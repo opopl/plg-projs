@@ -1,4 +1,21 @@
 
+
+fun! projs#complete (...)
+
+  let comps=[]
+
+  LFUN F_VarUpdate
+
+  call F_VarUpdate('projs')
+
+  if exists("g:projs")
+  	let comps=g:projs
+  endif
+
+  return join(comps,"\n")
+endf
+
+
 function! projs#viewproj (...)
 
  CD projs
@@ -42,4 +59,3 @@ function! projs#viewproj (...)
  RFUN SubNameEnd
 endfun
 
-endfunction
