@@ -101,11 +101,11 @@ fun! DC_NewProjs(...)
 	 """   preamble, packages, begin etc. 
 	 for [id,file] in items(texfiles)
 		 		let cmd = ' tex_create_proj.pl ' 
-	          \ . ' --dir  ' . g:DC_ProjsDir 
-	          \ . ' --proj ' . proj
-	          \ . ' --sec  ' . id
-	          \ . ' --struct  ' . projstruct
-	          \ . ' --force  '
+					\ . ' --dir  ' . g:DC_ProjsDir 
+					\ . ' --proj ' . proj
+					\ . ' --sec  ' . id
+					\ . ' --struct  ' . projstruct
+					\ . ' --force  '
 				if ! F_sys(cmd)
 			    	RFUN SubNameEnd 
 						return 0

@@ -42,5 +42,4 @@ function! projs#viewproj (...)
  RFUN SubNameEnd
 endfun
 
-	
 endfunction
