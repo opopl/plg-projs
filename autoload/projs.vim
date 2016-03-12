@@ -1,285 +1,14 @@
-
-
-function! projs#viewproj (...)
-
- CD projs
-
- """ delete buffers from the previously loaded project
- "RFUN DC_Proj_BufsDelete
- "BuffersWipeAll
-
- let sec=''
- if a:0
-    let g:proj = matchstr(a:1,'^\zs\w\+\ze')
-    let sec    = matchstr(a:1,'^\w\+\.\zs\w\+\ze')
-
- endif
-
- let pm     = 'TeX::Project::Generate::' . g:proj
- let loadpm = input('Load project module ' . pm . '(y/n)? :','n' )
-
- if loadpm == 'y'
-	exe 'tag ' . pm
- endif
-
- let g:DC_Proj_SecOrderFile = base#catpath('projs', g:proj . '.secorder.i.dat' )
-
- let var='g:DC_Proj_SecName'
- if ! strlen(sec)
-  	let {var}='_main_'
- else
-  	let {var}=sec
- endif
-
- call projs#checksecdir()
- call base#varupdate('DC_Proj_SecNames')
- 
- call projs#opensec(projs#var('secname'))
-
- let menuprojs=input('Load projs menu? (y/n): ', 'n')
- if menuprojs == 'y'
-	MenuReset projs
- endif
-
-endfun
-
-fun! projs#complete (...)
-
-  let comps=[]
-
-  call base#varupdate('projs')
-
-  let comps=projs#list()
-
-  return join(comps,"\n")
-endf
-
-fun! projs#checksecdir()
-
-  if exists("g:DC_Proj_SecDir_Exists")
-    unlet g:DC_Proj_SecDir_Exists
-  endif
-
-  if isdirectory(base#catpath('texdocs',g:proj))
-    let g:DC_Proj_SecDir_Exists=1
-  endif
-
-endf
-
-function! projs#opensec (...)
-
- let vars=[
-    \   'proj',
-    \   'DC_Proj_SecNamesBase',
-    \   'DC_Proj_SecNames',
-    \   'extensions_tex',
-    \   ]
-
- call base#varcheckexist(vars)
-
- if a:0==1
-    let sec=a:1
- else
-    let sec='body'
-
-    let listsecs=copy(projs#var('secnamesbase'))
-    call extend(listsecs,projs#var('secnames'))
-
-    let listsecs=sort(base#uniq(listsecs))
-
-    let sec=base#getfromchoosedialog({ 
-      \ 'list'        : listsecs,
-      \ 'startopt'    : 'body',
-      \ 'header'      : "Available sections are: ",
-      \ 'numcols'     : 1,
-      \ 'bottom'      : "Choose section by number: ",
-      \ })
-
-  endif
-
-  call projs#var("secname",sec)
-
-  let vfile             = ''
-  let vfiles            = []
-
-  if exists("g:DC_Proj_SecDir_Exists")
-   	let vfile = base#catpath('projs', g:proj, projs#var('secname') . '.tex' )
-  else
-   	let vfile = base#catpath('projs', g:proj . '.' . projs#var('secname') . '.tex' )
-  endif
-
-  if sec == '_main_'
-		for ext in projs#var('extensions_tex')
-    		let vfile = base#catpath('projs', g:proj . '.' . ext )
-				if filereadable(vfile)
-    				call add(vfiles, vfile)
-				endif
-		endfor
-
-  elseif sec == '_dat_defs_'
-    let vfile = base#catpath('projs', g:proj . '.defs.i.dat' )
-
-  elseif sec == '_dat_files_'
-    let vfile = base#catpath('projs', g:proj . '.files.i.dat' )
-
-  elseif sec == '_dat_files_ext_'
-    let vfile = base#catpath('projs', g:proj . '.files_ext.i.dat' )
-
-  elseif sec == '_dat_'
-    let vfile = base#catpath('projs', g:proj . '.secs.i.dat' )
-
-    call projs#gensecdat()
-
-    return
-  elseif sec == '_osecs_'
-    call projs#opensecorder()
-
-    return
-
-  elseif sec == '_bib_'
-    let vfile=base#catpath('projs', g:proj . '.refs.bib' )
-
-  elseif sec == '_pl_'
-    call extend(vfiles,base#splitglob('projs',g:proj . '.*.pl'))
-    let vfile=''
-  endif
-
-  if strlen(vfile) 
-    call add(vfiles,vfile)
-  endif
-
-  call projs#var('curfile',vfile)
-
-  for vfile in vfiles
-    call base#fileopen(vfile) 
-  endfor
-
-  return 
-endf
-	
-
-function! projs#gensecdat (...)
- 
- let f = base#catpath('texdocs',g:proj . '.secs.i.dat')
- call projs#var('secdatfile',f)
-
- let datlines=[]
-
- for line in projs#var('secnames')
-   if ! base#inlist(line,base#qw("_main_ _dat_ _osecs_ _bib_ _pl_ "))
-      call add(datlines,line)
-   endif
- endfor
-
- call writefile(datlines,projs#var('secdatfile'))
-
-endf
-
-fun! projs#opensecorder()
- 
-  let f=base#catpath('texdocs', g:proj . '.secorder.i.dat' )
-
-  call projs#var('secorderfile',f)
-  exe 'tabnew ' . projs#var('secorderfile')
-
-  MakePrg projs
-
-endf
-
- 
-"" Remove the project 
-""  This function does not affect the current value of g:proj 
-""			if g:proj is different from the project being removed.
-""			On the other hand, if g:proj is the project requested to be removed,
-""     g:proj is unlet in the end of the function body
-
-" former DC_PrjRemove
-function! projs#removeproject(proj)
-
- let ok = 0 
-
- if exists('g:proj')
-	 if g:proj != a:proj 
-	 		let oldproj=g:proj
-	 		let g:proj=a:proj
-	 endif
-
- else
-	 let g:proj = a:proj
-
- endif
-
- """ update variables:
- """   g:projs          - list of all projects
- """   g:DC_Proj_Files  - list of full paths of this project files ( specified by g:proj )
- """   g:datfiles       - list of all *.i.dat files 
- call base#varupdate([ 
-	 	\	'projs',
-	 	\	'DC_Proj_Files',
-	 	\	'datfiles',
-	 	\	] )
-
- if index(g:projs,g:proj) < 0
-	call base#subwarn('Input project does not exist in g:projs  ' . g:proj )
- endif
-
- """ remove proj from g:projs
- call filter(g:projs,"v:val != g:proj") 
-
- """ remove proj from PROJS datfile
- let lines=filter(readfile(g:datfiles['PROJS']), "v:val != g:proj" )
-
- call writefile(lines,g:datfiles['PROJS'])
-
- for file in g:DC_Proj_Files
-	 if filereadable(file)
-		echo 'Removing file: ' . file
-		let cmds=[ 
-			\	"git reset HEAD " . file . ' || echo $?',
-			\	"git checkout -- " . file . ' || echo $?',
-	   		\	"git rm " . file . ' -f || rm -f ' . file,
-	   		\	]
-	
-	   if ! base#sys( cmds )
-	 		return 0
-	   endif
- 	 endif
- endfor
-
- call base#echoredraw('Project removed: ' . g:proj)
-
- if exists("oldproj")
-	let g:proj=oldproj
- else
-	unlet g:proj
- endif
-
- let ok = 1
- 
- return ok
-
-endfunction
-
 """projs_new
 function! projs#new (...)
 
  LCOM MenuReset
  LCOM VSECBASE
 
- let vars=[
-       \  'DC_Proj_SecNamesBase',
-       \  'DC_ProjsDir',
-       \  'projs',
-       \  'DC_ProjTypes',
-       \ ]
-
- call base#varcheckexist(vars)
-
  call base#uniq('projs')
 
  echo ""
  echo "This will create a new TeX project skeleton "
- echo "		in projects' directory: " . base#path('projs')
+ echo "		in projects' root directory: " . projs#root() 
  echo ""
 
  let yn=input('Continue? (y/n): ','y')
@@ -374,7 +103,7 @@ function! projs#new (...)
 		 endif
 	 endfor
 	
-	 let g:proj=proj
+	 let s:proj=proj
 	
 	 call projs#genperl()
 	
@@ -445,6 +174,258 @@ EOF
 
 endf
 
+
+function! projs#viewproj (...)
+
+call projs#rootcd()
+
+ """ delete buffers from the previously loaded project
+ "RFUN DC_Proj_BufsDelete
+ "BuffersWipeAll
+
+ let sec=''
+ if a:0
+    let s:proj = matchstr(a:1,'^\zs\w\+\ze')
+    let sec    = matchstr(a:1,'^\w\+\.\zs\w\+\ze')
+
+ endif
+
+" let pm     = 'TeX::Project::Generate::' . s:proj
+ "let loadpm = input('Load project module ' . pm . '(y/n)? :','n' )
+
+ "if loadpm == 'y'
+	"exe 'tag ' . pm
+ "endif
+
+ let f = projs#path([ s:proj . '.secorder.i.dat' ])
+ call projs#var('secorderfile',f)
+
+ if ! strlen(sec)
+  	let sec='_main_'
+ endif
+
+ call projs#var('secname',sec)
+ call projs#var('proj',s:proj)
+
+ call projs#checksecdir()
+ 
+ call projs#opensec(projs#var('secname'))
+
+ "let menuprojs=input('Load projs menu? (y/n): ', 'n')
+ "if menuprojs == 'y'
+	"MenuReset projs
+ "endif
+
+endfun
+
+fun! projs#complete (...)
+
+  let comps=[]
+
+  call base#varupdate('projs')
+
+  let comps=projs#list()
+
+  return join(comps,"\n")
+endf
+
+fun! projs#checksecdir()
+
+	call projs#var('secdirexists',0)
+	
+	let dir = projs#path([ s:proj ])
+	if isdirectory(dir)
+		call projs#var('secdirexists',1)
+	endif
+
+endf
+
+function! projs#opensec (...)
+
+ if a:0==1
+    let sec=a:1
+ else
+    let sec='body'
+
+    let listsecs=copy(projs#var('secnamesbase'))
+    call extend(listsecs,projs#var('secnames'))
+
+    let listsecs=sort(base#uniq(listsecs))
+
+    let sec=base#getfromchoosedialog({ 
+      \ 'list'        : listsecs,
+      \ 'startopt'    : 'body',
+      \ 'header'      : "Available sections are: ",
+      \ 'numcols'     : 1,
+      \ 'bottom'      : "Choose section by number: ",
+      \ })
+
+  endif
+
+  call projs#var("secname",sec)
+
+  let vfile             = ''
+  let vfiles            = []
+
+  if base#var('secdirexists')
+   	let vfile = projs#path([ s:proj, sec . '.tex' ])
+  else
+   	let vfile = projs#path([ s:proj . '.' . sec . '.tex' ])
+  endif
+
+  if sec == '_main_'
+		for ext in projs#var('extensions_tex')
+    		let vfile = projs#path([ s:proj . '.' . ext ])
+				if filereadable(vfile)
+    				call add(vfiles, vfile)
+				endif
+		endfor
+
+  elseif sec == '_dat_defs_'
+    let vfile = projs#path([ 'projs', s:proj . '.defs.i.dat' ])
+
+  elseif sec == '_dat_files_'
+    let vfile = projs#path([ 'projs', s:proj . '.files.i.dat' ])
+
+  elseif sec == '_dat_files_ext_'
+    let vfile = projs#path([ 'projs', s:proj . '.files_ext.i.dat' ])
+
+  elseif sec == '_dat_'
+    let vfile = projs#path([ 'projs', s:proj . '.secs.i.dat' ])
+
+    call projs#gensecdat()
+
+    return
+  elseif sec == '_osecs_'
+    call projs#opensecorder()
+
+    return
+
+  elseif sec == '_bib_'
+    let vfile = projs#path([ s:proj . '.refs.bib' ])
+
+  elseif sec == '_pl_'
+    call extend(vfiles,base#splitglob('projs',s:proj . '.*.pl'))
+    let vfile=''
+  endif
+
+  if strlen(vfile) 
+    call add(vfiles,vfile)
+  endif
+
+  call projs#var('curfile',vfile)
+
+  for vfile in vfiles
+    call base#fileopen(vfile) 
+  endfor
+
+  return 
+endf
+	
+
+function! projs#gensecdat (...)
+ 
+ let f = projs#path([ s:proj . '.secs.i.dat' ])
+ call projs#var('secdatfile',f)
+
+ let datlines=[]
+
+ for line in projs#var('secnames')
+   if ! base#inlist(line,base#qw("_main_ _dat_ _osecs_ _bib_ _pl_ "))
+      call add(datlines,line)
+   endif
+ endfor
+
+ call writefile(datlines,projs#var('secdatfile'))
+
+endf
+
+fun! projs#opensecorder()
+ 
+  let f=projs#path([s:proj . '.secorder.i.dat' ])
+
+  call projs#var('secorderfile',f)
+  exe 'tabnew ' . projs#var('secorderfile')
+
+  MakePrg projs
+
+endf
+
+ 
+"" Remove the project 
+""  This function does not affect the current value of s:proj 
+""			if s:proj is different from the project being removed.
+""			On the other hand, if s:proj is the project requested to be removed,
+""     s:proj is unlet in the end of the function body
+
+" former DC_PrjRemove
+function! projs#removeproject(proj)
+
+ let ok = 0 
+
+ if exists('s:proj')
+	 if s:proj != a:proj 
+	 		let oldproj=s:proj
+	 		let s:proj=a:proj
+	 endif
+
+ else
+	 let s:proj = a:proj
+
+ endif
+
+ """ update variables:
+ """   s:projs          - list of all projects
+ """   g:DC_Proj_Files  - list of full paths of this project files ( specified by s:proj )
+ """   g:datfiles       - list of all *.i.dat files 
+ call base#varupdate([ 
+	 	\	'projs',
+	 	\	'DC_Proj_Files',
+	 	\	'datfiles',
+	 	\	] )
+
+ if index(s:projs,s:proj) < 0
+	call base#subwarn('Input project does not exist in s:projs  ' . s:proj )
+ endif
+
+ """ remove proj from s:projs
+ call filter(s:projs,"v:val != s:proj") 
+
+ """ remove proj from PROJS datfile
+ let lines=filter(readfile(g:datfiles['PROJS']), "v:val != s:proj" )
+
+ call writefile(lines,g:datfiles['PROJS'])
+
+ for file in g:DC_Proj_Files
+	 if filereadable(file)
+		echo 'Removing file: ' . file
+		let cmds=[ 
+			\	"git reset HEAD " . file . ' || echo $?',
+			\	"git checkout -- " . file . ' || echo $?',
+	   		\	"git rm " . file . ' -f || rm -f ' . file,
+	   		\	]
+	
+	   if ! base#sys( cmds )
+	 		return 0
+	   endif
+ 	 endif
+ endfor
+
+ call base#echoredraw('Project removed: ' . s:proj)
+
+ if exists("oldproj")
+	let s:proj=oldproj
+ else
+	unlet s:proj
+ endif
+
+ let ok = 1
+ 
+ return ok
+
+endfunction
+
+
 function! projs#initvars (...)
 	let s:projvars={}
 endf
@@ -467,6 +448,25 @@ function! projs#echo(text,...)
 		\	})
 
 endfunction
+
+function! projs#info ()
+
+	let g:hl      = 'MoreMsg'
+	let indentlev = 2
+	let indent    = repeat(' ',indentlev)
+
+	let secname = projs#var('secname')
+		
+	call base#echo({ 'text' : "PROJECTS ", 'hl' : 'Title' } )
+	
+	call base#echo({ 'text' : "Current project: " } )
+	call base#echovar({ 'var' : 's:proj', 'indent' : indentlev })
+	
+	call base#echo({ 'text' : "Current section: " } )
+	call base#echovar({ 'var' : 'secname', 'indent' : indentlev })
+
+endfunction
+
 
 function! projs#init (...)
 
@@ -495,11 +495,14 @@ function! projs#init (...)
 		let s:projvars=e
 	endif
 
-    "let g:projs=base#readdatfile('PROJS')
+    "let s:projs=base#readdatfile('PROJS')
 		
 	for v in projs#var('varsfromdat')
 		call projs#varsetfromdat(v)
 	endfor
+
+	let varlist=sort(keys(s:projvars))
+	call projs#var('varlist',varlist)
 
 endfunction
 
@@ -565,6 +568,17 @@ function! projs#ex (proj)
 
 endfunction
 
+function! projs#path (pa)
+	let root = projs#root()
+	let arr = [ root ]
+	call extend(arr,a:pa)
+
+	let fullpath = base#file#catfile(arr)
+
+	return fullpath
+	
+endfunction
+
 function! projs#var (...)
 	if a:0 == 1
 		let var = a:1
@@ -574,6 +588,10 @@ function! projs#var (...)
 		let val = a:2
 		return projs#varset(var,val)
 	endif
+endfunction
+
+function! projs#varecho (varname)
+	echo projs#var(a:varname)
 endfunction
 
 function! projs#varget (varname)
@@ -658,8 +676,8 @@ function! projs#genperl(...)
  let pmfiles={}
 
  call extend(pmfiles, {
-			\	'generate_pm' : g:paths['perlmod'] . '/lib/TeX/Project/Generate/' . g:proj . '.pm',  
-			\	'generate_pl' : g:paths['projs']  . '/generate.' . g:proj . '.pl',  
+			\	'generate_pm' : g:paths['perlmod'] . '/lib/TeX/Project/Generate/' . s:proj . '.pm',  
+			\	'generate_pl' : g:paths['projs']  . '/generate.' . s:proj . '.pl',  
  			\	})
  
 endfunction

@@ -12,5 +12,9 @@ command! -nargs=* -complete=custom,projs#complete
 	\	PrjRemove call projs#removeproject(<f-args>)
 
 command! -nargs=* -complete=custom,projs#complete#varlist
-	\	PrjVarEcho call projs#varecho(<f-args>)
- 
+	\	ProjsVarEcho call projs#varecho(<f-args>)
+
+command! -nargs=* ProjsInit call projs#init()
+
+command! -nargs=* -complete=custom,projs#complete#secnamesbase
+  	\ VSECBASE call projs#opensec(<f-args>) 
