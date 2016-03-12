@@ -1,9 +1,6 @@
 """projs_new
 function! projs#new (...)
 
- LCOM MenuReset
- LCOM VSECBASE
-
  call base#uniq('projs')
 
  echo ""
@@ -71,10 +68,17 @@ function! projs#new (...)
 	 call map(texfiles, "proj . '.' . v:key . '.tex' ")
 	 call extend(texfiles, { '_main_' : proj . '.tex' } )
 	
+	 let creator = base#catpath('perlscripts','tex_create_proj.pl')
+
+	 if !filereadable(creator)
+		call projs#warn('Projs Creator script NOT found!')
+		return 0
+	 endif
+	
 	 """ fill in base sections: 
 	 """   preamble, packages, begin etc. 
 	 for [id,file] in items(texfiles)
-		 		let cmd = ' tex_create_proj.pl ' 
+		 		let cmd = ' perl ' . creator  
 					\ . ' --dir  ' . projs#root() 
 					\ . ' --proj ' . proj
 					\ . ' --sec  ' . id
@@ -87,7 +91,7 @@ function! projs#new (...)
 	
 	 """ append the name of the project being created to 
 	 """   PROJS.i.dat
-	 if ! base#sys(' tex_create_proj.pl ' 
+	 if ! base#sys(' perl ' . creator 
 	        \ . ' --proj ' . proj
 	        \ . ' --appenddat '
 	        \ . ' --force '
@@ -109,71 +113,20 @@ function! projs#new (...)
 	
 	 call base#echoredraw('Created new project: ' . proj)
 	
-	 let menuprojs=input('Load projs menu? (y/n): ', 'n')
-	 if menuprojs == 'y'
-	 		MenuReset projs
-	 endif
+	 "let menuprojs=input('Load projs menu? (y/n): ', 'n')
+	 "if menuprojs == 'y'
+			 "MenuReset projs
+	 "endif
+
 	 let loadmain=input('Load the main project file? (y/n): ', 'n')
 	 if loadmain == 'y'
-	 		VSECBASE _main_
+		VSECBASE _main_
 	 endif
-	
-"""projtype_receipt
- elseif projtype == 'receipt'
-
-	 let recnumber=input('Receipt number:','')
-
-	 let proj='receipt_REC_' . recnumber
-
-perl << EOF
-#!/usr/bin/env perl
- 
- use strict;
- use warnings;
- use feature qw(switch);
-  
-# use Vim::Perl qw( VimVars VimLet VimMsg );
-# Vim::Perl::init;
-#
-# use Text::Generate::TeX;
-# use Data::Dumper;
-#
-# my $vars=VimVars(  qw( recnumber )  );
-# my $tex=Text::Generate::TeX->new;
-# my $file=Text::Generate::TeX->new;
-#
-# VimMsg(Dumper($vars));
- 	
-EOF
-
-"""projtype_address
- elseif projtype == 'address'
-
-perl << EOF
-#!/usr/bin/env perl
- 
- use strict;
- use warnings;
-  
-# use Vim::Perl qw( VimVars VimLet VimMsg );
-#
-# use Text::Generate::TeX;
-# use Data::Dumper;
-#
-# my $vars=VimVars(  qw( recnumber )  );
-# my $tex=Text::Generate::TeX->new;
-# my $file=Text::Generate::TeX->new;
-#
-# VimMsg(Dumper($vars));
- 	
-EOF
-	 
  endif
-
+	
  return 1
 
 endf
-
 
 function! projs#viewproj (...)
 
@@ -201,7 +154,7 @@ call projs#rootcd()
  call projs#var('secorderfile',f)
 
  if ! strlen(sec)
-  	let sec='_main_'
+	let sec='_main_'
  endif
 
  call projs#var('secname',sec)
@@ -465,7 +418,61 @@ function! projs#info ()
 	call base#echo({ 'text' : "Current section: " } )
 	call base#echovar({ 'var' : 'secname', 'indent' : indentlev })
 
-endfunction
+  call projs#checksecdir()
+
+"  let delim   = repeat('  = ',30)
+  "let notvars = [ delim ]
+
+  "let vars=base#qw( ""
+      "\ . "Name " 
+      "\ . "MainFile "
+      "\ . "Files "
+      "\ . delim . " "
+      "\ . "CurFile "
+      "\ . delim . " "
+      "\ . "SecDir_Exists " 
+      "\ . "SecName " 
+      "\ . "SecNames " 
+      "\ . delim . " "
+      "\ . "SecOrderFile " 
+      "\ . "SecDat " 
+      "\ . delim . " "
+      "\ . "Attached " 
+      "\ . delim . " "
+      "\ )
+
+  "echo delim
+  "echo "CURRENT PROJECT INFO"
+  "echo delim
+
+"  for var in vars
+    "if index(notvars,var) >= 0 
+      "echo var
+      "continue
+    "endif
+
+    "let type=''
+    "let varexists=''
+    "let fvar='g:DC_Proj_' . var
+
+    "exe 'let varexists=exists("' . fvar . '")'
+
+    "if varexists
+      "exe 'let vartype=type(g:DC_Proj_' . var . ')'
+      "if vartype== type('')
+        "let evs="echo '" . fvar . "=' . " . fvar
+      "elseif vartype == type([])
+        "let evs="echo '" . fvar . "=' . join(" .  fvar . ",',')"
+      "endif
+    "else
+      "let evs="echo 'g:DC_Proj_" . var . " UNDEF '" 
+    "endif
+
+    "exe evs
+
+  "endfor
+
+endf
 
 
 function! projs#init (...)
