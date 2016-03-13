@@ -92,28 +92,12 @@ function! projs#proj#listsecnames (...)
 	
 endfunction
 
-function! projs#proj#remove(proj)
-
- let ok     = 0
- let proj   = a:proj
- let prefix = '(projs#proj#remove) '
-
- call base#echoprefix(prefix)
-
- if ! projs#ex(proj)
-	call base#warn({ 
-		\ 'text'   : 'Input project does not exist:  ' . proj,
-	    \ 	})
-	return 1
- endif
-
- let projs = projs#list()
-
- """ remove proj from projs
- call filter(projs,"v:val != proj") 
+function! projs#proj#removefromdat(proj)
 
  call base#echo({ 'text' : 'Removing project from PROJS dat file...'})
- """ remove proj from PROJS datfile
+ let proj=a:proj
+
+ "" remove proj from PROJS datfile
  let dfile = projs#path(['PROJS.i.dat'])
  let lines = readfile(dfile)
  let newlines=[]
@@ -137,7 +121,31 @@ function! projs#proj#remove(proj)
 
  call writefile(newlines,dfile)
 
- let pfiles = projs#proj#listfiles(proj)
+endfunction
+
+function! projs#proj#remove(proj)
+
+ let ok     = 0
+ let proj   = a:proj
+ let prefix = '(projs#proj#remove) '
+
+ call base#echoprefix(prefix)
+
+ if ! projs#ex(proj)
+	call base#warn({ 
+		\ 'text'   : 'Input project does not exist:  ' . proj,
+	    \ 	})
+	return 1
+ endif
+
+ let projs = projs#list()
+
+ """ remove proj from projs
+ call filter(projs,"v:val != proj") 
+
+ call projs#proj#removefromdat(proj)
+
+ let pfiles = projs#proj#files(proj)
 
  for file in pfiles
 	 if filereadable(file)
@@ -167,6 +175,8 @@ function! projs#proj#remove(proj)
  call base#echoredraw('Project removed: ' . proj)
 
  let ok = 1
+
+ call base#echoprefixold()
  
  return ok
 

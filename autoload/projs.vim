@@ -353,6 +353,9 @@ function! projs#info ()
 	let g:hl      = 'MoreMsg'
 	let indentlev = 2
 	let indent    = repeat(' ',indentlev)
+	let prefix=''
+
+	call base#echoprefix(prefix)
 
 	let proj     = projs#var('proj')
 	let secname  = projs#var('secname')
@@ -532,9 +535,27 @@ function! projs#listfromdat ()
 endf	
 
 function! projs#listfromfiles ()
-	let list = base#find({ })
-	call projs#var("list",list)
-	return list
+	let root = projs#root()
+
+	let list = base#find({ 
+		\ "dirs" : [ root ]                  ,
+		\ "ext"  : [ "tex" ]                 ,
+		\ "relpath" : 1                      ,
+		\ "pat"  : '^\(\w\+\)\.\(\w\+\)\.tex$' ,
+	    \ })
+
+	let nlist=[]
+	let found={}
+	for p in list
+		let p = substitute(p,'^\(\w\+\).*','\1','g')
+
+		if !get(found,p,0)
+			call add(nlist,p)
+			let found[p]=1
+		end
+	endfor
+
+	return nlist
 endf	
 
 function! projs#list ()
