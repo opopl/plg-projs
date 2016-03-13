@@ -1,8 +1,6 @@
 """projs_new
 function! projs#new (...)
 
- call base#uniq('projs')
-
  echo ""
  echo "This will create a new TeX project skeleton "
  echo "		in projects' root directory: " . projs#root() 
@@ -41,7 +39,7 @@ function! projs#new (...)
 """projtype_regular
  if projtype == 'regular'
 
-	 if ! exists('proj') || ! strlen(proj) 
+	 if ! exists('proj') || ! strlen(s:proj) 
 	 	let proj=input('Project name:','','custom,projs#complete')
 	 endif
 
@@ -107,11 +105,14 @@ function! projs#new (...)
 		 endif
 	 endfor
 	
-	 let s:proj=proj
+	 let s:proj = proj
 	
 	 call projs#genperl()
 	
 	 call base#echoredraw('Created new project: ' . proj)
+
+	 let s:proj = proj
+	 call base#var('proj',proj)
 	
 	 "let menuprojs=input('Load projs menu? (y/n): ', 'n')
 	 "if menuprojs == 'y'
@@ -140,6 +141,14 @@ call projs#rootcd()
  if a:0
     let s:proj = matchstr(a:1,'^\zs\w\+\ze')
     let sec    = matchstr(a:1,'^\w\+\.\zs\w\+\ze')
+else
+	let s:proj=base#getfromchoosedialog({ 
+		 	\ 'list'        : projs#list(),
+		 	\ 'startopt'    : '',
+		 	\ 'header'      : "Available projects are: ",
+		 	\ 'numcols'     : 1,
+		 	\ 'bottom'      : "Choose a projects by number: ",
+		 	\ })
 
  endif
 
@@ -185,8 +194,10 @@ endf
 fun! projs#checksecdir()
 
 	call projs#var('secdirexists',0)
-	
-	let dir = projs#path([ s:proj ])
+
+	let proj = projs#var('proj')
+	let dir  = projs#path([ proj ])
+
 	if isdirectory(dir)
 		call projs#var('secdirexists',1)
 	endif
@@ -200,8 +211,8 @@ function! projs#opensec (...)
  else
     let sec='body'
 
-    let listsecs=copy(projs#var('secnamesbase'))
-    call extend(listsecs,projs#var('secnames'))
+    let listsecs = copy(projs#var('secnamesbase'))
+    call extend(listsecs,projs#proj#secnames())
 
     let listsecs=sort(base#uniq(listsecs))
 
@@ -221,16 +232,16 @@ function! projs#opensec (...)
   let vfiles            = []
 
   if base#var('secdirexists')
-   	let vfile = projs#path([ s:proj, sec . '.tex' ])
+	let vfile = projs#path([ s:proj, sec . '.tex' ])
   else
-   	let vfile = projs#path([ s:proj . '.' . sec . '.tex' ])
+	let vfile = projs#path([ s:proj . '.' . sec . '.tex' ])
   endif
 
   if sec == '_main_'
 		for ext in projs#var('extensions_tex')
-    		let vfile = projs#path([ s:proj . '.' . ext ])
+			let vfile = projs#path([ s:proj . '.' . ext ])
 				if filereadable(vfile)
-    				call add(vfiles, vfile)
+					call add(vfiles, vfile)
 				endif
 		endfor
 
@@ -295,7 +306,7 @@ endf
 
 fun! projs#opensecorder()
  
-  let f=projs#path([s:proj . '.secorder.i.dat' ])
+  let f = projs#path([s:proj . '.secorder.i.dat' ])
 
   call projs#var('secorderfile',f)
   exe 'tabnew ' . projs#var('secorderfile')
@@ -312,71 +323,6 @@ endf
 ""     s:proj is unlet in the end of the function body
 
 " former DC_PrjRemove
-function! projs#removeproject(proj)
-
- let ok = 0 
-
- if exists('s:proj')
-	 if s:proj != a:proj 
-	 		let oldproj=s:proj
-	 		let s:proj=a:proj
-	 endif
-
- else
-	 let s:proj = a:proj
-
- endif
-
- """ update variables:
- """   s:projs          - list of all projects
- """   g:DC_Proj_Files  - list of full paths of this project files ( specified by s:proj )
- """   g:datfiles       - list of all *.i.dat files 
- call base#varupdate([ 
-	 	\	'projs',
-	 	\	'DC_Proj_Files',
-	 	\	'datfiles',
-	 	\	] )
-
- if index(s:projs,s:proj) < 0
-	call base#subwarn('Input project does not exist in s:projs  ' . s:proj )
- endif
-
- """ remove proj from s:projs
- call filter(s:projs,"v:val != s:proj") 
-
- """ remove proj from PROJS datfile
- let lines=filter(readfile(g:datfiles['PROJS']), "v:val != s:proj" )
-
- call writefile(lines,g:datfiles['PROJS'])
-
- for file in g:DC_Proj_Files
-	 if filereadable(file)
-		echo 'Removing file: ' . file
-		let cmds=[ 
-			\	"git reset HEAD " . file . ' || echo $?',
-			\	"git checkout -- " . file . ' || echo $?',
-	   		\	"git rm " . file . ' -f || rm -f ' . file,
-	   		\	]
-	
-	   if ! base#sys( cmds )
-	 		return 0
-	   endif
- 	 endif
- endfor
-
- call base#echoredraw('Project removed: ' . s:proj)
-
- if exists("oldproj")
-	let s:proj=oldproj
- else
-	unlet s:proj
- endif
-
- let ok = 1
- 
- return ok
-
-endfunction
 
 
 function! projs#initvars (...)
@@ -408,17 +354,28 @@ function! projs#info ()
 	let indentlev = 2
 	let indent    = repeat(' ',indentlev)
 
-	let secname = projs#var('secname')
+	let proj     = projs#var('proj')
+	let secname  = projs#var('secname')
+	let secnames = projs#proj#secnames()
 		
 	call base#echo({ 'text' : "PROJECTS ", 'hl' : 'Title' } )
 	
 	call base#echo({ 'text' : "Current project: " } )
-	call base#echovar({ 'var' : 's:proj', 'indent' : indentlev })
+	call base#echo({ 
+		\ 'text' : "proj => " . proj, 
+		\ 'indentlev' : indentlev, })
 	
 	call base#echo({ 'text' : "Current section: " } )
-	call base#echovar({ 'var' : 'secname', 'indent' : indentlev })
+	call base#echo({ 
+		\ 'text' : "secname => " . secname, 
+		\ 'indentlev' : indentlev })
 
-  call projs#checksecdir()
+	call base#echo({ 'text' : "Sections: " } )
+	call base#echo({ 
+		\ 'text' : "secnames => " . "\n\t" . join(secnames,"\n\t"), 
+		\ 'indentlev' : indentlev })
+
+	call projs#checksecdir()
 
 "  let delim   = repeat('  = ',30)
   "let notvars = [ delim ]
@@ -474,7 +431,6 @@ function! projs#info ()
 
 endf
 
-
 function! projs#init (...)
 
 	let prefix="(projs#init) "
@@ -502,6 +458,8 @@ function! projs#init (...)
 		let s:projvars=e
 	endif
 
+	if ! exists("s:proj") | let s:proj='' | endif
+
     "let s:projs=base#readdatfile('PROJS')
 		
 	for v in projs#var('varsfromdat')
@@ -513,7 +471,33 @@ function! projs#init (...)
 
 endfunction
 
-function! projs#root ()
+function! projs#listwrite2dat (...)
+
+ call base#echoprefix("(projs#listwrite2dat) " )
+
+ if a:0
+ 	let list = a:1
+	if base#type(list) != 'List'
+		call base#warn({ "text" : "1st input parameter should of type List" })
+		return 0
+	endif
+ else
+	let list = projs#list()
+ endif
+
+ let dfile = projs#path([ 'PROJS.i.dat' ])
+ call writefile(list,dfile)
+	
+endfunction
+
+" get the value of root dir
+" set the value of root dir
+
+function! projs#root (...)
+	if a:0
+		let root = a:1
+		call projs#var('root',root)
+	endif
 	return projs#var('root')
 endf	
 
@@ -537,7 +521,18 @@ endf
 
 function! projs#listfromdat ()
 	let file = ap#file#catfile([ projs#root(), 'PROJS.i.dat' ])
-	let list = base#readdatfile({ "file" : file, "type" : "List" })
+	let list = base#readdatfile({ 
+			\ "file" : file, 
+			\ "type" : "List", 
+			\ "sort" : 1,
+			\ "uniq" : 1,
+			\ })
+	call projs#var("list",list)
+	return list
+endf	
+
+function! projs#listfromfiles ()
+	let list = base#find({ })
 	call projs#var("list",list)
 	return list
 endf	
@@ -575,6 +570,12 @@ function! projs#ex (proj)
 
 endfunction
 
+"""projs_path
+"
+"
+"" projs#path(['a', 'b'])
+"" projs#path(base#qw('a b'))
+
 function! projs#path (pa)
 	let root = projs#root()
 	let arr = [ root ]
@@ -604,7 +605,7 @@ endfunction
 function! projs#varget (varname)
 	
 	if exists("s:projvars[a:varname]")
-		let val = s:projvars[a:varname]
+		let val = copy( s:projvars[a:varname] )
 	else
 		call projs#warn("Undefined variable: " . a:varname)
 		let val = ''
