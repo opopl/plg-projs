@@ -177,6 +177,11 @@ else
  "if menuprojs == 'y'
 	"MenuReset projs
  "endif
+ "
+ "
+ if (exists(":MakePrg") == 2)
+ 	MakePrg projs
+ endif
 
 endfun
 
@@ -279,6 +284,8 @@ function! projs#opensec (...)
 
   call projs#var('curfile',vfile)
 
+  let vfiles=base#uniq(vfiles)
+
   for vfile in vfiles
     call base#fileopen(vfile) 
   endfor
@@ -380,57 +387,11 @@ function! projs#info ()
 
 	call projs#checksecdir()
 
-"  let delim   = repeat('  = ',30)
-  "let notvars = [ delim ]
+	let vv=base#qw('texoutdir texmode')
+	for v in vv
+		call base#echo({ 'text' : v . " => " . projs#var(v) } )
+	endfor
 
-  "let vars=base#qw( ""
-      "\ . "Name " 
-      "\ . "MainFile "
-      "\ . "Files "
-      "\ . delim . " "
-      "\ . "CurFile "
-      "\ . delim . " "
-      "\ . "SecDir_Exists " 
-      "\ . "SecName " 
-      "\ . "SecNames " 
-      "\ . delim . " "
-      "\ . "SecOrderFile " 
-      "\ . "SecDat " 
-      "\ . delim . " "
-      "\ . "Attached " 
-      "\ . delim . " "
-      "\ )
-
-  "echo delim
-  "echo "CURRENT PROJECT INFO"
-  "echo delim
-
-"  for var in vars
-    "if index(notvars,var) >= 0 
-      "echo var
-      "continue
-    "endif
-
-    "let type=''
-    "let varexists=''
-    "let fvar='g:DC_Proj_' . var
-
-    "exe 'let varexists=exists("' . fvar . '")'
-
-    "if varexists
-      "exe 'let vartype=type(g:DC_Proj_' . var . ')'
-      "if vartype== type('')
-        "let evs="echo '" . fvar . "=' . " . fvar
-      "elseif vartype == type([])
-        "let evs="echo '" . fvar . "=' . join(" .  fvar . ",',')"
-      "endif
-    "else
-      "let evs="echo 'g:DC_Proj_" . var . " UNDEF '" 
-    "endif
-
-    "exe evs
-
-  "endfor
 
 endf
 
@@ -462,12 +423,18 @@ function! projs#init (...)
 	endif
 
 	if ! exists("s:proj") | let s:proj='' | endif
-
-    "let s:projs=base#readdatfile('PROJS')
 		
 	for v in projs#var('varsfromdat')
 		call projs#varsetfromdat(v)
 	endfor
+
+	call projs#varsetfromdat('vars','Dictionary')
+
+	let vars =  projs#var('vars')
+	for [k,v] in items(vars)
+		call projs#var(k,v)
+	endfor
+	call projs#var('texoutdir',projs#root())
 
 	let varlist=sort(keys(s:projvars))
 	call projs#var('varlist',varlist)
@@ -655,8 +622,14 @@ function! projs#varexists (varname)
 	
 endfunction
 
-function! projs#varsetfromdat (varname)
+function! projs#varsetfromdat (varname,...)
 	let datafile = projs#datafile(a:varname)
+
+	if a:0
+		let type = a:1
+	else
+		let type = "List"
+	endif
 
 	if !filereadable(datafile)
 		call projs#warn('NO datafile for: ' . a:varname)
@@ -665,7 +638,7 @@ function! projs#varsetfromdat (varname)
 
 	let data = base#readdatfile({ 
 		\   "file" : datafile ,
-		\   "type" : "List" ,
+		\   "type" : type ,
 		\	})
 
 	call projs#var(a:varname,data)
@@ -674,11 +647,24 @@ function! projs#varsetfromdat (varname)
 
 endfunction
 
+
 function! projs#datafile (id)
+	let files = projs#datafiles(a:id)
+	let file = get(files,0,'')
+	return file
+endfunction
+
+function! projs#datafiles (id)
 	let datadir = projs#datadir()
 	let file = a:id . ".i.dat"
-	let file = ap#file#catfile([ datadir, file ])
-	return file
+
+	let files = base#find({
+		\ "dirs"    : [ datadir ],
+		\ "subdirs" : 1,
+		\ "pat"     : '^'.file.'$',
+		\	})
+
+	return files
 endfunction
 
 function! projs#warn (text)
@@ -710,7 +696,4 @@ function! projs#genperl(...)
  			\	})
  
 endfunction
- 
-
-
 

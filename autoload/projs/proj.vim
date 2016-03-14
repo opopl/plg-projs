@@ -6,6 +6,11 @@ function! projs#proj#name ()
 	return proj
 endfunction
 
+function! projs#proj#secname ()
+	let sec = projs#var('secname')
+	return sec
+endfunction
+
 function! projs#proj#reset (...)
 	if a:0
 		let proj = a:1
@@ -181,6 +186,53 @@ function! projs#proj#remove(proj)
  return ok
 
 endfunction
+
+function! projs#proj#make (...)
+
+ call projs#rootcd()
+
+ let oldproj = projs#proj#name()
+
+ let opts={ 
+    \ 'steps' : '_all_', 
+    \ 'mode'  : 'nonstopmode',
+    \ 'proj'  : oldproj,
+    \ }
+
+ if a:0
+   call extend(opts,a:1)
+ endif
+
+ let g:proj  = opts.proj
+
+ call projs#var('texmode',opts.mode)
+
+ let i=0
+ let mks=projs#var('makesteps')
+ if opts.steps == '_all_'
+   let opts.steps=join(mks,',')
+ endif
+
+ echohl CursorLineNr
+ echo 'Starting PrjMake ... '
+ echohl Question
+ echo ' Steps: ' . opts.steps
+ echohl None
+
+ for step in split(opts.steps,',')
+    let fun='projs#makesteps#' . step
+    if exists("*" . fun)
+      exe 'call ' . fun . '()'
+    endif
+ endfor
+
+ call projs#proj#reset(oldproj)
+	
+endfunction
+ 
+
+
+
 
 
 

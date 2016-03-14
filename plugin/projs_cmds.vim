@@ -25,3 +25,6 @@ command! -nargs=* -complete=custom,projs#complete
 command! -nargs=* -complete=custom,projs#complete
 	\ PrjListSecs call projs#proj#listsecnames(<f-args>)
 
+command! -nargs=* -complete=custom,projs#complete
+	\ PrjMake call projs#proj#make(<f-args>)
+
