@@ -40,3 +40,9 @@ function! projs#complete#secnames (...)
   return projs#complete#vars([ 'secnames' ])
 	
 endfunction
+
+function! projs#complete#projsdirslist (...)
+
+  return projs#complete#vars([ 'projsdirslist' ])
+	
+endfunction

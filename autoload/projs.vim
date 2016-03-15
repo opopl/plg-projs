@@ -1,5 +1,33 @@
+
+" projs#newfile(id)
+
+function! projs#newsec(...)
+
+	let sec  = a:1
+	let file = a:2
+	let proj = projs#proj#name()
+
+	call projs#echo("Creating file:\n\t" . id )
+	let lines = []
+
+	let secs = base#qw("preamble body")
+
+	if sec == '_main_'
+		call add(lines,' ')
+		call add(lines,'\def\PROJ{'.proj.'}')
+		call add(lines,' ')
+		call add(lines,'\ii{'.'}')
+	endif
+
+	call writefile(lines,file)
+	
+endfunction
+
+"
+"
 """projs_new
 function! projs#new (...)
+ call base#echoprefix('(projs#new)')
 
  echo ""
  echo "This will create a new TeX project skeleton "
@@ -16,9 +44,9 @@ function! projs#new (...)
 	 let projtype = 'regular'
 
  else
-	 let projtype=base#getfromchoosedialog({ 
+	 let projtype = base#getfromchoosedialog({ 
 		 	\ 'list'        : projs#var('projecttypes'),
-		 	\ 'startopt'    : '',
+		 	\ 'startopt'    : 'regular',
 		 	\ 'header'      : "Available project types are: ",
 		 	\ 'numcols'     : 1,
 		 	\ 'bottom'      : "Choose a project type by number: ",
@@ -26,7 +54,7 @@ function! projs#new (...)
 
  endif
 
- let projstruct=base#getfromchoosedialog({ 
+ let projstruct = base#getfromchoosedialog({ 
 		 	\ 'list'        : projs#var('projectstructures'),
 		 	\ 'startopt'    : 'in_root',
 		 	\ 'header'      : "Available project structures are: ",
@@ -44,7 +72,7 @@ function! projs#new (...)
 	 endif
 
 	 if ! strlen(proj)
-		 call base#subwarn('no project name provided')
+		 call base#warn({ 'text' : 'no project name provided' })
 		 return 0 
 	 endif
 	
@@ -55,6 +83,8 @@ function! projs#new (...)
 			return 0
 		endif
 	 endif
+
+	 call projs#proj#name(proj)
 	
 	 let texfiles={}
 	 let texfileids=projs#var('secnamesbase')
@@ -70,40 +100,45 @@ function! projs#new (...)
 
 	 if !filereadable(creator)
 		call projs#warn('Projs Creator script NOT found!')
-		return 0
-	 endif
+
+		for [sec,file] in items(texfiles)
+			call projs#newsec(sec,file)
+		endfor
+	 else
 	
-	 """ fill in base sections: 
-	 """   preamble, packages, begin etc. 
-	 for [id,file] in items(texfiles)
-		 		let cmd = ' perl ' . creator  
-					\ . ' --dir  ' . projs#root() 
-					\ . ' --proj ' . proj
-					\ . ' --sec  ' . id
-					\ . ' --struct  ' . projstruct
-					\ . ' --force  '
-				if ! base#sys(cmd)
-					return 0
-				endif
-	 endfor
-	
-	 """ append the name of the project being created to 
-	 """   PROJS.i.dat
-	 if ! base#sys(' perl ' . creator 
-	        \ . ' --proj ' . proj
-	        \ . ' --appenddat '
-	        \ . ' --force '
-	       	\ ) 
-			return 0
-	 endif
-	
-	 for file in values(texfiles)
-		 if filereadable(file)
-	     	if ! base#sys("git add " . file )
-					return 0
-				endif
+		 """ fill in base sections: 
+		 """   preamble, packages, begin etc. 
+		 for [id,file] in items(texfiles)
+			 		let cmd = ' perl ' . creator  
+						\ . ' --dir  ' . projs#root() 
+						\ . ' --proj ' . proj
+						\ . ' --sec  ' . id
+						\ . ' --struct  ' . projstruct
+						\ . ' --force  '
+					if ! base#sys(cmd)
+						return 0
+					endif
+		 endfor
+		
+		 """ append the name of the project being created to 
+		 """   PROJS.i.dat
+		 if ! base#sys(' perl ' . creator 
+		        \ . ' --proj ' . proj
+		        \ . ' --appenddat '
+		        \ . ' --force '
+		       	\ ) 
+				return 0
 		 endif
-	 endfor
+		
+		 for file in values(texfiles)
+			 if filereadable(file)
+		     	if ! base#sys("git add " . file )
+						return 0
+					endif
+			 endif
+		 endfor
+
+	 endif
 	
 	 let s:proj = proj
 	
@@ -124,6 +159,8 @@ function! projs#new (...)
 		VSECBASE _main_
 	 endif
  endif
+
+ call base#echoprefixold()
 	
  return 1
 
@@ -422,20 +459,36 @@ function! projs#info ()
 
 endf
 
+"call projs#init ()
+"call projs#init (projsdir)
+"call projs#init (projsdir,'projs_new')
+
 function! projs#init (...)
 
-	let prefix="(projs#init) "
-	call projs#echo("Initializing projs plugin...",{ "prefix" : prefix })
-
 	let projsdir  = base#envvar('PROJSDIR')
+	let projsid   = 'projs'
+	if a:0 
+		let dir = a:1
+		call base#mkdir(dir)
+		if isdirectory(dir)
+			let projsdir = dir
+			if a:0 == 2
+				let projsid = a:2
+			endif
+		endif
+	endif
+
+	let prefix="(projs#init) "
+	call projs#echo("Initializing projs plugin, \n\t projsdir => " . projsdir ,{ "prefix" : prefix })
 
 	call base#pathset({
-		\	'projs' : projsdir,
+		\	projsid : projsdir,
 		\	})
 	
 	let datvars=''
 	let datvars.=" secnamesbase makesteps "
 	let datvars.=" projecttypes projectstructures "
+	let datvars.=" projsdirs "
 
 	let e={
 		\	"root"           : base#path('projs') ,
@@ -454,6 +507,9 @@ function! projs#init (...)
 	for v in projs#var('varsfromdat')
 		call projs#varsetfromdat(v)
 	endfor
+
+	let projsdirs=projs#var('projsdirs')
+	call projs#var('projsdirslist',projsdirs)
 
 	call projs#varsetfromdat('vars','Dictionary')
 

@@ -1,8 +1,14 @@
 
 """projs_proj_name
 
-function! projs#proj#name ()
-	let proj = projs#var('proj')
+function! projs#proj#name (...)
+
+	if a:0
+		let proj = a:1
+		call projs#var('proj',proj)
+	else
+		let proj = projs#var('proj')
+	endif
 	return proj
 endfunction
 
