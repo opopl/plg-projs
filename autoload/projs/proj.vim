@@ -43,6 +43,12 @@ function! projs#proj#files (...)
 	
 endfunction
 
+" Calculate available section names for
+" 	the current project
+
+" projs#proj#secnames ()
+" projs#proj#secnames (proj)
+
 function! projs#proj#secnames (...)
 	let proj = projs#proj#name()
 	if a:0 | let proj = a:1 | endif
@@ -59,6 +65,8 @@ function! projs#proj#secnames (...)
 			call add(secnames,sec)
 		endif
 	endfor
+
+ 	call projs#var('secnames',secnames)
 
 	return secnames
 	

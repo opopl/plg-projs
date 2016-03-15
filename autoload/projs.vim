@@ -169,6 +169,9 @@ else
  call projs#var('secname',sec)
  call projs#var('proj',s:proj)
 
+ let secnames = projs#proj#secnames()
+ call projs#var('secnames')
+
  call projs#checksecdir()
  
  call projs#opensec(projs#var('secname'))
@@ -179,8 +182,8 @@ else
  "endif
  "
  "
- if (exists(":MakePrg") == 2)
- 	MakePrg projs
+ if (exists("*make#makeprg"))
+	call make#makeprg('projs',{ 'echo' : 0 })
  endif
 
 endfun
@@ -236,7 +239,7 @@ function! projs#opensec (...)
   let vfile             = ''
   let vfiles            = []
 
-  if base#var('secdirexists')
+  if projs#var('secdirexists')
 	let vfile = projs#path([ s:proj, sec . '.tex' ])
   else
 	let vfile = projs#path([ s:proj . '.' . sec . '.tex' ])
@@ -289,6 +292,9 @@ function! projs#opensec (...)
   for vfile in vfiles
     call base#fileopen(vfile) 
   endfor
+
+  call base#stl#set('projs')
+  KEYMAP russian-jcukenwin
 
   return 
 endf
@@ -369,6 +375,11 @@ function! projs#info ()
 	let secnames = projs#proj#secnames()
 		
 	call base#echo({ 'text' : "PROJECTS ", 'hl' : 'Title' } )
+
+	call base#echo({ 'text' : "Projects directory: " } )
+	call base#echo({ 
+		\ 'text' : "projs#root() => " . projs#root(), 
+		\ 'indentlev' : indentlev, })
 	
 	call base#echo({ 'text' : "Current project: " } )
 	call base#echo({ 

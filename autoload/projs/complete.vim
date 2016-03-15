@@ -34,3 +34,9 @@ function! projs#complete#secnamesbase (...)
   return projs#complete#vars([ 'secnamesbase' ])
 	
 endfunction
+
+function! projs#complete#secnames (...)
+
+  return projs#complete#vars([ 'secnames' ])
+	
+endfunction

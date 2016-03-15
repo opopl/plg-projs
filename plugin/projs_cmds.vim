@@ -19,6 +19,9 @@ command! -nargs=* ProjsInit call projs#init()
 command! -nargs=* -complete=custom,projs#complete#secnamesbase
   	\ VSECBASE call projs#opensec(<f-args>) 
 
+command! -nargs=* -complete=custom,projs#complete#secnames
+  	\ VSEC call projs#opensec(<f-args>) 
+
 command! -nargs=* -complete=custom,projs#complete
 	\ PrjListFiles call projs#proj#listfiles(<f-args>)
 
@@ -27,4 +30,5 @@ command! -nargs=* -complete=custom,projs#complete
 
 command! -nargs=* -complete=custom,projs#complete
 	\ PrjMake call projs#proj#make(<f-args>)
+
 
