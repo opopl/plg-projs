@@ -9,6 +9,7 @@ title
 makeatletter
 defs
 _main_
+_vim_
 _dat_
 _dat_defs_
 _dat_files_

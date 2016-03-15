@@ -131,18 +131,18 @@ endf
 
 function! projs#viewproj (...)
 
-call projs#rootcd()
+	call projs#rootcd()
 
- """ delete buffers from the previously loaded project
- "RFUN DC_Proj_BufsDelete
- "BuffersWipeAll
+	 """ delete buffers from the previously loaded project
+	 "RFUN DC_Proj_BufsDelete
+	 "BuffersWipeAll
 
- let sec=''
- if a:0
-    let s:proj = matchstr(a:1,'^\zs\w\+\ze')
-    let sec    = matchstr(a:1,'^\w\+\.\zs\w\+\ze')
-else
-	let s:proj=base#getfromchoosedialog({ 
+	let sec=''
+	if a:0
+		let s:proj = matchstr(a:1,'^\zs\w\+\ze')
+		let sec    = matchstr(a:1,'^\w\+\.\zs\w\+\ze')
+	else
+		let s:proj=base#getfromchoosedialog({ 
 		 	\ 'list'        : projs#list(),
 		 	\ 'startopt'    : '',
 		 	\ 'header'      : "Available projects are: ",
@@ -159,22 +159,22 @@ else
 	"exe 'tag ' . pm
  "endif
 
- let f = projs#path([ s:proj . '.secorder.i.dat' ])
- call projs#var('secorderfile',f)
+	let f = projs#path([ s:proj . '.secorder.i.dat' ])
+	call projs#var('secorderfile',f)
 
- if ! strlen(sec)
-	let sec='_main_'
- endif
+	if ! strlen(sec)
+		let sec='_main_'
+	endif
 
- call projs#var('secname',sec)
- call projs#var('proj',s:proj)
+	call projs#var('secname',sec)
+	call projs#var('proj',s:proj)
 
- let secnames = projs#proj#secnames()
- call projs#var('secnames')
-
- call projs#checksecdir()
- 
- call projs#opensec(projs#var('secname'))
+	let secnames = projs#proj#secnames()
+	call projs#var('secnames')
+	
+	call projs#checksecdir()
+	
+	call projs#opensec(projs#var('secname'))
 
  "let menuprojs=input('Load projs menu? (y/n): ', 'n')
  "if menuprojs == 'y'
@@ -182,9 +182,14 @@ else
  "endif
  "
  "
- if (exists("*make#makeprg"))
-	call make#makeprg('projs',{ 'echo' : 0 })
- endif
+	if (exists("*make#makeprg"))
+		call make#makeprg('projs',{ 'echo' : 0 })
+	endif
+
+	let vimf = projs#path([ s:proj . '.vim' ])
+	if filereadable(vimf)
+		exe 'source ' . vimf
+	endif
 
 endfun
 
@@ -276,6 +281,9 @@ function! projs#opensec (...)
   elseif sec == '_bib_'
     let vfile = projs#path([ s:proj . '.refs.bib' ])
 
+  elseif sec == '_vim_'
+    let vfile = projs#path([ s:proj . '.vim' ])
+
   elseif sec == '_pl_'
     call extend(vfiles,base#splitglob('projs',s:proj . '.*.pl'))
     let vfile=''
@@ -287,7 +295,7 @@ function! projs#opensec (...)
 
   call projs#var('curfile',vfile)
 
-  let vfiles=base#uniq(vfiles)
+  let vfiles = base#uniq(vfiles)
 
   for vfile in vfiles
     call base#fileopen(vfile) 
