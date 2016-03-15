@@ -1,22 +1,50 @@
 
+function! projs#secfile (sec)
+	
+endfunction
+
 " projs#newfile(id)
 
-function! projs#newsec(...)
+function! projs#newsecfile(sec)
 
-	let sec  = a:1
-	let file = a:2
+	let sec  = a:sec
 	let proj = projs#proj#name()
 
-	call projs#echo("Creating file:\n\t" . id )
+	call projs#echo("Creating file:\n\t" . sec )
 	let lines = []
+	let file = projs#path([ proj . '.' . sec . '.tex'])
 
 	let secs = base#qw("preamble body")
 
+"""newsec__main__
 	if sec == '_main_'
+
+		let file = projs#path([ proj.'.tex'])
+
 		call add(lines,' ')
 		call add(lines,'\def\PROJ{'.proj.'}')
 		call add(lines,' ')
-		call add(lines,'\ii{'.'}')
+		call add(lines,'\def\ii#1{\include{'.proj.'.#1.tex}}')
+		call add(lines,' ')
+
+		call add(lines,'\ii{preamble}')
+
+		call add(lines,'\begin{document}')
+		call add(lines,' ')
+		call add(lines,'\ii{body}')
+		call add(lines,' ')
+		call add(lines,'\end{document}')
+		call add(lines,' ')
+
+
+"""newsec_preamble
+	elseif sec == 'preamble'
+
+		let packs = projs#var('tex_packs_preamble')
+
+		call add(lines,' ')
+		call add(lines,'\documentclass[a4paper,11pt]{report}')
+		call add(lines,' ')
 	endif
 
 	call writefile(lines,file)
@@ -87,10 +115,10 @@ function! projs#new (...)
 	 call projs#proj#name(proj)
 	
 	 let texfiles={}
-	 let texfileids=projs#var('secnamesbase')
+	 let secnamesbase = projs#var('secnamesbase')
 	 
-	 for id in texfileids
-	      let texfiles[id]=id
+	 for id in secnamesbase
+	    let texfiles[id]=id
 	 endfor
 	
 	 call map(texfiles, "proj . '.' . v:key . '.tex' ")
@@ -101,8 +129,8 @@ function! projs#new (...)
 	 if !filereadable(creator)
 		call projs#warn('Projs Creator script NOT found!')
 
-		for [sec,file] in items(texfiles)
-			call projs#newsec(sec,file)
+		for sec in base#qw(" _main_ preamble ")
+			call projs#newsecfile(sec)
 		endfor
 	 else
 	
@@ -443,7 +471,7 @@ function! projs#info ()
 
 	call projs#checksecdir()
 
-	let vv=base#qw('texoutdir texmode makesteps')
+	let vv=base#qw('texoutdir texmode makesteps secnamesbase')
 	for v in vv
 		if exists("vl") | unlet vl | endif
 		let vl = projs#var(v)
