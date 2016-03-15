@@ -194,7 +194,7 @@ fun! projs#complete (...)
 
   call base#varupdate('projs')
 
-  let comps=projs#list()
+  let comps=projs#listfromdat()
 
   return join(comps,"\n")
 endf
@@ -398,9 +398,17 @@ function! projs#info ()
 
 	call projs#checksecdir()
 
-	let vv=base#qw('texoutdir texmode')
+	let vv=base#qw('texoutdir texmode makesteps')
 	for v in vv
-		call base#echo({ 'text' : v . " => " . projs#var(v) } )
+		if exists("vl") | unlet vl | endif
+		let vl = projs#var(v)
+
+		if base#type(vl) == 'List'
+			let str = "\n\t" . join(vl,"\n\t")
+	    else
+			let str = vl
+		endif
+		call base#echo({ 'text' : v . " => " . str  } )
 	endfor
 
 

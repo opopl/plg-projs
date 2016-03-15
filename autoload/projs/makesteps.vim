@@ -1,10 +1,43 @@
 
-function! projs#makesteps#prepare ()
-	
+function! projs#makesteps#prepare (...)
+
+ try
+    cclose
+ catch
+ endtry
+  
+ let outdir=projs#var('texoutdir')
+ call base#mkdir(outdir)
+
+ let g:logfile     = outdir . '/' . proj . '.log'
+ let g:tmp_pdffile = outdir . '/' . proj . '.pdf'
+ let g:pdffile     = pdfout . '/' . proj . '.pdf'
+
+ let g:TexMode     = projs#var('texmode')
+ let g:TexMainFile = projs#proj#name()
+
+ if filereadable(g:logfile)
+    call delete(g:logfile)
+ endif
+ 
 endfunction
 
 function! projs#makesteps#HTLATEX ()
 	
+endfunction
+
+function! projs#makesteps#latex (...)
+ LFUN TEX_make
+
+ echohl Title
+ echo ' Stage latex: LaTeX invocation'
+ echohl None
+
+ MakePrg projs
+
+ call projs#makesteps#prepare()
+ call TEX_make()
+
 endfunction
 
 function! projs#makesteps#make (...)
@@ -15,9 +48,9 @@ function! projs#makesteps#make (...)
   endtry
 
   let texmode = projs#var('texmode')
-  let proj = projs#proj#name()
+  let proj    = projs#proj#name()
   
-  let outdir=projs#var('texoutdir')
+  let outdir  = projs#var('texoutdir')
   call base#mkdir(outdir)
 
   let pdfout=base#path('pdfout')
@@ -111,7 +144,3 @@ EOF
  
 endfunction
  
-
-function! projs#makesteps#latex ()
-	
-endfunction
