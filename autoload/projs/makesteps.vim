@@ -6,7 +6,8 @@ function! projs#makesteps#prepare (...)
  catch
  endtry
   
- let outdir=projs#var('texoutdir')
+ let outdir = projs#var('texoutdir')
+ let pdfout = base#path('pdfout')
  call base#mkdir(outdir)
 
  let g:logfile     = outdir . '/' . proj . '.log'

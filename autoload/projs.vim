@@ -1,5 +1,28 @@
 
-function! projs#secfile (sec)
+" projs#secfile (sec)
+"
+function! projs#secfile (...)
+	
+	let sec = a:1
+
+	let dot = '.'
+
+	let proj = projs#proj#name()
+	let secfile = ''
+
+	if sec == '_main_'
+		let secfile = projs#path([proj.'.tex'])
+	elseif sec == '_vim_'
+		let secfile = projs#path([proj.'.vim'])
+	elseif sec == '_osecs_'
+		let secfile = projs#path([proj.'.secorder.i.dat'])
+	elseif sec == '_bib_'
+		let secfile = projs#path([proj.'.refs.bib'])
+	else
+		let secfile = projs#path([proj.dot.sec.'.tex'])
+	endif
+
+	return secfile
 	
 endfunction
 
@@ -24,7 +47,12 @@ function! projs#newsecfile(sec)
 		call add(lines,' ')
 		call add(lines,'\def\PROJ{'.proj.'}')
 		call add(lines,' ')
-		call add(lines,'\def\ii#1{\include{'.proj.'.#1.tex}}')
+		"call add(lines,'\def\ii#1{\include{'.proj.'.#1.tex}}')
+		"
+		call add(lines,'% --------------')
+		call add(lines,'\def\ii#1{\InputIfFileExists{\PROJ.#1.tex}{}{}}')
+		call add(lines,'\def\iif#1{\input{\PROJ/#1.tex}}')
+		call add(lines,'% --------------')
 		call add(lines,' ')
 
 		call add(lines,'\ii{preamble}')
@@ -42,9 +70,20 @@ function! projs#newsecfile(sec)
 
 		let packs = projs#var('tex_packs_preamble')
 
+		let packopts = {
+			\ 'fontenc'  : 'OT1,T2A,T3',
+			\ 'inputenc' : 'utf8',
+			\ }
+
 		call add(lines,' ')
-		call add(lines,'\documentclass[a4paper,11pt]{report}')
+		call add(lines,'\documentclass[a4paper,11pt]{extreport}')
 		call add(lines,' ')
+		call add(lines,'\usepackage{mathtext}')
+		call add(lines,'\usepackage{extsizes}')
+		call add(lines,'\usepackage[OT1,T2A,T3]{fontenc}')
+		call add(lines,'\usepackage[english,ukrainian]{babel}')
+		call add(lines,' ')
+ 
 	endif
 
 	call writefile(lines,file)
@@ -54,33 +93,58 @@ endfunction
 "
 "
 """projs_new
+
+"" projs#new()
+"" projs#new(proj)
+"" projs#new(proj,{ use_creator : 0 })
+"
+
 function! projs#new (...)
  call base#echoprefix('(projs#new)')
 
- echo ""
+ let delim=repeat('-',50)
+
+ echo delim
+ echo " "
  echo "This will create a new TeX project skeleton "
- echo "		in projects' root directory: " . projs#root() 
- echo ""
+ echo "    in projects' root directory: " . projs#root() 
+ echo " "
+ echo delim
 
  let yn=input('Continue? (y/n): ','y')
  if yn != 'y'
    return 0
  endif
+
+ let newopts={ 
+ 	\	'use_creator' : 0 ,
+ 	\	'git_add'     : 0 ,
+ 	\	}
   
  if a:0
  	 let proj     = a:1
 	 let projtype = 'regular'
 
- else
-	 let projtype = base#getfromchoosedialog({ 
+	 if (a:0 == 2 && ( base#type(a:2) == 'Dictionary'))
+		call extend(newopts,a:2)
+	 endif
+
+ endif
+
+ echo " "
+ echo "Provided options for new project creation:"
+ echo " "
+ echo newopts
+ echo " "
+ echo delim
+
+ let projtype = base#getfromchoosedialog({ 
 		 	\ 'list'        : projs#var('projecttypes'),
 		 	\ 'startopt'    : 'regular',
 		 	\ 'header'      : "Available project types are: ",
 		 	\ 'numcols'     : 1,
 		 	\ 'bottom'      : "Choose a project type by number: ",
 		 	\ })
-
- endif
 
  let projstruct = base#getfromchoosedialog({ 
 		 	\ 'list'        : projs#var('projectstructures'),
@@ -95,7 +159,7 @@ function! projs#new (...)
 """projtype_regular
  if projtype == 'regular'
 
-	 if ! exists('proj') || ! strlen(s:proj) 
+	 if ! ( exists('proj') && strlen(proj) )
 	 	let proj=input('Project name:','','custom,projs#complete')
 	 endif
 
@@ -126,13 +190,16 @@ function! projs#new (...)
 	
 	 let creator = base#catpath('perlscripts','tex_create_proj.pl')
 
-	 if !filereadable(creator)
-		call projs#warn('Projs Creator script NOT found!')
+	 let uc = get(newopts,'use_creator',0)
 
+	 let use_vim = ! (uc && filereadable(creator))
+
+	 if use_vim
 		for sec in base#qw(" _main_ preamble ")
 			call projs#newsecfile(sec)
 		endfor
-	 else
+
+	 elseif (uc && filereadable(creator)) 
 	
 		 """ fill in base sections: 
 		 """   preamble, packages, begin etc. 
@@ -157,17 +224,18 @@ function! projs#new (...)
 		       	\ ) 
 				return 0
 		 endif
-		
+	 endif
+
+	 if get(newopts,'git_add',0)
 		 for file in values(texfiles)
 			 if filereadable(file)
 		     	if ! base#sys("git add " . file )
-						return 0
-					endif
+					return 0
+				endif
 			 endif
 		 endfor
-
 	 endif
-	
+
 	 let s:proj = proj
 	
 	 call projs#genperl()
@@ -176,6 +244,8 @@ function! projs#new (...)
 
 	 let s:proj = proj
 	 call base#var('proj',proj)
+
+	 call projs#listadd(proj)
 	
 	 "let menuprojs=input('Load projs menu? (y/n): ', 'n')
 	 "if menuprojs == 'y'
@@ -194,6 +264,26 @@ function! projs#new (...)
 
 endf
 
+"" projs#selectproject ()
+"" projs#selectproject (pat)
+
+function! projs#selectproject (...)
+	let pat  = a:1
+	let list = projs#list()
+
+	let s:proj=base#getfromchoosedialog({ 
+	 	\ 'list'        : ,
+	 	\ 'startopt'    : '',
+	 	\ 'header'      : "Available projects are: ",
+	 	\ 'numcols'     : 1,
+	 	\ 'bottom'      : "Choose a project by number: ",
+	 	\ })
+	return s:proj
+	
+endfunction
+
+
+
 function! projs#viewproj (...)
 
 	call projs#rootcd()
@@ -202,20 +292,15 @@ function! projs#viewproj (...)
 	 "RFUN DC_Proj_BufsDelete
 	 "BuffersWipeAll
 
-	let sec=''
+	let sec = ''
 	if a:0
 		let s:proj = matchstr(a:1,'^\zs\w\+\ze')
 		let sec    = matchstr(a:1,'^\w\+\.\zs\w\+\ze')
 	else
-		let s:proj=base#getfromchoosedialog({ 
-		 	\ 'list'        : projs#list(),
-		 	\ 'startopt'    : '',
-		 	\ 'header'      : "Available projects are: ",
-		 	\ 'numcols'     : 1,
-		 	\ 'bottom'      : "Choose a projects by number: ",
-		 	\ })
-
+		let s:proj=projs#selectproject()
  endif
+
+ call projs#proj#name(s:proj)
 
 " let pm     = 'TeX::Project::Generate::' . s:proj
  "let loadpm = input('Load project module ' . pm . '(y/n)? :','n' )
@@ -224,7 +309,7 @@ function! projs#viewproj (...)
 	"exe 'tag ' . pm
  "endif
 
-	let f = projs#path([ s:proj . '.secorder.i.dat' ])
+	let f = projs#secfile('_osecs_')
 	call projs#var('secorderfile',f)
 
 	if ! strlen(sec)
@@ -264,7 +349,7 @@ fun! projs#complete (...)
 
   call base#varupdate('projs')
 
-  let comps=projs#listfromdat()
+  let comps=projs#list()
 
   return join(comps,"\n")
 endf
@@ -550,6 +635,9 @@ function! projs#init (...)
 	let varlist=sort(keys(s:projvars))
 	call projs#var('varlist',varlist)
 
+	let list = projs#listfromfiles()
+	call projs#var('list',list)
+
 endfunction
 
 function! projs#listwrite2dat (...)
@@ -640,11 +728,12 @@ function! projs#list ()
 
 	let list=[]
 	if ! projs#varexists("list")
-		let list = projs#listfromdat()
+		"let list = projs#listfromdat()
+		let list = projs#listfromfiles()
 	else
 		let list = projs#var("list")
 	end
-	return list
+	return copy(list)
 endf	
 
 function! projs#listadd (proj)

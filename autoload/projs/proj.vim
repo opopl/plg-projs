@@ -8,6 +8,9 @@ function! projs#proj#name (...)
 		call projs#var('proj',proj)
 	else
 		let proj = projs#var('proj')
+		"if !strlen(proj)
+			"let proj = projs#selectproject()
+		"endif
 	endif
 	return proj
 endfunction
@@ -165,6 +168,7 @@ function! projs#proj#remove(proj)
  call projs#proj#removefromdat(proj)
 
  let pfiles = projs#proj#files(proj)
+ call map(pfiles,'projs#path([ v:val ])')
 
  for file in pfiles
 	 if filereadable(file)
@@ -181,13 +185,16 @@ function! projs#proj#remove(proj)
 				\	"git reset HEAD " . file . '',
 				\	"git checkout -- " . file . '',
 		   		\	"git rm " . file . ' -f',
+		   		\	"del " . file,
 		   		\	]
 
 		endif
-	
-	   if ! base#sys( cmds )
-	 		return 0
-	   endif
+
+	   	call base#sys({
+			\	"cmds"   : cmds   ,
+			\	"prompt" : 0      ,
+			\	"skip_errors" : 1 ,
+			\	})
  	 endif
  endfor
 
@@ -224,7 +231,7 @@ function! projs#proj#make (...)
  let i=0
  let mks=projs#var('makesteps')
  if opts.steps == '_all_'
-   let opts.steps=join(mks,',')
+   let opts.steps = join(mks,',')
  endif
 
  echohl CursorLineNr
