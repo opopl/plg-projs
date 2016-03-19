@@ -4,37 +4,42 @@ if exists("b:did_projs_tex_ftplugin")
 endif
 let b:did_projs_tex_ftplugin = 1
 
-function! b:BufProcess ()
-	StatusLine projs
-endfunction
-
 let b:file     = expand('%:p')
-let b:dirname  = expand('%:p:h')
 let b:basename = expand('%:p:t')
 let b:ext      = expand('%:p:e')
 
-let b:root = projs#root()
-let b:proj = substitute(b:basename,'^\(\w\+\).*','\1','g')
+let b:root    = projs#root()
+let b:dirname = expand('%:p:h')
 
-if b:ext == 'tex'
-	if b:basename =~ '\.\(\w\+\)\.tex$'
-		let b:sec = substitute(b:basename,'^.*\.\(\w\+\)\.tex$','\1','g')
-	elseif b:basename == b:proj . '.tex' 
-		let b:sec = '_main_'
-	endif
-endif
+let b:finfo   = base#getfileinfo()
 
-let b:fi=base#getfileinfo()
-
-call b:BufProcess()
-
+" if we are dealing with a 'projs' file
 if b:dirname == b:root
-  exe 'augroup projs_p_' . b:proj . '_' . b:sec
-  exe '  au!'
-  exe '  autocmd BufWinEnter,BufRead,BufEnter,BufWritePost ' . b:file . ' call b:BufProcess() '
-  exe 'augroup end'
+
+	let b:proj = substitute(b:basename,'^\(\w\+\).*','\1','g')
+
+	let b:sec = projs#secfromfile({ 
+		\	"file" : b:basename ,
+		\	"type" : "basename" ,
+		\	"proj" : b:proj     ,
+   		\	})
+
+	let aucmds = [ 
+			\	'StatusLine projs'                        ,
+			\	'call make#makeprg("projs",{"echo":0})'   ,
+			\	'call projs#proj#name("' . b:proj .'")'   ,
+			\	'call projs#proj#secname("' . b:sec .'")' ,
+			\	] 
+
+	let fr = '  autocmd BufWinEnter,BufRead,BufEnter,BufWritePost '
+	
+	let b:ufile = base#file#win2unix(b:file)
+	
+	exe 'augroup projs_p_' . b:proj . '_' . b:sec
+	exe '  au!'
+	for cmd in aucmds
+		exe join([ fr,b:ufile,cmd ],' ')
+	endfor
+	exe 'augroup end'
 endif
-
-"StatusLine projs
-
 

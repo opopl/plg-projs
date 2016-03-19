@@ -15,8 +15,14 @@ function! projs#proj#name (...)
 	return proj
 endfunction
 
-function! projs#proj#secname ()
-	let sec = projs#var('secname')
+function! projs#proj#secname (...)
+
+	if a:0
+		let sec = a:1
+		call projs#var('secname',sec)
+	else
+		let sec = projs#var('secname')
+	endif
 	return sec
 endfunction
 

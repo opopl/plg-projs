@@ -26,6 +26,33 @@ function! projs#secfile (...)
 	
 endfunction
 
+"call projs#secfromfile ({ "file" : file, "type" : "basename", "proj" : proj })
+
+function! projs#secfromfile (...)
+	let ref = {}
+	if a:0 | let ref = a:1 | endif
+
+	let proj = projs#proj#name()
+
+	let file = get(ref,'file','')
+	let type = get(ref,'type','basename')
+	let proj = get(ref,'proj',proj)
+
+	if type == 'basename'
+		let basename = file 
+	
+		if basename =~ '\.\(\w\+\)\.tex$'
+			let sec = substitute(basename,'^.*\.\(\w\+\)\.tex$','\1','g')
+		elseif basename == proj . '.tex' 
+			let sec = '_main_'
+		elseif basename =~ '\.\(\w\+\)\.vim$'
+			let sec = '_vim_'
+		endif
+		return sec
+	endif
+
+endfunction
+
 " projs#newfile(id)
 
 function! projs#newsecfile(sec)
