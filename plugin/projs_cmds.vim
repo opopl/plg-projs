@@ -18,7 +18,7 @@ command! -nargs=* -complete=custom,projs#complete
 	\ PrjListSecs call projs#proj#listsecnames(<f-args>)
 
 command! -nargs=* -complete=custom,projs#complete
-	\ PrjMake call projs#proj#make(<f-args>)
+	\ PrjMake call projs#prjmake(<f-args>)
 
 command! -nargs=* -complete=custom,projs#complete#varlist
 	\ ProjsVarEcho call projs#varecho(<f-args>)

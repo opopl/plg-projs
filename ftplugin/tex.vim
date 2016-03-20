@@ -26,9 +26,11 @@ if b:dirname == b:root
 
 	let aucmds = [ 
 			\	'StatusLine projs'                        ,
-			\	'call make#makeprg("projs",{"echo":0})'   ,
+			\	'call projs#maps()'                        ,
+			\	'call make#makeprg("projs_pdflatex",{"echo":0})'   ,
 			\	'call projs#proj#name("' . b:proj .'")'   ,
 			\	'call projs#proj#secname("' . b:sec .'")' ,
+			\	'TgSet projs_this'                        ,
 			\	] 
 
 	let fr = '  autocmd BufWinEnter,BufRead,BufEnter,BufWritePost '

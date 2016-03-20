@@ -34,11 +34,19 @@ function! projs#proj#reset (...)
 	call projs#var('proj',proj)
 endfunction
 
+"let files = projs#proj#files ({ "proj" : proj })
+"let files = projs#proj#files ({ "exts" : ["tex"]})
+"
+"let files = projs#proj#files ()
+
 function! projs#proj#files (...)
 	let proj = projs#proj#name()
-	if a:0
-		let proj = a:1
-	endif
+
+	let ref = {}
+	if a:0 | let ref = a:1 | endif
+
+	let proj = get(ref,'proj',proj)
+	let exts = get(ref,'exts',[])
 
 	let root   = projs#root()
 	let picdir = projs#path([ 'pics' , proj ])
@@ -48,11 +56,13 @@ function! projs#proj#files (...)
 		call add(dirs,picdir)
 	endif
 
-	let files = base#find({
-	  \   'dirs'       :  dirs          ,
-	  \   'relpath'    :  1             ,
-	  \   'pat'        :  '^'.proj.'\.' ,
-	  \   })
+	let fref = {
+			\   'dirs'       :  dirs          ,
+			\   'relpath'    :  1             ,
+			\   'pat'        :  '^'.proj.'\.' ,
+			\	'exts'       :  exts,
+			\	}
+	let files = base#find(fref)
 
 	return files
 	
@@ -70,7 +80,7 @@ function! projs#proj#secnames (...)
 
 	let root   = projs#root()
 
-	let pfiles = projs#proj#files(proj) 
+ 	let pfiles = projs#proj#files({ "proj" : proj })
 
 	let secnames=[]
 	let pat = '^'.proj.'\.\(\w\+\).*\.tex$'
@@ -98,7 +108,7 @@ function! projs#proj#listfiles (...)
 		let proj = a:1
 	endif
 
-	let pfiles = projs#proj#files(proj) 
+	let pfiles = projs#proj#files({ "proj" : proj }) 
 
 	for file in pfiles
 	  echo file
@@ -173,7 +183,7 @@ function! projs#proj#remove(proj)
 
  call projs#proj#removefromdat(proj)
 
- let pfiles = projs#proj#files(proj)
+ let pfiles = projs#proj#files({ "proj" : proj })
  call map(pfiles,'projs#path([ v:val ])')
 
  for file in pfiles
@@ -214,6 +224,7 @@ function! projs#proj#remove(proj)
 
 endfunction
 
+
 function! projs#proj#make (...)
 
  call projs#rootcd()
@@ -230,7 +241,8 @@ function! projs#proj#make (...)
    call extend(opts,a:1)
  endif
 
- let g:proj  = opts.proj
+ let proj = get(opts,'proj')
+ call projs#proj#reset(proj)
 
  call projs#var('texmode',opts.mode)
 
@@ -257,10 +269,3 @@ function! projs#proj#make (...)
 	
 endfunction
  
-
-
-
-
-
-
-

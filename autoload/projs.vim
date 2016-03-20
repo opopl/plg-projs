@@ -358,7 +358,6 @@ function! projs#viewproj (...)
 	"MenuReset projs
  "endif
  "
- "
 	if (exists("*make#makeprg"))
 		call make#makeprg('projs',{ 'echo' : 0 })
 	endif
@@ -367,6 +366,8 @@ function! projs#viewproj (...)
 	if filereadable(vimf)
 		exe 'source ' . vimf
 	endif
+
+	TgSet projs_this
 
 endfun
 
@@ -602,6 +603,17 @@ endf
 "call projs#init ()
 "call projs#init (projsdir)
 "call projs#init (projsdir,'projs_new')
+"
+function! projs#maps ()
+
+	nmap <silent> ;;co :copen<CR>
+	nmap <silent> <F1> :copen<CR>
+	nmap <silent> <F2> :cn<CR> 
+	nmap <silent> <F3> :cp<CR>
+	nmap <silent> <F4> :PrjMake<CR>
+	nmap <silent> <F5> :cclose<CR>
+	
+endfunction
 
 function! projs#init (...)
 
@@ -617,6 +629,12 @@ function! projs#init (...)
 			endif
 		endif
 	endif
+
+    let g:texlive={
+		\  'TEXMFDIST'  : projs#tex#kpsewhich('--var-value=TEXMFDIST'),
+		\  'TEXMFLOCAL' : projs#tex#kpsewhich('--var-value=TEXMFLOCAL'),
+		\  }
+	let g:pdfviewer = 'evince'
 
 	let prefix="(projs#init) "
 	call projs#echo("Initializing projs plugin, \n\t projsdir => " . projsdir ,{ "prefix" : prefix })
@@ -657,7 +675,9 @@ function! projs#init (...)
 	for [k,v] in items(vars)
 		call projs#var(k,v)
 	endfor
-	call projs#var('texoutdir',projs#root())
+
+	let texoutdir = projs#path([ 'builds' ])
+	call projs#var('texoutdir',texoutdir)
 
 	let varlist=sort(keys(s:projvars))
 	call projs#var('varlist',varlist)
@@ -922,5 +942,13 @@ function! projs#genperl(...)
 			\	'generate_pl' : g:paths['projs']  . '/generate.' . s:proj . '.pl',  
  			\	})
  
+endfunction
+
+function! projs#prjmake (...)
+	let proj = projs#proj#name()
+	if a:0
+		let proj = a:1
+	endif
+	call projs#proj#make({ "proj" : proj })
 endfunction
 
