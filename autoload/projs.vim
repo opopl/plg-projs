@@ -72,6 +72,8 @@ function! projs#newsecfile(sec)
 		let file = projs#path([ proj.'.tex'])
 
 		call add(lines,' ')
+		call add(lines,'%%file f_main')
+		call add(lines,' ')
 		call add(lines,'\def\PROJ{'.proj.'}')
 		call add(lines,' ')
 		"call add(lines,'\def\ii#1{\include{'.proj.'.#1.tex}}')
@@ -91,6 +93,12 @@ function! projs#newsecfile(sec)
 		call add(lines,'\end{document}')
 		call add(lines,' ')
 
+"""newsec_body
+	elseif sec == 'body'
+
+		call add(lines,' ')
+		call add(lines,'%%file f_' . sec)
+		call add(lines,' ')
 
 """newsec_preamble
 	elseif sec == 'preamble'
@@ -102,6 +110,8 @@ function! projs#newsecfile(sec)
 			\ 'inputenc' : 'utf8',
 			\ }
 
+		call add(lines,' ')
+		call add(lines,'%%file f_'. sec)
 		call add(lines,' ')
 		call add(lines,'\documentclass[a4paper,11pt]{extreport}')
 		call add(lines,' ')
@@ -130,6 +140,7 @@ function! projs#new (...)
  call base#echoprefix('(projs#new)')
 
  let delim=repeat('-',50)
+ let proj = ''
 
  echo delim
  echo " "
@@ -222,7 +233,7 @@ function! projs#new (...)
 	 let use_vim = ! (uc && filereadable(creator))
 
 	 if use_vim
-		for sec in base#qw(" _main_ preamble ")
+		for sec in base#qw(" _main_ preamble body ")
 			call projs#newsecfile(sec)
 		endfor
 
@@ -283,6 +294,8 @@ function! projs#new (...)
 	 if loadmain == 'y'
 		VSECBASE _main_
 	 endif
+
+	 TgUpdate projs_this
  endif
 
  call base#echoprefixold()
@@ -787,7 +800,7 @@ function! projs#listadd (proj)
 	let list = projs#list()
 
 	if ! projs#ex(a:proj)
-		call add(list,proj)
+		call add(list,a:proj)
 	endif
 
 	call projs#var("list",list)
