@@ -42,6 +42,7 @@ function! projs#makesteps#latex (...)
  "echohl None
 
  call make#makeprg('projs_pdflatex',{ 'echo' : 0 })
+ "call make#makeprg('projs_latexmk',{ 'echo' : 0 })
 
  let starttime   = localtime()
 
