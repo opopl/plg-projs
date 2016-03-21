@@ -23,6 +23,10 @@ function! projs#complete#vars (...)
  
 endfunction
 
+function! projs#complete#prjmake (...)
+  return projs#complete#vars([ 'prjmake_opts' ])
+endfunction
+
 function! projs#complete#varlist (...)
 
   return projs#complete#vars([ 'varlist' ])

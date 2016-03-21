@@ -7,6 +7,12 @@ function! projs#makesteps#latex (...)
  catch
  endtry
 
+ " simple latex run
+ let opt = 'latex'
+ if a:0
+ 	let opt = a:1
+ endif
+
  echohl Title
  echo ' Stage latex: LaTeX invocation'
  echohl None
@@ -36,7 +42,6 @@ function! projs#makesteps#latex (...)
  "echohl None
 
  call make#makeprg('projs_pdflatex',{ 'echo' : 0 })
- "call make#makeprg('projs_pdflatex')
 
  let starttime   = localtime()
 

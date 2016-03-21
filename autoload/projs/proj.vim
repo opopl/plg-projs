@@ -240,6 +240,7 @@ function! projs#proj#make (...)
  if a:0
    call extend(opts,a:1)
  endif
+ let opt = get(opts,'opt','latex')
 
  let proj = get(opts,'proj')
  call projs#proj#reset(proj)
@@ -255,12 +256,12 @@ function! projs#proj#make (...)
  echohl CursorLineNr
  echo 'Starting PrjMake ... '
  echohl Question
- echo ' Steps: ' . opts.steps
+ echo ' Selected option: ' . opt
  echohl None
 
  for step in split(opts.steps,',')
     let fun='projs#makesteps#' . step
-    exe 'call ' . fun . '()'
+    exe 'call ' . fun . '("' . opt .'")'
     "if exists("*" . fun)
     "endif
  endfor

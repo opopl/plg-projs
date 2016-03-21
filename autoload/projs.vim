@@ -671,6 +671,7 @@ function! projs#init (...)
 	let datvars.=" secnamesbase makesteps "
 	let datvars.=" projecttypes projectstructures "
 	let datvars.=" projsdirs "
+	let datvars.=" prjmake_opts "
 
 	let e={
 		\	"root"           : base#path('projs') ,
@@ -978,11 +979,12 @@ function! projs#genperl(...)
 endfunction
 
 function! projs#prjmake (...)
-	let proj = projs#proj#name()
+	let opt = 'latex'
 	if a:0
-		let proj = a:1
+		let opt = a:1
 	endif
-	call projs#proj#make({ "proj" : proj })
+	let proj = projs#proj#name()
+	call projs#proj#make({ "proj" : proj, "opt" : opt })
 endfunction
 
 function! projs#buildnum (...)

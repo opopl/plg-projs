@@ -1,0 +1,1581 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+#2	.\logwork.defs.tex	/^  \\section{#2}%$/;"	s
+#2	.\logwork.defs.tex	/^\\def\\isubsec#1#2{\\subsection{#2}\\label{#1}}$/;"	b
+#2	.\logwork.defs.tex	/^\\def\\isubsubsec#1#2{\\subsubsection{#2}\\label{#1}}$/;"	b
+#2	.\postgre.preamble.tex	/^\\def\\ipar#1#2{\\paragraph{#2}\\label{#1}}$/;"	P
+#2	.\postgre.preamble.tex	/^\\def\\isec#1#2{\\section{#2}\\label{#1}}$/;"	s
+#2	.\postgre.preamble.tex	/^\\def\\isubsec#1#2{\\subsection{#2}\\label{#1}}$/;"	b
+#2	.\postgre.preamble.tex	/^\\def\\isubsubsec#1#2{\\subsubsection{#2}\\label{#1}}$/;"	b
+#2	.\spd.preamble.tex	/^	\\section{#2}%$/;"	s
+#2	.\spd.preamble.tex	/^\\def\\isubsec#1#2{\\subsection{#2}\\label{#1}}$/;"	b
+1	.\KantCPR.EN.tex	/^\\subsection{§1 Вступ}$/;"	b
+1	.\RussoSOC.body.tex	/^\\chapter{КНИГА 1}$/;"	c
+1	.\kandmin_questions.body.tex	/^\\subsection{1}$/;"	b
+1 3 Getting Started Git Basics	.\gitscm.1_3_git_basics.tex	/^\\section{1.3 Getting Started - Git Basics}$/;"	s
+1 5 Getting Started First Time Git Setup	.\gitscm.1_5_first_time_git_setup.tex	/^\\section{1.5 Getting Started - First-Time Git Setup}$/;"	s
+1 6 Getting Started Getting Help	.\gitscm.1_6_getting_help.tex	/^\\section{1.6 Getting Started - Getting Help}$/;"	s
+11	.\sems.11.tex	/^\\section{Семінар 11}$/;"	s
+11 2014	.\letters.dacha.tex	/^\\subsubsection{11 Января 2014}$/;"	b
+12	.\sems.12.tex	/^\\section{Семінар 12 Вчення про буття}$/;"	s
+1969	.\Kun.body.tex	/^\\chapter{ДОПОЛНЕНИЕ 1969 ГОДА}$/;"	c
+1992	.\EngReferat.HT92.tex	/^\\section{Дж.~Д.~Ханікатт і Д.~Тірумалаї, Природа згорнутих станів глобулярних білків (1992)}$/;"	s
+1992	.\EngReferat.LeopoldMO92.tex	/^\\section{П.~Е.~Леопольд та ін.,~Воронки білкового згортання: кінетичний підхід до взаємовідношення$/;"	s
+1999	.\EngReferat.MillerWales99.tex	/^\\section{М.~Міллер та Д.~Вейлс, Енергетичний ландшафт модельного білка (1999) }$/;"	s
+2	.\kandmin_questions.body.tex	/^\\subsection{2}$/;"	b
+2	.\sems.12.tex	/^\\subsubsection{2 питання -  буття як філософська категорія}$/;"	b
+2	.\source.KantCritiquePureReason.RU.tex	/^\\subsubsection{2. Метафизическое истолкование этого понятия}$/;"	b
+2 2 Git Basics Recording Changes to the Repository	.\gitscm.2_2_recording_changes_to_the_repository.tex	/^\\section{2.2 Git Basics - Recording Changes to the Repository}$/;"	s
+2 3 Git Basics Viewing the Commit History	.\gitscm.2_3_viewing_the_commit_history.tex	/^\\section{2.3 Git Basics - Viewing the Commit History}$/;"	s
+26 1 2 Pod Directives	.\programmingperl.body.tex	/^\\subsubsection{26.1.2. Pod Directives}$/;"	b
+26 3 Writing Your Own Pod Tools	.\programmingperl.body.tex	/^\\subsection{26.3. Writing Your Own Pod Tools}$/;"	b
+3	.\kandmin_questions.body.tex	/^\\subsection{3}$/;"	b
+3	.\sems.12.tex	/^\\subsubsection{3 питання - Буття як матерія}$/;"	b
+3	.\source.KantCritiquePureReason.RU.tex	/^\\subsubsection{3. Трансцендентальное истолкование понятия о пространстве}$/;"	b
+4	.\kandmin_questions.body.tex	/^\\subsection{4}$/;"	b
+4	.\sems.12.tex	/^\\subsubsection{4 питання - Буття як ідея}$/;"	b
+4	.\sems.4.tex	/^\\section{4 - Німецька класична філософія}$/;"	s
+4 4 2 mysql _install _db Initialize MySQL Data Directory	.\ref\mysql\install.tex	/^\\section{4.4.2 mysql\\_install\\_db -- Initialize MySQL Data Directory}$/;"	s
+5	.\kandmin_questions.body.tex	/^\\subsection{5}$/;"	b
+6	.\kandmin_questions.body.tex	/^\\subsection{6}$/;"	b
+7	.\kandmin_questions.body.tex	/^\\subsection{7}$/;"	b
+8	.\kandmin_questions.body.tex	/^\\subsection{8}$/;"	b
+9	.\kandmin_questions.body.tex	/^\\subsection{9}$/;"	b
+A	.\Dict.EN-UA.A.tex	/^\\subsection{A}$/;"	b
+A More Complicated Mapping	.\LVSHW.09.tex	/^\\subsection{A More Complicated Mapping}$/;"	b
+A New Hope Plugin Layout with Pathogen	.\LVSHW.43.tex	/^\\section{A New Hope: Plugin Layout with Pathogen}$/;"	s
+A Preliminary Sketch	.\LVSHW.32.tex	/^\\subsection{A Preliminary Sketch}$/;"	b
+ABSTRACT	.\paps_phd.Chernyshuk11.tex	/^\\subsection{ABSTRACT}$/;"	b
+ARGV=( qw( --cgi --shcmds ), "cgi www" );	.\www\cgi-bin\www.pl	/^@ARGV=( qw( --cgi --shcmds ), "cgi www" );$/;"	e
+Abbreviations	.\LVSHW.08.tex	/^\\section{Abbreviations}$/;"	s
+Absence of Prof Robinson s email in respect of representation textbf R3	.\oia_OP_further_remarks.RobinsonEmail.tex	/^\\section{Absence of Prof. Robinson's email}$/;"	s
+Absence of any academic assessment of the thesis and the student s supervision bf was not of sufficient quality	.\ap2.eval.MV.previva.tex	/^\\subsubsection{Absence of any academic assessment $/;"	b
+Absence of any evaluation of the results shift towards experiments	.\ap2.eval.JC.previva.tex	/^\\paragraph{Absence of any evaluation of the results; shift towards experiments}$/;"	P
+Absence of any positive statements	.\ap2.eval.JC.previva.tex	/^\\paragraph{Absence of any positive statements}$/;"	P
+Absolute Paths	.\LVSHW.40.tex	/^\\subsection{Absolute Paths}$/;"	b
+Accents	.\tbt.characters.tex	/^\\section{Accents}$/;"	s
+Acknowledgements	.\PoplavskyyGM09.defs.tex4ht.tex	/^  \\section{Acknowledgements}%$/;"	s
+Additional Comments on Ms Reed s letter to the OIA dated July 29 2013 begin itemize	.\oia_OP_further_remarks.Comments_REED_29_07_2013.tex	/^\\section{Additional Comments on Ms Reed's letter (29 July 2013)}$/;"	s
+Additional after viva report by Prof M Sprik	.\ap2.MS.vivarep.tex	/^\\section{Additional after-viva report by Prof. M. Sprik}$/;"	s
+Additional remarks	.\tbt.baseline_distances.tex	/^\\section{Additional remarks}$/;"	s
+Advanced Folding	.\LVSHW.49.tex	/^\\section{Advanced Folding}$/;"	s
+Advanced Syntax Highlighting	.\LVSHW.46.tex	/^\\section{Advanced Syntax Highlighting}$/;"	s
+Age	.\cv_eng.personal.tex	/^\\section{Age} 31 years$/;"	s
+Age	.\cv_eng.personal_foto.tex	/^\\section{Age} 28 years$/;"	s
+Alicea06	.\PoplavskyyGM09.refs.bib	/^@article{Alicea06,$/;"	b
+Alignment	.\tbt.alignment.tex	/^\\chapter{Alignment}\\label{align}$/;"	c
+Allison04	.\Referat.refs.bib	/^@book{Allison04,$/;"	b
+Allison04	.\refs.bib	/^@book{Allison04,$/;"	b
+Allocation	.\tbt.allocation.tex	/^\\chapter{Allocation}\\label{alloc}$/;"	c
+Allocation commands	.\tbt.allocation.tex	/^\\section{Allocation commands}$/;"	s
+Alternate specifications cs omit	.\tbt.alignment.tex	/^\\subsection{Alternate specifications: \\cs{omit}}$/;"	b
+An enquiry for a PhD position	.\motiv.senior_PD.tex	/^\\section*{An enquiry for a PhD position}$/;"	s
+An enquiry for a PhD position	.\motiv.terentjev.tex	/^\\section*{An enquiry for a PhD position}$/;"	s
+Analysis of Examiners s reply is given in Sec ref sec re jc response	.\ap3.data.4776.i.tex	/^\\chapter{Analysis of Examiners' responses to Representation 2}$/;"	c
+Analysis of the final report	.\ap2.eval.finalrep.tex	/^\\section{Analysis of the final report}$/;"	s
+Analysis of the pre viva report by Prof Clarke	.\ap2.eval.JC.previva.tex	/^\\section{Analysis of the pre-viva report by Prof. Clarke}$/;"	s
+Analysis of the pre viva reports	.\ap2.eval.previva.tex	/^\\chapter{Analysis of the pre-viva reports}$/;"	c
+Another Example	.\LVSHW.12.tex	/^\\subsection{Another Example}$/;"	b
+Apalkov06	.\PoplavskyyGM09.refs.bib	/^@article{Apalkov06,$/;"	b
+Areas of work experience	.\cv_eng.work.tex	/^\\section{Areas of work experience}$/;"	s
+AsmusIntuition	.\Referat.refs.bib	/^@BOOK{AsmusIntuition,$/;"	b
+AsmusIntuition	.\refs.bib	/^@BOOK{AsmusIntuition,$/;"	b
+Assigning and Adding	.\LVSHW.37.tex	/^\\subsection{Assigning and Adding}$/;"	b
+Assorted remarks	.\tbt.boxes.tex	/^\\section{Assorted remarks}$/;"	s
+Assorted remarks	.\tbt.conditionals.tex	/^\\section{Assorted remarks}$/;"	s
+Assorted remarks	.\tbt.file_IO.tex	/^\\section{Assorted remarks}$/;"	s
+Assorted remarks	.\tbt.paragraph_shape.tex	/^\\section{Assorted remarks}$/;"	s
+Assorted remarks	.\tbt.paragraph_start.tex	/^\\section{Assorted remarks}$/;"	s
+Attached Documents	.\oia_OP_further_remarks.AttachedDocs.tex	/^\\section{Attached Documents}$/;"	s
+Attached Documents	.\oia_OP_further_remarks.attached_documents.tex	/^\\section{Attached Documents}$/;"	s
+Attached documents	.\ap2.structure.tex	/^\\paragraph{Attached documents}$/;"	P
+Austin03	.\Referat.refs.bib	/^@BOOK{Austin03,$/;"	b
+Austin03	.\refs.bib	/^@BOOK{Austin03,$/;"	b
+Autocommand Groups	.\LVSHW.14.tex	/^\\section{Autocommand Groups}$/;"	s
+Autocommands	.\LVSHW.12.tex	/^\\section{Autocommands}$/;"	s
+Autocommands and Abbreviations	.\LVSHW.13.tex	/^\\subsection{Autocommands and Abbreviations}$/;"	b
+Autoloading	.\LVSHW.53.tex	/^\\section{Autoloading}$/;"	s
+Automatic interword space	.\tbt.spacing.tex	/^\\section{Automatic interword space}$/;"	s
+Awards and funding	.\cv_eng.awards.tex	/^\\section{Awards and funding}$/;"	s
+B	.\Dict.EN-UA.B.tex	/^\\subsection{B}$/;"	b
+Badness	.\tbt.dimensions_and_glue.tex	/^\\subsection{Badness}$/;"	b
+Balanovskii11	.\Referat.refs.bib	/^@ARTICLE{Balanovskii11,$/;"	b
+Balanovskii11	.\refs.bib	/^@ARTICLE{Balanovskii11,$/;"	b
+Base Movement	.\LVSHW.51.tex	/^\\subsection{Base Movement}$/;"	b
+Baseline Distances	.\tbt.baseline_distances.tex	/^\\chapter{Baseline Distances}\\label{baseline}$/;"	c
+Basic Folding	.\LVSHW.48.tex	/^\\section{Basic Folding}$/;"	s
+Basic Layout	.\LVSHW.42.tex	/^\\subsection{Basic Layout}$/;"	b
+Basic Mapping	.\LVSHW.03.tex	/^\\section{Basic Mapping}$/;"	s
+Basic Regular Expressions	.\LVSHW.31.tex	/^\\section{Basic Regular Expressions}$/;"	s
+Basic Syntax Highlighting	.\LVSHW.45.tex	/^\\section{Basic Syntax Highlighting}$/;"	s
+Basic Usage	.\svnbook.ch_Basic_Usage.tex	/^\\chapter{Basic Usage}$/;"	c
+Best Practices for Development	.\traveltek.best_practices_for_development.tex	/^\\chapter{Best Practices for Development}$/;"	c
+Between the lines	.\tbt.line_breaking.tex	/^\\subsection{Between the lines}$/;"	b
+Boolean Options	.\LVSHW.02.tex	/^\\subsection{Boolean Options}$/;"	b
+Boundary ligatures	.\tbt.fonts.tex	/^\\subsection{Boundary ligatures}$/;"	b
+Box registers	.\tbt.boxes.tex	/^\\section{Box registers}$/;"	s
+Box tests	.\tbt.conditionals.tex	/^\\subsection{Box tests}$/;"	b
+Boxes	.\tbt.boxes.tex	/^\\chapter{Boxes}\\label{boxes}\\index{boxes|(}$/;"	c
+Boxes	.\tbt.boxes.tex	/^\\section{Boxes}$/;"	s
+Boxes and negative glue	.\tbt.boxes.tex	/^\\subsection{Boxes and negative glue}$/;"	b
+Braces in the expansion processor	.\tbt.structure_tex_processor.tex	/^\\subsection{Braces in the expansion processor}$/;"	b
+Brief Summary of the Complaint	.\oia_BriefSummary.body.tex	/^\\chapter*{Brief Summary of the Complaint}$/;"	c
+Brook04	.\Referat.refs.bib	/^@BOOK{Brook04,$/;"	b
+Brook04	.\refs.bib	/^@BOOK{Brook04,$/;"	b
+Brook13	.\Referat.refs.bib	/^@InCollection{Brook13,$/;"	b
+Brook13	.\refs.bib	/^@InCollection{Brook13,$/;"	b
+Buffer Local Abbreviations	.\LVSHW.13.tex	/^\\section{Buffer-Local Abbreviations}$/;"	s
+Buffer Local Options and Mappings	.\LVSHW.11.tex	/^\\section{Buffer-Local Options and Mappings}$/;"	s
+Bulatov03	.\Referat.refs.bib	/^@BOOK{Bulatov03,$/;"	b
+Bulatov03	.\refs.bib	/^@BOOK{Bulatov03,$/;"	b
+C	.\Dict.EN-UA.C.tex	/^\\subsection{C}$/;"	b
+COMMENT #1	.\reply_oia_complaint_outcome.defs.tex	/^	\\subsection{COMMENT #1}$/;"	b
+Calling Functions	.\LVSHW.23.tex	/^\\subsection{Calling Functions}$/;"	b
+Cascade Style Sheets and Character Sets	.\TEXREF.tex4ht.tex	/^\\section{Cascade Style Sheets and Character Sets}$/;"	s
+Case Sensitivity	.\LVSHW.22.tex	/^\\subsection{Case Sensitivity}$/;"	b
+Case Study Grep Operator Part One	.\LVSHW.32.tex	/^\\section{Case Study: Grep Operator, Part One}$/;"	s
+Case Study Grep Operator Part Three	.\LVSHW.34.tex	/^\\section{Case Study: Grep Operator, Part Three}$/;"	s
+Case Study Grep Operator Part Two	.\LVSHW.33.tex	/^\\section{Case Study: Grep Operator, Part Two}$/;"	s
+Case statement	.\tbt.conditionals.tex	/^\\subsection{Case statement}$/;"	b
+CastroNeto09	.\PoplavskyyGM09.refs.bib	/^@ARTICLE{CastroNeto09,$/;"	b
+Category Codes and Internal States	.\tbt.category_codes_internal_states.tex	/^\\chapter{Category Codes and Internal States}\\label{mouth}$/;"	c
+Centred last lines	.\tbt.paragraph_shape.tex	/^\\subsection{Centred last lines}$/;"	b
+Chalmers92	.\Referat.refs.bib	/^@ARTICLE{Chalmers92,$/;"	b
+Chalmers92	.\refs.bib	/^@ARTICLE{Chalmers92,$/;"	b
+Change log	.\tbt.end.tex	/^\\chapter*{Change log}$/;"	c
+Change the font of lowercase Greek and mathematical symbols	.\tbt.fonts_in_formulas.tex	/^\\subsection{Change the font of lowercase Greek$/;"	b
+Change the font of ordinary characters and uppercase Greek	.\tbt.fonts_in_formulas.tex	/^\\subsection{Change the font of ordinary characters and uppercase Greek}$/;"	b
+Chapter 26 Plain Old Documentation	.\programmingperl.body.tex	/^\\section{Chapter 26. Plain Old Documentation}$/;"	s
+Character and control sequence tests	.\tbt.conditionals.tex	/^\\section{Character and control sequence tests}$/;"	s
+Character codes	.\tbt.characters.tex	/^\\section{Character codes}$/;"	s
+Character constants	.\tbt.numbers.tex	/^\\subsection{Character constants}$/;"	b
+Character input	.\tbt.structure_tex_processor.tex	/^\\subsection{Character input}$/;"	b
+Characters	.\tbt.characters.tex	/^\\chapter{Characters}\\label{char}$/;"	c
+Characters in Math Mode	.\tbt.characters_in_math_mode.tex	/^\\chapter{Characters in Math Mode}\\label{mathchar}$/;"	c
+Checking Your Settings	.\gitscm.1_5_first_time_git_setup.tex	/^\\subsection{Checking Your Settings}$/;"	b
+Checking the Status of Your Files	.\gitscm.2_2_recording_changes_to_the_repository.tex	/^\\subsection{Checking the Status of Your Files}$/;"	b
+Chen04	.\PoplavskyyGM09.refs.bib	/^@article{Chen04,$/;"	b
+Chen06	.\PoplavskyyGM09.refs.bib	/^@article{Chen06,$/;"	b
+Chernyshuk10	.\paps_phd.Chernyshuk10.tex	/^\\section{Chernyshuk10}$/;"	s
+Chernyshuk11	.\paps_phd.Chernyshuk11.tex	/^\\section{Chernyshuk11}$/;"	s
+Chronological overview	.\oia_FinalDecision.R3.summary.tex	/^\\subsubsection{Chronological overview}$/;"	b
+Citizenship	.\cv_eng.personal.tex	/^\\section{Citizenship} Ukrainian$/;"	s
+Citizenship	.\cv_eng.personal_foto.tex	/^\\section{Citizenship} Ukrainian$/;"	s
+Classification of n mu	.\tbt.mathematics_typesetting.tex	/^\\subsection{Classification of \\n{mu} glue}$/;"	b
+Classification of supplied University documents	.\oia_OP_confirmation_letter.classification_univ_docs.tex	/^\\subsubsection{Classification of supplied University documents}$/;"	b
+Cleanup	.\LVSHW.32.tex	/^\\subsection{Cleanup}$/;"	b
+Clearing Groups	.\LVSHW.14.tex	/^\\subsection{Clearing Groups}$/;"	b
+Code Defensively	.\LVSHW.22.tex	/^\\subsection{Code Defensively}$/;"	b
+Coercion	.\LVSHW.25.tex	/^\\subsection{Coercion}$/;"	b
+Color Schemes	.\LVSHW.56.tex	/^\\subsection{Color Schemes}$/;"	b
+Combining cs aftergroup	.\tbt.expansion.tex	/^\\subsection{Combining \\cs{aftergroup} and boxes}$/;"	b
+Commenting	.\LVSHW.03.tex	/^\\subsection{Commenting}$/;"	b
+Commenting	.\LVSHW.18.tex	/^\\subsection{Commenting}$/;"	b
+Comments	.\LVSHW.01.tex	/^\\subsection{Comments}$/;"	b
+Comparison with the real space density	.\PoplavskyyGM09.results_discussions.tex	/^\\subsection{Comparison with the real-space density}$/;"	b
+Comparisons	.\LVSHW.22.tex	/^\\section{Comparisons}$/;"	s
+Comparisons between PhD CPGS and Part III courses	.\ap3.data.4776.i.tex	/^\\subsubsection{Comparisons between PhD, CPGS and Part III courses}$/;"	b
+Compatibility	.\tbt.tex_outside_world.tex	/^\\subsection{Compatibility}$/;"	b
+Completion of Procedures Letter	.\oia_FinalDecision.R3.summary.tex	/^\\subsubsection{Completion-of-Procedures Letter}$/;"	b
+Computational electrochemistry	.\ap2.MS.research.tex	/^\\paragraph{Computational electrochemistry}$/;"	P
+Computer skills	.\cv_eng.computer.tex	/^\\section{Computer skills}$/;"	s
+Concatenation	.\LVSHW.26.tex	/^\\subsection{Concatenation}$/;"	b
+Concatenation	.\LVSHW.35.tex	/^\\subsection{Concatenation}$/;"	b
+Conclusions	.\PoplavskyyGM09.conclusions.tex	/^\\section{Conclusions}$/;"	s
+Conclusions	.\ap2.eval.JC.previva.tex	/^\\paragraph{Conclusions}$/;"	P
+Conclusions	.\ap2.eval.JC.tex	/^\\paragraph{Conclusions} $/;"	P
+Conditionals	.\LVSHW.21.tex	/^\\section{Conditionals}$/;"	s
+Conditionals	.\tbt.conditionals.tex	/^\\chapter{Conditionals}\\label{if}$/;"	c
+Confirmation of receipt of University documentation	.\oia_OP_confirmation_letter.confirmation_of_receipt.tex	/^\\subsubsection{Confirmation of receipt of University documentation}$/;"	b
+Control sequences for characters	.\tbt.characters.tex	/^\\section{Control sequences for characters}$/;"	s
+Conversion of gr glue	.\tbt.dimensions_and_glue.tex	/^\\subsection{Conversion of \\gr{glue} to \\gr{dimen}}$/;"	b
+Cooper99	.\PoplavskyyGM09.refs.bib	/^@article{Cooper99,$/;"	b
+Copernican revolution	.\GlossaryKant.EN.in.tex	/^\\subsection{Copernican revolution} \\index{Kant!technical terms!Copernican$/;"	b
+Copernican revolution	.\GlossaryKant.EN.tex	/^\\subsection{Copernican revolution} \\index{Kant!technical terms!Copernican$/;"	b
+Copernican revolution	.\GlossaryKant.UKR.in.tex	/^\\subsection{Copernican revolution} \\index{Kant!technical terms!Copernican$/;"	b
+Copernican revolution	.\GlossaryKant.UKR.tex	/^\\subsection{Copernican revolution} \\index{Kant!technical terms!Copernican$/;"	b
+Copernican revolution	.\source.glossary.tex	/^\\paragraph{Copernican revolution}$/;"	P
+Cote04	.\PoplavskyyGM09.refs.bib	/^@article{Cote04,$/;"	b
+Cote08	.\PoplavskyyGM09.refs.bib	/^@article{Cote08,$/;"	b
+Cote90	.\PoplavskyyGM09.refs.bib	/^@article{Cote90,$/;"	b
+Cote91	.\PoplavskyyGM09.refs.bib	/^@article{Cote91,$/;"	b
+Cote92	.\PoplavskyyGM09.refs.bib	/^@article{Cote92,$/;"	b
+Cover letter	.\motiv.quipu.tex	/^\\section*{Cover letter}$/;"	s
+Cover letter	.\motiv.yeepmedia.tex	/^\\section*{Cover letter}$/;"	s
+Cover letter English Ukrainian Translator Editor	.\motiv.trans.janus.tex	/^\\section*{Cover letter: English-Ukrainian Translator-Editor}$/;"	s
+Cover letter Perl Developer position	.\motiv.perldeveloper.gen.tex	/^\\section*{Cover letter: Perl Developer position}$/;"	s
+Create a File	.\LVSHW.33.tex	/^\\subsection{Create a File}$/;"	b
+Creating a Full Plugin	.\LVSHW.41.tex	/^\\section{Creating a Full Plugin}$/;"	s
+Creative use of cs uppercase	.\tbt.characters.tex	/^\\subsection{Creative use of \\cs{uppercase} and \\cs{lowercase}}$/;"	b
+D	.\Dict.EN-UA.D.tex	/^\\subsection{D}$/;"	b
+DBI Class Methods label DBI_Class_Methods	.\perldoc.DBI.tex	/^\\subsection*{DBI Class Methods\\label{DBI_Class_Methods}\\index{DBI Class Methods}}$/;"	b
+DBI DATABASE HANDLE OBJECTS label DBI_DATABASE_HANDLE_OBJECTS	.\perldoc.DBI.tex	/^\\section{DBI DATABASE HANDLE OBJECTS\\label{DBI_DATABASE_HANDLE_OBJECTS}\\index{DBI DATABASE HANDLE OBJECTS}}$/;"	s
+DBI STATEMENT HANDLE OBJECTS label DBI_STATEMENT_HANDLE_OBJECTS	.\perldoc.DBI.tex	/^\\section{DBI STATEMENT HANDLE OBJECTS\\label{DBI_STATEMENT_HANDLE_OBJECTS}\\index{DBI STATEMENT HANDLE OBJECTS}}$/;"	s
+DBI Utility Functions label DBI_Utility_Functions	.\perldoc.DBI.tex	/^\\subsection*{DBI Utility Functions\\label{DBI_Utility_Functions}\\index{DBI Utility Functions}}$/;"	b
+DESCRIPTION label DESCRIPTION	.\perldoc.DBI.tex	/^\\section{DESCRIPTION\\label{DESCRIPTION}\\index{DESCRIPTION}}$/;"	s
+DESCRIPTION label DESCRIPTION	.\perldoc.perlvar.tex	/^\\section{DESCRIPTION\\label{DESCRIPTION}\\index{DESCRIPTION}}$/;"	s
+DF to OP April 8 2013	.\emails_OP_DF.DF_to_OP_April_8_2013.tex	/^\\subsection{DF to OP, April 8, 2013}$/;"	b
+DF to OP February 28 2013	.\emails_OP_DF.DF_to_OP_Feb_28_2013.tex	/^\\subsection{DF to OP, February 28, 2013}$/;"	b
+DF to OP March 14 2013	.\emails_OP_DF.DF_to_OP_March_14_2013.tex	/^\\subsection{DF to OP, March 14, 2013}$/;"	b
+DF to OP March 21 2013	.\emails_OP_DF.DF_to_OP_March_21_2013.tex	/^\\subsection{DF to OP, March 21, 2013}$/;"	b
+DF to OP March 30 2013	.\emails_OP_DF.DF_to_OP_March_30_2013.tex	/^\\subsection{DF to OP, March 30, 2013}$/;"	b
+DF to OP March 31 2013	.\emails_OP_DF.DF_to_OP_March_31_2013.tex	/^\\subsection{DF to OP, March 31, 2013}$/;"	b
+DF to OP March 5 2013	.\emails_OP_DF.DF_to_OP_March_5_2013.tex	/^\\subsection{DF to OP, March 5, 2013}$/;"	b
+Dahal06	.\PoplavskyyGM09.refs.bib	/^@article{Dahal06,$/;"	b
+Database Handle Attributes label Database_Handle_Attributes	.\perldoc.DBI.tex	/^\\subsection*{Database Handle Attributes\\label{Database_Handle_Attributes}\\index{Database Handle Attributes}}$/;"	b
+Database Handle Methods label Database_Handle_Methods	.\perldoc.DBI.tex	/^\\subsection*{Database Handle Methods\\label{Database_Handle_Methods}\\index{Database Handle Methods}}$/;"	b
+Defined dimensions	.\tbt.dimensions_and_glue.tex	/^\\subsection{Defined dimensions}$/;"	b
+Definition of glue	.\tbt.dimensions_and_glue.tex	/^\\subsection{Definition of glue}$/;"	b
+Definition of gr glue	.\tbt.dimensions_and_glue.tex	/^\\section{Definition of \\gr{glue} and \\gr{dimen}}$/;"	s
+Degree Committee Response to representation R2	.\oia_FinalDecision.SummaryDecision.R2.tex	/^\\section{Degree Committee Response to representation R2}$/;"	s
+Degree Committee composition during its consideration of Representations 1 and 2	.\ap3.s.eval.dc.composition.tex	/^\\section{Degree Committee composition during its $/;"	s
+Delimited parameters	.\tbt.macros.tex	/^\\subsection{Delimited parameters}$/;"	b
+Delimiter codes	.\tbt.characters_in_math_mode.tex	/^\\subsection{Delimiter codes }$/;"	b
+Delimiters	.\tbt.characters_in_math_mode.tex	/^\\section{Delimiters}$/;"	s
+Denotations integers	.\tbt.numbers.tex	/^\\subsection{Denotations: integers}$/;"	b
+Denoting characters to be typeset protect cs char	.\tbt.characters.tex	/^\\section{Denoting characters to be typeset: \\protect\\cs{char}}$/;"	s
+Detecting Filetypes	.\LVSHW.44.tex	/^\\section{Detecting Filetypes}$/;"	s
+Determining the breakpoint	.\tbt.page_breaking.tex	/^\\subsection{Determining the breakpoint}$/;"	b
+Determining the font of a character in math mode	.\tbt.fonts_in_formulas.tex	/^\\section{Determining the font of a character in math mode}$/;"	s
+Dictionaries	.\LVSHW.37.tex	/^\\section{Dictionaries}$/;"	s
+Dictionary Functions	.\LVSHW.37.tex	/^\\subsection{Dictionary Functions}$/;"	b
+Diff	.\LVSHW.48.tex	/^\\subsubsection{Diff}$/;"	b
+Dimension testing	.\tbt.conditionals.tex	/^\\subsection{Dimension testing}$/;"	b
+Dimension testing	.\tbt.dimensions_and_glue.tex	/^\\subsection{Dimension testing}$/;"	b
+Dimensions and Glue	.\tbt.dimensions_and_glue.tex	/^\\chapter{Dimensions and Glue}\\label{glue}$/;"	c
+Discussion of the change of the supervisor	.\ap2.chsup.tex	/^\\section{Discussion of the change of the supervisor}$/;"	s
+Display Math	.\tbt.display_math.tex	/^\\chapter{Display Math}\\label{displaymath}$/;"	c
+Displays	.\tbt.display_math.tex	/^\\section{Displays}$/;"	s
+Dissecting paragraphs with cs lastbox	.\tbt.boxes.tex	/^\\subsection{Dissecting paragraphs with \\cs{lastbox}}$/;"	b
+Distribution	.\LVSHW.55.tex	/^\\section{Distribution}$/;"	s
+Division	.\LVSHW.25.tex	/^\\subsection{Division}$/;"	b
+Doc	.\PROJS.i.dat	/^###Doc$/;"	a
+Documentation	.\LVSHW.54.tex	/^\\section{Documentation}$/;"	s
+Documents used	.\ap2.eval.reps.intro.tex	/^\\paragraph{Documents used}$/;"	P
+Documents used within the present complaint	.\ap2.docs.tex	/^\\section{Documents used within the present complaint}$/;"	s
+Drawbacks of the pre viva report	.\ap2.eval.JC.previva.tex	/^\\subsubsection{Drawbacks of the pre-viva report}$/;"	b
+DurantSP	.\Referat.refs.bib	/^@BOOK{DurantSP,$/;"	b
+DurantSP	.\refs.bib	/^@BOOK{DurantSP,$/;"	b
+E	.\Dict.EN-UA.E.tex	/^\\subsection{E}$/;"	b
+E 1 Introduction comments on the thesis	.\ap2.eval.finalrep.tex	/^\\subsubsection{E-1 - Introduction; comments on the thesis}$/;"	b
+E 1 The title of the report	.\ap2.eval.MV.previva.tex	/^\\subsubsection{E-1 The title of the report}$/;"	b
+E 1 Title and preamble	.\ap2.eval.JC.previva.tex	/^\\subsubsection{E-1 Title and preamble }$/;"	b
+E 10 Physical chemistry knowledge	.\ap2.eval.finalrep.tex	/^\\subsubsection{E-10 - Physical chemistry knowledge}$/;"	b
+E 12 Progression to the PhD	.\ap2.eval.finalrep.tex	/^\\subsubsection{E-12 - Progression to the PhD}$/;"	b
+E 13 Summary	.\ap2.eval.finalrep.tex	/^\\subsubsection{E-13 - Summary}$/;"	b
+E 2 Chapters 1 4	.\ap2.eval.JC.previva.tex	/^\\subsubsection{E-2 Chapters 1-4 }$/;"	b
+E 2 Start of supervision	.\ap2.eval.MV.previva.tex	/^\\subsubsection{E-2 Start of supervision}$/;"	b
+E 3 The topic studied by the candidate alternative PhD projects	.\ap2.eval.MV.previva.tex	/^\\subsubsection{E-3 The topic studied by the candidate; alternative PhD projects}$/;"	b
+E 4 Description of the Model	.\ap2.eval.JC.previva.tex	/^\\subsubsection{E-4 Description of the Model}$/;"	b
+E 4 Initial goals by the supervisor writing descriptions for the figures	.\ap2.eval.MV.previva.tex	/^\\subsubsection{E-4 Initial goals by the supervisor; writing descriptions for the figures}$/;"	b
+E 5 Chapters 5 6	.\ap2.eval.JC.previva.tex	/^\\subsubsection{E-5 Chapters 5-6}$/;"	b
+E 5 Statements on not following the supervisor s statement from my side naturally I expected from him a competent technical advice on the physical meaning of the results and also on the technical way they were obtained given that he is also a theorist and also works on proteins Unfortunately and surprisingly bf such advice has never been given	.\ap2.eval.MV.previva.tex	/^\\subsubsection{E-5 Statements on not following the supervisor's suggestions}$/;"	b
+E 6 Writing the report in an understandable way	.\ap2.eval.MV.previva.tex	/^\\subsubsection{E-6 Writing the report in an understandable way}$/;"	b
+E 7 Meeting deadlines	.\ap2.eval.MV.previva.tex	/^\\subsubsection{E-7 Meeting deadlines}$/;"	b
+E 7 evidence for testing the new program	.\ap2.eval.finalrep.tex	/^\\subsubsection{E-7 - evidence for testing the new program}$/;"	b
+E 8 Chapters 8 and 9 Quality of the thesis	.\ap2.eval.JC.previva.tex	/^\\subsubsection{E-8 Chapters 8 and 9; Quality of the thesis}$/;"	b
+E 9 Final conclusions by the supervisor	.\ap2.eval.MV.previva.tex	/^\\subsubsection{E-9 Final conclusions by the supervisor}$/;"	b
+E 9 meaning of the results	.\ap2.eval.finalrep.tex	/^\\subsubsection{E-9 - meaning of the results }$/;"	b
+Echoing Messages	.\LVSHW.01.tex	/^\\section{Echoing Messages}$/;"	s
+Editing Your Vimrc	.\LVSHW.07.tex	/^\\section{Editing Your Vimrc}$/;"	s
+Education	.\cv_eng.education.tex	/^\\section{Education} $/;"	s
+Education	.\cv_eng.education_short.tex	/^\\section{Education} $/;"	s
+Eisenstein02	.\PoplavskyyGM09.refs.bib	/^@ARTICLE{Eisenstein02,$/;"	b
+Eisenstein02	.\PoplavskyyGM09.refs.bib	/^@article{Eisenstein02,$/;"	b
+Email 1 of 4	.\oia_OP_confirmation_letter.email_1_4.tex	/^\\subsubsection{Email 1 of 4}$/;"	b
+Email 2 of 4	.\oia_OP_confirmation_letter.email_2_4.tex	/^\\subsubsection{Email 2 of 4}$/;"	b
+Email 3 of 4	.\oia_OP_confirmation_letter.email_3_4.tex	/^\\subsubsection{Email 3 of 4}$/;"	b
+Email 4 of 4	.\oia_OP_confirmation_letter.email_4_4.tex	/^\\subsubsection{Email 4 of 4}$/;"	b
+Email Originals	.\emails_OP_DF.email_originals.tex	/^\\section{Email Originals}$/;"	s
+Email Originals	.\emails_OP_RK.email_originals.tex	/^\\section{Email Originals}$/;"	s
+Emails	.\cv_eng.personal.tex	/^\\section{Emails} op@cantab.net, apopl@ukr.net, poplavsky@bitp.kiev.ua $/;"	s
+Emails	.\cv_eng.personal_foto.tex	/^\\section{Emails} op@cantab.net, apopl@ukr.net $/;"	s
+End of the job	.\tbt.running_tex.tex	/^\\subsection{End of the job}$/;"	b
+Ending a paragraph with a rule	.\tbt.paragraph_end.tex	/^\\subsection{Ending a paragraph with a rule}$/;"	b
+Equations	.\test_tex4ht.body.tex	/^\\subsection{Equations}$/;"	b
+Error messages	.\tbt.errors_catastrophes_help.tex	/^\\section{Error messages}$/;"	s
+Errors Catastrophes and Help	.\tbt.errors_catastrophes_help.tex	/^\\chapter{Errors, Catastrophes,  and Help}\\label{error}$/;"	c
+Escaping Shell Command Arguments	.\LVSHW.32.tex	/^\\subsection{Escaping Shell Command Arguments}$/;"	b
+Escaping the Search Term	.\LVSHW.33.tex	/^\\subsection{Escaping the Search Term}$/;"	b
+Evaluation of Prof J Clarke s scientific background and expertise was sufficient close to assess a theoretical CPGS thesis in biophysics and specifically to assess my ability to do a good quality theoretical PhD in this field Concerns	.\ap2.eval.JC.tex	/^\\section{Evaluation of Prof. J. Clarke's scientific suitability $/;"	s
+Evaluation of Prof M Sprik protein biochemistry hard core electrochemistry protein s own ute field of research	.\ap2.eval.MS.tex	/^\\section{Evaluation of Prof. M. Sprik's scientific suitability $/;"	s
+Evaluation of Prof Vendruscolo s opinion was different from my own Later on during the whole revision period the supervisor was regularly updated by myself on what was going on begin itemize	.\ap2.eval.MV.tex	/^\\section{Evaluation of Prof. Vendruscolo's supervision}$/;"	s
+Evaluation of individual excerpts	.\ap3.analysis.dc.tex	/^\\subsection{Evaluation of individual excerpts}$/;"	b
+Evaluation of the Degree Committee s response to Representation 2 dated June 27 2012 document 4776 The summary of my evaluation is given in Sec ref sec eval dc summary	.\ap3.analysis.dc.tex	/^\\section{Evaluation of the Degree Committee's response to Representation 2}$/;"	s
+Evaluation of the Examiners suitability to examine this CPGS thesis whereas my individual evaluations of each Examiner scientific expertise bf was not sufficiently close to the scope and the topic of the present thesis to make a correct academic judgement	.\ap2.eval.examiners.tex	/^\\chapter{Evaluation of the Examiners' academic suitability to examine $/;"	c
+Evaluation of the additional viva report by Prof M Sprik	.\ap2.eval.MS.vivarep.tex	/^\\section{Evaluation of the additional viva report by Prof. M. Sprik}$/;"	s
+Evaluation of the formal response from the Degree Committee for the Faculty of Physics and Chemistry to Representation 1	.\ap3.s.eval.dc.r1.tex	/^\\section{Evaluation of the formal response from the Degree Committee $/;"	s
+Evaluation of the formal responses from the Degree Committee and its decision making practices	.\ap3.analysis.dc.tex	/^\\chapter{Evaluation of the formal responses from the Degree Committee and its decision-making practices}$/;"	c
+Evaluation of the pre viva report of Prof Vendruscolo	.\ap2.eval.MV.previva.tex	/^\\section{Evaluation of the pre-viva report of Prof. Vendruscolo}$/;"	s
+Evaluations of the reports by the Examiners and the supervisor	.\ap2.eval.reps.tex	/^\\chapter{Evaluations of the reports by the Examiners and the supervisor}$/;"	c
+Even More Advanced Syntax Highlighting	.\LVSHW.47.tex	/^\\section{Even More Advanced Syntax Highlighting}$/;"	s
+Evenly spaced leaders	.\tbt.rules_and_leaders.tex	/^\\subsection{Evenly spaced leaders}$/;"	b
+Examiner does not cite core work on the BLN model and protein folding	.\ap3.data.4776.i.tex	/^\\subsubsection{Examiner does not cite core work on the BLN model and protein folding}$/;"	b
+Examiner mentions her collaborations with theorists	.\ap3.data.4776.i.tex	/^\\subsubsection{Examiner mentions her collaborations with theorists}$/;"	b
+Examiner s knowledge of what has been done in this field was inadequate He had not thought about his results in any depth He did not demonstrate that he understands the importance of explicit evidence in making statements the fact that he told us Yes I tested p33 is not sufficient scientific evidence for me to accept This is not prejudice or bias it is simply making a judgement based on scientific method and rigor	.\ap3.data.4776.i.tex	/^\\subsubsection{Examiner's statements on ``evidence'' related to software testing}$/;"	b
+Example math alignments	.\tbt.alignment.tex	/^\\section{Example: math alignments}$/;"	s
+Example no indentation top of page	.\tbt.output_routines.tex	/^\\subsection{Example: no indentation top of page}$/;"	b
+Examples	.\LVSHW.54.tex	/^\\subsection{Examples}$/;"	b
+Examples	.\tbt.boxes.tex	/^\\subsection{Examples}$/;"	b
+Examples	.\tbt.expansion.tex	/^\\section{Examples}$/;"	s
+Examples	.\tbt.token_lists.tex	/^\\section{Examples}$/;"	s
+Examples of page breaking	.\tbt.page_breaking.tex	/^\\section{Examples of page breaking}$/;"	s
+Examples with delimited arguments	.\tbt.macros.tex	/^\\subsection{Examples with delimited arguments}$/;"	b
+Exception Handling for modperl	.\modperl.guide.tex	/^\\section{Exception Handling for \\modperl}$/;"	s
+Exception dictionary rm 307	.\tbt.errors_catastrophes_help.tex	/^\\subsection{Exception dictionary {\\rm(307)}}$/;"	b
+Execute	.\LVSHW.16.tex	/^\\subsection{Execute}$/;"	b
+Execute	.\LVSHW.28.tex	/^\\section{Execute}$/;"	s
+Execute Normal	.\LVSHW.30.tex	/^\\section{Execute Normal!}$/;"	s
+Exercises	.\LVSHW.04.tex	/^\\subsection{Exercises}$/;"	b
+Exercises	.\LVSHW.05.tex	/^\\subsection{Exercises}$/;"	b
+Exercises	.\LVSHW.06.tex	/^\\subsection{Exercises}$/;"	b
+Exercises	.\LVSHW.08.tex	/^\\subsection{Exercises}$/;"	b
+Exercises	.\LVSHW.14.tex	/^\\subsection{Exercises}$/;"	b
+Exercises	.\LVSHW.18.tex	/^\\subsection{Exercises}$/;"	b
+Exercises	.\LVSHW.23.tex	/^\\subsection{Exercises}$/;"	b
+Exercises	.\LVSHW.24.tex	/^\\subsection{Exercises}$/;"	b
+Exercises	.\LVSHW.25.tex	/^\\subsection{Exercises}$/;"	b
+Exercises	.\LVSHW.26.tex	/^\\subsection{Exercises}$/;"	b
+Exercises	.\LVSHW.28.tex	/^\\subsection{Exercises}$/;"	b
+Exercises	.\LVSHW.29.tex	/^\\subsection{Exercises}$/;"	b
+Exercises	.\LVSHW.30.tex	/^\\subsection{Exercises}$/;"	b
+Exercises	.\LVSHW.39.tex	/^\\subsection{Exercises}$/;"	b
+Exercises	.\LVSHW.41.tex	/^\\subsection{Exercises}$/;"	b
+Exercises	.\LVSHW.49.tex	/^\\subsection{Exercises}$/;"	b
+Exercises	.\LVSHW.50.tex	/^\\subsection{Exercises}$/;"	b
+Exercises	.\LVSHW.55.tex	/^\\subsection{Exercises}$/;"	b
+Exercises	.\LVSHW.56.tex	/^\\subsection{Exercises}$/;"	b
+Expanding after	.\tbt.expansion.tex	/^\\subsection{Expanding after}$/;"	b
+Expansion	.\tbt.expansion.tex	/^\\chapter{Expansion}\\label{expand}$/;"	c
+Expansion and cs write	.\tbt.expansion.tex	/^\\subsection{Expansion and \\cs{write}}$/;"	b
+Expansion and spaces in cs write	.\tbt.file_IO.tex	/^\\subsection{Expansion and spaces in \\cs{write} and \\cs{message}}$/;"	b
+Experimenting	.\LVSHW.53.tex	/^\\subsection{Experimenting}$/;"	b
+Expr	.\LVSHW.48.tex	/^\\subsubsection{Expr}$/;"	b
+External Commands	.\LVSHW.52.tex	/^\\section{External Commands}$/;"	s
+Extra Credit	.\LVSHW.29.tex	/^\\subsection{Extra Credit}$/;"	b
+Extremely long duration of the viva	.\ap2.pirr.tex	/^\\paragraph{Extremely long duration of the viva}$/;"	P
+F	.\Dict.EN-UA.F.tex	/^\\subsection{F}$/;"	b
+Failures of the candidate in respect of his aims	.\ap3.data.4776.i.tex	/^\\subsubsection{Failures of the candidate in respect of his aims}$/;"	b
+Family definition	.\tbt.fonts_in_formulas.tex	/^\\section{Family definition}$/;"	s
+Fertig97	.\PoplavskyyGM09.refs.bib	/^@INCOLLECTION{Fertig97,$/;"	b
+File I	.\tbt.file_IO.tex	/^\\section{File I{\/}O}$/;"	s
+File Input and Output	.\tbt.file_IO.tex	/^\\chapter{File Input and Output}\\label{io}$/;"	c
+FileType Events	.\LVSHW.12.tex	/^\\subsection{FileType Events}$/;"	b
+Filling up a page	.\tbt.page_breaking.tex	/^\\subsection{Filling up a page}$/;"	b
+Final Decision by the University	.\oia_FinalDecision.SummaryDecision.intro.tex	/^\\chapter{Final Decision by the University}$/;"	c
+Final viva report	.\ap2.finalrep.tex	/^\\section{Final viva report}$/;"	s
+Finishing the Fold Function	.\LVSHW.49.tex	/^\\subsection{Finishing the Fold Function}$/;"	b
+Finite cs parfillskip	.\tbt.paragraph_end.tex	/^\\subsection{Finite \\cs{parfillskip}}$/;"	b
+First Time Git Setup	.\gitscm.1_5_first_time_git_setup.tex	/^\\subsection{First-Time Git Setup}$/;"	b
+Fischer07	.\PoplavskyyGM09.refs.bib	/^@article{Fischer07,$/;"	b
+Float Formats	.\LVSHW.25.tex	/^\\subsection{Float Formats}$/;"	b
+Fogler01	.\PoplavskyyGM09.refs.bib	/^@INCOLLECTION{Fogler01,$/;"	b
+Fogler96	.\PoplavskyyGM09.refs.bib	/^@ARTICLE{Fogler96,$/;"	b
+Folding Theory	.\LVSHW.49.tex	/^\\subsection{Folding Theory}$/;"	b
+FollmerEvCogn	.\Referat.refs.bib	/^@BOOK{FollmerEvCogn,$/;"	b
+FollmerEvCogn	.\refs.bib	/^@BOOK{FollmerEvCogn,$/;"	b
+Font declaration	.\tbt.fonts.tex	/^\\section{Font declaration}$/;"	s
+Font dimensions	.\tbt.fonts.tex	/^\\subsection{Font dimensions}$/;"	b
+Font information	.\tbt.fonts.tex	/^\\section{Font information}$/;"	s
+Font memory 20$ $000	.\tbt.errors_catastrophes_help.tex	/^\\subsection{Font memory (20$\\,$000)}$/;"	b
+Fonts	.\tbt.fonts.tex	/^\\chapter{Fonts}\\label{font}$/;"	c
+Fonts and n tfm	.\tbt.fonts.tex	/^\\subsection{Fonts and \\n{tfm} files}$/;"	b
+Fonts in Formulas	.\tbt.fonts_in_formulas.tex	/^\\chapter{Fonts in Formulas}\\label{mathfont}$/;"	c
+For Loops	.\LVSHW.36.tex	/^\\subsection{For Loops}$/;"	b
+Forgetting the cs box	.\tbt.boxes.tex	/^\\subsection{Forgetting the \\cs{box}}$/;"	b
+Formal response from the Degree Committee to the Board July 5 2011	.\ap3.data.4508.i.tex	/^\\subsection{Formal response from the Degree Committee to the Board (July 5, 2011)}$/;"	b
+Formats dumping	.\tbt.tex_outside_world.tex	/^\\subsection{Formats: dumping}$/;"	b
+Found typos in Representation 2	.\ap3.s.typos.r2.tex	/^\\section{Found typos in Representation 2}$/;"	s
+Found typos in Representation 3	.\ap3.s.typos.r3.tex	/^\\section{Found typos in Representation 3}$/;"	s
+Four TeX protect processors	.\tbt.structure_tex_processor.tex	/^\\section{Four \\TeX\\protect\\ processors}$/;"	s
+Fradkin99	.\PoplavskyyGM09.refs.bib	/^@ARTICLE{Fradkin99,$/;"	b
+Frames	.\TEXREF.tex4ht.tex	/^\\section{Frames}$/;"	s
+Fukuyama79	.\PoplavskyyGM09.refs.bib	/^@article{Fukuyama79,$/;"	b
+FukuyamaLee77	.\PoplavskyyGM09.refs.bib	/^@ARTICLE{FukuyamaLee77,$/;"	b
+FukuyamaLee78	.\PoplavskyyGM09.refs.bib	/^@ARTICLE{FukuyamaLee78,$/;"	b
+Full name	.\cv_eng.personal.tex	/^\\section{Full name} Oleksandr Poplavskyy$/;"	s
+Full name	.\cv_eng.personal_foto.tex	/^\\section{Full name} Oleksandr Poplavskyy$/;"	s
+Function Arguments	.\LVSHW.24.tex	/^\\section{Function Arguments}$/;"	s
+Functional Programming	.\LVSHW.39.tex	/^\\section{Functional Programming}$/;"	s
+Functions	.\LVSHW.23.tex	/^\\section{Functions}$/;"	s
+Functions as Variables	.\LVSHW.39.tex	/^\\subsection{Functions as Variables}$/;"	b
+Fundamental Concepts	.\svnbook.ch_Fundamental_Concepts.tex	/^\\chapter{Fundamental Concepts}$/;"	c
+Further remarks	.\oia_OP_further_remarks.address.tex	/^\\subsection*{Further remarks}$/;"	b
+GETTING HELP label GETTING_HELP	.\perldoc.DBI_SYNOPSIS.tex	/^\\subsection*{GETTING HELP\\label{GETTING_HELP}\\index{GETTING HELP}}$/;"	b
+Gaer07	.\Referat.refs.bib	/^@BOOK{Gaer07,$/;"	b
+Gaer07	.\refs.bib	/^@BOOK{Gaer07,$/;"	b
+Gail08	.\PoplavskyyGM09.refs.bib	/^@article{Gail08,$/;"	b
+Geim07	.\PoplavskyyGM09.refs.bib	/^@article{Geim07,$/;"	b
+General Format	.\LVSHW.17.tex	/^\\subsection{General Format}$/;"	b
+General Interface Rules Caveats label General_Interface_Rules_Caveats	.\perldoc.DBI.tex	/^\\subsection*{General Interface Rules \\& Caveats\\label{General_Interface_Rules_Caveats}\\index{General Interface Rules \\& Caveats}}$/;"	b
+General label General	.\perldoc.DBI_SYNOPSIS.tex	/^\\subsubsection*{General\\label{General}\\index{General}}$/;"	b
+General paragraph shapes cs parshape	.\tbt.paragraph_shape.tex	/^\\subsection{General paragraph shapes: \\cs{parshape}}$/;"	b
+Getting Help	.\gitscm.1_6_getting_help.tex	/^\\subsection{Getting Help}$/;"	b
+Getting Started	.\LVSHW.49.tex	/^\\subsection{Getting Started}$/;"	b
+Git Basics	.\gitscm.1_3_git_basics.tex	/^\\subsection{Git Basics}$/;"	b
+Global statistics	.\tbt.tracing.tex	/^\\section{Global statistics}$/;"	s
+Glossaries	.\source.glossary.tex	/^\\chapter{Glossaries}$/;"	c
+Glossary of Kant s System of Perspectives see Ref cite Palmquist93	.\GlossaryKant.EN.in.tex	/^\\section{Glossary of Kant's Technical Terms}$/;"	s
+Glossary of Kant s System of Perspectives see Ref cite Palmquist93	.\GlossaryKant.EN.tex	/^\\section{Glossary of Kant's Technical Terms}$/;"	s
+Glossary of Kant s System of Perspectives see Ref cite Palmquist93	.\source.glossary.tex	/^\\section{Glossary of Kant's Technical Terms}$/;"	s
+Glossary of TeX Primitives	.\tbt.glossary_tex_primitives.tex	/^\\chapter{Glossary of \\TeX\\ Primitives}$/;"	c
+Glue and breaking	.\tbt.dimensions_and_glue.tex	/^\\subsection{Glue and breaking}$/;"	b
+Glue and modes	.\tbt.dimensions_and_glue.tex	/^\\subsection{Glue and modes}$/;"	b
+Goerbig03	.\PoplavskyyGM09.refs.bib	/^@article{Goerbig03,$/;"	b
+Goerbig04	.\PoplavskyyGM09.refs.bib	/^@article{Goerbig04,$/;"	b
+Goerbig06	.\PoplavskyyGM09.refs.bib	/^@article{Goerbig06,$/;"	b
+Goerbig07	.\PoplavskyyGM09.refs.bib	/^@article{Goerbig07,$/;"	b
+Ground rules for macro writers	.\tbt.allocation.tex	/^\\section{Ground rules for macro writers}$/;"	s
+Grounds for representation	.\oia_BriefSummary.body.tex	/^\\subsection{Grounds for representation}$/;"	b
+Grouping	.\LVSHW.18.tex	/^\\subsection{Grouping}$/;"	b
+Grouping	.\tbt.grouping.tex	/^\\chapter{Grouping}\\label{group}$/;"	c
+Grouping Autocommands	.\LVSHW.14.tex	/^\\subsection{Grouping Autocommands}$/;"	b
+Grouping levels	.\tbt.errors_catastrophes_help.tex	/^\\subsection{Grouping levels}$/;"	b
+Gulyga77	.\Referat.refs.bib	/^@BOOK{Gulyga77,$/;"	b
+Gulyga77	.\refs.bib	/^@BOOK{Gulyga77,$/;"	b
+HTTP 1 0 Status Codes	.\ref\http\codes.tex	/^\\section{HTTP 1.0 Status Codes}$/;"	s
+HTTP 1 1 Status Codes	.\ref\http\codes.tex	/^\\section{HTTP 1.1 Status Codes}$/;"	s
+HTTP Status Codes	.\ref\http\codes.tex	/^\\section{HTTP Status Codes}$/;"	s
+Handling BLOB LONG Memo Fields label Handling_BLOB_LONG_Memo_Fields	.\perldoc.DBI.tex	/^\\subsection*{Handling BLOB \/ LONG \/ Memo Fields\\label{Handling_BLOB_LONG_Memo_Fields}\\index{Handling BLOB \/ LONG \/ Memo Fields}}$/;"	b
+Hartree Fock Hamiltonian	.\PoplavskyyGM09.hartree_fock_hamiltonian.tex	/^\\section{Hartree-Fock Hamiltonian}$/;"	s
+Hash size rm 2100	.\tbt.errors_catastrophes_help.tex	/^\\subsection{Hash size {\\rm(2100)}}$/;"	b
+Header of the letter	.\ap3.s.eval.dc.r1.joint.response.tex	/^\\paragraph{Header of the letter}$/;"	P
+Heine1876	.\Referat.refs.bib	/^@BOOK{Heine1876,$/;"	b
+Heine1876	.\refs.bib	/^@BOOK{Heine1876,$/;"	b
+Higher Order Functions	.\LVSHW.39.tex	/^\\subsection{Higher-Order Functions}$/;"	b
+Highlighting	.\LVSHW.31.tex	/^\\subsection{Highlighting}$/;"	b
+Highlighting Comments	.\LVSHW.46.tex	/^\\subsection{Highlighting Comments}$/;"	b
+Highlighting Functions	.\LVSHW.45.tex	/^\\subsection{Highlighting Functions}$/;"	b
+Horizontal alignments cs halign	.\tbt.alignment.tex	/^\\subsection{Horizontal alignments: \\cs{halign}}$/;"	b
+Horizontal and Vertical Mode	.\tbt.horizontal_and_vertical_mode.tex	/^\\chapter{Horizontal and Vertical Mode}\\label{hvmode}$/;"	c
+Horizontal and vertical alignment	.\tbt.alignment.tex	/^\\section{Horizontal and vertical alignment}$/;"	s
+Horizontal and vertical mode	.\tbt.horizontal_and_vertical_mode.tex	/^\\section{Horizontal and vertical mode}$/;"	s
+Hosting	.\LVSHW.55.tex	/^\\subsection{Hosting}$/;"	b
+How Autoload Works	.\LVSHW.53.tex	/^\\subsection{How Autoload Works}$/;"	b
+I	.\tbt.conditionals.tex	/^\\subsection{I{\/}O tests}$/;"	b
+IG	.\PoplavskyyGM09.defs.tex	/^%%macro IG$/;"	w
+III GENERAL GREEN frac 1	.\paps_phd.Chernyshuk11.tex	/^\\subsection{III. GENERAL GREEN'S FUNCTION APPROACH FOR THE DESCRIPTION OF COLLOIDAL PARTICLES IN CONFINED NLC}$/;"	b
+INTRODUCTION	.\paps_phd.Chernyshuk11.tex	/^\\subsection{INTRODUCTION}$/;"	b
+IV	.\source.KantCritiquePowerJudgement.RU.tex	/^\\subsection{IV О СВЯЗИ ЧУВСТВА УДОВОЛЬСТВИЯ С ПОНЯТИЕМ ЦЕЛЕСООБРАЗНОСТИ ПРИРОДЫ}$/;"	b
+IV	.\source.KantCritiquePowerJudgement.RU.tex	/^\\subsection{IV О СПОСОБНОСТИ СУЖДЕНИЯ КАК АПРИОРНО ЗАКОНОДАТЕЛЬНОЙ СПОСОБНОСТИ}$/;"	b
+IX	.\source.KantCritiquePowerJudgement.RU.tex	/^\\subsection{IX О СВЯЗИ МЕЖДУ ЗАКОНОДАТЕЛЬСТВОМ РАССУДКА И ЗАКОНОДАТЕЛЬСТВОМ РАЗУМА, ОСУЩЕСТВЛЯЕМОЙ СПОСОБНОСТЬЮ СУЖДЕНИЯ$/;"	b
+Ideas for creating a computing machine	.\sciua\firstcomp.tex	/^\\subsubsection*{Ideas for creating a computing machine}$/;"	b
+Ignoring Files	.\gitscm.2_2_recording_changes_to_the_repository.tex	/^\\subsection{Ignoring Files}$/;"	b
+Immanuel Kant	.\Referat.source.Rohlf10.tex	/^\\chapter{Immanuel Kant}$/;"	c
+Implicit Returning	.\LVSHW.23.tex	/^\\subsection{Implicit Returning}$/;"	b
+Inadequate assessment	.\ap3.s.eval.dc.r1.tex	/^\\subsection{Inadequate assessment}$/;"	b
+Included emails My enquiry to Dr Miller May 11 2011	.\ap3.s.eval.dc.r1.joint.response.tex	/^\\subsubsection{Included emails - My enquiry to Dr. Miller, May 11, 2011}$/;"	b
+Including files protect cs input	.\tbt.file_IO.tex	/^\\section{Including files: \\protect\\cs{input} and \\protect\\cs{endinput}}$/;"	s
+Incorrect matching	.\tbt.conditionals.tex	/^\\subsection{Incorrect matching}$/;"	b
+Indent	.\LVSHW.48.tex	/^\\subsubsection{Indent}$/;"	b
+Index	.\tbt.end.tex	/^\\chapter{Index}$/;"	c
+Indexing	.\LVSHW.37.tex	/^\\subsection{Indexing}$/;"	b
+Initial family settings	.\tbt.fonts_in_formulas.tex	/^\\section{Initial family settings}$/;"	s
+Input stack size rm 200	.\tbt.errors_catastrophes_help.tex	/^\\subsection{Input stack size {\\rm(200)}}$/;"	b
+Input with cs read	.\tbt.file_IO.tex	/^\\subsection{Input with \\cs{read}}$/;"	b
+Insert Mode	.\LVSHW.04.tex	/^\\subsection{Insert Mode}$/;"	b
+Insertion class declaration	.\tbt.insertions.tex	/^\\section{Insertion class declaration}$/;"	s
+Insertion items	.\tbt.insertions.tex	/^\\section{Insertion items}$/;"	s
+Insertion parameters	.\tbt.insertions.tex	/^\\section{Insertion parameters}$/;"	s
+Insertions	.\tbt.insertions.tex	/^\\chapter{Insertions}\\label{insert}$/;"	c
+Insertions in the output routine	.\tbt.insertions.tex	/^\\section{Insertions in the output routine}$/;"	s
+Inspecting input	.\tbt.file_IO.tex	/^\\subsection{Inspecting input}$/;"	b
+Insufficient care and attention spent on the report	.\ap2.eval.JC.previva.tex	/^\\paragraph{Insufficient care and attention spent on the report}$/;"	P
+Insufficient supervision by Prof Vendruscolo	.\oia_BriefSummary.body.tex	/^\\subsection{Insufficient supervision by Prof. Vendruscolo}$/;"	b
+Integer registers	.\tbt.numbers.tex	/^\\section{Integer registers}$/;"	s
+Integers	.\tbt.numbers.tex	/^\\section{Integers}$/;"	s
+Integrated Density of states	.\PoplavskyyGM09.results_discussions.tex	/^\\subsection{(Integrated) Density of states}$/;"	b
+Internal integers	.\tbt.numbers.tex	/^\\subsection{Internal integers}$/;"	b
+Internal integers other codes of a character	.\tbt.numbers.tex	/^\\subsection{Internal integers: other codes of a character}$/;"	b
+Internal quantities and their representations	.\tbt.structure_tex_processor.tex	/^\\subsection{Internal quantities and their representations}$/;"	b
+Introduction	.\PoplavskyyGM09.intro.tex	/^\\section{Introduction}$/;"	s
+Introduction	.\ap2.iass.tex	/^\\subsection{Introduction}$/;"	b
+Introduction	.\reply_oia_complaint_outcome.Intro.tex	/^\\chapter{Introduction}$/;"	c
+Introduction	.\tbt.alignment.tex	/^\\section{Introduction}$/;"	s
+Introduction	.\tbt.category_codes_internal_states.tex	/^\\section{Introduction}$/;"	s
+Introduction	.\tbt.expansion.tex	/^\\section{Introduction}$/;"	s
+Introduction	.\tbt.spacing.tex	/^\\section{Introduction}$/;"	s
+Introductory remarks	.\ap2.eval.reps.intro.tex	/^\\section{Introductory remarks}$/;"	s
+Is this command defined	.\TEXREF.texfaq.tex	/^\\subsection{Is this command defined?}$/;"	b
+Italic correction	.\tbt.fonts.tex	/^\\subsection{Italic correction}$/;"	b
+JavaScript	.\TEXREF.tex4ht.tex	/^\\section{JavaScript}$/;"	s
+Jobs	.\tbt.running_tex.tex	/^\\section{Jobs}$/;"	s
+Joining	.\LVSHW.27.tex	/^\\subsection{Joining}$/;"	b
+Joint response from the Examiners to the Representation	.\ap3.s.eval.dc.r1.joint.response.tex	/^\\subsection{Joint response from the Examiners to the Representation}$/;"	b
+KantAntropology	.\Referat.refs.bib	/^@BOOK{KantAntropology,$/;"	b
+KantAntropology	.\refs.bib	/^@BOOK{KantAntropology,$/;"	b
+KantCPREN	.\Referat.refs.bib	/^@BOOK{KantCPREN,$/;"	b
+KantCPREN	.\refs.bib	/^@BOOK{KantCPREN,$/;"	b
+KantCPRUKR	.\Referat.refs.bib	/^@BOOK{KantCPRUKR,$/;"	b
+KantCPRUKR	.\refs.bib	/^@BOOK{KantCPRUKR,$/;"	b
+KantDiff	.\Referat.refs.bib	/^@BOOK{KantDiff,$/;"	b
+KantDiff	.\refs.bib	/^@BOOK{KantDiff,$/;"	b
+KantInag	.\Referat.refs.bib	/^@BOOK{KantInag,$/;"	b
+KantInag	.\refs.bib	/^@BOOK{KantInag,$/;"	b
+KantMetaphysGrounds	.\Referat.refs.bib	/^@INBOOK{KantMetaphysGrounds,$/;"	b
+KantMetaphysGrounds	.\refs.bib	/^@INBOOK{KantMetaphysGrounds,$/;"	b
+KantProleg	.\Referat.refs.bib	/^@BOOK{KantProleg,$/;"	b
+KantProleg	.\refs.bib	/^@BOOK{KantProleg,$/;"	b
+Kerning	.\tbt.fonts.tex	/^\\subsection{Kerning}$/;"	b
+Key achievements	.\cv_eng.achiev.tex	/^\\section{Key achievements}$/;"	s
+Khveshchenko07	.\PoplavskyyGM09.refs.bib	/^@article{Khveshchenko07,$/;"	b
+Koulakov96	.\PoplavskyyGM09.refs.bib	/^@ARTICLE{Koulakov96,$/;"	b
+Kyiv period	.\sciua\firstcomp.tex	/^\\subsubsection*{Kyiv period}$/;"	b
+LOGWORK	.\logwork.body.tex	/^\\chapter{LOGWORK}$/;"	c
+Languages	.\cv_eng.lang.tex	/^\\section{Languages}$/;"	s
+Languages	.\cv_eng.lang_cert.tex	/^\\section{Languages}$/;"	s
+Large operators and their limits	.\tbt.mathematics_typesetting.tex	/^\\section{Large operators and their limits}$/;"	s
+Layout of a macro definition	.\tbt.macros.tex	/^\\section{Layout of a macro definition}$/;"	s
+Leader	.\LVSHW.06.tex	/^\\subsection{Leader}$/;"	b
+Leaders	.\LVSHW.06.tex	/^\\section{Leaders}$/;"	s
+Lesser Indent Levels	.\LVSHW.49.tex	/^\\subsubsection{Lesser Indent Levels}$/;"	b
+Lewis02	.\PoplavskyyGM09.refs.bib	/^@article{Lewis02,$/;"	b
+Lewis04	.\PoplavskyyGM09.refs.bib	/^@article{Lewis04,$/;"	b
+Lewis05	.\PoplavskyyGM09.refs.bib	/^@article{Lewis05,$/;"	b
+Li_Luican_Andrei_arxiv_arxiv_0803_4016	.\PoplavskyyGM09.refs.bib	/^@ARTICLE{Li_Luican_Andrei_arxiv_arxiv_0803_4016,$/;"	b
+Limiting Log Output	.\gitscm.2_3_viewing_the_commit_history.tex	/^\\subsection{Limiting Log Output}$/;"	b
+Line Breaking	.\tbt.line_breaking.tex	/^\\chapter{Line Breaking}\\label{line:break}$/;"	c
+List of Projects	.\ProjIndex.projlist.tex	/^\\section{List of Projects}$/;"	s
+List of attachments to this letter	.\motiv.terentjev.tex	/^\\section*{List of attachments to this letter}$/;"	s
+List remote branches	.\doc_git.list_remote_branches.tex	/^\\section{List remote branches}$/;"	s
+Lists	.\LVSHW.35.tex	/^\\section{Lists}$/;"	s
+Local Leader	.\LVSHW.11.tex	/^\\subsection{Local Leader}$/;"	b
+Local density of states	.\PoplavskyyGM09.results_discussions.tex	/^\\subsection{Local density of states}$/;"	b
+LockeTreatise	.\Referat.refs.bib	/^@INBOOK{LockeTreatise,$/;"	b
+LockeTreatise	.\refs.bib	/^@INBOOK{LockeTreatise,$/;"	b
+Looping	.\LVSHW.36.tex	/^\\section{Looping}$/;"	s
+Macro techniques	.\tbt.macros.tex	/^\\section{Macro techniques}$/;"	s
+Macros	.\tbt.macros.tex	/^\\chapter{Macros}\\label{macro}$/;"	c
+Macros and conditionals the use of cs expandafter	.\tbt.conditionals.tex	/^\\subsection{Macros and conditionals; the use of \\cs{expandafter}}$/;"	b
+Magic	.\LVSHW.31.tex	/^\\subsection{Magic}$/;"	b
+Magnification	.\tbt.tex_outside_world.tex	/^\\subsection{Magnification }$/;"	b
+Mahan80	.\PoplavskyyGM09.refs.bib	/^@BOOK{Mahan80,$/;"	b
+Mailing Lists label Mailing_Lists	.\perldoc.DBI_SYNOPSIS.tex	/^\\subsubsection*{Mailing Lists\\label{Mailing_Lists}\\index{Mailing Lists}}$/;"	b
+Main body of the complaint	.\ap2.structure.tex	/^\\paragraph{Main body of the complaint}$/;"	P
+Main body of the complaint	.\apsc.structure.tex	/^\\paragraph{Main body of the complaint}$/;"	P
+Main memory size 30$ $000	.\tbt.errors_catastrophes_help.tex	/^\\subsection{Main memory size (30$\\,$000)}$/;"	b
+Main professional experience	.\cv_eng.work_short.tex	/^\\section{Main professional experience}$/;"	s
+Main research web page of Prof M Sprik	.\ap2.MS.research.tex	/^\\section{Main research web-page of Prof. M. Sprik}$/;"	s
+Mallet07	.\PoplavskyyGM09.refs.bib	/^@article{Mallet07,$/;"	b
+Manual	.\LVSHW.48.tex	/^\\subsubsection{Manual}$/;"	b
+Marker	.\LVSHW.48.tex	/^\\subsubsection{Marker}$/;"	b
+Martin08	.\PoplavskyyGM09.refs.bib	/^@ARTICLE{Martin08,$/;"	b
+Math accents	.\tbt.characters_in_math_mode.tex	/^\\section{Math accents}$/;"	s
+Math modes	.\tbt.mathematics_typesetting.tex	/^\\section{Math modes}$/;"	s
+Mathematical characters	.\tbt.characters_in_math_mode.tex	/^\\section{Mathematical characters}$/;"	s
+Mathematical formats	.\tbt.tex_outside_world.tex	/^\\subsection{Mathematical formats}$/;"	b
+Mathematical spacing n mu	.\tbt.mathematics_typesetting.tex	/^\\section{Mathematical spacing: \\n{mu} glue}$/;"	s
+Mathematics Typesetting	.\tbt.mathematics_typesetting.tex	/^\\chapter{Mathematics Typesetting}\\label{math}$/;"	c
+Memory sizes of TeX and IniTeX	.\tbt.tex_outside_world.tex	/^\\subsection{Memory sizes of \\TeX\\ and \\IniTeX}$/;"	b
+Minakov01	.\Referat.refs.bib	/^@ARTICLE{Minakov01,$/;"	b
+Minakov01	.\refs.bib	/^@ARTICLE{Minakov01,$/;"	b
+Modal Mapping	.\LVSHW.04.tex	/^\\section{Modal Mapping}$/;"	s
+Mode tests	.\tbt.conditionals.tex	/^\\section{Mode tests}$/;"	s
+Moessner96	.\PoplavskyyGM09.refs.bib	/^@ARTICLE{Moessner96,$/;"	b
+More Mappings	.\LVSHW.09.tex	/^\\section{More Mappings}$/;"	s
+More Operator Pending Mappings	.\LVSHW.16.tex	/^\\section{More Operator-Pending Mappings}$/;"	s
+More about formats	.\tbt.tex_outside_world.tex	/^\\section{More about formats}$/;"	s
+More examples of output routines	.\tbt.output_routines.tex	/^\\subsection{More examples of output routines}$/;"	b
+More expansion	.\tbt.expansion.tex	/^\\subsection{More expansion}$/;"	b
+More on the space factor	.\tbt.spacing.tex	/^\\section{More on the space factor}$/;"	s
+More subtleties with vertical boxes	.\tbt.boxes.tex	/^\\subsection{More subtleties with vertical boxes}$/;"	b
+Motroshilova91	.\Referat.refs.bib	/^@BOOK{Motroshilova91,$/;"	b
+Motroshilova91	.\refs.bib	/^@BOOK{Motroshilova91,$/;"	b
+Movement Mappings	.\LVSHW.15.tex	/^\\subsection{Movement Mappings}$/;"	b
+Moving insertion items from the contributions list	.\tbt.insertions.tex	/^\\section{Moving insertion items from the contributions list}$/;"	s
+Multiple Events	.\LVSHW.12.tex	/^\\subsection{Multiple Events}$/;"	b
+Multiple incorrect statements	.\ap2.eval.JC.previva.tex	/^\\paragraph{Multiple incorrect statements}$/;"	P
+Muskip registers	.\tbt.mathematics_typesetting.tex	/^\\subsection{Muskip registers}$/;"	b
+Mutt ssmtp	.\ref\mutt\mutt_Mutt_ssmtp_i_otpravka_otchetov.tex	/^\\section{Mutt, ssmtp и отправка отчетов}$/;"	s
+My academic background and initial research experience	.\motiv.terentjev.tex	/^\\paragraph{My academic background and initial research experience}$/;"	P
+My analysis	.\ap3.s.eval.dc.r1.joint.response.tex	/^\\paragraph{My analysis}$/;"	P
+My analysis	.\ap3.s.eval.dc.r1.procirr.tex	/^\\paragraph{My analysis}$/;"	P
+My developments after the second viva	.\motiv.terentjev.tex	/^\\paragraph{My developments after the second viva}$/;"	P
+My evaluation	.\ap2.eval.MS.vivarep.tex	/^\\paragraph{My evaluation}$/;"	P
+My evaluation Completion of Procedures Letter	.\oia_FinalDecision.R3.eval.completion.tex	/^\\subsubsection{My evaluation: Completion-of-Procedures Letter}$/;"	b
+My evaluation Prof Farndale	.\oia_FinalDecision.R3.eval.Farndale.tex	/^\\subsubsection{My evaluation: Prof. Farndale}$/;"	b
+My evaluation Prof Robinson	.\oia_FinalDecision.R3.eval.Robinson.tex	/^\\subsubsection{My evaluation: Prof. Robinson}$/;"	b
+My evaluation Prof Yates	.\oia_FinalDecision.R3.eval.Yates.tex	/^\\subsubsection{My evaluation: Prof. Yates}$/;"	b
+My evaluation of the Review Committee s response is inadequate in the circumstances	.\oia_FinalDecision.R3.eval.tex	/^\\subsection{My evaluation of the Review Committee's response to R3}$/;"	b
+My evaluation summary	.\oia_FinalDecision.R3.eval.summary.tex	/^\\subsubsection{My evaluation: summary}$/;"	b
+My thoughts on Kant	.\source.web.Kant.tex	/^\\section{My thoughts on Kant}$/;"	s
+NAME label NAME	.\perldoc.DBI.tex	/^\\section{NAME\\label{NAME}\\index{NAME}}$/;"	s
+NAME label NAME	.\perldoc.perlvar.tex	/^\\section{NAME\\label{NAME}\\index{NAME}}$/;"	s
+NO COMMENT	.\reply_oia_complaint_outcome.defs.tex	/^	\\subsection{NO COMMENT}$/;"	b
+Namespacing	.\LVSHW.34.tex	/^\\subsection{Namespacing}$/;"	b
+No page breaks in between paragraphs	.\tbt.paragraph_end.tex	/^\\subsection{No page breaks in between paragraphs}$/;"	b
+Nomura06	.\PoplavskyyGM09.refs.bib	/^@article{Nomura06,$/;"	b
+Nonrecursive Mapping	.\LVSHW.05.tex	/^\\subsection{Nonrecursive Mapping}$/;"	b
+Normal	.\LVSHW.29.tex	/^\\section{Normal}$/;"	s
+Northoff12	.\Referat.refs.bib	/^@ARTICLE{Northoff12,$/;"	b
+Northoff12	.\refs.bib	/^@ARTICLE{Northoff12,$/;"	b
+Notations	.\tbt.grammar_tex.tex	/^\\section{Notations}$/;"	s
+Note on being	.\ap2.eval.reps.intro.tex	/^\\paragraph{Note on being "false"} Throughout this chapter, I widely use word 'false'.$/;"	P
+Novoselov05	.\PoplavskyyGM09.refs.bib	/^@article{Novoselov05,$/;"	b
+Novoselov07	.\PoplavskyyGM09.refs.bib	/^@article{Novoselov07,$/;"	b
+Number of strings rm 3000	.\tbt.errors_catastrophes_help.tex	/^\\subsection{Number of strings {\\rm(3000)}}$/;"	b
+Number testing	.\tbt.numbers.tex	/^\\section{Number testing}$/;"	s
+Numbers	.\LVSHW.25.tex	/^\\section{Numbers}$/;"	s
+Numbers	.\tbt.numbers.tex	/^\\chapter{Numbers}\\label{number}$/;"	c
+Numbers and gr number	.\tbt.numbers.tex	/^\\section{Numbers and \\gr{number}s}$/;"	s
+Numerical tests	.\tbt.conditionals.tex	/^\\section{Numerical tests}$/;"	s
+OP to DF April 9 2013	.\emails_OP_DF.OP_to_DF_April_9_2013.tex	/^\\subsection{OP to DF, April 9, 2013}$/;"	b
+OP to DF April 9 2013	.\emails_OP_DF.OP_to_DF_April_9_2013_2.tex	/^\\subsection{OP to DF, April 9, 2013}$/;"	b
+OP to DF April 9 2013 Forwarded Emails with Prof Vendruscolo	.\emails_OP_DF.OP_to_DF_April_9_2013_forwarded_emails_Vendruscolo.tex	/^\\subsection{OP to DF, April 9, 2013 - Forwarded Emails with Prof. Vendruscolo}$/;"	b
+OP to DF February 24 2013	.\emails_OP_DF.OP_to_DF_Feb_24_2013.tex	/^\\subsection{OP to DF, February 24, 2013}$/;"	b
+OP to DF March 1 2013	.\emails_OP_DF.OP_to_DF_March_1_2013.tex	/^\\subsection{OP to DF, March 1, 2013}$/;"	b
+OP to DF March 14 2013	.\emails_OP_DF.OP_to_DF_March_14_2013.tex	/^\\subsection{OP to DF, March 14, 2013}$/;"	b
+OP to DF March 27 2013	.\emails_OP_DF.OP_to_DF_March_27_2013.tex	/^\\subsection{OP to DF, March 27, 2013}$/;"	b
+OP to DF March 30 2013	.\emails_OP_DF.OP_to_DF_March_30_2013.tex	/^\\subsection{OP to DF, March 30, 2013}$/;"	b
+OP to DF March 6 2013	.\emails_OP_DF.OP_to_DF_March_6_2013.tex	/^\\subsection{OP to DF, March 6, 2013}$/;"	b
+OP to DF last one April 24 2013	.\emails_OP_DF.OP_to_DF_April_24_2013_last_one.tex	/^\\subsection{OP to DF (last one), April 24, 2013}$/;"	b
+OP to RK April 1 2013 Letter 1	.\emails_OP_RK.OP_to_RK_April_1_Letter_1_2013.tex	/^\\subsection{OP to RK, April 1, 2013, Letter-1}$/;"	b
+OP to RK March 14 2013	.\emails_OP_RK.OP_to_RK_March_14_2013.tex	/^\\subsection{OP to RK, March 14, 2013}$/;"	b
+OP to RK March 15 2013	.\emails_OP_RK.OP_to_RK_March_15_2013.tex	/^\\subsection{OP to RK, March 15, 2013}$/;"	b
+OP to RK March 19 2013	.\emails_OP_RK.OP_to_RK_March_19_2013.tex	/^\\subsection{OP to RK, March 19, 2013}$/;"	b
+OP to RK March 26 2013	.\emails_OP_RK.OP_to_RK_March_26_2013.tex	/^\\subsection{OP to RK, March 26, 2013}$/;"	b
+OP to RK March 27 2013	.\emails_OP_RK.OP_to_RK_March_27_2013.tex	/^\\subsection{OP to RK, March 27, 2013}$/;"	b
+OP to RK March 29 2013	.\emails_OP_RK.OP_to_RK_March_29_2013.tex	/^\\subsection{OP to RK, March 29, 2013}$/;"	b
+OP to RK March 30 2013	.\emails_OP_RK.OP_to_RK_March_30_2013.tex	/^\\subsection{OP to RK, March 30, 2013}$/;"	b
+OP to RK last letter April 1 2013 Letter 2	.\emails_OP_RK.OP_to_RK_April_1_Letter_2_2013.tex	/^\\subsection{OP to RK (last letter), April 1, 2013, Letter-2}$/;"	b
+OP::Projs::Postprocess::invoices	.\invoices.postprocess.pl	/^package OP::Projs::Postprocess::invoices;$/;"	p
+Oizerman09	.\Referat.refs.bib	/^@ARTICLE{Oizerman09,$/;"	b
+Oizerman09	.\refs.bib	/^@ARTICLE{Oizerman09,$/;"	b
+Omnicomplete	.\LVSHW.56.tex	/^\\subsection{Omnicomplete}$/;"	b
+One by one analysis of individual excerpts from the report	.\ap2.eval.MV.previva.tex	/^\\subsection{One-by-one analysis of individual excerpts from the report}$/;"	b
+One by one analysis of individual excerpts from the report	.\ap2.eval.finalrep.tex	/^\\subsection{One-by-one analysis of individual excerpts from the report}$/;"	b
+One by one analysis of individual excerpts from the report by Prof Clarke	.\ap2.eval.JC.previva.tex	/^\\subsection{One-by-one analysis of individual excerpts from the report by Prof. Clarke}$/;"	b
+Online label Online	.\perldoc.DBI_SYNOPSIS.tex	/^\\subsubsection*{Online\\label{Online}\\index{Online}}$/;"	b
+Opening and closing streams	.\tbt.file_IO.tex	/^\\subsection{Opening and closing streams}$/;"	b
+Operations on token lists stack macros	.\tbt.token_lists.tex	/^\\subsection{Operations on token lists: stack macros}$/;"	b
+Operator Pending Mappings	.\LVSHW.15.tex	/^\\section{Operator-Pending Mappings}$/;"	s
+Original text	.\ap3.s.eval.dc.r1.procirr.tex	/^\\paragraph{Original text}$/;"	P
+Original texts Document 4508	.\ap3.data.4508.i.tex	/^\\section{Original texts - Document 4508}$/;"	s
+Originals	.\oia_FinalDecision.originals.tex	/^\\chapter{Originals}$/;"	c
+Other Complaint Procedures	.\oia_OP_further_remarks.OtherComplaintProcedures.tex	/^\\section{Other Complaint Procedures}$/;"	s
+Other Kant Glossaries	.\GlossaryKant.ENother.tex	/^\\section{Other Kant Glossaries}$/;"	s
+Other Languages	.\LVSHW.56.tex	/^\\subsection{Other Languages}$/;"	b
+Other formats	.\tbt.tex_outside_world.tex	/^\\subsection{Other formats}$/;"	b
+Other information	.\cv_eng.other.tex	/^\\section{Other information}$/;"	s
+Other internal quantities coersion to integer	.\tbt.numbers.tex	/^\\subsection{Other internal quantities: coersion to integer}$/;"	b
+Other non letters	.\tbt.spacing.tex	/^\\subsection{Other non-letters}$/;"	b
+Other possible project options in your group	.\motiv.terentjev.tex	/^\\paragraph{Other possible project options in your group}$/;"	P
+Other spaces in math mode	.\tbt.mathematics_typesetting.tex	/^\\subsection{Other spaces in math mode}$/;"	b
+Other tests	.\tbt.conditionals.tex	/^\\section{Other tests}$/;"	s
+Other web resources on Kant	.\source.web.Kant.tex	/^\\chapter{Other web resources on Kant}$/;"	c
+Output Routines	.\tbt.output_routines.tex	/^\\chapter{Output Routines}\\label{output}$/;"	c
+Output and protect cs box255	.\tbt.output_routines.tex	/^\\section{Output and \\protect\\cs{box255}}$/;"	s
+Overfull and underfull boxes	.\tbt.boxes.tex	/^\\section{Overfull and underfull boxes}$/;"	s
+Overview	.\oia_FinalDecision.SummaryDecision.intro.tex	/^\\section{Overview}$/;"	s
+P 1	.\source.KantCritiquePowerJudgement.RU.tex	/^\\subsection{P-1 СУЖДЕНИЕ ВКУСА ЕСТЬ ЭСТЕТИЧЕСКОЕ СУЖДЕНИЕ }$/;"	b
+P 16	.\source.KantCritiquePowerJudgement.RU.tex	/^\\subsection{P-16 СУЖДЕНИЕ ВКУСА, В КОТОРОМ ПРЕДМЕТ ПРИЗНАЕТСЯ ПРЕКРАСНЫМ ПРИ$/;"	b
+P 17	.\source.KantCritiquePowerJudgement.RU.tex	/^\\subsection{P-17 ОБ ИДЕАЛЕ КРАСОТЫ}$/;"	b
+P 18	.\source.KantCritiquePowerJudgement.RU.tex	/^\\subsection{P-18 ЧТО ТАКОЕ МОДАЛЬНОСТЬ СУЖДЕНИЯ ВКУСА}$/;"	b
+P 19	.\source.KantCritiquePowerJudgement.RU.tex	/^\\subsection{P-19 СУБЪЕКТИВНАЯ НЕОБХОДИМОСТЬ, КОТОРУЮ МЫ ПРИПИСЫВАЕМ СУЖДЕНИЮ ВКУСА. ОБУСЛОВЛЕНА}$/;"	b
+P 2	.\source.KantCritiquePowerJudgement.RU.tex	/^\\subsection{P-2 БЛАГОРАСПОЛОЖЕНИЕ, КОТОРОЕ ОПРЕДЕЛЯЕТ СУЖДЕНИЕ ВКУСА, ЛИШЕНО ВСЯКОГО ИНТЕРЕСА}$/;"	b
+P 20	.\source.KantCritiquePowerJudgement.RU.tex	/^\\subsection{P-20 УСЛОВИЕ НЕОБХОДИМОСТИ. ПРЕДПОЛАГАЕМОЕ СУЖДЕНИЕМ ВКУСА, ЕСТЬ ИДЕЯ ОБЩЕГО ЧУВСТВА}$/;"	b
+P 21	.\source.KantCritiquePowerJudgement.RU.tex	/^\\subsection{P-21 МОЖНО ЛИ С ДОСТАТОЧНЫМ ОСНОВАНИЕМ ПРЕДПОЛАГАТЬ НАЛИЧИЕ ОБЩЕГО ЧУВСТВА}$/;"	b
+P 22	.\source.KantCritiquePowerJudgement.RU.tex	/^\\subsection{P-22 НЕОБХОДИМОСТЬ ВСЕОБЩЕГО СОГЛАСИЯ, МЫСЛИМАЯ В СУЖДЕНИИ ВКУСА. ЕСТЬ СУБЪЕКТИВНАЯ НЕОБХОДИМОСТЬ, КОТОРАЯ ПРИ ПРЕДПОЛОЖЕНИИ ОБЩЕГО ЧУВСТВА ПРЕДСТАВЛЯЕТСЯ ОБЪЕКТИВНОЙ}$/;"	b
+P 23	.\source.KantCritiquePowerJudgement.RU.tex	/^\\subsection{P-23 ПЕРЕХОД ОТ СПОСОБНОСТИ СУЖДЕНИЯ О ПРЕКРАСНОМ К СПОСОБНОСТИ СУЖДЕНИЯ О ВОЗВЫШЕННОМ}$/;"	b
+P 24	.\source.KantCritiquePowerJudgement.RU.tex	/^\\subsection{P-24 О ДЕЛЕНИИ ИССЛЕДОВАНИЯ ЧУВСТВА ВОЗВЫШЕННОГО}$/;"	b
+P 25	.\source.KantCritiquePowerJudgement.RU.tex	/^\\subsection{P-25 ПОЯСНЕНИЕ НАЗВАНИЯ ВОЗВЫШЕННОГО}$/;"	b
+P 26	.\source.KantCritiquePowerJudgement.RU.tex	/^\\subsection{P-26 ОБ ОПРЕДЕЛЕНИИ ВЕЛИЧИНЫ ПРИРОДНЫХ ВЕЩЕЙ, ТРЕБУЮЩЕЙСЯ ДЛЯ ИДЕИ ВОЗВЫШЕННОГО}$/;"	b
+P 3	.\source.KantCritiquePowerJudgement.RU.tex	/^\\subsection{P-3 БЛАГОРАСПОЛОЖЕНИЕ К ПРИЯТНОМУ СВЯЗАНО С ИНТЕРЕСОМ}$/;"	b
+P 4 13	.\source.KantCritiquePowerJudgement.RU.tex	/^\\subsection{P-4 БЛАГОРАСПОЛОЖЕНИЕ К ХОРОШЕМУ13 СВЯЗАНО С ИНТЕРЕССМ}$/;"	b
+P 43	.\source.KantCritiquePowerJudgement.RU.tex	/^\\subsection{P-43 ОБ ИСКУССТВЕ ВООБЩЕ}$/;"	b
+P 44	.\source.KantCritiquePowerJudgement.RU.tex	/^\\subsection{P-44 О ПРЕКРАСНОМ ИСКУССТВЕ}$/;"	b
+P 45	.\source.KantCritiquePowerJudgement.RU.tex	/^\\subsection{P-45 ПРЕКРАСНОЕ ИСКУССТВО ЕСТЬ ТАКОЕ ИСКУССТВО, КОТОРОЕ ОДНОВРЕМЕННО ПРЕДСТАВЛЯЕТСЯ НАМ ПРИРОДОЙ}$/;"	b
+P 46	.\source.KantCritiquePowerJudgement.RU.tex	/^\\subsection{P-46 ПРЕКРАСНОЕ ИСКУССТВО - ЭТО ИСКУССТВО ГЕНИЯ}$/;"	b
+P 47	.\source.KantCritiquePowerJudgement.RU.tex	/^\\subsection{P-47 ПОЯСНЕНИЕ И ПОДТВЕРЖДЕНИЕ ДАННОГО ВЫШЕ ТОЛКОВАНИЯ ГЕНИЯ}$/;"	b
+P 5	.\source.KantCritiquePowerJudgement.RU.tex	/^\\subsection{P-5 СРАВНЕНИЕ ТРЕХ РАЗЛИЧНЫХ ПО СВОЕЙ СПЕЦИФИКЕ ВИДОВ БЛАГОРАСПОЛОЖЕНИЯ}$/;"	b
+P 50	.\source.KantCritiquePowerJudgement.RU.tex	/^\\subsection{P-50 О СВЯЗИ ВКУСА С ГЕНИЕМ В ПРОИЗВЕДЕНИЯХ ПРЕКРАСНОГО ИСКУССТВА}$/;"	b
+P 51	.\source.KantCritiquePowerJudgement.RU.tex	/^\\subsection{P-51 О ДЕЛЕНИИ ПРЕКРАСНЫХ ИСКУССТВ}$/;"	b
+P 52	.\source.KantCritiquePowerJudgement.RU.tex	/^\\subsection{P-52 О СОЕДИНЕНИИ РАЗЛИЧНЫХ ПРЕКРАСНЫХ ИСКУССТВ В ОДНОМ ПРОИЗВЕДЕНИИ}$/;"	b
+P 53	.\source.KantCritiquePowerJudgement.RU.tex	/^\\subsection{P-53 СРАВНЕНИЕ РАЗЛИЧНЫХ ПРЕКРАСНЫХ ИСКУССТВ ПО ИХ ЭСТЕТИЧЕСКОЙ ЦЕННОСТИ}$/;"	b
+P 54	.\source.KantCritiquePowerJudgement.RU.tex	/^\\subsection{P-54 ПРИМЕЧАНИЕ}$/;"	b
+P 6	.\source.KantCritiquePowerJudgement.RU.tex	/^\\subsection{P-6 ПРЕКРАСНОЕ ЕСТЬ ТО, ЧТО БЕЗ ПОНЯТИИ ПРЕДСТАВЛЯЕТСЯ КАК ПРЕДМЕТ ВСЕОБЩЕГО БЛАГОРАСПОЛОЖЕНИЯ}$/;"	b
+PREFACE TO THE FIRST EDITION 1790	.\source.Kant.CritiquePureReason-En.tex	/^\\section{PREFACE TO THE FIRST EDITION 1790.}$/;"	s
+Page Breaking	.\tbt.page_breaking.tex	/^\\chapter{Page Breaking}\\label{page:break}$/;"	c
+Page Shape	.\tbt.page_shape.tex	/^\\chapter{Page Shape}\\label{page:shape}$/;"	c
+Page height and depth	.\tbt.page_shape.tex	/^\\section{Page height and depth}$/;"	s
+Page identification	.\tbt.tex_outside_world.tex	/^\\subsection{Page identification}$/;"	b
+Pairing experimentalist and theorist as Examiners	.\ap3.data.4776.i.tex	/^\\subsubsection{Pairing experimentalist and theorist as Examiners}$/;"	b
+Palmer10	.\Referat.refs.bib	/^@ARTICLE{Palmer10,$/;"	b
+Palmer10	.\refs.bib	/^@ARTICLE{Palmer10,$/;"	b
+Palmquist93	.\Referat.refs.bib	/^@BOOK{Palmquist93,$/;"	b
+Palmquist93	.\refs.bib	/^@BOOK{Palmquist93,$/;"	b
+Panafidina12	.\Referat.refs.bib	/^@ARTICLE{Panafidina12,$/;"	b
+Panafidina12	.\refs.bib	/^@ARTICLE{Panafidina12,$/;"	b
+Papers	.\paps_phd.body.tex	/^\\part{Papers}$/;"	p
+Paragraph End	.\tbt.paragraph_end.tex	/^\\chapter{Paragraph End}\\label{par:end}$/;"	c
+Paragraph Shape	.\tbt.paragraph_shape.tex	/^\\chapter{Paragraph Shape}\\label{par:shape}$/;"	c
+Paragraph Start	.\tbt.paragraph_start.tex	/^\\chapter{Paragraph Start}\\label{par:start}$/;"	c
+Paragraphs	.\TEXREF.tex4ht.tex	/^\\section{Paragraphs}$/;"	s
+Pathogen	.\LVSHW.43.tex	/^\\subsection{Pathogen}$/;"	b
+Paths	.\LVSHW.40.tex	/^\\section{Paths}$/;"	s
+Paulsen1910	.\Referat.refs.bib	/^@BOOK{Paulsen1910,$/;"	b
+Paulsen1910	.\refs.bib	/^@BOOK{Paulsen1910,$/;"	b
+Pereboom09	.\Referat.refs.bib	/^@InCollection{Pereboom09,$/;"	b
+Pereboom09	.\refs.bib	/^@InCollection{Pereboom09,$/;"	b
+Performance	.\LVSHW.39.tex	/^\\subsection{Performance}$/;"	b
+PhD position at the Department of Chemistry 2009 2012	.\motiv.terentjev.tex	/^\\paragraph{PhD position at the Department of Chemistry (2009-2012)}$/;"	P
+Phone number	.\cv_eng.personal.tex	/^\\section{Phone number} +380 (096) 637-24-73 (mobile)$/;"	s
+Phone number	.\cv_eng.personal_foto.tex	/^\\section{Phone number} +380 (096) 637-24-73 (mobile)$/;"	s
+Physica ldots	.\source.KantCritiquePureReason.RU.tex	/^\\paragraph{Естествознание (Physica) \\ldots}$/;"	P
+Plain TeX insertions	.\tbt.insertions.tex	/^\\section{Plain \\TeX\\ insertions}$/;"	s
+Plain TeX reference	.\TEXREF.plaintex_CSNAME_TXT.tex	/^\\chapter{Plain \\TeX\\ reference}$/;"	c
+Plugin Layout in the Dark Ages	.\LVSHW.42.tex	/^\\section{Plugin Layout in the Dark Ages}$/;"	s
+Point #1	.\reply_oia_complaint_outcome.defs.tex	/^	\\section{Point #1}%$/;"	s
+Potion Section Movement	.\LVSHW.51.tex	/^\\section{Potion Section Movement}$/;"	s
+Pre viva and viva reports Originals	.\ap2.appendix.tex	/^\\chapter{Pre-viva and viva reports (Originals)}$/;"	c
+Pre viva report Prof J Clarke	.\ap2.JC.previva.tex	/^\\section{Pre-viva report, Prof. J. Clarke}$/;"	s
+Pre viva report Prof M Sprik	.\ap2.MS.previva.tex	/^\\section{Pre-viva report, Prof. M. Sprik}$/;"	s
+Preface	.\BKM.preface.tex	/^\\section{Preface }$/;"	s
+Prejudice bias or inadequate assessment	.\ap2.iass.tex	/^\\section{Prejudice, bias or inadequate assessment}$/;"	s
+Preloaded fonts	.\tbt.tex_outside_world.tex	/^\\subsection{Preloaded fonts}$/;"	b
+Prerequisites	.\LVSHW.00.tex	/^\\section{Prerequisites}$/;"	s
+Presentations conference and seminar participation	.\cv_eng.presentations.tex	/^\\section{Presentations, conference and seminar participation}$/;"	s
+Prima facie reasoning by the Committee is unsustainable	.\oia_FinalDecision.R3.eval.completion.tex	/^\\paragraph{Prima facie reasoning by the Committee is unsustainable}$/;"	P
+Procedural irregularities	.\ap2.pirr.tex	/^\\section{Procedural irregularities}$/;"	s
+Procedural irregularities	.\ap3.analysis.dc.tex	/^\\subsubsection{Procedural irregularities}$/;"	b
+Procedural irregularities	.\ap3.s.eval.dc.r1.procirr.tex	/^\\subsection{Procedural irregularities}$/;"	b
+Prof Farndale response	.\oia_FinalDecision.R3.summary.tex	/^\\subsubsection{Prof. Farndale response}$/;"	b
+Prof Robinson original response	.\oia_FinalDecision.originals.tex	/^\\section{Prof. Robinson original response}$/;"	s
+Prof Sprik comments during the viva	.\ap2.eval.finalrep.tex	/^\\paragraph{Prof. Sprik comments during the viva}$/;"	P
+Prof Sprik comments pre viva report	.\ap2.eval.finalrep.tex	/^\\paragraph{Prof. Sprik comments, pre-viva report}$/;"	P
+Prof Vendruscolo pre viva report	.\ap2.MV.previva.tex	/^\\section{Prof. Vendruscolo pre-viva report}$/;"	s
+Prof Vendruscolo supervision	.\ap3.analysis.dc.tex	/^\\subsubsection{Prof. Vendruscolo supervision}$/;"	b
+Prof Wales involvement	.\oia_BriefSummary.body.tex	/^\\subsection{Prof. Wales involvement}$/;"	b
+Prof Yates original response	.\oia_FinalDecision.originals.tex	/^\\section{Prof. Yates original response}$/;"	s
+Professor Michiel Sprik	.\ap2.MS.research.tex	/^\\paragraph{Professor Michiel Sprik}$/;"	P
+ProjIndex	.\ProjIndex.tex	/^%%project ProjIndex$/;"	v
+Publications	.\cv_eng.publications.tex	/^\\section{Publications}$/;"	s
+Punctuation	.\tbt.spacing.tex	/^\\subsection{Punctuation}$/;"	b
+Querying the current font and font names	.\tbt.fonts.tex	/^\\subsection{Querying the current font and font names}$/;"	b
+Questioning competence and professional ethics of the Examiner	.\ap3.data.4776.i.tex	/^\\subsubsection{Questioning  ``competence and professional ethics'' of the Examiner}$/;"	b
+Quotes in LaTeX	.\TEXREF.SE.tex	/^\\section{Quotes in \\LaTeX\\ ?}$/;"	s
+Quotes in LaTeX	.\TEXREF.texSE.tex	/^\\section{Quotes in \\LaTeX\\ ?}$/;"	s
+REF OIA 50518 13	.\oia_OP_confirmation_letter.confirmation_of_receipt.tex	/^\\subsubsection{REF: OIA\/50518\/13}$/;"	b
+REF OIA 50518 13	.\oia_OP_further_remarks.address.tex	/^\\subsection*{REF: OIA\/50518\/13}$/;"	b
+RK to OP April 1 2013	.\emails_OP_RK.RK_to_OP_April_1_2013.tex	/^\\subsection{RK to OP, April 1, 2013}$/;"	b
+RK to OP March 26 2013	.\emails_OP_RK.RK_to_OP_March_26_2013.tex	/^\\subsection{RK to OP, March 26, 2013}$/;"	b
+RK to OP March 29 2013	.\emails_OP_RK.RK_to_OP_March_29_2013.tex	/^\\subsection{RK to OP, March 29, 2013}$/;"	b
+Reading an entry	.\tbt.alignment.tex	/^\\subsection{Reading an entry}$/;"	b
+Real space density profile	.\PoplavskyyGM09.results_discussions.tex	/^\\subsection{Real-space density profile}$/;"	b
+Reasons for requesting a review of the examination	.\ap2.reasons.tex	/^\\section{Reasons for requesting a review of the examination}$/;"	s
+Recording Changes to the Repository	.\gitscm.2_2_recording_changes_to_the_repository.tex	/^\\subsection{Recording Changes to the Repository}$/;"	b
+Recursion	.\LVSHW.05.tex	/^\\subsection{Recursion}$/;"	b
+Refereeing manuscripts from theoretical groups	.\ap3.data.4776.i.tex	/^\\subsubsection{Refereeing manuscripts from theoretical groups}$/;"	b
+References	.\cv_eng.references.tex	/^\\section{References}$/;"	s
+Relashionship to academic judgement matters	.\oia_BriefSummary.body.tex	/^\\subsection{Relashionship to academic judgement matters}$/;"	b
+Relationship of my past research experience to my current PhD enquiry to your group	.\motiv.terentjev.tex	/^\\paragraph{Relationship of my past research experience to my current PhD enquiry to your group}$/;"	P
+Remarks	.\oia_BriefSummary.body.tex	/^\\section{Remarks}$/;"	s
+Remarks	.\oia_OP_further_remarks.remarks.tex	/^\\chapter{Remarks}$/;"	c
+Remarks	.\tbt.numbers.tex	/^\\section{Remarks}$/;"	s
+Remarks over academic assessment or academic judgement	.\oia_OP_further_remarks.AcademicAssessment.tex	/^\\section{Remarks over ``academic assessment'' or ``academic$/;"	s
+Remarks over academic assessment or academic judgement	.\oia_OP_further_remarks.aa.tex	/^\\section{Remarks over ``academic assessment'' or ``academic$/;"	s
+Remedies requested	.\ap2.remedies.tex	/^\\section{Remedies requested}$/;"	s
+Removal from the register of graduate students and my return back to Ukraine	.\motiv.terentjev.tex	/^\\paragraph{Removal from the register of graduate students and my return back to Ukraine}$/;"	P
+Removing Entries	.\LVSHW.37.tex	/^\\subsection{Removing Entries}$/;"	b
+Representation R1	.\oia_BriefSummary.body.tex	/^\\section{Representation R1}$/;"	s
+Representation R2	.\oia_BriefSummary.body.tex	/^\\section{Representation R2}$/;"	s
+Representation R3	.\oia_BriefSummary.body.tex	/^\\section{Representation R3}$/;"	s
+Research outlook and plans	.\motiv.terentjev.tex	/^\\paragraph{Research outlook and plans}$/;"	P
+Response by Dr Miller to my enquiry	.\ap3.s.eval.dc.r1.joint.response.tex	/^\\subsubsection{Response by Dr. Miller to my enquiry}$/;"	b
+Responsible Coding	.\LVSHW.18.tex	/^\\section{Responsible Coding}$/;"	s
+Results	.\LVSHW.16.tex	/^\\subsection{Results}$/;"	b
+Results and discussions	.\PoplavskyyGM09.results_discussions.tex	/^\\section{Results and discussions}$/;"	s
+Review Committee Procedural Guidelines	.\oia_OP_further_remarks.ReviewCommitteeGuidelines.tex	/^\\section{Review Committee Procedural Guidelines}$/;"	s
+Review Committee Response to representation R3	.\oia_FinalDecision.SummaryDecision.R3.tex	/^\\section{Review Committee Response to representation R3}$/;"	s
+Rohlf10	.\Referat.refs.bib	/^@ARTICLE{Rohlf10,$/;"	b
+Rohlf10	.\refs.bib	/^@ARTICLE{Rohlf10,$/;"	b
+Rosenberg05	.\Referat.refs.bib	/^@BOOK{Rosenberg05,$/;"	b
+Rosenberg05	.\refs.bib	/^@BOOK{Rosenberg05,$/;"	b
+Rules	.\tbt.rules_and_leaders.tex	/^\\section{Rules}$/;"	s
+Rules and Leaders	.\tbt.rules_and_leaders.tex	/^\\chapter{Rules and Leaders}\\label{rules}$/;"	c
+Run modes	.\tbt.running_tex.tex	/^\\section{Run modes}$/;"	s
+Running TeX	.\tbt.running_tex.tex	/^\\chapter{Running \\TeX}\\label{run}$/;"	c
+Runtimepath	.\LVSHW.43.tex	/^\\subsection{Runtimepath}$/;"	b
+RusselCognition	.\Referat.refs.bib	/^@BOOK{RusselCognition,$/;"	b
+RusselCognition	.\refs.bib	/^@BOOK{RusselCognition,$/;"	b
+RusselHistPhil3	.\Referat.refs.bib	/^@BOOK{RusselHistPhil3,$/;"	b
+RusselHistPhil3	.\refs.bib	/^@BOOK{RusselHistPhil3,$/;"	b
+SYNOPSIS label SYNOPSIS	.\perldoc.DBI_SYNOPSIS.tex	/^\\section{SYNOPSIS\\label{SYNOPSIS}\\index{SYNOPSIS}}$/;"	s
+SchopenhauerWWI	.\Referat.refs.bib	/^@BOOK{SchopenhauerWWI,$/;"	b
+SchopenhauerWWI	.\refs.bib	/^@BOOK{SchopenhauerWWI,$/;"	b
+Scratch Splits	.\LVSHW.52.tex	/^\\subsection{Scratch Splits}$/;"	b
+Scripting Indirectly Referencing Variables	.\vimtips.body.tex	/^\\section{Scripting - Indirectly Referencing Variables}$/;"	s
+Searching	.\LVSHW.31.tex	/^\\subsection{Searching}$/;"	b
+Section 1 Background	.\reply_oia_complaint_outcome.Section_1_Background.tex	/^\\chapter{Section 1: Background}$/;"	c
+Section 2 OIA Review Process	.\reply_oia_complaint_outcome.Section_2_OIA_Review_Process.tex	/^\\chapter{Section 2: OIA Review Process}$/;"	c
+Section 3 Review of Complaint and Conclusions	.\reply_oia_complaint_outcome.Section_3_Review_of_Complaint_and_Conclusions.tex	/^\\chapter{Section 3: Review of Complaint and Conclusions}$/;"	c
+Section Movement Theory	.\LVSHW.50.tex	/^\\section{Section Movement Theory}$/;"	s
+Sections	.\LVSHW.54.tex	/^\\subsection{Sections}$/;"	b
+Selected publications	.\ap2.MS.research.tex	/^\\paragraph{Selected publications}$/;"	P
+Semantic nest size rm 40	.\tbt.errors_catastrophes_help.tex	/^\\subsection{Semantic nest size {\\rm(40)}}$/;"	b
+Send Receive mails to from localhost	.\ref\mutt\send_receive_mails_to_from_localhost.tex	/^\\section{Send \\& Receive mails to \\& from localhost}$/;"	s
+Setting Options	.\LVSHW.02.tex	/^\\section{Setting Options}$/;"	s
+Settings	.\LVSHW.11.tex	/^\\subsection{Settings}$/;"	b
+Short Names	.\LVSHW.18.tex	/^\\subsection{Short Names}$/;"	b
+Short list of the cases of pbia	.\ap2.eval.finalrep.tex	/^\\subsection{Short list of the cases of \\pbia}$/;"	b
+Show boxes protect cs showbox	.\tbt.tracing.tex	/^\\section{Show boxes: \\protect\\cs{showbox}, \\protect\\cs{tracingoutput}}$/;"	s
+Simple Examples label Simple_Examples	.\perldoc.DBI.tex	/^\\subsection*{Simple Examples\\label{Simple_Examples}\\index{Simple Examples}}$/;"	b
+Some final notice	.\motiv.terentjev.tex	/^\\paragraph{Some final notice}$/;"	P
+Some important cases of prejudice bias or inadequate assessment	.\ap2.iass.tex	/^\\subsection{Some important cases of prejudice, bias or inadequate assessment}$/;"	b
+Some specific font changes	.\tbt.fonts_in_formulas.tex	/^\\section{Some specific font changes}$/;"	s
+Sourcing Mapping	.\LVSHW.07.tex	/^\\subsection{Sourcing Mapping}$/;"	b
+Sowa05	.\Referat.refs.bib	/^@INBOOK{Sowa05,$/;"	b
+Sowa05	.\refs.bib	/^@INBOOK{Sowa05,$/;"	b
+Space factor assignments	.\tbt.spacing.tex	/^\\subsection{Space factor assignments}$/;"	b
+Spacing	.\tbt.spacing.tex	/^\\chapter{Spacing}\\label{space}$/;"	c
+Spanning across multiple columns cs span	.\tbt.alignment.tex	/^\\subsection{Spanning across multiple columns: \\cs{span}}$/;"	b
+Special Characters	.\LVSHW.03.tex	/^\\subsection{Special Characters}$/;"	b
+Special Characters	.\LVSHW.29.tex	/^\\subsection{Special Characters}$/;"	b
+Special Foldlevels	.\LVSHW.49.tex	/^\\subsection{Special Foldlevels}$/;"	b
+Special cases cs expandafter	.\tbt.structure_tex_processor.tex	/^\\subsection{Special cases: \\cs{expandafter}, \\cs{noexpand}, and \\cs{the}}$/;"	b
+Special purpose boxes	.\tbt.boxes.tex	/^\\subsection{Special-purpose boxes}$/;"	b
+Special tests	.\tbt.conditionals.tex	/^\\subsection{Special tests}$/;"	b
+Specials	.\tbt.tex_outside_world.tex	/^\\section{Specials}$/;"	s
+Splitting	.\LVSHW.17.tex	/^\\subsection{Splitting}$/;"	b
+Staging Modified Files	.\gitscm.2_2_recording_changes_to_the_repository.tex	/^\\subsection{Staging Modified Files}$/;"	b
+Start of the job	.\tbt.running_tex.tex	/^\\subsection{Start of the job}$/;"	b
+Start of the response of the Examiners	.\ap3.s.eval.dc.r1.joint.response.tex	/^\\subsubsection{Start of the response of the Examiners}$/;"	b
+Starting a paragraph with a box	.\tbt.paragraph_start.tex	/^\\subsection{Starting a paragraph with a box}$/;"	b
+Starting a paragraph with a group	.\tbt.paragraph_start.tex	/^\\subsection{Starting a paragraph with a group}$/;"	b
+Statement Handle Methods label Statement_Handle_Methods	.\perldoc.DBI.tex	/^\\subsection*{Statement Handle Methods\\label{Statement_Handle_Methods}\\index{Statement Handle Methods}}$/;"	b
+Status Lines	.\LVSHW.17.tex	/^\\section{Status Lines}$/;"	s
+Stern12	.\Referat.refs.bib	/^@InCollection{Stern12,$/;"	b
+Stern12	.\refs.bib	/^@InCollection{Stern12,$/;"	b
+Stormer99	.\PoplavskyyGM09.refs.bib	/^@article{Stormer99,$/;"	b
+Strict Mapping	.\LVSHW.05.tex	/^\\section{Strict Mapping}$/;"	s
+String Functions	.\LVSHW.27.tex	/^\\section{String Functions}$/;"	s
+Strings	.\LVSHW.26.tex	/^\\section{Strings}$/;"	s
+Structure of evaluations	.\ap2.eval.reps.intro.tex	/^\\paragraph{Structure of evaluations}$/;"	P
+Structure of the present complaint	.\ap2.structure.tex	/^\\section{Structure of the present complaint}$/;"	s
+Structure of the present complaint	.\apsc.structure.tex	/^\\section{Structure of the present complaint}$/;"	s
+Structure of the present representation	.\ap3.structure.tex	/^\\section{Structure of the present representation}$/;"	s
+Styles in math mode	.\tbt.mathematics_typesetting.tex	/^\\section{Styles in math mode}$/;"	s
+Summary	.\EngReferat.annot.tex	/^\\section{Summary}$/;"	s
+Summary	.\ap2.eval.JC.previva.tex	/^\\subsection{Summary}$/;"	b
+Summary	.\ap2.summary.tex	/^\\section{Summary}$/;"	s
+Summary of evaluation	.\ap2.eval.MV.previva.tex	/^\\subsection{Summary of evaluation}$/;"	b
+Summary of evaluation	.\ap2.eval.finalrep.tex	/^\\subsection{Summary of evaluation }$/;"	b
+Summary of evaluation	.\ap3.analysis.dc.tex	/^\\subsection{Summary of evaluation}$/;"	b
+Summary of my response	.\ap3.data.4776.i.tex	/^\\subsection{Summary of my response}$/;"	b
+Summary of the response	.\oia_FinalDecision.R3.summary.tex	/^\\subsection{Summary of the response}$/;"	b
+Summary of the response	.\oia_FinalDecision.SummaryDecision.R2.tex	/^\\subsection{Summary of the response}$/;"	b
+Superscripts and subscripts	.\tbt.mathematics_typesetting.tex	/^\\subsection{Superscripts and subscripts}$/;"	b
+Supervision records	.\oia_OP_further_remarks.SupervisionRecords.tex	/^\\section{Supervision records}$/;"	s
+Supplementary documents	.\ap2.appendix.tex	/^\\chapter{Supplementary documents}$/;"	c
+Supplementary documents	.\ap3.s.tex	/^\\chapter{Supplementary documents}$/;"	c
+TDMS v2	.\traveltek.tdms_v2.tex	/^\\chapter{TDMS v2}$/;"	c
+THE EXACT APPROACH FOR COLLOIDAL PARTICLES IN NEMATIC LIQUID CRYSTALS TOPOLOGICAL DEFECTS	.\paps_phd.Chernyshuk11.tex	/^\\subsection{THE EXACT APPROACH FOR COLLOIDAL PARTICLES IN NEMATIC LIQUID CRYSTALS: TOPOLOGICAL DEFECTS}$/;"	b
+Table of Contents	.\LVSHW.54.tex	/^\\subsection{Table of Contents}$/;"	b
+Tables	.\tbt.end.tex	/^\\chapter{Tables}$/;"	c
+TeX Frequently Asked Questions	.\TEXREF.texfaq.tex	/^\\chapter{TeX Frequently Asked Questions}$/;"	c
+TeX IniTeX VirTeX	.\tbt.tex_outside_world.tex	/^\\section{\\TeX, \\IniTeX, \\VirTeX}$/;"	s
+TeX and the Outside World	.\tbt.tex_outside_world.tex	/^\\chapter{\\TeX\\ and the Outside World}\\label{TeXcomm}$/;"	c
+TeX inserts a cs relax	.\tbt.expansion.tex	/^\\subsection{\\TeX\\ inserts a \\cs{relax}}$/;"	b
+TeX primitives	.\TEXREF.plaintex_CSNAME_TXT.tex	/^\\section{\\TeX\\ primitives}$/;"	s
+TeX4HT reference	.\TEXREF.tex4ht.tex	/^\\chapter{TeX4HT reference}$/;"	c
+Testing cs ifvoid	.\tbt.boxes.tex	/^\\subsection{Testing: \\cs{ifvoid}, \\cs{ifhbox}, \\cs{ifvbox}}$/;"	b
+Text in boxes	.\tbt.boxes.tex	/^\\section{Text in boxes}$/;"	s
+Text input levels rm 6	.\tbt.errors_catastrophes_help.tex	/^\\subsection{Text input levels {\\rm(6)}}$/;"	b
+The Aesthetic Representation of the Finality of Nature	.\source.Kant.CritiquePureReason-En.tex	/^\\subsection{The Aesthetic Representation of the Finality of Nature.}$/;"	b
+The Association of the Feeling of Pleasure with the Concept of the Finality of Nature	.\source.Kant.CritiquePureReason-En.tex	/^\\subsection{The Association of the Feeling of Pleasure with the Concept of the Finality of Nature.}$/;"	b
+The Command Command	.\LVSHW.56.tex	/^\\subsection{The Command Command}$/;"	b
+The Grammar of TeX	.\tbt.grammar_tex.tex	/^\\chapter{The Grammar of \\TeX}\\label{gramm}$/;"	c
+The Problem	.\LVSHW.14.tex	/^\\subsection{The Problem}$/;"	b
+The Structure of the TeX Processor	.\tbt.structure_tex_processor.tex	/^\\chapter{The Structure of the \\TeX\\ Processor}$/;"	c
+The Syntax of Variable Names label The_Syntax_of_Variable_Names	.\perldoc.perlvar.tex	/^\\subsection*{The Syntax of Variable Names\\label{The_Syntax_of_Variable_Names}\\index{The Syntax of Variable Names}}$/;"	b
+The contemporary relevance of Kant s contribution	.\BKM.ch1.tex	/^\\chapter{The contemporary relevance of Kant's work}$/;"	c
+The execution processor	.\tbt.structure_tex_processor.tex	/^\\section{The execution processor}$/;"	s
+The grouping mechanism	.\tbt.grouping.tex	/^\\section{The grouping mechanism}$/;"	s
+The height of a vertical box in horizontal mode	.\tbt.boxes.tex	/^\\subsection{The height of a vertical box in horizontal mode}$/;"	b
+The input processor	.\tbt.structure_tex_processor.tex	/^\\section{The input processor}$/;"	s
+The knowledge of IniTeX	.\tbt.tex_outside_world.tex	/^\\subsection{The knowledge of \\IniTeX}$/;"	b
+The last glue item in a list backspacing	.\tbt.dimensions_and_glue.tex	/^\\subsection{The last  glue item in a list: backspacing}$/;"	b
+The log file	.\tbt.running_tex.tex	/^\\subsection{The log file}$/;"	b
+The macro parameter character	.\tbt.macros.tex	/^\\subsection{The macro parameter character}$/;"	b
+The n dvi	.\tbt.tex_outside_world.tex	/^\\subsection{The \\n{dvi} file format}$/;"	b
+The original report text	.\ap2.eval.MS.vivarep.tex	/^\\paragraph{The original report text}$/;"	P
+The page builder after a paragraph	.\tbt.page_breaking.tex	/^\\subsection{The page builder after a paragraph}$/;"	b
+The parameter text	.\tbt.macros.tex	/^\\section{The parameter text}$/;"	s
+The plain format	.\tbt.tex_outside_world.tex	/^\\subsection{The plain format}$/;"	b
+The process of expansion	.\tbt.structure_tex_processor.tex	/^\\subsection{The process of expansion}$/;"	b
+The protect cs newif	.\tbt.conditionals.tex	/^\\section{The \\protect\\cs{newif} macro}$/;"	s
+The protect cs output	.\tbt.output_routines.tex	/^\\section{The \\protect\\cs{output} token list}$/;"	s
+The reference point for global positioning	.\tbt.page_shape.tex	/^\\section{The reference point for global positioning}$/;"	s
+The shape of conditionals	.\tbt.conditionals.tex	/^\\section{The shape of conditionals}$/;"	s
+The test gobbles up tokens	.\tbt.conditionals.tex	/^\\subsection{The test gobbles up tokens}$/;"	b
+The test wants to gobble up the cs else	.\tbt.conditionals.tex	/^\\subsection{The test wants to gobble up the \\cs{else} or \\cs{fi}}$/;"	b
+The timeline of the examination process	.\oia_BriefSummary.body.tex	/^\\subsection{The timeline of the examination process}$/;"	b
+The value of non macros cs the	.\tbt.expansion.tex	/^\\subsection{The value of non-macros; \\cs{the}}$/;"	b
+The visual processor	.\tbt.structure_tex_processor.tex	/^\\section{The visual processor}$/;"	s
+The width of text lines	.\tbt.paragraph_shape.tex	/^\\section{The width of text lines}$/;"	s
+Toggling	.\LVSHW.38.tex	/^\\section{Toggling}$/;"	s
+Toggling Options	.\LVSHW.38.tex	/^\\subsection{Toggling Options}$/;"	b
+Toke06	.\PoplavskyyGM09.refs.bib	/^@article{Toke06,$/;"	b
+Toke07	.\PoplavskyyGM09.refs.bib	/^@article{Toke07,$/;"	b
+Token Lists	.\tbt.token_lists.tex	/^\\chapter{Token Lists}\\label{token}$/;"	c
+Token assignments by protect cs let	.\tbt.macros.tex	/^\\section{Token assignments by \\protect\\cs{let} and \\protect\\cs{futurelet}}$/;"	s
+Token list registers	.\tbt.token_lists.tex	/^\\section{Token list registers}$/;"	s
+Token lists	.\tbt.token_lists.tex	/^\\section{Token lists}$/;"	s
+Top Level Text Sections	.\LVSHW.51.tex	/^\\subsection{Top Level Text Sections}$/;"	b
+Tracing	.\tbt.tracing.tex	/^\\chapter{Tracing}\\label{trace}$/;"	c
+Tracking New Files	.\gitscm.2_2_recording_changes_to_the_repository.tex	/^\\subsection{Tracking New Files}$/;"	b
+Trailing spaces	.\tbt.numbers.tex	/^\\subsection{Trailing spaces}$/;"	b
+Training Your Fingers	.\LVSHW.10.tex	/^\\section{Training Your Fingers}$/;"	s
+Transactions label Transactions	.\perldoc.DBI.tex	/^\\subsection*{Transactions\\label{Transactions}\\index{Transactions}}$/;"	b
+Two level input processing	.\tbt.structure_tex_processor.tex	/^\\subsection{Two-level input processing}$/;"	b
+Types of Folding	.\LVSHW.48.tex	/^\\subsection{Types of Folding}$/;"	b
+U 1 graphene local density of states	.\PoplavskyyGM09.results_discussions.tex	/^\\subsection{U(1)-graphene: local density of states}$/;"	b
+Ukrainian Driver Licence B Series	.\cv_eng.driver_licence.tex	/^\\section{Ukrainian Driver Licence, B Series }$/;"	s
+Ukrainian Driver Licence B Series	.\cv_eng.driver_license.tex	/^\\section{Ukrainian Driver Licence, B Series }$/;"	s
+Unboxing	.\tbt.boxes.tex	/^\\section{Unboxing}$/;"	s
+Undelimited parameters	.\tbt.macros.tex	/^\\subsection{Undelimited parameters}$/;"	b
+Unfair and unequal conditions for the candidate compared to other students	.\ap2.pirr.tex	/^\\paragraph{Unfair and unequal conditions for the candidate compared to other students}$/;"	P
+Unknown number of arguments	.\tbt.macros.tex	/^\\subsection{Unknown number of arguments}$/;"	b
+Uppercase and lowercase forms of keywords	.\tbt.characters.tex	/^\\subsection{Uppercase and lowercase forms of keywords}$/;"	b
+Usage	.\LVSHW.32.tex	/^\\subsection{Usage}$/;"	b
+Use of token lists	.\tbt.token_lists.tex	/^\\section{Use of token lists}$/;"	s
+V	.\source.KantCritiquePowerJudgement.RU.tex	/^\\subsection{V ПРИНЦИП ФОРМАЛЬНОЙ ЦЕЛЕСООБРАЗНОСТИ ПРИРОДЫ ЕСТЬ ТРАНСЦЕНДЕНТАЛЬНЫЙ ПРИНЦИП СПОСОБНОСТИ СУЖДЕНИЯ$/;"	b
+VII	.\source.KantCritiquePowerJudgement.RU.tex	/^\\subsection{VII ОБ ЭСТЕТИЧЕСКОМ ПРЕДСТАВЛЕНИИ О ЦЕЛЕСООБРАЗНОСТИ ПРИРОДЫ}$/;"	b
+VIII	.\source.KantCritiquePowerJudgement.RU.tex	/^\\subsection{VIII О ЛОГИЧЕСКОМ ПРЕДСТАВЛЕНИИ О ЦЕЛЕСООБРАЗНОСТИ ПРИРОДЫ}$/;"	b
+Variable Scoping	.\LVSHW.20.tex	/^\\section{Variable Scoping}$/;"	s
+Variables	.\LVSHW.19.tex	/^\\section{Variables}$/;"	s
+Variables related to filehandles label Variables_related_to_filehandles	.\perldoc.perlvar.tex	/^\\subsection*{Variables related to filehandles\\label{Variables_related_to_filehandles}\\index{Variables related to filehandles}}$/;"	b
+Variables related to formats label Variables_related_to_formats	.\perldoc.perlvar.tex	/^\\subsubsection*{Variables related to formats\\label{Variables_related_to_formats}\\index{Variables related to formats}}$/;"	b
+Variables related to regular expressions label Variables_related_to_regular_expressions	.\perldoc.perlvar.tex	/^\\subsection*{Variables related to regular expressions\\label{Variables_related_to_regular_expressions}\\index{Variables related to regular expressions}}$/;"	b
+Version 1 1	.\tbt.end.tex	/^\\section*{Version 1.1}$/;"	s
+Version 1 2	.\tbt.end.tex	/^\\section*{Version 1.2}$/;"	s
+Vertical alignments cs valign	.\tbt.alignment.tex	/^\\subsection{Vertical alignments: \\cs{valign}}$/;"	b
+Vertical centring protect cs vcenter	.\tbt.mathematics_typesetting.tex	/^\\section{Vertical centring: \\protect\\cs{vcenter}}$/;"	s
+Vertical mode	.\tbt.horizontal_and_vertical_mode.tex	/^\\subsection{Vertical mode}$/;"	b
+Very Magic	.\LVSHW.31.tex	/^\\subsection{Very Magic}$/;"	b
+Very detailed report with lots of useful criticisms and comments	.\ap2.eval.JC.previva.tex	/^\\subsubsection{Very detailed report with lots of useful criticisms and comments}$/;"	b
+Viewing the Commit History	.\gitscm.2_3_viewing_the_commit_history.tex	/^\\subsection{Viewing the Commit History}$/;"	b
+Vilfan08	.\paps_phd.refs.bib	/^@ARTICLE{Vilfan08,$/;"	b
+Vim s a list of Vim help topics that are especially useful informative interesting or just plain fun in no particular order begin itemize	.\LVSHW.56.tex	/^\\subsection{Vim's Documentation}$/;"	b
+Visual Mode	.\LVSHW.33.tex	/^\\subsection{Visual Mode}$/;"	b
+Wang08	.\PoplavskyyGM09.refs.bib	/^@article{Wang08,$/;"	b
+What Now	.\LVSHW.56.tex	/^\\section{What Now?}$/;"	s
+What happens when a paragraph starts	.\tbt.paragraph_start.tex	/^\\section{What happens when a paragraph starts}$/;"	s
+What to Document	.\LVSHW.54.tex	/^\\subsection{What to Document}$/;"	b
+Whatsits	.\tbt.file_IO.tex	/^\\section{Whatsits}$/;"	s
+While Loops	.\LVSHW.36.tex	/^\\subsection{While Loops}$/;"	b
+Why Bother	.\LVSHW.51.tex	/^\\subsection{Why Bother?}$/;"	b
+Why Not Use Mappings	.\LVSHW.08.tex	/^\\subsection{Why Not Use Mappings?}$/;"	b
+Wigner34	.\PoplavskyyGM09.refs.bib	/^@article{Wigner34,$/;"	b
+Work experience	.\cv_eng.work.tex	/^\\section{Work experience}$/;"	s
+Work experience	.\cv_eng.work_short.tex	/^\\section{Work experience}$/;"	s
+Work on the bibliographic side of my protein folding project	.\motiv.terentjev.tex	/^\\paragraph{Work on the bibliographic side of my protein folding project}$/;"	P
+Write	.\LVSHW.54.tex	/^\\subsection{Write!}$/;"	b
+XIII	.\Russel.body.tex	/^\\section{Глава: Глава XIII. ТЕОРИЯ ПОЗНАНИЯ ЛОККА}$/;"	s
+XIX	.\Russel.body.tex	/^\\section{Глава XIX. РУССО}$/;"	s
+XVI	.\Russel.body.tex	/^\\section{Глава: Глава XVI. БЕРКЛИ}$/;"	s
+XX	.\Russel.body.tex	/^\\section{Глава XX. КАНТ}$/;"	s
+Yoshioka79	.\PoplavskyyGM09.refs.bib	/^@article{Yoshioka79,$/;"	b
+Yoshioka83	.\PoplavskyyGM09.refs.bib	/^@article{Yoshioka83,$/;"	b
+Your Diff Tool	.\gitscm.1_5_first_time_git_setup.tex	/^\\subsection{Your Diff Tool}$/;"	b
+Your Editor	.\gitscm.1_5_first_time_git_setup.tex	/^\\subsection{Your Editor}$/;"	b
+Your Identity	.\gitscm.1_5_first_time_git_setup.tex	/^\\subsection{Your Identity}$/;"	b
+Zhang05	.\PoplavskyyGM09.refs.bib	/^@ARTICLE{Zhang05,$/;"	b
+Zhang07	.\PoplavskyyGM09.refs.bib	/^@article{Zhang07,$/;"	b
+Zhang08	.\PoplavskyyGM09.refs.bib	/^@ARTICLE{Zhang08,$/;"	b
+Zhang08	.\PoplavskyyGM09.refs.bib	/^@article{Zhang08,$/;"	b
+_index	.\PROJS.i.dat	/^###_index$/;"	a
+a 1 1	.\kandmin_questions.vyklad-a.tex	/^\\section{(a-1-1) Канонічне квантування за Гейзенбергом-Діраком. Рівняння$/;"	s
+a 1 2	.\kandmin_questions.vyklad-a.tex	/^\\section{(a-1-2) Ефект Вавілова - Черенкова}$/;"	s
+a 10 1 $ CH	.\kandmin_questions.vyklad-a.tex	/^\\section{(a-10-1) Симетрії у квантовій механіці. Точкові групи. Симетрійний$/;"	s
+a 10 2	.\kandmin_questions.vyklad-a.tex	/^\\section{(a-10-2) Електрон Дірака в кулонівському полі. Тонка структура атомних рівнів}$/;"	s
+a 11 1	.\kandmin_questions.vyklad-a.tex	/^\\section{(a-11-1) Симетрії польових систем. Теорема Нетер. Інтеграли руху для комплексного скалярного поля}$/;"	s
+a 11 2	.\kandmin_questions.vyklad-a.tex	/^\\section{(a-11-2) Електронні терми двохатомної молекули. Наближення Гайтлера - Лондона}$/;"	s
+a 12 1 SU a 3	.\kandmin_questions.vyklad-a.tex	/^\\section{(a-12-1) Скінченновимірні представлення групи SU(a-3). Представлення, які відповідають кваркам та антикваркам}$/;"	s
+a 12 2	.\kandmin_questions.vyklad-a.tex	/^\\section{(a-12-2)  Розсіяння світла в рідинах та газах.  Розсіяння Релея та Мандельштама - Брілюена}$/;"	s
+a 2 1	.\kandmin_questions.vyklad-a.tex	/^\\section{(a-2-1) Когерентні стани квантового осцилятора та їх зв'язок з$/;"	s
+a 9 2	.\kandmin_questions.vyklad-a.tex	/^\\section{(a-9-2) Група Пуанкаре, представлення з нульовою масою}$/;"	s
+b 1 1	.\kandmin_questions.vyklad-b.tex	/^\\section{(b-1-1) Щільні гази. Рівняння Ван-дер-Ваальса. Групові та віріальні розклади}$/;"	s
+b 1 2 SU b 3	.\kandmin_questions.vyklad-b.tex	/^\\section{(b-1-2) SU(b-3)-симетрія в теорії елементарних частинок. Унітарні мультиплети}$/;"	s
+b 10 1	.\kandmin_questions.vyklad-b.tex	/^\\section{(b-10-1) Надпровідність, куперівські пари, модель БКШ}$/;"	s
+b 10 2	.\kandmin_questions.vyklad-b.tex	/^\\section{(b-10-2) Кінетичне рівняння Власова}$/;"	s
+b 11 1	.\kandmin_questions.vyklad-b.tex	/^\\section{(b-11-1) Діаграмна техніка в квантовій електродинаміці.$/;"	s
+b 11 2	.\kandmin_questions.vyklad-b.tex	/^\\section{(b-11-2) Часова та просторова дисперсія електричної проникності}$/;"	s
+b 12 1 U V	.\kandmin_questions.vyklad-b.tex	/^\\section{(b-12-1) Квантові рідини. Явище надплинності, ефективний гамільтоніан та$/;"	s
+b 12 2 S	.\kandmin_questions.vyklad-b.tex	/^\\section{(b-12-2) Приведення S-матриці до нормальної форми. Теорема Віка}$/;"	s
+b 13 1	.\kandmin_questions.vyklad-b.tex	/^\\section{(b-13-1) Квантові кінетичні рівняння}$/;"	s
+b 13 2	.\kandmin_questions.vyklad-b.tex	/^\\section{(b-13-2) Градієнтна інваріантність і тотожність Уорда в квантовій електродинаміці}$/;"	s
+b 2 1	.\kandmin_questions.vyklad-b.tex	/^\\section{(b-2-1) Модель електрослабкої взаємодії Вайнберга - Салама. Кут Вайнберга}$/;"	s
+b 2 2	.\kandmin_questions.vyklad-b.tex	/^\\section{(b-2-2) Мікроканонічний, канонічний та великий канонічний ансамблі. Розподіл Гібса}$/;"	s
+b 3 1	.\kandmin_questions.vyklad-b.tex	/^\\section{(b-3-1) Комптонівське розсіювання в квантовій електродинаміці}$/;"	s
+b 3 2	.\kandmin_questions.vyklad-b.tex	/^\\section{(b-3-2) Розподіл Фермі. Теплоемність та магнітна сприйнятливість виродженого електронного газу}$/;"	s
+b 4 1	.\kandmin_questions.vyklad-b.tex	/^\\section{(b-4-1) Генерація маси за рахунок спонтанного порушення симетрії.  Механізм Хігса}$/;"	s
+b 4 2	.\kandmin_questions.vyklad-b.tex	/^\\section{(b-4-2) Розріджені гази. Рівняння Больцмана}$/;"	s
+b 5 1	.\kandmin_questions.vyklad-b.tex	/^\\section{(b-5-1) Квантування скалярного поля. Аналітичні властивості функції Паулі - Йордана}$/;"	s
+b 5 2	.\kandmin_questions.vyklad-b.tex	/^\\section{(b-5-2) Ланцюжки рівнянь Боголюбова. Принцип ослаблення кореляцій. Кінетичні рівняння}$/;"	s
+b 6 1	.\kandmin_questions.vyklad-b.tex	/^\\section{(b-6-1) Квантування електромагнітного поля. Метод Гупта - Блейлера}$/;"	s
+b 6 2	.\kandmin_questions.vyklad-b.tex	/^\\section{(b-6-2) Термодинамічні нерівності. Принцип Ле-Шательє. Теорема Нернста}$/;"	s
+b 7 1	.\kandmin_questions.vyklad-b.tex	/^\\section{(b-7-1) Квантування поля Дірака. Електронний пропагатор}$/;"	s
+b 7 2	.\kandmin_questions.vyklad-b.tex	/^\\section{(b-7-2) Рівняння Фоккера - Планка та Ейнштейна - Смолуховського. Броунівський рух.}$/;"	s
+b 8 1	.\kandmin_questions.vyklad-b.tex	/^\\section{(b-8-1) Перенормування маси в другому порядку за теорією збурень у квантовій електродинаміці}$/;"	s
+b 8 2	.\kandmin_questions.vyklad-b.tex	/^\\section{(b-8-2) Теорія Ландау фазових переходів другого роду. Критична точка, критичні показники}$/;"	s
+b 9 1	.\kandmin_questions.vyklad-b.tex	/^\\section{(b-9-1) Калібрувальне поле Янга - Міллса та його симетрії. Лагранжіан квантової хромодинаміки}$/;"	s
+b 9 2	.\kandmin_questions.vyklad-b.tex	/^\\section{(b-9-2) Фонони. Теплоємність твердих тіл за Дебаєм.}$/;"	s
+bf GNU Free Documentation License	.\tbt.GPL.tex	/^\\paragraph*{\\bf GNU Free Documentation License}$/;"	P
+bf Preface	.\tbt.preface.tex	/^\\paragraph*{\\bf Preface}$/;"	P
+categorical imperative	.\GlossaryKant.EN.in.tex	/^\\subsection{categorical imperative}$/;"	b
+categorical imperative	.\GlossaryKant.EN.tex	/^\\subsection{categorical imperative}$/;"	b
+categorical imperative	.\source.glossary.tex	/^\\paragraph{categorical imperative}$/;"	P
+categories	.\GlossaryKant.EN.in.tex	/^\\subsection{categories}$/;"	b
+categories	.\GlossaryKant.EN.tex	/^\\subsection{categories}$/;"	b
+categories	.\source.glossary.tex	/^\\paragraph{categories}$/;"	P
+ch_Basic_Usage	.\svnbook.ch_Basic_Usage.tex	/^%%section ch_Basic_Usage$/;"	x
+ch_Fundamental_Concepts	.\svnbook.ch_Fundamental_Concepts.tex	/^%%section ch_Fundamental_Concepts$/;"	x
+cognitive science	.\Referat.relevance.tex	/^\\section{Когнитивна наука (cognitive science)}$/;"	s
+concept	.\GlossaryKant.EN.in.tex	/^\\subsection{concept}$/;"	b
+concept	.\GlossaryKant.EN.tex	/^\\subsection{concept}$/;"	b
+concept	.\source.glossary.tex	/^\\paragraph{concept}$/;"	P
+conscience	.\GlossaryKant.EN.in.tex	/^\\subsection{conscience}$/;"	b
+conscience	.\GlossaryKant.EN.tex	/^\\subsection{conscience}$/;"	b
+conscience	.\source.glossary.tex	/^\\paragraph{conscience}$/;"	P
+constitutive	.\GlossaryKant.EN.in.tex	/^\\subsection{constitutive} \\index{Kant!technical terms!constitutive}$/;"	b
+constitutive	.\GlossaryKant.EN.tex	/^\\subsection{constitutive} $/;"	b
+constitutive	.\GlossaryKant.UKR.in.tex	/^\\subsection{constitutive} \\index{Kant!technical terms!constitutive}$/;"	b
+constitutive	.\GlossaryKant.UKR.tex	/^\\subsection{constitutive} $/;"	b
+constitutive	.\source.glossary.tex	/^\\paragraph{constitutive}$/;"	P
+cpp	.\PROJS.i.dat	/^###cpp$/;"	a
+cs box	.\tbt.allocation.tex	/^\\subsection{\\cs{box}, \\cs{fam}, \\cs{write}, \\cs{read}, \\cs{insert}}$/;"	b
+cs count	.\tbt.allocation.tex	/^\\subsection{\\cs{count}, \\cs{dimen}, \\cs{skip}, \\cs{muskip}, \\cs{toks}}$/;"	b
+cs if	.\tbt.conditionals.tex	/^\\subsection{\\cs{if}}$/;"	b
+cs ifcat	.\tbt.conditionals.tex	/^\\subsection{\\cs{ifcat}}$/;"	b
+cs kern	.\tbt.dimensions_and_glue.tex	/^\\subsection{\\cs{kern}}$/;"	b
+cs nullfont	.\tbt.fonts.tex	/^\\subsection{\\cs{nullfont}}$/;"	b
+def_labeleq	.\paps_phd.defs.tex	/^%%def def_labeleq$/;"	q
+disposition	.\GlossaryKant.EN.in.tex	/^\\subsection{disposition} \\index{Kant!technical terms!disposition}$/;"	b
+disposition	.\GlossaryKant.EN.tex	/^\\subsection{disposition} $/;"	b
+disposition	.\GlossaryKant.UKR.in.tex	/^\\subsection{disposition} \\index{Kant!technical terms!disposition}$/;"	b
+disposition	.\GlossaryKant.UKR.tex	/^\\subsection{disposition} $/;"	b
+disposition	.\source.glossary.tex	/^\\paragraph{disposition}$/;"	P
+duty	.\GlossaryKant.EN.in.tex	/^\\subsection{duty} \\index{Kant!technical terms!duty}$/;"	b
+duty	.\GlossaryKant.EN.tex	/^\\subsection{duty} $/;"	b
+duty	.\GlossaryKant.UKR.in.tex	/^\\subsection{duty} \\index{Kant!technical terms!duty}$/;"	b
+duty	.\GlossaryKant.UKR.tex	/^\\subsection{duty} $/;"	b
+duty	.\source.glossary.tex	/^\\paragraph{duty}$/;"	P
+e_10_nmuxx	.\paps_phd.Chernyshuk11.tex	/^%%equation e_10_nmuxx$/;"	z
+e_11_Uself	.\paps_phd.Chernyshuk11.tex	/^%%equation e_11_Uself$/;"	z
+e_12	.\paps_phd.Chernyshuk11.tex	/^%%equation e_12$/;"	z
+e_13	.\paps_phd.Chernyshuk11.tex	/^%%equation e_13$/;"	z
+e_1_Fbulk	.\paps_phd.Chernyshuk11.tex	/^%%equation e_1_Fbulk$/;"	z
+e_2_Fbulk	.\paps_phd.Chernyshuk11.tex	/^%%equation e_2_Fbulk$/;"	z
+e_3_Fsurf	.\paps_phd.Chernyshuk11.tex	/^%%equation e_3_Fsurf$/;"	z
+e_4_Fsurf	.\paps_phd.Chernyshuk11.tex	/^%%equation e_4_Fsurf$/;"	z
+e_5_Fwalls	.\paps_phd.Chernyshuk11.tex	/^%%equation e_5_Fwalls$/;"	z
+e_6_Fbulk_beyond_coat	.\paps_phd.Chernyshuk11.tex	/^%%equation e_6_Fbulk_beyond_coat$/;"	z
+e_7_Euler_Lagrange_eqs	.\paps_phd.Chernyshuk11.tex	/^%%equation e_7_Euler_Lagrange_eqs$/;"	z
+e_8_Feff	.\paps_phd.Chernyshuk11.tex	/^%%equation e_8_Feff$/;"	z
+e_9_Euler_Langange_eqs	.\paps_phd.Chernyshuk11.tex	/^%%equation e_9_Euler_Langange_eqs$/;"	z
+emails	.\PROJS.i.dat	/^###emails$/;"	a
+empirical	.\GlossaryKant.EN.in.tex	/^\\subsection{empirical} \\index{Kant!technical terms!empirical}$/;"	b
+empirical	.\GlossaryKant.EN.tex	/^\\subsection{empirical} $/;"	b
+empirical	.\GlossaryKant.UKR.in.tex	/^\\subsection{empirical} \\index{Kant!technical terms!empirical}$/;"	b
+empirical	.\GlossaryKant.UKR.tex	/^\\subsection{empirical} $/;"	b
+empirical	.\source.glossary.tex	/^\\paragraph{empirical}$/;"	P
+f_Chernyshuk10	.\paps_phd.Chernyshuk10.tex	/^%%file f_Chernyshuk10$/;"	f
+f_Chernyshuk11	.\paps_phd.Chernyshuk11.tex	/^%%file f_Chernyshuk11$/;"	f
+f_begin	.\paps_phd.begin.tex	/^%%file f_begin$/;"	f
+f_body	.\paps_phd.body.tex	/^%%file f_body$/;"	f
+f_defs	.\paps_phd.defs.tex	/^%%file f_defs$/;"	f
+f_main	.\Referat.tex	/^%%file f_main$/;"	f
+f_main	.\paps_phd.tex	/^%%file f_main$/;"	f
+f_packages	.\Referat.packages.tex	/^%%file f_packages$/;"	f
+f_packages	.\paps_phd.packages.tex	/^%%file f_packages$/;"	f
+f_preamble	.\Referat.preamble.tex	/^%%file f_preamble$/;"	f
+f_preamble	.\paps_phd.preamble.tex	/^%%file f_preamble$/;"	f
+faith	.\GlossaryKant.UKR.in.tex	/^\\subsection{faith} \\index{Kant!technical terms!faith}$/;"	b
+faith	.\GlossaryKant.UKR.tex	/^\\subsection{faith} $/;"	b
+fig_DOS	.\PoplavskyyGM09.results_discussions.tex	/^%%figure fig_DOS$/;"	y
+formal	.\GlossaryKant.UKR.in.tex	/^\\subsection{formal} \\index{Kant!technical terms!formal}$/;"	b
+formal	.\GlossaryKant.UKR.tex	/^\\subsection{formal} $/;"	b
+fortran	.\PROJS.i.dat	/^###fortran$/;"	a
+gr special integer	.\tbt.numbers.tex	/^\\subsection{\\gr{special integer}}$/;"	b
+gr token parameter	.\tbt.token_lists.tex	/^\\section{\\gr{token parameter}}$/;"	s
+heteronomy	.\GlossaryKant.UKR.in.tex	/^\\subsection{heteronomy} \\index{Kant!technical terms!heteronomy}$/;"	b
+heteronomy	.\GlossaryKant.UKR.tex	/^\\subsection{heteronomy} $/;"	b
+hypersetup	.\invoices.preamble.tex	/^%%%hypersetup$/;"	b
+hypothetical	.\GlossaryKant.UKR.in.tex	/^\\subsection{hypothetical} \\index{Kant!technical terms!hypothetical}$/;"	b
+hypothetical	.\GlossaryKant.UKR.tex	/^\\subsection{hypothetical} $/;"	b
+ideas	.\GlossaryKant.EN.in.tex	/^\\subsection{ideas} \\index{Kant!technical terms!ideas}$/;"	b
+ideas	.\GlossaryKant.EN.tex	/^\\subsection{ideas} $/;"	b
+ideas	.\source.glossary.tex	/^\\paragraph{ideas}$/;"	P
+imagination	.\GlossaryKant.EN.in.tex	/^\\subsection{imagination} \\index{Kant!technical terms!imagination}$/;"	b
+imagination	.\GlossaryKant.EN.tex	/^\\subsection{imagination} $/;"	b
+imagination	.\source.glossary.tex	/^\\paragraph{imagination}$/;"	P
+inclination	.\GlossaryKant.EN.in.tex	/^\\subsection{inclination} \\index{Kant!technical terms!inclination}$/;"	b
+inclination	.\GlossaryKant.EN.tex	/^\\subsection{inclination} $/;"	b
+inclination	.\source.glossary.tex	/^\\paragraph{inclination}$/;"	P
+init_DATA	.\invoices.generate.pl	/^sub init_DATA {$/;"	s
+init_FILES	.\invoices.generate.pl	/^sub init_FILES {$/;"	s
+init_PACKS	.\invoices.generate.pl	/^sub init_PACKS {$/;"	s
+init_vars	.\PoplavskyyGM09.convbib.pl	/^sub init_vars {$/;"	s
+init_vars	.\invoices.generate.pl	/^sub init_vars {$/;"	s
+init_vars	.\texbook.split.pl	/^sub init_vars {$/;"	s
+intelligible	.\GlossaryKant.EN.in.tex	/^\\subsection{intelligible} \\index{Kant!technical terms!intelligible}$/;"	b
+intelligible	.\GlossaryKant.EN.tex	/^\\subsection{intelligible} $/;"	b
+intelligible	.\source.glossary.tex	/^\\paragraph{intelligible}$/;"	P
+introname	.\EngReferat.intro.tex	/^\\chapter*{\\introname}$/;"	c
+introname	.\Referat.intro.tex	/^\\chapter*{\\introname}$/;"	c
+intuition	.\GlossaryKant.EN.in.tex	/^\\subsection{intuition} \\index{Kant!technical terms!intuition}$/;"	b
+intuition	.\GlossaryKant.EN.tex	/^\\subsection{intuition} $/;"	b
+intuition	.\source.glossary.tex	/^\\paragraph{intuition}$/;"	P
+invoices	.\invoices.mk	/^invoices: invoices_generate_pl$/;"	t
+invoices_generate_pl	.\invoices.mk	/^invoices_generate_pl: invoices.generate.pl$/;"	t
+isec_	.\postgre.body.tex	/^%%section isec_Несколько_команд_для_управления_PostgreSQL$/;"	x
+isec_	.\sql.matkovsky_perldbi.tex	/^%%section isec_Методы_DBI$/;"	x
+isec_02_02_2014	.\logwork.02_02_2014.tex	/^%%section isec_02_02_2014$/;"	x
+isec_05_03_2014	.\logwork.05_03_2014.tex	/^%%section isec_05_03_2014$/;"	x
+isec_06_Feb_2014	.\logwork.06_02_2014.tex	/^%%section isec_06_Feb_2014$/;"	x
+isec_06_Feb_2014	.\logwork.06_03_2014.tex	/^%%section isec_06_Feb_2014$/;"	x
+isec_24_03_2014	.\logwork.24_03_2014.tex	/^%%section isec_24_03_2014$/;"	x
+isec_26_03_14	.\logwork.26_03_2014.tex	/^%%section isec_26_03_14$/;"	x
+isec_27_03_14	.\logwork.27_03_2014.tex	/^%%section isec_27_03_14$/;"	x
+isec_28_01_2014	.\logwork.28_01_2014.tex	/^%%section isec_28_01_2014$/;"	x
+isec_30_01_2014	.\logwork.30_01_2014.tex	/^%%section isec_30_01_2014$/;"	x
+isec_31_01_2014	.\logwork.31_01_2014.tex	/^%%section isec_31_01_2014$/;"	x
+isec_Admin_Security_Checks	.\traveltek.best_practices_for_development.tex	/^%%section isec_Admin_Security_Checks$/;"	x
+isec_Basic_Work_Cycle	.\svnbook.ch_Basic_Usage.tex	/^%%section isec_Basic_Work_Cycle$/;"	x
+isec_Braces_and_Blocks	.\traveltek.best_practices_for_development.tex	/^%%section isec_Braces_and_Blocks$/;"	x
+isec_CGI_Cross	.\traveltek.best_practices_for_development.tex	/^%%section isec_CGI_Cross­site­scripting_attacks$/;"	x
+isec_CGI_parameters	.\traveltek.best_practices_for_development.tex	/^%%section isec_CGI_parameters$/;"	x
+isec_Completion_status	.\traveltek_op.odtdms.tex	/^%%section isec_Completion_status$/;"	x
+isec_Creating_a_Working_Copy	.\svnbook.ch_Basic_Usage.tex	/^%%section isec_Creating_a_Working_Copy$/;"	x
+isec_DESCRIPTION	.\doc_git.git_help_branch.tex	/^%%section isec_DESCRIPTION$/;"	x
+isec_DESCRIPTION	.\doc_git.git_help_glossary.tex	/^%%section isec_DESCRIPTION$/;"	x
+isec_Dealing_with_Structural_Conflicts	.\svnbook.isec_Dealing_with_Structural_Conflicts.tex	/^%%section isec_Dealing_with_Structural_Conflicts$/;"	x
+isec_Deprecated_and_invalid_syntax	.\traveltek.best_practices_for_development.tex	/^%%section isec_Deprecated_and_invalid_syntax$/;"	x
+isec_EXAMPLES	.\doc_git.git_help_branch.tex	/^%%section isec_EXAMPLES$/;"	x
+isec_Encoding_output_with_HTML	.\traveltek.best_practices_for_development.tex	/^%%section isec_Encoding_output_with_HTML::Entities$/;"	x
+isec_Examining_History	.\svnbook.isec_Examining_History.tex	/^%%section isec_Examining_History$/;"	x
+isec_Fri_Jan_24_2014	.\logwork.24_01_2014.tex	/^%%section isec_Fri_Jan_24_2014$/;"	x
+isec_Fusion_blocks_should_have_config_values	.\traveltek.best_practices_for_development.tex	/^%%section isec_Fusion_blocks_should_have_config_values$/;"	x
+isec_GIT	.\doc_git.git_help_glossary.tex	/^%%section isec_GIT$/;"	x
+isec_GIT_vs_SVN	.\doc_git.Zvonko_Biskup_GIT_vs_SVN.tex	/^%%section isec_GIT_vs_SVN$/;"	x
+isec_Getting_Data_into_Your_Repository	.\svnbook.ch_Basic_Usage.tex	/^%%section isec_Getting_Data_into_Your_Repository$/;"	x
+isec_Help	.\svnbook.ch_Basic_Usage.tex	/^%%section isec_Help!$/;"	x
+isec_Mon_Feb__3_2014	.\logwork.03_02_2014.tex	/^%%section isec_Mon_Feb__3_2014$/;"	x
+isec_NAME	.\doc_git.git_help_branch.tex	/^%%section isec_NAME$/;"	x
+isec_NAME	.\doc_git.git_help_glossary.tex	/^%%section isec_NAME$/;"	x
+isec_NOTES	.\doc_git.git_help_branch.tex	/^%%section isec_NOTES$/;"	x
+isec_NOTES	.\doc_git.git_help_glossary.tex	/^%%section isec_NOTES$/;"	x
+isec_Namespaces__Import_and_Objects	.\traveltek.best_practices_for_development.tex	/^%%section isec_Namespaces__Import_and_Objects$/;"	x
+isec_Naming_of_subs__variables__modules	.\traveltek.best_practices_for_development.tex	/^%%section isec_Naming_of_subs__variables__modules$/;"	x
+isec_OPTIONS	.\doc_git.git_help_branch.tex	/^%%section isec_OPTIONS$/;"	x
+isec_Perl_DBI	.\sql.matkovsky_perldbi.tex	/^%%section isec_Perl_DBI$/;"	x
+isec_Purpose	.\traveltek.tdms_v2.tex	/^%%section isec_Purpose$/;"	x
+isec_Regex_on_variables	.\traveltek.best_practices_for_development.tex	/^%%section isec_Regex_on_variables$/;"	x
+isec_SEE_ALSO	.\doc_git.git_help_branch.tex	/^%%section isec_SEE_ALSO$/;"	x
+isec_SEE_ALSO	.\doc_git.git_help_glossary.tex	/^%%section isec_SEE_ALSO$/;"	x
+isec_SYNOPSIS	.\doc_git.git_help_branch.tex	/^%%section isec_SYNOPSIS$/;"	x
+isec_Secure_Coding_Guidelines	.\traveltek.best_practices_for_development.tex	/^%%section isec_Secure_Coding_Guidelines$/;"	x
+isec_Solution	.\traveltek.tdms_v2.tex	/^%%section isec_Solution$/;"	x
+isec_Strictness__Scope__Warnings	.\traveltek.best_practices_for_development.tex	/^%%section isec_Strictness__Scope__Warnings$/;"	x
+isec_Summary	.\svnbook.ch_Fundamental_Concepts.tex	/^%%section isec_Summary$/;"	x
+isec_Transactions_and_other_error	.\traveltek.best_practices_for_development.tex	/^%%section isec_Transactions_and_other_error­checked_procedures$/;"	x
+isec_URLs_with_escaped_characters	.\traveltek.best_practices_for_development.tex	/^%%section isec_URLs_with_escaped_characters$/;"	x
+isec_UTF8_ness	.\traveltek.best_practices_for_development.tex	/^%%section isec_UTF8_ness$/;"	x
+isec_Version_Control_Basics	.\svnbook.ch_Fundamental_Concepts.tex	/^%%section isec_Version_Control_Basics$/;"	x
+isec_Version_Control_the_Subversion_Way	.\svnbook.ch_Fundamental_Concepts.tex	/^%%section isec_Version_Control_the_Subversion_Way$/;"	x
+isec_Wed_Feb_5_2014	.\logwork.05_02_2014.tex	/^%%section isec_Wed_Feb_5_2014$/;"	x
+isec_polozhennya	.\spd.polozhennya_pro_formu_ZEK.tex	/^%%section isec_polozhennya$/;"	x
+isubsec_1110_1410_28_01_2014	.\logwork.28_01_2014.tex	/^%%section isubsec_1110_1410_28_01_2014$/;"	x
+isubsec_11_14_27_01_2014	.\logwork.27_01_2014.tex	/^%%section isubsec_11_14_27_01_2014$/;"	x
+isubsec_14	.\logwork.26_01_2014.tex	/^%%section isubsec_14:00-17:00$/;"	x
+isubsec_2030_2330_28_01_2014	.\logwork.28_01_2014.tex	/^%%section isubsec_2030_2330_28_01_2014$/;"	x
+isubsec_6_3_2_Adding_User_Accounts	.\sql.6_3_2_Adding_User_Accounts.tex	/^%%section isubsec_6_3_2_Adding_User_Accounts$/;"	x
+isubsec_Browsing_the_Repository	.\svnbook.isec_Examining_History.tex	/^%%section isubsec_Browsing_the_Repository$/;"	x
+isubsec_Commands	.\vim_perl.coms.tex	/^%%section isubsec_Commands$/;"	x
+isubsec_Commit_Your_Changes	.\svnbook.ch_Basic_Usage.tex	/^%%section isubsec_Commit_Your_Changes$/;"	x
+isubsec_Delete_an_unneeded_branch	.\doc_git.git_help_branch.tex	/^%%section isubsec_Delete_an_unneeded_branch$/;"	x
+isubsec_Distributed_vs_Centralized	.\doc_git.Zvonko_Biskup_GIT_vs_SVN.tex	/^%%section isubsec_Distributed_vs_Centralized$/;"	x
+isubsec_Examine_the_details_of_your_local_modifications	.\svnbook.ch_Basic_Usage.tex	/^%%section isubsec_Examine_the_details_of_your_local_modifications$/;"	x
+isubsec_Examining_the_Details_of_Historical_Changes	.\svnbook.isec_Examining_History.tex	/^%%section isubsec_Examining_the_Details_of_Historical_Changes$/;"	x
+isubsec_Fetching_Older_Repository_Snapshots	.\svnbook.isec_Examining_History.tex	/^%%section isubsec_Fetching_Older_Repository_Snapshots$/;"	x
+isubsec_Fix_Your_Mistakes	.\svnbook.ch_Basic_Usage.tex	/^%%section isubsec_Fix_Your_Mistakes$/;"	x
+isubsec_Fundamental_working_copy_interactions	.\svnbook.ch_Fundamental_Concepts.tex	/^%%section isubsec_Fundamental_working_copy_interactions$/;"	x
+isubsec_GIT	.\doc_git.Zvonko_Biskup_GIT_vs_SVN.tex	/^%%section isubsec_GIT$/;"	x
+isubsec_GIT_over_SVN	.\doc_git.Zvonko_Biskup_GIT_vs_SVN.tex	/^%%section isubsec_GIT_over_SVN$/;"	x
+isubsec_Generating_a_List_of_Historical_Changes	.\svnbook.isec_Examining_History.tex	/^%%section isubsec_Generating_a_List_of_Historical_Changes$/;"	x
+isubsec_How_the_working_copy_works	.\svnbook.ch_Fundamental_Concepts.tex	/^%%section isubsec_How_the_working_copy_works$/;"	x
+isubsec_Importing_Files_and_Directories	.\svnbook.ch_Basic_Usage.tex	/^%%section isubsec_Importing_Files_and_Directories$/;"	x
+isubsec_Job	.\traveltek.tdms_v2.tex	/^%%section isubsec_Job$/;"	x
+isubsec_Make_Your_Changes	.\svnbook.ch_Basic_Usage.tex	/^%%section isubsec_Make_Your_Changes$/;"	x
+isubsec_Mixed	.\svnbook.ch_Fundamental_Concepts.tex	/^%%section isubsec_Mixed-revision_working_copies$/;"	x
+isubsec_Recommended_Repository_Layout	.\svnbook.ch_Basic_Usage.tex	/^%%section isubsec_Recommended_Repository_Layout$/;"	x
+isubsec_Resolve_Any_Conflicts	.\svnbook.ch_Basic_Usage.tex	/^%%section isubsec_Resolve_Any_Conflicts$/;"	x
+isubsec_Review_Your_Changes	.\svnbook.ch_Basic_Usage.tex	/^%%section isubsec_Review_Your_Changes$/;"	x
+isubsec_SVN	.\doc_git.Zvonko_Biskup_GIT_vs_SVN.tex	/^%%section isubsec_SVN$/;"	x
+isubsec_SVN_over_GIT	.\doc_git.Zvonko_Biskup_GIT_vs_SVN.tex	/^%%section isubsec_SVN_over_GIT$/;"	x
+isubsec_Start_development_from_a_known_tag	.\doc_git.git_help_branch.tex	/^%%section isubsec_Start_development_from_a_known_tag$/;"	x
+isubsec_Sun_Jan_26_16	.\logwork.26_01_2014.tex	/^%%section isubsec_Sun_Jan_26_16:59:20_EET_2014$/;"	x
+isubsec_Update_Your_Working_Copy	.\svnbook.ch_Basic_Usage.tex	/^%%section isubsec_Update_Your_Working_Copy$/;"	x
+isubsec_What	.\svnbook.ch_Basic_Usage.tex	/^%%section isubsec_What's_In_a_Name?$/;"	x
+isubsec_connect	.\sql.matkovsky_perldbi.tex	/^%%section isubsec_connect$/;"	x
+isubsec_disconnect	.\sql.matkovsky_perldbi.tex	/^%%section isubsec_disconnect$/;"	x
+isubsec_do	.\sql.matkovsky_perldbi.tex	/^%%section isubsec_do$/;"	x
+isubsec_execute	.\sql.matkovsky_perldbi.tex	/^%%section isubsec_execute$/;"	x
+isubsec_message_in_basecamp	.\logwork.05_02_2014.tex	/^%%section isubsec_message_in_basecamp$/;"	x
+isubsec_prepare	.\sql.matkovsky_perldbi.tex	/^%%section isubsec_prepare$/;"	x
+isubsec_ready	.\traveltek_op.odtdms.tex	/^%%section isubsec_ready::TDMS::Job$/;"	x
+isubsec_tdms_jobs	.\traveltek.tdms_v2_db_tdms_jobs.tex	/^%%section isubsec_tdms_jobs$/;"	x
+isubsec_tdms_jobs_actions	.\traveltek.tdms_v2_db_tdms_jobs_actions.tex	/^%%section isubsec_tdms_jobs_actions$/;"	x
+isubsubsec_Access_control	.\doc_git.Zvonko_Biskup_GIT_vs_SVN.tex	/^%%section isubsubsec_Access_control$/;"	x
+isubsubsec_Binary_files	.\doc_git.Zvonko_Biskup_GIT_vs_SVN.tex	/^%%section isubsubsec_Binary_files$/;"	x
+isubsubsec_Branch_handling	.\doc_git.Zvonko_Biskup_GIT_vs_SVN.tex	/^%%section isubsubsec_Branch_handling$/;"	x
+isubsubsec_Change_tracking	.\doc_git.Zvonko_Biskup_GIT_vs_SVN.tex	/^%%section isubsubsec_Change_tracking$/;"	x
+isubsubsec_Comparing_repository_revisions	.\svnbook.isec_Examining_History.tex	/^%%section isubsubsec_Comparing_repository_revisions$/;"	x
+isubsubsec_Comparing_working_copy_to_repository	.\svnbook.isec_Examining_History.tex	/^%%section isubsubsec_Comparing_working_copy_to_repository$/;"	x
+isubsubsec_Conclusion	.\doc_git.Zvonko_Biskup_GIT_vs_SVN.tex	/^%%section isubsubsec_Conclusion$/;"	x
+isubsubsec_DB_Scheme_for_job_table	.\traveltek.tdms_v2.tex	/^%%section isubsubsec_DB_Scheme_for_job_table$/;"	x
+isubsubsec_Detection_and_properties	.\doc_git.Zvonko_Biskup_GIT_vs_SVN.tex	/^%%section isubsubsec_Detection_and_properties$/;"	x
+isubsubsec_Discarding_your_changes_in_favor_of_a_newly_fetched_revision	.\svnbook.ch_Basic_Usage.tex	/^%%section isubsubsec_Discarding_your_changes_in_favor_of_a_newly_fetched_revision$/;"	x
+isubsubsec_Displaying_file_contents	.\svnbook.isec_Examining_History.tex	/^%%section isubsubsec_Displaying_file_contents$/;"	x
+isubsubsec_Displaying_line	.\svnbook.isec_Examining_History.tex	/^%%section isubsubsec_Displaying_line-by-line_change_attribution$/;"	x
+isubsubsec_Distributed_Nature	.\doc_git.Zvonko_Biskup_GIT_vs_SVN.tex	/^%%section isubsubsec_Distributed_Nature$/;"	x
+isubsubsec_Examining_local_changes	.\svnbook.isec_Examining_History.tex	/^%%section isubsubsec_Examining_local_changes$/;"	x
+isubsubsec_Job_life_cycle	.\traveltek.tdms_v2.tex	/^%%section isubsubsec_Job_life_cycle$/;"	x
+isubsubsec_Line_Ending_Conversion	.\doc_git.Zvonko_Biskup_GIT_vs_SVN.tex	/^%%section isubsubsec_Line_Ending_Conversion$/;"	x
+isubsubsec_Listing_versioned_directories	.\svnbook.isec_Examining_History.tex	/^%%section isubsubsec_Listing_versioned_directories$/;"	x
+isubsubsec_Merging_conflicts_by_hand	.\svnbook.ch_Basic_Usage.tex	/^%%section isubsubsec_Merging_conflicts_by_hand$/;"	x
+isubsubsec_Mixed_revisions_are_normal	.\svnbook.ch_Fundamental_Concepts.tex	/^%%section isubsubsec_Mixed_revisions_are_normal$/;"	x
+isubsubsec_Mixed_revisions_are_useful	.\svnbook.ch_Fundamental_Concepts.tex	/^%%section isubsubsec_Mixed_revisions_are_useful$/;"	x
+isubsubsec_Mixed_revisions_have_limitations	.\svnbook.ch_Fundamental_Concepts.tex	/^%%section isubsubsec_Mixed_revisions_have_limitations$/;"	x
+isubsubsec_Partial_Checkout	.\doc_git.Zvonko_Biskup_GIT_vs_SVN.tex	/^%%section isubsubsec_Partial_Checkout\/Bandwidth_Requirements$/;"	x
+isubsubsec_Performance_	.\doc_git.Zvonko_Biskup_GIT_vs_SVN.tex	/^%%section isubsubsec_Performance_(Speed_of_Operation)$/;"	x
+isubsubsec_Postponing_conflict_resolution	.\svnbook.ch_Basic_Usage.tex	/^%%section isubsubsec_Postponing_conflict_resolution$/;"	x
+isubsubsec_Punting	.\svnbook.ch_Basic_Usage.tex	/^%%section isubsubsec_Punting:_using_svn_revert$/;"	x
+isubsubsec_Resolving_conflict_differences_interactively	.\svnbook.ch_Basic_Usage.tex	/^%%section isubsubsec_Resolving_conflict_differences_interactively$/;"	x
+isubsubsec_See_an_overview_of_your_changes	.\svnbook.ch_Basic_Usage.tex	/^%%section isubsubsec_See_an_overview_of_your_changes$/;"	x
+isubsubsec_Shorter_and_Predictable_Revision_Numbers	.\doc_git.Zvonko_Biskup_GIT_vs_SVN.tex	/^%%section isubsubsec_Shorter_and_Predictable_Revision_Numbers$/;"	x
+isubsubsec_Single_repository	.\doc_git.Zvonko_Biskup_GIT_vs_SVN.tex	/^%%section isubsubsec_Single_repository$/;"	x
+isubsubsec_Skype_history	.\logwork.27_01_2014.tex	/^%%section isubsubsec_Skype_history$/;"	x
+isubsubsec_Smaller_Space_Requirements	.\doc_git.Zvonko_Biskup_GIT_vs_SVN.tex	/^%%section isubsubsec_Smaller_Space_Requirements$/;"	x
+isubsubsec_Updates_and_commits_are_separate	.\svnbook.ch_Fundamental_Concepts.tex	/^%%section isubsubsec_Updates_and_commits_are_separate$/;"	x
+isubsubsec_Viewing_conflict_differences_interactively	.\svnbook.ch_Basic_Usage.tex	/^%%section isubsubsec_Viewing_conflict_differences_interactively$/;"	x
+judgements_prof_clarke	.\oia_OP_further_remarks.AcademicAssessment.tex	/^%%figure judgements_prof_clarke$/;"	y
+judgements_prof_sprik	.\oia_OP_further_remarks.AcademicAssessment.tex	/^%%figure judgements_prof_sprik$/;"	y
+judgment	.\GlossaryKant.EN.in.tex	/^\\subsection{judgment} \\index{Kant!technical terms!judgment}$/;"	b
+judgment	.\GlossaryKant.EN.tex	/^\\subsection{judgment} $/;"	b
+judgment	.\source.glossary.tex	/^\\paragraph{judgment}$/;"	P
+judicial	.\GlossaryKant.EN.in.tex	/^\\subsection{judicial} \\index{Kant!technical terms!judicial}$/;"	b
+judicial	.\GlossaryKant.EN.tex	/^\\subsection{judicial} $/;"	b
+judicial	.\source.glossary.tex	/^\\paragraph{judicial}$/;"	P
+knowledge	.\GlossaryKant.UKR.in.tex	/^\\subsection{knowledge} \\index{Kant!technical terms!knowledge}$/;"	b
+knowledge	.\GlossaryKant.UKR.tex	/^\\subsection{knowledge} $/;"	b
+ldots	.\source.KantCritiquePureReason.RU.tex	/^\\paragraph{Все математические суждения\\ldots}$/;"	P
+ldots	.\source.KantCritiquePureReason.RU.tex	/^\\paragraph{Метафизика\\ldots}$/;"	P
+logical	.\GlossaryKant.UKR.in.tex	/^\\subsection{logical} \\index{Kant!technical terms!logical}$/;"	b
+logical	.\GlossaryKant.UKR.tex	/^\\subsection{logical} $/;"	b
+main	.\PoplavskyyGM09.convbib.pl	/^###main$/;"	a
+main	.\PoplavskyyGM09.convbib.pl	/^sub main {$/;"	s
+main	.\invoices.generate.pl	/^sub main {$/;"	s
+main	.\invoices.postprocess.pl	/^package main;$/;"	p
+main	.\texbook.split.pl	/^sub main {$/;"	s
+material	.\GlossaryKant.EN.in.tex	/^\\subsection{material} \\index{Kant!technical terms!material}$/;"	b
+material	.\GlossaryKant.EN.tex	/^\\subsection{material} $/;"	b
+material	.\source.glossary.tex	/^\\paragraph{material}$/;"	P
+maxim	.\GlossaryKant.EN.in.tex	/^\\subsection{maxim} \\index{Kant!technical terms!maxim}$/;"	b
+maxim	.\GlossaryKant.EN.tex	/^\\subsection{maxim} $/;"	b
+maxim	.\source.glossary.tex	/^\\paragraph{maxim}$/;"	P
+me	.\contract_traveltek.fancyhdr.tex	/^%%%me$/;"	b
+metaphysics	.\GlossaryKant.EN.in.tex	/^\\subsection{metaphysics} \\index{Kant!technical terms!metaphysics}$/;"	b
+metaphysics	.\GlossaryKant.EN.tex	/^\\subsection{metaphysics} $/;"	b
+metaphysics	.\source.glossary.tex	/^\\paragraph{metaphysics}$/;"	P
+moral law	.\GlossaryKant.EN.in.tex	/^\\subsection{moral law} \\index{Kant!technical terms!moral law}$/;"	b
+moral law	.\GlossaryKant.EN.tex	/^\\subsection{moral law} $/;"	b
+moral law	.\source.glossary.tex	/^\\paragraph{moral law}$/;"	P
+mysql	.\errors.body.tex	/^\\section{mysql}$/;"	s
+mysql help	.\ref\mysql\usage.tex	/^\\section{mysql --help}$/;"	s
+noumenon	.\GlossaryKant.EN.in.tex	/^\\subsection{noumenon} \\index{Kant!technical terms!noumenon}$/;"	b
+noumenon	.\GlossaryKant.EN.tex	/^\\subsection{noumenon} $/;"	b
+noumenon	.\source.glossary.tex	/^\\paragraph{noumenon}$/;"	P
+object	.\GlossaryKant.EN.in.tex	/^\\subsection{object} \\index{Kant!technical terms!object}$/;"	b
+object	.\GlossaryKant.EN.tex	/^\\subsection{object} $/;"	b
+object	.\source.glossary.tex	/^\\paragraph{object}$/;"	P
+objective	.\GlossaryKant.UKR.in.tex	/^\\subsection{objective} \\index{Kant!technical terms!objective}$/;"	b
+objective	.\GlossaryKant.UKR.tex	/^\\subsection{objective} $/;"	b
+oia	.\PROJS.i.dat	/^###oia$/;"	a
+older_appeals	.\PROJS.i.dat	/^###older_appeals$/;"	a
+other	.\PROJS.i.dat	/^###other$/;"	a
+our	.\invoices.generate.pl	/^###our$/;"	a
+our	.\texbook.split.pl	/^###our$/;"	a
+papers	.\PROJS.i.dat	/^###papers$/;"	a
+perspective	.\GlossaryKant.UKR.in.tex	/^\\subsection{perspective} \\index{Kant!technical terms!perspective}$/;"	b
+perspective	.\GlossaryKant.UKR.tex	/^\\subsection{perspective} $/;"	b
+phd	.\PROJS.i.dat	/^###phd$/;"	a
+phenomenon	.\GlossaryKant.UKR.in.tex	/^\\subsection{phenomenon} \\index{Kant!technical terms!phenomenon}$/;"	b
+phenomenon	.\GlossaryKant.UKR.tex	/^\\subsection{phenomenon} $/;"	b
+philosophy	.\PROJS.i.dat	/^###philosophy$/;"	a
+postprocess	.\invoices.postprocess.pl	/^sub postprocess {$/;"	s
+practical	.\GlossaryKant.UKR.in.tex	/^\\subsection{practical} \\index{Kant!technical terms!practical}$/;"	b
+practical	.\GlossaryKant.UKR.tex	/^\\subsection{practical} $/;"	b
+predisposition	.\GlossaryKant.EN.in.tex	/^\\subsection{predisposition} \\index{Kant!technical terms!predisposition}$/;"	b
+predisposition	.\GlossaryKant.EN.tex	/^\\subsection{predisposition} $/;"	b
+predisposition	.\source.glossary.tex	/^\\paragraph{predisposition}$/;"	P
+print_end	.\www\cgi-bin\frameset.pl	/^sub print_end {$/;"	s
+print_frameset	.\www\cgi-bin\frameset.pl	/^sub print_frameset {$/;"	s
+print_html_header	.\www\cgi-bin\frameset.pl	/^sub print_html_header {$/;"	s
+print_query	.\www\cgi-bin\frameset.pl	/^sub print_query {$/;"	s
+print_response	.\www\cgi-bin\frameset.pl	/^sub print_response {$/;"	s
+protect cs afterassignment	.\tbt.expansion.tex	/^\\subsection{\\protect\\cs{afterassignment}}$/;"	b
+protect cs aftergroup	.\tbt.expansion.tex	/^\\subsection{\\protect\\cs{aftergroup}}$/;"	b
+protect cs futurelet	.\tbt.macros.tex	/^\\subsection{\\protect\\cs{futurelet}}$/;"	b
+protect cs ifx	.\tbt.conditionals.tex	/^\\subsection{\\protect\\cs{ifx}}$/;"	b
+protect cs let	.\tbt.macros.tex	/^\\subsection{\\protect\\cs{let}}$/;"	b
+protect cs noexpand	.\tbt.expansion.tex	/^\\subsection{\\protect\\cs{noexpand}}$/;"	b
+protect cs topskip	.\tbt.page_shape.tex	/^\\section{\\protect\\cs{topskip}}$/;"	s
+pure	.\GlossaryKant.EN.in.tex	/^\\subsection{pure} \\index{Kant!technical terms!pure}$/;"	b
+pure	.\GlossaryKant.EN.tex	/^\\subsection{pure} $/;"	b
+pure	.\source.glossary.tex	/^\\paragraph{pure}$/;"	P
+rational	.\GlossaryKant.EN.in.tex	/^\\subsection{rational} \\index{Kant!technical terms!rational}$/;"	b
+rational	.\GlossaryKant.EN.tex	/^\\subsection{rational} $/;"	b
+rational	.\source.glossary.tex	/^\\paragraph{rational}$/;"	P
+read_CHAPTERS	.\texbook.split.pl	/^sub read_CHAPTERS {$/;"	s
+read_use_dat	.\texbook.split.pl	/^sub read_use_dat {$/;"	s
+reality	.\GlossaryKant.EN.in.tex	/^\\subsection{reality} \\index{Kant!technical terms!reality}$/;"	b
+reality	.\GlossaryKant.EN.tex	/^\\subsection{reality} $/;"	b
+reality	.\source.glossary.tex	/^\\paragraph{reality}$/;"	P
+reason	.\GlossaryKant.EN.in.tex	/^\\subsection{reason} \\index{Kant!technical terms!reason}$/;"	b
+reason	.\GlossaryKant.EN.tex	/^\\subsection{reason} $/;"	b
+reason	.\source.glossary.tex	/^\\paragraph{reason}$/;"	P
+regulative	.\GlossaryKant.UKR.in.tex	/^\\subsection{regulative} \\index{Kant!technical terms!regulative}$/;"	b
+regulative	.\GlossaryKant.UKR.tex	/^\\subsection{regulative} $/;"	b
+religion	.\GlossaryKant.UKR.in.tex	/^\\subsection{religion} \\index{Kant!technical terms!religion}$/;"	b
+religion	.\GlossaryKant.UKR.tex	/^\\subsection{religion} $/;"	b
+sSMTP	.\ref\mutt\otsylka_pochty_cherez_ssmtp.tex	/^\\section{Отсылка почты через sSMTP}$/;"	s
+s_1_introduction	.\paps_phd.Chernyshuk11.tex	/^%%section s_1_introduction$/;"	x
+s_2_the_exact_approach	.\paps_phd.Chernyshuk11.tex	/^%%section s_2_the_exact_approach$/;"	x
+s_3_general_greens_function	.\paps_phd.Chernyshuk11.tex	/^%%section s_3_general_greens_function$/;"	x
+s_4A	.\paps_phd.Chernyshuk11.tex	/^%%section s_4A$/;"	x
+s_4_interaction_with_wall	.\paps_phd.Chernyshuk11.tex	/^%%section s_4_interaction_with_wall$/;"	x
+s_Chernyshuk10	.\paps_phd.Chernyshuk10.tex	/^%%section s_Chernyshuk10$/;"	x
+s_Chernyshuk11	.\paps_phd.Chernyshuk11.tex	/^%%section s_Chernyshuk11$/;"	x
+s_abstract	.\paps_phd.Chernyshuk11.tex	/^%%section s_abstract$/;"	x
+schematism	.\GlossaryKant.UKR.in.tex	/^\\subsection{schematism} \\index{Kant!technical terms!schematism}$/;"	b
+schematism	.\GlossaryKant.UKR.tex	/^\\subsection{schematism} $/;"	b
+sendmail Introduction and Configuration	.\ref\sendmail\sendmail_introduction_and_configuration.tex	/^\\section{sendmail: Introduction and Configuration}$/;"	s
+sensibility	.\GlossaryKant.UKR.in.tex	/^\\subsection{sensibility} \\index{Kant!technical terms!sensibility}$/;"	b
+sensibility	.\GlossaryKant.UKR.tex	/^\\subsection{sensibility} $/;"	b
+sensible	.\GlossaryKant.UKR.in.tex	/^\\subsection{sensible} \\index{Kant!technical terms!sensible}$/;"	b
+sensible	.\GlossaryKant.UKR.tex	/^\\subsection{sensible} $/;"	b
+showHide	.\paps_phd.html	/^ function showHide(ev) ev=ev || window.event var elem=(ev.target || ev.srcElement).getElementsByTagName("UL")[0]$/;"	f
+space and time	.\GlossaryKant.UKR.in.tex	/^\\subsection{space and time} \\index{Kant!technical terms!space and time}$/;"	b
+space and time	.\GlossaryKant.UKR.tex	/^\\subsection{space and time} $/;"	b
+speculative	.\GlossaryKant.UKR.in.tex	/^\\subsection{speculative} \\index{Kant!technical terms!speculative}$/;"	b
+speculative	.\GlossaryKant.UKR.tex	/^\\subsection{speculative} $/;"	b
+standpoint	.\GlossaryKant.UKR.in.tex	/^\\subsection{standpoint} \\index{Kant!technical terms!standpoint}$/;"	b
+standpoint	.\GlossaryKant.UKR.tex	/^\\subsection{standpoint} $/;"	b
+startsection paragraph	.\Akv.preamble.tex	/^\\renewcommand\\paragraph{%$/;"	P
+startsection paragraph	.\AristotelMetaphys.preamble.tex	/^\\renewcommand\\paragraph{%$/;"	P
+startsection paragraph	.\BKM.preamble.tex	/^   \\renewcommand\\paragraph{%$/;"	P
+startsection paragraph	.\Dict.preamble.tex	/^\\renewcommand\\paragraph{%$/;"	P
+startsection paragraph	.\EngReferat.preamble.tex	/^\\renewcommand\\paragraph{%$/;"	P
+startsection paragraph	.\KantCPR.preamble.tex	/^\\renewcommand\\paragraph{%$/;"	P
+startsection paragraph	.\Kun.preamble.tex	/^\\renewcommand\\paragraph{%$/;"	P
+startsection paragraph	.\Lett.tex	/^\\renewcommand\\paragraph{%$/;"	P
+startsection paragraph	.\Marx.preamble.tex	/^\\renewcommand\\paragraph{%$/;"	P
+startsection paragraph	.\Metcalf_Fortran90_Explained.makeatletter.tex	/^\\renewcommand\\paragraph{%$/;"	P
+startsection paragraph	.\Meth.preamble.tex	/^\\renewcommand\\paragraph{%$/;"	P
+startsection paragraph	.\ProjIndex.makeatletter.tex	/^\\renewcommand\\paragraph{%$/;"	P
+startsection paragraph	.\Referat.preamble.tex	/^\\renewcommand\\paragraph{%$/;"	P
+startsection paragraph	.\Russel.preamble.tex	/^\\renewcommand\\paragraph{%$/;"	P
+startsection paragraph	.\RussoINEQ.preamble.tex	/^\\renewcommand\\paragraph{%$/;"	P
+startsection paragraph	.\RussoSOC.preamble.tex	/^\\renewcommand\\paragraph{%$/;"	P
+startsection paragraph	.\Sem2.preamble.tex	/^\\renewcommand\\paragraph{%$/;"	P
+startsection paragraph	.\TEXREF.preamble.tex	/^\\renewcommand\\paragraph{%$/;"	P
+startsection paragraph	.\acw.makeatletter.tex	/^\\renewcommand\\paragraph{%$/;"	P
+startsection paragraph	.\ap2.preamble.tex	/^\\renewcommand\\paragraph{%$/;"	P
+startsection paragraph	.\ap3.preamble.tex	/^\\renewcommand\\paragraph{%$/;"	P
+startsection paragraph	.\ap3.s.preamble.tex	/^\\renewcommand\\paragraph{%$/;"	P
+startsection paragraph	.\apsc.makeatletter.tex	/^\\renewcommand\\paragraph{%$/;"	P
+startsection paragraph	.\contract_traveltek.makeatletter.tex	/^\\renewcommand\\paragraph{%$/;"	P
+startsection paragraph	.\doc_git.makeatletter.tex	/^\\renewcommand\\paragraph{%$/;"	P
+startsection paragraph	.\docs_op.makeatletter.tex	/^\\renewcommand\\paragraph{%$/;"	P
+startsection paragraph	.\errors.makeatletter.tex	/^\\renewcommand\\paragraph{%$/;"	P
+startsection paragraph	.\gitscm.makeatletter.tex	/^\\renewcommand\\paragraph{%$/;"	P
+startsection paragraph	.\invoices.makeatletter.tex	/^\\renewcommand\\paragraph{%$/;"	P
+startsection paragraph	.\invoices.preamble.tex	/^\\renewcommand\\paragraph{%$/;"	P
+startsection paragraph	.\letter_to_martha_choe.makeatletter.tex	/^\\renewcommand\\paragraph{%$/;"	P
+startsection paragraph	.\letter_to_martin_rees.makeatletter.tex	/^\\renewcommand\\paragraph{%$/;"	P
+startsection paragraph	.\letter_to_vice_chancellor.makeatletter.tex	/^\\renewcommand\\paragraph{%$/;"	P
+startsection paragraph	.\letters.makeatletter.tex	/^\\renewcommand\\paragraph{%$/;"	P
+startsection paragraph	.\logwork.makeatletter.tex	/^\\renewcommand\\paragraph{%$/;"	P
+startsection paragraph	.\logwork_traveltek.makeatletter.tex	/^\\renewcommand\\paragraph{%$/;"	P
+startsection paragraph	.\modperl.makeatletter.tex	/^\\renewcommand\\paragraph{%$/;"	P
+startsection paragraph	.\motiv.tex	/^\\renewcommand\\paragraph{%$/;"	P
+startsection paragraph	.\motiv_dixi_school.makeatletter.tex	/^\\renewcommand\\paragraph{%$/;"	P
+startsection paragraph	.\oia_BriefSummary.makeatletter.tex	/^\\renewcommand\\paragraph{%$/;"	P
+startsection paragraph	.\oia_FinalDecision.makeatletter.tex	/^\\renewcommand\\paragraph{%$/;"	P
+startsection paragraph	.\oia_OP_confirmation_letter.preamble.tex	/^\\renewcommand\\paragraph{%$/;"	P
+startsection paragraph	.\oia_reply.makeatletter.tex	/^\\renewcommand\\paragraph{%$/;"	P
+startsection paragraph	.\orthodoxy.makeatletter.tex	/^\\renewcommand\\paragraph{%$/;"	P
+startsection paragraph	.\paps_phd.makeatletter.tex	/^\\renewcommand\\paragraph{%$/;"	P
+startsection paragraph	.\perl_articles.makeatletter.tex	/^\\renewcommand\\paragraph{%$/;"	P
+startsection paragraph	.\perldoc.makeatletter.tex	/^\\renewcommand\\paragraph{%$/;"	P
+startsection paragraph	.\phd_bitp.makeatletter.tex	/^\\renewcommand\\paragraph{%$/;"	P
+startsection paragraph	.\postgre.makeatletter.tex	/^\\renewcommand\\paragraph{%$/;"	P
+startsection paragraph	.\preamble.tex	/^\\renewcommand\\paragraph{%$/;"	P
+startsection paragraph	.\programmingperl.makeatletter.tex	/^\\renewcommand\\paragraph{%$/;"	P
+startsection paragraph	.\reply_oia_complaint_outcome.makeatletter.tex	/^\\renewcommand\\paragraph{%$/;"	P
+startsection paragraph	.\rozik.preamble.tex	/^\\renewcommand\\paragraph{%$/;"	P
+startsection paragraph	.\rr.makeatletter.tex	/^\\renewcommand\\paragraph{%$/;"	P
+startsection paragraph	.\sciua\makeatletter.tex	/^\\renewcommand\\paragraph{%$/;"	P
+startsection paragraph	.\source.preamble.tex	/^\\renewcommand\\paragraph{%$/;"	P
+startsection paragraph	.\spd.makeatletter.tex	/^\\renewcommand\\paragraph{%$/;"	P
+startsection paragraph	.\sql.makeatletter.tex	/^\\renewcommand\\paragraph{%$/;"	P
+startsection paragraph	.\svnbook.makeatletter.tex	/^\\renewcommand\\paragraph{%$/;"	P
+startsection paragraph	.\template_letter.makeatletter.tex	/^\\renewcommand\\paragraph{%$/;"	P
+startsection paragraph	.\test_tex4ht.makeatletter.tex	/^\\renewcommand\\paragraph{%$/;"	P
+startsection paragraph	.\tex4ht.makeatletter.tex	/^\\renewcommand\\paragraph{%$/;"	P
+startsection paragraph	.\tex_fonts.makeatletter.tex	/^\\renewcommand\\paragraph{%$/;"	P
+startsection paragraph	.\trans.makeatletter.tex	/^\\renewcommand\\paragraph{%$/;"	P
+startsection paragraph	.\traveltek.makeatletter.tex	/^\\renewcommand\\paragraph{%$/;"	P
+startsection paragraph	.\traveltek_op.makeatletter.tex	/^\\renewcommand\\paragraph{%$/;"	P
+startsection paragraph	.\ukr_moneyorder.makeatletter.tex	/^\\renewcommand\\paragraph{%$/;"	P
+startsection paragraph	.\ukraine.makeatletter.tex	/^\\renewcommand\\paragraph{%$/;"	P
+startsection paragraph	.\vafan.preamble.tex	/^\\renewcommand\\paragraph{%$/;"	P
+startsection paragraph	.\vera.makeatletter.tex	/^\\renewcommand\\paragraph{%$/;"	P
+startsection paragraph	.\vim.makeatletter.tex	/^\\renewcommand\\paragraph{%$/;"	P
+startsection paragraph	.\vim_perl.makeatletter.tex	/^\\renewcommand\\paragraph{%$/;"	P
+startsection paragraph	.\vimtips.makeatletter.tex	/^\\renewcommand\\paragraph{%$/;"	P
+student_complaints	.\PROJS.i.dat	/^###student_complaints$/;"	a
+subject	.\GlossaryKant.UKR.in.tex	/^\\subsection{subject} \\index{Kant!technical terms!subject}$/;"	b
+subject	.\GlossaryKant.UKR.tex	/^\\subsection{subject} $/;"	b
+subjective	.\GlossaryKant.UKR.in.tex	/^\\subsection{subjective} \\index{Kant!technical terms!subjective}$/;"	b
+subjective	.\GlossaryKant.UKR.tex	/^\\subsection{subjective} $/;"	b
+subs	.\invoices.generate.pl	/^###subs$/;"	a
+summum bonum	.\GlossaryKant.UKR.in.tex	/^\\subsection{summum bonum} \\index{Kant!technical terms!summum bonum}$/;"	b
+summum bonum	.\GlossaryKant.UKR.tex	/^\\subsection{summum bonum} $/;"	b
+supersensible	.\GlossaryKant.EN.in.tex	/^\\subsection{supersensible} \\index{Kant!technical terms!supersensible}$/;"	b
+supersensible	.\GlossaryKant.EN.tex	/^\\subsection{supersensible} $/;"	b
+supersensible	.\source.glossary.tex	/^\\paragraph{supersensible}$/;"	P
+synthesis	.\GlossaryKant.EN.in.tex	/^\\subsection{synthesis} \\index{Kant!technical terms!synthesis}$/;"	b
+synthesis	.\GlossaryKant.EN.tex	/^\\subsection{synthesis} $/;"	b
+synthesis	.\source.glossary.tex	/^\\paragraph{synthesis}$/;"	P
+synthetic	.\GlossaryKant.UKR.in.tex	/^\\subsection{synthetic} \\index{Kant!technical terms!synthetic}$/;"	b
+synthetic	.\GlossaryKant.UKR.tex	/^\\subsection{synthetic} $/;"	b
+system	.\GlossaryKant.UKR.in.tex	/^\\subsection{system} \\index{Kant!technical terms!system}$/;"	b
+system	.\GlossaryKant.UKR.tex	/^\\subsection{system} $/;"	b
+teleological	.\GlossaryKant.EN.in.tex	/^\\subsection{teleological} \\index{Kant!technical terms!teleological}$/;"	b
+teleological	.\GlossaryKant.EN.tex	/^\\subsection{teleological} $/;"	b
+teleological	.\source.glossary.tex	/^\\paragraph{teleological}$/;"	P
+tex	.\PROJS.i.dat	/^###tex$/;"	a
+tex stackexchange com	.\TEXREF.SE.tex	/^\\chapter{tex.stackexchange.com}$/;"	c
+tex stackexchange com	.\TEXREF.texSE.tex	/^\\chapter{tex.stackexchange.com}$/;"	c
+texbook	.\texbook.mk	/^texbook:$/;"	t
+textasciitilde	.\LVSHW.42.tex	/^\\subsection{\\textasciitilde{}\/.vim\/after\/}$/;"	b
+textasciitilde	.\LVSHW.42.tex	/^\\subsection{\\textasciitilde{}\/.vim\/compiler\/}$/;"	b
+textasciitilde	.\LVSHW.42.tex	/^\\subsection{\\textasciitilde{}\/.vim\/ftdetect\/}$/;"	b
+textasciitilde	.\LVSHW.42.tex	/^\\subsection{\\textasciitilde{}\/.vim\/ftplugin\/}$/;"	b
+textasciitilde	.\LVSHW.42.tex	/^\\subsection{\\textasciitilde{}\/.vim\/plugin\/}$/;"	b
+texttt ActiveKids	.\perldoc.DBI.tex	/^\\subsubsection*{\\texttt{ActiveKids}\\label{ActiveKids}\\index{ActiveKids}}$/;"	b
+texttt AutoCommit	.\perldoc.DBI.tex	/^\\subsubsection*{\\texttt{AutoCommit}\\label{AutoCommit}\\index{AutoCommit}}$/;"	b
+texttt AutoInactiveDestroy	.\perldoc.DBI.tex	/^\\subsubsection*{\\texttt{AutoInactiveDestroy}\\label{AutoInactiveDestroy}\\index{AutoInactiveDestroy}}$/;"	b
+texttt CachedKids	.\perldoc.DBI.tex	/^\\subsubsection*{\\texttt{CachedKids}\\label{CachedKids}\\index{CachedKids}}$/;"	b
+texttt Callbacks	.\perldoc.DBI.tex	/^\\subsubsection*{\\texttt{Callbacks}\\label{Callbacks}\\index{Callbacks}}$/;"	b
+texttt ChildHandles	.\perldoc.DBI.tex	/^\\subsubsection*{\\texttt{ChildHandles}\\label{ChildHandles}\\index{ChildHandles}}$/;"	b
+texttt CompatMode	.\perldoc.DBI.tex	/^\\subsubsection*{\\texttt{CompatMode}\\label{CompatMode}\\index{CompatMode}}$/;"	b
+texttt CursorName	.\perldoc.DBI.tex	/^\\subsubsection*{\\texttt{CursorName}\\label{CursorName}\\index{CursorName}}$/;"	b
+texttt Database	.\perldoc.DBI.tex	/^\\subsubsection*{\\texttt{Database}\\label{Database}\\index{Database}}$/;"	b
+texttt Driver	.\perldoc.DBI.tex	/^\\subsubsection*{\\texttt{Driver}\\label{Driver}\\index{Driver}}$/;"	b
+texttt ErrCount	.\perldoc.DBI.tex	/^\\subsubsection*{\\texttt{ErrCount}\\label{ErrCount}\\index{ErrCount}}$/;"	b
+texttt HandleError	.\perldoc.DBI.tex	/^\\subsubsection*{\\texttt{HandleError}\\label{HandleError}\\index{HandleError}}$/;"	b
+texttt InactiveDestroy	.\perldoc.DBI.tex	/^\\subsubsection*{\\texttt{InactiveDestroy}\\label{InactiveDestroy}\\index{InactiveDestroy}}$/;"	b
+texttt Kids	.\perldoc.DBI.tex	/^\\subsubsection*{\\texttt{Kids}\\label{Kids}\\index{Kids}}$/;"	b
+texttt LongTruncOk	.\perldoc.DBI.tex	/^\\subsubsection*{\\texttt{LongTruncOk}\\label{LongTruncOk}\\index{LongTruncOk}}$/;"	b
+texttt NAME	.\perldoc.DBI.tex	/^\\subsubsection*{\\texttt{NAME}\\label{NAME}\\index{NAME}}$/;"	b
+texttt NAME _hash	.\perldoc.DBI.tex	/^\\subsubsection*{\\texttt{NAME\\_hash}\\label{NAME_hash}\\index{NAME\\ hash}}$/;"	b
+texttt NAME _lc	.\perldoc.DBI.tex	/^\\subsubsection*{\\texttt{NAME\\_lc}\\label{NAME_lc}\\index{NAME\\ lc}}$/;"	b
+texttt NAME _lc _hash	.\perldoc.DBI.tex	/^\\subsubsection*{\\texttt{NAME\\_lc\\_hash}\\label{NAME_lc_hash}\\index{NAME\\ lc\\ hash}}$/;"	b
+texttt NAME _uc	.\perldoc.DBI.tex	/^\\subsubsection*{\\texttt{NAME\\_uc}\\label{NAME_uc}\\index{NAME\\ uc}}$/;"	b
+texttt NAME _uc _hash	.\perldoc.DBI.tex	/^\\subsubsection*{\\texttt{NAME\\_uc\\_hash}\\label{NAME_uc_hash}\\index{NAME\\ uc\\ hash}}$/;"	b
+texttt NULLABLE	.\perldoc.DBI.tex	/^\\subsubsection*{\\texttt{NULLABLE}\\label{NULLABLE}\\index{NULLABLE}}$/;"	b
+texttt NUM _OF _PARAMS	.\perldoc.DBI.tex	/^\\subsubsection*{\\texttt{NUM\\_OF\\_PARAMS}\\label{NUM_OF_PARAMS}\\index{NUM\\ OF\\ PARAMS}}$/;"	b
+texttt Name	.\perldoc.DBI.tex	/^\\subsubsection*{\\texttt{Name}\\label{Name}\\index{Name}}$/;"	b
+texttt PRECISION	.\perldoc.DBI.tex	/^\\subsubsection*{\\texttt{PRECISION}\\label{PRECISION}\\index{PRECISION}}$/;"	b
+texttt ParamArrays	.\perldoc.DBI.tex	/^\\subsubsection*{\\texttt{ParamArrays}\\label{ParamArrays}\\index{ParamArrays}}$/;"	b
+texttt ParamValues	.\perldoc.DBI.tex	/^\\subsubsection*{\\texttt{ParamValues}\\label{ParamValues}\\index{ParamValues}}$/;"	b
+texttt RowCacheSize	.\perldoc.DBI.tex	/^\\subsubsection*{\\texttt{RowCacheSize}\\label{RowCacheSize}\\index{RowCacheSize}}$/;"	b
+texttt RowsInCache	.\perldoc.DBI.tex	/^\\subsubsection*{\\texttt{RowsInCache}\\label{RowsInCache}\\index{RowsInCache}}$/;"	b
+texttt SCALE	.\perldoc.DBI.tex	/^\\subsubsection*{\\texttt{SCALE}\\label{SCALE}\\index{SCALE}}$/;"	b
+texttt Statement	.\perldoc.DBI.tex	/^\\subsubsection*{\\texttt{Statement}\\label{Statement}\\index{Statement}}$/;"	b
+texttt TYPE	.\perldoc.DBI.tex	/^\\subsubsection*{\\texttt{TYPE}\\label{TYPE}\\index{TYPE}}$/;"	b
+texttt Type	.\perldoc.DBI.tex	/^\\subsubsection*{\\texttt{Type}\\label{Type}\\index{Type}}$/;"	b
+texttt Username	.\perldoc.DBI.tex	/^\\subsubsection*{\\texttt{Username}\\label{Username}\\index{Username}}$/;"	b
+texttt bind _columns	.\perldoc.DBI.tex	/^\\subsubsection*{\\texttt{bind\\_columns}\\label{bind_columns}\\index{bind\\ columns}}$/;"	b
+texttt bind _param	.\perldoc.DBI.tex	/^\\subsubsection*{\\texttt{bind\\_param}\\label{bind_param}\\index{bind\\ param}}$/;"	b
+texttt clone	.\perldoc.DBI.tex	/^\\subsubsection*{\\texttt{clone}\\label{clone}\\index{clone}}$/;"	b
+texttt connect _cached	.\perldoc.DBI.tex	/^\\subsubsection*{\\texttt{connect\\_cached}\\label{connect_cached}\\index{connect\\ cached}}$/;"	b
+texttt data _sources	.\perldoc.DBI.tex	/^\\subsubsection*{\\texttt{data\\_sources}\\label{data_sources}\\index{data\\ sources}}$/;"	b
+texttt data _string _desc	.\perldoc.DBI.tex	/^\\subsubsection*{\\texttt{data\\_string\\_desc}\\label{data_string_desc}\\index{data\\ string\\ desc}}$/;"	b
+texttt execute _array	.\perldoc.DBI.tex	/^\\subsubsection*{\\texttt{execute\\_array}\\label{execute_array}\\index{execute\\ array}}$/;"	b
+texttt fetchall _hashref	.\perldoc.DBI.tex	/^\\subsubsection*{\\texttt{fetchall\\_hashref}\\label{fetchall_hashref}\\index{fetchall\\ hashref}}$/;"	b
+texttt fetchrow _arrayref	.\perldoc.DBI.tex	/^\\subsubsection*{\\texttt{fetchrow\\_arrayref}\\label{fetchrow_arrayref}\\index{fetchrow\\ arrayref}}$/;"	b
+texttt foreign _key _info	.\perldoc.DBI.tex	/^\\subsubsection*{\\texttt{foreign\\_key\\_info}\\label{foreign_key_info}\\index{foreign\\ key\\ info}}$/;"	b
+texttt func	.\perldoc.DBI.tex	/^\\subsubsection*{\\texttt{func}\\label{func}\\index{func}}$/;"	b
+texttt get _info	.\perldoc.DBI.tex	/^\\subsubsection*{\\texttt{get\\_info}\\label{get_info}\\index{get\\ info}}$/;"	b
+texttt last _insert _id	.\perldoc.DBI.tex	/^\\subsubsection*{\\texttt{last\\_insert\\_id}\\label{last_insert_id}\\index{last\\ insert\\ id}}$/;"	b
+texttt parse _dsn	.\perldoc.DBI.tex	/^\\subsubsection*{\\texttt{parse\\_dsn}\\label{parse_dsn}\\index{parse\\ dsn}}$/;"	b
+texttt parse _trace _flag	.\perldoc.DBI.tex	/^\\subsubsection*{\\texttt{parse\\_trace\\_flag}\\label{parse_trace_flag}\\index{parse\\ trace\\ flag}}$/;"	b
+texttt parse _trace _flags	.\perldoc.DBI.tex	/^\\subsubsection*{\\texttt{parse\\_trace\\_flags}\\label{parse_trace_flags}\\index{parse\\ trace\\ flags}}$/;"	b
+texttt ping	.\perldoc.DBI.tex	/^\\subsubsection*{\\texttt{ping}\\label{ping}\\index{ping}}$/;"	b
+texttt prepare	.\perldoc.DBI.tex	/^\\subsubsection*{\\texttt{prepare}\\label{prepare}\\index{prepare}}$/;"	b
+texttt prepare _cached	.\perldoc.DBI.tex	/^\\subsubsection*{\\texttt{prepare\\_cached}\\label{prepare_cached}\\index{prepare\\ cached}}$/;"	b
+texttt primary _key	.\perldoc.DBI.tex	/^\\subsubsection*{\\texttt{primary\\_key}\\label{primary_key}\\index{primary\\ key}}$/;"	b
+texttt primary _key _info	.\perldoc.DBI.tex	/^\\subsubsection*{\\texttt{primary\\_key\\_info}\\label{primary_key_info}\\index{primary\\ key\\ info}}$/;"	b
+texttt private _your _module _name _	.\perldoc.DBI.tex	/^\\subsubsection*{\\texttt{private\\_your\\_module\\_name\\_*}\\label{private_your_module_name_}\\index{private\\ your\\ module\\ name\\ *}}$/;"	b
+texttt quote	.\perldoc.DBI.tex	/^\\subsubsection*{\\texttt{quote}\\label{quote}\\index{quote}}$/;"	b
+texttt selectall _arrayref	.\perldoc.DBI.tex	/^\\subsubsection*{\\texttt{selectall\\_arrayref}\\label{selectall_arrayref}\\index{selectall\\ arrayref}}$/;"	b
+texttt selectall _hashref	.\perldoc.DBI.tex	/^\\subsubsection*{\\texttt{selectall\\_hashref}\\label{selectall_hashref}\\index{selectall\\ hashref}}$/;"	b
+texttt selectcol _arrayref	.\perldoc.DBI.tex	/^\\subsubsection*{\\texttt{selectcol\\_arrayref}\\label{selectcol_arrayref}\\index{selectcol\\ arrayref}}$/;"	b
+texttt selectrow _arrayref	.\perldoc.DBI.tex	/^\\subsubsection*{\\texttt{selectrow\\_arrayref}\\label{selectrow_arrayref}\\index{selectrow\\ arrayref}}$/;"	b
+texttt selectrow _hashref	.\perldoc.DBI.tex	/^\\subsubsection*{\\texttt{selectrow\\_hashref}\\label{selectrow_hashref}\\index{selectrow\\ hashref}}$/;"	b
+texttt table _info	.\perldoc.DBI.tex	/^\\subsubsection*{\\texttt{table\\_info}\\label{table_info}\\index{table\\ info}}$/;"	b
+texttt trace	.\perldoc.DBI.tex	/^\\subsubsection*{\\texttt{trace}\\label{trace}\\index{trace}}$/;"	b
+texttt trace _msg	.\perldoc.DBI.tex	/^\\subsubsection*{\\texttt{trace\\_msg}\\label{trace_msg}\\index{trace\\ msg}}$/;"	b
+texttt visit _child _handles	.\perldoc.DBI.tex	/^\\subsubsection*{\\texttt{visit\\_child\\_handles}\\label{visit_child_handles}\\index{visit\\ child\\ handles}}$/;"	b
+texttt visit _handles	.\perldoc.DBI.tex	/^\\subsubsection*{\\texttt{visit\\_handles}\\label{visit_handles}\\index{visit\\ handles}}$/;"	b
+theoretical	.\GlossaryKant.EN.in.tex	/^\\subsection{theoretical} \\index{Kant!technical terms!theoretical}$/;"	b
+theoretical	.\GlossaryKant.EN.tex	/^\\subsection{theoretical} $/;"	b
+theoretical	.\source.glossary.tex	/^\\paragraph{theoretical}$/;"	P
+time	.\GlossaryKant.UKR.in.tex	/^\\subsection{time} \\index{Kant!technical terms!time}$/;"	b
+time	.\GlossaryKant.UKR.tex	/^\\subsection{time} $/;"	b
+transcendent	.\GlossaryKant.UKR.in.tex	/^\\subsection{transcendent} \\index{Kant!technical terms!transcendent}$/;"	b
+transcendent	.\GlossaryKant.UKR.tex	/^\\subsection{transcendent} $/;"	b
+transcendental	.\GlossaryKant.UKR.in.tex	/^\\subsection{transcendental} \\index{Kant!technical terms!transcendental}$/;"	b
+transcendental	.\GlossaryKant.UKR.tex	/^\\subsection{transcendental} $/;"	b
+transcendental object	.\GlossaryKant.EN.in.tex	/^\\subsection{transcendental object} \\index{Kant!technical terms!transcendental$/;"	b
+transcendental object	.\GlossaryKant.EN.tex	/^\\subsection{transcendental object} \\index{Kant!technical terms!transcendental$/;"	b
+transcendental object	.\source.glossary.tex	/^\\paragraph{transcendental object}$/;"	P
+traveltek	.\contract_traveltek.fancyhdr.tex	/^%%%traveltek$/;"	b
+understanding	.\GlossaryKant.EN.in.tex	/^\\subsection{understanding} \\index{Kant!technical terms!understanding}$/;"	b
+understanding	.\GlossaryKant.EN.tex	/^\\subsection{understanding} $/;"	b
+understanding	.\source.glossary.tex	/^\\paragraph{understanding}$/;"	P
+used_packages	.\invoices.preamble.tex	/^%%%used_packages$/;"	b
+vim	.\PROJS.i.dat	/^###vim$/;"	a
+will	.\GlossaryKant.EN.in.tex	/^\\subsection{will} \\index{Kant!technical terms!will}$/;"	b
+will	.\GlossaryKant.EN.tex	/^\\subsection{will} $/;"	b
+will	.\source.glossary.tex	/^\\paragraph{will}$/;"	P
+write_TEX	.\texbook.split.pl	/^sub write_TEX {$/;"	s
+write_begin	.\invoices.generate.pl	/^sub write_begin {$/;"	s
+write_body	.\invoices.generate.pl	/^sub write_body {$/;"	s
+write_defs	.\invoices.generate.pl	/^sub write_defs {$/;"	s
+write_main	.\invoices.generate.pl	/^sub write_main {$/;"	s
+write_preamble	.\invoices.generate.pl	/^sub write_preamble {$/;"	s
+write_sign	.\invoices.generate.pl	/^sub write_sign {$/;"	s
+write_split_chapters	.\texbook.split.pl	/^sub write_split_chapters {$/;"	s
+write_sum	.\invoices.generate.pl	/^sub write_sum {$/;"	s
+write_tables	.\invoices.generate.pl	/^sub write_tables {$/;"	s
+writetocentry	.\texbook.split.pl	/^###writetocentry$/;"	a
