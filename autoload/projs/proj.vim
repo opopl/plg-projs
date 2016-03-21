@@ -260,9 +260,9 @@ function! projs#proj#make (...)
 
  for step in split(opts.steps,',')
     let fun='projs#makesteps#' . step
-    if exists("*" . fun)
-      exe 'call ' . fun . '()'
-    endif
+    exe 'call ' . fun . '()'
+    "if exists("*" . fun)
+    "endif
  endfor
 
  call projs#proj#reset(oldproj)

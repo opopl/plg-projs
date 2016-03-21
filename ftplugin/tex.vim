@@ -27,9 +27,9 @@ if b:dirname == b:root
 	let aucmds = [ 
 			\	'StatusLine projs'                        ,
 			\	'call projs#maps()'                        ,
-			\	'call make#makeprg("projs_pdflatex",{"echo":0})'   ,
 			\	'call projs#proj#name("' . b:proj .'")'   ,
 			\	'call projs#proj#secname("' . b:sec .'")' ,
+			\	'call make#makeprg("projs_pdflatex",{"echo":0})'   ,
 			\	'TgSet projs_this'                        ,
 			\	] 
 

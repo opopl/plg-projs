@@ -17,24 +17,26 @@ function! projs#makesteps#latex (...)
 
  let texoutdir = base#file#catfile([ projs#builddir(), bnum ])
  call base#mkdir(texoutdir)
+ call projs#var('texoutdir',texoutdir)
 
  let texmode    = projs#var('texmode')
  let texjobname = proj
 
  let pdfout = projs#var('pdfout')
 
- call projs#var('texoutdir',texoutdir)
  call projs#var('texjobname',texjobname)
 
- echohl WildMenu
- echo 'texjobname => ' . texjobname 
- echo 'texoutdir  => ' . texoutdir
- echo 'texmode    => ' . texmode
- echo 'pdfout     => ' . pdfout
- echohl None
+ echo 'Build number     => '  . bnum 
 
- "call make#makeprg('projs_pdflatex',{ 'echo' : 0 })
- call make#makeprg('projs_pdflatex')
+ "echohl WildMenu
+ "echo 'texjobname => ' . texjobname 
+ "echo 'texoutdir  => ' . texoutdir
+ "echo 'texmode    => ' . texmode
+ "echo 'pdfout     => ' . pdfout
+ "echohl None
+
+ call make#makeprg('projs_pdflatex',{ 'echo' : 0 })
+ "call make#makeprg('projs_pdflatex')
 
  let starttime   = localtime()
 
@@ -112,7 +114,7 @@ function! projs#makesteps#latex (...)
 
 endfunction
 
-function! projs#makesteps#HTLATEX ()
+function! projs#makesteps#htlatex ()
 	
 endfunction
 

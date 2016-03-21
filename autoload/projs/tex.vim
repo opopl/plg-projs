@@ -7,3 +7,9 @@ function! projs#tex#kpsewhich (cmd)
   return join(lines,',')
 
 endfunction
+
+function! projs#tex#texdoc (...)
+
+  return 1
+
+endfunction
