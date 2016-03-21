@@ -628,6 +628,16 @@ function! projs#maps ()
 	
 endfunction
 
+function! projs#builddir (...)
+	let proj     = projs#proj#name()
+	let broot    = projs#var('rootbuilddir')
+	let builddir = base#file#catfile([ broot, proj ])
+
+	return builddir
+
+endfunction
+
+"""projs_init
 function! projs#init (...)
 
 	let projsdir  = base#envvar('PROJSDIR')
@@ -655,6 +665,7 @@ function! projs#init (...)
 	call base#pathset({
 		\	projsid : projsdir,
 		\	})
+
 	
 	let datvars=''
 	let datvars.=" secnamesbase makesteps "
@@ -673,6 +684,17 @@ function! projs#init (...)
 		let s:projvars=e
 	endif
 
+ 	let pdfout = projs#path([ 'pdf_built' ])
+	call projs#var('pdfout',pdfout)
+ 	call base#mkdir(pdfout)
+
+	"let texoutdir = projs#path([ 'builds' ])
+	"call projs#var('texoutdir',texoutdir)
+
+	let rootbuilddir = projs#path([ 'builds' ])
+	call projs#var('rootbuilddir',rootbuilddir)
+	call base#mkdir(rootbuilddir)
+
 	if ! exists("s:proj") | let s:proj='' | endif
 		
 	for v in projs#var('varsfromdat')
@@ -689,8 +711,6 @@ function! projs#init (...)
 		call projs#var(k,v)
 	endfor
 
-	let texoutdir = projs#path([ 'builds' ])
-	call projs#var('texoutdir',texoutdir)
 
 	let varlist=sort(keys(s:projvars))
 	call projs#var('varlist',varlist)
@@ -731,7 +751,7 @@ function! projs#root (...)
 endf	
 
 function! projs#rootcd ()
-	let dir =  projs#var('root')
+	let dir =  projs#root()
 	exe 'cd ' . dir
 endf	
 
@@ -963,5 +983,52 @@ function! projs#prjmake (...)
 		let proj = a:1
 	endif
 	call projs#proj#make({ "proj" : proj })
+endfunction
+
+function! projs#buildnum (...)
+ if a:0
+	let proj = a:1
+ else
+	let proj = projs#proj#name()
+ endif
+		
+ """" --------------------- get build number, initialize output pdf directory
+ let pdfout = projs#path([ 'pdf_built' ])
+ call base#mkdir(pdfout)
+
+ let bnum = 1
+ let pdfs = base#find({ 
+ 	\ "dirs" : [ pdfout ], 
+	\ "exts" : ["pdf"],
+	\ "relpath" : 1,
+	\ })
+
+ let bnums = []
+ let pat = '^'.proj.'\(\d\+\)\.pdf'
+ for pdf in pdfs
+	if pdf =~ pat
+		let bnum = substitute(pdf,pat,'\1','g')
+		call add(bnums,str2nr(bnum))
+	else
+		continue
+	endif
+ endfor
+
+ func! Cmp(i1, i2)
+   return a:i1 == a:i2 ? 0 : a:i1 > a:i2 ? 1 : -1
+ endfunc
+
+ let bnums = sort(bnums,"Cmp")
+
+ if len(bnums)
+ 	let bnum = bnums[-1] + 1
+ else
+	let bnum = 1
+ endif
+ let snum = bnum . ''
+
+ """" ---------------------
+ return snum
+	
 endfunction
 

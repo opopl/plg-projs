@@ -13,20 +13,31 @@ function! projs#makesteps#latex (...)
 
  let proj = projs#proj#name()
 
- let texoutdir = projs#path([ 'builds', proj ])
+ let bnum = projs#buildnum()
 
- let texmode   = projs#var('texmode')
- let texjobname   = proj . '_' . localtime()
-
+ let texoutdir = base#file#catfile([ projs#builddir(), bnum ])
  call base#mkdir(texoutdir)
+
+ let texmode    = projs#var('texmode')
+ let texjobname = proj
+
+ let pdfout = projs#var('pdfout')
+
  call projs#var('texoutdir',texoutdir)
  call projs#var('texjobname',texjobname)
 
- call make#makeprg('projs_pdflatex',{ 'echo' : 0 })
+ echohl WildMenu
+ echo 'texjobname => ' . texjobname 
+ echo 'texoutdir  => ' . texoutdir
+ echo 'texmode    => ' . texmode
+ echo 'pdfout     => ' . pdfout
+ echohl None
+
+ "call make#makeprg('projs_pdflatex',{ 'echo' : 0 })
+ call make#makeprg('projs_pdflatex')
 
  let starttime   = localtime()
 
- let pdfout=base#path('pdfout')
  let pdffile_tmp = base#file#catfile([ texoutdir, texjobname . '.pdf'])
 
  if index([ 'nonstopmode','batchmode' ],texmode) >= 0 
@@ -35,24 +46,7 @@ function! projs#makesteps#latex (...)
    exe 'make!'
  endif
 
- let pdfout = projs#path([ 'pdf_built' ])
- call base#mkdir(pdfout)
-
- let num = 1
- let pdfs = base#find({ 
- 	\ "dirs" : [ pdfout ], 
-	\ "exts" : ["pdf"],
-	\ })
- let nums = map(pdfs,
- 	\	"substitute(v:val,'^'.proj.'\\(\\d\\+\\)\\.pdf','\\1','g')")
-
- if len(nums)
- 	let num = nums[-1] + 1
- else
-	let num = 1
- endif
-
- let pdffile_final = base#file#catfile([ pdfout, proj .num.'.pdf'])
+ let pdffile_final = base#file#catfile([ pdfout, proj .bnum.'.pdf'])
 
  if filereadable(pdffile_tmp)
  	echo "PDF file created"
@@ -62,7 +56,7 @@ function! projs#makesteps#latex (...)
 
  let endtime   = localtime()
  let buildtime = endtime-starttime
- let timemsg=' (' . buildtime . ' secs)' 
+ let timemsg   = ' (' . buildtime . ' secs)'
 
  let qflist = copy(getqflist())
 
