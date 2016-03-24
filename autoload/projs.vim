@@ -594,25 +594,34 @@ function! projs#info ()
 		\ 'text' : "secname => " . secname, 
 		\ 'indentlev' : indentlev })
 
-	call base#echo({ 'text' : "Sections: " } )
-	call base#echo({ 
-		\ 'text' : "secnames => " . "\n\t" . join(secnames,"\n\t"), 
-		\ 'indentlev' : indentlev })
+	let cnt = input('Show list of sections? (1/0)',1)
+	if cnt
+		call base#echo({ 'text' : "Sections: " } )
+		call base#echo({ 
+			\ 'text' : "secnames => " . "\n\t" . join(secnames,"\n\t"), 
+			\ 'indentlev' : indentlev })
+	endif
 
 	call projs#checksecdir()
 
-	let vv=base#qw('texoutdir texmode makesteps secnamesbase')
-	for v in vv
-		if exists("vl") | unlet vl | endif
-		let vl = projs#var(v)
+	let vvs = 'texoutdir texmode makesteps secnamesbase'
+	let vv  = base#qw(vvs)
 
-		if base#type(vl) == 'List'
-			let str = "\n\t" . join(vl,"\n\t")
-	    else
-			let str = vl
-		endif
-		call base#echo({ 'text' : v . " => " . str  } )
-	endfor
+	let cnt = input('Show Values for variables '.vvs.' ? (1/0)',1)
+
+	if cnt
+		for v in vv
+			if exists("vl") | unlet vl | endif
+			let vl = projs#var(v)
+	
+			if base#type(vl) == 'List'
+				let str = "\n\t" . join(vl,"\n\t")
+		    else
+				let str = vl
+			endif
+			call base#echo({ 'text' : v . " => " . str  } )
+		endfor
+	endif
 
 
 endf
@@ -1041,6 +1050,37 @@ function! projs#buildnum (...)
 
  """" ---------------------
  return snum
+	
+endfunction
+
+function! projs#setbuildvars (...)
+ let ref = {}
+ if a:0 | let ref = a:1 | endif
+		
+ let proj = projs#proj#name()
+
+ let bnum      = projs#buildnum()
+ let texoutdir = base#file#catfile([ projs#builddir(), bnum ])
+
+ call base#mkdir(texoutdir)
+ call projs#var('texoutdir',texoutdir)
+
+ let texmode    = projs#var('texmode')
+ let texjobname = proj
+
+ let pdfout = projs#var('pdfout')
+
+ call projs#var('texjobname',texjobname)
+ call projs#var('buildnum',bnum)
+
+ if get(ref,'echo',1)
+	 echo '---------- projs#setbuildvars(...)--------'
+	 echo 'Setting latex build-related options:'
+	 echo '  buildnum         => '  . bnum
+	 echo '  texjobname       => '  . texjobname
+	 echo '  texmode          => '  . texmode
+	 echo '---------- end projs#setbuildvars---------'
+ endif
 	
 endfunction
 

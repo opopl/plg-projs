@@ -18,8 +18,9 @@ function! projs#makesteps#latex (...)
  echohl None
 
  let proj = projs#proj#name()
+ call projs#setbuildvars()
 
- let bnum = projs#buildnum()
+ let bnum = projs#var('buildnum')
  let texoutdir = base#file#catfile([ projs#builddir(), bnum ])
 
  call base#mkdir(texoutdir)
