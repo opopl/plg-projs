@@ -594,7 +594,7 @@ function! projs#info ()
 		\ 'text' : "secname => " . secname, 
 		\ 'indentlev' : indentlev })
 
-	let cnt = input('Show list of sections? (1/0)',1)
+	let cnt = input('Show list of sections? (1/0): ',1)
 	if cnt
 		call base#echo({ 'text' : "Sections: " } )
 		call base#echo({ 
@@ -607,7 +607,7 @@ function! projs#info ()
 	let vvs = 'texoutdir texmode makesteps secnamesbase'
 	let vv  = base#qw(vvs)
 
-	let cnt = input('Show Values for variables '.vvs.' ? (1/0)',1)
+	let cnt = input('Show Values for variables '.vvs.' ? (1/0): ',1)
 
 	if cnt
 		for v in vv
