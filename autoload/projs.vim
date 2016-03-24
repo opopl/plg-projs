@@ -577,7 +577,11 @@ function! projs#info ()
 
 	call base#echo({ 'text' : "Projects directory: " } )
 	call base#echo({ 
-		\ 'text' : "projs#root() => " . projs#root(), 
+		\ 'text' : "projs#root() => " . projs#root(),
+		\ 'indentlev' : indentlev, })
+
+	call base#echo({ 
+		\ 'text' : "$PROJSDIR => " . base#envvar('PROJSDIR'), 
 		\ 'indentlev' : indentlev, })
 	
 	call base#echo({ 'text' : "Current project: " } )
@@ -613,9 +617,6 @@ function! projs#info ()
 
 endf
 
-"call projs#init ()
-"call projs#init (projsdir)
-"call projs#init (projsdir,'projs_new')
 "
 function! projs#maps ()
 
@@ -638,13 +639,22 @@ function! projs#builddir (...)
 endfunction
 
 """projs_init
+
+"call projs#init ()       -  ProjsInit     - use environment variable PROJSDIR
+"call projs#init (dirid)  -  ProjsInit DIRID - specify custom projects' directory, full path is base#path(DIRID)
+"
+"call projs#init (dirid,'projs_new')
+
 function! projs#init (...)
 
 	let projsdir  = base#envvar('PROJSDIR')
 	let projsid   = 'projs'
 	if a:0 
-		let dir = a:1
+		let dirid = a:1 
+		let dir = base#path(dirid)
+
 		call base#mkdir(dir)
+
 		if isdirectory(dir)
 			let projsdir = dir
 			if a:0 == 2

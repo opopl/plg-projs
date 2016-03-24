@@ -20,8 +20,8 @@ function! projs#makesteps#latex (...)
  let proj = projs#proj#name()
 
  let bnum = projs#buildnum()
-
  let texoutdir = base#file#catfile([ projs#builddir(), bnum ])
+
  call base#mkdir(texoutdir)
  call projs#var('texoutdir',texoutdir)
 
