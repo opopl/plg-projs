@@ -626,7 +626,63 @@ function! projs#info ()
 
 endf
 
-"
+" call projs#filejoinlines ()
+" call projs#filejoinlines ({ "sec" : sec })
+
+function! projs#filejoinlines (...)
+	let ref = {}
+	if a:0 | let ref = a:1 | endif
+
+	let sec = get(ref,'sec','_main_')
+
+	let proj = projs#proj#name()
+	call projs#rootcd()
+
+	let sf={}
+	let sf[sec] = projs#secfile(sec)
+	let f=sf[sec]
+
+	let flines = readfile(f)
+	let lines = []
+
+	let pat='^\s*\\ii{\(\w\+\)}.*$'
+
+	let delim=repeat('%',50)
+
+	for line in flines
+		if line =~ pat
+			let iisec = substitute(line,pat,'\1','g')
+
+			let iilines=projs#filejoinlines({ "sec" : iisec })
+
+			call add(lines,delim)
+			call add(lines,'%% ' . line)
+			call add(lines,delim)
+
+			call extend(lines,iilines)
+		else
+			call add(lines,line)
+		endif
+	endfor
+
+	if sec == '_main_'
+		let jdir = projs#path(['joins'])
+		call base#mkdir(jdir)
+
+		let jfile = base#file#catfile([ jdir, proj . '.tex' ])
+	
+		echo 'Writing joined lines into: ' 
+		echo '  ' . jfile
+	
+		call writefile(lines,jfile)
+
+	endif
+
+	return lines
+
+
+endf
+
 function! projs#maps ()
 
 	nmap <silent> ;;co :copen<CR>
