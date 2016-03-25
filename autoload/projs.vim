@@ -645,13 +645,17 @@ function! projs#filejoinlines (...)
 	let flines = readfile(f)
 	let lines = []
 
-	let pat='^\s*\\ii{\(\w\+\)}.*$'
+	let pats={
+		\ 'ii'    : '^\s*\\ii{\(\w\+\)}.*$',
+		\ 'input' : '^\s*\\input{\(.*\)}.*$',
+		\	}
 
 	let delim=repeat('%',50)
 
 	for line in flines
-		if line =~ pat
-			let iisec = substitute(line,pat,'\1','g')
+		if line =~ pats.ii
+			
+			let iisec = substitute(line,pats.ii,'\1','g')
 
 			let iilines=projs#filejoinlines({ "sec" : iisec })
 
@@ -660,6 +664,8 @@ function! projs#filejoinlines (...)
 			call add(lines,delim)
 
 			call extend(lines,iilines)
+
+		elseif line =~ pats.input
 		else
 			call add(lines,line)
 		endif
