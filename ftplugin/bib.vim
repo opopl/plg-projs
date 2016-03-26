@@ -1,8 +1,8 @@
 
-if exists("b:did_projs_tex_ftplugin")
+if exists("b:did_projs_bib_ftplugin")
   finish
 endif
-let b:did_projs_tex_ftplugin = 1
+let b:did_projs_bib_ftplugin = 1
 
 let b:file     = expand('%:p')
 let b:basename = expand('%:p:t')
@@ -13,8 +13,8 @@ let b:dirname = expand('%:p:h')
 
 let b:finfo   = base#getfileinfo()
 
-" if we are dealing with a 'projs' (La)TeX file
-if ( ( b:dirname == b:root ) && ( b:ext == 'tex' ) )
+" if we are dealing with a 'projs' BibTeX file
+if ( ( b:dirname == b:root ) && ( b:ext == 'bib' ) )
 
 	let b:proj = substitute(b:basename,'^\(\w\+\)\..*','\1','g')
 

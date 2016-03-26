@@ -40,13 +40,16 @@ endfunction
 "let files = projs#proj#files ()
 
 function! projs#proj#files (...)
-	let proj = projs#proj#name()
-
 	let ref = {}
 	if a:0 | let ref = a:1 | endif
 
+	let proj = projs#proj#name()
 	let proj = get(ref,'proj',proj)
-	let exts = get(ref,'exts',[])
+
+	let exts = []
+	let exts = get(ref,'exts',exts)
+
+	let prompt = get(ref,'prompt',0)
 
 	let root   = projs#root()
 	let picdir = projs#path([ 'pics' , proj ])
@@ -60,9 +63,17 @@ function! projs#proj#files (...)
 			\   'dirs'       :  dirs          ,
 			\   'relpath'    :  1             ,
 			\   'pat'        :  '^'.proj.'\.' ,
-			\	'exts'       :  exts,
-			\	}
+			\   'exts'       :  exts,
+			\   }
 	let files = base#find(fref)
+
+	let dirs = base#qw('joins builds')
+	let dirs = get(ref,'exclude_dirs',dirs)
+	if len(dirs)
+		for dir in dirs
+			call filter(files,"v:val !~ '^".dir."'")
+		endfor
+	endif
 
 	return files
 	
@@ -231,27 +242,12 @@ function! projs#proj#make (...)
 
  let oldproj = projs#proj#name()
 
- let opts={ 
-    \ 'steps' : '_all_', 
-    \ 'mode'  : 'nonstopmode',
-    \ 'proj'  : oldproj,
-    \ }
-
+ let opt = 'single_run'
  if a:0
-   call extend(opts,a:1)
+	let opt = a:1
  endif
- let opt = get(opts,'opt','latex')
 
- let proj = get(opts,'proj')
- call projs#proj#reset(proj)
-
- call projs#var('texmode',opts.mode)
-
- let i=0
- let mks=projs#var('makesteps')
- if opts.steps == '_all_'
-   let opts.steps = join(mks,',')
- endif
+ call projs#var('texmode','nonstopmode')
 
  echohl CursorLineNr
  echo 'Starting PrjMake ... '
@@ -259,14 +255,7 @@ function! projs#proj#make (...)
  echo ' Selected option: ' . opt
  echohl None
 
- for step in split(opts.steps,',')
-    let fun='projs#makesteps#' . step
-    exe 'call ' . fun . '("' . opt .'")'
-    "if exists("*" . fun)
-    "endif
- endfor
-
- call projs#proj#reset(oldproj)
+ call projs#build#run(opt)
 	
 endfunction
  

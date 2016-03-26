@@ -47,6 +47,8 @@ function! projs#secfromfile (...)
 			let sec = '_main_'
 		elseif basename =~ '\.\(\w\+\)\.vim$'
 			let sec = '_vim_'
+		elseif basename =~ '\.\(\w\+\)\.bib$'
+			let sec = '_bib_'
 		endif
 		return sec
 	endif
@@ -749,9 +751,8 @@ function! projs#init (...)
 		\	projsid : projsdir,
 		\	})
 
-	
 	let datvars=''
-	let datvars.=" secnamesbase makesteps "
+	let datvars.=" secnamesbase "
 	let datvars.=" projecttypes projectstructures "
 	let datvars.=" projsdirs "
 	let datvars.=" prjmake_opts "
@@ -1062,12 +1063,11 @@ function! projs#genperl(...)
 endfunction
 
 function! projs#prjmake (...)
-	let opt = 'latex'
+	let opt = 'single_run'
 	if a:0
 		let opt = a:1
 	endif
-	let proj = projs#proj#name()
-	call projs#proj#make({ "proj" : proj, "opt" : opt })
+	call projs#proj#make(opt)
 endfunction
 
 function! projs#buildnum (...)
