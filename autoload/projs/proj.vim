@@ -94,7 +94,7 @@ function! projs#proj#secnames (...)
  	let pfiles = projs#proj#files({ "proj" : proj })
 
 	let secnames=[]
-	let pat = '^'.proj.'\.\(\w\+\).*\.tex$'
+	let pat = '^'.proj.'\.\(.*\).*\.tex$'
 	for pfile in pfiles
 		if ( pfile =~ pat )
 			let sec = substitute(pfile,pat,'\1','g')

@@ -43,8 +43,8 @@ function! projs#secfromfile (...)
 	if type == 'basename'
 		let basename = file 
 	
-		if basename =~ '\.\(\w\+\)\.tex$'
-			let sec = substitute(basename,'^.*\.\(\w\+\)\.tex$','\1','g')
+		if basename =~ '^\w\+\.\(.*\)\.tex$'
+			let sec = substitute(basename,'^\w\+\.\(.*\)\.tex$','\1','g')
 		elseif basename == proj . '.tex' 
 			let sec = '_main_'
 		elseif basename =~ '\.\(\w\+\)\.vim$'
