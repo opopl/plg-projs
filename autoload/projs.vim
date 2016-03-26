@@ -666,6 +666,8 @@ function! projs#filejoinlines (...)
 			call extend(lines,iilines)
 
 		elseif line =~ pats.input
+
+			let if = substitute(line,pats.input,'\1','g')
 		else
 			call add(lines,line)
 		endif
