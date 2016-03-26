@@ -50,3 +50,9 @@ function! projs#complete#projsdirslist (...)
   return projs#complete#vars([ 'projsdirslist' ])
 	
 endfunction
+
+function! projs#complete#gitcmds (...)
+  let c = base#qw('cip st')
+  call projs#var('gitcmds',c)
+  return projs#complete#vars([ 'gitcmds' ])
+endfunction

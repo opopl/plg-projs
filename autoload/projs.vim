@@ -1173,3 +1173,8 @@ function! projs#setbuildvars (...)
 	
 endfunction
 
+function! projs#git (...)
+	call projs#rootcd()
+	
+endfunction
+

@@ -22,6 +22,10 @@ if ( ( b:dirname == b:root ) && ( b:ext == 'tex' ) )
 		finish
 	endif
 
+	if (b:proj =~ '^'.'_def')
+		finish
+	endif
+
 	let b:sec = projs#secfromfile({ 
 		\	"file" : b:basename ,
 		\	"type" : "basename" ,

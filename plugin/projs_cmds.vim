@@ -30,11 +30,14 @@ command! -nargs=* -complete=custom,projs#complete
 "command! -nargs=* -complete=custom,projs#complete
 	"\ PrjMake call projs#prjmake(<f-args>)
 
-command! -nargs=* -complete=custom,projs#complete
-	\ PrjBuildCleanup call projs#build#cleanup(<f-args>)
+command! -nargs=* -complete=custom,projs#complete PrjBuildCleanup 
+	\ call projs#build#cleanup(<f-args>)
 
-command! -nargs=* -complete=custom,projs#complete#varlist
-	\ ProjsVarEcho call projs#varecho(<f-args>)
+command! -nargs=* -complete=custom,projs#complete#varlist ProjsVarEcho 
+	\ call projs#varecho(<f-args>)
+
+command! -nargs=* -complete=custom,projs#complete#gitcmds ProjsGit
+	\ call projs#git(<f-args>)
 
 
 command! -nargs=* -complete=custom,projs#complete#secnamesbase VSECBASE
