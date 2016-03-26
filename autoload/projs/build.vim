@@ -39,8 +39,13 @@ function! projs#build#run (...)
  catch
  endtry
 
- " simple latex run
- let opt = 'single_run'
+ " simple latex run, if opt was not previously defined
+ "let opt = 'single_run'
+ let opt = 'latexmk'
+ if projs#varexists('prjmake_opt')
+ 	let opt = projs#var('prjmake_opt')
+ end
+
  if a:0
  	let opt = a:1
  endif
@@ -69,11 +74,13 @@ function! projs#build#run (...)
 
  if opt == 'single_run'
  	call make#makeprg('projs_pdflatex',{ 'echo' : 0 })
- elseif opt == 'use_latexmk'
+ elseif opt == 'latexmk'
  	call make#makeprg('projs_latexmk',{ 'echo' : 0 })
- elseif opt == 'use_htlatex'
+ elseif opt == 'htlatex'
  	call make#makeprg('projs_htlatex',{ 'echo' : 0 })
  endif
+
+ call projs#var('prjmake_opt',opt)
 
  let starttime   = localtime()
 

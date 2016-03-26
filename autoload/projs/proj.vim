@@ -242,7 +242,10 @@ function! projs#proj#make (...)
 
  let oldproj = projs#proj#name()
 
- let opt = 'single_run'
+ let opt = 'latexmk'
+ if projs#varexists('prjmake_opt')
+ 	let opt = projs#var('prjmake_opt')
+ end
  if a:0
 	let opt = a:1
  endif

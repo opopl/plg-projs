@@ -18,6 +18,10 @@ if ( ( b:dirname == b:root ) && ( b:ext == 'tex' ) )
 
 	let b:proj = substitute(b:basename,'^\(\w\+\)\..*','\1','g')
 
+	if index(base#qw('inc jnames defs'),b:proj) >= 0
+		finish
+	endif
+
 	let b:sec = projs#secfromfile({ 
 		\	"file" : b:basename ,
 		\	"type" : "basename" ,

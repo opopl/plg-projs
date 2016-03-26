@@ -1,3 +1,3 @@
 single_run
-use_latexmk
-use_htlatex
+latexmk
+htlatex

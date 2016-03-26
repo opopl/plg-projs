@@ -18,6 +18,8 @@ function! projs#secfile (...)
 		let secfile = projs#path([proj.'.secorder.i.dat'])
 	elseif sec == '_bib_'
 		let secfile = projs#path([proj.'.refs.bib'])
+	elseif sec == '_join_'
+		let secfile = projs#path(['joins',proj.'.tex'])
 	else
 		let secfile = projs#path([proj.dot.sec.'.tex'])
 	endif
@@ -474,6 +476,13 @@ function! projs#opensec (...)
   elseif sec == '_bib_'
     let vfile = projs#path([ s:proj . '.refs.bib' ])
 
+  elseif sec == '_join_'
+	let vfile = projs#path(['joins',s:proj.'.tex'])
+
+	if !filereadable(vfile)
+		call projs#filejoinlines()
+	endif
+
   elseif sec == '_vim_'
     let vfile = projs#path([ s:proj . '.vim' ])
 
@@ -606,7 +615,7 @@ function! projs#info ()
 
 	call projs#checksecdir()
 
-	let vvs = 'texoutdir texmode makesteps secnamesbase'
+	let vvs = 'texoutdir texmode prjmake_opt secnamesbase pdfout'
 	let vv  = base#qw(vvs)
 
 	let cnt = input('Show Values for variables '.vvs.' ? (1/0): ',1)
@@ -649,6 +658,7 @@ function! projs#filejoinlines (...)
 
 	let pats={
 		\ 'ii'    : '^\s*\\ii{\(\w\+\)}.*$',
+		\ 'iifig' : '^\s*\\iifig{\(\w\+\)}.*$',
 		\ 'input' : '^\s*\\input{\(.*\)}.*$',
 		\	}
 
@@ -666,6 +676,19 @@ function! projs#filejoinlines (...)
 			call add(lines,delim)
 
 			call extend(lines,iilines)
+
+		elseif line =~ pats.iifig
+
+			let fsec = substitute(line,pats.iifig,'\1','g')
+			let fsec = 'fig.'.fsec
+
+			let figlines=projs#filejoinlines({ "sec" : fsec })
+
+			call add(lines,delim)
+			call add(lines,'%% ' . line)
+			call add(lines,delim)
+
+			call extend(lines,figlines)
 
 		elseif line =~ pats.input
 
@@ -772,6 +795,8 @@ function! projs#init (...)
  	let pdfout = projs#path([ 'pdf_built' ])
 	call projs#var('pdfout',pdfout)
  	call base#mkdir(pdfout)
+
+	call projs#var('prjmake_opt','latexmk')
 
 	"let texoutdir = projs#path([ 'builds' ])
 	"call projs#var('texoutdir',texoutdir)
