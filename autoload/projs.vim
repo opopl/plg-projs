@@ -124,6 +124,9 @@ function! projs#newsecfile(sec)
 		call add(lines,'\usepackage[OT1,T2A,T3]{fontenc}')
 		call add(lines,'\usepackage[english,ukrainian]{babel}')
 		call add(lines,' ')
+		call add(lines,'\usepackage{hyperref}')
+		call add(lines,'\usepackage{bookmark}')
+		call add(lines,' ')
  
 	endif
 
