@@ -1091,10 +1091,19 @@ function! projs#genperl(...)
 endfunction
 
 function! projs#prjmake (...)
-	let opt = 'single_run'
+	
+	if projs#varexists('prjmake_opt')
+		let opt = projs#var('prjmake_opt')
+	else
+		let opt = 'latexmk'
+		call projs#var('prjmake_opt',opt)
+	endif
+
 	if a:0
 		let opt = a:1
+		call projs#var('prjmake_opt',opt)
 	endif
+
 	call projs#proj#make(opt)
 endfunction
 
