@@ -39,8 +39,27 @@ function! projs#complete#secnamesbase (...)
 	
 endfunction
 
+function! projs#complete#update (...)
+
+ let s  = ''
+ let s .= ' secnames'
+ let s .= ' secnamesbase'
+
+ let comps=base#qwsort(s)
+
+ return join(comps,"\n")
+endfunction
+
+function! projs#complete#grep (...)
+ let comps=base#qwsort('')
+
+ return join(comps,"\n")
+
+endfunction
+
 function! projs#complete#secnames (...)
 
+  "call projs#proj#secnames()
   return projs#complete#vars([ 'secnames' ])
 	
 endfunction

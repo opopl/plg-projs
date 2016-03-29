@@ -20,6 +20,10 @@ function! projs#secfile (...)
 		let secfile = projs#path([proj.'.refs.bib'])
 	elseif sec == '_join_'
 		let secfile = projs#path(['joins',proj.'.tex'])
+	elseif sec == '_build_'
+		if has('win32')
+	    	let secfile = projs#path([ 'b_' . proj . '.bat' ])
+		endif
 	else
 		let secfile = projs#path([proj.dot.sec.'.tex'])
 	endif
@@ -66,7 +70,8 @@ function! projs#newsecfile(sec)
 
 	call projs#echo("Creating file:\n\t" . sec )
 	let lines = []
-	let file = projs#path([ proj . '.' . sec . '.tex'])
+
+	let file = projs#secfile(sec)
 
 	let secs = base#qw("preamble body")
 
@@ -85,6 +90,7 @@ function! projs#newsecfile(sec)
 		call add(lines,'% --------------')
 		call add(lines,'\def\ii#1{\InputIfFileExists{\PROJ.#1.tex}{}{}}')
 		call add(lines,'\def\iif#1{\input{\PROJ/#1.tex}}')
+		call add(lines,'\def\idef#1{\InputIfFileExists{_def.#1.tex}{}{}}')
 		call add(lines,'% --------------')
 		call add(lines,' ')
 
@@ -122,10 +128,35 @@ function! projs#newsecfile(sec)
 		call add(lines,'\usepackage{mathtext}')
 		call add(lines,'\usepackage{extsizes}')
 		call add(lines,'\usepackage[OT1,T2A,T3]{fontenc}')
+		call add(lines,'\usepackage[utf8]{inputenc}')
 		call add(lines,'\usepackage[english,ukrainian]{babel}')
 		call add(lines,' ')
 		call add(lines,'\usepackage{hyperref}')
 		call add(lines,'\usepackage{bookmark}')
+		call add(lines,' ')
+
+	elseif sec == '_build_'
+
+		let latexopts  = ' -file-line-error '
+		let latexopts .= ' -output-directory=./builds/'.proj.'/b'
+
+		call add(lines,' ')
+		call add(lines,'set Bin=%~dp0')
+		call add(lines,' ')
+		call add(lines,'md %Bin%\builds\'.proj.'\b')
+		call add(lines,' ')
+		call add(lines,'pdflatex ' . latexopts . ' ' .proj  )
+		call add(lines,' ')
+
+		let origin = '%Bin%\builds\'.proj.'\b\'.proj.'.pdf'
+		let dest   = '%Bin%\pdf_built\b_'.proj.'.pdf'
+
+		call add(lines,'copy '.origin.' '.dest)
+		call add(lines,' ')
+	else
+
+		call add(lines,' ')
+		call add(lines,'%%file f_' . sec)
 		call add(lines,' ')
  
 	endif
@@ -297,7 +328,7 @@ function! projs#new (...)
 			 "MenuReset projs
 	 "endif
 
-	 let loadmain=input('Load the main project file? (y/n): ', 'n')
+	 let loadmain=input('Load the main project file? (y/n): ', 'y')
 	 if loadmain == 'y'
 		VSECBASE _main_
 	 endif
@@ -315,11 +346,15 @@ endf
 "" projs#selectproject (pat)
 
 function! projs#selectproject (...)
-	let pat  = a:1
+	
+	if a:0
+		let pat  = a:1
+	endif
+
 	let list = projs#list()
 
 	let s:proj=base#getfromchoosedialog({ 
-	 	\ 'list'        : ,
+	 	\ 'list'        : list,
 	 	\ 'startopt'    : '',
 	 	\ 'header'      : "Available projects are: ",
 	 	\ 'numcols'     : 1,
@@ -416,6 +451,7 @@ fun! projs#checksecdir()
 endf
 
 function! projs#opensec (...)
+ let proj = projs#proj#name()
 
  if a:0==1
     let sec=a:1
@@ -465,6 +501,11 @@ function! projs#opensec (...)
   elseif sec == '_dat_files_ext_'
     let vfile = projs#path([ 'projs', s:proj . '.files_ext.i.dat' ])
 
+  elseif sec == '_build_'
+	if has('win32')
+    	let vfile = projs#path([ 'b_' . s:proj . '.bat' ])
+	endif
+
   elseif sec == '_dat_'
     let vfile = projs#path([ 'projs', s:proj . '.secs.i.dat' ])
 
@@ -503,6 +544,9 @@ function! projs#opensec (...)
   let vfiles = base#uniq(vfiles)
 
   for vfile in vfiles
+	if !filereadable(vfile)
+		call projs#newsecfile(sec)
+	endif
     call base#fileopen(vfile) 
   endfor
 
@@ -1069,9 +1113,18 @@ endfunction
  
 function! projs#renameproject(old,new)
 
- call base#CD('projs')
+ let old = a:old
+ let new = a:new
 
- call system("rename 's/^" . a:old . '\.*/' . a:new . "./g' " . a:old . ".*")
+ call projs#rootcd()
+ call projs#proj#name(old)
+
+ let files = projs#proj#files({ "exts" : [] })
+ 
+ for f in files
+	let nf = substitute(f,'^'.old,new,'g')
+	call rename(f,nf)
+ endfor
  
 endfunction
 
@@ -1189,4 +1242,36 @@ function! projs#git (...)
 	call projs#rootcd()
 	
 endfunction
+
+function! projs#grep (pat,...)
+	let ref = {}
+	if a:0 | let ref = a:1 | endif
+
+	call projs#rootcd()
+
+	let pat   = a:pat
+
+	let exts  = base#qw('tex vim bib')
+	let files = projs#proj#files ({ "exts" : exts })
+
+	call base#grep({ 
+		\ "pat"   : pat   ,
+		\ "files" : files ,
+		\ })
+	
+endfunction
+
+function! projs#update (...)
+	if a:0
+		let opt = a:1
+	endif
+
+	if opt == 'secnames'
+		call projs#proj#secnames()
+	elseif opt == 'secnamesbase'
+		call projs#varsetfromdat('secnamesbase')
+	endif
+	
+endfunction
+
 

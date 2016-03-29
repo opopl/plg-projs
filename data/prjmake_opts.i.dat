@@ -1,3 +1,5 @@
 single_run
 latexmk
 htlatex
+bibtex
+makeindex

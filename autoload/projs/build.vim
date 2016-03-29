@@ -7,19 +7,20 @@ function! projs#build#cleanup (...)
 		return
 	endif
 	
-	echohl Title
-	echo 'Files to remove:'
-	echohl MoreMsg
-	for bfile in bfiles
-		echo "\t" . bfile
-	endfor
-	echohl None
+	"echohl Title
+	"echo 'Files to remove:'
+	"echohl MoreMsg
+	"for bfile in bfiles
+		"echo "\t" . bfile
+	"endfor
+	"echohl None
 
-	let rm = input('Remove these files? (y/n):','y')
+	"let rm = input('Remove files? (y/n):','y')
+	let rm = 'y'
 	if rm == 'y'
-		echo "\n"
+		"echo "\n"
 		for bfile in bfiles
-			echo "\t" . 'Removing file: ' . bfile 
+			"echo "\t" . 'Removing file: ' . bfile 
 			call delete(bfile)
 		endfor
 	endif
@@ -74,10 +75,19 @@ function! projs#build#run (...)
 
  if opt == 'single_run'
  	call make#makeprg('projs_pdflatex',{ 'echo' : 0 })
+
  elseif opt == 'latexmk'
  	call make#makeprg('projs_latexmk',{ 'echo' : 0 })
+
  elseif opt == 'htlatex'
  	call make#makeprg('projs_htlatex',{ 'echo' : 0 })
+
+ elseif opt == 'bibtex'
+ 	call make#makeprg('projs_bibtex',{ 'echo' : 0 })
+
+ elseif opt == 'makeindex'
+ 	call make#makeprg('projs_makeindex',{ 'echo' : 0 })
+
  endif
 
  call projs#var('prjmake_opt',opt)

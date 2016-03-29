@@ -21,6 +21,12 @@ command! -nargs=* -complete=custom,projs#complete            PrjRemove
 command! -nargs=* -complete=custom,projs#complete#secnames   PrjJoin
 	\ call projs#filejoinlines()
 
+command! -nargs=* -complete=custom,projs#complete#grep       PrjGrep
+	\ call projs#grep(<f-args>)
+
+command! -nargs=* -complete=custom,projs#complete#update     PrjUpdate
+	\ call projs#update(<f-args>)
+
 command! -nargs=* -complete=custom,projs#complete
 	\ PrjListFiles call projs#proj#listfiles(<f-args>)
 
