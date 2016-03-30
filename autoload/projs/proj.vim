@@ -107,6 +107,19 @@ function! projs#proj#secnames (...)
 	return secnames
 	
 endfunction
+
+function! projs#proj#secnamesall (...)
+	call projs#proj#secnames()
+
+	let sall = projs#var('secnames')
+	call extend(sall,projs#var('secnamesbase'))
+	let sall = sort(base#uniq(sall))
+
+ 	call projs#var('secnamesall',sall)
+
+	return sall
+
+endfunction
 "
 """projs_proj_listfiles
 

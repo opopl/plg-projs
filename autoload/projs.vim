@@ -134,8 +134,22 @@ function! projs#newsecfile(sec)
 		call add(lines,'\usepackage{hyperref}')
 		call add(lines,'\usepackage{bookmark}')
 		call add(lines,' ')
+		call add(lines,'\usepackage[hmargin={3cm,1.5cm},vmargin={2cm,2cm},centering]{geometry}')
+		call add(lines,'\usepackage{longtable}')
+		call add(lines,' ')
+
+	elseif sec == '_dat_'
+	elseif sec == '_dat_defs_'
+	elseif sec == '_vim_'
+	elseif sec == '_bib_'
+
+		call add(lines,' ')
+		call add(lines,'"""file f__vim_ ')
+		call add(lines,' ')
+		call add(lines,' ')
 
 	elseif sec == '_build_'
+
 
 		let latexopts  = ' -file-line-error '
 		let latexopts .= ' -output-directory=./builds/'.proj.'/b'
@@ -905,6 +919,13 @@ function! projs#root (...)
 		call projs#var('root',root)
 	endif
 	return projs#var('root')
+endf	
+
+function! projs#rootbasename ()
+	let root = projs#root()
+	let bn   = fnamemodify(root,":p:h:t")
+
+	return bn
 endf	
 
 function! projs#rootcd ()
