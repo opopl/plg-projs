@@ -1289,6 +1289,7 @@ function! projs#update (...)
 
 	if opt == 'secnames'
 		call projs#proj#secnames()
+		call projs#proj#secnamesall()
 	elseif opt == 'secnamesbase'
 		call projs#varsetfromdat('secnamesbase')
 	endif

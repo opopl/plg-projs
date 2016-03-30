@@ -103,13 +103,13 @@ function! projs#proj#secnames (...)
 	endfor
 
  	call projs#var('secnames',secnames)
+	call projs#proj#secnamesall()
 
 	return secnames
 	
 endfunction
 
 function! projs#proj#secnamesall (...)
-	call projs#proj#secnames()
 
 	let sall = projs#var('secnames')
 	call extend(sall,projs#var('secnamesbase'))

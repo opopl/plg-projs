@@ -33,7 +33,7 @@ if ( ( b:dirname == b:root ) && ( b:ext == 'tex' ) )
    		\	})
 
 	let aucmds = [ 
-			\	'call projs#root("'.b:root.'")'             ,
+			\	'call projs#root("'.escape(b:root,'\').'")'           ,
 			\	'StatusLine projs'                        ,
 			\	'call projs#maps()'                       ,
 			\	'call projs#proj#name("' . b:proj .'")'   ,
