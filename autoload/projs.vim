@@ -493,35 +493,35 @@ function! projs#opensec (...)
   let vfiles            = []
 
   if projs#var('secdirexists')
-	let vfile = projs#path([ s:proj, sec . '.tex' ])
+	let vfile = projs#path([ proj, sec . '.tex' ])
   else
-	let vfile = projs#path([ s:proj . '.' . sec . '.tex' ])
+	let vfile = projs#path([ proj . '.' . sec . '.tex' ])
   endif
 
   if sec == '_main_'
 		for ext in projs#var('extensions_tex')
-			let vfile = projs#path([ s:proj . '.' . ext ])
+			let vfile = projs#path([ proj . '.' . ext ])
 				if filereadable(vfile)
 					call add(vfiles, vfile)
 				endif
 		endfor
 
   elseif sec == '_dat_defs_'
-    let vfile = projs#path([ 'projs', s:proj . '.defs.i.dat' ])
+    let vfile = projs#path([ 'projs', proj . '.defs.i.dat' ])
 
   elseif sec == '_dat_files_'
-    let vfile = projs#path([ 'projs', s:proj . '.files.i.dat' ])
+    let vfile = projs#path([ 'projs', proj . '.files.i.dat' ])
 
   elseif sec == '_dat_files_ext_'
-    let vfile = projs#path([ 'projs', s:proj . '.files_ext.i.dat' ])
+    let vfile = projs#path([ 'projs', proj . '.files_ext.i.dat' ])
 
   elseif sec == '_build_'
 	if has('win32')
-    	let vfile = projs#path([ 'b_' . s:proj . '.bat' ])
+    	let vfile = projs#path([ 'b_' . proj . '.bat' ])
 	endif
 
   elseif sec == '_dat_'
-    let vfile = projs#path([ 'projs', s:proj . '.secs.i.dat' ])
+    let vfile = projs#path([ 'projs', proj . '.secs.i.dat' ])
 
     call projs#gensecdat()
 
@@ -532,20 +532,20 @@ function! projs#opensec (...)
     return
 
   elseif sec == '_bib_'
-    let vfile = projs#path([ s:proj . '.refs.bib' ])
+    let vfile = projs#path([ proj . '.refs.bib' ])
 
   elseif sec == '_join_'
-	let vfile = projs#path(['joins',s:proj.'.tex'])
+	let vfile = projs#path(['joins',proj.'.tex'])
 
 	if !filereadable(vfile)
 		call projs#filejoinlines()
 	endif
 
   elseif sec == '_vim_'
-    let vfile = projs#path([ s:proj . '.vim' ])
+    let vfile = projs#path([ proj . '.vim' ])
 
   elseif sec == '_pl_'
-    call extend(vfiles,base#splitglob('projs',s:proj . '.*.pl'))
+    call extend(vfiles,base#splitglob('projs',proj . '.*.pl'))
     let vfile=''
   endif
 

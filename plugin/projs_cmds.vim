@@ -48,6 +48,9 @@ command! -nargs=* -complete=custom,projs#complete          PrjListFiles
 command! -nargs=* -complete=custom,projs#complete          PrjListSecs 
 	\	call projs#proj#listsecnames(<f-args>)
 
+command! -nargs=* -complete=custom,projs#complete#prjgit   PrjGit 
+	\	call projs#proj#git(<f-args>)
+
 "command! -nargs=* -complete=custom,projs#complete
 	"\ PrjMake call projs#prjmake(<f-args>)
 

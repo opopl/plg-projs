@@ -41,6 +41,17 @@ function! projs#complete#secnamesall (...)
   return projs#complete#vars([ 'secnamesall' ])
 endfunction
 
+function! projs#complete#prjgit (...)
+
+ let s  = ''
+ let s .= ' add'
+ let s .= ' rm'
+
+ let comps=base#qwsort(s)
+
+ return join(comps,"\n")
+endfunction
+
 function! projs#complete#update (...)
 
  let s  = ''

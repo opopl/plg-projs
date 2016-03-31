@@ -32,6 +32,8 @@ function! projs#proj#reset (...)
 	endif
 
 	call projs#var('proj',proj)
+
+	call projs#proj#secnames()
 endfunction
 
 "let files = projs#proj#files ({ "proj" : proj })
@@ -128,15 +130,17 @@ endfunction
 "
 function! projs#proj#listfiles (...)
 	let proj = projs#proj#name()
-	if a:0
-		let proj = a:1
-	endif
 
-	let pfiles = projs#proj#files({ "proj" : proj }) 
+	let extstr = input('File extensions:'."\n",'tex bib vim')
+	let exts = base#qwsort(extstr)
 
+	let pfiles = projs#proj#files({ "proj" : proj, 'exts' : exts }) 
+
+	echo "\n".'--- List of project files ---'
 	for file in pfiles
 	  echo file
 	endfor
+	echo '-----------------------------'
 	
 endfunction
 
@@ -274,4 +278,15 @@ function! projs#proj#make (...)
  call projs#build#run(opt)
 	
 endfunction
+
+
+function! projs#proj#git (...)
+	let proj = projs#proj#name()
+
+	let files = projs#proj#files()
+
+	echo files
+	
+endfunction
+
  

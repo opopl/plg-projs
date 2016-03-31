@@ -104,10 +104,30 @@ function! projs#build#run (...)
 
  let pdffile_final = base#file#catfile([ pdfout, proj .bnum.'.pdf'])
 
- if filereadable(pdffile_tmp)
- 	echo "PDF file created"
 
- 	call rename(pdffile_tmp,pdffile_final)
+ let dests=[]
+ call add(dests,pdffile_final)
+
+ "" copy to $PDFOUT dir
+ let pdffile_env = base#file#catfile([ base#path('pdfout'), proj.'.pdf'])
+ let bp_pdfout = base#path('pdfout')
+
+ call base#mkdir(bp_pdfout)
+ if isdirectory(bp_pdfout)
+ 	call add(dests,pdffile_env)
+ endif
+
+ if filereadable(pdffile_tmp)
+	for dest in dests
+		let ok = base#file#copy(pdffile_tmp,dest)
+	
+		if ok
+		 	echo "PDF file copied to:"
+		 	echo " " . dest
+		endif
+	endfor
+
+     "call rename(pdffile_tmp,pdffile_final)
  endif
 
  let endtime   = localtime()
