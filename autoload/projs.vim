@@ -110,6 +110,8 @@ function! projs#newsecfile(sec)
 		call add(lines,'%%file f_' . sec)
 		call add(lines,' ')
 
+	elseif sec == 'cfg'
+
 """newsec_preamble
 	elseif sec == 'preamble'
 
@@ -1332,6 +1334,22 @@ function! projs#update (...)
 		call projs#proj#secnamesall()
 	elseif opt == 'secnamesbase'
 		call projs#varsetfromdat('secnamesbase')
+	endif
+	
+endfunction
+
+function! projs#load (...)
+
+	if a:0
+		let opt = a:1
+	endif
+
+	if opt == ''
+	elseif opt == 'tex'
+		ProjsInit
+		PrjView TEXREF
+		PrjView latexref
+	elseif opt == 'paps_phd'
 	endif
 	
 endfunction

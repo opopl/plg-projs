@@ -27,6 +27,16 @@ function! projs#complete#prjmake (...)
   return projs#complete#vars([ 'prjmake_opts' ])
 endfunction
 
+function! projs#complete#projsload (...)
+ let s  = ''
+ let s .= ' tex'
+ let s .= ' phd'
+
+ let comps = base#qwsort(s)
+
+ return join(comps,"\n")
+endfunction
+
 function! projs#complete#varlist (...)
 
   return projs#complete#vars([ 'varlist' ])

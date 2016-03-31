@@ -9,6 +9,9 @@ command! -nargs=* -complete=custom,projs#complete#varlist    ProjsVarEcho
 command! -nargs=* -complete=custom,projs#complete#gitcmds    ProjsGit
 	\ call projs#git(<f-args>)
 
+command! -nargs=* -complete=custom,projs#complete#projsload  ProjsLoad
+	\ call projs#load(<f-args>)
+
 command! -nargs=* -complete=custom,projs#complete            PrjView
 	\ call projs#viewproj(<f-args>) 
 
