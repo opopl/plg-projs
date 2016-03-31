@@ -36,6 +36,49 @@ function! projs#proj#reset (...)
 	call projs#proj#secnames()
 endfunction
 
+function! projs#proj#filesact (...)
+ let s  = ''
+ let s .= ' list'
+ let s .= ' view'
+ let acts = base#qwsort(s)
+
+ if a:0
+	let act = a:1
+ else
+	let act = base#getfromchoosedialog({ 
+		 	\ 'list'        : acts,
+		 	\ 'startopt'    : 'regular',
+		 	\ 'header'      : "Available acts are: ",
+		 	\ 'numcols'     : 1,
+		 	\ 'bottom'      : "Choose act by number: ",
+		 	\ })
+		
+ endif
+
+ let proj = projs#proj#name()
+
+ if act == 'list'
+	call projs#proj#listfiles()
+ elseif act == 'view'
+	let extstr = input('File extensions:'."\n",'tex bib vim')
+	let exts = base#qwsort(extstr)
+
+	let pfiles = projs#proj#files({ "proj" : proj, 'exts' : exts }) 
+
+	let pfile = base#getfromchoosedialog({ 
+		 	\ 'list'        : pfiles,
+		 	\ 'startopt'    : 'regular',
+		 	\ 'header'      : "Available project files are: ",
+		 	\ 'numcols'     : 1,
+		 	\ 'bottom'      : "Choose a project file by number: ",
+		 	\ })
+
+	call base#fileopen(pfile)
+
+ endif
+
+endfunction
+
 "let files = projs#proj#files ({ "proj" : proj })
 "let files = projs#proj#files ({ "exts" : ["tex"]})
 "

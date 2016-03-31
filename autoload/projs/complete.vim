@@ -52,6 +52,16 @@ function! projs#complete#prjgit (...)
  return join(comps,"\n")
 endfunction
 
+function! projs#complete#prjfiles (...)
+
+ let s  = ''
+ let s .= ' list'
+ let s .= ' view'
+ let acts = base#qwsort(s)
+
+ return join(acts,"\n")
+endfunction
+
 function! projs#complete#prjbuild (...)
 
  let s  = ''

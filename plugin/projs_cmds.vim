@@ -42,8 +42,8 @@ command! -nargs=* -complete=custom,projs#complete#secnames PrjSecRename
 command! -nargs=* -complete=custom,projs#complete#secnames PrjSecRemove
 	\ call projs#sec#remove(<f-args>)
 
-command! -nargs=* -complete=custom,projs#complete          PrjListFiles 
-	\	call projs#proj#listfiles(<f-args>)
+command! -nargs=* -complete=custom,projs#complete#prjfiles PrjFiles
+	\	call projs#proj#filesact(<f-args>)
 
 command! -nargs=* -complete=custom,projs#complete          PrjListSecs 
 	\	call projs#proj#listsecnames(<f-args>)
