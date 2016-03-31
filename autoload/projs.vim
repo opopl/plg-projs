@@ -110,6 +110,7 @@ function! projs#newsecfile(sec)
 		call add(lines,'%%file f_' . sec)
 		call add(lines,' ')
 
+"""newsec_cfg
 	elseif sec == 'cfg'
 
 """newsec_preamble
