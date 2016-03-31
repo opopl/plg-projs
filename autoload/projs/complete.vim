@@ -47,8 +47,20 @@ function! projs#complete#prjgit (...)
  let s .= ' add'
  let s .= ' rm'
 
- let comps=base#qwsort(s)
+ let comps = base#qwsort(s)
 
+ return join(comps,"\n")
+endfunction
+
+function! projs#complete#prjbuild (...)
+
+ let s  = ''
+ 	\ .	' View '
+ 	\ .	' Cleanup '
+ 	\ .	' Run '
+ 	\ .	' List '
+
+ let comps=base#qwsort(s)
  return join(comps,"\n")
 endfunction
 

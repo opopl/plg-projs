@@ -279,13 +279,21 @@ function! projs#proj#make (...)
 	
 endfunction
 
+" call projs#proj#git ('add')
+" call projs#proj#git ('rm')
 
 function! projs#proj#git (...)
 	let proj = projs#proj#name()
 
+	let cmd = a:1
+
 	let files = projs#proj#files()
 
-	echo files
+	for f  in files
+		let fp = projs#path([f])
+		let gitcmd = '! git ' . cmd . ' ' . fp
+		silent exe gitcmd
+	endfor
 	
 endfunction
 

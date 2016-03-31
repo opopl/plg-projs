@@ -1,3 +1,44 @@
+function! projs#build#action (...)
+
+	let acts = base#qwsort('View Run Cleanup List')
+	if a:0
+		let act=a:1
+	else
+		let act = base#getfromchoosedialog({ 
+		 	\ 'list'        : acts,
+		 	\ 'startopt'    : 'regular',
+		 	\ 'header'      : "Actions: ",
+		 	\ 'numcols'     : 1,
+		 	\ 'bottom'      : "Choose an action by number: ",
+		 	\ })
+	endif
+
+	if act == 'Cleanup'
+		call projs#build#cleanup()
+	elseif act == 'View'
+		let extstr ='aux log'
+		let extstr = input('Extensions for files:',extstr)
+
+		let exts = base#qwsort(extstr)
+
+		let bfiles = projs#build#files({ 
+			\	"exts" : exts, 
+			\	"add_pdf_built" : 0
+			\	})
+
+
+		let file = base#getfromchoosedialog({ 
+		 	\ 'list'        : bfiles,
+		 	\ 'startopt'    : 'regular',
+		 	\ 'header'      : "Build files available for viewing: ",
+		 	\ 'numcols'     : 1,
+		 	\ 'bottom'      : "Choose a file by number: ",
+		 	\ })
+		call base#fileopen(file)
+
+	endif
+	
+endfunction
 
 function! projs#build#cleanup (...)
 	let bfiles = projs#build#files()
@@ -71,6 +112,9 @@ function! projs#build#run (...)
 
  call projs#var('texjobname',texjobname)
 
+ let makeef=''
+ let makeef = base#file#catfile([ texoutdir , 'make_'.opt.'.log' ])
+
  echo 'Build number     => '  . bnum 
 
  if opt == 'single_run'
@@ -78,6 +122,7 @@ function! projs#build#run (...)
 
  elseif opt == 'latexmk'
  	call make#makeprg('projs_latexmk',{ 'echo' : 0 })
+	let makeef = base#file#catfile([ texoutdir , 'make.log' ])
 
  elseif opt == 'htlatex'
  	call make#makeprg('projs_htlatex',{ 'echo' : 0 })
@@ -88,6 +133,9 @@ function! projs#build#run (...)
  elseif opt == 'makeindex'
  	call make#makeprg('projs_makeindex',{ 'echo' : 0 })
 
+ elseif opt == 'build_bat'
+ 	call make#makeprg('projs_build_bat',{ 'echo' : 0 })
+
  endif
 
  call projs#var('prjmake_opt',opt)
@@ -95,6 +143,10 @@ function! projs#build#run (...)
  let starttime   = localtime()
 
  let pdffile_tmp = base#file#catfile([ texoutdir, texjobname . '.pdf'])
+
+ if strlen(makeef)
+ 	exe 'setlocal makeef='.makeef
+ endif
 
  if index([ 'nonstopmode','batchmode' ],texmode) >= 0 
    exe 'silent make!'
@@ -188,35 +240,61 @@ function! projs#build#run (...)
 
 endfunction
 
+" echo projs#build#files({ 
+" 	\	"exts" : ["pdf"],
+" 	\	"add_pdf_built" : 1,
+" 	\	"add_other" : 1,
+" 	\	})
+
 function! projs#build#files (...)
+	let ref = {}
+	if a:0 | let ref = a:1 | endif
+
+	let exts_other = get(ref,'exts',[ ])
+
 	let pdfout = projs#var('pdfout')
 	let proj   = projs#proj#name()
 
 	let bfiles = []
 
-	" ---------------- get built PDF files
-	let fref = {
-		\ "dirs" : [pdfout],
-		\ "pat"  : '^'.proj.'\d\+'.'\.pdf',
-		\ "relpath" : 0,
-		\ "subdirs" : 0,
-		\ "exts" : ["pdf"],
+	let defs={
+		\	'relpath' : 0
 		\ }
-	let pdffiles = base#find(fref)
+	let do ={}
 
-	call extend(bfiles,pdffiles)
+	for d in keys(defs)
+		let do[d]=get(ref,d,defs[d])
+	endfor
+
+
+	" ---------------- get built (PDF/other extension) files
+	if get(ref,'add_pdf_built',1)
+		let fref = {
+			\ "dirs" : [pdfout],
+			\ "pat"  : '^'.proj.'\d\+'.'\.pdf',
+			\ "relpath" : do.relpath,
+			\ "subdirs" : 0,
+			\ "exts"    : ["pdf"],
+			\ }
+		let pdffiles = base#find(fref)
+	
+		call extend(bfiles,pdffiles)
+	endif
 
 	" ---------------- get all other build files
-	let builddir = projs#builddir()
-	let files = []
-
-	let fref = {
-		\ "dirs" : [builddir],
-		\ "relpath" : 0,
-		\ "subdirs" : 1,
-		\ }
-
-	let files = base#find(fref)
+	if get(ref,'add_other',1)
+		let builddir = projs#builddir()
+		let files = []
+	
+		let fref = {
+			\ "dirs" : [builddir],
+			\ "relpath" : do.relpath,
+			\ "subdirs" : 1,
+			\ "exts"    :  exts_other,
+			\ }
+	
+		let files = base#find(fref)
+	endif
 
 	call extend(bfiles,files)
 

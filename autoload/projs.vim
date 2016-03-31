@@ -148,25 +148,65 @@ function! projs#newsecfile(sec)
 		call add(lines,' ')
 		call add(lines,' ')
 
+"""newsec__build_
 	elseif sec == '_build_'
 
 
+		let outd = [ 'builds', proj, 'b' ]
+
+		let pcwin = [ '%Bin%' ]
+		let pcunix = [ '.' ]
+
+		call extend(pcwin,outd)
+		call extend(pcunix,outd)
+
+		let outdir_win = base#file#catfile(pcwin)
+
+		let outdir_unix = base#file#catfile(pcunix)
+		let outdir_unix = base#file#win2unix(outdir_unix)
+
 		let latexopts  = ' -file-line-error '
-		let latexopts .= ' -output-directory=./builds/'.proj.'/b'
+		let latexopts .= ' -output-directory='. outdir_unix
+
+		let lns = {
+			\ 'pdflatex'  : 'pdflatex '.latexopts.' '.proj ,
+			\ 'bibtex'    : 'bibtex '    . proj            ,
+			\ 'makeindex' : 'makeindex ' . proj            ,
+		    \ }
+		let bibfile=projs#secfile('_bib_')
 
 		call add(lines,' ')
 		call add(lines,'set Bin=%~dp0')
 		call add(lines,' ')
-		call add(lines,'md %Bin%\builds\'.proj.'\b')
+		call add(lines,'set outdir='.outdir_win)
+		call add(lines,'md %outdir%')
 		call add(lines,' ')
-		call add(lines,'pdflatex ' . latexopts . ' ' .proj  )
+		call add(lines,'set bibfile='.bibfile)
+		call add(lines,'copy %bibfile% %outdir%')
+		call add(lines,' ')
+		call add(lines,lns.pdflatex  )
+		call add(lines,'rem --- bibtex makeindex --- ')
+		call add(lines,'cd %outdir% ')
+		call add(lines,lns.bibtex  )
+		call add(lines,lns.makeindex  )
+		call add(lines,'rem ------------------------ ')
+		call add(lines,' ')
+		call add(lines,'cd %Bin% ')
+		call add(lines,lns.pdflatex  )
+		call add(lines,lns.pdflatex  )
 		call add(lines,' ')
 
 		let origin = '%Bin%\builds\'.proj.'\b\'.proj.'.pdf'
-		let dest   = '%Bin%\pdf_built\b_'.proj.'.pdf'
 
-		call add(lines,'copy '.origin.' '.dest)
-		call add(lines,' ')
+		let dests = []
+
+		call add(dests,'%Bin%\pdf_built\b_'.proj.'.pdf' )
+		call add(dests,'%PDFOUT%\b_'.proj.'.pdf' )
+
+		for dest in dests
+			call add(lines,'copy '.origin.' '.dest)
+			call add(lines,' ')
+		endfor
 	else
 
 		call add(lines,' ')

@@ -20,6 +20,8 @@ function! projs#sec#rename (new)
 	endfor
 
 	call writefile(nlines,newf)
+
+	call projs#proj#secnames()
 	
 endfunction
 
