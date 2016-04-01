@@ -29,7 +29,7 @@ function! projs#secfile (...)
 	    	let secfile = projs#path([ 'b_' . proj . '_htlatex.bat' ])
 		endif
 	elseif sec == '_main_htlatex_'
-	    	let secfile = projs#path([ 'b_' . proj . '.main_htlatex.tex' ])
+	    	let secfile = projs#path([ proj . '.main_htlatex.tex' ])
 	else
 		let secfile = projs#path([proj.dot.sec.'.tex'])
 	endif
@@ -203,6 +203,8 @@ function! projs#newsecfile(sec)
 
 		let mf = projs#secfile('_main_')
 		let ml = readfile(mf)
+
+		call filter(ml,'v:val !~ "^%%file f_main"')
 
 		call extend(lines,ml)
 
