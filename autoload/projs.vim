@@ -20,9 +20,13 @@ function! projs#secfile (...)
 		let secfile = projs#path([proj.'.refs.bib'])
 	elseif sec == '_join_'
 		let secfile = projs#path(['joins',proj.'.tex'])
-	elseif sec == '_build_'
+	elseif sec == '_build_pdflatex_'
 		if has('win32')
-	    	let secfile = projs#path([ 'b_' . proj . '.bat' ])
+	    	let secfile = projs#path([ 'b_' . proj . '_pdflatex.bat' ])
+		endif
+	elseif sec == '_build_htlatex_'
+		if has('win32')
+	    	let secfile = projs#path([ 'b_' . proj . '_htlatex.bat' ])
 		endif
 	else
 		let secfile = projs#path([proj.dot.sec.'.tex'])
@@ -113,6 +117,13 @@ function! projs#newsecfile(sec)
 """newsec_cfg
 	elseif sec == 'cfg'
 
+		call add(lines,' ')
+		call add(lines,'%%file f_' . sec)
+		call add(lines,' ')
+
+		let ln  = projs#qw#rf('data tex tex4ht_cfg.tex')
+		call extend(lines,ln)
+
 """newsec_preamble
 	elseif sec == 'preamble'
 
@@ -126,20 +137,9 @@ function! projs#newsecfile(sec)
 		call add(lines,' ')
 		call add(lines,'%%file f_'. sec)
 		call add(lines,' ')
-		call add(lines,'\documentclass[a4paper,11pt]{extreport}')
-		call add(lines,' ')
-		call add(lines,'\usepackage{mathtext}')
-		call add(lines,'\usepackage{extsizes}')
-		call add(lines,'\usepackage[OT1,T2A,T3]{fontenc}')
-		call add(lines,'\usepackage[utf8]{inputenc}')
-		call add(lines,'\usepackage[english,ukrainian]{babel}')
-		call add(lines,' ')
-		call add(lines,'\usepackage{hyperref}')
-		call add(lines,'\usepackage{bookmark}')
-		call add(lines,' ')
-		call add(lines,'\usepackage[hmargin={3cm,1.5cm},vmargin={2cm,2cm},centering]{geometry}')
-		call add(lines,'\usepackage{longtable}')
-		call add(lines,' ')
+
+		let ln  = projs#qw#rf('data tex preamble.tex')
+		call extend(lines,ln)
 
 	elseif sec == '_dat_'
 	elseif sec == '_dat_defs_'
@@ -151,9 +151,13 @@ function! projs#newsecfile(sec)
 		call add(lines,' ')
 		call add(lines,' ')
 
-"""newsec__build_
-	elseif sec == '_build_'
+	elseif sec == '_build_pdflatex'
 
+"""newsec__build_htlatex
+	elseif sec == '_build_htlatex'
+
+"""newsec__build_pdflatex
+	elseif sec == '_build_pdflatex'
 
 		let outd = [ 'builds', proj, 'b' ]
 
@@ -558,10 +562,8 @@ function! projs#opensec (...)
   elseif sec == '_dat_files_ext_'
     let vfile = projs#path([ 'projs', proj . '.files_ext.i.dat' ])
 
-  elseif sec == '_build_'
-	if has('win32')
-    	let vfile = projs#path([ 'b_' . proj . '.bat' ])
-	endif
+  elseif sec =~ '^_build_'
+	let vfile = projs#secfile(sec)
 
   elseif sec == '_dat_'
     let vfile = projs#path([ 'projs', proj . '.secs.i.dat' ])
@@ -1058,6 +1060,29 @@ function! projs#ex (proj)
 	return 0
 
 endfunction
+
+function! projs#pathqw (s)
+	let pa = base#qw(a:s)
+	return projs#path(pa)
+
+endfunction
+
+function! projs#pathqwrf (s)
+	let pa = base#qw(a:s)
+	let f = projs#path(pa)
+	let lines = []
+
+
+	if filereadable(f)
+		let lines = readfile(f)
+	endif
+
+	return lines
+
+endfunction
+
+
+
 
 """projs_path
 "

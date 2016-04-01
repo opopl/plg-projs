@@ -9,7 +9,8 @@ title
 makeatletter
 defs
 _main_
-_build_
+_build_htlatex_
+_build_pdflatex_
 _vim_
 _dat_
 _dat_defs_
