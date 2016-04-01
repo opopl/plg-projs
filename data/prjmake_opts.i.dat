@@ -3,4 +3,5 @@ latexmk
 htlatex
 bibtex
 makeindex
-build_bat
+build_pdflatex
+build_htlatex

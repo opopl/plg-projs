@@ -115,7 +115,6 @@ function! projs#build#run (...)
  let makeef=''
  let makeef = base#file#catfile([ texoutdir , 'make_'.opt.'.log' ])
 
- echo 'Build number     => '  . bnum 
 
  if opt == 'single_run'
  	call make#makeprg('projs_pdflatex',{ 'echo' : 0 })
@@ -133,8 +132,11 @@ function! projs#build#run (...)
  elseif opt == 'makeindex'
  	call make#makeprg('projs_makeindex',{ 'echo' : 0 })
 
- elseif opt == 'build_bat'
- 	call make#makeprg('projs_build_bat',{ 'echo' : 0 })
+ elseif opt == 'build_pdflatex'
+ 	call make#makeprg('projs_build_pdflatex',{ 'echo' : 0 })
+
+ elseif opt == 'build_htlatex'
+ 	call make#makeprg('projs_build_htlatex',{ 'echo' : 0 })
 
  endif
 
@@ -148,38 +150,53 @@ function! projs#build#run (...)
  	exe 'setlocal makeef='.makeef
  endif
 
+ let pdfo    = base#qw('latexmk single_run')
+ let is_pdfo = base#inlist(opt,pdfo)
+
+ if is_pdfo
+  	echo 'Build number     => '  . bnum 
+ endif
+
+ "let is_pdfo = base#inlist(opt,['build_pdflatex'])
+ if opt =~ '^build_'
+	call projs#newsecfile('_'.opt.'_')
+ endif
+
+ echo 'Running make ...'
+
  if index([ 'nonstopmode','batchmode' ],texmode) >= 0 
    exe 'silent make!'
  elseif texmode == 'errorstopmode'
    exe 'make!'
  endif
 
- let pdffile_final = base#file#catfile([ pdfout, proj .bnum.'.pdf'])
-
-
- let dests=[]
- call add(dests,pdffile_final)
-
- "" copy to $PDFOUT dir
- let pdffile_env = base#file#catfile([ base#path('pdfout'), proj.'.pdf'])
- let bp_pdfout = base#path('pdfout')
-
- call base#mkdir(bp_pdfout)
- if isdirectory(bp_pdfout)
- 	call add(dests,pdffile_env)
- endif
-
- if filereadable(pdffile_tmp)
-	for dest in dests
-		let ok = base#file#copy(pdffile_tmp,dest)
+ if is_pdfo
+	 let pdffile_final = base#file#catfile([ pdfout, proj .bnum.'.pdf'])
 	
-		if ok
-		 	echo "PDF file copied to:"
-		 	echo " " . dest
-		endif
-	endfor
-
-     "call rename(pdffile_tmp,pdffile_final)
+	 let dests=[]
+	 call add(dests,pdffile_final)
+	
+	 "" copy to $PDFOUT dir
+	 let pdffile_env = base#file#catfile([ base#path('pdfout'), proj.'.pdf'])
+	 let bp_pdfout = base#path('pdfout')
+	
+	 call base#mkdir(bp_pdfout)
+	 if isdirectory(bp_pdfout)
+	 	call add(dests,pdffile_env)
+	 endif
+	
+	 if filereadable(pdffile_tmp)
+		for dest in dests
+			let ok = base#file#copy(pdffile_tmp,dest)
+		
+			if ok
+			 	echo "PDF file copied to:"
+			 	echo " " . dest
+			endif
+		endfor
+	
+	     "call rename(pdffile_tmp,pdffile_final)
+	 endif
  endif
 
  let endtime   = localtime()

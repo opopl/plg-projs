@@ -28,6 +28,8 @@ function! projs#secfile (...)
 		if has('win32')
 	    	let secfile = projs#path([ 'b_' . proj . '_htlatex.bat' ])
 		endif
+	elseif sec == '_main_htlatex_'
+	    	let secfile = projs#path([ 'b_' . proj . '.main_htlatex.tex' ])
 	else
 		let secfile = projs#path([proj.dot.sec.'.tex'])
 	endif
@@ -151,13 +153,61 @@ function! projs#newsecfile(sec)
 		call add(lines,' ')
 		call add(lines,' ')
 
-	elseif sec == '_build_pdflatex'
-
 """newsec__build_htlatex
-	elseif sec == '_build_htlatex'
+	elseif sec == '_build_htlatex_'
+
+		let outd = [ 'builds', proj, 'b_htlatex' ]
+
+		let pcwin = [ '%Bin%' ]
+		let pcunix = [ '.' ]
+
+		call extend(pcwin,outd)
+		call extend(pcunix,outd)
+
+		let outdir_win = base#file#catfile(pcwin)
+
+		let outdir_unix = base#file#catfile(pcunix)
+		let outdir_unix = base#file#win2unix(outdir_unix)
+
+		let latexopts  = ' -file-line-error '
+		let latexopts .= ' -output-directory='. outdir_unix
+
+		call add(lines,' ')
+		call add(lines,'set Bin=%~dp0')
+		call add(lines,' ')
+		call add(lines,'set outdir='.outdir_win)
+		call add(lines,'md %outdir%')
+		call add(lines,' ')
+		call add(lines,'cd %Bin%')
+		call add(lines,' ')
+		call add(lines,'copy '.proj.'.*.tex %outdir%' )
+		call add(lines,'copy '.proj.'.tex %outdir%' )
+		call add(lines,' ')
+		call add(lines,'cd %outdir%')
+		call add(lines,' ')
+		call add(lines,'copy '.proj.'.cfg.tex main.cfg' )
+		call add(lines,'copy '.proj.'.main_htlatex.tex main.tex' )
+		call add(lines,' ')
+		call add(lines,'htlatex main main')
+		call add(lines,' ')
+
+		call projs#newsecfile('_main_htlatex_')
+
+	elseif sec == '_main_htlatex_'
+
+		call add(lines,' ')
+		call add(lines,'%%file f_'. sec)
+		call add(lines,' ')
+		call add(lines,'\nonstopmode')
+		call add(lines,' ')
+
+		let mf = projs#secfile('_main_')
+		let ml = readfile(mf)
+
+		call extend(lines,ml)
 
 """newsec__build_pdflatex
-	elseif sec == '_build_pdflatex'
+	elseif sec == '_build_pdflatex_'
 
 		let outd = [ 'builds', proj, 'b' ]
 
@@ -203,7 +253,7 @@ function! projs#newsecfile(sec)
 		call add(lines,lns.pdflatex  )
 		call add(lines,' ')
 
-		let origin = '%Bin%\builds\'.proj.'\b\'.proj.'.pdf'
+		let origin = base#file#catfile([ outdir_win, proj.'.pdf'])
 
 		let dests = []
 
@@ -544,6 +594,8 @@ function! projs#opensec (...)
   else
 	let vfile = projs#path([ proj . '.' . sec . '.tex' ])
   endif
+
+  let vfile = projs#secfile(sec)
 
   if sec == '_main_'
 		for ext in projs#var('extensions_tex')
