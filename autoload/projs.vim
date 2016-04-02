@@ -921,32 +921,33 @@ endfunction
 "call projs#init ()       -  ProjsInit     - use environment variable PROJSDIR
 "call projs#init (dirid)  -  ProjsInit DIRID - specify custom projects' directory, full path is base#path(DIRID)
 "
-"call projs#init (dirid,'projs_new')
 
 function! projs#init (...)
 
-	let projsdir  = base#envvar('PROJSDIR')
-	let projsid   = 'projs'
+	let projsdir=''
+	let projsid=''
+
+	if projs#varexists('root')
+		let projsdir  = projs#var('root')
+
+		if projs#varexists('rootid')
+			let projsid = projs#var('rootid')
+		endif
+		
+	else
+		let projsdir  = base#envvar('PROJSDIR')
+		let projsid   = 'texdocs'
+	endif
+
 	if a:0 
-		let dirid = a:1 
-		let dir = base#path(dirid)
+		let projsid = a:1 
+		let dir = base#path(projsid)
 
 		call base#mkdir(dir)
 
 		if isdirectory(dir)
 			let projsdir = dir
-			if a:0 == 2
-				let projsid = a:2
-			endif
 		endif
-	else
-"""todo_projs
-		"let root = projs#rootid()
-		"if strlen(rootid)
-			"let projsid = rootid
-			"let projsdir = base#path(rootid)
-		"endif
-
 	endif
 
     let g:texlive={
@@ -959,7 +960,7 @@ function! projs#init (...)
 	call projs#echo("Initializing projs plugin, \n\t projsdir => " . projsdir ,{ "prefix" : prefix })
 
 	call base#pathset({
-		\	projsid : projsdir,
+		\	'projs' : projsdir,
 		\	})
 
 	let datvars=''
