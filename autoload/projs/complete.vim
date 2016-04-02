@@ -47,6 +47,10 @@ function! projs#complete#secnamesbase (...)
   return projs#complete#vars([ 'secnamesbase' ])
 endfunction
 
+function! projs#complete#projrootsec (...)
+  return projs#complete#vars([ 'latex_sectionnames' ])
+endfunction
+
 function! projs#complete#secnamesall (...)
   return projs#complete#vars([ 'secnamesall' ])
 endfunction
