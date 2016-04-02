@@ -403,7 +403,7 @@ function! projs#new (...)
 	 let use_vim = ! (uc && filereadable(creator))
 
 	 if use_vim
-		for sec in base#qw(" _main_ preamble body ")
+		for sec in base#qw(" _main_ preamble body cfg ")
 			call projs#newsecfile(sec)
 		endfor
 
