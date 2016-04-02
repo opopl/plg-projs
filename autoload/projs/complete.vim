@@ -89,14 +89,7 @@ function! projs#complete#prjbuild (...)
 endfunction
 
 function! projs#complete#update (...)
-
- let s  = ''
- let s .= ' secnames'
- let s .= ' secnamesbase'
-
- let comps=base#qwsort(s)
-
- return join(comps,"\n")
+   return projs#complete#vars([ 'opts_PrjUpdate' ])
 endfunction
 
 function! projs#complete#grep (...)

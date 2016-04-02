@@ -938,6 +938,14 @@ function! projs#init (...)
 				let projsid = a:2
 			endif
 		endif
+	else
+"""todo_projs
+		"let root = projs#rootid()
+		"if strlen(rootid)
+			"let projsid = rootid
+			"let projsdir = base#path(rootid)
+		"endif
+
 	endif
 
     let g:texlive={
@@ -959,6 +967,7 @@ function! projs#init (...)
 	let datvars.=" projsdirs "
 	let datvars.=" prjmake_opts "
 	let datvars.=" latex_sectionnames "
+	let datvars.=" opts_PrjUpdate"
 
 	let e={
 		\	"root"           : base#path('projs') ,
@@ -1432,8 +1441,12 @@ function! projs#update (...)
 	if opt == 'secnames'
 		call projs#proj#secnames()
 		call projs#proj#secnamesall()
+
 	elseif opt == 'secnamesbase'
 		call projs#varsetfromdat('secnamesbase')
+
+	elseif opt == 'list'
+		call projs#listfromfiles()
 	endif
 	
 endfunction
