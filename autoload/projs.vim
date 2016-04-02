@@ -91,14 +91,15 @@ function! projs#newsecfile(sec)
 		call add(lines,' ')
 		call add(lines,'\def\PROJ{'.proj.'}')
 		call add(lines,' ')
-		"call add(lines,'\def\ii#1{\include{'.proj.'.#1.tex}}')
-		"
+
 		call add(lines,'% --------------')
 		call add(lines,'\def\ii#1{\InputIfFileExists{\PROJ.#1.tex}{}{}}')
 		call add(lines,'\def\iif#1{\input{\PROJ/#1.tex}}')
 		call add(lines,'\def\idef#1{\InputIfFileExists{_def.#1.tex}{}{}}')
+
+		let ProjRootSec = input('(_main_) ProjRootSec:','part','custom,projs#complete#projrootsec')
 		call add(lines,'% --------------')
-		call add(lines,'\def\ProjRootSec{part}')
+		call add(lines,'\def\ProjRootSec{'.ProjRootSec.'}')
 		call add(lines,'% --------------')
 
 		call add(lines,' ')
@@ -402,7 +403,7 @@ function! projs#new (...)
 	 let use_vim = ! (uc && filereadable(creator))
 
 	 if use_vim
-		for sec in base#qw(" _main_ preamble body ")
+		for sec in base#qw(" _main_ preamble body cfg ")
 			call projs#newsecfile(sec)
 		endfor
 
@@ -957,6 +958,7 @@ function! projs#init (...)
 	let datvars.=" projecttypes projectstructures "
 	let datvars.=" projsdirs "
 	let datvars.=" prjmake_opts "
+	let datvars.=" latex_sectionnames "
 
 	let e={
 		\	"root"           : base#path('projs') ,
