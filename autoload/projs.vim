@@ -1,4 +1,15 @@
 
+function! projs#secfilecheck (...)
+	let sec = a:1
+	let sfile = projs#secfile(sec)
+
+	if !filereadable(sfile)
+		call projs#newsecfile(sec)
+	endif
+
+	return 1
+endf
+
 " projs#secfile (sec)
 "
 function! projs#secfile (...)
@@ -207,13 +218,18 @@ function! projs#newsecfile(sec)
 		call add(lines,' ')
 		call add(lines,'htlatex main main')
 		call add(lines,' ')
-		call add(lines,'copy *.html %htmloutdir% ')
-		call add(lines,'copy *.png %htmloutdir% ')
+		call add(lines,'copy *.html %htmloutdir%\ ')
+		call add(lines,'copy *.png %htmloutdir%\ ')
 		call add(lines,' ')
 		call add(lines,'cd %Bin% ')
 		call add(lines,' ')
 
 		call projs#newsecfile('_main_htlatex_')
+
+		let secc = base#qw('_main_htlatex_ cfg')
+		for sec in secc
+			call projs#secfilecheck(sec)
+		endfor
 
 	elseif sec == '_main_htlatex_'
 
