@@ -179,13 +179,16 @@ function! projs#newsecfile(sec)
 		call add(lines,' ')
 		call add(lines,'set Bin=%~dp0')
 		call add(lines,' ')
+		"call add(lines,'if not exist %htmout% set htmout=%Bin%\html' )
 		call add(lines,'set htmloutdir=%htmlout%\'.proj)
 		call add(lines,' ')
+
 		call add(lines,'if exist %htmloutdir% rmdir /q/s  %htmloutdir% ')
 		call add(lines,'md %htmloutdir%')
 		call add(lines,' ')
 		call add(lines,'set outdir='.outdir_win)
 		call add(lines,' ')
+
 		call add(lines,'if  exist %outdir% rmdir /q/s  %outdir% ')
 		call add(lines,'md %outdir%')
 		call add(lines,' ')
@@ -920,24 +923,40 @@ endfunction
 "call projs#init ()       -  ProjsInit     - use environment variable PROJSDIR
 "call projs#init (dirid)  -  ProjsInit DIRID - specify custom projects' directory, full path is base#path(DIRID)
 "
-"call projs#init (dirid,'projs_new')
 
 function! projs#init (...)
 
-	let projsdir  = base#envvar('PROJSDIR')
-	let projsid   = 'projs'
+	let projsdir=''
+	let projsid=''
+
+	if projs#varexists('root')
+		let projsdir  = projs#var('root')
+
+		if projs#varexists('rootid')
+			let projsid = projs#var('rootid')
+		endif
+		
+	else
+		let projsdir  = base#envvar('PROJSDIR')
+		let projsid   = 'texdocs'
+	endif
+
 	if a:0 
-		let dirid = a:1 
-		let dir = base#path(dirid)
+		let projsid = a:1 
+		let dir = base#path(projsid)
+
+		"echo dir
+		"echo projsid
 
 		call base#mkdir(dir)
 
 		if isdirectory(dir)
 			let projsdir = dir
-			if a:0 == 2
-				let projsid = a:2
-			endif
 		endif
+	endif
+
+	if strlen(projsid)
+		call projs#var('rootid',projsid)
 	endif
 
     let g:texlive={
@@ -950,7 +969,7 @@ function! projs#init (...)
 	call projs#echo("Initializing projs plugin, \n\t projsdir => " . projsdir ,{ "prefix" : prefix })
 
 	call base#pathset({
-		\	projsid : projsdir,
+		\	'projs' : projsdir,
 		\	})
 
 	let datvars=''
@@ -959,6 +978,7 @@ function! projs#init (...)
 	let datvars.=" projsdirs "
 	let datvars.=" prjmake_opts "
 	let datvars.=" latex_sectionnames "
+	let datvars.=" opts_PrjUpdate"
 
 	let e={
 		\	"root"           : base#path('projs') ,
@@ -1432,8 +1452,12 @@ function! projs#update (...)
 	if opt == 'secnames'
 		call projs#proj#secnames()
 		call projs#proj#secnamesall()
+
 	elseif opt == 'secnamesbase'
 		call projs#varsetfromdat('secnamesbase')
+
+	elseif opt == 'list'
+		call projs#listfromfiles()
 	endif
 	
 endfunction
