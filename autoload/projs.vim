@@ -943,11 +943,18 @@ function! projs#init (...)
 		let projsid = a:1 
 		let dir = base#path(projsid)
 
+		"echo dir
+		"echo projsid
+
 		call base#mkdir(dir)
 
 		if isdirectory(dir)
 			let projsdir = dir
 		endif
+	endif
+
+	if strlen(projsid)
+		call projs#var('rootid',projsid)
 	endif
 
     let g:texlive={
