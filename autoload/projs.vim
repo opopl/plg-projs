@@ -531,7 +531,7 @@ function! projs#viewproj (...)
 		let sec    = matchstr(a:1,'^\w\+\.\zs\w\+\ze')
 	else
 		let s:proj=projs#selectproject()
- endif
+ 	endif
 
  call projs#proj#name(s:proj)
 
