@@ -78,12 +78,18 @@ function! projs#secfromfile (...)
 
 endfunction
 
-" projs#newfile(id)
+" projs#newsecfile(sec)
+" projs#newsecfile(sec,{ "git_add" : 1 })
 
-function! projs#newsecfile(sec)
+function! projs#newsecfile(sec,...)
 
 	let sec  = a:sec
 	let proj = projs#proj#name()
+
+	let ref = { 
+		\	"git_add" : 0 
+		\	}
+	if a:0 | let ref = a:1 | endif
 
 	call projs#echo("Creating file:\n\t" . sec )
 	let lines = []
@@ -313,6 +319,10 @@ function! projs#newsecfile(sec)
 	endif
 
 	call writefile(lines,file)
+
+	if get(ref,'git_add')
+		call base#sys("git add " . file)
+	endif
 	
 endfunction
 
@@ -421,6 +431,9 @@ function! projs#new (...)
 
 	 let use_vim = ! (uc && filereadable(creator))
 
+	 let git_add = get(newopts,'git_add',0)
+	 let git_add = input('Add each new file to git? (1/0)',git_add)
+
 	 if use_vim
 		for sec in base#qw(" _main_ preamble body cfg ")
 			call projs#newsecfile(sec)
@@ -453,7 +466,7 @@ function! projs#new (...)
 		 endif
 	 endif
 
-	 if get(newopts,'git_add',0)
+	 if git_add
 		 for file in values(texfiles)
 			 if filereadable(file)
 		     	if ! base#sys("git add " . file )
@@ -485,6 +498,7 @@ function! projs#new (...)
 	 endif
 
 	 TgUpdate projs_this
+	 call projs#update('list')
  endif
 
  call base#echoprefixold()
