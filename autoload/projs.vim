@@ -1148,6 +1148,8 @@ function! projs#listfromfiles ()
 		end
 	endfor
 
+	call projs#var('list',nlist)
+
 	return nlist
 endf	
 
@@ -1333,15 +1335,36 @@ function! projs#renameproject(old,new)
  call projs#proj#name(old)
 
  let files = projs#proj#files({ "exts" : [] })
+
+ call projs#proj#name(new)
  
  for f in files
 	let nf = substitute(f,'^'.old,new,'g')
 	call rename(f,nf)
+
+	let bn = fnamemodify(nf,':p:t')
+	let sec = projs#secfromfile({ "file" : bn })
+	if sec == '_main_'
+		let lines=readfile(nf)
+		let nlines=[]
+		let changed=0
+		for line in lines
+			if line =~ '^\def\PROJ{'.old.'}'
+				let line = '\def\PROJ{'.new.'}'
+				let changed = 1
+			endif
+			call add(nlines,line)
+		endfor
+		if changed
+			call writefile(nlines,nf)
+		endif
+	endif
  endfor
+
+ call projs#update('list')
  
 endfunction
 
- 
 ""used in:
 ""  projs#new
 
