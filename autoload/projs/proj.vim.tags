@@ -1,0 +1,18 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+projs#proj#files	C:\Users\op\programs\Vim\Vim74\plg\projs\autoload\projs\proj.vim	/^function! projs#proj#files (...)$/;"	f
+projs#proj#listfiles	C:\Users\op\programs\Vim\Vim74\plg\projs\autoload\projs\proj.vim	/^function! projs#proj#listfiles (...)$/;"	f
+projs#proj#listsecnames	C:\Users\op\programs\Vim\Vim74\plg\projs\autoload\projs\proj.vim	/^function! projs#proj#listsecnames (...)$/;"	f
+projs#proj#make	C:\Users\op\programs\Vim\Vim74\plg\projs\autoload\projs\proj.vim	/^function! projs#proj#make (...)$/;"	f
+projs#proj#name	C:\Users\op\programs\Vim\Vim74\plg\projs\autoload\projs\proj.vim	/^function! projs#proj#name (...)$/;"	f
+projs#proj#remove	C:\Users\op\programs\Vim\Vim74\plg\projs\autoload\projs\proj.vim	/^function! projs#proj#remove(proj)$/;"	f
+projs#proj#removefromdat	C:\Users\op\programs\Vim\Vim74\plg\projs\autoload\projs\proj.vim	/^function! projs#proj#removefromdat(proj)$/;"	f
+projs#proj#reset	C:\Users\op\programs\Vim\Vim74\plg\projs\autoload\projs\proj.vim	/^function! projs#proj#reset (...)$/;"	f
+projs#proj#secname	C:\Users\op\programs\Vim\Vim74\plg\projs\autoload\projs\proj.vim	/^function! projs#proj#secname (...)$/;"	f
+projs#proj#secnames	C:\Users\op\programs\Vim\Vim74\plg\projs\autoload\projs\proj.vim	/^function! projs#proj#secnames (...)$/;"	f
+projs_proj_listfiles	C:\Users\op\programs\Vim\Vim74\plg\projs\autoload\projs\proj.vim	/^"""projs_proj_listfiles$/;"	z
+projs_proj_name	C:\Users\op\programs\Vim\Vim74\plg\projs\autoload\projs\proj.vim	/^"""projs_proj_name$/;"	z

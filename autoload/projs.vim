@@ -476,13 +476,13 @@ function! projs#new (...)
 		 endfor
 	 endif
 
-	 let s:proj = proj
+	 let proj = proj
 	
 	 call projs#genperl()
 	
 	 call base#echoredraw('Created new project: ' . proj)
 
-	 let s:proj = proj
+	 let proj = proj
 	 call base#var('proj',proj)
 
 	 call projs#listadd(proj)
@@ -518,14 +518,14 @@ function! projs#selectproject (...)
 
 	let list = projs#list()
 
-	let s:proj=base#getfromchoosedialog({ 
+	let proj=base#getfromchoosedialog({ 
 	 	\ 'list'        : list,
 	 	\ 'startopt'    : '',
 	 	\ 'header'      : "Available projects are: ",
 	 	\ 'numcols'     : 1,
 	 	\ 'bottom'      : "Choose a project by number: ",
 	 	\ })
-	return s:proj
+	return proj
 	
 endfunction
 
@@ -541,15 +541,24 @@ function! projs#viewproj (...)
 
 	let sec = ''
 	if a:0
-		let s:proj = matchstr(a:1,'^\zs\w\+\ze')
+		let proj = matchstr(a:1,'^\zs\w\+\ze')
 		let sec    = matchstr(a:1,'^\w\+\.\zs\w\+\ze')
 	else
-		let s:proj=projs#selectproject()
+		let proj=projs#selectproject()
  	endif
+	let proj = proj
 
- call projs#proj#name(s:proj)
+	if !projs#exists(proj)
+		let o = input('Project '.proj.' does not exist, create new? (1/0):',1)
+		if o
+			call projs#new(proj)
+			return 1
+		endif
+	endif
 
-" let pm     = 'TeX::Project::Generate::' . s:proj
+ call projs#proj#name(proj)
+
+" let pm     = 'TeX::Project::Generate::' . proj
  "let loadpm = input('Load project module ' . pm . '(y/n)? :','n' )
 
  "if loadpm == 'y'
@@ -564,7 +573,7 @@ function! projs#viewproj (...)
 	endif
 
 	call projs#var('secname',sec)
-	call projs#var('proj',s:proj)
+	call projs#var('proj',proj)
 
 	let secnames = projs#proj#secnames()
 	call projs#var('secnames')
@@ -582,7 +591,7 @@ function! projs#viewproj (...)
 		call make#makeprg('projs',{ 'echo' : 0 })
 	endif
 
-	let vimf = projs#path([ s:proj . '.vim' ])
+	let vimf = projs#path([ proj . '.vim' ])
 	if filereadable(vimf)
 		exe 'source ' . vimf
 	endif
@@ -724,7 +733,7 @@ endf
 
 function! projs#gensecdat (...)
  
- let f = projs#path([ s:proj . '.secs.i.dat' ])
+ let f = projs#path([ proj . '.secs.i.dat' ])
  call projs#var('secdatfile',f)
 
  let datlines=[]
@@ -741,7 +750,7 @@ endf
 
 fun! projs#opensecorder()
  
-  let f = projs#path([s:proj . '.secorder.i.dat' ])
+  let f = projs#path([proj . '.secorder.i.dat' ])
 
   call projs#var('secorderfile',f)
   exe 'tabnew ' . projs#var('secorderfile')
@@ -752,16 +761,16 @@ endf
 
  
 "" Remove the project 
-""  This function does not affect the current value of s:proj 
-""			if s:proj is different from the project being removed.
-""			On the other hand, if s:proj is the project requested to be removed,
-""     s:proj is unlet in the end of the function body
+""  This function does not affect the current value of proj 
+""			if proj is different from the project being removed.
+""			On the other hand, if proj is the project requested to be removed,
+""     proj is unlet in the end of the function body
 
 " former DC_PrjRemove
 
 
 function! projs#initvars (...)
-	let s:projvars={}
+	let projvars={}
 endf
 
 function! projs#echo(text,...)
@@ -1016,10 +1025,10 @@ function! projs#init (...)
 		\	"extensions_tex" : base#qw('tex')     ,
 		\	}
 
-	if exists("s:projvars")
-		call extend(s:projvars,e)
+	if exists("projvars")
+		call extend(projvars,e)
 	else
-		let s:projvars=e
+		let projvars=e
 	endif
 
  	let pdfout = projs#path([ 'pdf_built' ])
@@ -1035,7 +1044,7 @@ function! projs#init (...)
 	call projs#var('rootbuilddir',rootbuilddir)
 	call base#mkdir(rootbuilddir)
 
-	if ! exists("s:proj") | let s:proj='' | endif
+	if ! exists("proj") | let proj='' | endif
 		
 	for v in projs#var('varsfromdat')
 		call projs#varsetfromdat(v)
@@ -1052,7 +1061,7 @@ function! projs#init (...)
 	endfor
 
 
-	let varlist=sort(keys(s:projvars))
+	let varlist=sort(keys(projvars))
 	call projs#var('varlist',varlist)
 
 	let list = projs#listfromfiles()
@@ -1244,8 +1253,8 @@ endfunction
 
 function! projs#varget (varname)
 	
-	if exists("s:projvars[a:varname]")
-		let val = copy( s:projvars[a:varname] )
+	if exists("projvars[a:varname]")
+		let val = copy( projvars[a:varname] )
 	else
 		call projs#warn("Undefined variable: " . a:varname)
 		let val = ''
@@ -1257,13 +1266,13 @@ endfunction
 
 function! projs#varset (varname, value)
 
-	let s:projvars[a:varname] = a:value
+	let projvars[a:varname] = a:value
 	
 endfunction
 
 function! projs#varexists (varname)
-	if exists("s:projvars")
-		if exists("s:projvars[a:varname]")
+	if exists("projvars")
+		if exists("projvars[a:varname]")
 			return 1
 		else
 			return 0
@@ -1371,10 +1380,11 @@ endfunction
 function! projs#genperl(...)
 
  let pmfiles={}
+ let proj = projs#var('proj')
 
  call extend(pmfiles, {
-			\	'generate_pm' : g:paths['perlmod'] . '/lib/TeX/Project/Generate/' . s:proj . '.pm',  
-			\	'generate_pl' : g:paths['projs']  . '/generate.' . s:proj . '.pl',  
+			\	'generate_pm' : g:paths['perlmod'] . '/lib/TeX/Project/Generate/' . proj . '.pm',  
+			\	'generate_pl' : g:paths['projs']  . '/generate.' . proj . '.pl',  
  			\	})
  
 endfunction
@@ -1531,4 +1541,15 @@ function! projs#load (...)
 	
 endfunction
 
+function! projs#exists (...)
+	let proj = a:1
+	let list = projs#list()
+
+	if base#inlist(proj,list)
+		return 1
+	endif
+
+	return 0
+	
+endfunction
 

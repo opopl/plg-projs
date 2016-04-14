@@ -1,0 +1,61 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+bnum	C:\Users\op\programs\Vim\Vim74\plg\projs\autoload\projs.vim	/^	let bnum = 1$/;"	v
+bnum	C:\Users\op\programs\Vim\Vim74\plg\projs\autoload\projs.vim	/^ 	let bnum = bnums[-1] + 1$/;"	v
+bnums	C:\Users\op\programs\Vim\Vim74\plg\projs\autoload\projs.vim	/^ let bnums = sort(bnums,"Cmp")$/;"	v
+newsec__main__	C:\Users\op\programs\Vim\Vim74\plg\projs\autoload\projs.vim	/^"""newsec__main__$/;"	z
+newsec_body	C:\Users\op\programs\Vim\Vim74\plg\projs\autoload\projs.vim	/^"""newsec_body$/;"	z
+newsec_preamble	C:\Users\op\programs\Vim\Vim74\plg\projs\autoload\projs.vim	/^"""newsec_preamble$/;"	z
+projs#builddir	C:\Users\op\programs\Vim\Vim74\plg\projs\autoload\projs.vim	/^function! projs#builddir (...)$/;"	f
+projs#buildnum	C:\Users\op\programs\Vim\Vim74\plg\projs\autoload\projs.vim	/^function! projs#buildnum (...)$/;"	f
+projs#checksecdir	C:\Users\op\programs\Vim\Vim74\plg\projs\autoload\projs.vim	/^fun! projs#checksecdir()$/;"	f
+projs#complete	C:\Users\op\programs\Vim\Vim74\plg\projs\autoload\projs.vim	/^fun! projs#complete (...)$/;"	f
+projs#datadir	C:\Users\op\programs\Vim\Vim74\plg\projs\autoload\projs.vim	/^function! projs#datadir ()$/;"	f
+projs#datafile	C:\Users\op\programs\Vim\Vim74\plg\projs\autoload\projs.vim	/^function! projs#datafile (id)$/;"	f
+projs#datafiles	C:\Users\op\programs\Vim\Vim74\plg\projs\autoload\projs.vim	/^function! projs#datafiles (id)$/;"	f
+projs#echo	C:\Users\op\programs\Vim\Vim74\plg\projs\autoload\projs.vim	/^function! projs#echo(text,...)$/;"	f
+projs#ex	C:\Users\op\programs\Vim\Vim74\plg\projs\autoload\projs.vim	/^function! projs#ex (proj)$/;"	f
+projs#filejoinlines	C:\Users\op\programs\Vim\Vim74\plg\projs\autoload\projs.vim	/^function! projs#filejoinlines (...)$/;"	f
+projs#genperl	C:\Users\op\programs\Vim\Vim74\plg\projs\autoload\projs.vim	/^function! projs#genperl(...)$/;"	f
+projs#gensecdat	C:\Users\op\programs\Vim\Vim74\plg\projs\autoload\projs.vim	/^function! projs#gensecdat (...)$/;"	f
+projs#info	C:\Users\op\programs\Vim\Vim74\plg\projs\autoload\projs.vim	/^function! projs#info ()$/;"	f
+projs#init	C:\Users\op\programs\Vim\Vim74\plg\projs\autoload\projs.vim	/^function! projs#init (...)$/;"	f
+projs#initvars	C:\Users\op\programs\Vim\Vim74\plg\projs\autoload\projs.vim	/^function! projs#initvars (...)$/;"	f
+projs#list	C:\Users\op\programs\Vim\Vim74\plg\projs\autoload\projs.vim	/^function! projs#list ()$/;"	f
+projs#listadd	C:\Users\op\programs\Vim\Vim74\plg\projs\autoload\projs.vim	/^function! projs#listadd (proj)$/;"	f
+projs#listfromdat	C:\Users\op\programs\Vim\Vim74\plg\projs\autoload\projs.vim	/^function! projs#listfromdat ()$/;"	f
+projs#listfromfiles	C:\Users\op\programs\Vim\Vim74\plg\projs\autoload\projs.vim	/^function! projs#listfromfiles ()$/;"	f
+projs#listwrite2dat	C:\Users\op\programs\Vim\Vim74\plg\projs\autoload\projs.vim	/^function! projs#listwrite2dat (...)$/;"	f
+projs#maps	C:\Users\op\programs\Vim\Vim74\plg\projs\autoload\projs.vim	/^function! projs#maps ()$/;"	f
+projs#new	C:\Users\op\programs\Vim\Vim74\plg\projs\autoload\projs.vim	/^function! projs#new (...)$/;"	f
+projs#newsecfile	C:\Users\op\programs\Vim\Vim74\plg\projs\autoload\projs.vim	/^function! projs#newsecfile(sec)$/;"	f
+projs#opensec	C:\Users\op\programs\Vim\Vim74\plg\projs\autoload\projs.vim	/^function! projs#opensec (...)$/;"	f
+projs#opensecorder	C:\Users\op\programs\Vim\Vim74\plg\projs\autoload\projs.vim	/^fun! projs#opensecorder()$/;"	f
+projs#path	C:\Users\op\programs\Vim\Vim74\plg\projs\autoload\projs.vim	/^function! projs#path (pa)$/;"	f
+projs#plgcd	C:\Users\op\programs\Vim\Vim74\plg\projs\autoload\projs.vim	/^function! projs#plgcd ()$/;"	f
+projs#plgdir	C:\Users\op\programs\Vim\Vim74\plg\projs\autoload\projs.vim	/^function! projs#plgdir ()$/;"	f
+projs#prjmake	C:\Users\op\programs\Vim\Vim74\plg\projs\autoload\projs.vim	/^function! projs#prjmake (...)$/;"	f
+projs#renameproject	C:\Users\op\programs\Vim\Vim74\plg\projs\autoload\projs.vim	/^function! projs#renameproject(old,new)$/;"	f
+projs#root	C:\Users\op\programs\Vim\Vim74\plg\projs\autoload\projs.vim	/^function! projs#root (...)$/;"	f
+projs#rootcd	C:\Users\op\programs\Vim\Vim74\plg\projs\autoload\projs.vim	/^function! projs#rootcd ()$/;"	f
+projs#secfile	C:\Users\op\programs\Vim\Vim74\plg\projs\autoload\projs.vim	/^function! projs#secfile (...)$/;"	f
+projs#secfromfile	C:\Users\op\programs\Vim\Vim74\plg\projs\autoload\projs.vim	/^function! projs#secfromfile (...)$/;"	f
+projs#selectproject	C:\Users\op\programs\Vim\Vim74\plg\projs\autoload\projs.vim	/^function! projs#selectproject (...)$/;"	f
+projs#setbuildvars	C:\Users\op\programs\Vim\Vim74\plg\projs\autoload\projs.vim	/^function! projs#setbuildvars (...)$/;"	f
+projs#var	C:\Users\op\programs\Vim\Vim74\plg\projs\autoload\projs.vim	/^function! projs#var (...)$/;"	f
+projs#varecho	C:\Users\op\programs\Vim\Vim74\plg\projs\autoload\projs.vim	/^function! projs#varecho (varname)$/;"	f
+projs#varexists	C:\Users\op\programs\Vim\Vim74\plg\projs\autoload\projs.vim	/^function! projs#varexists (varname)$/;"	f
+projs#varget	C:\Users\op\programs\Vim\Vim74\plg\projs\autoload\projs.vim	/^function! projs#varget (varname)$/;"	f
+projs#varset	C:\Users\op\programs\Vim\Vim74\plg\projs\autoload\projs.vim	/^function! projs#varset (varname, value)$/;"	f
+projs#varsetfromdat	C:\Users\op\programs\Vim\Vim74\plg\projs\autoload\projs.vim	/^function! projs#varsetfromdat (varname,...)$/;"	f
+projs#viewproj	C:\Users\op\programs\Vim\Vim74\plg\projs\autoload\projs.vim	/^function! projs#viewproj (...)$/;"	f
+projs#warn	C:\Users\op\programs\Vim\Vim74\plg\projs\autoload\projs.vim	/^function! projs#warn (text)$/;"	f
+projs_init	C:\Users\op\programs\Vim\Vim74\plg\projs\autoload\projs.vim	/^"""projs_init$/;"	z
+projs_new	C:\Users\op\programs\Vim\Vim74\plg\projs\autoload\projs.vim	/^"""projs_new$/;"	z
+projs_path	C:\Users\op\programs\Vim\Vim74\plg\projs\autoload\projs.vim	/^"""projs_path$/;"	z
+projtype_regular	C:\Users\op\programs\Vim\Vim74\plg\projs\autoload\projs.vim	/^"""projtype_regular$/;"	z
+snum	C:\Users\op\programs\Vim\Vim74\plg\projs\autoload\projs.vim	/^ let snum = bnum . ''$/;"	v

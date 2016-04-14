@@ -1,0 +1,18 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+aucmds	C:\Users\op\programs\Vim\Vim74\plg\projs\ftplugin\tex.vim	/^	let aucmds = [ $/;"	v
+b:basename	C:\Users\op\programs\Vim\Vim74\plg\projs\ftplugin\tex.vim	/^let b:basename = expand('%:p:t')$/;"	v
+b:did_projs_tex_ftplugin	C:\Users\op\programs\Vim\Vim74\plg\projs\ftplugin\tex.vim	/^let b:did_projs_tex_ftplugin = 1$/;"	v
+b:dirname	C:\Users\op\programs\Vim\Vim74\plg\projs\ftplugin\tex.vim	/^let b:dirname = expand('%:p:h')$/;"	v
+b:ext	C:\Users\op\programs\Vim\Vim74\plg\projs\ftplugin\tex.vim	/^let b:ext      = expand('%:p:e')$/;"	v
+b:file	C:\Users\op\programs\Vim\Vim74\plg\projs\ftplugin\tex.vim	/^let b:file     = expand('%:p')$/;"	v
+b:finfo	C:\Users\op\programs\Vim\Vim74\plg\projs\ftplugin\tex.vim	/^let b:finfo   = base#getfileinfo()$/;"	v
+b:proj	C:\Users\op\programs\Vim\Vim74\plg\projs\ftplugin\tex.vim	/^	let b:proj = substitute(b:basename,'^\\(\\w\\+\\).*','\\1','g')$/;"	v
+b:root	C:\Users\op\programs\Vim\Vim74\plg\projs\ftplugin\tex.vim	/^let b:root    = projs#root()$/;"	v
+b:sec	C:\Users\op\programs\Vim\Vim74\plg\projs\ftplugin\tex.vim	/^	let b:sec = projs#secfromfile({ $/;"	v
+b:ufile	C:\Users\op\programs\Vim\Vim74\plg\projs\ftplugin\tex.vim	/^	let b:ufile = base#file#win2unix(b:file)$/;"	v
+fr	C:\Users\op\programs\Vim\Vim74\plg\projs\ftplugin\tex.vim	/^	let fr = '  autocmd BufWinEnter,BufRead,BufEnter,BufWritePost '$/;"	v

@@ -1,0 +1,18 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+PrjBuildCleanup	C:\Users\op\programs\Vim\Vim74\plg\projs\plugin\projs_cmds.vim	/^	\\ PrjBuildCleanup call projs#build#cleanup(<f-args>)$/;"	c
+PrjListFiles	C:\Users\op\programs\Vim\Vim74\plg\projs\plugin\projs_cmds.vim	/^	\\ PrjListFiles call projs#proj#listfiles(<f-args>)$/;"	c
+PrjListSecs	C:\Users\op\programs\Vim\Vim74\plg\projs\plugin\projs_cmds.vim	/^	\\ PrjListSecs call projs#proj#listsecnames(<f-args>)$/;"	c
+PrjMake	C:\Users\op\programs\Vim\Vim74\plg\projs\plugin\projs_cmds.vim	/^command! -nargs=* -complete=custom,projs#complete#prjmake    PrjMake$/;"	c
+PrjNew	C:\Users\op\programs\Vim\Vim74\plg\projs\plugin\projs_cmds.vim	/^command! -nargs=* -complete=custom,projs#complete            PrjNew$/;"	c
+PrjRemove	C:\Users\op\programs\Vim\Vim74\plg\projs\plugin\projs_cmds.vim	/^command! -nargs=* -complete=custom,projs#complete            PrjRemove$/;"	c
+PrjRename	C:\Users\op\programs\Vim\Vim74\plg\projs\plugin\projs_cmds.vim	/^command! -nargs=* -complete=custom,projs#complete            PrjRename$/;"	c
+PrjView	C:\Users\op\programs\Vim\Vim74\plg\projs\plugin\projs_cmds.vim	/^command! -nargs=* -complete=custom,projs#complete            PrjView$/;"	c
+ProjsInit	C:\Users\op\programs\Vim\Vim74\plg\projs\plugin\projs_cmds.vim	/^command! -nargs=* -complete=custom,base#complete#CD          ProjsInit$/;"	c
+ProjsVarEcho	C:\Users\op\programs\Vim\Vim74\plg\projs\plugin\projs_cmds.vim	/^	\\ ProjsVarEcho call projs#varecho(<f-args>)$/;"	c
+VSEC	C:\Users\op\programs\Vim\Vim74\plg\projs\plugin\projs_cmds.vim	/^command! -nargs=* -complete=custom,projs#complete#secnames     VSEC$/;"	c
+VSECBASE	C:\Users\op\programs\Vim\Vim74\plg\projs\plugin\projs_cmds.vim	/^command! -nargs=* -complete=custom,projs#complete#secnamesbase VSECBASE$/;"	c
