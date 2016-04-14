@@ -770,7 +770,7 @@ endf
 
 
 function! projs#initvars (...)
-	let projvars={}
+	let s:projvars={}
 endf
 
 function! projs#echo(text,...)
@@ -1025,10 +1025,10 @@ function! projs#init (...)
 		\	"extensions_tex" : base#qw('tex')     ,
 		\	}
 
-	if exists("projvars")
-		call extend(projvars,e)
+	if exists("s:projvars")
+		call extend(s:projvars,e)
 	else
-		let projvars=e
+		let s:projvars=e
 	endif
 
  	let pdfout = projs#path([ 'pdf_built' ])
@@ -1061,7 +1061,7 @@ function! projs#init (...)
 	endfor
 
 
-	let varlist=sort(keys(projvars))
+	let varlist=sort(keys(s:projvars))
 	call projs#var('varlist',varlist)
 
 	let list = projs#listfromfiles()
@@ -1253,8 +1253,8 @@ endfunction
 
 function! projs#varget (varname)
 	
-	if exists("projvars[a:varname]")
-		let val = copy( projvars[a:varname] )
+	if exists("s:projvars[a:varname]")
+		let val = copy( s:projvars[a:varname] )
 	else
 		call projs#warn("Undefined variable: " . a:varname)
 		let val = ''
@@ -1266,13 +1266,13 @@ endfunction
 
 function! projs#varset (varname, value)
 
-	let projvars[a:varname] = a:value
+	let s:projvars[a:varname] = a:value
 	
 endfunction
 
 function! projs#varexists (varname)
-	if exists("projvars")
-		if exists("projvars[a:varname]")
+	if exists("s:projvars")
+		if exists("s:projvars[a:varname]")
 			return 1
 		else
 			return 0
