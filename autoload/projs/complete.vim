@@ -60,6 +60,7 @@ function! projs#complete#prjgit (...)
  let s  = ''
  let s .= ' add'
  let s .= ' rm'
+ let s .= ' st'
 
  let comps = base#qwsort(s)
 

@@ -332,11 +332,28 @@ function! projs#proj#git (...)
 
 	let files = projs#proj#files()
 
-	for f  in files
-		let fp = projs#path([f])
-		let gitcmd = '! git ' . cmd . ' ' . fp
-		silent exe gitcmd
-	endfor
+	let so=[]
+
+	let tmp = tempname()
+	if base#inlist(cmd,base#qw('rm add'))
+	
+		for f  in files
+			let fp = projs#path([f])
+			let gitcmd = 'git ' . cmd . ' ' . fp
+			call base#sys({ "cmds" : [gitcmd]})
+			call extend(so,base#var('sysout'))
+		endfor
+
+	"elseif base#inlist(cmd,base#qw('st'))
+	else
+		let gitcmd = 'git ' . cmd
+		call base#sys({ "cmds" : [gitcmd]})
+		call extend(so,base#var('sysout'))
+	endif
+
+	call writefile(so,tmp)
+	call base#fileopen({ "files" : [ tmp ], "action" : "split" })
+	setf gitcommit
 	
 endfunction
 
