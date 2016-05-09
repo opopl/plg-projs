@@ -23,14 +23,22 @@ function! projs#secfile (...)
 
 	if sec == '_main_'
 		let secfile = projs#path([proj.'.tex'])
+
 	elseif sec == '_vim_'
 		let secfile = projs#path([proj.'.vim'])
+
 	elseif sec == '_osecs_'
 		let secfile = projs#path([proj.'.secorder.i.dat'])
+
+	elseif sec == '_dat_citn_'
+		let secfile = projs#path([proj.'.citn.i.dat'])
+
 	elseif sec == '_bib_'
 		let secfile = projs#path([proj.'.refs.bib'])
+
 	elseif sec == '_join_'
 		let secfile = projs#path(['joins',proj.'.tex'])
+
 	elseif sec == '_build_pdflatex_'
 		if has('win32')
 	    	let secfile = projs#path([ 'b_' . proj . '_pdflatex.bat' ])
@@ -669,19 +677,22 @@ function! projs#opensec (...)
 		endfor
 
   elseif sec == '_dat_defs_'
-    let vfile = projs#path([ 'projs', proj . '.defs.i.dat' ])
+    let vfile = projs#path([ proj . '.defs.i.dat' ])
+
+  elseif sec == '_dat_citn_'
+    let vfile = projs#path([ proj . '.citn.i.dat' ])
 
   elseif sec == '_dat_files_'
-    let vfile = projs#path([ 'projs', proj . '.files.i.dat' ])
+    let vfile = projs#path([ proj . '.files.i.dat' ])
 
   elseif sec == '_dat_files_ext_'
-    let vfile = projs#path([ 'projs', proj . '.files_ext.i.dat' ])
+    let vfile = projs#path([ proj . '.files_ext.i.dat' ])
 
   elseif sec =~ '^_build_'
 	let vfile = projs#secfile(sec)
 
   elseif sec == '_dat_'
-    let vfile = projs#path([ 'projs', proj . '.secs.i.dat' ])
+    let vfile = projs#path([ proj . '.secs.i.dat' ])
 
     call projs#gensecdat()
 

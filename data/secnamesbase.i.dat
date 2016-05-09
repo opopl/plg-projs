@@ -14,6 +14,7 @@ _build_htlatex_
 _build_pdflatex_
 _vim_
 _dat_
+_dat_citn_
 _dat_defs_
 _dat_files_
 _dat_files_ext_
