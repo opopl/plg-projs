@@ -30,6 +30,9 @@ function! projs#secfile (...)
 	elseif sec == '_osecs_'
 		let secfile = projs#path([proj.'.secorder.i.dat'])
 
+  elseif sec == '_dat_defs_'
+    let secfile = projs#path([ proj . '.defs.i.dat' ])
+
 	elseif sec == '_dat_citn_'
 		let secfile = projs#path([proj.'.citn.i.dat'])
 
@@ -676,8 +679,6 @@ function! projs#opensec (...)
 				endif
 		endfor
 
-  elseif sec == '_dat_defs_'
-    let vfile = projs#path([ proj . '.defs.i.dat' ])
 
   elseif sec == '_dat_citn_'
     let vfile = projs#path([ proj . '.citn.i.dat' ])
