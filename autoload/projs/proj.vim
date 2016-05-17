@@ -91,6 +91,10 @@ function! projs#proj#files (...)
 	let proj = projs#proj#name()
 	let proj = get(ref,'proj',proj)
 
+	let files=[]
+
+	if !strlen(proj) | return files | endif
+
 	let exts = []
 	let exts = get(ref,'exts',exts)
 
@@ -322,13 +326,31 @@ function! projs#proj#make (...)
 	
 endfunction
 
+function! projs#proj#gitcmds (...)
+	let cmds = base#qw#rf('plg','projs data gitcmds.i.dat')
+
+	return cmds
+endfunction
+
 " call projs#proj#git ('add')
 " call projs#proj#git ('rm')
 
 function! projs#proj#git (...)
 	let proj = projs#proj#name()
 
-	let cmd = a:1
+	call projs#rootcd()
+
+	if a:0
+		let cmd = a:1
+	else
+		let cmd = base#getfromchoosedialog({ 
+		 	\ 'list'        : projs#proj#gitcmds(),
+		 	\ 'startopt'    : 'regular',
+		 	\ 'header'      : "Available git cmds are: ",
+		 	\ 'numcols'     : 1,
+		 	\ 'bottom'      : "Choose git cmd by number: ",
+		 	\ })
+	endif
 
 	let files = projs#proj#files()
 
