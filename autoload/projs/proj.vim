@@ -72,6 +72,7 @@ function! projs#proj#filesact (...)
 		 	\ 'numcols'     : 1,
 		 	\ 'bottom'      : "Choose a project file by number: ",
 		 	\ })
+	let pfile = projs#path([pfile])
 
 	call base#fileopen(pfile)
 
