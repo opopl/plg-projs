@@ -1520,8 +1520,18 @@ function! projs#grep (pat,...)
 endfunction
 
 function! projs#update (...)
+	let opts = base#qw('secnames secnamesbase list')
+
 	if a:0
 		let opt = a:1
+	else
+		let opt = base#getfromchoosedialog({ 
+		 	\ 'list'        : opts,
+		 	\ 'startopt'    : 'regular',
+		 	\ 'header'      : "Available options are: ",
+		 	\ 'numcols'     : 1,
+		 	\ 'bottom'      : "Choose an option by number: ",
+		 	\ })
 	endif
 
 	if opt == 'secnames'
