@@ -126,6 +126,7 @@ function! projs#newsecfile(sec,...)
 		call add(lines,'\def\idef#1{\InputIfFileExists{_def.#1.tex}{}{}}')
 
 		let ProjRootSec = input('(_main_) ProjRootSec:','part','custom,projs#complete#projrootsec')
+
 		call add(lines,'% --------------')
 		call add(lines,'\def\ProjRootSec{'.ProjRootSec.'}')
 		call add(lines,'% --------------')
@@ -133,6 +134,8 @@ function! projs#newsecfile(sec,...)
 		call add(lines,' ')
 
 		call add(lines,'\ii{preamble}')
+		call add(lines,'\ii{defs}')
+		call add(lines,' ')
 
 		call add(lines,'\begin{document}')
 		call add(lines,' ')
