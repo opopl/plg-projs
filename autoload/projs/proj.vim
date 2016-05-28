@@ -360,8 +360,10 @@ function! projs#proj#git (...)
 	let tmp = tempname()
 
 	let cmdopts = {
-		\ 'push' : "origin master",
-		\ 'commit' : '-a -m "u"',
+		\ 'push'   : "origin master" ,
+		\ 'commit' : '-a -m "u"'   ,
+		\ 'remote' : '-v'          ,
+		\ 'rm'     : '--cached'    ,
 		\ }
 
 	let opts = get(cmdopts,cmd,'')
