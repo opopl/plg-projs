@@ -358,6 +358,17 @@ function! projs#proj#git (...)
 	let so=[]
 
 	let tmp = tempname()
+
+	let cmdopts = {
+		\ 'push' : "origin master",
+		\ 'commit' : '-a -m "u"',
+		\ }
+
+	let opts = get(cmdopts,cmd,'')
+
+	let opts = input('Options for '.cmd.' command:',opts)
+	let cmd  = cmd .' '.opts
+
 	if base#inlist(cmd,base#qw('rm add'))
 	
 		for f  in files

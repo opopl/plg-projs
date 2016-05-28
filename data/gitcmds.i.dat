@@ -1,6 +1,9 @@
-st
+status
 rm
 add
 push
 pull
 commit
+checkout
+log
+lg
