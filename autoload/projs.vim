@@ -1445,21 +1445,29 @@ function! projs#genperl(...)
  
 endfunction
 
-function! projs#prjmake (...)
-	
-	if projs#varexists('prjmake_opt')
-		let opt = projs#var('prjmake_opt')
-	else
-		let opt = 'latexmk'
-		call projs#var('prjmake_opt',opt)
-	endif
-
+function! projs#prjmakeoption (...)
 	if a:0
 		let opt = a:1
-		call projs#var('prjmake_opt',opt)
+	else
+		let opts = projs#var('prjmake_opts')
+		let opt  = base#getfromchoosedialog({ 
+		 	\ 'list'        : opts,
+		 	\ 'startopt'    : 'regular',
+		 	\ 'header'      : "Available options for projs#build#run(...) are: ",
+		 	\ 'numcols'     : 1,
+		 	\ 'bottom'      : "Choose an option by number: ",
+		 	\ })
 	endif
+	return opt
+endfunction
 
-	call projs#proj#make(opt)
+function! projs#prjmake (...)
+	let opt = a:0 ? a:1 :  projs#prjmakeoption()
+	call projs#build#run({ "opt" : opt })
+endfunction
+
+function! projs#prjmakeprompt (...)
+	call projs#build#run({ "opt" : opt, "prompt" : 1 })
 endfunction
 
 function! projs#buildnum (...)

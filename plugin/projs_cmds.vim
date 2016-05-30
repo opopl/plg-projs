@@ -19,7 +19,10 @@ command! -nargs=* -complete=custom,projs#complete            PrjNew
 	\ call projs#new(<f-args>) 
 
 command! -nargs=* -complete=custom,projs#complete#prjmake    PrjMake
-	\ call projs#prjmake(<f-args>)
+ 	\ call projs#prjmake(<f-args>)
+
+command! -nargs=* -complete=custom,projs#complete#prjmake    PrjMakePrompt
+ 	\ call projs#prjmakeprompt(<f-args>)
 
 command! -nargs=* -complete=custom,projs#complete            PrjRename
 	\ call projs#renameproject(<f-args>)

@@ -112,8 +112,8 @@ endfunction
 
 " projs#build#run ()
 " projs#build#run ('single_run')
-" projs#build#run ('use_latexmk')
-" projs#build#run ('use_htlatex')
+" projs#build#run ({ 'opt' : 'use_latexmk' })
+" projs#build#run ({ 'opt' : 'use_htlatex'})
 "
 function! projs#build#run (...)
 
@@ -129,9 +129,17 @@ function! projs#build#run (...)
  	let opt = projs#var('prjmake_opt')
  end
 
+ let ref ={
+	\	"prompt" : 0,
+ 	\	}
+
  if a:0
- 	let opt = a:1
+	let refadd = a:1
+	call extend(ref,refadd)
  endif
+
+ let prompt = get(ref,'prompt',0)
+ let opt    = get(ref,'opt',opt)
 
  echohl Title
  echo ' Stage latex: LaTeX invocation'
@@ -146,12 +154,22 @@ function! projs#build#run (...)
  call base#mkdir(texoutdir)
  call projs#var('texoutdir',texoutdir)
 
- let texmode    = projs#var('texmode')
+ let texmode = projs#var('texmode')
+
+ if prompt
+ 	let texmode = input('texmode:',texmode,'custom,tex#complete#texmodes')
+ endif
+
  let texjobname = proj
+
+ if prompt
+ 	let texjobname = input('texjobname:',texjobname)
+ endif
+
+ call projs#var('texjobname',texjobname)
 
  let pdfout = projs#var('pdfout')
 
- call projs#var('texjobname',texjobname)
 
  call projs#build#setmake({"opt" : opt, "texoutdir" : texoutdir })
 
