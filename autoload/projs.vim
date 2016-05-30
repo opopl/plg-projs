@@ -1200,13 +1200,21 @@ function! projs#listfromfiles ()
 		\ "dirs" : [ root ]                  ,
 		\ "ext"  : [ "tex" ]                 ,
 		\ "relpath" : 1                      ,
-		\ "pat"  : '^\(\w\+\)\.\(\w\+\)\.tex$' ,
+		\ "pat"  : '^\(\w\+\)\.tex$' ,
 	    \ })
+
+		"\ "pat"  : '^\(\w\+\)\.\(\w\+\)\.tex$' ,
+		
+	let exclude=projs#list#exclude()
 
 	let nlist=[]
 	let found={}
 	for p in list
-		let p = substitute(p,'^\(\w\+\).*','\1','g')
+		let p = substitute(p,'^\(\w\+\)\.tex$','\1','g')
+
+		if base#inlist(p,exclude)
+			continue
+		endif
 
 		if !get(found,p,0)
 			call add(nlist,p)
@@ -1452,7 +1460,7 @@ function! projs#prjmakeoption (...)
 	else
 		"let opt = 'latexmk'
 		if projs#varexists('prjmake_opt')
-			let opt = projs#var('prjmake_opt')
+			let opt  = projs#var('prjmake_opt')
 		else
 			let opts = projs#var('prjmake_opts')
 			let opt  = base#getfromchoosedialog({ 
