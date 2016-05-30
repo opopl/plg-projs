@@ -996,11 +996,12 @@ endf
 function! projs#maps ()
 
 	nmap <silent> ;;co :copen<CR>
-	nmap <silent> <F1> :copen<CR>
-	nmap <silent> <F2> :cn<CR> 
-	nmap <silent> <F3> :cp<CR>
+	"nmap <silent> <F1> :copen<CR>
+	"nmap <silent> <F5> :cclose<CR>
+	"nmap <silent> <F2> :cn<CR> 
+	"nmap <silent> <F3> :cp<CR>
 	nmap <silent> <F4> :PrjMake<CR>
-	nmap <silent> <F5> :cclose<CR>
+	nmap <silent> <F5> :PrjMakePrompt<CR>
 	
 endfunction
 
@@ -1467,6 +1468,7 @@ function! projs#prjmake (...)
 endfunction
 
 function! projs#prjmakeprompt (...)
+	let opt = a:0 ? a:1 :  projs#prjmakeoption()
 	call projs#build#run({ "opt" : opt, "prompt" : 1 })
 endfunction
 

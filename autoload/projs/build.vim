@@ -157,19 +157,22 @@ function! projs#build#run (...)
  let texmode = projs#var('texmode')
 
  if prompt
- 	let texmode = input('texmode:',texmode,'custom,tex#complete#texmodes')
+ 	let texmode = input('texmode: ',texmode,'custom,tex#complete#texmodes')
  endif
 
  let texjobname = proj
 
  if prompt
- 	let texjobname = input('texjobname:',texjobname)
+ 	let texjobname = input('texjobname: ',texjobname)
  endif
 
  call projs#var('texjobname',texjobname)
 
  let pdfout = projs#var('pdfout')
-
+ if prompt
+ 	let pdfout = input('pdfout: ',pdfout)
+	call projs#var('pdfout',pdfout)
+ endif
 
  call projs#build#setmake({"opt" : opt, "texoutdir" : texoutdir })
 
