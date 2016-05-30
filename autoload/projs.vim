@@ -134,6 +134,8 @@ function! projs#newsecfile(sec,...)
 		call add(lines,' ')
 
 		call add(lines,'\ii{preamble}')
+		call add(lines,' ')
+		call add(lines,'%Definitions ')
 		call add(lines,'\ii{defs}')
 		call add(lines,' ')
 
@@ -141,8 +143,34 @@ function! projs#newsecfile(sec,...)
 		call add(lines,' ')
 		call add(lines,'\ii{body}')
 		call add(lines,' ')
+		call add(lines,'%Bibliography ')
+		call add(lines,'\ii{bib}')
+		call add(lines,' ')
+		call add(lines,'%Index ')
+		call add(lines,'\ii{index}')
+		call add(lines,' ')
 		call add(lines,'\end{document}')
 		call add(lines,' ')
+
+"""newsec_bib
+	elseif sec == 'bib'
+
+		let bibstyle = input('Bibliography style:','unsrt')
+		let bibfile = input('Bibliography:','\PROJ.refs')
+
+		call add(lines,'\phantomsection')
+		"call add(lines,'\renewcommand\bibname{<++>}')
+
+		call add(lines,'\addcontentsline{toc}{chapter}{\bibname}')
+
+		call add(lines,'\bibliographystyle{'.bibstyle.'}')
+		call add(lines,'\bibliography{'.bibfile.'}')
+
+"""newsec_index
+	elseif sec == 'index'
+
+		call add(lines,'\phantomsection')
+		"call add(lines,'\printindex')
 
 """newsec_body
 	elseif sec == 'body'
@@ -449,7 +477,10 @@ function! projs#new (...)
 	 let git_add = input('Add each new file to git? (1/0)',git_add)
 
 	 if use_vim
-		for sec in base#qw(" _main_ preamble body cfg ")
+		let nsecs = " _main_ preamble body cfg bib index"
+		let nsecs = input('Sections to be created:',nsecs)
+
+		for sec in base#qw(nsecs)
 			call projs#newsecfile(sec)
 		endfor
 
