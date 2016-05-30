@@ -643,7 +643,7 @@ function! projs#viewproj (...)
  "endif
  "
 	if (exists("*make#makeprg"))
-		call make#makeprg('projs',{ 'echo' : 0 })
+		call make#makeprg('projs_latexmk',{ 'echo' : 0 })
 	endif
 
 	let vimf = projs#path([ proj . '.vim' ])
