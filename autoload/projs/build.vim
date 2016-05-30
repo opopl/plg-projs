@@ -68,6 +68,47 @@ function! projs#build#cleanup (...)
 
 endfunction
 
+function! projs#build#setmake (ref)
+ let ref = a:ref
+
+ let opt        = get(ref,'opt')
+ let texoutdir  = get(ref,'texoutdir')
+	
+ let makeef=''
+ let makeef = base#file#catfile([ texoutdir , 'make_'.opt.'.log' ])
+
+ if opt == 'single_run'
+ 	call make#makeprg('projs_pdflatex',{ 'echo' : 0 })
+
+ elseif opt == 'latexmk'
+ 	call make#makeprg('projs_latexmk',{ 'echo' : 0 })
+	let makeef = base#file#catfile([ texoutdir , 'make.log' ])
+
+ elseif opt == 'htlatex'
+ 	call make#makeprg('projs_htlatex',{ 'echo' : 0 })
+
+ elseif opt == 'bibtex'
+ 	call make#makeprg('projs_bibtex',{ 'echo' : 0 })
+
+ elseif opt == 'makeindex'
+ 	call make#makeprg('projs_makeindex',{ 'echo' : 0 })
+
+ elseif opt == 'build_pdflatex'
+ 	call make#makeprg('projs_build_pdflatex',{ 'echo' : 0 })
+
+ elseif opt == 'build_htlatex'
+ 	call make#makeprg('projs_build_htlatex',{ 'echo' : 0 })
+
+ endif
+
+ call projs#var('prjmake_opt',opt)
+
+ if strlen(makeef)
+ 	exe 'setlocal makeef='.makeef
+ endif
+
+endfunction
+
 
 " projs#build#run ()
 " projs#build#run ('single_run')
@@ -112,43 +153,11 @@ function! projs#build#run (...)
 
  call projs#var('texjobname',texjobname)
 
- let makeef=''
- let makeef = base#file#catfile([ texoutdir , 'make_'.opt.'.log' ])
-
-
- if opt == 'single_run'
- 	call make#makeprg('projs_pdflatex',{ 'echo' : 0 })
-
- elseif opt == 'latexmk'
- 	call make#makeprg('projs_latexmk',{ 'echo' : 0 })
-	let makeef = base#file#catfile([ texoutdir , 'make.log' ])
-
- elseif opt == 'htlatex'
- 	call make#makeprg('projs_htlatex',{ 'echo' : 0 })
-
- elseif opt == 'bibtex'
- 	call make#makeprg('projs_bibtex',{ 'echo' : 0 })
-
- elseif opt == 'makeindex'
- 	call make#makeprg('projs_makeindex',{ 'echo' : 0 })
-
- elseif opt == 'build_pdflatex'
- 	call make#makeprg('projs_build_pdflatex',{ 'echo' : 0 })
-
- elseif opt == 'build_htlatex'
- 	call make#makeprg('projs_build_htlatex',{ 'echo' : 0 })
-
- endif
-
- call projs#var('prjmake_opt',opt)
+ call projs#build#setmake({"opt" : opt, "texoutdir" : texoutdir })
 
  let starttime   = localtime()
 
  let pdffile_tmp = base#file#catfile([ texoutdir, texjobname . '.pdf'])
-
- if strlen(makeef)
- 	exe 'setlocal makeef='.makeef
- endif
 
  let pdfo    = base#qw('latexmk single_run')
  let is_pdfo = base#inlist(opt,pdfo)

@@ -91,6 +91,7 @@ endfunction
 
 " projs#newsecfile(sec)
 " projs#newsecfile(sec,{ "git_add" : 1 })
+" projs#newsecfile(sec,{ "view" : 1 })
 
 function! projs#newsecfile(sec,...)
 
@@ -98,9 +99,14 @@ function! projs#newsecfile(sec,...)
 	let proj = projs#proj#name()
 
 	let ref = { 
-		\	"git_add" : 0 
+		\	"git_add" : 0, 
+		\	"view"    : 0, 
 		\	}
-	if a:0 | let ref = a:1 | endif
+
+	if a:0 
+		let refadd = a:1 
+		call extend(ref,refadd)
+	endif
 
 	call projs#echo("Creating file:\n\t" . sec )
 	let lines = []
@@ -364,6 +370,10 @@ function! projs#newsecfile(sec,...)
 
 	if get(ref,'git_add')
 		call base#sys("git add " . file)
+	endif
+
+	if get(ref,'view')
+		exe 'split ' . file
 	endif
 	
 endfunction

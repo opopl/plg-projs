@@ -37,7 +37,7 @@ command! -nargs=* -complete=custom,projs#complete#update     PrjUpdate
 	\ call projs#update(<f-args>)
 
 command! -nargs=* -complete=custom,projs#complete#secnamesall PrjSecNew
-	\ call projs#newsecfile(<f-args>)
+	\ call projs#newsecfile(<f-args>,{ "view" : 1 })
 
 command! -nargs=* -complete=custom,projs#complete#secnames PrjSecRename
 	\ call projs#sec#rename(<f-args>)
