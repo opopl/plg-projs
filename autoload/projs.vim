@@ -1450,14 +1450,20 @@ function! projs#prjmakeoption (...)
 	if a:0
 		let opt = a:1
 	else
-		let opts = projs#var('prjmake_opts')
-		let opt  = base#getfromchoosedialog({ 
-		 	\ 'list'        : opts,
-		 	\ 'startopt'    : 'regular',
-		 	\ 'header'      : "Available options for projs#build#run(...) are: ",
-		 	\ 'numcols'     : 1,
-		 	\ 'bottom'      : "Choose an option by number: ",
-		 	\ })
+		"let opt = 'latexmk'
+		if projs#varexists('prjmake_opt')
+			let opt = projs#var('prjmake_opt')
+		else
+			let opts = projs#var('prjmake_opts')
+			let opt  = base#getfromchoosedialog({ 
+			 	\ 'list'        : opts,
+			 	\ 'startopt'    : 'regular',
+			 	\ 'header'      : "Available options for projs#build#run(...) are: ",
+			 	\ 'numcols'     : 1,
+			 	\ 'bottom'      : "Choose an option by number: ",
+			 	\ })
+		endif
+		call projs#var('prjmake_opt',opt)
 	endif
 	return opt
 endfunction

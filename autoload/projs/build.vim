@@ -109,6 +109,20 @@ function! projs#build#setmake (ref)
 
 endfunction
 
+function! projs#build#aftermake (...)
+ let ref ={}
+
+ if a:0
+	let refadd = a:1
+	call extend(ref,refadd)
+ endif
+ let opt = get(ref,'opt')
+
+ if opt == 'latexmk'
+
+ endif
+	
+endfunction
 
 " projs#build#run ()
 " projs#build#run ('single_run')
@@ -122,12 +136,7 @@ function! projs#build#run (...)
  catch
  endtry
 
- " simple latex run, if opt was not previously defined
- "let opt = 'single_run'
- let opt = 'latexmk'
- if projs#varexists('prjmake_opt')
- 	let opt = projs#var('prjmake_opt')
- end
+ let opt =  projs#varexists('prjmake_opt') ? projs#var('prjmake_opt') : 'latexmk' 
 
  let ref ={
 	\	"prompt" : 0,
@@ -192,13 +201,35 @@ function! projs#build#run (...)
 	call projs#newsecfile('_'.opt.'_')
  endif
 
- echo 'Running make ...'
+ if prompt
+	let makeprg=input('makeprg:',&makeprg)
+	exe 'setlocal makeprg='.makeprg
+
+	let makeef=input('makeef:',&makeef)
+	exe 'setlocal makeef='.makeef
+ endif
+
+ echo '-------------------------'
+ echo ' '
+ echo 'Running make:'
+ echo ' '
+ echo ' Current directory:           ' . getcwd()
+ echo ' '
+ echo ' ( Vim opt ) &makeprg      => ' . &makeprg
+ echo ' ( Vim opt ) &makeef       => ' . &makeef
+ echo ' ( Vim opt ) &errorformat  => ' . &efm
+ echo ' '
+ echo ' Build opt                 => ' . opt 
+ echo ' '
+ echo '-------------------------'
 
  if index([ 'nonstopmode','batchmode' ],texmode) >= 0 
    exe 'silent make!'
  elseif texmode == 'errorstopmode'
    exe 'make!'
  endif
+
+ call projs#build#aftermake({ "opt" : opt })
 
  if is_pdfo
 	 let pdffile_final = base#file#catfile([ pdfout, proj .bnum.'.pdf'])
