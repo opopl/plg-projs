@@ -34,13 +34,16 @@ if ( ( b:dirname == b:root ) && ( b:ext == 'tex' ) )
 		\	"proj" : b:proj     ,
    		\	})
 
+	let  mprg='projs_pdflatex'
+	let  mprg='projs_latexmk'
+
 	let aucmds = [ 
 			\	'call projs#root("'.escape(b:root,'\').'")'           ,
 			\	'StatusLine projs'                        ,
 			\	'call projs#maps()'                       ,
 			\	'call projs#proj#name("' . b:proj .'")'   ,
 			\	'call projs#proj#secname("' . b:sec .'")' ,
-			\	'call make#makeprg("projs_pdflatex",{"echo":0})'   ,
+			\	'call make#makeprg("'.mprg.'",{"echo":0})'   ,
 			\	'TgSet projs_this'                        ,
 			\	] 
 
