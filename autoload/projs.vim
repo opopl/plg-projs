@@ -996,10 +996,14 @@ endf
 function! projs#maps ()
 
 	nmap <silent> ;;co :copen<CR>
-	"nmap <silent> <F1> :copen<CR>
+	nmap <silent> ;;cc :cclose<CR>
+
 	"nmap <silent> <F5> :cclose<CR>
-	"nmap <silent> <F2> :cn<CR> 
 	"nmap <silent> <F3> :cp<CR>
+	"
+	nmap <silent> <F1> :copen<CR>
+	nmap <silent> <F2> :cclose<CR> 
+
 	nmap <silent> <F4> :PrjMake<CR>
 	nmap <silent> <F5> :PrjMakePrompt<CR>
 	

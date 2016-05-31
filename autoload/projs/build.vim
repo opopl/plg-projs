@@ -188,6 +188,7 @@ function! projs#build#run (...)
  call projs#build#setmake({"opt" : opt, "texoutdir" : texoutdir })
 
  let starttime   = localtime()
+ call projs#var('build_starttime',starttime)
 
  let pdffile_tmp = base#file#catfile([ texoutdir, texjobname . '.pdf'])
 
@@ -261,6 +262,15 @@ function! projs#build#run (...)
 	 endif
  endif
 
+
+ call projs#build#qflist_process({ "prompt" : prompt, "opt" : opt })
+
+endfunction
+
+function! projs#build#qflist_process (...)
+
+ let starttime=projs#var('build_starttime')
+
  let endtime   = localtime()
  let buildtime = endtime-starttime
  let timemsg   = ' (' . buildtime . ' secs)'
@@ -316,6 +326,8 @@ function! projs#build#run (...)
   
       copen
  endif
+
+	
 
 endfunction
 
