@@ -150,6 +150,8 @@ function! projs#build#run (...)
  let prompt = get(ref,'prompt',0)
  let opt    = get(ref,'opt',opt)
 
+ if prompt | let opt = input('Build opt: ',opt,'custom,projs#complete#prjmake') | endif
+
  echohl Title
  echo ' Stage latex: LaTeX invocation'
  echohl None
@@ -157,7 +159,7 @@ function! projs#build#run (...)
  let proj = projs#proj#name()
  call projs#setbuildvars()
 
- let bnum = projs#var('buildnum')
+ let bnum      = projs#var('buildnum')
  let texoutdir = base#file#catfile([ projs#builddir(), bnum ])
 
  call base#mkdir(texoutdir)
@@ -203,7 +205,7 @@ function! projs#build#run (...)
 
  if prompt
 	let makeprg=input('makeprg:',&makeprg)
-	exe 'setlocal makeprg='.makeprg
+	exe 'setlocal makeprg='.escape(makeprg,' "')
 
 	let makeef=input('makeef:',&makeef)
 	exe 'setlocal makeef='.makeef
