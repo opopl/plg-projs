@@ -270,6 +270,7 @@ endfunction
 function! projs#build#qflist_process (...)
 
  let starttime=projs#var('build_starttime')
+ let proj = projs#proj#name()
 
  let endtime   = localtime()
  let buildtime = endtime-starttime

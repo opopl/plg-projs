@@ -1,91 +1,91 @@
 
 function! projs#secfilecheck (...)
-	let sec = a:1
-	let sfile = projs#secfile(sec)
+    let sec = a:1
+    let sfile = projs#secfile(sec)
 
-	if !filereadable(sfile)
-		call projs#newsecfile(sec)
-	endif
+    if !filereadable(sfile)
+        call projs#newsecfile(sec)
+    endif
 
-	return 1
+    return 1
 endf
 
 " projs#secfile (sec)
 "
 function! projs#secfile (...)
-	
-	let sec = a:1
+    
+    let sec = a:1
 
-	let dot = '.'
+    let dot = '.'
 
-	let proj = projs#proj#name()
-	let secfile = ''
+    let proj = projs#proj#name()
+    let secfile = ''
 
-	if sec == '_main_'
-		let secfile = projs#path([proj.'.tex'])
+    if sec == '_main_'
+        let secfile = projs#path([proj.'.tex'])
 
-	elseif sec == '_vim_'
-		let secfile = projs#path([proj.'.vim'])
+    elseif sec == '_vim_'
+        let secfile = projs#path([proj.'.vim'])
 
-	elseif sec == '_osecs_'
-		let secfile = projs#path([proj.'.secorder.i.dat'])
+    elseif sec == '_osecs_'
+        let secfile = projs#path([proj.'.secorder.i.dat'])
 
   elseif sec == '_dat_defs_'
     let secfile = projs#path([ proj . '.defs.i.dat' ])
 
-	elseif sec == '_dat_citn_'
-		let secfile = projs#path([proj.'.citn.i.dat'])
+    elseif sec == '_dat_citn_'
+        let secfile = projs#path([proj.'.citn.i.dat'])
 
-	elseif sec == '_bib_'
-		let secfile = projs#path([proj.'.refs.bib'])
+    elseif sec == '_bib_'
+        let secfile = projs#path([proj.'.refs.bib'])
 
-	elseif sec == '_join_'
-		let secfile = projs#path(['joins',proj.'.tex'])
+    elseif sec == '_join_'
+        let secfile = projs#path(['joins',proj.'.tex'])
 
-	elseif sec == '_build_pdflatex_'
-		if has('win32')
-	    	let secfile = projs#path([ 'b_' . proj . '_pdflatex.bat' ])
-		endif
-	elseif sec == '_build_htlatex_'
-		if has('win32')
-	    	let secfile = projs#path([ 'b_' . proj . '_htlatex.bat' ])
-		endif
-	elseif sec == '_main_htlatex_'
-	    	let secfile = projs#path([ proj . '.main_htlatex.tex' ])
-	else
-		let secfile = projs#path([proj.dot.sec.'.tex'])
-	endif
+    elseif sec == '_build_pdflatex_'
+        if has('win32')
+            let secfile = projs#path([ 'b_' . proj . '_pdflatex.bat' ])
+        endif
+    elseif sec == '_build_htlatex_'
+        if has('win32')
+            let secfile = projs#path([ 'b_' . proj . '_htlatex.bat' ])
+        endif
+    elseif sec == '_main_htlatex_'
+            let secfile = projs#path([ proj . '.main_htlatex.tex' ])
+    else
+        let secfile = projs#path([proj.dot.sec.'.tex'])
+    endif
 
-	return secfile
-	
+    return secfile
+    
 endfunction
 
 "call projs#secfromfile ({ "file" : file, "type" : "basename", "proj" : proj })
 
 function! projs#secfromfile (...)
-	let ref = {}
-	if a:0 | let ref = a:1 | endif
+    let ref = {}
+    if a:0 | let ref = a:1 | endif
 
-	let proj = projs#proj#name()
+    let proj = projs#proj#name()
 
-	let file = get(ref,'file','')
-	let type = get(ref,'type','basename')
-	let proj = get(ref,'proj',proj)
+    let file = get(ref,'file','')
+    let type = get(ref,'type','basename')
+    let proj = get(ref,'proj',proj)
 
-	if type == 'basename'
-		let basename = file 
-	
-		if basename =~ '^\w\+\.\(.*\)\.tex$'
-			let sec = substitute(basename,'^\w\+\.\(.*\)\.tex$','\1','g')
-		elseif basename == proj . '.tex' 
-			let sec = '_main_'
-		elseif basename =~ '\.\(\w\+\)\.vim$'
-			let sec = '_vim_'
-		elseif basename =~ '\.\(\w\+\)\.bib$'
-			let sec = '_bib_'
-		endif
-		return sec
-	endif
+    if type == 'basename'
+        let basename = file 
+    
+        if basename =~ '^\w\+\.\(.*\)\.tex$'
+            let sec = substitute(basename,'^\w\+\.\(.*\)\.tex$','\1','g')
+        elseif basename == proj . '.tex' 
+            let sec = '_main_'
+        elseif basename =~ '\.\(\w\+\)\.vim$'
+            let sec = '_vim_'
+        elseif basename =~ '\.\(\w\+\)\.bib$'
+            let sec = '_bib_'
+        endif
+        return sec
+    endif
 
 endfunction
 
@@ -95,287 +95,303 @@ endfunction
 
 function! projs#newsecfile(sec,...)
 
-	let sec  = a:sec
-	let proj = projs#proj#name()
+    let sec  = a:sec
+    let proj = projs#proj#name()
 
-	let ref = { 
-		\	"git_add" : 0, 
-		\	"view"    : 0, 
-		\	}
+    let ref = { 
+        \   "git_add" : 0, 
+        \   "view"    : 0, 
+        \   }
 
-	if a:0 
-		let refadd = a:1 
-		call extend(ref,refadd)
-	endif
+    if a:0 
+        let refadd = a:1 
+        call extend(ref,refadd)
+    endif
 
-	call projs#echo("Creating file:\n\t" . sec )
-	let lines = []
+    call projs#echo("Creating file:\n\t" . sec )
+    let lines = []
 
-	let file = projs#secfile(sec)
+    let file = projs#secfile(sec)
 
-	let secs = base#qw("preamble body")
+    let secs = base#qw("preamble body")
 
 """newsec__main__
-	if sec == '_main_'
+    if sec == '_main_'
 
-		let file = projs#path([ proj.'.tex'])
+        let file = projs#path([ proj.'.tex'])
 
-		call add(lines,' ')
-		call add(lines,'%%file f_main')
-		call add(lines,' ')
-		call add(lines,'\def\PROJ{'.proj.'}')
-		call add(lines,' ')
+        call add(lines,' ')
+        call add(lines,'%%file f_main')
+        call add(lines,' ')
+        call add(lines,'\def\PROJ{'.proj.'}')
+        call add(lines,' ')
 
-		call add(lines,'% --------------')
-		call add(lines,'\def\ii#1{\InputIfFileExists{\PROJ.#1.tex}{}{}}')
-		call add(lines,'\def\iif#1{\input{\PROJ/#1.tex}}')
-		call add(lines,'\def\idef#1{\InputIfFileExists{_def.#1.tex}{}{}}')
+        call add(lines,'% --------------')
+        call add(lines,'\def\ii#1{\InputIfFileExists{\PROJ.#1.tex}{}{}}')
+        call add(lines,'\def\iif#1{\input{\PROJ/#1.tex}}')
+        call add(lines,'\def\idef#1{\InputIfFileExists{_def.#1.tex}{}{}}')
 
-		let ProjRootSec = input('(_main_) ProjRootSec:','part','custom,projs#complete#projrootsec')
+        let ProjRootSec = input('(_main_) ProjRootSec:','part','custom,projs#complete#projrootsec')
 
-		call add(lines,'% --------------')
-		call add(lines,'\def\ProjRootSec{'.ProjRootSec.'}')
-		call add(lines,'% --------------')
+        call add(lines,'% --------------')
+        call add(lines,'\def\ProjRootSec{'.ProjRootSec.'}')
+        call add(lines,'% --------------')
 
-		call add(lines,' ')
+        call add(lines,' ')
 
-		call add(lines,'\ii{preamble}')
-		call add(lines,' ')
-		call add(lines,'%Definitions ')
-		call add(lines,'\ii{defs}')
-		call add(lines,' ')
+        call add(lines,'\ii{preamble}')
+        call add(lines,' ')
+        call add(lines,'%Definitions ')
+        call add(lines,'\ii{defs}')
+        call add(lines,' ')
 
-		call add(lines,'\begin{document}')
-		call add(lines,' ')
-		call add(lines,'\ii{body}')
-		call add(lines,' ')
-		call add(lines,'%Bibliography ')
-		call add(lines,'\ii{bib}')
-		call add(lines,' ')
-		call add(lines,'%Index ')
-		call add(lines,'\ii{index}')
-		call add(lines,' ')
-		call add(lines,'\end{document}')
-		call add(lines,' ')
+        call add(lines,'\begin{document}')
+        call add(lines,' ')
+        call add(lines,'\ii{body}')
+        call add(lines,' ')
+        call add(lines,'%Bibliography ')
+        call add(lines,'\ii{bib}')
+        call add(lines,' ')
+        call add(lines,'%Index ')
+        call add(lines,'\ii{index}')
+        call add(lines,' ')
+        call add(lines,'\end{document}')
+        call add(lines,' ')
 
 """newsec_bib
-	elseif sec == 'bib'
+    elseif sec == 'bib'
 
-		let bibstyle = input('Bibliography style:','unsrt')
-		let bibfile = input('Bibliography:','\PROJ.refs')
+        let bibstyle = input('Bibliography style:','unsrt')
+        let bibfile = input('Bibliography:','\PROJ.refs')
 
-		call add(lines,'\phantomsection')
-		"call add(lines,'\renewcommand\bibname{<++>}')
+        call add(lines,'\phantomsection')
+        "call add(lines,'\renewcommand\bibname{<++>}')
 
-		call add(lines,'\addcontentsline{toc}{chapter}{\bibname}')
+        call add(lines,'\addcontentsline{toc}{chapter}{\bibname}')
 
-		call add(lines,'\bibliographystyle{'.bibstyle.'}')
-		call add(lines,'\bibliography{'.bibfile.'}')
+        call add(lines,'\bibliographystyle{'.bibstyle.'}')
+        call add(lines,'\bibliography{'.bibfile.'}')
 
 """newsec_index
-	elseif sec == 'index'
+    elseif sec == 'index'
 
-		call add(lines,'\phantomsection')
-		"call add(lines,'\printindex')
+        call add(lines,'\phantomsection')
+        "call add(lines,'\printindex')
 
 """newsec_body
-	elseif sec == 'body'
+    elseif sec == 'body'
 
-		call add(lines,' ')
-		call add(lines,'%%file f_' . sec)
-		call add(lines,' ')
+        call add(lines,' ')
+        call add(lines,'%%file f_' . sec)
+        call add(lines,' ')
 
 """newsec_cfg
-	elseif sec == 'cfg'
+    elseif sec == 'cfg'
 
-		call add(lines,' ')
-		call add(lines,'%%file f_' . sec)
-		call add(lines,' ')
+        call add(lines,' ')
+        call add(lines,'%%file f_' . sec)
+        call add(lines,' ')
 
-		let ln  = projs#qw#rf('data tex tex4ht_cfg.tex')
-		call extend(lines,ln)
+        let ln  = projs#qw#rf('data tex tex4ht_cfg.tex')
+        call extend(lines,ln)
 
 """newsec_preamble
-	elseif sec == 'preamble'
+    elseif sec == 'preamble'
 
-		let packs = projs#var('tex_packs_preamble')
+        let packs = projs#var('tex_packs_preamble')
 
-		let packopts = {
-			\ 'fontenc'  : 'OT1,T2A,T3',
-			\ 'inputenc' : 'utf8',
-			\ }
+        let packopts = {
+            \ 'fontenc'  : 'OT1,T2A,T3',
+            \ 'inputenc' : 'utf8',
+            \ }
 
-		call add(lines,' ')
-		call add(lines,'%%file f_'. sec)
-		call add(lines,' ')
+        call add(lines,' ')
+        call add(lines,'%%file f_'. sec)
+        call add(lines,' ')
 
-		let ln  = projs#qw#rf('data tex preamble.tex')
-		call extend(lines,ln)
+        let ln  = projs#qw#rf('data tex preamble.tex')
+        call extend(lines,ln)
 
-	elseif sec == '_dat_'
-	elseif sec == '_dat_defs_'
-	elseif sec == '_vim_'
-	elseif sec == '_bib_'
+    elseif sec == '_dat_'
+    elseif sec == '_dat_defs_'
+    elseif sec == '_vim_'
+    elseif sec == '_bib_'
 
-		call add(lines,' ')
-		call add(lines,'"""file f__vim_ ')
-		call add(lines,' ')
-		call add(lines,' ')
+        call add(lines,' ')
+        call add(lines,'"""file f__vim_ ')
+        call add(lines,' ')
+        call add(lines,' ')
 
 """newsec__build_htlatex
-	elseif sec == '_build_htlatex_'
+    elseif sec == '_build_htlatex_'
 
-		let outd = [ 'builds', proj, 'b_htlatex' ]
+        let outd = [ 'builds', proj, 'b_htlatex' ]
 
-		let pcwin = [ '%Bin%' ]
-		let pcunix = [ '.' ]
+        let pcwin = [ '%Bin%' ]
+        let pcunix = [ '.' ]
 
-		call extend(pcwin,outd)
-		call extend(pcunix,outd)
+        call extend(pcwin,outd)
+        call extend(pcunix,outd)
 
-		let outdir_win = base#file#catfile(pcwin)
+        let outdir_win = base#file#catfile(pcwin)
 
-		let outdir_unix = base#file#catfile(pcunix)
-		let outdir_unix = base#file#win2unix(outdir_unix)
+        let outdir_unix = base#file#catfile(pcunix)
+        let outdir_unix = base#file#win2unix(outdir_unix)
 
-		let latexopts  = ' -file-line-error '
-		let latexopts .= ' -output-directory='. outdir_unix
+        let latexopts  = ' -file-line-error '
+        let latexopts .= ' -output-directory='. outdir_unix
 
-		call add(lines,' ')
-		call add(lines,'set Bin=%~dp0')
-		call add(lines,' ')
-		"call add(lines,'if not exist %htmout% set htmout=%Bin%\html' )
-		call add(lines,'set htmloutdir=%htmlout%\'.proj)
-		call add(lines,' ')
+        call add(lines,' ')
+        call add(lines,'set Bin=%~dp0')
+        call add(lines,' ')
+        "call add(lines,'if not exist %htmout% set htmout=%Bin%\html' )
+        call add(lines,'set htmloutdir=%htmlout%\'.proj)
+        call add(lines,' ')
 
-		call add(lines,'if exist %htmloutdir% rmdir /q/s  %htmloutdir% ')
-		call add(lines,'md %htmloutdir%')
-		call add(lines,' ')
-		call add(lines,'set outdir='.outdir_win)
-		call add(lines,' ')
+        call add(lines,'if exist %htmloutdir% rmdir /q/s  %htmloutdir% ')
+        call add(lines,'md %htmloutdir%')
+        call add(lines,' ')
+        call add(lines,'set outdir='.outdir_win)
+        call add(lines,' ')
 
-		call add(lines,'if  exist %outdir% rmdir /q/s  %outdir% ')
-		call add(lines,'md %outdir%')
-		call add(lines,' ')
-		call add(lines,'cd %Bin%')
-		call add(lines,' ')
-		call add(lines,'copy '.proj.'.*.tex %outdir%' )
-		call add(lines,'copy '.proj.'.tex %outdir%' )
-		call add(lines,'copy *.sty %outdir%' )
-		call add(lines,'copy _def.*.tex %outdir%' )
-		call add(lines,'copy inc.*.tex %outdir%' )
-		call add(lines,' ')
-		call add(lines,'cd %outdir%')
-		call add(lines,' ')
-		call add(lines,'copy '.proj.'.cfg.tex main.cfg' )
-		call add(lines,'copy '.proj.'.main_htlatex.tex main.tex' )
-		call add(lines,' ')
-		call add(lines,'htlatex main main')
-		call add(lines,' ')
-		call add(lines,'copy *.html %htmloutdir%\ ')
-		call add(lines,'copy *.png %htmloutdir%\ ')
-		call add(lines,' ')
-		call add(lines,'cd %Bin% ')
-		call add(lines,' ')
+        call add(lines,'if  exist %outdir% rmdir /q/s  %outdir% ')
+        call add(lines,'md %outdir%')
+        call add(lines,' ')
+        call add(lines,'cd %Bin%')
+        call add(lines,' ')
+        call add(lines,'copy '.proj.'.*.tex %outdir%' )
+        call add(lines,'copy '.proj.'.tex %outdir%' )
+        call add(lines,'copy *.sty %outdir%' )
+        call add(lines,'copy _def.*.tex %outdir%' )
+        call add(lines,'copy inc.*.tex %outdir%' )
+        call add(lines,' ')
+        call add(lines,'cd %outdir%')
+        call add(lines,' ')
+        call add(lines,'copy '.proj.'.cfg.tex main.cfg' )
+        call add(lines,'copy '.proj.'.main_htlatex.tex main.tex' )
+        call add(lines,' ')
+        call add(lines,'htlatex main main')
+        call add(lines,' ')
+        call add(lines,'copy *.html %htmloutdir%\ ')
+        call add(lines,'copy *.png %htmloutdir%\ ')
+        call add(lines,' ')
+        call add(lines,'cd %Bin% ')
+        call add(lines,' ')
 
-		call projs#newsecfile('_main_htlatex_')
+        call projs#newsecfile('_main_htlatex_')
 
-		let secc = base#qw('_main_htlatex_ cfg')
-		for sec in secc
-			call projs#secfilecheck(sec)
-		endfor
+        let secc = base#qw('_main_htlatex_ cfg')
+        for sec in secc
+            call projs#secfilecheck(sec)
+        endfor
 
-	elseif sec == '_main_htlatex_'
+    elseif sec == '_main_htlatex_'
 
-		call add(lines,' ')
-		call add(lines,'%%file f_'. sec)
-		call add(lines,' ')
-		call add(lines,'\nonstopmode')
-		call add(lines,' ')
+        call add(lines,' ')
+        call add(lines,'%%file f_'. sec)
+        call add(lines,' ')
+        call add(lines,'\nonstopmode')
+        call add(lines,' ')
 
-		let mf = projs#secfile('_main_')
-		let ml = readfile(mf)
+        let mf = projs#secfile('_main_')
+        let ml = readfile(mf)
 
-		call filter(ml,'v:val !~ "^%%file f_main"')
+        call filter(ml,'v:val !~ "^%%file f_main"')
 
-		call extend(lines,ml)
+        call extend(lines,ml)
 
 """newsec__build_pdflatex
-	elseif sec == '_build_pdflatex_'
+    elseif sec == '_build_pdflatex_'
 
-		let outd = [ 'builds', proj, 'b' ]
+        let outd = [ 'builds', proj, 'b' ]
 
-		let pcwin = [ '%Bin%' ]
-		let pcunix = [ '.' ]
+        let pcwin = [ '%Bin%' ]
+        let pcunix = [ '.' ]
 
-		call extend(pcwin,outd)
-		call extend(pcunix,outd)
+        call extend(pcwin,outd)
+        call extend(pcunix,outd)
 
-		let outdir_win = base#file#catfile(pcwin)
+        let outdir_win = base#file#catfile(pcwin)
 
-		let outdir_unix = base#file#catfile(pcunix)
-		let outdir_unix = base#file#win2unix(outdir_unix)
+        let outdir_unix = base#file#catfile(pcunix)
+        let outdir_unix = base#file#win2unix(outdir_unix)
 
-		let latexopts  = ' -file-line-error '
-		let latexopts .= ' -output-directory='. outdir_unix
+        let latexopts  = ' -file-line-error '
+        let latexopts .= ' -output-directory='. outdir_unix
 
-		let lns = {
-			\ 'pdflatex'  : 'pdflatex '.latexopts.' '.proj ,
-			\ 'bibtex'    : 'bibtex '    . proj            ,
-			\ 'makeindex' : 'makeindex ' . proj            ,
-		    \ }
-		let bibfile=projs#secfile('_bib_')
+        let lns = {
+            \ 'pdflatex'  : 'pdflatex '.latexopts.' '.proj ,
+            \ 'bibtex'    : 'bibtex '    . proj            ,
+            \ 'makeindex' : 'makeindex ' . proj            ,
+            \ }
+        let bibfile=projs#secfile('_bib_')
 
-		call add(lines,' ')
-		call add(lines,'set Bin=%~dp0')
-		call add(lines,' ')
-		call add(lines,'set outdir='.outdir_win)
-		call add(lines,'md %outdir%')
-		call add(lines,' ')
-		call add(lines,'set bibfile='.bibfile)
-		call add(lines,'copy %bibfile% %outdir%')
-		call add(lines,' ')
-		call add(lines,lns.pdflatex  )
-		call add(lines,'rem --- bibtex makeindex --- ')
-		call add(lines,'cd %outdir% ')
-		call add(lines,lns.bibtex  )
-		call add(lines,lns.makeindex  )
-		call add(lines,'rem ------------------------ ')
-		call add(lines,' ')
-		call add(lines,'cd %Bin% ')
-		call add(lines,lns.pdflatex  )
-		call add(lines,lns.pdflatex  )
-		call add(lines,' ')
+        call add(lines,' ')
+        call add(lines,'set Bin=%~dp0')
+        call add(lines,' ')
+        call add(lines,'set outdir='.outdir_win)
+        call add(lines,'md %outdir%')
+        call add(lines,' ')
+        call add(lines,'set bibfile='.bibfile)
+        call add(lines,'copy %bibfile% %outdir%')
+        call add(lines,' ')
+        call add(lines,lns.pdflatex  )
+        call add(lines,'rem --- bibtex makeindex --- ')
+        call add(lines,'cd %outdir% ')
+        call add(lines,lns.bibtex  )
+        call add(lines,lns.makeindex  )
+        call add(lines,'rem ------------------------ ')
+        call add(lines,' ')
+        call add(lines,'cd %Bin% ')
+        call add(lines,lns.pdflatex  )
+        call add(lines,lns.pdflatex  )
+        call add(lines,' ')
 
-		let origin = base#file#catfile([ outdir_win, proj.'.pdf'])
+        let origin = base#file#catfile([ outdir_win, proj.'.pdf'])
 
-		let dests = []
+        let dests = []
 
-		call add(dests,'%Bin%\pdf_built\b_'.proj.'.pdf' )
-		call add(dests,'%PDFOUT%\b_'.proj.'.pdf' )
+        call add(dests,'%Bin%\pdf_built\b_'.proj.'.pdf' )
+        call add(dests,'%PDFOUT%\b_'.proj.'.pdf' )
 
-		for dest in dests
-			call add(lines,'copy '.origin.' '.dest)
-			call add(lines,' ')
-		endfor
-	else
+        for dest in dests
+            call add(lines,'copy '.origin.' '.dest)
+            call add(lines,' ')
+        endfor
+    else
 
-		call add(lines,' ')
-		call add(lines,'%%file f_' . sec)
-		call add(lines,' ')
+        call add(lines,' ')
+        call add(lines,'%%file f_' . sec)
+        call add(lines,' ')
+
+        let cnt = input('Continue adding? (1/0):',1)
+
+        if cnt
+            let addsec = input('Add sectioning? (1/0):',1)
+            if addsec
+                let seccmd = input('Sectioning command: ','section','custom,tex#complete#seccmds')
+
+                let title = input('Title: ',sec)
+                let label = input('Label: ','sec:'.title)
+
+                call add(lines,'\' . seccmd . '{'.title.'}')
+                call add(lines,'\label{'.label.'}')
+                call add(lines,' ')
+            endif
+        endif
  
-	endif
+    endif
 
-	call writefile(lines,file)
+    call writefile(lines,file)
 
-	if get(ref,'git_add')
-		call base#sys("git add " . file)
-	endif
+    if get(ref,'git_add')
+        call base#sys("git add " . file)
+    endif
 
-	if get(ref,'view')
-		exe 'split ' . file
-	endif
-	
+    if get(ref,'view')
+        exe 'split ' . file
+    endif
+    
 endfunction
 
 "
@@ -406,17 +422,17 @@ function! projs#new (...)
  endif
 
  let newopts={ 
- 	\	'use_creator' : 0 ,
- 	\	'git_add'     : 0 ,
- 	\	}
+    \   'use_creator' : 0 ,
+    \   'git_add'     : 0 ,
+    \   }
   
  if a:0
- 	 let proj     = a:1
-	 let projtype = 'regular'
+     let proj     = a:1
+     let projtype = 'regular'
 
-	 if (a:0 == 2 && ( base#type(a:2) == 'Dictionary'))
-		call extend(newopts,a:2)
-	 endif
+     if (a:0 == 2 && ( base#type(a:2) == 'Dictionary'))
+        call extend(newopts,a:2)
+     endif
 
  endif
 
@@ -428,136 +444,136 @@ function! projs#new (...)
  echo delim
 
  let projtype = base#getfromchoosedialog({ 
-		 	\ 'list'        : projs#var('projecttypes'),
-		 	\ 'startopt'    : 'regular',
-		 	\ 'header'      : "Available project types are: ",
-		 	\ 'numcols'     : 1,
-		 	\ 'bottom'      : "Choose a project type by number: ",
-		 	\ })
+            \ 'list'        : projs#var('projecttypes'),
+            \ 'startopt'    : 'regular',
+            \ 'header'      : "Available project types are: ",
+            \ 'numcols'     : 1,
+            \ 'bottom'      : "Choose a project type by number: ",
+            \ })
 
  let projstruct = base#getfromchoosedialog({ 
-		 	\ 'list'        : projs#var('projectstructures'),
-		 	\ 'startopt'    : 'in_root',
-		 	\ 'header'      : "Available project structures are: ",
-		 	\ 'numcols'     : 1,
-		 	\ 'bottom'      : "Choose a project structure by number: ",
-		 	\ })
+            \ 'list'        : projs#var('projectstructures'),
+            \ 'startopt'    : 'in_root',
+            \ 'header'      : "Available project structures are: ",
+            \ 'numcols'     : 1,
+            \ 'bottom'      : "Choose a project structure by number: ",
+            \ })
 
  call projs#rootcd()
 
 """projtype_regular
  if projtype == 'regular'
 
-	 if ! ( exists('proj') && strlen(proj) )
-	 	let proj=input('Project name:','','custom,projs#complete')
-	 endif
+     if ! ( exists('proj') && strlen(proj) )
+        let proj=input('Project name:','','custom,projs#complete')
+     endif
 
-	 if ! strlen(proj)
-		 call base#warn({ 'text' : 'no project name provided' })
-		 return 0 
-	 endif
-	
-	 if projs#ex(proj)
-		let rw = input('Project already exists, rewrite (y/n)?: ','n')
+     if ! strlen(proj)
+         call base#warn({ 'text' : 'no project name provided' })
+         return 0 
+     endif
+    
+     if projs#ex(proj)
+        let rw = input('Project already exists, rewrite (y/n)?: ','n')
 
-		if rw != 'y'
-			return 0
-		endif
-	 endif
+        if rw != 'y'
+            return 0
+        endif
+     endif
 
-	 call projs#proj#name(proj)
-	
-	 let texfiles={}
-	 let secnamesbase = projs#var('secnamesbase')
-	 
-	 for id in secnamesbase
-	    let texfiles[id]=id
-	 endfor
-	
-	 call map(texfiles, "proj . '.' . v:key . '.tex' ")
-	 call extend(texfiles, { '_main_' : proj . '.tex' } )
-	
-	 let creator = base#catpath('perlscripts','tex_create_proj.pl')
+     call projs#proj#name(proj)
+    
+     let texfiles={}
+     let secnamesbase = projs#var('secnamesbase')
+     
+     for id in secnamesbase
+        let texfiles[id]=id
+     endfor
+    
+     call map(texfiles, "proj . '.' . v:key . '.tex' ")
+     call extend(texfiles, { '_main_' : proj . '.tex' } )
+    
+     let creator = base#catpath('perlscripts','tex_create_proj.pl')
 
-	 let uc = get(newopts,'use_creator',0)
+     let uc = get(newopts,'use_creator',0)
 
-	 let use_vim = ! (uc && filereadable(creator))
+     let use_vim = ! (uc && filereadable(creator))
 
-	 let git_add = get(newopts,'git_add',0)
-	 let git_add = input('Add each new file to git? (1/0)',git_add)
+     let git_add = get(newopts,'git_add',0)
+     let git_add = input('Add each new file to git? (1/0)',git_add)
 
-	 if use_vim
-		let nsecs = " _main_ preamble body cfg bib index"
-		let nsecs = input('Sections to be created:',nsecs)
+     if use_vim
+        let nsecs = " _main_ preamble body cfg bib index"
+        let nsecs = input('Sections to be created:',nsecs)
 
-		for sec in base#qw(nsecs)
-			call projs#newsecfile(sec)
-		endfor
+        for sec in base#qw(nsecs)
+            call projs#newsecfile(sec)
+        endfor
 
-	 elseif (uc && filereadable(creator)) 
-	
-		 """ fill in base sections: 
-		 """   preamble, packages, begin etc. 
-		 for [id,file] in items(texfiles)
-			 		let cmd = ' perl ' . creator  
-						\ . ' --dir  ' . projs#root() 
-						\ . ' --proj ' . proj
-						\ . ' --sec  ' . id
-						\ . ' --struct  ' . projstruct
-						\ . ' --force  '
-					if ! base#sys(cmd)
-						return 0
-					endif
-		 endfor
-		
-		 """ append the name of the project being created to 
-		 """   PROJS.i.dat
-		 if ! base#sys(' perl ' . creator 
-		        \ . ' --proj ' . proj
-		        \ . ' --appenddat '
-		        \ . ' --force '
-		       	\ ) 
-				return 0
-		 endif
-	 endif
+     elseif (uc && filereadable(creator)) 
+    
+         """ fill in base sections: 
+         """   preamble, packages, begin etc. 
+         for [id,file] in items(texfiles)
+                    let cmd = ' perl ' . creator  
+                        \ . ' --dir  ' . projs#root() 
+                        \ . ' --proj ' . proj
+                        \ . ' --sec  ' . id
+                        \ . ' --struct  ' . projstruct
+                        \ . ' --force  '
+                    if ! base#sys(cmd)
+                        return 0
+                    endif
+         endfor
+        
+         """ append the name of the project being created to 
+         """   PROJS.i.dat
+         if ! base#sys(' perl ' . creator 
+                \ . ' --proj ' . proj
+                \ . ' --appenddat '
+                \ . ' --force '
+                \ ) 
+                return 0
+         endif
+     endif
 
-	 if git_add
-		 for file in values(texfiles)
-			 if filereadable(file)
-		     	if ! base#sys("git add " . file )
-					return 0
-				endif
-			 endif
-		 endfor
-	 endif
+     if git_add
+         for file in values(texfiles)
+             if filereadable(file)
+                if ! base#sys("git add " . file )
+                    return 0
+                endif
+             endif
+         endfor
+     endif
 
-	 let proj = proj
-	
-	 call projs#genperl()
-	
-	 call base#echoredraw('Created new project: ' . proj)
+     let proj = proj
+    
+     call projs#genperl()
+    
+     call base#echoredraw('Created new project: ' . proj)
 
-	 let proj = proj
-	 call base#var('proj',proj)
+     let proj = proj
+     call base#var('proj',proj)
 
-	 call projs#listadd(proj)
-	
-	 "let menuprojs=input('Load projs menu? (y/n): ', 'n')
-	 "if menuprojs == 'y'
-			 "MenuReset projs
-	 "endif
+     call projs#listadd(proj)
+    
+     "let menuprojs=input('Load projs menu? (y/n): ', 'n')
+     "if menuprojs == 'y'
+             "MenuReset projs
+     "endif
 
-	 let loadmain=input('Load the main project file? (y/n): ', 'y')
-	 if loadmain == 'y'
-		VSECBASE _main_
-	 endif
+     let loadmain=input('Load the main project file? (y/n): ', 'y')
+     if loadmain == 'y'
+        VSECBASE _main_
+     endif
 
-	 TgUpdate projs_this
-	 call projs#update('list')
+     TgUpdate projs_this
+     call projs#update('list')
  endif
 
  call base#echoprefixold()
-	
+    
  return 1
 
 endf
@@ -566,50 +582,50 @@ endf
 "" projs#selectproject (pat)
 
 function! projs#selectproject (...)
-	
-	if a:0
-		let pat  = a:1
-	endif
+    
+    if a:0
+        let pat  = a:1
+    endif
 
-	let list = projs#list()
+    let list = projs#list()
 
-	let proj=base#getfromchoosedialog({ 
-	 	\ 'list'        : list,
-	 	\ 'startopt'    : '',
-	 	\ 'header'      : "Available projects are: ",
-	 	\ 'numcols'     : 1,
-	 	\ 'bottom'      : "Choose a project by number: ",
-	 	\ })
-	return proj
-	
+    let proj=base#getfromchoosedialog({ 
+        \ 'list'        : list,
+        \ 'startopt'    : '',
+        \ 'header'      : "Available projects are: ",
+        \ 'numcols'     : 1,
+        \ 'bottom'      : "Choose a project by number: ",
+        \ })
+    return proj
+    
 endfunction
 
 
 
 function! projs#viewproj (...)
 
-	call projs#rootcd()
+    call projs#rootcd()
 
-	 """ delete buffers from the previously loaded project
-	 "RFUN DC_Proj_BufsDelete
-	 "BuffersWipeAll
+     """ delete buffers from the previously loaded project
+     "RFUN DC_Proj_BufsDelete
+     "BuffersWipeAll
 
-	let sec = ''
-	if a:0
-		let proj = matchstr(a:1,'^\zs\w\+\ze')
-		let sec    = matchstr(a:1,'^\w\+\.\zs\w\+\ze')
-	else
-		let proj=projs#selectproject()
- 	endif
-	let proj = proj
+    let sec = ''
+    if a:0
+        let proj = matchstr(a:1,'^\zs\w\+\ze')
+        let sec    = matchstr(a:1,'^\w\+\.\zs\w\+\ze')
+    else
+        let proj=projs#selectproject()
+    endif
+    let proj = proj
 
-	if !projs#exists(proj)
-		let o = input('Project '.proj.' does not exist, create new? (1/0):',1)
-		if o
-			call projs#new(proj)
-			return 1
-		endif
-	endif
+    if !projs#exists(proj)
+        let o = input('Project '.proj.' does not exist, create new? (1/0):',1)
+        if o
+            call projs#new(proj)
+            return 1
+        endif
+    endif
 
  call projs#proj#name(proj)
 
@@ -617,41 +633,41 @@ function! projs#viewproj (...)
  "let loadpm = input('Load project module ' . pm . '(y/n)? :','n' )
 
  "if loadpm == 'y'
-	"exe 'tag ' . pm
+    "exe 'tag ' . pm
  "endif
 
-	let f = projs#secfile('_osecs_')
-	call projs#var('secorderfile',f)
+    let f = projs#secfile('_osecs_')
+    call projs#var('secorderfile',f)
 
-	if ! strlen(sec)
-		let sec='_main_'
-	endif
+    if ! strlen(sec)
+        let sec='_main_'
+    endif
 
-	call projs#var('secname',sec)
-	call projs#var('proj',proj)
+    call projs#var('secname',sec)
+    call projs#var('proj',proj)
 
-	let secnames = projs#proj#secnames()
-	call projs#var('secnames')
-	
-	call projs#checksecdir()
-	
-	call projs#opensec(projs#var('secname'))
+    let secnames = projs#proj#secnames()
+    call projs#var('secnames')
+    
+    call projs#checksecdir()
+    
+    call projs#opensec(projs#var('secname'))
 
  "let menuprojs=input('Load projs menu? (y/n): ', 'n')
  "if menuprojs == 'y'
-	"MenuReset projs
+    "MenuReset projs
  "endif
  "
-	if (exists("*make#makeprg"))
-		call make#makeprg('projs_latexmk',{ 'echo' : 0 })
-	endif
+    if (exists("*make#makeprg"))
+        call make#makeprg('projs_latexmk',{ 'echo' : 0 })
+    endif
 
-	let vimf = projs#path([ proj . '.vim' ])
-	if filereadable(vimf)
-		exe 'source ' . vimf
-	endif
+    let vimf = projs#path([ proj . '.vim' ])
+    if filereadable(vimf)
+        exe 'source ' . vimf
+    endif
 
-	TgSet projs_this
+    TgSet projs_this
 
 endfun
 
@@ -668,14 +684,14 @@ endf
 
 fun! projs#checksecdir()
 
-	call projs#var('secdirexists',0)
+    call projs#var('secdirexists',0)
 
-	let proj = projs#var('proj')
-	let dir  = projs#path([ proj ])
+    let proj = projs#var('proj')
+    let dir  = projs#path([ proj ])
 
-	if isdirectory(dir)
-		call projs#var('secdirexists',1)
-	endif
+    if isdirectory(dir)
+        call projs#var('secdirexists',1)
+    endif
 
 endf
 
@@ -708,20 +724,20 @@ function! projs#opensec (...)
   let vfiles            = []
 
   if projs#var('secdirexists')
-	let vfile = projs#path([ proj, sec . '.tex' ])
+    let vfile = projs#path([ proj, sec . '.tex' ])
   else
-	let vfile = projs#path([ proj . '.' . sec . '.tex' ])
+    let vfile = projs#path([ proj . '.' . sec . '.tex' ])
   endif
 
   let vfile = projs#secfile(sec)
 
   if sec == '_main_'
-		for ext in projs#var('extensions_tex')
-			let vfile = projs#path([ proj . '.' . ext ])
-				if filereadable(vfile)
-					call add(vfiles, vfile)
-				endif
-		endfor
+        for ext in projs#var('extensions_tex')
+            let vfile = projs#path([ proj . '.' . ext ])
+                if filereadable(vfile)
+                    call add(vfiles, vfile)
+                endif
+        endfor
 
 
   elseif sec == '_dat_citn_'
@@ -734,7 +750,7 @@ function! projs#opensec (...)
     let vfile = projs#path([ proj . '.files_ext.i.dat' ])
 
   elseif sec =~ '^_build_'
-	let vfile = projs#secfile(sec)
+    let vfile = projs#secfile(sec)
 
   elseif sec == '_dat_'
     let vfile = projs#path([ proj . '.secs.i.dat' ])
@@ -751,11 +767,11 @@ function! projs#opensec (...)
     let vfile = projs#path([ proj . '.refs.bib' ])
 
   elseif sec == '_join_'
-	let vfile = projs#path(['joins',proj.'.tex'])
+    let vfile = projs#path(['joins',proj.'.tex'])
 
-	if !filereadable(vfile)
-		call projs#filejoinlines()
-	endif
+    if !filereadable(vfile)
+        call projs#filejoinlines()
+    endif
 
   elseif sec == '_vim_'
     let vfile = projs#path([ proj . '.vim' ])
@@ -774,9 +790,9 @@ function! projs#opensec (...)
   let vfiles = base#uniq(vfiles)
 
   for vfile in vfiles
-	if !filereadable(vfile)
-		call projs#newsecfile(sec)
-	endif
+    if !filereadable(vfile)
+        call projs#newsecfile(sec)
+    endif
     call base#fileopen(vfile) 
   endfor
 
@@ -785,7 +801,7 @@ function! projs#opensec (...)
 
   return 
 endf
-	
+    
 
 function! projs#gensecdat (...)
  
@@ -818,98 +834,98 @@ endf
  
 "" Remove the project 
 ""  This function does not affect the current value of proj 
-""			if proj is different from the project being removed.
-""			On the other hand, if proj is the project requested to be removed,
+""          if proj is different from the project being removed.
+""          On the other hand, if proj is the project requested to be removed,
 ""     proj is unlet in the end of the function body
 
 " former DC_PrjRemove
 
 
 function! projs#initvars (...)
-	let s:projvars={}
+    let s:projvars={}
 endf
 
 function! projs#echo(text,...)
 
-	let prefix=''
-	if a:0
-		let opts=a:1
+    let prefix=''
+    if a:0
+        let opts=a:1
 
-		if opts['prefix']
-			let prefix=opts['prefix']
-		endif
-	endif
+        if opts['prefix']
+            let prefix=opts['prefix']
+        endif
+    endif
 
-	call base#echo({ 
-		\	"text" : a:text, 
-		\	"hl"   : "MoreMsg",
-		\	"prefix"  : prefix,
-		\	})
+    call base#echo({ 
+        \   "text" : a:text, 
+        \   "hl"   : "MoreMsg",
+        \   "prefix"  : prefix,
+        \   })
 
 endfunction
 
 function! projs#info ()
 
-	let g:hl      = 'MoreMsg'
-	let indentlev = 2
-	let indent    = repeat(' ',indentlev)
-	let prefix=''
+    let g:hl      = 'MoreMsg'
+    let indentlev = 2
+    let indent    = repeat(' ',indentlev)
+    let prefix=''
 
-	call base#echoprefix(prefix)
+    call base#echoprefix(prefix)
 
-	let proj     = projs#var('proj')
-	let secname  = projs#var('secname')
-	let secnames = projs#proj#secnames()
-		
-	call base#echo({ 'text' : "PROJECTS ", 'hl' : 'Title' } )
+    let proj     = projs#var('proj')
+    let secname  = projs#var('secname')
+    let secnames = projs#proj#secnames()
+        
+    call base#echo({ 'text' : "PROJECTS ", 'hl' : 'Title' } )
 
-	call base#echo({ 'text' : "Projects directory: " } )
-	call base#echo({ 
-		\ 'text' : "projs#root() => " . projs#root(),
-		\ 'indentlev' : indentlev, })
+    call base#echo({ 'text' : "Projects directory: " } )
+    call base#echo({ 
+        \ 'text' : "projs#root() => " . projs#root(),
+        \ 'indentlev' : indentlev, })
 
-	call base#echo({ 
-		\ 'text' : "$PROJSDIR => " . base#envvar('PROJSDIR'), 
-		\ 'indentlev' : indentlev, })
-	
-	call base#echo({ 'text' : "Current project: " } )
-	call base#echo({ 
-		\ 'text' : "proj => " . proj, 
-		\ 'indentlev' : indentlev, })
-	
-	call base#echo({ 'text' : "Current section: " } )
-	call base#echo({ 
-		\ 'text' : "secname => " . secname, 
-		\ 'indentlev' : indentlev })
+    call base#echo({ 
+        \ 'text' : "$PROJSDIR => " . base#envvar('PROJSDIR'), 
+        \ 'indentlev' : indentlev, })
+    
+    call base#echo({ 'text' : "Current project: " } )
+    call base#echo({ 
+        \ 'text' : "proj => " . proj, 
+        \ 'indentlev' : indentlev, })
+    
+    call base#echo({ 'text' : "Current section: " } )
+    call base#echo({ 
+        \ 'text' : "secname => " . secname, 
+        \ 'indentlev' : indentlev })
 
-	let cnt = input('Show list of sections? (1/0): ',1)
-	if cnt
-		call base#echo({ 'text' : "Sections: " } )
-		call base#echo({ 
-			\ 'text' : "secnames => " . "\n\t" . join(secnames,"\n\t"), 
-			\ 'indentlev' : indentlev })
-	endif
+    let cnt = input('Show list of sections? (1/0): ',1)
+    if cnt
+        call base#echo({ 'text' : "Sections: " } )
+        call base#echo({ 
+            \ 'text' : "secnames => " . "\n\t" . join(secnames,"\n\t"), 
+            \ 'indentlev' : indentlev })
+    endif
 
-	call projs#checksecdir()
+    call projs#checksecdir()
 
-	let vvs = 'texoutdir texmode prjmake_opt secnamesbase pdfout'
-	let vv  = base#qw(vvs)
+    let vvs = 'texoutdir texmode prjmake_opt secnamesbase pdfout'
+    let vv  = base#qw(vvs)
 
-	let cnt = input('Show Values for variables '.vvs.' ? (1/0): ',1)
+    let cnt = input('Show Values for variables '.vvs.' ? (1/0): ',1)
 
-	if cnt
-		for v in vv
-			if exists("vl") | unlet vl | endif
-			let vl = projs#var(v)
-	
-			if base#type(vl) == 'List'
-				let str = "\n\t" . join(vl,"\n\t")
-		    else
-				let str = vl
-			endif
-			call base#echo({ 'text' : v . " => " . str  } )
-		endfor
-	endif
+    if cnt
+        for v in vv
+            if exists("vl") | unlet vl | endif
+            let vl = projs#var(v)
+    
+            if base#type(vl) == 'List'
+                let str = "\n\t" . join(vl,"\n\t")
+            else
+                let str = vl
+            endif
+            call base#echo({ 'text' : v . " => " . str  } )
+        endfor
+    endif
 
 
 endf
@@ -918,103 +934,103 @@ endf
 " call projs#filejoinlines ({ "sec" : sec })
 
 function! projs#filejoinlines (...)
-	let ref = {}
-	if a:0 | let ref = a:1 | endif
+    let ref = {}
+    if a:0 | let ref = a:1 | endif
 
-	let sec = get(ref,'sec','_main_')
+    let sec = get(ref,'sec','_main_')
 
-	let proj = projs#proj#name()
-	call projs#rootcd()
+    let proj = projs#proj#name()
+    call projs#rootcd()
 
-	let sf={}
-	let sf[sec] = projs#secfile(sec)
-	let f=sf[sec]
+    let sf={}
+    let sf[sec] = projs#secfile(sec)
+    let f=sf[sec]
 
-	let flines = readfile(f)
-	let lines = []
+    let flines = readfile(f)
+    let lines = []
 
-	let pats={
-		\ 'ii'    : '^\s*\\ii{\(\w\+\)}.*$',
-		\ 'iifig' : '^\s*\\iifig{\(\w\+\)}.*$',
-		\ 'input' : '^\s*\\input{\(.*\)}.*$',
-		\	}
+    let pats={
+        \ 'ii'    : '^\s*\\ii{\(\w\+\)}.*$',
+        \ 'iifig' : '^\s*\\iifig{\(\w\+\)}.*$',
+        \ 'input' : '^\s*\\input{\(.*\)}.*$',
+        \   }
 
-	let delim=repeat('%',50)
+    let delim=repeat('%',50)
 
-	for line in flines
-		if line =~ pats.ii
-			
-			let iisec = substitute(line,pats.ii,'\1','g')
+    for line in flines
+        if line =~ pats.ii
+            
+            let iisec = substitute(line,pats.ii,'\1','g')
 
-			let iilines=projs#filejoinlines({ "sec" : iisec })
+            let iilines=projs#filejoinlines({ "sec" : iisec })
 
-			call add(lines,delim)
-			call add(lines,'%% ' . line)
-			call add(lines,delim)
+            call add(lines,delim)
+            call add(lines,'%% ' . line)
+            call add(lines,delim)
 
-			call extend(lines,iilines)
+            call extend(lines,iilines)
 
-		elseif line =~ pats.iifig
+        elseif line =~ pats.iifig
 
-			let fsec = substitute(line,pats.iifig,'\1','g')
-			let fsec = 'fig.'.fsec
+            let fsec = substitute(line,pats.iifig,'\1','g')
+            let fsec = 'fig.'.fsec
 
-			let figlines=projs#filejoinlines({ "sec" : fsec })
+            let figlines=projs#filejoinlines({ "sec" : fsec })
 
-			call add(lines,delim)
-			call add(lines,'%% ' . line)
-			call add(lines,delim)
+            call add(lines,delim)
+            call add(lines,'%% ' . line)
+            call add(lines,delim)
 
-			call extend(lines,figlines)
+            call extend(lines,figlines)
 
-		elseif line =~ pats.input
+        elseif line =~ pats.input
 
-			let if = substitute(line,pats.input,'\1','g')
-		else
-			call add(lines,line)
-		endif
-	endfor
+            let if = substitute(line,pats.input,'\1','g')
+        else
+            call add(lines,line)
+        endif
+    endfor
 
-	if sec == '_main_'
-		let jdir = projs#path(['joins'])
-		call base#mkdir(jdir)
+    if sec == '_main_'
+        let jdir = projs#path(['joins'])
+        call base#mkdir(jdir)
 
-		let jfile = base#file#catfile([ jdir, proj . '.tex' ])
-	
-		echo 'Writing joined lines into: ' 
-		echo '  ' . jfile
-	
-		call writefile(lines,jfile)
+        let jfile = base#file#catfile([ jdir, proj . '.tex' ])
+    
+        echo 'Writing joined lines into: ' 
+        echo '  ' . jfile
+    
+        call writefile(lines,jfile)
 
-	endif
+    endif
 
-	return lines
+    return lines
 
 
 endf
 
 function! projs#maps ()
 
-	nmap <silent> ;;co :copen<CR>
-	nmap <silent> ;;cc :cclose<CR>
+    nmap <silent> ;;co :copen<CR>
+    nmap <silent> ;;cc :cclose<CR>
 
-	"nmap <silent> <F5> :cclose<CR>
-	"nmap <silent> <F3> :cp<CR>
-	"
-	nmap <silent> <F1> :copen<CR>
-	nmap <silent> <F2> :cclose<CR> 
+    "nmap <silent> <F5> :cclose<CR>
+    "nmap <silent> <F3> :cp<CR>
+    "
+    nmap <silent> <F1> :copen<CR>
+    nmap <silent> <F2> :cclose<CR> 
 
-	nmap <silent> <F4> :PrjMake<CR>
-	nmap <silent> <F5> :PrjMakePrompt<CR>
-	
+    nmap <silent> <F4> :PrjMake<CR>
+    nmap <silent> <F5> :PrjMakePrompt<CR>
+    
 endfunction
 
 function! projs#builddir (...)
-	let proj     = projs#proj#name()
-	let broot    = projs#var('rootbuilddir')
-	let builddir = base#file#catfile([ broot, proj ])
+    let proj     = projs#proj#name()
+    let broot    = projs#var('rootbuilddir')
+    let builddir = base#file#catfile([ broot, proj ])
 
-	return builddir
+    return builddir
 
 endfunction
 
@@ -1026,107 +1042,107 @@ endfunction
 
 function! projs#init (...)
 
-	let projsdir=''
-	let projsid=''
+    let projsdir=''
+    let projsid=''
 
-	if projs#varexists('root')
-		let projsdir  = projs#var('root')
+    if projs#varexists('root')
+        let projsdir  = projs#var('root')
 
-		if projs#varexists('rootid')
-			let projsid = projs#var('rootid')
-		endif
-		
-	else
-		let projsdir  = base#envvar('PROJSDIR')
-		let projsid   = 'texdocs'
-	endif
+        if projs#varexists('rootid')
+            let projsid = projs#var('rootid')
+        endif
+        
+    else
+        let projsdir  = base#envvar('PROJSDIR')
+        let projsid   = 'texdocs'
+    endif
 
-	if a:0 
-		let projsid = a:1 
-		let dir = base#path(projsid)
+    if a:0 
+        let projsid = a:1 
+        let dir = base#path(projsid)
 
-		"echo dir
-		"echo projsid
+        "echo dir
+        "echo projsid
 
-		call base#mkdir(dir)
+        call base#mkdir(dir)
 
-		if isdirectory(dir)
-			let projsdir = dir
-		endif
-	endif
+        if isdirectory(dir)
+            let projsdir = dir
+        endif
+    endif
 
-	if strlen(projsid)
-		call projs#var('rootid',projsid)
-	endif
+    if strlen(projsid)
+        call projs#var('rootid',projsid)
+    endif
 
     let g:texlive={
-		\  'TEXMFDIST'  : projs#tex#kpsewhich('--var-value=TEXMFDIST'),
-		\  'TEXMFLOCAL' : projs#tex#kpsewhich('--var-value=TEXMFLOCAL'),
-		\  }
-	let g:pdfviewer = 'evince'
+        \  'TEXMFDIST'  : projs#tex#kpsewhich('--var-value=TEXMFDIST'),
+        \  'TEXMFLOCAL' : projs#tex#kpsewhich('--var-value=TEXMFLOCAL'),
+        \  }
+    let g:pdfviewer = 'evince'
 
-	let prefix="(projs#init) "
-	call projs#echo("Initializing projs plugin, \n\t projsdir => " . projsdir ,{ "prefix" : prefix })
+    let prefix="(projs#init) "
+    call projs#echo("Initializing projs plugin, \n\t projsdir => " . projsdir ,{ "prefix" : prefix })
 
-	call base#pathset({
-		\	'projs' : projsdir,
-		\	})
+    call base#pathset({
+        \   'projs' : projsdir,
+        \   })
 
-	let datvars=''
-	let datvars.=" secnamesbase "
-	let datvars.=" projecttypes projectstructures "
-	let datvars.=" projsdirs "
-	let datvars.=" prjmake_opts "
-	let datvars.=" latex_sectionnames "
-	let datvars.=" opts_PrjUpdate"
+    let datvars=''
+    let datvars.=" secnamesbase "
+    let datvars.=" projecttypes projectstructures "
+    let datvars.=" projsdirs "
+    let datvars.=" prjmake_opts "
+    let datvars.=" latex_sectionnames "
+    let datvars.=" opts_PrjUpdate"
 
-	let e={
-		\	"root"           : base#path('projs') ,
-		\	"varsfromdat"    : base#qw(datvars)   ,
-		\	"extensions_tex" : base#qw('tex')     ,
-		\	}
+    let e={
+        \   "root"           : base#path('projs') ,
+        \   "varsfromdat"    : base#qw(datvars)   ,
+        \   "extensions_tex" : base#qw('tex')     ,
+        \   }
 
-	if exists("s:projvars")
-		call extend(s:projvars,e)
-	else
-		let s:projvars=e
-	endif
+    if exists("s:projvars")
+        call extend(s:projvars,e)
+    else
+        let s:projvars=e
+    endif
 
- 	let pdfout = projs#path([ 'pdf_built' ])
-	call projs#var('pdfout',pdfout)
- 	call base#mkdir(pdfout)
+    let pdfout = projs#path([ 'pdf_built' ])
+    call projs#var('pdfout',pdfout)
+    call base#mkdir(pdfout)
 
-	call projs#var('prjmake_opt','latexmk')
+    call projs#var('prjmake_opt','latexmk')
 
-	"let texoutdir = projs#path([ 'builds' ])
-	"call projs#var('texoutdir',texoutdir)
+    "let texoutdir = projs#path([ 'builds' ])
+    "call projs#var('texoutdir',texoutdir)
 
-	let rootbuilddir = projs#path([ 'builds' ])
-	call projs#var('rootbuilddir',rootbuilddir)
-	call base#mkdir(rootbuilddir)
+    let rootbuilddir = projs#path([ 'builds' ])
+    call projs#var('rootbuilddir',rootbuilddir)
+    call base#mkdir(rootbuilddir)
 
-	if ! exists("proj") | let proj='' | endif
-		
-	for v in projs#var('varsfromdat')
-		call projs#varsetfromdat(v)
-	endfor
+    if ! exists("proj") | let proj='' | endif
+        
+    for v in projs#var('varsfromdat')
+        call projs#varsetfromdat(v)
+    endfor
 
-	let projsdirs=projs#var('projsdirs')
-	call projs#var('projsdirslist',projsdirs)
+    let projsdirs=projs#var('projsdirs')
+    call projs#var('projsdirslist',projsdirs)
 
-	call projs#varsetfromdat('vars','Dictionary')
+    call projs#varsetfromdat('vars','Dictionary')
 
-	let vars =  projs#var('vars')
-	for [k,v] in items(vars)
-		call projs#var(k,v)
-	endfor
+    let vars =  projs#var('vars')
+    for [k,v] in items(vars)
+        call projs#var(k,v)
+    endfor
 
 
-	let varlist=sort(keys(s:projvars))
-	call projs#var('varlist',varlist)
+    let varlist=sort(keys(s:projvars))
+    call projs#var('varlist',varlist)
 
-	let list = projs#listfromfiles()
-	call projs#var('list',list)
+    let list = projs#listfromfiles()
+    call projs#var('list',list)
 
 endfunction
 
@@ -1135,153 +1151,153 @@ function! projs#listwrite2dat (...)
  call base#echoprefix("(projs#listwrite2dat) " )
 
  if a:0
- 	let list = a:1
-	if base#type(list) != 'List'
-		call base#warn({ "text" : "1st input parameter should of type List" })
-		return 0
-	endif
+    let list = a:1
+    if base#type(list) != 'List'
+        call base#warn({ "text" : "1st input parameter should of type List" })
+        return 0
+    endif
  else
-	let list = projs#list()
+    let list = projs#list()
  endif
 
  let dfile = projs#path([ 'PROJS.i.dat' ])
  call writefile(list,dfile)
-	
+    
 endfunction
 
 " get the value of root dir
 " set the value of root dir
 
 function! projs#root (...)
-	if a:0
-		let root = a:1
-		call projs#var('root',root)
-	endif
-	return projs#var('root')
-endf	
+    if a:0
+        let root = a:1
+        call projs#var('root',root)
+    endif
+    return projs#var('root')
+endf    
 
 function! projs#rootbasename ()
-	let root = projs#root()
-	let bn   = fnamemodify(root,":p:h:t")
+    let root = projs#root()
+    let bn   = fnamemodify(root,":p:h:t")
 
-	return bn
-endf	
+    return bn
+endf    
 
 function! projs#rootcd ()
-	let dir =  projs#root()
-	exe 'cd ' . dir
-endf	
+    let dir =  projs#root()
+    exe 'cd ' . dir
+endf    
 
 function! projs#plgdir ()
-	return projs#var('plgdir')
-endf	
+    return projs#var('plgdir')
+endf    
 
 function! projs#datadir ()
-	return projs#var('datadir')
-endf	
+    return projs#var('datadir')
+endf    
 
 function! projs#plgcd ()
-	let dir = projs#plgdir()
-	exe 'cd ' . dir
-endf	
+    let dir = projs#plgdir()
+    exe 'cd ' . dir
+endf    
 
 function! projs#listfromdat ()
-	let file = ap#file#catfile([ projs#root(), 'PROJS.i.dat' ])
-	let list = base#readdatfile({ 
-			\ "file" : file, 
-			\ "type" : "List", 
-			\ "sort" : 1,
-			\ "uniq" : 1,
-			\ })
-	call projs#var("list",list)
-	return list
-endf	
+    let file = ap#file#catfile([ projs#root(), 'PROJS.i.dat' ])
+    let list = base#readdatfile({ 
+            \ "file" : file, 
+            \ "type" : "List", 
+            \ "sort" : 1,
+            \ "uniq" : 1,
+            \ })
+    call projs#var("list",list)
+    return list
+endf    
 
 function! projs#listfromfiles ()
-	let root = projs#root()
+    let root = projs#root()
 
-	let list = base#find({ 
-		\ "dirs" : [ root ]                  ,
-		\ "ext"  : [ "tex" ]                 ,
-		\ "relpath" : 1                      ,
-		\ "pat"  : '^\(\w\+\)\.tex$' ,
-	    \ })
+    let list = base#find({ 
+        \ "dirs" : [ root ]                  ,
+        \ "ext"  : [ "tex" ]                 ,
+        \ "relpath" : 1                      ,
+        \ "pat"  : '^\(\w\+\)\.tex$' ,
+        \ })
 
-		"\ "pat"  : '^\(\w\+\)\.\(\w\+\)\.tex$' ,
-		
-	let exclude=projs#list#exclude()
+        "\ "pat"  : '^\(\w\+\)\.\(\w\+\)\.tex$' ,
+        
+    let exclude=projs#list#exclude()
 
-	let nlist=[]
-	let found={}
-	for p in list
-		let p = substitute(p,'^\(\w\+\)\.tex$','\1','g')
+    let nlist=[]
+    let found={}
+    for p in list
+        let p = substitute(p,'^\(\w\+\)\.tex$','\1','g')
 
-		if base#inlist(p,exclude)
-			continue
-		endif
+        if base#inlist(p,exclude)
+            continue
+        endif
 
-		if !get(found,p,0)
-			call add(nlist,p)
-			let found[p]=1
-		end
-	endfor
+        if !get(found,p,0)
+            call add(nlist,p)
+            let found[p]=1
+        end
+    endfor
 
-	call projs#var('list',nlist)
+    call projs#var('list',nlist)
 
-	return nlist
-endf	
+    return nlist
+endf    
 
 function! projs#list ()
 
-	let list=[]
-	if ! projs#varexists("list")
-		"let list = projs#listfromdat()
-		let list = projs#listfromfiles()
-	else
-		let list = projs#var("list")
-	end
-	return copy(list)
-endf	
+    let list=[]
+    if ! projs#varexists("list")
+        "let list = projs#listfromdat()
+        let list = projs#listfromfiles()
+    else
+        let list = projs#var("list")
+    end
+    return copy(list)
+endf    
 
 function! projs#listadd (proj)
-	let list = projs#list()
+    let list = projs#list()
 
-	if ! projs#ex(a:proj)
-		call add(list,a:proj)
-	endif
+    if ! projs#ex(a:proj)
+        call add(list,a:proj)
+    endif
 
-	call projs#var("list",list)
-	
+    call projs#var("list",list)
+    
 endfunction
 
 function! projs#ex (proj)
 
-	let list = projs#list()
-	if index(list,a:proj) >= 0
-		return 1
-	endif
+    let list = projs#list()
+    if index(list,a:proj) >= 0
+        return 1
+    endif
 
-	return 0
+    return 0
 
 endfunction
 
 function! projs#pathqw (s)
-	let pa = base#qw(a:s)
-	return projs#path(pa)
+    let pa = base#qw(a:s)
+    return projs#path(pa)
 
 endfunction
 
 function! projs#pathqwrf (s)
-	let pa = base#qw(a:s)
-	let f = projs#path(pa)
-	let lines = []
+    let pa = base#qw(a:s)
+    let f = projs#path(pa)
+    let lines = []
 
 
-	if filereadable(f)
-		let lines = readfile(f)
-	endif
+    if filereadable(f)
+        let lines = readfile(f)
+    endif
 
-	return lines
+    return lines
 
 endfunction
 
@@ -1295,112 +1311,112 @@ endfunction
 "" projs#path(base#qw('a b'))
 
 function! projs#path (pa)
-	let root = projs#root()
-	let arr = [ root ]
-	call extend(arr,a:pa)
+    let root = projs#root()
+    let arr = [ root ]
+    call extend(arr,a:pa)
 
-	let fullpath = base#file#catfile(arr)
+    let fullpath = base#file#catfile(arr)
 
-	return fullpath
-	
+    return fullpath
+    
 endfunction
 
 function! projs#var (...)
-	if a:0 == 1
-		let var = a:1
-		return projs#varget(var)
-	elseif a:0 == 2
-		let var = a:1
-		let val = a:2
-		return projs#varset(var,val)
-	endif
+    if a:0 == 1
+        let var = a:1
+        return projs#varget(var)
+    elseif a:0 == 2
+        let var = a:1
+        let val = a:2
+        return projs#varset(var,val)
+    endif
 endfunction
 
 function! projs#varecho (varname)
-	echo projs#var(a:varname)
+    echo projs#var(a:varname)
 endfunction
 
 function! projs#varget (varname)
-	
-	if exists("s:projvars[a:varname]")
-		let val = copy( s:projvars[a:varname] )
-	else
-		call projs#warn("Undefined variable: " . a:varname)
-		let val = ''
-	endif
+    
+    if exists("s:projvars[a:varname]")
+        let val = copy( s:projvars[a:varname] )
+    else
+        call projs#warn("Undefined variable: " . a:varname)
+        let val = ''
+    endif
 
-	return val
-	
+    return val
+    
 endfunction
 
 function! projs#varset (varname, value)
 
-	let s:projvars[a:varname] = a:value
-	
+    let s:projvars[a:varname] = a:value
+    
 endfunction
 
 function! projs#varexists (varname)
-	if exists("s:projvars")
-		if exists("s:projvars[a:varname]")
-			return 1
-		else
-			return 0
-		endif
-	else
-		return 0
-	endif
-	
+    if exists("s:projvars")
+        if exists("s:projvars[a:varname]")
+            return 1
+        else
+            return 0
+        endif
+    else
+        return 0
+    endif
+    
 endfunction
 
 function! projs#varsetfromdat (varname,...)
-	let datafile = projs#datafile(a:varname)
+    let datafile = projs#datafile(a:varname)
 
-	if a:0
-		let type = a:1
-	else
-		let type = "List"
-	endif
+    if a:0
+        let type = a:1
+    else
+        let type = "List"
+    endif
 
-	if !filereadable(datafile)
-		call projs#warn('NO datafile for: ' . a:varname)
-		return 0
-	endif
+    if !filereadable(datafile)
+        call projs#warn('NO datafile for: ' . a:varname)
+        return 0
+    endif
 
-	let data = base#readdatfile({ 
-		\   "file" : datafile ,
-		\   "type" : type ,
-		\	})
+    let data = base#readdatfile({ 
+        \   "file" : datafile ,
+        \   "type" : type ,
+        \   })
 
-	call projs#var(a:varname,data)
+    call projs#var(a:varname,data)
 
-	return 1
+    return 1
 
 endfunction
 
 
 function! projs#datafile (id)
-	let files = projs#datafiles(a:id)
-	let file = get(files,0,'')
-	return file
+    let files = projs#datafiles(a:id)
+    let file = get(files,0,'')
+    return file
 endfunction
 
 function! projs#datafiles (id)
-	let datadir = projs#datadir()
-	let file = a:id . ".i.dat"
+    let datadir = projs#datadir()
+    let file = a:id . ".i.dat"
 
-	let files = base#find({
-		\ "dirs"    : [ datadir ],
-		\ "subdirs" : 1,
-		\ "pat"     : '^'.file.'$',
-		\	})
+    let files = base#find({
+        \ "dirs"    : [ datadir ],
+        \ "subdirs" : 1,
+        \ "pat"     : '^'.file.'$',
+        \   })
 
-	return files
+    return files
 endfunction
 
 function! projs#warn (text)
-	let prefix = "--PROJS--"
-	call base#warn({ "text" : a:text, "prefix" : prefix })
-	
+    let prefix = "--PROJS--"
+    call base#warn({ "text" : a:text, "prefix" : prefix })
+    
 endfunction
 
  
@@ -1417,26 +1433,26 @@ function! projs#renameproject(old,new)
  call projs#proj#name(new)
  
  for f in files
-	let nf = substitute(f,'^'.old,new,'g')
-	call rename(f,nf)
+    let nf = substitute(f,'^'.old,new,'g')
+    call rename(f,nf)
 
-	let bn = fnamemodify(nf,':p:t')
-	let sec = projs#secfromfile({ "file" : bn })
-	if sec == '_main_'
-		let lines=readfile(nf)
-		let nlines=[]
-		let changed=0
-		for line in lines
-			if line =~ '^\def\PROJ{'.old.'}'
-				let line = '\def\PROJ{'.new.'}'
-				let changed = 1
-			endif
-			call add(nlines,line)
-		endfor
-		if changed
-			call writefile(nlines,nf)
-		endif
-	endif
+    let bn = fnamemodify(nf,':p:t')
+    let sec = projs#secfromfile({ "file" : bn })
+    if sec == '_main_'
+        let lines=readfile(nf)
+        let nlines=[]
+        let changed=0
+        for line in lines
+            if line =~ '^\def\PROJ{'.old.'}'
+                let line = '\def\PROJ{'.new.'}'
+                let changed = 1
+            endif
+            call add(nlines,line)
+        endfor
+        if changed
+            call writefile(nlines,nf)
+        endif
+    endif
  endfor
 
  call projs#update('list')
@@ -1452,71 +1468,71 @@ function! projs#genperl(...)
  let proj = projs#var('proj')
 
  call extend(pmfiles, {
-			\	'generate_pm' : g:paths['perlmod'] . '/lib/TeX/Project/Generate/' . proj . '.pm',  
-			\	'generate_pl' : g:paths['projs']  . '/generate.' . proj . '.pl',  
- 			\	})
+            \   'generate_pm' : g:paths['perlmod'] . '/lib/TeX/Project/Generate/' . proj . '.pm',  
+            \   'generate_pl' : g:paths['projs']  . '/generate.' . proj . '.pl',  
+            \   })
  
 endfunction
 
 function! projs#prjmakeoption (...)
-	if a:0
-		let opt = a:1
-	else
-		"let opt = 'latexmk'
-		if projs#varexists('prjmake_opt')
-			let opt  = projs#var('prjmake_opt')
-		else
-			let opts = projs#var('prjmake_opts')
-			let opt  = base#getfromchoosedialog({ 
-			 	\ 'list'        : opts,
-			 	\ 'startopt'    : 'regular',
-			 	\ 'header'      : "Available options for projs#build#run(...) are: ",
-			 	\ 'numcols'     : 1,
-			 	\ 'bottom'      : "Choose an option by number: ",
-			 	\ })
-		endif
-		call projs#var('prjmake_opt',opt)
-	endif
-	return opt
+    if a:0
+        let opt = a:1
+    else
+        "let opt = 'latexmk'
+        if projs#varexists('prjmake_opt')
+            let opt  = projs#var('prjmake_opt')
+        else
+            let opts = projs#var('prjmake_opts')
+            let opt  = base#getfromchoosedialog({ 
+                \ 'list'        : opts,
+                \ 'startopt'    : 'regular',
+                \ 'header'      : "Available options for projs#build#run(...) are: ",
+                \ 'numcols'     : 1,
+                \ 'bottom'      : "Choose an option by number: ",
+                \ })
+        endif
+        call projs#var('prjmake_opt',opt)
+    endif
+    return opt
 endfunction
 
 function! projs#prjmake (...)
-	let opt = a:0 ? a:1 :  projs#prjmakeoption()
-	call projs#build#run({ "opt" : opt })
+    let opt = a:0 ? a:1 :  projs#prjmakeoption()
+    call projs#build#run({ "opt" : opt })
 endfunction
 
 function! projs#prjmakeprompt (...)
-	let opt = a:0 ? a:1 :  projs#prjmakeoption()
-	call projs#build#run({ "opt" : opt, "prompt" : 1 })
+    let opt = a:0 ? a:1 :  projs#prjmakeoption()
+    call projs#build#run({ "opt" : opt, "prompt" : 1 })
 endfunction
 
 function! projs#buildnum (...)
  if a:0
-	let proj = a:1
+    let proj = a:1
  else
-	let proj = projs#proj#name()
+    let proj = projs#proj#name()
  endif
-		
+        
  """" --------------------- get build number, initialize output pdf directory
  let pdfout = projs#path([ 'pdf_built' ])
  call base#mkdir(pdfout)
 
  let bnum = 1
  let pdfs = base#find({ 
- 	\ "dirs" : [ pdfout ], 
-	\ "exts" : ["pdf"],
-	\ "relpath" : 1,
-	\ })
+    \ "dirs" : [ pdfout ], 
+    \ "exts" : ["pdf"],
+    \ "relpath" : 1,
+    \ })
 
  let bnums = []
  let pat = '^'.proj.'\(\d\+\)\.pdf'
  for pdf in pdfs
-	if pdf =~ pat
-		let bnum = substitute(pdf,pat,'\1','g')
-		call add(bnums,str2nr(bnum))
-	else
-		continue
-	endif
+    if pdf =~ pat
+        let bnum = substitute(pdf,pat,'\1','g')
+        call add(bnums,str2nr(bnum))
+    else
+        continue
+    endif
  endfor
 
  func! Cmp(i1, i2)
@@ -1526,21 +1542,21 @@ function! projs#buildnum (...)
  let bnums = sort(bnums,"Cmp")
 
  if len(bnums)
- 	let bnum = bnums[-1] + 1
+    let bnum = bnums[-1] + 1
  else
-	let bnum = 1
+    let bnum = 1
  endif
  let snum = bnum . ''
 
  """" ---------------------
  return snum
-	
+    
 endfunction
 
 function! projs#setbuildvars (...)
  let ref = {}
  if a:0 | let ref = a:1 | endif
-		
+        
  let proj = projs#proj#name()
 
  let bnum      = projs#buildnum()
@@ -1558,92 +1574,92 @@ function! projs#setbuildvars (...)
  call projs#var('buildnum',bnum)
 
  if get(ref,'echo',1)
-	 echo '---------- projs#setbuildvars(...)--------'
-	 echo 'Setting latex build-related options:'
-	 echo '  buildnum         => '  . bnum
-	 echo '  texjobname       => '  . texjobname
-	 echo '  texmode          => '  . texmode
-	 echo '---------- end projs#setbuildvars---------'
+     echo '---------- projs#setbuildvars(...)--------'
+     echo 'Setting latex build-related options:'
+     echo '  buildnum         => '  . bnum
+     echo '  texjobname       => '  . texjobname
+     echo '  texmode          => '  . texmode
+     echo '---------- end projs#setbuildvars---------'
  endif
-	
+    
 endfunction
 
 function! projs#git (...)
-	call projs#rootcd()
-	
+    call projs#rootcd()
+    
 endfunction
 
 function! projs#grep (pat,...)
-	let ref = {}
-	if a:0 | let ref = a:1 | endif
+    let ref = {}
+    if a:0 | let ref = a:1 | endif
 
-	call projs#rootcd()
+    call projs#rootcd()
 
-	let pat   = a:pat
+    let pat   = a:pat
 
-	let exts  = base#qw('tex vim bib')
-	let files = projs#proj#files ({ "exts" : exts })
+    let exts  = base#qw('tex vim bib')
+    let files = projs#proj#files ({ "exts" : exts })
 
-	call base#grep({ 
-		\ "pat"   : pat   ,
-		\ "files" : files ,
-		\ })
-	
+    call base#grep({ 
+        \ "pat"   : pat   ,
+        \ "files" : files ,
+        \ })
+    
 endfunction
 
 function! projs#update (...)
-	let opts = base#qw('secnames secnamesbase list')
+    let opts = base#qw('secnames secnamesbase list')
 
-	if a:0
-		let opt = a:1
-	else
-		let opt = base#getfromchoosedialog({ 
-		 	\ 'list'        : opts,
-		 	\ 'startopt'    : 'regular',
-		 	\ 'header'      : "Available options are: ",
-		 	\ 'numcols'     : 1,
-		 	\ 'bottom'      : "Choose an option by number: ",
-		 	\ })
-	endif
+    if a:0
+        let opt = a:1
+    else
+        let opt = base#getfromchoosedialog({ 
+            \ 'list'        : opts,
+            \ 'startopt'    : 'regular',
+            \ 'header'      : "Available options are: ",
+            \ 'numcols'     : 1,
+            \ 'bottom'      : "Choose an option by number: ",
+            \ })
+    endif
 
-	if opt == 'secnames'
-		call projs#proj#secnames()
-		call projs#proj#secnamesall()
+    if opt == 'secnames'
+        call projs#proj#secnames()
+        call projs#proj#secnamesall()
 
-	elseif opt == 'secnamesbase'
-		call projs#varsetfromdat('secnamesbase')
+    elseif opt == 'secnamesbase'
+        call projs#varsetfromdat('secnamesbase')
 
-	elseif opt == 'list'
-		call projs#listfromfiles()
-	endif
-	
+    elseif opt == 'list'
+        call projs#listfromfiles()
+    endif
+    
 endfunction
 
 function! projs#load (...)
 
-	if a:0
-		let opt = a:1
-	endif
+    if a:0
+        let opt = a:1
+    endif
 
-	if opt == ''
-	elseif opt == 'tex'
-		ProjsInit
-		PrjView TEXREF
-		PrjView latexref
-	elseif opt == 'paps_phd'
-	endif
-	
+    if opt == ''
+    elseif opt == 'tex'
+        ProjsInit
+        PrjView TEXREF
+        PrjView latexref
+    elseif opt == 'paps_phd'
+    endif
+    
 endfunction
 
 function! projs#exists (...)
-	let proj = a:1
-	let list = projs#list()
+    let proj = a:1
+    let list = projs#list()
 
-	if base#inlist(proj,list)
-		return 1
-	endif
+    if base#inlist(proj,list)
+        return 1
+    endif
 
-	return 0
-	
+    return 0
+    
 endfunction
 
