@@ -198,14 +198,13 @@ function! projs#build#run (...)
   	echo 'Build number     => '  . bnum 
  endif
 
- "let is_pdfo = base#inlist(opt,['build_pdflatex'])
  if opt =~ '^build_'
 	call projs#newsecfile('_'.opt.'_')
  endif
 
  if prompt
 	let makeprg=input('makeprg:',&makeprg)
-	exe 'setlocal makeprg='.escape(makeprg,' "')
+	exe 'setlocal makeprg='.escape(makeprg,' "\')
 
 	let makeef=input('makeef:',&makeef)
 	exe 'setlocal makeef='.makeef
