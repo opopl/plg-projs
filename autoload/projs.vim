@@ -713,6 +713,17 @@ fun! projs#checksecdir()
 endf
 
 function! projs#switch (...)
+
+	if a:0
+		let proj = a:1
+	else
+		let proj = input('Switch to:','','custom,projs#complete#switch')
+	endif
+
+	call projs#proj#name(proj)
+	call projs#update('secnames')
+
+	VSECBASE body
 	
 endfunction
 
@@ -1053,6 +1064,8 @@ function! projs#maps ()
 
     nmap <silent> <F4> :PrjMake<CR>
     nmap <silent> <F5> :PrjMakePrompt<CR>
+
+    nmap <silent> <F6> :PrjSwitch<CR>
     
 endfunction
 
@@ -1659,9 +1672,6 @@ function! projs#update (...)
     
 endfunction
 
-function! projs#switch (...)
-	
-endfunction
 
 function! projs#load (...)
 

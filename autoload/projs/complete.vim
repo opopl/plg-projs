@@ -105,7 +105,7 @@ function! projs#complete#projsdirslist (...)
 endfunction
 
 function! projs#complete#switch (...)
-  return projs#complete#vars([ 'loadedprojs' ])
+  return projs#complete#vars([ 'loaded' ])
 endfunction
 
 function! projs#complete#gitcmds (...)

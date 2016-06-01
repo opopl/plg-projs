@@ -8,9 +8,6 @@ function! projs#proj#name (...)
 		call projs#var('proj',proj)
 	else
 		let proj = projs#var('proj')
-		"if !strlen(proj)
-			"let proj = projs#selectproject()
-		"endif
 	endif
 	return proj
 endfunction
