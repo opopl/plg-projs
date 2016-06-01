@@ -714,10 +714,13 @@ endf
 
 function! projs#switch (...)
 
+	let proj = ''
 	if a:0
 		let proj = a:1
 	else
-		let proj = input('Switch to:','','custom,projs#complete#switch')
+		while ! projs#exists(proj)
+			let proj = input('Switch to:','','custom,projs#complete#switch')
+		endw
 	endif
 
 	call projs#proj#name(proj)
@@ -1653,6 +1656,7 @@ function! projs#update (...)
         call projs#update#datvars()
     elseif opt == 'loaded'
 		call base#buffers#get()
+
 		let bufs=base#var('bufs')
 		let loaded={}
 
