@@ -60,6 +60,18 @@ function! projs#secfile (...)
     
 endfunction
 
+function! projs#namefromfile (...)
+	let ref = {}
+	if a:0 | let ref = a:1 | endif
+
+	let file = get(ref,'file','')
+	let bname = fnamemodify(file,':p:t')
+	let name = substitute(bname,'^\(\w\+\)\..*$','\1','g')
+
+	return name
+
+endfunction
+
 "call projs#secfromfile ({ "file" : file, "type" : "basename", "proj" : proj })
 
 function! projs#secfromfile (...)
@@ -908,9 +920,9 @@ function! projs#info ()
         \ 'indentlev' : indentlev })
 
     call base#echo({ 'text' : "Loaded projects: " } )
-	let	loaded=projs#var('loadedprojs')
+	let	loaded=projs#var('loaded')
     call base#echo({ 
-        \ 'text' : "loadedprojs => " . base#dump(loaded), 
+        \ 'text' : "loaded => " . base#dump(loaded), 
         \ 'indentlev' : indentlev })
 
     let cnt = input('Continue? (1/0): ',0)
@@ -1626,15 +1638,29 @@ function! projs#update (...)
         call projs#listfromfiles()
     elseif opt == 'datvars'
         call projs#update#datvars()
-    elseif opt == 'loadedprojs'
+    elseif opt == 'loaded'
 		call base#buffers#get()
 		let bufs=base#var('bufs')
-		for buf in bufs
-			" code
+		let loaded={}
+
+		for b in bufs
+			let file = get(b,'shortname','')
+			let path = get(b,'path','')
+			let ext  = get(b,'ext','')
+
+			if path != projs#root() | continue | endif
+
+			let proj = projs#namefromfile({ 'file' : file })
+			call extend(loaded,{ proj : 1 })
 		endfor
+		call projs#var('loaded',keys(loaded))
 
     endif
     
+endfunction
+
+function! projs#switch (...)
+	
 endfunction
 
 function! projs#load (...)
