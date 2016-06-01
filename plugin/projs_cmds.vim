@@ -72,6 +72,9 @@ command! -nargs=* -complete=custom,projs#complete#prjgit   PrjGit
 command! -nargs=* -complete=custom,projs#complete#prjbuild PrjBuild
 	\ call projs#build#action(<f-args>)
 
+command! -nargs=* -complete=custom,projs#complete#prjswitch PrjSwitch
+	\ call projs#switch(<f-args>)
+
 command! -nargs=* -complete=custom,projs#complete#secnamesbase VSECBASE
   	\ call projs#opensec(<f-args>) 
 

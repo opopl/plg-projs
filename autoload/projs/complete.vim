@@ -96,16 +96,16 @@ function! projs#complete#grep (...)
 endfunction
 
 function! projs#complete#secnames (...)
-
   "call projs#proj#secnames()
   return projs#complete#vars([ 'secnames' ])
-	
 endfunction
 
 function! projs#complete#projsdirslist (...)
-
   return projs#complete#vars([ 'projsdirslist' ])
-	
+endfunction
+
+function! projs#complete#switch (...)
+  return projs#complete#vars([ 'loadedprojs' ])
 endfunction
 
 function! projs#complete#gitcmds (...)

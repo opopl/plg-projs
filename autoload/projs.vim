@@ -669,6 +669,11 @@ function! projs#viewproj (...)
 
     TgSet projs_this
 
+	let loaded=projs#varget('loadedprojs',[])
+
+	call add(loaded,proj)
+	call projs#var('loadedprojs',loaded)
+
 endfun
 
 fun! projs#complete (...)
@@ -694,6 +699,10 @@ fun! projs#checksecdir()
     endif
 
 endf
+
+function! projs#switch (...)
+	
+endfunction
 
 function! projs#opensec (...)
  let proj = projs#proj#name()
@@ -898,6 +907,15 @@ function! projs#info ()
         \ 'text' : "secname => " . secname, 
         \ 'indentlev' : indentlev })
 
+    call base#echo({ 'text' : "Loaded projects: " } )
+	let	loaded=projs#var('loadedprojs')
+    call base#echo({ 
+        \ 'text' : "loadedprojs => " . base#dump(loaded), 
+        \ 'indentlev' : indentlev })
+
+    let cnt = input('Continue? (1/0): ',0)
+	if !cnt | return | endif
+
     let cnt = input('Show list of sections? (1/0): ',1)
     if cnt
         call base#echo({ 'text' : "Sections: " } )
@@ -927,6 +945,7 @@ function! projs#info ()
         endfor
     endif
 
+	return
 
 endf
 
@@ -1088,25 +1107,8 @@ function! projs#init (...)
         \   'projs' : projsdir,
         \   })
 
-    let datvars=''
-    let datvars.=" secnamesbase "
-    let datvars.=" projecttypes projectstructures "
-    let datvars.=" projsdirs "
-    let datvars.=" prjmake_opts "
-    let datvars.=" latex_sectionnames "
-    let datvars.=" opts_PrjUpdate"
 
-    let e={
-        \   "root"           : base#path('projs') ,
-        \   "varsfromdat"    : base#qw(datvars)   ,
-        \   "extensions_tex" : base#qw('tex')     ,
-        \   }
-
-    if exists("s:projvars")
-        call extend(s:projvars,e)
-    else
-        let s:projvars=e
-    endif
+	call projs#update#datvars()
 
     let pdfout = projs#path([ 'pdf_built' ])
     call projs#var('pdfout',pdfout)
@@ -1123,26 +1125,13 @@ function! projs#init (...)
 
     if ! exists("proj") | let proj='' | endif
         
-    for v in projs#var('varsfromdat')
-        call projs#varsetfromdat(v)
-    endfor
-
     let projsdirs=projs#var('projsdirs')
     call projs#var('projsdirslist',projsdirs)
-
-    call projs#varsetfromdat('vars','Dictionary')
-
-    let vars =  projs#var('vars')
-    for [k,v] in items(vars)
-        call projs#var(k,v)
-    endfor
-
 
     let varlist=sort(keys(s:projvars))
     call projs#var('varlist',varlist)
 
-    let list = projs#listfromfiles()
-    call projs#var('list',list)
+	call projs#update('list')
 
 endfunction
 
@@ -1336,13 +1325,17 @@ function! projs#varecho (varname)
     echo projs#var(a:varname)
 endfunction
 
-function! projs#varget (varname)
+function! projs#varget (varname,...)
     
     if exists("s:projvars[a:varname]")
         let val = copy( s:projvars[a:varname] )
     else
-        call projs#warn("Undefined variable: " . a:varname)
+        "call projs#warn("Undefined variable: " . a:varname)
         let val = ''
+		if a:0
+			unlet val
+			let val = a:1
+		endif
     endif
 
     return val
@@ -1608,7 +1601,7 @@ function! projs#grep (pat,...)
 endfunction
 
 function! projs#update (...)
-    let opts = base#qw('secnames secnamesbase list')
+	let opts = projs#varget('opts_PrjUpdate',base#qw('secnames list datvars'))
 
     if a:0
         let opt = a:1
@@ -1631,6 +1624,15 @@ function! projs#update (...)
 
     elseif opt == 'list'
         call projs#listfromfiles()
+    elseif opt == 'datvars'
+        call projs#update#datvars()
+    elseif opt == 'loadedprojs'
+		call base#buffers#get()
+		let bufs=base#var('bufs')
+		for buf in bufs
+			" code
+		endfor
+
     endif
     
 endfunction
