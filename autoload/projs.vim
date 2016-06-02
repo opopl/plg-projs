@@ -142,6 +142,7 @@ function! projs#newsecfile(sec,...)
         call add(lines,'\def\ii#1{\InputIfFileExists{\PROJ.#1.tex}{}{}}')
         call add(lines,'\def\iif#1{\input{\PROJ/#1.tex}}')
         call add(lines,'\def\idef#1{\InputIfFileExists{_def.#1.tex}{}{}}')
+        call add(lines,'% --------------')
 
         let ProjRootSec = input('(_main_) ProjRootSec:','part','custom,projs#complete#projrootsec')
 
@@ -183,6 +184,10 @@ function! projs#newsecfile(sec,...)
 
         call add(lines,'\bibliographystyle{'.bibstyle.'}')
         call add(lines,'\bibliography{'.bibfile.'}')
+"""newsec_title
+    elseif sec == 'index'
+        call add(lines,'\begin{titlepage}')
+		call add(lines,'\end{titlepage}')
 
 """newsec_index
     elseif sec == 'index'
@@ -720,13 +725,22 @@ function! projs#switch (...)
 	else
 		while ! projs#exists(proj)
 			let proj = input('Switch to:','','custom,projs#complete#switch')
+			if proj == ''
+				let text = 'Project switching aborted'
+				redraw!
+				call base#echo({ "text": text, "hl" : 'MoreMsg'})
+				return
+			endif
 		endw
 	endif
 
 	call projs#proj#name(proj)
 	call projs#update('secnames')
 
-	VSECBASE body
+	let sec = 'body'
+	let sec = input('Section to open:',sec,'custom,projs#complete#secnames')
+
+	call projs#opensec(sec)
 	
 endfunction
 
@@ -735,6 +749,7 @@ function! projs#opensec (...)
 
  if a:0==1
     let sec=a:1
+
  else
     let sec='body'
 
@@ -743,14 +758,13 @@ function! projs#opensec (...)
 
     let listsecs=sort(base#uniq(listsecs))
 
-    let sec=base#getfromchoosedialog({ 
-      \ 'list'        : listsecs,
-      \ 'startopt'    : 'body',
-      \ 'header'      : "Available sections are: ",
-      \ 'numcols'     : 1,
-      \ 'bottom'      : "Choose section by number: ",
-      \ })
-
+    let sec = base#getfromchoosedialog({ 
+	      \ 'list'        : listsecs,
+	      \ 'startopt'    : 'body',
+	      \ 'header'      : "Available sections are: ",
+	      \ 'numcols'     : 1,
+	      \ 'bottom'      : "Choose section by number: ",
+	      \ })
   endif
 
   call projs#var("secname",sec)
@@ -1056,19 +1070,19 @@ endf
 
 function! projs#maps ()
 
-    nmap <silent> ;;co :copen<CR>
-    nmap <silent> ;;cc :cclose<CR>
+    nnoremap <silent> ;;co :copen<CR>
+    nnoremap <silent> ;;cc :cclose<CR>
 
-    "nmap <silent> <F5> :cclose<CR>
-    "nmap <silent> <F3> :cp<CR>
+    "nnoremap <silent> <F5> :cclose<CR>
+    "nnoremap <silent> <F3> :cp<CR>
     "
-    nmap <silent> <F1> :copen<CR>
-    nmap <silent> <F2> :cclose<CR> 
+    nnoremap <silent> <F1> :copen<CR>
+    nnoremap <silent> <F2> :cclose<CR> 
 
-    nmap <silent> <F4> :PrjMake<CR>
-    nmap <silent> <F5> :PrjMakePrompt<CR>
+    nnoremap <silent> <F4> :PrjMake<CR>
+    nnoremap <silent> <F5> :PrjMakePrompt<CR>
 
-    nmap <silent> <F6> :PrjSwitch<CR>
+    nnoremap <silent> <F6> :PrjSwitch<CR>
     
 endfunction
 
@@ -1610,13 +1624,16 @@ function! projs#git (...)
     
 endfunction
 
-function! projs#grep (pat,...)
+function! projs#grep (...)
     let ref = {}
-    if a:0 | let ref = a:1 | endif
+    if a:0 
+		let pat = a:1
+		if a:0 > 1 | let ref = a:2 | endif
+	else
+		let pat = input('Pattern to search for:','')
+	endif
 
     call projs#rootcd()
-
-    let pat   = a:pat
 
     let exts  = base#qw('tex vim bib')
     let files = projs#proj#files ({ "exts" : exts })

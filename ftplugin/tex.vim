@@ -13,6 +13,12 @@ let b:dirname = expand('%:p:h')
 
 let b:finfo   = base#getfileinfo()
 
+function! b:SetOpts()
+	setlocal ts=2
+	setlocal iminsert=0
+	call projs#maps()
+endfunction
+
 " if we are dealing with a 'projs' (La)TeX file
 if ( ( b:dirname == b:root ) && ( b:ext == 'tex' ) )
 
@@ -25,8 +31,6 @@ if ( ( b:dirname == b:root ) && ( b:ext == 'tex' ) )
 	if (b:proj =~ '^'.'_def')
 		finish
 	endif
-
-	setlocal ts=2
 
 	let b:sec = projs#secfromfile({ 
 		\	"file" : b:basename ,
@@ -43,8 +47,9 @@ if ( ( b:dirname == b:root ) && ( b:ext == 'tex' ) )
 			\	'call projs#maps()'                       ,
 			\	'call projs#proj#name("' . b:proj .'")'   ,
 			\	'call projs#proj#secname("' . b:sec .'")' ,
-			\	'call make#makeprg("'.mprg.'",{"echo":0})'   ,
+			\	'call make#makeprg("'.mprg.'",{"echo":0})',
 			\	'TgSet projs_this'                        ,
+			\	'call b:SetOpts()'                        ,
 			\	] 
 
 	let fr = '  autocmd BufWinEnter,BufRead,BufEnter,BufWritePost '
