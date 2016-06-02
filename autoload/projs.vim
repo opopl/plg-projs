@@ -925,6 +925,8 @@ function! projs#info ()
     let proj     = projs#var('proj')
     let secname  = projs#var('secname')
     let secnames = projs#proj#secnames()
+
+	call projs#update('loaded')
         
     call base#echo({ 'text' : "PROJECTS ", 'hl' : 'Title' } )
 
