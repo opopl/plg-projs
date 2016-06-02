@@ -723,16 +723,21 @@ function! projs#switch (...)
 	if a:0
 		let proj = a:1
 	else
-		while ! projs#exists(proj)
-			let proj = input('Switch to:','','custom,projs#complete#switch')
-			if proj == ''
-				let text = 'Project switching aborted'
-				redraw!
-				call base#echo({ "text": text, "hl" : 'MoreMsg'})
-				return
-			endif
-		endw
+		let proj = input('Switch to:','','custom,projs#complete#switch')
 	endif
+
+	"let ul = input('Update list? (1/0):',0)
+	"if ul | call projs#update('list') | endif
+
+	while ! projs#exists(proj)
+		let proj = input('Switch to:','','custom,projs#complete#switch')
+		if proj == ''
+			let text = 'Project switching aborted'
+			redraw!
+			call base#echo({ "text": text, "hl" : 'MoreMsg'})
+			return
+		endif
+	endw
 
 	call projs#proj#name(proj)
 	call projs#update('secnames')
