@@ -15,15 +15,14 @@ function! projs#update#datvars (...)
         \   "extensions_tex" : base#qw('tex')     ,
         \   }
 
-    if exists("s:projvars")
-        call extend(s:projvars,e)
-    else
-        let s:projvars=e
-    endif
+	for k in keys(e)
+		call projs#varset(k,get(e,k))
+	endfor
 
-    for v in projs#var('varsfromdat')
-        call projs#varsetfromdat(v)
-    endfor
+
+	for v in projs#var('varsfromdat')
+		call projs#varsetfromdat(v)
+	endfor
 
     call projs#varsetfromdat('vars','Dictionary')
 

@@ -1122,9 +1122,6 @@ function! projs#init (...)
         let projsid = a:1 
         let dir = base#path(projsid)
 
-        "echo dir
-        "echo projsid
-
         call base#mkdir(dir)
 
         if isdirectory(dir)
@@ -1386,6 +1383,12 @@ endfunction
 
 function! projs#varset (varname, value)
 
+	if !exists("s:projvars")
+		let s:projvars={}
+	endif
+    if exists("s:projvars[a:varname]")
+    	unlet s:projvars[a:varname]
+	endif
     let s:projvars[a:varname] = a:value
     
 endfunction
