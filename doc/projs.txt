@@ -1,0 +1,14 @@
+
+*plg_projs*
+
+*projs_maps*
+
+<F1> - open quickfix window
+<F1> - close quickfix window
+
+<F4> - PrjMake
+<F5> - PrjMakePrompt
+
+<F6> - PrjSwitch
+<F7> - PrjPdfView
+

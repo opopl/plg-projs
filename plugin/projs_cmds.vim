@@ -18,6 +18,9 @@ command! -nargs=* -complete=custom,projs#complete            PrjView
 command! -nargs=* -complete=custom,projs#complete            PrjNew
 	\ call projs#new(<f-args>) 
 
+command! -nargs=* -complete=custom,projs#complete            PrjPdfView
+	\ call projs#pdf#view(<f-args>) 
+
 command! -nargs=* -complete=custom,projs#complete#prjmake    PrjMake
  	\ call projs#prjmake(<f-args>)
 

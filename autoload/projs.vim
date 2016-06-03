@@ -969,6 +969,11 @@ function! projs#info ()
     call base#echo({ 
         \ 'text' : "$PROJSDIR => " . base#envvar('PROJSDIR'), 
         \ 'indentlev' : indentlev, })
+
+    call base#echo({ 'text' : "Projects PDF dir: " } )
+    call base#echo({ 
+        \ 'text' : "pdffin => " . projs#var('pdffin'),
+        \ 'indentlev' : indentlev, })
     
     call base#echo({ 'text' : "Current project: " } )
     call base#echo({ 
@@ -1116,6 +1121,7 @@ function! projs#maps ()
     nnoremap <silent> <F5> :PrjMakePrompt<CR>
 
     nnoremap <silent> <F6> :PrjSwitch<CR>
+    nnoremap <silent> <F7> :PrjPdfView<CR>
     
 endfunction
 
@@ -1185,6 +1191,11 @@ function! projs#init (...)
     let pdfout = projs#path([ 'pdf_built' ])
     call projs#var('pdfout',pdfout)
     call base#mkdir(pdfout)
+
+	let pdffin = exists('$PDFOUT') ? $PDFOUT : base#qw#catfile('C: out pdf')
+    call base#mkdir(pdffin)
+
+	call projs#var('pdffin',$PDFOUT)
 
     call projs#var('prjmake_opt','latexmk')
 
