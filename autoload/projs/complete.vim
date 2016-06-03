@@ -88,6 +88,13 @@ function! projs#complete#update (...)
    return projs#complete#vars([ 'opts_PrjUpdate' ])
 endfunction
 
+function! projs#complete#varlist (...)
+   	let varlist = projs#varlist()
+   	let comps   = varlist
+
+ 	return join(comps,"\n")
+endfunction
+
 function! projs#complete#grep (...)
  let comps=base#qwsort('')
 

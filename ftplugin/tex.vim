@@ -1,4 +1,5 @@
 
+
 if exists("b:did_projs_tex_ftplugin")
   finish
 endif
@@ -14,10 +15,10 @@ let b:dirname = expand('%:p:h')
 let b:finfo   = base#getfileinfo()
 
 function! b:SetOpts()
-	setlocal ts=2
-	setlocal iminsert=0
-	call projs#maps()
+	call projs#onload()
 endfunction
+
+"""ftplugin
 
 " if we are dealing with a 'projs' (La)TeX file
 if ( ( b:dirname == b:root ) && ( b:ext == 'tex' ) )
@@ -49,10 +50,10 @@ if ( ( b:dirname == b:root ) && ( b:ext == 'tex' ) )
 			\	'call projs#proj#secname("' . b:sec .'")' ,
 			\	'call make#makeprg("'.mprg.'",{"echo":0})',
 			\	'TgSet projs_this'                        ,
-			\	'call b:SetOpts()'                        ,
+			\	'call projs#onload()'                     ,
 			\	] 
 
-	let fr = '  autocmd BufWinEnter,BufRead,BufEnter,BufWritePost '
+	let fr = '  autocmd BufWinEnter,BufRead,BufEnter,BufWritePost,BufNewFile '
 	
 	let b:ufile = base#file#win2unix(b:file)
 	

@@ -478,83 +478,92 @@ function! projs#new (...)
 
  call projs#rootcd()
 
+ if ! ( exists('proj') && strlen(proj) )
+    let proj=input('Project name:','','custom,projs#complete')
+ endif
+
+ if ! strlen(proj)
+     call base#warn({ 'text' : 'no project name provided' })
+     return 0 
+ endif
+ 
+ if projs#ex(proj)
+    let rw = input('Project already exists, rewrite (y/n)?: ','n')
+
+    if rw != 'y'
+        return 0
+    endif
+ endif
+
+	call projs#proj#name(proj)
+
+	if projtype == 'single_file'
+		let nsecs = " _main_"
+
+		for sec in base#qw(nsecs)
+			call projs#newsecfile(sec)
+		endfor
+
 """projtype_regular
- if projtype == 'regular'
-
-     if ! ( exists('proj') && strlen(proj) )
-        let proj=input('Project name:','','custom,projs#complete')
-     endif
-
-     if ! strlen(proj)
-         call base#warn({ 'text' : 'no project name provided' })
-         return 0 
-     endif
+	elseif projtype == 'regular'
     
-     if projs#ex(proj)
-        let rw = input('Project already exists, rewrite (y/n)?: ','n')
+		let texfiles={}
+		let secnamesbase = projs#var('secnamesbase')
+		
+		for id in secnamesbase
+			let texfiles[id]=id
+		endfor
+		
+		call map(texfiles, "proj . '.' . v:key . '.tex' ")
+		call extend(texfiles, { '_main_' : proj . '.tex' } )
+		
+		let creator = base#catpath('perlscripts','tex_create_proj.pl')
+		
+		let uc = get(newopts,'use_creator',0)
+		
+		let use_vim = ! (uc && filereadable(creator))
+		
 
-        if rw != 'y'
-            return 0
-        endif
-     endif
+     	if use_vim
+	        let nsecs = " _main_ preamble body cfg bib index"
+	        let nsecs = input('Sections to be created:',nsecs)
+	
+	        for sec in base#qw(nsecs)
+	            call projs#newsecfile(sec)
+	        endfor
 
-     call projs#proj#name(proj)
-    
-     let texfiles={}
-     let secnamesbase = projs#var('secnamesbase')
-     
-     for id in secnamesbase
-        let texfiles[id]=id
-     endfor
-    
-     call map(texfiles, "proj . '.' . v:key . '.tex' ")
-     call extend(texfiles, { '_main_' : proj . '.tex' } )
-    
-     let creator = base#catpath('perlscripts','tex_create_proj.pl')
-
-     let uc = get(newopts,'use_creator',0)
-
-     let use_vim = ! (uc && filereadable(creator))
-
-     let git_add = get(newopts,'git_add',0)
-     let git_add = input('Add each new file to git? (1/0)',git_add)
-
-     if use_vim
-        let nsecs = " _main_ preamble body cfg bib index"
-        let nsecs = input('Sections to be created:',nsecs)
-
-        for sec in base#qw(nsecs)
-            call projs#newsecfile(sec)
-        endfor
-
-     elseif (uc && filereadable(creator)) 
+     	elseif (uc && filereadable(creator)) 
     
          """ fill in base sections: 
          """   preamble, packages, begin etc. 
-         for [id,file] in items(texfiles)
-                    let cmd = ' perl ' . creator  
-                        \ . ' --dir  ' . projs#root() 
-                        \ . ' --proj ' . proj
-                        \ . ' --sec  ' . id
-                        \ . ' --struct  ' . projstruct
-                        \ . ' --force  '
-                    if ! base#sys(cmd)
-                        return 0
-                    endif
-         endfor
+	         for [id,file] in items(texfiles)
+	                    let cmd = ' perl ' . creator  
+	                        \ . ' --dir  ' . projs#root() 
+	                        \ . ' --proj ' . proj
+	                        \ . ' --sec  ' . id
+	                        \ . ' --struct  ' . projstruct
+	                        \ . ' --force  '
+	                    if ! base#sys(cmd)
+	                        return 0
+	                    endif
+	         endfor
         
-         """ append the name of the project being created to 
-         """   PROJS.i.dat
-         if ! base#sys(' perl ' . creator 
-                \ . ' --proj ' . proj
-                \ . ' --appenddat '
-                \ . ' --force '
-                \ ) 
-                return 0
-         endif
-     endif
+	         """ append the name of the project being created to 
+	         """   PROJS.i.dat
+	         if ! base#sys(' perl ' . creator 
+	                \ . ' --proj ' . proj
+	                \ . ' --appenddat '
+	                \ . ' --force '
+	                \ ) 
+	                return 0
+	         endif
+		endif
+	endif
 
-     if git_add
+	let git_add = get(newopts,'git_add',0)
+	let git_add = input('Add each new file to git? (1/0)',git_add)
+
+    if git_add
          for file in values(texfiles)
              if filereadable(file)
                 if ! base#sys("git add " . file )
@@ -587,7 +596,6 @@ function! projs#new (...)
 
      TgUpdate projs_this
      call projs#update('list')
- endif
 
  call base#echoprefixold()
     
@@ -686,10 +694,10 @@ function! projs#viewproj (...)
 
     TgSet projs_this
 
-	let loaded=projs#varget('loadedprojs',[])
+	let loaded=projs#varget('loaded',[])
 
 	call add(loaded,proj)
-	call projs#var('loadedprojs',loaded)
+	call projs#var('loaded',loaded)
 
 endfun
 
@@ -728,6 +736,8 @@ function! projs#switch (...)
 
 	"let ul = input('Update list? (1/0):',0)
 	"if ul | call projs#update('list') | endif
+	"
+	setlocal iminsert=0
 
 	while ! projs#exists(proj)
 		let proj = input('Switch to:','','custom,projs#complete#switch')
@@ -746,6 +756,22 @@ function! projs#switch (...)
 	let sec = input('Section to open:',sec,'custom,projs#complete#secnames')
 
 	call projs#opensec(sec)
+	
+endfunction
+
+"call projs#onload ()
+"call projs#onload ({ 'proj' : proj })
+
+function! projs#onload (...)
+	let ref = {}
+	if a:0 | let ref = a:1 | endif
+
+	let proj=projs#proj#name()
+	let proj=get(ref,'proj',proj)
+
+	setlocal ts=2
+	setlocal iminsert=0
+	call projs#maps()
 	
 endfunction
 
@@ -1354,6 +1380,16 @@ function! projs#path (pa)
 
     return fullpath
     
+endfunction
+
+function! projs#vars (...)
+    let vars = exists("s:projvars") ? s:projvars : {}
+	return vars
+endfunction
+
+function! projs#varlist (...)
+    let vars = projs#vars()
+	return keys(vars)
 endfunction
 
 function! projs#var (...)
