@@ -500,6 +500,7 @@ function! projs#new (...)
  endif
 
 	call projs#proj#name(proj)
+    call projs#var('projtype',projtype)
 
 	if projtype == 'single_file'
 		let nsecs = " _main_"
@@ -507,6 +508,11 @@ function! projs#new (...)
 		for sec in base#qw(nsecs)
 			call projs#newsecfile(sec)
 		endfor
+
+	elseif projtype == 'da_qa_report'
+
+	    let nsecs = " _main_ preamble body tests_run "
+	    let nsecs = input('Sections to be created:',nsecs)
 
 """projtype_regular
 	elseif projtype == 'regular'
