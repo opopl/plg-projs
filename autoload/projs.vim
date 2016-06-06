@@ -175,7 +175,7 @@ function! projs#newsecfile(sec,...)
     elseif sec == 'bib'
 
         let bibstyle = input('Bibliography style:','unsrt')
-        let bibfile = input('Bibliography:','\PROJ.refs')
+        let bibfile  = input('Bibliography:','\PROJ.refs')
 
         call add(lines,'\phantomsection')
         "call add(lines,'\renewcommand\bibname{<++>}')
@@ -185,15 +185,19 @@ function! projs#newsecfile(sec,...)
         call add(lines,'\bibliographystyle{'.bibstyle.'}')
         call add(lines,'\bibliography{'.bibfile.'}')
 """newsec_title
-    elseif sec == 'index'
+    elseif sec == 'title'
+        call add(lines,' ')
         call add(lines,'\begin{titlepage}')
+        call add(lines,' ')
 		call add(lines,'\end{titlepage}')
 
 """newsec_index
     elseif sec == 'index'
 
+        call add(lines,'\clearpage')
         call add(lines,'\phantomsection')
-        "call add(lines,'\printindex')
+		call add(lines,'\addcontentsline{toc}{chapter}{\indexname}')
+		call add(lines,'\printindex')
 
 """newsec_body
     elseif sec == 'body'
@@ -772,6 +776,9 @@ function! projs#onload (...)
 	setlocal ts=2
 	setlocal iminsert=0
 	call projs#maps()
+
+	TgSet projs_this
+	StatusLine projs
 	
 endfunction
 

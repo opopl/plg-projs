@@ -44,12 +44,9 @@ if ( ( b:dirname == b:root ) && ( b:ext == 'tex' ) )
 
 	let aucmds = [ 
 			\	'call projs#root("'.escape(b:root,'\').'")'           ,
-			\	'StatusLine projs'                        ,
-			\	'call projs#maps()'                       ,
 			\	'call projs#proj#name("' . b:proj .'")'   ,
 			\	'call projs#proj#secname("' . b:sec .'")' ,
 			\	'call make#makeprg("'.mprg.'",{"echo":0})',
-			\	'TgSet projs_this'                        ,
 			\	'call projs#onload()'                     ,
 			\	] 
 
