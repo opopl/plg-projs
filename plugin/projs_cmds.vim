@@ -1,4 +1,11 @@
 
+
+command! -nargs=* -complete=custom,projs#complete            PV
+	\ call projs#viewproj(<f-args>) 
+
+command! -nargs=* -complete=custom,projs#complete            PN
+	\ call projs#new(<f-args>) 
+
 "command! -nargs=* -complete=custom,projs#complete#projsdirslist
 command! -nargs=* -complete=custom,base#complete#CD          ProjsInit
 	\ call projs#init(<f-args>)
