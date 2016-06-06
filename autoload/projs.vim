@@ -775,10 +775,11 @@ function! projs#onload (...)
 
 	setlocal ts=2
 	setlocal iminsert=0
-	call projs#maps()
 
 	TgSet projs_this
 	StatusLine projs
+
+	call projs#maps()
 	
 endfunction
 
@@ -1124,11 +1125,11 @@ function! projs#maps ()
     nnoremap <silent> <F1> :copen<CR>
     nnoremap <silent> <F2> :cclose<CR> 
 
-    nnoremap <silent> <F4> :PrjMake<CR>
-    nnoremap <silent> <F5> :PrjMakePrompt<CR>
+    nnoremap <buffer><silent> <F4> :PrjMake<CR>
+    nnoremap <buffer><silent> <F5> :PrjMakePrompt<CR>
 
-    nnoremap <silent> <F6> :PrjSwitch<CR>
-    nnoremap <silent> <F7> :PrjPdfView<CR>
+    nnoremap <buffer><silent> <F6> :PrjSwitch<CR>
+    nnoremap <buffer><silent> <F7> :PrjPdfView<CR>
     
 endfunction
 
