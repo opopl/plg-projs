@@ -415,6 +415,28 @@ function! projs#newsecfile(sec,...)
     
 endfunction
 
+function! projs#help (...)
+		echo ' '
+		echo 'PROJS PLUGIN HELP'
+		echo ' '
+
+		let topics=base#qw('maps')
+
+	  let topic = base#getfromchoosedialog({ 
+            \ 'list'        : topics,
+            \ 'startopt'    : 'regular',
+            \ 'header'      : "Available help topics are: ",
+            \ 'numcols'     : 1,
+            \ 'bottom'      : "Choose a help topic by number: ",
+            \ })
+
+		if topic == 'maps'
+				let yn=input('Show projs#maps() ? (1/0):',1)
+				if yn | verbose function projs#maps | endif
+		endif
+
+endfunction
+
 "
 "
 """projs_new
