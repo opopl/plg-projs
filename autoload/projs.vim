@@ -1201,18 +1201,17 @@ function! projs#init (...)
     call base#pathset({
         \   'projs' : projsdir,
         \   })
+	
+		call projs#update#datvars()
+		
+		let pdfout = projs#path([ 'pdf_built' ])
+		call projs#var('pdfout',pdfout)
+		call base#mkdir(pdfout)
 
-
-	call projs#update#datvars()
-
-    let pdfout = projs#path([ 'pdf_built' ])
-    call projs#var('pdfout',pdfout)
-    call base#mkdir(pdfout)
-
-	let pdffin = exists('$PDFOUT') ? $PDFOUT : base#qw#catfile('C: out pdf')
+		let pdffin = exists('$PDFOUT') ? $PDFOUT : base#qw#catfile('C: out pdf')
     call base#mkdir(pdffin)
 
-	call projs#var('pdffin',$PDFOUT)
+		call projs#var('pdffin',$PDFOUT)
 
     call projs#var('prjmake_opt','latexmk')
 
