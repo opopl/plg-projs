@@ -1136,6 +1136,9 @@ function! projs#maps ()
 
     nnoremap <buffer><silent> <F6> :PrjSwitch<CR>
     nnoremap <buffer><silent> <F7> :PrjPdfView<CR>
+    nnoremap <buffer><silent> <F8> :PrjUpdate<CR>
+    nnoremap <buffer><silent> <F9> :OMNIFUNC<CR>
+    nnoremap <buffer><silent> <F10> :TgUpdate<CR>
     
 endfunction
 
