@@ -424,7 +424,7 @@ function! projs#help (...)
 
 	  let topic = base#getfromchoosedialog({ 
             \ 'list'        : topics,
-            \ 'startopt'    : 'regular',
+            \ 'startopt'    : get(topics,0,''),
             \ 'header'      : "Available help topics are: ",
             \ 'numcols'     : 1,
             \ 'bottom'      : "Choose a help topic by number: ",
@@ -798,13 +798,13 @@ function! projs#onload (...)
 	let ref = {}
 	if a:0 | let ref = a:1 | endif
 
-	let proj=projs#proj#name()
-	let proj=get(ref,'proj',proj)
+	let proj = projs#proj#name()
+	let proj = get(ref,'proj',proj)
 
 	setlocal ts=2
 	setlocal iminsert=0
 
-	TgSet projs_this
+	TgAdd projs_this
 	StatusLine projs
 
 	call projs#maps()

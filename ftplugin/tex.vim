@@ -14,10 +14,6 @@ let b:dirname = expand('%:p:h')
 
 let b:finfo   = base#getfileinfo()
 
-"function! b:SetOpts()
-	"call projs#onload()
-"endfunction
-
 """ftplugin
 
 " if we are dealing with a 'projs' (La)TeX file
