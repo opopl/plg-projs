@@ -1299,12 +1299,12 @@ endf
 function! projs#list ()
 
     let list=[]
-    if ! projs#varexists("list")
-        "let list = projs#listfromdat()
-        let list = projs#listfromfiles()
-    else
-        let list = projs#var("list")
-    end
+    "if ! projs#varexists("list")
+    "else
+        "let list = projs#var("list")
+    "end
+
+    let list = projs#listfromfiles()
     return copy(list)
 endf    
 
