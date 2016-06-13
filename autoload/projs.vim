@@ -1174,8 +1174,8 @@ function! projs#init (...)
     let projsdirs=projs#var('projsdirs')
     call projs#var('projsdirslist',projsdirs)
 
-    let varlist=sort(keys(s:projvars))
-    call projs#var('varlist',varlist)
+
+		call projs#update#varlist()
 
   call projs#update('list')
 
@@ -1359,8 +1359,8 @@ function! projs#vars (...)
 endfunction
 
 function! projs#varlist (...)
-  let vars = projs#vars()
-  return keys(vars)
+  let vars = projs#var('varlist')
+  return vars
 endfunction
 
 function! projs#var (...)
@@ -1667,8 +1667,13 @@ function! projs#update (...)
 
     elseif opt == 'list'
         call projs#listfromfiles()
+
+    elseif opt == 'varlist'
+        call projs#update#varlist()
+
     elseif opt == 'datvars'
         call projs#update#datvars()
+
     elseif opt == 'loaded'
         call base#buffers#get()
     
