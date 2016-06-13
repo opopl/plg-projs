@@ -529,46 +529,25 @@ function! projs#new (...)
      call projs#newsecfile(sec)
   endfor
 
-  let git_add = get(newopts,'git_add',0)
-  let git_add = input('Add each new file to git? (1/0)',git_add)
+  call projs#proj#git_add()
+	
+	call base#echoredraw('Created new project: ' . proj)
+	
+	call base#var('proj',proj)
+	
+	call projs#listadd(proj)
+	
+	let loadmain=input('Load the main project file? (1/0): ', 1)
+	if loadmain 
+	VSECBASE _main_
+	endif
+	
+	TgUpdate projs_this
+	call projs#update('list')
 
-  if git_add
-         for file in values(texfiles)
-             if filereadable(file)
-                if ! base#sys("git add " . file )
-                    return 0
-                endif
-             endif
-         endfor
-   endif
-
-     let proj = proj
+  call base#echoprefixold()
     
-     call projs#genperl()
-    
-     call base#echoredraw('Created new project: ' . proj)
-
-     let proj = proj
-     call base#var('proj',proj)
-
-     call projs#listadd(proj)
-    
-     "let menuprojs=input('Load projs menu? (y/n): ', 'n')
-     "if menuprojs == 'y'
-             "MenuReset projs
-     "endif
-
-     let loadmain=input('Load the main project file? (y/n): ', 'y')
-     if loadmain == 'y'
-        VSECBASE _main_
-     endif
-
-     TgUpdate projs_this
-     call projs#update('list')
-
- call base#echoprefixold()
-    
- return 1
+  return 1
 
 endf
 
