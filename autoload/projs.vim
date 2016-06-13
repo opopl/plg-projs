@@ -156,7 +156,7 @@ function! projs#newsecfile(sec,...)
         call add(lines,' ')
         call add(lines,'\begin{titlepage}')
         call add(lines,' ')
-    call add(lines,'\end{titlepage}')
+        call add(lines,'\end{titlepage}')
 
 """newsec_index
     elseif sec == 'index'
