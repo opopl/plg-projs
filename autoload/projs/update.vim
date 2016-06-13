@@ -12,3 +12,19 @@ function! projs#update#varlist ()
     call projs#varset('varlist',varlist)
 	
 endfunction
+
+function! projs#update#texfiles ()
+
+  let texfiles={}
+  let secnamesbase = projs#varget('secnamesbase',[])
+    
+  for id in secnamesbase
+    let texfiles[id]=id
+  endfor
+
+  call map(texfiles, "proj . '.' . v:key . '.tex' ")
+  call extend(texfiles, { '_main_' : proj . '.tex' } )
+
+	call projs#varset('texfiles',texfiles)
+	
+endfunction

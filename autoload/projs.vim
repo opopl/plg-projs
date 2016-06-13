@@ -504,9 +504,13 @@ function! projs#new (...)
   call projs#proj#name(proj)
   call projs#var('projtype',projtype)
 
+	call projs#update#texfiles()
+
+"""projtype_single_file
   if projtype == 'single_file'
     call projs#newsecfile('_main_')
 
+"""projtype_da
   elseif projtype == 'da_qa_report'
 
       let nsecs = " _main_ preamble body tests_run "
@@ -519,15 +523,6 @@ function! projs#new (...)
 """projtype_regular
   elseif projtype == 'regular'
     
-    let texfiles={}
-    let secnamesbase = projs#var('secnamesbase')
-    
-    for id in secnamesbase
-      let texfiles[id]=id
-    endfor
-    
-    call map(texfiles, "proj . '.' . v:key . '.tex' ")
-    call extend(texfiles, { '_main_' : proj . '.tex' } )
     
     let nsecs = " _main_ preamble body cfg bib index"
     let nsecs = input('Sections to be created:',nsecs)
