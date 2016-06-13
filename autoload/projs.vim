@@ -1112,10 +1112,9 @@ endfunction
 
 function! projs#init (...)
 
-		let rootid = get(a:000,0,'')
-
     call projs#initvars()
 
+		let rootid = get(a:000,0,'')
 		let [root,rootid] = projs#init#root(rootid)
 		
     let g:texlive={
@@ -1126,10 +1125,6 @@ function! projs#init (...)
 
     let prefix="(projs#init) "
     call projs#echo("Initializing projs plugin, \n\t projsdir => " . root ,{ "prefix" : prefix })
-
-    call base#pathset({
-        \   'projs' : root,
-        \   })
   
     let pdfout = projs#path([ 'pdf_built' ])
 

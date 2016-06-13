@@ -20,6 +20,9 @@ function! projs#init#root (...)
      		call projs#varset('root',root)
     endif
 
+
+    call base#pathset({ 'projs' : root })
+
 		return [root,rootid]
 	
 endfunction
