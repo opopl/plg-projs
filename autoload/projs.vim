@@ -443,7 +443,7 @@ endfunction
 
 "" projs#new()
 "" projs#new(proj)
-"" projs#new(proj,{ use_creator : 0 })
+"" projs#new(proj,{ git_add : 1 })
 "
 
 function! projs#new (...)
@@ -459,15 +459,10 @@ function! projs#new (...)
  echo " "
  echo delim
 
- let yn=input('Continue? (y/n): ','y')
- if yn != 'y'
-   return 0
- endif
+ let yn=input('Continue? (1/0): ',1)
+ if !yn | return 0 | endif
 
- let newopts={ 
-    \   'use_creator' : 0 ,
-    \   'git_add'     : 0 ,
-    \   }
+ let newopts=projs#var('PrjNew_opts',{})
   
  if a:0
      let proj     = a:1
@@ -510,16 +505,16 @@ function! projs#new (...)
   call projs#var('projtype',projtype)
 
   if projtype == 'single_file'
-    let nsecs = " _main_"
-
-    for sec in base#qw(nsecs)
-      call projs#newsecfile(sec)
-    endfor
+    call projs#newsecfile('_main_')
 
   elseif projtype == 'da_qa_report'
 
       let nsecs = " _main_ preamble body tests_run "
       let nsecs = input('Sections to be created:',nsecs)
+
+	    for sec in base#qw(nsecs)
+	        call projs#newsecfile(sec)
+	    endfor
 
 """projtype_regular
   elseif projtype == 'regular'
@@ -940,6 +935,11 @@ function! projs#info ()
     call base#echo({ 
         \ 'text' : "pdffin => " . projs#var('pdffin'),
         \ 'indentlev' : indentlev, })
+
+    call base#echo({ 'text' : "Project type: " } )
+    call base#echo({ 
+        \ 'text' : "projtype => " . projs#varget('projtype',''),
+        \ 'indentlev' : indentlev, })
     
     call base#echo({ 'text' : "Current project: " } )
     call base#echo({ 
@@ -1109,40 +1109,15 @@ endfunction
 "call projs#init (dirid)  -  ProjsInit DIRID - specify custom projects' directory, full path is base#path(DIRID)
 "
 
+
 function! projs#init (...)
 
-    let projsdir = ''
-    let projsid  = ''
+		let rootid = get(a:000,0,'')
 
     call projs#initvars()
 
-    if projs#varexists('root')
-        let projsdir = projs#varget('root')
-        let projsid  = projs#varget('rootid','')
-        
-    else
-        let projsdir  = base#envvar('PROJSDIR')
-        let projsid   = 'texdocs'
-    endif
-
-    if a:0 
-        let projsid = a:1
-        let dir     = base#path(projsid)
-
-        call base#mkdir(dir)
-
-        if isdirectory(dir)
-            let projsdir = dir
-        endif
-    endif
-
-    if strlen(projsid)
-        call projs#varset('rootid',projsid)
-    endif
-    if strlen(projsdir)
-        call projs#varset('root',projsdir)
-    endif
-
+		let [root,rootid] = projs#init#root(rootid)
+		
     let g:texlive={
         \  'TEXMFDIST'  : projs#tex#kpsewhich('--var-value=TEXMFDIST'),
         \  'TEXMFLOCAL' : projs#tex#kpsewhich('--var-value=TEXMFLOCAL'),
@@ -1150,23 +1125,23 @@ function! projs#init (...)
     let g:pdfviewer = 'evince'
 
     let prefix="(projs#init) "
-    call projs#echo("Initializing projs plugin, \n\t projsdir => " . projsdir ,{ "prefix" : prefix })
+    call projs#echo("Initializing projs plugin, \n\t projsdir => " . root ,{ "prefix" : prefix })
 
     call base#pathset({
-        \   'projs' : projsdir,
+        \   'projs' : root,
         \   })
   
     let pdfout = projs#path([ 'pdf_built' ])
 
-    call projs#var('pdfout',pdfout)
-    call base#mkdir(pdfout)
-
     let pdffin = exists('$PDFOUT') ? $PDFOUT : base#qw#catfile('C: out pdf')
+
+    call projs#var('pdffin',pdffin)
     call base#mkdir(pdffin)
 
-    call projs#var('pdffin',$PDFOUT)
-
     call projs#var('prjmake_opt','latexmk')
+
+    call projs#var('pdfout',pdfout)
+    call base#mkdir(pdfout)
 
     let rootbuilddir = projs#path([ 'builds' ])
     call projs#var('rootbuilddir',rootbuilddir)
