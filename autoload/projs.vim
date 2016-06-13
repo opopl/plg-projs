@@ -472,13 +472,15 @@ function! projs#new (...)
       \ "regular"       : " _main_ preamble body cfg bib index",
       \ }
 
-  let nsecs_s = input('Sections to be created:',get(nsecs_h,projtype,''))
+  let nsecs_s = get(nsecs_h,projtype,'')
 
   if projtype == 'da_qa_report'
     let vms   = input('Tested VMs:','winxp1 win7x64n1')
     let tests = input('Tests Run:','trial_forcetest licensed_forcetest LCS_license_generate')
   endif
   let nsecs_s.=vms
+
+  let nsecs_s = input('Sections to be created:',nsecs_s)
 
   let nsecs = base#qw(nsecs_s)
 
