@@ -127,49 +127,16 @@ function! projs#newsecfile(sec,...)
 
     let secs = base#qw("preamble body")
 
+    let projtype=projs#varget('projtype','regular')
+
 """newsec__main__
     if sec == '_main_'
 
-        let file = projs#path([ proj.'.tex'])
+      let file = projs#path([ proj.'.tex'])
+      let sub = 'projs#newseclines#'.projtype.'#'.sec
 
-        call add(lines,' ')
-        call add(lines,'%%file f_main')
-        call add(lines,' ')
-        call add(lines,'\def\PROJ{'.proj.'}')
-        call add(lines,' ')
-
-        call add(lines,'% --------------')
-        call add(lines,'\def\ii#1{\InputIfFileExists{\PROJ.#1.tex}{}{}}')
-        call add(lines,'\def\iif#1{\input{\PROJ/#1.tex}}')
-        call add(lines,'\def\idef#1{\InputIfFileExists{_def.#1.tex}{}{}}')
-        call add(lines,'% --------------')
-
-        let ProjRootSec = input('(_main_) ProjRootSec:','part','custom,projs#complete#projrootsec')
-
-        call add(lines,'% --------------')
-        call add(lines,'\def\ProjRootSec{'.ProjRootSec.'}')
-        call add(lines,'% --------------')
-
-        call add(lines,' ')
-
-        call add(lines,'\ii{preamble}')
-        call add(lines,' ')
-        call add(lines,'%Definitions ')
-        call add(lines,'\ii{defs}')
-        call add(lines,' ')
-
-        call add(lines,'\begin{document}')
-        call add(lines,' ')
-        call add(lines,'\ii{body}')
-        call add(lines,' ')
-        call add(lines,'%Bibliography ')
-        call add(lines,'\ii{bib}')
-        call add(lines,' ')
-        call add(lines,'%Index ')
-        call add(lines,'\ii{index}')
-        call add(lines,' ')
-        call add(lines,'\end{document}')
-        call add(lines,' ')
+      let lines = []
+      exe 'let lines='.sub.'()'
 
 """newsec_bib
     elseif sec == 'bib'
@@ -194,10 +161,10 @@ function! projs#newsecfile(sec,...)
 """newsec_index
     elseif sec == 'index'
 
-        call add(lines,'\clearpage')
-        call add(lines,'\phantomsection')
-    call add(lines,'\addcontentsline{toc}{chapter}{\indexname}')
-    call add(lines,'\printindex')
+		    call add(lines,'\clearpage')
+		    call add(lines,'\phantomsection')
+		    call add(lines,'\addcontentsline{toc}{chapter}{\indexname}')
+		    call add(lines,'\printindex')
 
 """newsec_body
     elseif sec == 'body'
@@ -506,23 +473,13 @@ function! projs#new (...)
 
   let texfiles =  projs#update#texfiles()
 
-"""projtype_single_file
-  if projtype == 'single_file'
+  let nsecs_h = {
+			\ "single_file"   : "_main_",
+			\ "da_qa_report"  : "_main_ preamble body tests_run ",
+      \ "regular"       : " _main_ preamble body cfg bib index",
+      \ }
 
-      let nsecs_s = " _main_"
-
-"""projtype_da
-  elseif projtype == 'da_qa_report'
-
-      let nsecs_s = " _main_ preamble body tests_run "
-      let nsecs_s = input('Sections to be created:',nsecs_s)
-
-"""projtype_regular
-  elseif projtype == 'regular'
-      let nsecs_s = " _main_ preamble body cfg bib index"
-      let nsecs_s = input('Sections to be created:',nsecs_s)
-
-  endif
+  let nsecs_s = input('Sections to be created:',get(nsecs_h,projtype,''))
 
   let nsecs = base#qw(nsecs_s)
   for sec in nsecs
@@ -539,7 +496,7 @@ function! projs#new (...)
 	
 	let loadmain=input('Load the main project file? (1/0): ', 1)
 	if loadmain 
-	VSECBASE _main_
+	  VSECBASE _main_
 	endif
 	
 	TgUpdate projs_this
