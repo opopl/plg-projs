@@ -1167,8 +1167,6 @@ function! projs#init (...)
         \   'projs' : projsdir,
         \   })
   
-    call projs#update#datvars()
-    
     let pdfout = projs#path([ 'pdf_built' ])
 
     call projs#var('pdfout',pdfout)
@@ -1180,9 +1178,6 @@ function! projs#init (...)
     call projs#var('pdffin',$PDFOUT)
 
     call projs#var('prjmake_opt','latexmk')
-
-    "let texoutdir = projs#path([ 'builds' ])
-    "call projs#var('texoutdir',texoutdir)
 
     let rootbuilddir = projs#path([ 'builds' ])
     call projs#var('rootbuilddir',rootbuilddir)
