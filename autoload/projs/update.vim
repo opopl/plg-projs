@@ -10,7 +10,5 @@ function! projs#update#varlist ()
 		let varlist = base#mapsub(varlist,'^projs_','','g')
 
     call projs#varset('varlist',varlist)
-
-		echo projs#var('varlist')
 	
 endfunction

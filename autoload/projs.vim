@@ -1126,8 +1126,8 @@ function! projs#init (...)
     endif
 
     if a:0 
-        let projsid = a:1 
-        let dir = base#path(projsid)
+        let projsid = a:1
+        let dir     = base#path(projsid)
 
         call base#mkdir(dir)
 
@@ -1138,6 +1138,9 @@ function! projs#init (...)
 
     if strlen(projsid)
         call projs#varset('rootid',projsid)
+    endif
+    if strlen(projsdir)
+        call projs#varset('root',projsdir)
     endif
 
     let g:texlive={
@@ -1174,10 +1177,11 @@ function! projs#init (...)
     let projsdirs=projs#var('projsdirs')
     call projs#var('projsdirslist',projsdirs)
 
-
+		" update list of projs plugin variables
 		call projs#update#varlist()
 
-  call projs#update('list')
+		" update list of projects
+  	call projs#update('list')
 
 endfunction
 
