@@ -760,25 +760,11 @@ function! projs#opensec (...)
 
  if a:0==1
     let sec=a:1
-
  else
-    let sec='body'
-
-    let listsecs = copy(projs#var('secnamesbase'))
-    call extend(listsecs,projs#proj#secnames())
-
-    let listsecs=sort(base#uniq(listsecs))
-
-    let sec = base#getfromchoosedialog({ 
-        \ 'list'        : listsecs,
-        \ 'startopt'    : 'body',
-        \ 'header'      : "Available sections are: ",
-        \ 'numcols'     : 1,
-        \ 'bottom'      : "Choose section by number: ",
-        \ })
+    let sec=projs#select#sec()
   endif
 
-  call projs#var("secname",sec)
+  call projs#varset("secname",sec)
 
   let vfile             = ''
   let vfiles            = []
@@ -1272,8 +1258,6 @@ function! projs#listfromfiles ()
         \ "subdirs" : 0                      ,
         \ "pat"  : '^\(\w\+\)\.tex$' ,
         \ })
-
-        "\ "pat"  : '^\(\w\+\)\.\(\w\+\)\.tex$' ,
         
     let exclude=projs#list#exclude()
 

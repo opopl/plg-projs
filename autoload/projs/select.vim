@@ -23,3 +23,24 @@ function! projs#select#projstruct ()
  return projstruct
         
 endfunction
+
+function! projs#select#sec ()
+        
+    let sec='body'
+
+    let listsecs = copy(projs#varget('secnamesbase',[]))
+    call extend(listsecs,projs#proj#secnames())
+
+    let listsecs=sort(base#uniq(listsecs))
+
+    let sec = base#getfromchoosedialog({ 
+        \ 'list'        : listsecs,
+        \ 'startopt'    : 'body',
+        \ 'header'      : "Available sections are: ",
+        \ 'numcols'     : 1,
+        \ 'bottom'      : "Choose section by number: ",
+        \ })
+    return sec
+
+endfunction
+
