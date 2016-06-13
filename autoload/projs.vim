@@ -1269,6 +1269,7 @@ function! projs#listfromfiles ()
         \ "dirs" : [ root ]                  ,
         \ "ext"  : [ "tex" ]                 ,
         \ "relpath" : 1                      ,
+        \ "subdirs" : 0                      ,
         \ "pat"  : '^\(\w\+\)\.tex$' ,
         \ })
 
@@ -1298,13 +1299,11 @@ endf
 
 function! projs#list ()
 
-    let list=[]
-    "if ! projs#varexists("list")
-    "else
-        "let list = projs#var("list")
-    "end
+    let list=projs#varget('list',[])
+    if ! len(list)
+        let list = projs#listfromfiles()
+    end
 
-    let list = projs#listfromfiles()
     return copy(list)
 endf    
 
