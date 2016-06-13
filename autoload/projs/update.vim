@@ -26,5 +26,7 @@ function! projs#update#texfiles ()
   call extend(texfiles, { '_main_' : proj . '.tex' } )
 
 	call projs#varset('texfiles',texfiles)
+
+	return texfiles
 	
 endfunction

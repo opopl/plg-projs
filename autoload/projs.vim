@@ -504,34 +504,30 @@ function! projs#new (...)
   call projs#proj#name(proj)
   call projs#var('projtype',projtype)
 
-	call projs#update#texfiles()
+  let texfiles =  projs#update#texfiles()
 
 """projtype_single_file
   if projtype == 'single_file'
-    call projs#newsecfile('_main_')
+
+      let nsecs_s = " _main_"
 
 """projtype_da
   elseif projtype == 'da_qa_report'
 
-      let nsecs = " _main_ preamble body tests_run "
-      let nsecs = input('Sections to be created:',nsecs)
-
-	    for sec in base#qw(nsecs)
-	        call projs#newsecfile(sec)
-	    endfor
+      let nsecs_s = " _main_ preamble body tests_run "
+      let nsecs_s = input('Sections to be created:',nsecs_s)
 
 """projtype_regular
   elseif projtype == 'regular'
-    
-    
-    let nsecs = " _main_ preamble body cfg bib index"
-    let nsecs = input('Sections to be created:',nsecs)
-  
-    for sec in base#qw(nsecs)
-        call projs#newsecfile(sec)
-    endfor
+      let nsecs_s = " _main_ preamble body cfg bib index"
+      let nsecs_s = input('Sections to be created:',nsecs_s)
 
   endif
+
+  let nsecs = base#qw(nsecs_s)
+  for sec in nsecs
+     call projs#newsecfile(sec)
+  endfor
 
   let git_add = get(newopts,'git_add',0)
   let git_add = input('Add each new file to git? (1/0)',git_add)
@@ -1109,9 +1105,9 @@ function! projs#init (...)
 
     call projs#initvars()
 
-		let rootid = get(a:000,0,'')
-		let [root,rootid] = projs#init#root(rootid)
-		
+    let rootid = get(a:000,0,'')
+    let [root,rootid] = projs#init#root(rootid)
+    
     let g:texlive={
         \  'TEXMFDIST'  : projs#tex#kpsewhich('--var-value=TEXMFDIST'),
         \  'TEXMFLOCAL' : projs#tex#kpsewhich('--var-value=TEXMFLOCAL'),
@@ -1142,11 +1138,11 @@ function! projs#init (...)
     let projsdirs=projs#var('projsdirs')
     call projs#var('projsdirslist',projsdirs)
 
-		" update list of projs plugin variables
-		call projs#update#varlist()
+    " update list of projs plugin variables
+    call projs#update#varlist()
 
-		" update list of projects
-  	call projs#update('list')
+    " update list of projects
+    call projs#update('list')
 
 endfunction
 
