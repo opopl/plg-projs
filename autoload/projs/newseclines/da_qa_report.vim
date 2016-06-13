@@ -17,6 +17,7 @@ function! projs#newseclines#da_qa_report#_main_ (...)
     let dclass = input('Document class:','report')
     let copts  = input('Class options:','a4paper,11pt,portrait')
 
+
     if len(copts)
       let copts='['.copts.']'
     endif
