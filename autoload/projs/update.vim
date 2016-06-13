@@ -14,6 +14,7 @@ function! projs#update#varlist ()
 endfunction
 
 function! projs#update#texfiles ()
+	let proj = projs#proj#name()
 
   let texfiles={}
   let secnamesbase = projs#varget('secnamesbase',[])
