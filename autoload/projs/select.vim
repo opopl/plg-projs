@@ -1,8 +1,9 @@
 function! projs#select#projtype ()
+ let list  = projs#varget('projecttypes',[])
         
  let projtype = base#getfromchoosedialog({ 
-            \ 'list'        : projs#varget('projecttypes',[]),
-            \ 'startopt'    : 'regular',
+            \ 'list'        : list,
+            \ 'startopt'    : get(list,0,''),
             \ 'header'      : "Available project types are: ",
             \ 'numcols'     : 1,
             \ 'bottom'      : "Choose a project type by number: ",
@@ -12,10 +13,11 @@ function! projs#select#projtype ()
 endfunction
 
 function! projs#select#projstruct ()
+ let list = projs#varget('projectstructures',[])
 
  let projstruct = base#getfromchoosedialog({ 
-            \ 'list'        : projs#varget('projectstructures',[]),
-            \ 'startopt'    : 'in_root',
+            \ 'list'        : list,
+            \ 'startopt'    : get(list,0,''),
             \ 'header'      : "Available project structures are: ",
             \ 'numcols'     : 1,
             \ 'bottom'      : "Choose a project structure by number: ",

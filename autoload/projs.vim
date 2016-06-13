@@ -441,15 +441,8 @@ function! projs#new (...)
 
  endif
 
- echo " "
- echo "Provided options for new project creation:"
- echo " "
- echo newopts
- echo " "
- echo delim
-
- let projtype = projs#select#projtype()
- let projtype = projs#select#projstruct()
+ let projtype   = projs#select#projtype()
+ let projstruct = projs#select#projstruct()
 
  call projs#rootcd()
 
