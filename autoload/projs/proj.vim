@@ -325,7 +325,7 @@ function! projs#proj#make (...)
 endfunction
 
 function! projs#proj#gitcmds (...)
-	let cmds = base#qw#rf('plg','projs data gitcmds.i.dat')
+	let cmds =  projs#varget('gitcmds',[])
 
 	return cmds
 endfunction
@@ -354,6 +354,7 @@ function! projs#proj#git (...)
 	endif
 
 	let files = projs#proj#files()
+	echo files
 
 endfunction
 
