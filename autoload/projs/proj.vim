@@ -93,7 +93,7 @@ function! projs#proj#files (...)
 
 	if !strlen(proj) | return files | endif
 
-	let exts = []
+	let exts = base#qw('tex vim dat')
 	let exts = get(ref,'exts',exts)
 
 	let prompt = get(ref,'prompt',0)
