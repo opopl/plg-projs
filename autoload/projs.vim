@@ -1575,6 +1575,9 @@ function! projs#update (...)
     elseif opt == 'list'
         call projs#listfromfiles()
 
+    elseif opt == 'usedpacks'
+        call projs#update#usedpacks()
+
     elseif opt == 'varlist'
         call projs#update#varlist()
 

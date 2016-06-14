@@ -3,6 +3,13 @@ function! projs#update#datvars (...)
    call base#plg#loadvars('projs')
 endfunction
 
+function! projs#update#usedpacks (...)
+	let proj = projs#proj#name()
+
+	let secs = base#qw('preamble packages')
+	let mfile = projs#secfile('_main_')
+endfunction
+
 function! projs#update#varlist ()
 
 		let bvars   = copy(base#varlist())
