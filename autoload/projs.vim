@@ -686,7 +686,12 @@ function! projs#opensec (...)
     let sec=a:1
  else
     let sec=projs#select#sec()
-  endif
+ endif
+
+ if !projs#sec#exists(sec)
+		let cnt = input('Section does not exist, continue? (1/0):',1)
+		if !cnt | return | endif
+ endif
 
   call projs#varset("secname",sec)
 
@@ -708,7 +713,6 @@ function! projs#opensec (...)
                     call add(vfiles, vfile)
                 endif
         endfor
-
 
   elseif sec == '_dat_citn_'
     let vfile = projs#path([ proj . '.citn.i.dat' ])

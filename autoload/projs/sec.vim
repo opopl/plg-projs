@@ -33,3 +33,13 @@ function! projs#sec#remove (...)
 	endif
 	
 endfunction
+
+function! projs#sec#exists (...)
+	let sec = get(a:000,0,'')
+	let secnames = copy(projs#varget('secnames',[]))
+
+	call extend(secnames,projs#varget('secnamesbase',[]))
+
+	return base#inlist(sec,secnames)
+
+endfunction
