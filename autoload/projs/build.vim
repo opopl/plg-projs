@@ -130,13 +130,14 @@ endfunction
 " projs#build#run ({ 'opt' : 'use_htlatex'})
 "
 function! projs#build#run (...)
+ let verbose=1
 
  try
     cclose
  catch
  endtry
 
- let opt =  projs#varexists('prjmake_opt') ? projs#var('prjmake_opt') : 'latexmk' 
+ let opt =  projs#varget('prjmake_opt','latexmk')
 
  let ref ={
 	\	"prompt" : 0,
@@ -165,7 +166,8 @@ function! projs#build#run (...)
  call base#mkdir(texoutdir)
  call projs#var('texoutdir',texoutdir)
 
- let texmode = projs#var('texmode')
+ let texmode = projs#varget('texmode','')
+ if !len(texmode) | call projs#warn('texmode is not defined!') | endif 
 
  if prompt
  	let texmode = input('texmode: ',texmode,'custom,tex#complete#texmodes')
@@ -211,19 +213,23 @@ function! projs#build#run (...)
 	exe 'setlocal makeef='.makeef
  endif
 
- echo '-------------------------'
- echo ' '
- echo 'Running make:'
- echo ' '
- echo ' Current directory:           ' . getcwd()
- echo ' '
- echo ' ( Vim opt ) &makeprg      => ' . &makeprg
- echo ' ( Vim opt ) &makeef       => ' . &makeef
- echo ' ( Vim opt ) &errorformat  => ' . &efm
- echo ' '
- echo ' Build opt                 => ' . opt 
- echo ' '
- echo '-------------------------'
+ if verbose
+	 echo '-------------------------'
+	 echo ' '
+	 echo 'Running make:'
+	 echo ' '
+	 echo ' Current directory:           ' . getcwd()
+	 echo ' '
+	 echo ' ( Vim opt ) &makeprg      => ' . &makeprg
+	 echo ' ( Vim opt ) &makeef       => ' . &makeef
+	 echo ' ( Vim opt ) &errorformat  => ' . &efm
+	 echo ' '
+	 echo ' Build opt                 => ' . opt 
+	 echo ' Texmode                   => ' . texmode
+	 echo ' '
+	 echo ' '
+	 echo '-------------------------'
+ endif
 
  if index([ 'nonstopmode','batchmode' ],texmode) >= 0 
    exe 'silent make!'

@@ -813,6 +813,11 @@ endf
 
 function! projs#initvars (...)
     call base#plg#loadvars('projs')
+		let vars = projs#varget('vars',{})
+
+		for [k,v] in items(vars)
+			call projs#varset(k,v)
+		endfor
 endf
 
 function! projs#echo(text,...)
