@@ -354,6 +354,21 @@ function! projs#proj#git (...)
 	endif
 
 	let files = projs#proj#files()
+
+	if base#inlist(cmd,base#qw('rm add'))
+		for f in files
+			let fcmd= git .' '.cmd. ' '.f
+
+			let refsys={ 
+							\	"cmds"         : [fcmd],
+              \ "split_output" : 0,
+              \ ],
+              \   }
+			call base#sys(refsys)
+
+		endfor
+	endif
+
 	echo files
 
 endfunction
