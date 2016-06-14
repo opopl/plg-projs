@@ -6,8 +6,25 @@ endfunction
 function! projs#update#usedpacks (...)
 	let proj = projs#proj#name()
 
-	let secs = base#qw('preamble packages')
-	let mfile = projs#secfile('_main_')
+	let secs = base#qw('preamble')
+
+	for sec in secs
+		let lines = projs#filejoinlines({ 'sec' : sec })
+	endfor
+
+	let pats={
+		\ 'up' : '^\\usepackage{\(\w\+\)}'
+		\	}
+	let usedpacks=[]
+	for line  in lines
+		if line =~ pats.up
+			let pack = substitute(line,pats.up,'\1','g')
+			call add(usedpacks,pack)
+		endif
+	endfor
+
+	call projs#varset('usedpacks',usedpacks)
+
 endfunction
 
 function! projs#update#varlist ()
