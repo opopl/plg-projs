@@ -1051,11 +1051,6 @@ function! projs#init (...)
     let rootid = get(a:000,0,'')
     let [root,rootid] = projs#init#root(rootid)
     
-    let g:texlive={
-        \  'TEXMFDIST'  : projs#tex#kpsewhich('--var-value=TEXMFDIST'),
-        \  'TEXMFLOCAL' : projs#tex#kpsewhich('--var-value=TEXMFLOCAL'),
-        \  }
-    let g:pdfviewer = 'evince'
 
     let prefix="(projs#init) "
     call projs#echo("Initializing projs plugin, \n\t projsdir => " . root ,{ "prefix" : prefix })

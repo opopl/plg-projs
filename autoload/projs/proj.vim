@@ -341,9 +341,12 @@ function! projs#proj#git (...)
 	if a:0
 		let cmd = a:1
 	else
+		let cmds = projs#proj#gitcmds()
+		let start = get(cmds,0,'')
+
 		let cmd = base#getfromchoosedialog({ 
-		 	\ 'list'        : projs#proj#gitcmds(),
-		 	\ 'startopt'    : 'regular',
+		 	\ 'list'        : cmds,
+		 	\ 'startopt'    : start,
 		 	\ 'header'      : "Available git cmds are: ",
 		 	\ 'numcols'     : 1,
 		 	\ 'bottom'      : "Choose git cmd by number: ",
@@ -352,42 +355,6 @@ function! projs#proj#git (...)
 
 	let files = projs#proj#files()
 
-	let so=[]
-
-	let tmp = tempname()
-
-	let cmdopts = {
-		\ 'push'   : "origin master" ,
-		\ 'commit' : '-a -m "u"'   ,
-		\ 'remote' : '-v'          ,
-		\ 'rm'     : '--cached'    ,
-		\ }
-
-	let opts = get(cmdopts,cmd,'')
-
-	let opts = input('Options for '.cmd.' command:',opts)
-	let cmd  = cmd .' '.opts
-
-	if base#inlist(cmd,base#qw('rm add'))
-	
-		for f  in files
-			let fp = projs#path([f])
-			let gitcmd = 'git ' . cmd . ' ' . fp
-			call base#sys({ "cmds" : [gitcmd]})
-			call extend(so,base#var('sysout'))
-		endfor
-
-	"elseif base#inlist(cmd,base#qw('st'))
-	else
-		let gitcmd = 'git ' . cmd
-		call base#sys({ "cmds" : [gitcmd]})
-		call extend(so,base#var('sysout'))
-	endif
-
-	call writefile(so,tmp)
-	call base#fileopen({ "files" : [ tmp ], "action" : "split" })
-	setf gitcommit
-	
 endfunction
 
 function! projs#proj#git_add ()
