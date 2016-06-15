@@ -399,7 +399,7 @@ function! projs#help (...)
 
     if topic == 'maps'
         let yn=input('Show projs#maps() ? (1/0):',1)
-        if yn | verbose function projs#maps | endif
+        if yn | call base#vim#showfun('projs#maps') | endif
     endif
 
 endfunction
