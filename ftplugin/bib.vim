@@ -8,7 +8,7 @@ let b:root    = projs#root()
 call base#buf#start()
 
 " if we are dealing with a 'projs' BibTeX file
-if ( ( b:dirname == b:root ) && ( b:ext == 'bib' ) )
+if ( b:dirname == b:root )
 
 	let b:proj = substitute(b:basename,'^\(\w\+\)\..*','\1','g')
 
