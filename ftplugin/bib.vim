@@ -4,14 +4,8 @@ if exists("b:did_projs_bib_ftplugin")
 endif
 let b:did_projs_bib_ftplugin = 1
 
-let b:file     = expand('%:p')
-let b:basename = expand('%:p:t')
-let b:ext      = expand('%:p:e')
-
 let b:root    = projs#root()
-let b:dirname = expand('%:p:h')
-
-let b:finfo   = base#getfileinfo()
+call base#buf#start()
 
 " if we are dealing with a 'projs' BibTeX file
 if ( ( b:dirname == b:root ) && ( b:ext == 'bib' ) )

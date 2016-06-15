@@ -1,23 +1,18 @@
 
-
 if exists("b:did_projs_tex_ftplugin")
   finish
 endif
 let b:did_projs_tex_ftplugin = 1
 
-let b:file     = expand('%:p')
-let b:basename = expand('%:p:t')
-let b:ext      = expand('%:p:e')
-
 let b:root    = projs#root()
-let b:dirname = expand('%:p:h')
-
-let b:finfo   = base#getfileinfo()
+call base#buf#start()
 
 """ftplugin
 
 " if we are dealing with a 'projs' (La)TeX file
-if ( ( b:dirname == b:root ) && ( b:ext == 'tex' ) )
+"if ( ( b:dirname == b:root ) && ( b:ext == 'tex' ) )
+
+if ( b:dirname == b:root )
 	
 	call projs#onload()
 

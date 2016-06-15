@@ -1051,6 +1051,7 @@ endfunction
 function! projs#init (...)
 
     call projs#initvars()
+    call projs#init#au()
 
     let rootid = get(a:000,0,'')
     let [root,rootid] = projs#init#root(rootid)

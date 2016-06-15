@@ -26,3 +26,10 @@ function! projs#init#root (...)
 		return [root,rootid]
 	
 endfunction
+
+function! projs#init#au (...)
+	augroup plg_projs
+		au!
+		autocmd BufWinEnter,BufRead,BufNewFile *.cld setf tex
+	augroup end
+endfunction
