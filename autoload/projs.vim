@@ -95,6 +95,8 @@ function! projs#secfromfile (...)
             let sec = '_vim_'
         elseif basename =~ '\.\(\w\+\)\.bib$'
             let sec = '_bib_'
+        elseif basename =~ '\.\(\w\+\)\.bib$'
+            let sec = '_unknown_'
         endif
         return sec
     endif
