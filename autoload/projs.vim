@@ -675,6 +675,8 @@ function! projs#onload (...)
   setlocal iminsert=0
 
   TgAdd projs_this
+  TgAdd plg_projs
+
   StatusLine projs
 
   call projs#maps()
@@ -1017,12 +1019,8 @@ function! projs#maps ()
     nnoremap <silent> ;;co :copen<CR>
     nnoremap <silent> ;;cc :cclose<CR>
 
-    "nnoremap <silent> <F5> :cclose<CR>
-    "nnoremap <silent> <F3> :cp<CR>
-    "
-    nnoremap <silent> <F1> :copen<CR>
-    nnoremap <silent> <F2> :cclose<CR> 
-
+    nnoremap <buffer><silent> <F2> :PrjMake single_run<CR>
+    nnoremap <buffer><silent> <F3> :PrjMake latexmk<CR>
     nnoremap <buffer><silent> <F4> :PrjMake<CR>
     nnoremap <buffer><silent> <F5> :PrjMakePrompt<CR>
 
