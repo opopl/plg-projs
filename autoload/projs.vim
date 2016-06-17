@@ -572,18 +572,8 @@ function! projs#viewproj (...)
 
     call projs#var('secname',sec)
     call projs#var('proj',proj)
-
-    let secnames = projs#proj#secnames()
-    call projs#var('secnames')
-    
-    call projs#checksecdir()
     
     call projs#opensec(projs#var('secname'))
-
- "let menuprojs=input('Load projs menu? (y/n): ', 'n')
- "if menuprojs == 'y'
-    "MenuReset projs
- "endif
  "
     if (exists("*make#makeprg"))
         call make#makeprg('projs_latexmk',{ 'echo' : 0 })
@@ -595,11 +585,14 @@ function! projs#viewproj (...)
     endif
 
     TgSet projs_this
+    TgAdd plg_projs
 
     let loaded=projs#varget('loaded',[])
 
     call add(loaded,proj)
     call projs#varset('loaded',loaded)
+
+		call projs#update_qw('piclist secnames')
 
 endfun
 
@@ -1552,13 +1545,24 @@ function! projs#grep (...)
     
 endfunction
 
+function! projs#update_qw (s)
+	let s = a:s	
+	let opts = base#qwsort(s)
+
+	for o in opts
+		call projs#update(o)
+	endfor
+
+endfunction
+
 function! projs#update (...)
   let opts = projs#varget('opts_PrjUpdate',base#qw('secnames list datvars'))
+	let proj = projs#proj#name()
 
-    if a:0
-        let opt = a:1
-    else
-        let opt = base#getfromchoosedialog({ 
+  if a:0
+       let opt = a:1
+  else
+       let opt = base#getfromchoosedialog({ 
             \ 'list'        : opts,
             \ 'startopt'    : 'regular',
             \ 'header'      : "Available options are: ",
@@ -1570,6 +1574,16 @@ function! projs#update (...)
     if opt == 'secnames'
         call projs#proj#secnames()
         call projs#proj#secnamesall()
+
+    elseif opt == 'piclist'
+				let pdir = projs#path(['pics',proj])
+				let piclist = base#find({ 
+						\ "dirs"    : [pdir],
+						\ "qw_exts" : 'jpg png eps',
+						\	"rmext" : 1,
+						\	"relpath" : 1,
+						\	})
+				call projs#var('piclist',piclist)
 
     elseif opt == 'secnamesbase'
         call projs#varsetfromdat('secnamesbase')
