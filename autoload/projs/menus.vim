@@ -79,7 +79,7 @@ function! projs#menus#set(...)
 
 	 call base#menu#additem({
 					\	'item' 	: '&PROJS.&' . lett . '.&' . proj,
-	 				\	'cmd'		:	'VPROJ ' . proj,
+	 				\	'cmd'		:	'PrjView ' . proj,
 	 				\	'lev'		:	lev,
 	 				\	})
 
@@ -91,7 +91,7 @@ function! projs#menus#set(...)
  let filesdat=base#catpath('projs',proj . '.files.i.dat' )
 
  if filereadable(filesdat)
-	 let pfiles=base#readdatfile({	'file' : filesdat })
+	 let pfiles = base#readdatfile({	'file' : filesdat })
 	
 	 for fname in pfiles
 		 	 let pfile=base#catpath('projs',proj . '.' . fname)
@@ -109,8 +109,8 @@ function! projs#menus#set(...)
 
 
 """EFILES
- let efiles=[]
- let filesdat=base#catpath('projs',proj . '.files_ext.i.dat' )
+ let efiles   = []
+ let filesdat = base#catpath('projs',proj . '.files_ext.i.dat' )
 
  if filereadable(filesdat)
 	 let efiles=base#readdatfile({	'file' : filesdat })
