@@ -479,8 +479,8 @@ function! projs#new (...)
   if projtype == 'da_qa_report'
     let vms   = input('Tested VMs:','winxp1 win7x64n1')
     let tests = input('Tests Run:','trial_forcetest licensed_forcetest LCS_license_generate')
+  	let nsecs_s.=vms
   endif
-  let nsecs_s.=vms
 
   let nsecs_s = input('Sections to be created:',nsecs_s)
 
@@ -860,7 +860,7 @@ function! projs#info ()
     let secname  = projs#var('secname')
     let secnames = projs#proj#secnames()
 
-  call projs#update('loaded')
+  	call projs#update('loaded')
         
     call base#echo({ 'text' : "PROJECTS ", 'hl' : 'Title' } )
 
@@ -880,7 +880,7 @@ function! projs#info ()
 
     call base#echo({ 'text' : "Project type: " } )
     call base#echo({ 
-        \ 'text' : "projtype => " . projs#varget('projtype',''),
+        \ 'text'      : "projtype => " . projs#varget('projtype',''),
         \ 'indentlev' : indentlev, })
     
     call base#echo({ 'text' : "Current project: " } )
@@ -894,7 +894,7 @@ function! projs#info ()
         \ 'indentlev' : indentlev })
 
     call base#echo({ 'text' : "Loaded projects: " } )
-  let loaded=projs#var('loaded')
+  	let loaded=projs#var('loaded')
     call base#echo({ 
         \ 'text' : "loaded => " . base#dump(loaded), 
         \ 'indentlev' : indentlev })
@@ -964,10 +964,10 @@ function! projs#filejoinlines (...)
 
     for line in flines
         if line =~ pats.ii
-            
-            let iisec = substitute(line,pats.ii,'\1','g')
 
-            let iilines=projs#filejoinlines({ "sec" : iisec })
+            let iisec   = substitute(line,pats.ii,'\1','g')
+
+            let iilines = projs#filejoinlines({ "sec" : iisec })
 
             call add(lines,delim)
             call add(lines,'%% ' . line)
