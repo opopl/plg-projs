@@ -668,6 +668,8 @@ function! projs#onload (...)
   let ref = {}
   if a:0 | let ref = a:1 | endif
 
+	let b:projs_onload_done=1
+
   let proj = projs#proj#name()
   let proj = get(ref,'proj',proj)
 
@@ -1015,10 +1017,10 @@ function! projs#filejoinlines (...)
 endf
 
 function! projs#maps ()
-
     nnoremap <silent> ;;co :copen<CR>
     nnoremap <silent> ;;cc :cclose<CR>
 
+    nnoremap <buffer><silent> <F1> :PrjMake build_pdflatex<CR>
     nnoremap <buffer><silent> <F2> :PrjMake single_run<CR>
     nnoremap <buffer><silent> <F3> :PrjMake latexmk<CR>
     nnoremap <buffer><silent> <F4> :PrjMake<CR>
@@ -1038,7 +1040,6 @@ function! projs#builddir (...)
     let builddir = base#file#catfile([ broot, proj ])
 
     return builddir
-
 endfunction
 
 """projs_init
