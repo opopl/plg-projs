@@ -645,7 +645,7 @@ function! projs#switch (...)
   endw
 
   call projs#proj#name(proj)
-  call projs#update('secnames')
+  call projs#update_qw('piclist secnames')
 
   let sec = 'body'
   let sec = input('Section to open:',sec,'custom,projs#complete#secnames')
