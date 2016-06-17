@@ -574,7 +574,7 @@ function! projs#viewproj (...)
     call projs#var('proj',proj)
     
     call projs#opensec(projs#var('secname'))
- "
+ 
     if (exists("*make#makeprg"))
         call make#makeprg('projs_latexmk',{ 'echo' : 0 })
     endif
