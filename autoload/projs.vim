@@ -1183,6 +1183,11 @@ function! projs#listfromfiles ()
     return nlist
 endf    
 
+function! projs#piclist ()
+	let list = projs#varget('piclist',[])
+	return list
+endf    
+
 function! projs#list ()
 
     let list=projs#varget('list',[])
