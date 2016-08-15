@@ -172,14 +172,14 @@ function! projs#newsecfile(sec,...)
     elseif sec == 'body'
 
         call add(lines,' ')
-        call add(lines,'%%file f_' . sec)
+        call add(lines,'%%file ' . sec)
         call add(lines,' ')
 
 """newsec_cfg
     elseif sec == 'cfg'
 
         call add(lines,' ')
-        call add(lines,'%%file f_' . sec)
+        call add(lines,'%%file ' . sec)
         call add(lines,' ')
 
         let ln  = projs#qw#rf('data tex tex4ht_cfg.tex')
@@ -196,7 +196,7 @@ function! projs#newsecfile(sec,...)
             \ }
 
         call add(lines,' ')
-        call add(lines,'%%file f_'. sec)
+        call add(lines,'%%file '. sec)
         call add(lines,' ')
 
         let ln  = projs#qw#rf('data tex preamble.tex')
@@ -208,7 +208,7 @@ function! projs#newsecfile(sec,...)
     elseif sec == '_bib_'
 
         call add(lines,' ')
-        call add(lines,'"""file f__vim_ ')
+        call add(lines,'"""file _vim_ ')
         call add(lines,' ')
         call add(lines,' ')
 
@@ -278,7 +278,7 @@ function! projs#newsecfile(sec,...)
     elseif sec == '_main_htlatex_'
 
         call add(lines,' ')
-        call add(lines,'%%file f_'. sec)
+        call add(lines,'%%file '. sec)
         call add(lines,' ')
         call add(lines,'\nonstopmode')
         call add(lines,' ')
@@ -286,7 +286,7 @@ function! projs#newsecfile(sec,...)
         let mf = projs#secfile('_main_')
         let ml = readfile(mf)
 
-        call filter(ml,'v:val !~ "^%%file f_main"')
+        call filter(ml,'v:val !~ "^%%file _main_"')
 
         call extend(lines,ml)
 
@@ -351,7 +351,7 @@ function! projs#newsecfile(sec,...)
     else
 
         call add(lines,' ')
-        call add(lines,'%%file f_' . sec)
+        call add(lines,'%%file ' . sec)
         call add(lines,' ')
 
         let cnt = input('Continue adding? (1/0):',1)
