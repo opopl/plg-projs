@@ -362,7 +362,7 @@ function! projs#newsecfile(sec,...)
                 let seccmd = input('Sectioning command: ','section','custom,tex#complete#seccmds')
 
                 let title = input('Title: ',sec)
-                let label = input('Label: ','sec:'.title)
+                let label = input('Label: ','sec:'.sec)
 
                 call add(lines,'\' . seccmd . '{'.title.'}')
                 call add(lines,'\label{'.label.'}')
