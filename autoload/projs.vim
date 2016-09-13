@@ -668,6 +668,7 @@ function! projs#onload (...)
 
   setlocal ts=2
   setlocal iminsert=0
+	setlocal isk=@,48-57,_,128-167,224-235
 
   TgAdd projs_this
   TgAdd plg_projs
