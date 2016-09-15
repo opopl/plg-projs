@@ -115,15 +115,19 @@ function! projs#newsecfile(sec,...)
     let ref = { 
         \   "git_add" : 0, 
         \   "view"    : 0, 
+        \   "prompt"  : 1, 
         \   }
 
     if a:0 
         let refadd = a:1 
         call extend(ref,refadd)
     endif
+		let prompt = get(ref,'prompt',1)
 
     call projs#echo("Creating file:\n\t" . sec )
+
     let lines = []
+    call add(lines,get(ref,'add_lines_before',[]))
 
     let file = projs#secfile(sec)
 
@@ -354,23 +358,27 @@ function! projs#newsecfile(sec,...)
         call add(lines,'%%file ' . sec)
         call add(lines,' ')
 
-        let cnt = input('Continue adding? (1/0):',1)
-
-        if cnt
-            let addsec = input('Add sectioning? (1/0):',1)
-            if addsec
-                let seccmd = input('Sectioning command: ','section','custom,tex#complete#seccmds')
-
-                let title = input('Title: ',sec)
-                let label = input('Label: ','sec:'.sec)
-
-                call add(lines,'\' . seccmd . '{'.title.'}')
-                call add(lines,'\label{'.label.'}')
-                call add(lines,' ')
-            endif
-        endif
+				if prompt 
+	        let cnt = input('Continue adding? (1/0):',1)
+	
+	        if cnt
+	            let addsec = input('Add sectioning? (1/0):',1)
+	            if addsec
+	                let seccmd = input('Sectioning command: ','section','custom,tex#complete#seccmds')
+	
+	                let title = input('Title: ',sec)
+	                let label = input('Label: ','sec:'.sec)
+	
+	                call add(lines,'\' . seccmd . '{'.title.'}')
+	                call add(lines,'\label{'.label.'}')
+	                call add(lines,' ')
+	            endif
+	        endif
+				endif
  
     endif
+
+    call add(lines,get(ref,'add_lines_after',[]))
 
     call writefile(lines,file)
 
