@@ -122,12 +122,12 @@ function! projs#newsecfile(sec,...)
         let refadd = a:1 
         call extend(ref,refadd)
     endif
-		let prompt = get(ref,'prompt',1)
+    let prompt = get(ref,'prompt',1)
 
     call projs#echo("Creating file:\n\t" . sec )
 
     let lines = []
-    call add(lines,get(ref,'add_lines_before',[]))
+    call extend(lines,get(ref,'add_lines_before',[]))
 
     let file = projs#secfile(sec)
 
@@ -167,10 +167,10 @@ function! projs#newsecfile(sec,...)
 """newsec_index
     elseif sec == 'index'
 
-		    call add(lines,'\clearpage')
-		    call add(lines,'\phantomsection')
-		    call add(lines,'\addcontentsline{toc}{chapter}{\indexname}')
-		    call add(lines,'\printindex')
+        call add(lines,'\clearpage')
+        call add(lines,'\phantomsection')
+        call add(lines,'\addcontentsline{toc}{chapter}{\indexname}')
+        call add(lines,'\printindex')
 
 """newsec_body
     elseif sec == 'body'
@@ -358,27 +358,27 @@ function! projs#newsecfile(sec,...)
         call add(lines,'%%file ' . sec)
         call add(lines,' ')
 
-				if prompt 
-	        let cnt = input('Continue adding? (1/0):',1)
-	
-	        if cnt
-	            let addsec = input('Add sectioning? (1/0):',1)
-	            if addsec
-	                let seccmd = input('Sectioning command: ','section','custom,tex#complete#seccmds')
-	
-	                let title = input('Title: ',sec)
-	                let label = input('Label: ','sec:'.sec)
-	
-	                call add(lines,'\' . seccmd . '{'.title.'}')
-	                call add(lines,'\label{'.label.'}')
-	                call add(lines,' ')
-	            endif
-	        endif
-				endif
+        if prompt 
+          let cnt = input('Continue adding? (1/0):',1)
+  
+          if cnt
+              let addsec = input('Add sectioning? (1/0):',1)
+              if addsec
+                  let seccmd = input('Sectioning command: ','section','custom,tex#complete#seccmds')
+  
+                  let title = input('Title: ',sec)
+                  let label = input('Label: ','sec:'.sec)
+  
+                  call add(lines,'\' . seccmd . '{'.title.'}')
+                  call add(lines,'\label{'.label.'}')
+                  call add(lines,' ')
+              endif
+          endif
+        endif
  
     endif
 
-    call add(lines,get(ref,'add_lines_after',[]))
+    call extend(lines,get(ref,'add_lines_after',[]))
 
     call writefile(lines,file)
 
@@ -477,8 +477,8 @@ function! projs#new (...)
   let texfiles =  projs#update#texfiles()
 
   let nsecs_h = {
-			\ "single_file"   : "_main_",
-			\ "da_qa_report"  : "_main_ preamble body tests_run ",
+      \ "single_file"   : "_main_",
+      \ "da_qa_report"  : "_main_ preamble body tests_run ",
       \ "regular"       : " _main_ preamble body cfg bib index",
       \ }
 
@@ -487,7 +487,7 @@ function! projs#new (...)
   if projtype == 'da_qa_report'
     let vms   = input('Tested VMs:','winxp1 win7x64n1')
     let tests = input('Tests Run:','trial_forcetest licensed_forcetest LCS_license_generate')
-  	let nsecs_s.=vms
+    let nsecs_s.=vms
   endif
 
   let nsecs_s = input('Sections to be created:',nsecs_s)
@@ -499,20 +499,20 @@ function! projs#new (...)
   endfor
 
   call projs#proj#git_add()
-	
-	call base#echoredraw('Created new project: ' . proj)
-	
-	call base#var('proj',proj)
-	
-	call projs#listadd(proj)
-	
-	let loadmain=input('Load the main project file? (1/0): ', 1)
-	if loadmain 
-	  VSECBASE _main_
-	endif
-	
-	TgUpdate projs_this
-	call projs#update('list')
+  
+  call base#echoredraw('Created new project: ' . proj)
+  
+  call base#var('proj',proj)
+  
+  call projs#listadd(proj)
+  
+  let loadmain=input('Load the main project file? (1/0): ', 1)
+  if loadmain 
+    VSECBASE _main_
+  endif
+  
+  TgUpdate projs_this
+  call projs#update('list')
 
   call base#echoprefixold()
     
@@ -600,7 +600,7 @@ function! projs#viewproj (...)
     call add(loaded,proj)
     call projs#varset('loaded',loaded)
 
-		call projs#update_qw('piclist secnames')
+    call projs#update_qw('piclist secnames')
 
 endfun
 
@@ -669,14 +669,14 @@ function! projs#onload (...)
   let ref = {}
   if a:0 | let ref = a:1 | endif
 
-	let b:projs_onload_done=1
+  let b:projs_onload_done=1
 
   let proj = projs#proj#name()
   let proj = get(ref,'proj',proj)
 
   setlocal ts=2
   setlocal iminsert=0
-	setlocal isk=@,48-57,_,128-167,224-235
+  setlocal isk=@,48-57,_,128-167,224-235
 
   TgAdd projs_this
   TgAdd plg_projs
@@ -697,8 +697,8 @@ function! projs#opensec (...)
  endif
 
  if !projs#sec#exists(sec)
-		let cnt = input('Section does not exist, continue? (1/0):',1)
-		if !cnt | return | endif
+    let cnt = input('Section does not exist, continue? (1/0):',1)
+    if !cnt | return | endif
  endif
 
   call projs#varset("secname",sec)
@@ -825,11 +825,11 @@ endf
 
 function! projs#initvars (...)
     call base#plg#loadvars('projs')
-		let vars = projs#varget('vars',{})
+    let vars = projs#varget('vars',{})
 
-		for [k,v] in items(vars)
-			call projs#varset(k,v)
-		endfor
+    for [k,v] in items(vars)
+      call projs#varset(k,v)
+    endfor
 endf
 
 function! projs#echo(text,...)
@@ -864,7 +864,7 @@ function! projs#info ()
     let secname  = projs#var('secname')
     let secnames = projs#proj#secnames()
 
-  	call projs#update('loaded')
+    call projs#update('loaded')
         
     call base#echo({ 'text' : "PROJECTS ", 'hl' : 'Title' } )
 
@@ -898,7 +898,7 @@ function! projs#info ()
         \ 'indentlev' : indentlev })
 
     call base#echo({ 'text' : "Loaded projects: " } )
-  	let loaded=projs#var('loaded')
+    let loaded=projs#var('loaded')
     call base#echo({ 
         \ 'text' : "loaded => " . base#dump(loaded), 
         \ 'indentlev' : indentlev })
@@ -1193,8 +1193,8 @@ function! projs#listfromfiles ()
 endf    
 
 function! projs#piclist ()
-	let list = projs#varget('piclist',[])
-	return list
+  let list = projs#varget('piclist',[])
+  return list
 endf    
 
 function! projs#list ()
@@ -1560,18 +1560,18 @@ function! projs#grep (...)
 endfunction
 
 function! projs#update_qw (s)
-	let s = a:s	
-	let opts = base#qwsort(s)
+  let s = a:s 
+  let opts = base#qwsort(s)
 
-	for o in opts
-		call projs#update(o)
-	endfor
+  for o in opts
+    call projs#update(o)
+  endfor
 
 endfunction
 
 function! projs#update (...)
   let opts = projs#varget('opts_PrjUpdate',base#qw('secnames list datvars'))
-	let proj = projs#proj#name()
+  let proj = projs#proj#name()
 
   if a:0
        let opt = a:1
@@ -1590,14 +1590,14 @@ function! projs#update (...)
         call projs#proj#secnamesall()
 
     elseif opt == 'piclist'
-				let pdir = projs#path(['pics',proj])
-				let piclist = base#find({ 
-						\ "dirs"    : [pdir],
-						\ "qw_exts" : 'jpg png eps',
-						\	"rmext" : 1,
-						\	"relpath" : 1,
-						\	})
-				call projs#var('piclist',piclist)
+        let pdir = projs#path(['pics',proj])
+        let piclist = base#find({ 
+            \ "dirs"    : [pdir],
+            \ "qw_exts" : 'jpg png eps',
+            \ "rmext" : 1,
+            \ "relpath" : 1,
+            \ })
+        call projs#var('piclist',piclist)
 
     elseif opt == 'secnamesbase'
         call projs#varsetfromdat('secnamesbase')
