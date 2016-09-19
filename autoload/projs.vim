@@ -675,7 +675,9 @@ function! projs#onload (...)
   let proj = get(ref,'proj',proj)
 
   setlocal ts=2
+	"-------- needed for keymapping
   setlocal iminsert=0
+	"-------- needed for tags
   setlocal isk=@,48-57,_,128-167,224-235
 
   TgAdd projs_this
@@ -837,10 +839,7 @@ function! projs#echo(text,...)
     let prefix=''
     if a:0
         let opts=a:1
-
-        if opts['prefix']
-            let prefix=opts['prefix']
-        endif
+        let prefix=get(opts,'prefix',prefix)
     endif
 
     call base#echo({ 
@@ -1585,11 +1584,16 @@ function! projs#update (...)
             \ })
     endif
 
+		let o = { "prefix" : "(proj: ".proj.") "  }
     if opt == 'secnames'
+				call projs#echo("Updating list of sections",o)
+
         call projs#proj#secnames()
         call projs#proj#secnamesall()
 
     elseif opt == 'piclist'
+				call projs#echo("Updating list of pictures",o)
+
         let pdir = projs#path(['pics',proj])
         let piclist = base#find({ 
             \ "dirs"    : [pdir],
@@ -1600,21 +1604,31 @@ function! projs#update (...)
         call projs#var('piclist',piclist)
 
     elseif opt == 'secnamesbase'
+				call projs#echo("Updating list of base sections",o)
+
         call projs#varsetfromdat('secnamesbase')
 
     elseif opt == 'list'
+				call projs#echo("Updating list of projects")
+
         call projs#listfromfiles()
 
     elseif opt == 'usedpacks'
+				call projs#echo("Updating list of used TeX packages",o)
+
         call projs#update#usedpacks()
 
     elseif opt == 'varlist'
+				call projs#echo("Updating list of PROJS variables")
+
         call projs#update#varlist()
 
     elseif opt == 'datvars'
         call projs#update#datvars()
 
     elseif opt == 'loaded'
+				call projs#echo("Updating list of loaded projects")
+
         call base#buffers#get()
     
         let bufs=base#var('bufs')

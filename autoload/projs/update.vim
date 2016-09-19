@@ -13,17 +13,33 @@ function! projs#update#usedpacks (...)
 	endfor
 
 	let pats={
-		\ 'up' : '^\\usepackage{\(\w\+\)}'
+		\ 'up'  : '^\\usepackage{\(\w\+\)}'            ,
+		\ 'upo' : '^\\usepackage\[\(.*\)\]{\(\w\+\)}$' ,
 		\	}
+
 	let usedpacks=[]
+	let packopts={}
+
 	for line  in lines
 		if line =~ pats.up
 			let pack = substitute(line,pats.up,'\1','g')
+
 			call add(usedpacks,pack)
+			call extend(packopts,{ pack : ""})
+
+		elseif line =~ pats.upo
+			let pack = substitute(line,pats.upo,'\2','g')
+			let popts = substitute(line,pats.upo,'\1','g')
+
+			call add(usedpacks,pack)
+			call extend(packopts,{ pack : popts })
 		endif
 	endfor
 
 	call projs#varset('usedpacks',usedpacks)
+	call projs#varset('packopts',packopts)
+
+	call projs#update('varlist')
 
 endfunction
 
