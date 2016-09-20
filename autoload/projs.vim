@@ -14,7 +14,8 @@ endf
 "
 function! projs#secfile (...)
     
-    let sec = a:1
+		let sec = projs#proj#secname()
+    let sec = get(a:000,0,sec)
 
     let dot = '.'
 
@@ -834,9 +835,15 @@ function! projs#initvars (...)
     endfor
 endf
 
+function! projs#warn (text)
+    let prefix = "--PROJS--"
+    call base#warn({ "text" : a:text, "prefix" : prefix })
+    
+endfunction
+
 function! projs#echo(text,...)
 
-    let prefix=''
+    let prefix='--PROJS--'
     if a:0
         let opts=a:1
         let prefix=get(opts,'prefix',prefix)
@@ -1361,11 +1368,7 @@ function! projs#datafiles (id)
     return files
 endfunction
 
-function! projs#warn (text)
-    let prefix = "--PROJS--"
-    call base#warn({ "text" : a:text, "prefix" : prefix })
-    
-endfunction
+
 
  
 function! projs#renameproject(old,new)

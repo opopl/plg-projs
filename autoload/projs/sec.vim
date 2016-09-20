@@ -26,12 +26,29 @@ function! projs#sec#rename (new)
 endfunction
 
 function! projs#sec#remove (...)
-	if a:0
-		let sec = a:1
+
+	let sec = projs#proj#secname()
+	let sec = get(a:000,0,sec)
+
+	let secfile   = projs#secfile(sec)
+	let secfile_u = base#file#win2unix(secfile)
+
+	if filereadable(secfile)
+		call base#git({ 
+			\ "cmds"    : [ 'rm ' . secfile_u ],
+	  	\ "gitopts" : { "git_prompt" : 0},
+			\	})
 	else
-		let sec = projs#proj#secname()
+		call projs#warn('Section file does not exist for: '.sec)
+		return
 	endif
-	
+
+	call base#file#delete({ 'file' : secfile })
+
+	if !filereadable(secfile)
+		call projs#echo('Section has been deleted: '.sec)
+	endif
+
 endfunction
 
 function! projs#sec#exists (...)
