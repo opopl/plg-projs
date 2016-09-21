@@ -80,9 +80,20 @@ function! projs#update#usedpacks (...)
 	call projs#varset('usedpacks',usedpacks)
 	call projs#varset('packopts',packopts)
 
-	let pdata      = base#varget('prjdata',{})
 	let pdir_id    = projs#rootid()
-	let pdata_pdir = get(pdata,pdir_id,{})
+
+	let pdata          = base#varget('prjdata',{})
+	let pdata_pdir     = get(pdata,pdir_id,{})
+	let pdata_projdata = get(pdata_pdir,'projdata',{})
+
+	let pdata_proj = get(pdata_pdir,proj,{})
+	call extend(pdata_proj,{
+		\	'usedpacks' : usedpacks,
+		\	'packopts'  : packopts,
+		\	})
+	call extend(pdata_projdata,{ proj : pdata_proj })
+	call extend(pdata_pdir,{ 'projdata' : pdata_projdata })
+	call extend(pdata, { pdir_id : pdata_pdir })
 
 	call base#varset('prjdata',pdata)
 
