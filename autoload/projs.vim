@@ -655,7 +655,8 @@ function! projs#switch (...)
   endw
 
   call projs#proj#name(proj)
-  call projs#update_qw('piclist secnames')
+	let u='piclist secnames usedpacks'
+  call projs#update_qw(u)
 
   let sec = 'body'
   let sec = input('Section to open:',sec,'custom,projs#complete#secnames')
@@ -877,7 +878,11 @@ function! projs#info ()
 
     call base#echo({ 'text' : "Projects directory: " } )
     call base#echo({ 
-        \ 'text' : "projs#root() => " . projs#root(),
+        \ 'text' : "projs#root()     => " . projs#root(),
+        \ 'indentlev' : indentlev, })
+
+    call base#echo({ 
+        \ 'text' : "projs#rootid()   => " . projs#rootid(),
         \ 'indentlev' : indentlev, })
 
     call base#echo({ 

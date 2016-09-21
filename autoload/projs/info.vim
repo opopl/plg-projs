@@ -6,6 +6,17 @@ function! projs#info#usedpacks ()
 	let up = projs#varget('usedpacks',[])
 	let po = projs#varget('packopts',{})
 
+	let dc = projs#varget('dc','')
+	let dco = projs#varget('dco','')
+
+	call base#echo({   'text' : 'Document Class: ', 'prefix' : ''})
+	call base#echo({   'text' : '                '.dc, 'prefix' : ''})
+
+	if strlen(dco)
+		call base#echo({   'text' : 'Document Class Options: ', 'prefix' : ''})
+		call base#echo({   'text' : '                '.dco, 'prefix' : ''})
+	endif
+
 	for p in up
 		let o=get(po,p,'')
 

@@ -17,16 +17,22 @@ function! projs#update#usedpacks (...)
 	"upo - single line, with options
 	
 	let pats={
-		\ 'up'  : '^\\usepackage\s*{\(\w\+\)}\s*'               ,
+		\ 'up'        : '^\\usepackage\s*{\(\w\+\)}\s*'               ,
 		\ 'upm_start' : '^\\usepackage\s*\['                    ,
 		\ 'upm_end'   : '\]{\(\w\+\)}\s*$'                    ,
-		\ 'upo' : '^\\usepackage\s*\[\(.*\)\]\s*{\(\w\+\)}\s*$' ,
+		\ 'upo'       : '^\\usepackage\s*\[\(.*\)\]\s*{\(\w\+\)}\s*$' ,
+		\ 'dc'        : '^\\documentclass\s*{\(\w\+\)}\s*$' ,
+		\ 'dco'       : '^\\documentclass\[\(.*\)\]\s*{\(\w\+\)}\s*$' ,
 		\	}
 
 	let usedpacks = []
 	let packopts  = {}
 	let mode      = {}
 	let popts     = ''
+
+	" documentclass
+	let dc  = ''
+	let dco = ''
 
 	while len(lines)
 		let line=remove(lines,0)
@@ -72,6 +78,13 @@ function! projs#update#usedpacks (...)
 				let mode['insideopt']=1
 				let popts=''
 
+			elseif line =~ pats.dc
+				let dc  = substitute(line,pats.dc,'\1','g')
+
+			elseif line =~ pats.dco
+				let dco  = substitute(line,pats.dco,'\1','g')
+				let dc   = substitute(line,pats.dco,'\2','g')
+
 			endif
 			break
 		endw
@@ -79,6 +92,8 @@ function! projs#update#usedpacks (...)
 
 	call projs#varset('usedpacks',usedpacks)
 	call projs#varset('packopts',packopts)
+	call projs#varset('dc',dc)
+	call projs#varset('dco',dco)
 
 	let pdir_id    = projs#rootid()
 
@@ -90,6 +105,8 @@ function! projs#update#usedpacks (...)
 	call extend(pdata_proj,{
 		\	'usedpacks' : usedpacks,
 		\	'packopts'  : packopts,
+		\	'dc'        : dc,
+		\	'dco'       : dco,
 		\	})
 	call extend(pdata_projdata,{ proj : pdata_proj })
 	call extend(pdata_pdir,{ 'projdata' : pdata_projdata })
