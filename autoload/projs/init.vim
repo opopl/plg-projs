@@ -7,6 +7,7 @@ function! projs#init#root (...)
 
 		if !len(root)
     	let rootid = projs#varget('rootid','texdocs')
+    	call projs#varset('rootid',rootid)
 		endif
 
 		if len(rootid)
@@ -19,7 +20,6 @@ function! projs#init#root (...)
     		call projs#varset('rootid',rootid)
      		call projs#varset('root',root)
     endif
-
 
     call base#pathset({ 'projs' : root })
 

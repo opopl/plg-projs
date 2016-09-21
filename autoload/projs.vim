@@ -556,7 +556,7 @@ function! projs#viewproj (...)
     let sec = ''
     if a:0
         let proj = matchstr(a:1,'^\zs\w\+\ze')
-        let sec    = matchstr(a:1,'^\w\+\.\zs\w\+\ze')
+        let sec  = matchstr(a:1,'^\w\+\.\zs\w\+\ze')
     else
         let proj=projs#selectproject()
     endif
@@ -1128,6 +1128,10 @@ function! projs#root (...)
     endif
     return projs#var('root')
 endf    
+
+function! projs#rootid ()
+    return projs#varget('rootid','')
+endf  
 
 function! projs#rootbasename ()
     let root = projs#root()

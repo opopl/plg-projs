@@ -7,7 +7,13 @@ function! projs#info#usedpacks ()
 	let po = projs#varget('packopts',{})
 
 	for p in up
-		call base#echo({ 'text' : 'Package: '.p, 'prefix' : ''})
+		let o=get(po,p,'')
+
+		call base#echo({   'text' : 'Package: ', 'prefix' : ''})
+		call base#echo({   'text' : '         '.p, 'prefix' : ''})
+		if strlen(o)
+			call base#echo({ 'text' : '         '.o, 'prefix' : ''})
+		endif
 	endfor
 	
 endfunction

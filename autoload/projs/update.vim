@@ -39,6 +39,8 @@ function! projs#update#usedpacks (...)
 						let pack=substitute(line,pats.upm_end,'\1','g')
 						let mode['insideopt']=0
 
+						let popts=base#rmwh(popts)
+
 						call add(usedpacks,pack)
 						call extend(packopts,{ pack : popts })
 
@@ -77,6 +79,12 @@ function! projs#update#usedpacks (...)
 
 	call projs#varset('usedpacks',usedpacks)
 	call projs#varset('packopts',packopts)
+
+	let pdata      = base#varget('prjdata',{})
+	let pdir_id    = projs#rootid()
+	let pdata_pdir = get(pdata,pdir_id,{})
+
+	call base#varset('prjdata',pdata)
 
 	call projs#update('varlist')
 
