@@ -630,6 +630,16 @@ fun! projs#checksecdir()
 
 endf
 
+function! projs#action (...)
+	let act = get(a:000,0,'')
+
+	let sub = 'projs#action#'.act
+	if exists("*".sub)
+		exe 'call '.sub.'()'
+	endif
+	
+endfunction
+
 function! projs#switch (...)
 
   let proj = ''

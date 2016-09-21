@@ -84,6 +84,10 @@ function! projs#complete#prjbuild (...)
  return join(comps,"\n")
 endfunction
 
+function! projs#complete#prjact (...)
+   return projs#complete#vars([ 'opts_PrjAct' ])
+endfunction
+
 function! projs#complete#update (...)
    return projs#complete#vars([ 'opts_PrjUpdate' ])
 endfunction
