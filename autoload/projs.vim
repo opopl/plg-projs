@@ -573,14 +573,14 @@ function! projs#viewproj (...)
     call projs#proj#name(proj)
 
     let f = projs#secfile('_osecs_')
-    call projs#var('secorderfile',f)
+    call projs#varset('secorderfile',f)
 
     if ! strlen(sec)
         let sec='_main_'
     endif
 
-    call projs#var('secname',sec)
-    call projs#var('proj',proj)
+    call projs#varset('secname',sec)
+    call projs#varset('proj',proj)
     
     call projs#opensec(projs#var('secname'))
  
@@ -601,7 +601,8 @@ function! projs#viewproj (...)
     call add(loaded,proj)
     call projs#varset('loaded',loaded)
 
-    call projs#update_qw('piclist secnames')
+		let u='piclist secnames usedpacks'
+    call projs#update_qw(u)
 
 endfun
 
@@ -1296,6 +1297,11 @@ function! projs#var (...)
     endif
 endfunction
 
+
+function! projs#varset (varname, value)
+  call base#varset('projs_'.a:varname,a:value)
+endfunction
+
 function! projs#varecho (varname)
     echo projs#var(a:varname)
 endfunction
@@ -1311,9 +1317,6 @@ function! projs#varget (varname,...)
     
 endfunction
 
-function! projs#varset (varname, value)
-  call base#varset('projs_'.a:varname,a:value)
-endfunction
 
 function! projs#varexists (varname)
     if base#varexists('projs_'.a:varname)
