@@ -35,7 +35,7 @@ function! projs#sec#remove (...)
 
 	if filereadable(secfile)
 		call base#git({ 
-			\ "cmds"    : [ 'rm ' . secfile_u ],
+			\ "cmds"    : [ 'rm ' . secfile_u . ' -f'],
 	  	\ "gitopts" : { "git_prompt" : 0},
 			\	})
 	else

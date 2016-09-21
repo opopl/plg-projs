@@ -5,9 +5,9 @@ function! projs#proj#name (...)
 
 	if a:0
 		let proj = a:1
-		call projs#var('proj',proj)
+		call projs#varset('proj',proj)
 	else
-		let proj = projs#var('proj')
+		let proj = projs#varget('proj','')
 	endif
 	return proj
 endfunction

@@ -1,7 +1,15 @@
 
-function! projs#action#tags_replace ()
-	let files = projs#proj#files()
-	let pdir = projs#root()
+function! projs#action#thisproj_tags_replace (...)
+	let proj  = projs#proj#name()
+
+	let ref_def = { 'proj' : proj }
+	let ref     = get(a:000,0,ref_def)
+
+	let proj = get(ref,'proj',proj)
+	
+
+	let files = projs#proj#files({ 'proj' : proj })
+	let pdir  = projs#root()
 
 	for f in files
 		let p = base#file#catfile([ pdir, f ])
@@ -26,4 +34,15 @@ function! projs#action#tags_replace ()
 	endfor
 
 	
+endfunction
+
+function! projs#action#projs_tags_replace ()
+	let list = projs#varget('list',[])
+
+	let oldproj=projs#proj#name()
+
+	for proj in list
+		call projs#action#thisproj_tags_replace({ 'proj': proj})
+	endfor
+
 endfunction
