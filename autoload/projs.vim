@@ -1078,9 +1078,15 @@ function! projs#init (...)
     call projs#initvars()
     call projs#init#au()
 
-    let rootid = get(a:000,0,'')
+		let rootid = projs#varget('rootid','')
+    let rootid = get(a:000,0,rootid)
+
     let [root,rootid] = projs#init#root(rootid)
-    
+
+		if !strlen(rootid)
+			call projs#warn('rootid is NOT defined! Aborting init.')
+			return
+		endif
 
     let prefix="(projs#init) "
     call projs#echo("Initializing projs plugin, \n\t projsdir => " . root ,{ "prefix" : prefix })
@@ -1089,12 +1095,12 @@ function! projs#init (...)
 
     let pdffin = exists('$PDFOUT') ? $PDFOUT : base#qw#catfile('C: out pdf')
 
-    call projs#var('pdffin',pdffin)
+    call projs#varset('pdffin',pdffin)
     call base#mkdir(pdffin)
 
-    call projs#var('prjmake_opt','latexmk')
+    call projs#varset('prjmake_opt','latexmk')
 
-    call projs#var('pdfout',pdfout)
+    call projs#varset('pdfout',pdfout)
     call base#mkdir(pdfout)
 
     let rootbuilddir = projs#path([ 'builds' ])

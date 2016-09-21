@@ -1,6 +1,7 @@
 
 function! projs#init#root (...)
 
+		let rootid = projs#varget('rootid','')
 		let rootid = get(a:000,0,'')
 
 		let root   = projs#varget('root',base#envvar('PROJSDIR'))
