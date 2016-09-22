@@ -41,6 +41,10 @@ function! projs#complete#varlist (...)
   return projs#complete#vars([ 'varlist' ])
 endfunction
 
+function! projs#complete#buildmodes (...)
+  return projs#complete#vars([ 'buildmodes' ])
+endfunction
+
 function! projs#complete#projsdirs (...)
   return projs#complete#vars([ 'projsdirs' ])
 endfunction
