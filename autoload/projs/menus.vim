@@ -4,6 +4,23 @@
 """__USED_BY F_MenuAdd
 
 "
+"
+function! projs#menus#remove(...)
+
+ try
+	 	exe 'aunmenu &BASESECS'
+	 	exe 'aunmenu &BUFFERS'
+	 	exe 'aunmenu &MAKEFILES'
+	 	exe 'aunmenu &MENUS'
+	 	exe 'aunmenu &PROJS'
+	 	exe 'aunmenu &SECTIONS'
+	 	exe 'aunmenu &TEX'
+	 	exe 'aunmenu &TOOLS'
+ catch
+
+ endtry
+endf
+
 function! projs#menus#set(...)
 
  let projs = projs#list()
@@ -78,7 +95,7 @@ function! projs#menus#set(...)
    let lett=toupper(matchstr(proj,'^\zs\w\ze'))
 
 	 call base#menu#additem({
-					\	'item' 	: '&PROJS.&' . lett . '.&' . proj,
+					\	'item' 	: '&PROJS.&LIST.&' . lett . '.&' . proj,
 	 				\	'cmd'		:	'PrjView ' . proj,
 	 				\	'lev'		:	lev,
 	 				\	})
@@ -134,22 +151,23 @@ function! projs#menus#set(...)
 
 """SECTIONS
  let lev=10
- for sec in projs#varget('secnames',[])
+ let secnames=projs#proj#secnames()
+
+ for sec in secnames
    	if sec =~ '^fig\.'
 	  		let fig=matchstr(sec,'^fig\.\zs.*\ze$')
 
 		 		call base#menu#additem({
-						\	'item' 	: '&FIGS.&' . fig,
+						\	'item' 	: '&PROJS.&FIGS.&' . fig,
 		 				\	'cmd'		:	'VSEC ' . sec,
 		 				\	'lev'		:	levs.FIGS . '.' . lev,
 		 				\	})
 
 		else
-
-			let sec=substitute(sec,'\.','\\.','g')
+				let sec=substitute(sec,'\.','\\.','g')
 
 		 		call base#menu#additem({
-						\	'item' 	: '&SECTIONS.&' . sec,
+						\	'item' 	: '&PROJS.&SECTIONS.&' . sec,
 		 				\	'lev'		:	levs.SECTIONS . '.' . lev,
 		 				\	'cmd'		:	'VSEC ' . sec,
 		 				\	} )
@@ -158,12 +176,11 @@ function! projs#menus#set(...)
 		let lev+=10
  endfor
 
-
 """BASESECS
  let lev=10
  for sec in projs#varget('secnamesbase',[])
  		call base#menu#additem({
-						\	'item' 	: '&BASESECS.&' . sec,
+						\	'item' 	: '&PROJS.&BASESECS.&' . sec,
 		 				\	'cmd'		:	'VSECBASE ' . sec,
 		 				\	'lev'		:	levs.BASESECS . '.' . lev,
 		 				\	})
