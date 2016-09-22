@@ -52,6 +52,9 @@ command! -nargs=* -complete=custom,projs#complete#update     PrjUpdate
 command! -nargs=* -complete=custom,projs#complete#varlist    PrjVarEcho
 	\ call projs#varecho(<f-args>)
 
+command! -nargs=* -complete=custom,projs#complete#varlist    PrjVarSet
+	\ call projs#cmd#varset(<f-args>)
+
 command! -nargs=* -complete=custom,projs#complete#secnamesall PrjSecNew
 	\ call projs#newsecfile(<f-args>,{ "view" : 1 })
 

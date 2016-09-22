@@ -129,6 +129,9 @@ endfunction
 " projs#build#run ({ 'opt' : 'use_latexmk' })
 " projs#build#run ({ 'opt' : 'use_htlatex'})
 "
+" projs#build#run ({ 'buildmode' : 'make'})
+" projs#build#run ({ 'buildmode' : 'base_sys'})
+"
 function! projs#build#run (...)
  let verbose=1
 
@@ -141,12 +144,13 @@ function! projs#build#run (...)
 
  let ref ={
 	\	"prompt" : 0,
+	\	"buildmode"   : projs#varget('buildmode','make'),
  	\	}
 
- if a:0
-	let refadd = a:1
-	call extend(ref,refadd)
- endif
+ let refadd = get(a:000,1,{})
+ call extend(ref,refadd)
+
+ let buildmode = get(ref,'buildmode','')
 
  let prompt = get(ref,'prompt',0)
  let opt    = get(ref,'opt',opt)
@@ -160,7 +164,7 @@ function! projs#build#run (...)
  let proj = projs#proj#name()
  call projs#setbuildvars()
 
- let bnum      = projs#var('buildnum')
+ let bnum      = projs#varget('buildnum')
  let texoutdir = base#file#catfile([ projs#builddir(), bnum ])
 
  call base#mkdir(texoutdir)
@@ -213,28 +217,36 @@ function! projs#build#run (...)
 	exe 'setlocal makeef='.makeef
  endif
 
- if verbose
-	 echo '-------------------------'
-	 echo ' '
-	 echo 'Running make:'
-	 echo ' '
-	 echo ' Current directory:           ' . getcwd()
-	 echo ' '
-	 echo ' ( Vim opt ) &makeprg      => ' . &makeprg
-	 echo ' ( Vim opt ) &makeef       => ' . &makeef
-	 echo ' ( Vim opt ) &errorformat  => ' . &efm
-	 echo ' '
-	 echo ' Build opt                 => ' . opt 
-	 echo ' Texmode                   => ' . texmode
-	 echo ' '
-	 echo ' '
-	 echo '-------------------------'
- endif
+ if buildmode == 'make'
+	 if verbose
+		 echo '-------------------------'
+		 echo ' '
+		 echo 'Running make:'
+		 echo ' '
+		 echo ' Current directory:           ' . getcwd()
+		 echo ' '
+		 echo ' ( Vim opt ) &makeprg      => ' . &makeprg
+		 echo ' ( Vim opt ) &makeef       => ' . &makeef
+		 echo ' ( Vim opt ) &errorformat  => ' . &efm
+		 echo ' '
+		 echo ' Build opt                 => ' . opt 
+		 echo ' Texmode                   => ' . texmode
+		 echo ' '
+		 echo ' '
+		 echo '-------------------------'
+	 endif
+	
+	 if index([ 'nonstopmode','batchmode' ],texmode) >= 0 
+	   exe 'silent make!'
+	 elseif texmode == 'errorstopmode'
+	   exe 'make!'
+	 endif
 
- if index([ 'nonstopmode','batchmode' ],texmode) >= 0 
-   exe 'silent make!'
- elseif texmode == 'errorstopmode'
-   exe 'make!'
+ elseif buildmode == 'base_sys'
+	 call base#sys({ 
+			\ "cmds" : [ makeprg ]
+			\	})
+
  endif
 
  call projs#build#aftermake({ "opt" : opt })

@@ -1,2 +1,3 @@
 texmode nonstopmode
 rootid texdocs
+buildmode make
