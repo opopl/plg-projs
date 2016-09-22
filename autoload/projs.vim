@@ -1228,6 +1228,7 @@ endf
 
 "let list = projs#list ()
 "let list = projs#list ({ 'get' : 'fromfiles' })
+"let list = projs#list ({ 'get' : 'fromvar' })
 
 function! projs#list (...)
 		let refdef={ 
@@ -1241,7 +1242,7 @@ function! projs#list (...)
 		let gt = get(ref,'get')
 		while 1
 			if gt == 'fromvar'
-		    let list=projs#varget('list',[])
+		    let list = projs#varget('list',[])
 	    	if ! len(list) 
 					let gt = 'fromfiles' 
 					continue

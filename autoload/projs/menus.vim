@@ -6,7 +6,7 @@
 "
 function! projs#menus#set(...)
 
- let projs = projs#varget('list',[])
+ let projs = projs#list()
 
  if exists("&tbis")
  		set tbis=large
@@ -18,7 +18,7 @@ function! projs#menus#set(...)
 			 \	'SECTIONS' 	: 12,
 			 \	'BASESECS' 	: 13,
 			 \	'PROJS' 		: 14,
-			 \	'MAKEFILES' 		: 15,
+			 \	'MAKEFILES' : 15,
 			 \	'PFILES' 		: 16,
 			 \	}
 
@@ -130,7 +130,7 @@ function! projs#menus#set(...)
  endif
 
 """MAKEFILES
- MenuAdd makefiles
+ "MenuAdd makefiles
 
 """SECTIONS
  let lev=10
