@@ -12,6 +12,8 @@ function! projs#menus#remove(...)
 	 	exe 'aunmenu &BUFFERS'
 	 	exe 'aunmenu &MAKEFILES'
 	 	exe 'aunmenu &MENUS'
+	 	exe 'aunmenu &PROJS.&SECTIONS'
+	 	exe 'aunmenu &PROJS.&BASESECS'
 	 	exe 'aunmenu &PROJS'
 	 	exe 'aunmenu &SECTIONS'
 	 	exe 'aunmenu &TEX'
@@ -40,7 +42,7 @@ function! projs#menus#set(...)
 			 \	}
 
  try
-	 	exe 'aunmenu &SECTIONS'
+	 	exe 'aunmenu &PROJS.&SECTIONS'
 	 	exe 'aunmenu &FIGS'
 	 	exe 'aunmenu &BASESECS'
 	 	exe 'aunmenu &MAKEFILES'
@@ -52,41 +54,7 @@ function! projs#menus#set(...)
 
 """_ToolBar
 
-			"\	'ToolBar.TEXHT' ,
-			"\	'ToolBar.HTML' ,
-			"\	'ToolBar.CFG' ,
-	
-	let menus_add=[
-			\	'ToolBar.MAKE' ,
-			\	'ToolBar.sep1' ,
-			\	'ToolBar.VIEWPDF' ,
-			\	'ToolBar.VIEWLOG' ,
-			\	'ToolBar.sep2' ,
-			\	'ToolBar.MAIN' ,
-		 	\	'ToolBar.BODY' ,
-			\	'ToolBar.PREAMBLE' ,
-			\	'ToolBar.PACKAGES' ,
-			\	'ToolBar.DEFS' ,
-			\	'ToolBar.sep3' ,
-			\	'ToolBar.HTLATEX' ,
-			\	'ToolBar.sep4' ,
-			\	'TOOLS.VIEWPDF' ,
-			\	'TOOLS.VIEWLOG' ,
-			\	'TOOLS.VIEW.idx' ,
-			\	'TOOLS.VIEW.ind' ,
-			\	'TOOLS.VIEW.aux' ,
-			\	'TOOLS.VIEW.lof' ,
-			\	'TOOLS.VIEW.lot' ,
-			\	'TOOLS.RWPACK' ,
-			\	'OMNI.proj_defs' ,
-			\	'OMNI.proj_secs' ,
-			\	'OMNI.projs' ,
-			\	'OMNI._smart_tex' ,
-			\	'OMNI.snippets' ,
-			\	'OMNI.tex_plaintex_commands' ,
-			\	'OMNI.tex_TEXHT_commands' ,
-			\	]
-
+	let menus_add=projs#varget('menus_add',[])
 	call base#menus#add(menus_add)
 
 """PROJS
