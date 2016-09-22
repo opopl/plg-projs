@@ -1115,6 +1115,8 @@ function! projs#init (...)
     " update list of projects
     call projs#update('list')
 
+		"MenuAdd projs
+
 endfunction
 
 function! projs#listwrite2dat (...)

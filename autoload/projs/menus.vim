@@ -64,6 +64,7 @@ function! projs#menus#set(...)
  let pdirs=projs#varget('projsdirs',[])
 
  for proj in sort(projs)
+   let lett=toupper(matchstr(proj,'^\zs\w\ze'))
 
 	 call base#menu#additem({
 					\	'item' 	: '&PROJS.&LIST.&' . lett . '.&' . proj,
@@ -74,7 +75,7 @@ function! projs#menus#set(...)
 	 let lev+=10
  endfor
 
- for pdir in sort(projsdirs)
+ for pdir in sort(pdirs)
 	 call base#menu#additem({
 					\	'item' 	: '&PROJS.&DIRS.&' . pdir,
 	 				\	'cmd'		:	'ProjsInit ' . pdir,
