@@ -609,9 +609,6 @@ endfun
 fun! projs#complete (...)
 
   let comps=[]
-
-  call base#varupdate('projs')
-
   let comps=projs#list()
 
   return join(comps,"\n")
@@ -1229,12 +1226,31 @@ function! projs#piclist ()
   return list
 endf    
 
-function! projs#list ()
+"let list = projs#list ()
+"let list = projs#list ({ 'get' : 'fromfiles' })
 
-    let list=projs#varget('list',[])
-    if ! len(list)
-        let list = projs#listfromfiles()
-    end
+function! projs#list (...)
+		let refdef={ 
+					\	'get' : 'fromvar'
+					\	}
+		let ref  = refdef
+		let refa = get(a:000,0,{})
+
+		call extend(ref,refa)
+
+		let gt = get(ref,'get')
+		while 1
+			if gt == 'fromvar'
+		    let list=projs#varget('list',[])
+	    	if ! len(list) 
+					let gt = 'fromfiles' 
+					continue
+				endif
+			elseif gt == 'fromfiles'
+	    	let list = projs#listfromfiles()
+			endif
+			break
+		endw
 
     return copy(list)
 endf    
@@ -1246,7 +1262,7 @@ function! projs#listadd (proj)
         call add(list,a:proj)
     endif
 
-    call projs#var("list",list)
+    call projs#varset("list",list)
     
 endfunction
 
