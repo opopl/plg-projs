@@ -38,9 +38,11 @@ function! projs#complete#projsload (...)
 endfunction
 
 function! projs#complete#varlist (...)
-
   return projs#complete#vars([ 'varlist' ])
-	
+endfunction
+
+function! projs#complete#projsdirs (...)
+  return projs#complete#vars([ 'projsdirs' ])
 endfunction
 
 function! projs#complete#secnamesbase (...)

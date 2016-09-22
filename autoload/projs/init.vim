@@ -13,6 +13,11 @@ function! projs#init#root (...)
 
 		if len(rootid)
 			let dir     = base#path(rootid)
+
+			if !strlen(dir)
+				let dir = rootid
+			endif
+
       call base#mkdir(dir)
 			let root = dir
     endif

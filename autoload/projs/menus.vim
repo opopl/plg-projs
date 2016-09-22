@@ -59,8 +59,11 @@ function! projs#menus#set(...)
 
 """PROJS
  let lev=10
+ call projs#echo('Adding Menu: PROJS')
+
+ let pdirs=projs#varget('projsdirs',[])
+
  for proj in sort(projs)
-   let lett=toupper(matchstr(proj,'^\zs\w\ze'))
 
 	 call base#menu#additem({
 					\	'item' 	: '&PROJS.&LIST.&' . lett . '.&' . proj,
@@ -69,6 +72,14 @@ function! projs#menus#set(...)
 	 				\	})
 
 	 let lev+=10
+ endfor
+
+ for pdir in sort(projsdirs)
+	 call base#menu#additem({
+					\	'item' 	: '&PROJS.&DIRS.&' . pdir,
+	 				\	'cmd'		:	'ProjsInit ' . pdir,
+	 				\	'lev'		:	lev,
+	 				\	})
  endfor
 
 """PFILES
@@ -88,7 +99,6 @@ function! projs#menus#set(...)
 		 				\	'cmd'		:	'call base#fileopen("' . pfile . '")',
 		 				\	'lev'		:	lev,
 		 				\	})
-	
 	 endfor
  endif
 
