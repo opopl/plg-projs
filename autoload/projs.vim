@@ -1478,9 +1478,9 @@ function! projs#prjmakeoption (...)
     else
         "let opt = 'latexmk'
         if projs#varexists('prjmake_opt')
-            let opt  = projs#var('prjmake_opt')
+            let opt  = projs#varget('prjmake_opt')
         else
-            let opts = projs#var('prjmake_opts')
+            let opts = projs#varget('prjmake_opts')
             let opt  = base#getfromchoosedialog({ 
                 \ 'list'        : opts,
                 \ 'startopt'    : 'regular',
@@ -1489,7 +1489,7 @@ function! projs#prjmakeoption (...)
                 \ 'bottom'      : "Choose an option by number: ",
                 \ })
         endif
-        call projs#var('prjmake_opt',opt)
+        call projs#varset('prjmake_opt',opt)
     endif
     return opt
 endfunction

@@ -16,9 +16,9 @@ function! projs#proj#secname (...)
 
 	if a:0
 		let sec = a:1
-		call projs#var('secname',sec)
+		call projs#varset('secname',sec)
 	else
-		let sec = projs#var('secname')
+		let sec = projs#varget('secname','')
 	endif
 	return sec
 endfunction

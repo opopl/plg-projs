@@ -147,13 +147,15 @@ function! projs#build#run (...)
 	\	"buildmode"   : projs#varget('buildmode','make'),
  	\	}
 
- let refadd = get(a:000,1,{})
+ let refadd = get(a:000,0,{})
  call extend(ref,refadd)
 
  let buildmode = get(ref,'buildmode','')
 
  let prompt = get(ref,'prompt',0)
  let opt    = get(ref,'opt',opt)
+
+ call projs#varset('prjmake_opt',opt)
 
  if prompt | let opt = input('Build opt: ',opt,'custom,projs#complete#prjmake') | endif
 
@@ -287,8 +289,8 @@ endfunction
 
 function! projs#build#qflist_process (...)
 
- let starttime=projs#var('build_starttime')
- let proj = projs#proj#name()
+ let starttime = projs#var('build_starttime')
+ let proj      = projs#proj#name()
 
  let endtime   = localtime()
  let buildtime = endtime-starttime

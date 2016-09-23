@@ -1,4 +1,9 @@
 
+
+function! projs#buf#vim ()
+	TgSet projs_this
+endfunction
+
 function! projs#buf#tex_tex ()
 
 	call projs#onload()
