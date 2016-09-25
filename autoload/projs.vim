@@ -628,6 +628,16 @@ fun! projs#checksecdir()
 
 endf
 
+function! projs#insert (...)
+	let ins = get(a:000,0,'')
+
+	let sub = 'projs#insert#'.ins
+	if exists("*".sub)
+		exe 'call '.sub.'()'
+	endif
+	
+endfunction
+
 function! projs#action (...)
 	let act = get(a:000,0,'')
 

@@ -94,6 +94,20 @@ function! projs#complete#prjact (...)
    return projs#complete#vars([ 'opts_PrjAct' ])
 endfunction
 
+function! projs#complete#prjinsert (...)
+   return projs#complete#vars([ 'opts_PrjInsert' ])
+endfunction
+
+function! projs#complete#templates_vim (...)
+	 let comps = keys(projs#varget('templates_vim',{}))
+ 	 return join(comps,"\n")
+endfunction
+
+function! projs#complete#templates_tex (...)
+	 let comps = keys(projs#varget('templates_tex',{}))
+ 	 return join(comps,"\n")
+endfunction
+
 function! projs#complete#update (...)
    return projs#complete#vars([ 'opts_PrjUpdate' ])
 endfunction
