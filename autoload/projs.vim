@@ -590,6 +590,7 @@ function! projs#viewproj (...)
 
     let vimf = projs#path([ proj . '.vim' ])
     if filereadable(vimf)
+				call projs#echo('Found project vim file, executing:' . "\n\t".vimf)
         exe 'source ' . vimf
     endif
 
@@ -1074,6 +1075,7 @@ function! projs#init (...)
 
     call projs#initvars()
     call projs#init#au()
+    call projs#init#templates()
 
 		let rootid = projs#varget('rootid','')
     let rootid = get(a:000,0,rootid)

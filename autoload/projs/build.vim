@@ -170,7 +170,7 @@ function! projs#build#run (...)
  let texoutdir = base#file#catfile([ projs#builddir(), bnum ])
 
  call base#mkdir(texoutdir)
- call projs#var('texoutdir',texoutdir)
+ call projs#varset('texoutdir',texoutdir)
 
  let texmode = projs#varget('texmode','')
  if !len(texmode) | call projs#warn('texmode is not defined!') | endif 
@@ -185,12 +185,12 @@ function! projs#build#run (...)
  	let texjobname = input('texjobname: ',texjobname)
  endif
 
- call projs#var('texjobname',texjobname)
+ call projs#varset('texjobname',texjobname)
 
- let pdfout = projs#var('pdfout')
+ let pdfout = projs#varget('pdfout')
  if prompt
  	let pdfout = input('pdfout: ',pdfout)
-	call projs#var('pdfout',pdfout)
+	call projs#varset('pdfout',pdfout)
  endif
 
  call projs#build#setmake({"opt" : opt, "texoutdir" : texoutdir })
@@ -261,7 +261,7 @@ function! projs#build#run (...)
 	
 	 "" copy to $PDFOUT dir
 	 let pdffile_env = base#file#catfile([ base#path('pdfout'), proj.'.pdf'])
-	 let bp_pdfout = base#path('pdfout')
+	 let bp_pdfout   = base#path('pdfout')
 	
 	 call base#mkdir(bp_pdfout)
 	 if isdirectory(bp_pdfout)
