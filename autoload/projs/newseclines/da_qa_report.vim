@@ -49,6 +49,9 @@ function! projs#newseclines#da_qa_report#ts_tb_vm_vs_test (...)
     call add(lines,'%%file '.sec)
     call add(lines,' ')
 
+    let tests = projs#varget('da_qa_tests',[])
+    let vms   = projs#varget('da_qa_vms',[])
+
     let tb = tex#lines()
     
     return lines
