@@ -37,3 +37,20 @@ function! projs#newseclines#da_qa_report#_main_ (...)
     return lines
           
 endfunction
+
+function! projs#newseclines#da_qa_report#ts_tb_vm_vs_test (...)
+
+    let lines = []
+
+    let proj = projs#proj#name()
+    let sec = 'tb_vm_vs_test'
+    
+    call add(lines,' ')
+    call add(lines,'%%file '.sec)
+    call add(lines,' ')
+
+    let tb = tex#lines()
+    
+    return lines
+          
+endfunction
