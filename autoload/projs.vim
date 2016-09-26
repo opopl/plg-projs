@@ -14,7 +14,7 @@ endf
 "
 function! projs#secfile (...)
     
-		let sec = projs#proj#secname()
+    let sec = projs#proj#secname()
     let sec = get(a:000,0,sec)
 
     let dot = '.'
@@ -134,7 +134,7 @@ function! projs#newsecfile(sec,...)
 
     let secs = base#qw("preamble body")
 
-    let projtype=projs#varget('projtype','regular')
+    let projtype = projs#varget('projtype','regular')
 
 """newsec__main__
     if sec == '_main_'
@@ -143,7 +143,12 @@ function! projs#newsecfile(sec,...)
       let sub = 'projs#newseclines#'.projtype.'#'.sec
 
       let lines = []
-      exe 'let lines='.sub.'()'
+
+      try
+        exe 'let lines='.sub.'()'
+      catch 
+        call projs#warn('Problems while executing:'."\n\t".sub)
+      endtry
 
 """newsec_bib
     elseif sec == 'bib'
@@ -208,14 +213,26 @@ function! projs#newsecfile(sec,...)
         call extend(lines,ln)
 
     elseif sec == '_dat_'
+
     elseif sec == '_dat_defs_'
+
+"""newsec__vim_
     elseif sec == '_vim_'
-    elseif sec == '_bib_'
+
+        let q_proj     = txtmy#text#quotes(proj)
+        let q_projtype = txtmy#text#quotes(projtype)
 
         call add(lines,' ')
         call add(lines,'"""file _vim_ ')
         call add(lines,' ')
+        call add(lines,'let s:projtype ='.q_projtype)
+        call add(lines,'let s:proj     ='.q_proj)
         call add(lines,' ')
+        call add(lines,'call projs#proj#name(s:proj)')
+        call add(lines,'call projs#proj#type(s:projtype)')
+        call add(lines,' ')
+
+    elseif sec == '_bib_'
 
 """newsec__build_htlatex
     elseif sec == '_build_htlatex_'
@@ -427,8 +444,8 @@ endfunction
 function! projs#new (...)
  call base#echoprefix('(projs#new)')
 
- let delim=repeat('-',50)
- let proj = ''
+ let delim = repeat('-',50)
+ let proj  = ''
 
  echo delim
  echo " "
@@ -440,7 +457,7 @@ function! projs#new (...)
  let yn=input('Continue? (1/0): ',1)
  if !yn | return 0 | endif
 
- let newopts=projs#var('PrjNew_opts',{})
+ let newopts=projs#varget('PrjNew_opts',{})
   
  if a:0
      let proj     = a:1
@@ -449,22 +466,21 @@ function! projs#new (...)
      if (a:0 == 2 && ( base#type(a:2) == 'Dictionary'))
         call extend(newopts,a:2)
      endif
-
- endif
-
- let projtype   = projs#select#projtype()
- let projstruct = projs#select#projstruct()
-
- call projs#rootcd()
-
- if ! ( exists('proj') && strlen(proj) )
-    let proj=input('Project name:','','custom,projs#complete')
+ else
+     if !strlen(proj)
+        let proj = input('New project name:','','custom,projs#complete')
+     endif
  endif
 
  if ! strlen(proj)
      call base#warn({ 'text' : 'no project name provided' })
      return 0 
  endif
+
+ let projtype   = projs#select#projtype()
+ let projstruct = projs#select#projstruct()
+
+ call projs#rootcd()
  
  if projs#ex(proj)
     let rw = input('Project already exists, rewrite (1/0)?: ',0)
@@ -473,22 +489,30 @@ function! projs#new (...)
  endif
 
   call projs#proj#name(proj)
-  call projs#var('projtype',projtype)
+  call projs#varset('projtype',projtype)
 
   let texfiles =  projs#update#texfiles()
 
   let nsecs_h = {
       \ "single_file"   : "_main_",
-      \ "da_qa_report"  : "_main_ preamble body tests_run ",
-      \ "regular"       : " _main_ preamble body cfg bib index",
+      \ "da_qa_report"  : "_main_ preamble body tests_run tb_vm_vs_test",
+      \ "regular"       : "_main_ preamble body cfg bib index",
       \ }
-
   let nsecs_s = get(nsecs_h,projtype,'')
 
+  let nsecs_s .= ' _vim_ '
+
+"""projtype_da_qa_report
   if projtype == 'da_qa_report'
-    let vms   = input('Tested VMs:','winxp1 win7x64n1')
-    let tests = input('Tests Run:','trial_forcetest licensed_forcetest LCS_license_generate')
-    let nsecs_s.=vms
+    let vms_s    = input('Tested VMs:','winxp1 win7x64n1')
+    let tests_s  = input('Tests Run:','trial_forcetest licensed_forcetest LCS_license_generate')
+    let nsecs_s .= ' '.vms_s.' '
+
+    let tests = split(tests_s,' ')
+    let vms   = split(vms_s,' ')
+
+    call projs#varset('da_qa_tests',tests)
+    call projs#varset('da_qa_vms',vms)
   endif
 
   let nsecs_s = input('Sections to be created:',nsecs_s)
@@ -590,7 +614,7 @@ function! projs#viewproj (...)
 
     let vimf = projs#path([ proj . '.vim' ])
     if filereadable(vimf)
-				call projs#echo('Found project vim file, executing:' . "\n\t".vimf)
+        call projs#echo('Found project vim file, executing:' . "\n\t".vimf)
         exe 'source ' . vimf
     endif
 
@@ -602,7 +626,7 @@ function! projs#viewproj (...)
     call add(loaded,proj)
     call projs#varset('loaded',loaded)
 
-		let u='piclist secnames usedpacks'
+    let u='piclist secnames usedpacks'
     call projs#update_qw(u)
 
 endfun
@@ -629,23 +653,23 @@ fun! projs#checksecdir()
 endf
 
 function! projs#insert (...)
-	let ins = get(a:000,0,'')
+  let ins = get(a:000,0,'')
 
-	let sub = 'projs#insert#'.ins
-	if exists("*".sub)
-		exe 'call '.sub.'()'
-	endif
-	
+  let sub = 'projs#insert#'.ins
+  if exists("*".sub)
+    exe 'call '.sub.'()'
+  endif
+  
 endfunction
 
 function! projs#action (...)
-	let act = get(a:000,0,'')
+  let act = get(a:000,0,'')
 
-	let sub = 'projs#action#'.act
-	if exists("*".sub)
-		exe 'call '.sub.'()'
-	endif
-	
+  let sub = 'projs#action#'.act
+  if exists("*".sub)
+    exe 'call '.sub.'()'
+  endif
+  
 endfunction
 
 function! projs#switch (...)
@@ -673,7 +697,7 @@ function! projs#switch (...)
   endw
 
   call projs#proj#name(proj)
-	let u='piclist secnames usedpacks'
+  let u='piclist secnames usedpacks'
   call projs#update_qw(u)
 
   let sec = 'body'
@@ -696,9 +720,9 @@ function! projs#onload (...)
   let proj = get(ref,'proj',proj)
 
   setlocal ts=2
-	"-------- needed for keymapping
+  "-------- needed for keymapping
   setlocal iminsert=0
-	"-------- needed for tags
+  "-------- needed for tags
   setlocal isk=@,48-57,_,128-167,224-235
 
   TgAdd projs_this
@@ -779,6 +803,7 @@ function! projs#opensec (...)
         call projs#filejoinlines()
     endif
 
+"""projs_opensec__vim_
   elseif sec == '_vim_'
     let vfile = projs#path([ proj . '.vim' ])
 
@@ -1065,13 +1090,13 @@ function! projs#maps ()
     nnoremap <buffer><silent> <F9> :OMNIFUNC<CR>
     nnoremap <buffer><silent> <F10> :TgUpdate<CR>
 
-		nnoremap <buffer><silent> <C-S> :GitSave<CR>
+    nnoremap <buffer><silent> <C-S> :GitSave<CR>
     
 endfunction
 
 function! projs#builddir (...)
     let proj     = projs#proj#name()
-    let broot    = projs#var('rootbuilddir')
+    let broot    = projs#varget('rootbuilddir','')
     let builddir = base#file#catfile([ broot, proj ])
 
     return builddir
@@ -1090,15 +1115,15 @@ function! projs#init (...)
     call projs#init#au()
     call projs#init#templates()
 
-		let rootid = projs#varget('rootid','')
+    let rootid = projs#varget('rootid','')
     let rootid = get(a:000,0,rootid)
 
     let [root,rootid] = projs#init#root(rootid)
 
-		if !strlen(rootid)
-			call projs#warn('rootid is NOT defined! Aborting init.')
-			return
-		endif
+    if !strlen(rootid)
+      call projs#warn('rootid is NOT defined! Aborting init.')
+      return
+    endif
 
     let prefix="(projs#init) "
     call projs#echo("Initializing projs plugin, \n\t projsdir => " . root ,{ "prefix" : prefix })
@@ -1130,7 +1155,7 @@ function! projs#init (...)
     " update list of projects
     call projs#update('list')
 
-		"MenuAdd projs
+    "MenuAdd projs
 
 endfunction
 
@@ -1248,27 +1273,27 @@ endf
 "let list = projs#list ({ 'get' : 'fromvar' })
 
 function! projs#list (...)
-		let refdef={ 
-					\	'get' : 'fromvar'
-					\	}
-		let ref  = refdef
-		let refa = get(a:000,0,{})
+    let refdef={ 
+          \ 'get' : 'fromvar'
+          \ }
+    let ref  = refdef
+    let refa = get(a:000,0,{})
 
-		call extend(ref,refa)
+    call extend(ref,refa)
 
-		let gt = get(ref,'get')
-		while 1
-			if gt == 'fromvar'
-		    let list = projs#varget('list',[])
-	    	if ! len(list) 
-					let gt = 'fromfiles' 
-					continue
-				endif
-			elseif gt == 'fromfiles'
-	    	let list = projs#listfromfiles()
-			endif
-			break
-		endw
+    let gt = get(ref,'get')
+    while 1
+      if gt == 'fromvar'
+        let list = projs#varget('list',[])
+        if ! len(list) 
+          let gt = 'fromfiles' 
+          continue
+        endif
+      elseif gt == 'fromfiles'
+        let list = projs#listfromfiles()
+      endif
+      break
+    endw
 
     return copy(list)
 endf    
@@ -1649,15 +1674,15 @@ function! projs#update (...)
             \ })
     endif
 
-		let o = { "prefix" : "(proj: ".proj.") "  }
+    let o = { "prefix" : "(proj: ".proj.") "  }
     if opt == 'secnames'
-				call projs#echo("Updating list of sections",o)
+        call projs#echo("Updating list of sections",o)
 
         call projs#proj#secnames()
         call projs#proj#secnamesall()
 
     elseif opt == 'piclist'
-				call projs#echo("Updating list of pictures",o)
+        call projs#echo("Updating list of pictures",o)
 
         let pdir = projs#path(['pics',proj])
         let piclist = base#find({ 
@@ -1669,22 +1694,22 @@ function! projs#update (...)
         call projs#var('piclist',piclist)
 
     elseif opt == 'secnamesbase'
-				call projs#echo("Updating list of base sections",o)
+        call projs#echo("Updating list of base sections",o)
 
         call projs#varsetfromdat('secnamesbase')
 
     elseif opt == 'list'
-				call projs#echo("Updating list of projects")
+        call projs#echo("Updating list of projects")
 
         call projs#listfromfiles()
 
     elseif opt == 'usedpacks'
-				call projs#echo("Updating list of used TeX packages",o)
+        call projs#echo("Updating list of used TeX packages",o)
 
         call projs#update#usedpacks()
 
     elseif opt == 'varlist'
-				call projs#echo("Updating list of PROJS variables")
+        call projs#echo("Updating list of PROJS variables")
 
         call projs#update#varlist()
 
@@ -1692,7 +1717,7 @@ function! projs#update (...)
         call projs#update#datvars()
 
     elseif opt == 'loaded'
-				call projs#echo("Updating list of loaded projects")
+        call projs#echo("Updating list of loaded projects")
 
         call base#buffers#get()
     

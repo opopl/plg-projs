@@ -77,6 +77,18 @@ function! projs#proj#filesact (...)
 
 endfunction
 
+function! projs#proj#type (...)
+  if a:0
+    let t = get(a:000,0,'')
+    if strlen(t)
+      call projs#varset('projtype',t)
+    endif
+  else
+    let t = projs#varget('projtype','')
+  endif
+  return t
+endfunction
+
 "let files = projs#proj#files ({ "proj" : proj })
 "let files = projs#proj#files ({ "exts" : ["tex"]})
 "

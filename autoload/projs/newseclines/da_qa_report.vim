@@ -17,7 +17,6 @@ function! projs#newseclines#da_qa_report#_main_ (...)
     let dclass = input('Document class:','report')
     let copts  = input('Class options:','a4paper,11pt,portrait')
 
-
     if len(copts)
       let copts='['.copts.']'
     endif
@@ -25,8 +24,12 @@ function! projs#newseclines#da_qa_report#_main_ (...)
     call add(lines,' ')
     call add(lines,'\documentclass'.copts.'{'.dclass.'}')
     call add(lines,' ')
+    call add(lines,'\usepackage{longtable}')
+    call add(lines,' ')
 
     call add(lines,'\begin{document}')
+    call add(lines,' ')
+    call add(lines,'   \ii{tb_vm_vs_test}')
     call add(lines,' ')
     call add(lines,'\end{document}')
     call add(lines,' ')
