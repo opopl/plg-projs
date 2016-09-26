@@ -1063,6 +1063,8 @@ function! projs#maps ()
     nnoremap <buffer><silent> <F8> :PrjUpdate<CR>
     nnoremap <buffer><silent> <F9> :OMNIFUNC<CR>
     nnoremap <buffer><silent> <F10> :TgUpdate<CR>
+
+		nnoremap <buffer><silent> <C-S> :GitSave<CR>
     
 endfunction
 
