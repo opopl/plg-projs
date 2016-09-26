@@ -703,6 +703,7 @@ function! projs#onload (...)
 
   TgAdd projs_this
   TgAdd plg_projs
+  TgAdd plg_base
 
   StatusLine projs
 
@@ -713,7 +714,7 @@ endfunction
 function! projs#opensec (...)
  let proj = projs#proj#name()
 
- if a:0==1
+ if a:0 == 1
     let sec=a:1
  else
     let sec=projs#select#sec()
