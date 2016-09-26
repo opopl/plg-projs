@@ -136,19 +136,20 @@ function! projs#newsecfile(sec,...)
 
     let projtype = projs#varget('projtype','regular')
 
+    let sub = 'projs#newseclines#'.projtype.'#'.sec
+
+    let lines = []
+
+    try
+      exe 'let lines='.sub.'()'
+    catch 
+      call projs#warn('Problems while executing:'."\n\t".sub)
+    endtry
+
 """newsec__main__
     if sec == '_main_'
 
       let file = projs#path([ proj.'.tex'])
-      let sub = 'projs#newseclines#'.projtype.'#'.sec
-
-      let lines = []
-
-      try
-        exe 'let lines='.sub.'()'
-      catch 
-        call projs#warn('Problems while executing:'."\n\t".sub)
-      endtry
 
 """newsec_bib
     elseif sec == 'bib'
