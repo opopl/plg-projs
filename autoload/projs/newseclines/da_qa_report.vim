@@ -52,7 +52,13 @@ function! projs#newseclines#da_qa_report#ts_tb_vm_vs_test (...)
     let tests = projs#varget('da_qa_tests',[])
     let vms   = projs#varget('da_qa_vms',[])
 
-    let tb = tex#lines()
+    let tb = tex#lines('longtable',
+      \ {
+      \        ,
+      \        ,
+      \        })
+
+    call extend(lines,tb)
     
     return lines
           
