@@ -111,12 +111,8 @@ function! projs#proj#files (...)
 	let prompt = get(ref,'prompt',0)
 
 	let root   = projs#root()
-	let picdir = projs#path([ 'pics' , proj ])
 	let dirs   = [ root ]
 
-	if isdirectory(picdir)
-		call add(dirs,picdir)
-	endif
 
 	let fref = {
 			\   'dirs'       :  dirs          ,
@@ -133,6 +129,18 @@ function! projs#proj#files (...)
 			call filter(files,"v:val !~ '^".dir."'")
 		endfor
 	endif
+
+	let picdir = projs#path([ 'pics' , proj ])
+	if isdirectory(picdir)
+		let pref = {
+				\   'dirs'       :  [picdir]      ,
+				\   'relpath'    :  1             ,
+				\   'exts'       :  base#qw('jpg png'),
+				\   }
+		let pics = base#find(pref)
+		call extend(files,pics)
+	endif
+
 
 	return files
 	

@@ -726,9 +726,10 @@ function! projs#onload (...)
   "-------- needed for tags
   setlocal isk=@,48-57,_,128-167,224-235
 
-  TgAdd projs_this
-  TgAdd plg_projs
-  TgAdd plg_base
+  TgSet projs_this
+
+  "TgAdd plg_projs
+  "TgAdd plg_base
 
   StatusLine projs
 

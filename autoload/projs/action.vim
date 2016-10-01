@@ -7,7 +7,6 @@ function! projs#action#thisproj_tags_replace (...)
 
 	let proj = get(ref,'proj',proj)
 	
-
 	let files = projs#proj#files({ 'proj' : proj })
 	let pdir  = projs#root()
 
@@ -34,6 +33,19 @@ function! projs#action#thisproj_tags_replace (...)
 	endfor
 
 	
+endfunction
+
+function! projs#action#thisproj_saveas (...)
+	let proj  = projs#proj#name()
+
+	let ref_def = { 'proj' : proj }
+	let ref     = get(a:000,0,ref_def)
+
+	let proj = get(ref,'proj',proj)
+	
+	let files = projs#proj#files({ 'proj' : proj })
+	let pdir  = projs#root()
+
 endfunction
 
 function! projs#action#projs_tags_replace ()
