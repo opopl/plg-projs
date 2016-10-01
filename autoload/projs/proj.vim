@@ -56,6 +56,7 @@ function! projs#proj#filesact (...)
 
  if act == 'list'
 	call projs#proj#listfiles()
+
  elseif act == 'view'
 	let extstr = input('File extensions:'."\n",'tex bib vim')
 	let exts = base#qwsort(extstr)
@@ -113,7 +114,6 @@ function! projs#proj#files (...)
 	let root   = projs#root()
 	let dirs   = [ root ]
 
-
 	let fref = {
 			\   'dirs'       :  dirs          ,
 			\   'relpath'    :  1             ,
@@ -130,15 +130,17 @@ function! projs#proj#files (...)
 		endfor
 	endif
 
-	let picdir = projs#path([ 'pics' , proj ])
-	if isdirectory(picdir)
-		let pref = {
-				\   'dirs'       :  [picdir]      ,
-				\   'relpath'    :  1             ,
-				\   'exts'       :  base#qw('jpg png'),
-				\   }
-		let pics = base#find(pref)
-		call extend(files,pics)
+	if get(ref,'pics',1)
+		let picdir = projs#path([ 'pics' , proj ])
+		if isdirectory(picdir)
+			let pref = {
+					\   'dirs'       :  [picdir]      ,
+					\   'relpath'    :  1             ,
+					\   'exts'       :  base#qw('jpg png'),
+					\   }
+			let pics = base#find(pref)
+			call extend(files,pics)
+		endif
 	endif
 
 
@@ -199,7 +201,13 @@ function! projs#proj#listfiles (...)
 	let extstr = input('File extensions:'."\n",'tex bib vim')
 	let exts = base#qwsort(extstr)
 
-	let pfiles = projs#proj#files({ "proj" : proj, 'exts' : exts }) 
+	let pics = input('Include pics? 1/0:',1)
+
+	let pfiles = projs#proj#files({ 
+		\	"proj" : proj, 
+		\	'exts' : exts, 
+		\	'pics' : pics,
+		\	 }) 
 
 	echo "\n".'--- List of project files ---'
 	for file in pfiles
