@@ -131,18 +131,19 @@ function! projs#proj#files (...)
 	endif
 
 	if get(ref,'pics',1)
-		let picdir = projs#path([ 'pics' , proj ])
-		if isdirectory(picdir)
+		let picdir      = base#file#catfile([ 'pics',proj ])
+		let picdir_full = projs#path([ 'pics',proj ])
+		if isdirectory(picdir_full)
 			let pref = {
-					\   'dirs'       :  [picdir]      ,
+					\   'dirs'       :  [picdir_full]      ,
 					\   'relpath'    :  1             ,
 					\   'exts'       :  base#qw('jpg png'),
 					\   }
-			let pics = base#find(pref)
-			call extend(files,pics)
+			let picfiles = base#find(pref)
+			call map(picfiles,'base#file#catfile([ picdir , v:val ])')
+			call extend(files,picfiles)
 		endif
 	endif
-
 
 	return files
 	
