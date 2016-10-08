@@ -667,9 +667,11 @@ function! projs#action (...)
   let act = get(a:000,0,'')
 
   let sub = 'projs#action#'.act
-  if exists("*".sub)
+	try
     exe 'call '.sub.'()'
-  endif
+	catch 
+		call projs#warn('Failure to execute function ' . sub)
+	endtry
   
 endfunction
 

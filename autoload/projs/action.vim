@@ -3,7 +3,10 @@ function! projs#action#thisproj_tags_replace (...)
 	let proj  = projs#proj#name()
 
 	let ref_def = { 'proj' : proj }
-	let ref     = get(a:000,0,ref_def)
+	let ref_a   = get(a:000,0,{})
+	let ref     = ref_def
+
+	call extend(ref,ref_a)
 
 	let proj = get(ref,'proj',proj)
 	
