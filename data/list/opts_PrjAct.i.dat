@@ -1,5 +1,6 @@
 # current project actions
 thisproj_tags_replace
 thisproj_saveas
+thisproj_newfile
 # overall actions for
 projs_tags_replace

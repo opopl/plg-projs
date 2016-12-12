@@ -1,4 +1,25 @@
 
+"""PrjAct_thisprojs_newfile
+
+function! projs#action#thisproj_newfile (...)
+	let proj  = projs#proj#name()
+
+	let name = input('Filename:','')
+	let ext  = input('Extension:','')
+	let dot = '.'
+
+	let file = join([proj,name,ext],dot)
+
+	echo 'File to be created: ' . file
+
+	let fpath = projs#path([ file ])
+
+	call base#fileopen({ 'files' : [fpath] })
+
+endfunction
+
+"""PrjAct_thisprojs_tags_replace
+
 function! projs#action#thisproj_tags_replace (...)
 	let proj  = projs#proj#name()
 
@@ -35,9 +56,9 @@ function! projs#action#thisproj_tags_replace (...)
 		call writefile(nlines,p)
 	endfor
 
-	
 endfunction
 
+"""PrjAct_thisproj_saveas
 function! projs#action#thisproj_saveas (...)
 	let proj  = projs#proj#name()
 
