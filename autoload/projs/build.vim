@@ -1,3 +1,15 @@
+
+
+function! projs#build#logfile (...)
+		let exts = ['log']
+		let bfiles = projs#build#files({ 
+			\	"exts"          : exts,
+			\	"add_pdf_built" : 0
+			\	})
+		let bfile = get(bfiles,-1,'')
+		return bfile
+endfunction
+
 function! projs#build#action (...)
 
 	let acts = base#qwsort('View Run Cleanup List')
@@ -13,8 +25,11 @@ function! projs#build#action (...)
 		 	\ })
 	endif
 
+"""PrjBuild_Cleanup
 	if act == 'Cleanup'
 		call projs#build#cleanup()
+
+"""PrjBuild_View
 	elseif act == 'View'
 		let extstr ='aux log'
 		let extstr = input('Extensions for files:',extstr)
@@ -22,10 +37,9 @@ function! projs#build#action (...)
 		let exts = base#qwsort(extstr)
 
 		let bfiles = projs#build#files({ 
-			\	"exts" : exts, 
+			\	"exts"          : exts,
 			\	"add_pdf_built" : 0
 			\	})
-
 
 		let file = base#getfromchoosedialog({ 
 		 	\ 'list'        : bfiles,
@@ -37,7 +51,6 @@ function! projs#build#action (...)
 		call base#fileopen(file)
 
 	endif
-	
 endfunction
 
 function! projs#build#cleanup (...)
@@ -101,7 +114,7 @@ function! projs#build#setmake (ref)
 
  endif
 
- call projs#var('prjmake_opt',opt)
+ call projs#varset('prjmake_opt',opt)
 
  if strlen(makeef)
  	exe 'setlocal makeef='.makeef
@@ -142,9 +155,9 @@ function! projs#build#run (...)
 
  let opt =  projs#varget('prjmake_opt','latexmk')
 
- let ref ={
-	\	"prompt" : 0,
-	\	"buildmode"   : projs#varget('buildmode','make'),
+ let ref = {
+	\	"prompt"    : 0,
+	\	"buildmode" : projs#varget('buildmode','make'),
  	\	}
 
  let refadd = get(a:000,0,{})
@@ -166,7 +179,7 @@ function! projs#build#run (...)
  let proj = projs#proj#name()
  call projs#setbuildvars()
 
- let bnum      = projs#varget('buildnum')
+ let bnum      = projs#varget('buildnum',1)
  let texoutdir = base#file#catfile([ projs#builddir(), bnum ])
 
  call base#mkdir(texoutdir)
@@ -189,11 +202,14 @@ function! projs#build#run (...)
 
  let pdfout = projs#varget('pdfout')
  if prompt
- 	let pdfout = input('pdfout: ',pdfout)
-	call projs#varset('pdfout',pdfout)
+		 	let pdfout = input('pdfout: ',pdfout)
+			call projs#varset('pdfout',pdfout)
  endif
 
- call projs#build#setmake({"opt" : opt, "texoutdir" : texoutdir })
+ call projs#build#setmake({
+ 			\ "opt"       : opt,
+  		\ "texoutdir" : texoutdir,
+ 			\	})
 
  let starttime   = localtime()
  call projs#var('build_starttime',starttime)
@@ -281,7 +297,6 @@ function! projs#build#run (...)
 	     "call rename(pdffile_tmp,pdffile_final)
 	 endif
  endif
-
 
  call projs#build#qflist_process({ "prompt" : prompt, "opt" : opt })
 

@@ -653,6 +653,7 @@ fun! projs#checksecdir()
 
 endf
 
+
 function! projs#insert (...)
   let ins = get(a:000,0,'')
 
