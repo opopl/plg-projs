@@ -13,6 +13,12 @@ function! projs#insert#projname ()
 
 endfunction
 
+function! projs#insert#secname ()
+	let sec = projs#proj#secname()
+	call append(line('.'),sec)
+
+endfunction
+
 function! projs#insert#template (type)
 	let type  = a:type
 	let t     = projs#varget('templates_'.type,{})
