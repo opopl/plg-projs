@@ -78,6 +78,10 @@ function! projs#complete#prjfiles (...)
  return join(acts,"\n")
 endfunction
 
+function! projs#complete#pics (...)
+   return projs#complete#vars([ 'piclist' ])
+endfunction
+
 function! projs#complete#prjbuild (...)
 
  let s  = ''

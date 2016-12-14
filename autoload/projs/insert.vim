@@ -17,10 +17,10 @@ function! projs#insert#figure ()
 
 	let lines = []
 
-	let picname = input('Picture FileName:','')
-	let picname = input('Picture Width:','0.5\textwidth')
-	let caption = input('Caption:','')
-	let label   = input('Label:','')
+	let picname  = input('Picture FileName:','','custom,projs#complete#pics')
+	let picwidth = input('Picture Width (in terms of \textwidth):','0.5')
+	let caption  = input('Caption:','')
+	let label    = input('Label:',picname)
 
 	call add(lines,'\begin{figure}[ht]')
 	call add(lines,' \centering')
