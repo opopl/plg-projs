@@ -13,6 +13,26 @@ function! projs#insert#projname ()
 
 endfunction
 
+function! projs#insert#figure ()
+
+	let lines = []
+
+	let picname = input('Picture FileName:','')
+	let picname = input('Picture Width:','0.5\textwidth')
+	let caption = input('Caption:','')
+	let label   = input('Label:','')
+
+	call add(lines,'\begin{figure}[ht]')
+	call add(lines,' \centering')
+	call add(lines,' \PrjPicW{'.picname.'}{'.picwidth.'}')
+	call add(lines,' \caption{'.caption.'}')
+	call add(lines,' \caption{fig:'.label.'}')
+	call add(lines,'\end{figure}')
+
+	call append(line('.'),lines)
+
+endfunction
+
 function! projs#insert#secname ()
 	let sec = projs#proj#secname()
 	call append(line('.'),sec)
