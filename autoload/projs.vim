@@ -1111,7 +1111,8 @@ endfunction
 "call projs#init ()       -  ProjsInit     - use environment variable PROJSDIR
 "call projs#init (dirid)  -  ProjsInit DIRID - specify custom projects' directory, full path is base#path(DIRID)
 "
-
+"
+" ProjsInit DIRID
 
 function! projs#init (...)
 
