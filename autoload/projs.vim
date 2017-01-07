@@ -1130,6 +1130,8 @@ function! projs#init (...)
       return
     endif
 
+		call base#cd(root)
+
     let prefix="(projs#init) "
     call projs#echo("Initializing projs plugin, \n\t projsdir => " . root ,{ "prefix" : prefix })
   

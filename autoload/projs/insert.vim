@@ -26,7 +26,7 @@ function! projs#insert#figure ()
 	call add(lines,' \centering')
 	call add(lines,' \PrjPicW{'.picname.'}{'.picwidth.'}')
 	call add(lines,' \caption{'.caption.'}')
-	call add(lines,' \caption{fig:'.label.'}')
+	call add(lines,' \label{fig:'.label.'}')
 	call add(lines,'\end{figure}')
 
 	call append(line('.'),lines)

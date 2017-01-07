@@ -1,4 +1,17 @@
 
+" Used: 
+"   in projs#init()
+"
+" Usage:
+" 	call projs#init#root ()
+" 	call projs#init#root (rootid)
+" Purpose:
+" 	set the value of 'root' from:
+" 		-	 rootid, if given as first argument
+" 		-	 PROJSDIR env variable, if called with no arguments
+" Returns:
+"		return [root,rootid]
+
 function! projs#init#root (...)
 
 		let rootid = projs#varget('rootid','')
