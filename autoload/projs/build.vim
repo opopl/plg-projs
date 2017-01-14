@@ -176,6 +176,12 @@ function! projs#build#run (...)
  echo ' Stage latex: LaTeX invocation'
  echohl None
 
+ if opt == 'latexmk'
+		call projs#varset('buildmode','base_sys')
+ else
+		call projs#varset('buildmode','make')
+ endif
+
  let proj = projs#proj#name()
  call projs#setbuildvars()
 
@@ -212,7 +218,7 @@ function! projs#build#run (...)
  			\	})
 
  let starttime   = localtime()
- call projs#var('build_starttime',starttime)
+ call projs#varset('build_starttime',starttime)
 
  let pdffile_tmp = base#file#catfile([ texoutdir, texjobname . '.pdf'])
 
@@ -235,7 +241,10 @@ function! projs#build#run (...)
 	exe 'setlocal makeef='.makeef
  endif
 
+
  if buildmode == 'make'
+	 " verbose parameter is set at the beginning of the method
+	 " 		projs#build#run()
 	 if verbose
 		 echo '-------------------------'
 		 echo ' '
@@ -261,9 +270,43 @@ function! projs#build#run (...)
 	 endif
 
  elseif buildmode == 'base_sys'
-	 call base#sys({ 
-			\ "cmds" : [ makeprg ]
+	 let cmd = &makeprg
+
+	 " verbose parameter is set at the beginning of the method
+	 " 		projs#build#run()
+	 if verbose
+		 echo '-------------------------'
+		 echo ' '
+		 echo 'Running command:'
+		 echo ' ' . cmd
+		 echo ' '
+		 echo ' Current directory:           ' . getcwd()
+		 echo ' '
+		 echo ' Vim make-related options:'
+		 echo ' 		&makeprg      => ' . &makeprg
+		 echo ' 		&makeef       => ' . &makeef
+		 echo ' 		&errorformat  => ' . &efm
+		 echo ' '
+		 echo ' Build opt         => ' . opt 
+		 echo ' Texmode           => ' . texmode
+		 echo ' '
+		 echo '-------------------------'
+	 endif
+
+	 let ok = base#sys({ 
+			\ "cmds" : [ cmd ],
 			\	})
+
+	 let sysoutstr = base#varget('sysoutstr','')
+	 let sysout    = base#varget('sysout',[])
+
+	 if ok
+	 		echo 'BUILD OK'
+	 else
+	 		echo 'BUILD FAIL'
+	 		call base#text#bufsee({'lines':sysout})
+	 endif
+
 
  endif
 
@@ -281,7 +324,7 @@ function! projs#build#run (...)
 	
 	 call base#mkdir(bp_pdfout)
 	 if isdirectory(bp_pdfout)
-	 	call add(dests,pdffile_env)
+	 		call add(dests,pdffile_env)
 	 endif
 	
 	 if filereadable(pdffile_tmp)
@@ -298,13 +341,16 @@ function! projs#build#run (...)
 	 endif
  endif
 
- call projs#build#qflist_process({ "prompt" : prompt, "opt" : opt })
+ call projs#build#qflist_process({ 
+		\	"prompt" : prompt, 
+		\	"opt" : opt 
+		\	})
 
 endfunction
 
 function! projs#build#qflist_process (...)
 
- let starttime = projs#var('build_starttime')
+ let starttime = projs#varget('build_starttime')
  let proj      = projs#proj#name()
 
  let endtime   = localtime()
@@ -314,9 +360,9 @@ function! projs#build#qflist_process (...)
  let qflist = copy(getqflist())
 
  let pats = { 
- 	\	'latex_error' : '^\(.*\):\(\d\+\): LaTeX Error:\(.*\)',
- 	\	'error' : '^\(.*\):\(\d\+\): ',
-	\}
+		 	\	'latex_error' : '^\(.*\):\(\d\+\): LaTeX Error:\(.*\)',
+		 	\	'error' : '^\(.*\):\(\d\+\): ',
+			\}
  let patids = base#qw('latex_error error')
 
  let keep = 0

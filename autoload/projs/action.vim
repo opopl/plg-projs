@@ -65,8 +65,8 @@ function! projs#action#thisproj_saveas (...)
 	let ref_def = { 'proj' : proj }
 	let ref     = get(a:000,0,ref_def)
 
-	let proj = get(ref,'proj',proj)
-	
+	let proj  = get(ref,'proj',proj)
+
 	let files = projs#proj#files({ 'proj' : proj })
 	let pdir  = projs#root()
 
@@ -80,5 +80,13 @@ function! projs#action#projs_tags_replace ()
 	for proj in list
 		call projs#action#thisproj_tags_replace({ 'proj': proj})
 	endfor
+
+endfunction
+
+function! projs#action#buildmode_set ()
+	let buildmode=input('PROJS buildmode:','','custom,projs#complete#buildmodes')
+	
+	call projs#varset('buildmode',buildmode)
+	call projs#echo('Build mode set: ' . buildmode)
 
 endfunction

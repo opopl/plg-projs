@@ -1116,8 +1116,20 @@ endfunction
 
 function! projs#init (...)
 
+		" -------------------------------------------------
+		" load variables from the corresponding dat files
+		" load: 
+		" 	data/list/vars.i.dat
+		"
+		" 	all other dat files in data/list, data/dict subdirs
     call projs#initvars()
+		" -------------------------------------------------
+
+		" plg_projs augroup - autocommand group
     call projs#init#au()
+
+		" init projs variables: 
+		" 	templates_tex, templates_vim
     call projs#init#templates()
 
     let rootid = projs#varget('rootid','')
@@ -1545,6 +1557,7 @@ function! projs#prjmake (...)
     let opt = a:0 ? a:1 :  projs#prjmakeoption()
     call projs#build#run({ "opt" : opt })
 endfunction
+		" -------------------------------------------------
 
 function! projs#prjmakeprompt (...)
     let opt = a:0 ? a:1 :  projs#prjmakeoption()
@@ -1610,20 +1623,26 @@ function! projs#setbuildvars (...)
  call base#mkdir(texoutdir)
  call projs#var('texoutdir',texoutdir)
 
- let texmode    = projs#var('texmode')
+ let texmode    = projs#varget('texmode')
  let texjobname = proj
 
- let pdfout = projs#var('pdfout')
+ let buildmode    = projs#varget('buildmode','')
 
- call projs#var('texjobname',texjobname)
- call projs#var('buildnum',bnum)
+ let pdfout = projs#varget('pdfout')
+
+ call projs#varset('texjobname',texjobname)
+ call projs#varset('buildnum',bnum)
 
  if get(ref,'echo',1)
      echo '---------- projs#setbuildvars(...)--------'
      echo 'Setting latex build-related options:'
+		 echo ' '
      echo '  buildnum         => '  . bnum
      echo '  texjobname       => '  . texjobname
      echo '  texmode          => '  . texmode
+		 echo ' '
+     echo '  buildmode        => '  . buildmode
+		 echo ' '
      echo '---------- end projs#setbuildvars---------'
  endif
     

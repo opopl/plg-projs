@@ -4,3 +4,5 @@ thisproj_saveas
 thisproj_newfile
 # overall actions for
 projs_tags_replace
+# build process
+buildmode_set
