@@ -657,9 +657,9 @@ function! projs#insert (...)
   let ins = get(a:000,0,'')
 
   let sub = 'projs#insert#'.ins
-  if exists("*".sub)
+  "if exists("*".sub)
     exe 'call '.sub.'()'
-  endif
+  "endif
   
 endfunction
 
