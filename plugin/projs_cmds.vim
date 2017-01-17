@@ -41,7 +41,7 @@ command! -nargs=* -complete=custom,projs#complete            PrjRemove
 	\ call projs#proj#remove(<f-args>)
 
 command! -nargs=* -complete=custom,projs#complete#secnames   PrjJoin
-	\ call projs#filejoinlines()
+	\ call projs#filejoinlines({ 'write_jfile' : 1 })
 
 command! -nargs=* -complete=custom,projs#complete#grep       PrjGrep
 	\ call projs#grep(<f-args>)

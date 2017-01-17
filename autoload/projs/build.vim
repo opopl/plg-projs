@@ -300,6 +300,10 @@ function! projs#build#run (...)
 	 let sysoutstr = base#varget('sysoutstr','')
 	 let sysout    = base#varget('sysout',[])
 
+	 let qflist=[]
+	 for line in sysout
+	 endfor
+
 	 if ok
 	 		echo 'BUILD OK'
 	 else
@@ -359,10 +363,8 @@ function! projs#build#qflist_process (...)
 
  let qflist = copy(getqflist())
 
- let pats = { 
-		 	\	'latex_error' : '^\(.*\):\(\d\+\): LaTeX Error:\(.*\)',
-		 	\	'error' : '^\(.*\):\(\d\+\): ',
-			\}
+ let pats = tex#parser#latex#patterns()
+
  let patids = base#qw('latex_error error')
 
  let keep = 0

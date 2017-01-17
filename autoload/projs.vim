@@ -1023,9 +1023,22 @@ function! projs#filejoinlines (...)
     let proj = projs#proj#name()
     call projs#rootcd()
 
+		""" jfile handling ----------------------
+    let jdir = projs#path(['joins'])
+    call base#mkdir(jdir)
+    let jfile = base#file#catfile([ jdir, proj . '.tex' ])
+    let jfile = get(ref,'jfile',jfile)
+
+		let write_jfile = get(ref,'write_jfile',0)
+		""" end jfile handling ----------------------
+
     let sf={}
     let sf[sec] = projs#secfile(sec)
     let f=sf[sec]
+
+		if !filereadable(f)
+			return []
+		endif
 
     let flines = readfile(f)
     let lines = []
@@ -1073,15 +1086,13 @@ function! projs#filejoinlines (...)
     endfor
 
     if sec == '_main_'
-        let jdir = projs#path(['joins'])
-        call base#mkdir(jdir)
 
-        let jfile = base#file#catfile([ jdir, proj . '.tex' ])
-    
-        echo 'Writing joined lines into: ' 
-        echo '  ' . jfile
-    
-        call writefile(lines,jfile)
+				if write_jfile
+	        echo 'Writing joined lines into: ' 
+	        echo '  ' . jfile
+	    
+	        call writefile(lines,jfile)
+				endif
 
     endif
 

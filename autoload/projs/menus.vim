@@ -83,6 +83,14 @@ function! projs#menus#set(...)
 	 				\	})
  endfor
 
+"""COMMANDS
+	let cmds = [
+			\	'PrjAct',	
+			\	'PrjMake',	
+			\	'PrjSwitch',	
+			\	'PrjUpdate',	
+			\	]
+
 """PFILES
  let pfiles=[]
  let filesdat=base#catpath('projs',proj . '.files.i.dat' )
