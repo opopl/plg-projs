@@ -41,6 +41,10 @@ function! projs#complete#varlist (...)
   return projs#complete#vars([ 'varlist' ])
 endfunction
 
+fun! projs#complete#htlatex (...)
+  return projs#complete#vars([ 'opts_PrjHTLATEX' ])
+endfunction
+
 function! projs#complete#buildmodes (...)
   return projs#complete#vars([ 'buildmodes' ])
 endfunction

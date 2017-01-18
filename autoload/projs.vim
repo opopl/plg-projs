@@ -652,6 +652,7 @@ fun! projs#complete (...)
   return join(comps,"\n")
 endf
 
+
 fun! projs#checksecdir()
 
     call projs#var('secdirexists',0)
@@ -673,6 +674,10 @@ function! projs#insert (...)
     exe 'call '.sub.'()'
   "endif
   
+endfunction
+
+function! projs#htlatex (...)
+    call projs#build#run({ "opt" : 'build_htlatex' })
 endfunction
 
 function! projs#action (...)
