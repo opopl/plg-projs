@@ -133,6 +133,8 @@ function! projs#build#aftermake (...)
 
  if opt == 'latexmk'
 
+ elseif opt == 'build_htlatex'
+
  endif
 	
 endfunction
@@ -310,7 +312,6 @@ function! projs#build#run (...)
 	 		echo 'BUILD FAIL'
 	 		call base#text#bufsee({'lines':sysout})
 	 endif
-
 
  endif
 
