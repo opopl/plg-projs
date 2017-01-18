@@ -238,6 +238,11 @@ function! projs#newsecfile(sec,...)
 """newsec__build_htlatex
     elseif sec == '_build_htlatex_'
 
+        let secc = base#qw('_main_htlatex_ cfg')
+        for sec in secc
+            call projs#secfilecheck(sec)
+        endfor
+
         let outd = [ 'builds', proj, 'b_htlatex' ]
 
         let pcwin = [ '%Bin%' ]
@@ -305,10 +310,6 @@ function! projs#newsecfile(sec,...)
 
         call projs#newsecfile('_main_htlatex_')
 
-        let secc = base#qw('_main_htlatex_ cfg')
-        for sec in secc
-            call projs#secfilecheck(sec)
-        endfor
 
     elseif sec == '_main_htlatex_'
 
