@@ -262,7 +262,7 @@ function! projs#newsecfile(sec,...)
         call add(lines,' ')
         call add(lines,'set Bin=%~dp0')
         call add(lines,' ')
-        "call add(lines,'if not exist %htmout% set htmout=%Bin%\html' )
+				call add(lines,'set htmout='.base#path('htmlout') )
         call add(lines,'set htmloutdir=%htmlout%\'.proj)
         call add(lines,'set htmloutdir_pics=%htmloutdir%\pics\'.proj)
         call add(lines,' ')
@@ -1173,6 +1173,11 @@ function! projs#init (...)
 
 		call base#cd(root)
 
+		let ifile = projs#path(['_init_.vim'])
+		if filereadable(ifile)
+			exe 'so '.ifile
+		endif
+
     let prefix="(projs#init) "
     call projs#echo("Initializing projs plugin, \n\t projsdir => " . root ,{ "prefix" : prefix })
   
@@ -1194,8 +1199,8 @@ function! projs#init (...)
 
     if ! exists("proj") | let proj='' | endif
         
-    let projsdirs=projs#var('projsdirs')
-    call projs#var('projsdirslist',projsdirs)
+    let projsdirs=projs#varget('projsdirs')
+    call projs#varset('projsdirslist',projsdirs)
 
     " update list of projs plugin variables
     call projs#update#varlist()

@@ -18,6 +18,12 @@ function! projs#action#thisproj_newfile (...)
 
 endfunction
 
+function! projs#action#preamble_add_centered_toc (...)
+	let t = base#qw#catpath('plg','projs data tex makeatother centered_toc.tex')
+	let l = base#file#lines(f)
+
+endfunction
+
 """PrjAct_thisprojs_tags_replace
 
 function! projs#action#thisproj_tags_replace (...)

@@ -147,6 +147,19 @@ endfunction
 " projs#build#run ({ 'buildmode' : 'make'})
 " projs#build#run ({ 'buildmode' : 'base_sys'})
 "
+"
+function! projs#build#is_pdfo (opt)
+ let opt = a:opt
+
+ let pdfo    = base#qw('latexmk single_run')
+
+ let x = 0
+ let x = base#inlist(opt,pdfo)
+
+ return x
+
+endf
+
 function! projs#build#run (...)
  let verbose=1
 
@@ -187,8 +200,13 @@ function! projs#build#run (...)
  let proj = projs#proj#name()
  call projs#setbuildvars()
 
- let bnum      = projs#varget('buildnum',1)
- let texoutdir = base#file#catfile([ projs#builddir(), bnum ])
+ let bnum=1
+ if projs#build#is_pdfo(opt)
+	 let bnum      = projs#varget('buildnum',1)
+	 let texoutdir = base#file#catfile([ projs#builddir(), bnum ])
+ elseif opt == 'build_htlatex'
+	 let texoutdir = base#file#catfile([ projs#builddir(), 'b_htlatex' ])
+ endif
 
  call base#mkdir(texoutdir)
  call projs#varset('texoutdir',texoutdir)
@@ -224,11 +242,17 @@ function! projs#build#run (...)
 
  let pdffile_tmp = base#file#catfile([ texoutdir, texjobname . '.pdf'])
 
- let pdfo    = base#qw('latexmk single_run')
- let is_pdfo = base#inlist(opt,pdfo)
 
- if is_pdfo
-  	echo 'Build number     => '  . bnum 
+ if projs#build#is_pdfo(opt)
+  	echo 'PDF Build number     => '  . bnum 
+ endif
+
+ let htmlo   = base#qw('build_htlatex')
+
+ let is_htmlo = 0
+ let is_htmlo = base#inlist(opt,htmlo)
+
+ if is_htmlo
  endif
 
  if opt =~ '^build_'
@@ -317,7 +341,8 @@ function! projs#build#run (...)
 
  call projs#build#aftermake({ "opt" : opt })
 
- if is_pdfo
+	 "" pdf output
+ if projs#build#is_pdfo(opt)
 	 let pdffile_final = base#file#catfile([ pdfout, proj .bnum.'.pdf'])
 	
 	 let dests=[]
@@ -342,8 +367,9 @@ function! projs#build#run (...)
 			endif
 		endfor
 	
-	     "call rename(pdffile_tmp,pdffile_final)
 	 endif
+	 "" html output
+ elseif is_htmlo
  endif
 
  call projs#build#qflist_process({ 
