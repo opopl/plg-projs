@@ -193,13 +193,12 @@ function! projs#newsecfile(sec,...)
         call add(lines,'%%file ' . sec)
         call add(lines,' ')
 
-        let ln  = projs#qw#rf('data tex tex4ht_cfg.tex')
-        call extend(lines,ln)
+        call extend(lines,tex#lines('tex4ht_cfg'))
 
 """newsec_preamble
     elseif sec == 'preamble'
 
-        let packs = projs#var('tex_packs_preamble')
+        let packs = projs#varget('tex_packs_preamble',[])
 
         let packopts = {
             \ 'fontenc'  : 'OT1,T2A,T3',
