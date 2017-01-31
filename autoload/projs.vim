@@ -858,7 +858,7 @@ endf
 function! projs#gensecdat (...)
  
  let f = projs#path([ proj . '.secs.i.dat' ])
- call projs#var('secdatfile',f)
+ call projs#varset('secdatfile',f)
 
  let datlines=[]
 
@@ -868,7 +868,7 @@ function! projs#gensecdat (...)
    endif
  endfor
 
- call writefile(datlines,projs#var('secdatfile'))
+ call writefile(datlines,projs#varget('secdatfile'))
 
 endf
 
@@ -876,7 +876,7 @@ fun! projs#opensecorder()
  
   let f = projs#path([proj . '.secorder.i.dat' ])
 
-  call projs#var('secorderfile',f)
+  call projs#varset('secorderfile',f)
   exe 'tabnew ' . projs#var('secorderfile')
 
   MakePrg projs
