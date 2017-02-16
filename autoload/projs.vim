@@ -1439,7 +1439,7 @@ function! projs#varset (varname, value)
 endfunction
 
 function! projs#varecho (varname)
-    echo projs#var(a:varname)
+    echo projs#varget(a:varname)
 endfunction
 
 function! projs#varget (varname,...)
@@ -1570,9 +1570,9 @@ function! projs#prjmakeoption (...)
     else
         "let opt = 'latexmk'
         if projs#varexists('prjmake_opt')
-            let opt  = projs#varget('prjmake_opt')
+            let opt  = projs#varget('prjmake_opt','')
         else
-            let opts = projs#varget('prjmake_opts')
+            let opts = projs#varget('prjmake_opts',[])
             let opt  = base#getfromchoosedialog({ 
                 \ 'list'        : opts,
                 \ 'startopt'    : 'regular',

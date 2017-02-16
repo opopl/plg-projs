@@ -171,9 +171,9 @@ function! projs#build#run (...)
  let opt =  projs#varget('prjmake_opt','latexmk')
 
  let ref = {
-	\	"prompt"    : 0,
-	\	"buildmode" : projs#varget('buildmode','make'),
- 	\	}
+				\	"prompt"    : 0,
+				\	"buildmode" : projs#varget('buildmode','make'),
+			 	\	}
 
  let refadd = get(a:000,0,{})
  call extend(ref,refadd)
@@ -215,7 +215,7 @@ function! projs#build#run (...)
  if !len(texmode) | call projs#warn('texmode is not defined!') | endif 
 
  if prompt
- 	let texmode = input('texmode: ',texmode,'custom,tex#complete#texmodes')
+ 		let texmode = input('texmode: ',texmode,'custom,tex#complete#texmodes')
  endif
 
  let texjobname = proj
