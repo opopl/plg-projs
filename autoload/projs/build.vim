@@ -234,7 +234,7 @@ function! projs#build#run (...)
 
  call projs#build#setmake({
  			\ "opt"       : opt,
-  		\ "texoutdir" : texoutdir,
+  			\ "texoutdir" : texoutdir,
  			\	})
 
  let starttime   = localtime()
@@ -260,11 +260,11 @@ function! projs#build#run (...)
  endif
 
  if prompt
-	let makeprg=input('makeprg:',&makeprg)
-	exe 'setlocal makeprg='.escape(makeprg,' "\')
-
-	let makeef=input('makeef:',&makeef)
-	exe 'setlocal makeef='.makeef
+		let makeprg=input('makeprg:',&makeprg)
+		exe 'setlocal makeprg='.escape(makeprg,' "\')
+	
+		let makeef=input('makeef:',&makeef)
+		exe 'setlocal makeef='.makeef
  endif
 
 
