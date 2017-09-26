@@ -1,4 +1,17 @@
 
+function! projs#action#thisproj_cd_src (...)
+
+	let proj = projs#proj#name()
+	let root = projs#root()
+	let dir  = base#file#catfile([ root,'src',proj ])
+
+	if !isdirectory(dir)
+		return
+	endif
+
+	call base#cd(dir)
+endf
+
 """PrjAct_thisprojs_newfile
 
 function! projs#action#thisproj_newfile (...)

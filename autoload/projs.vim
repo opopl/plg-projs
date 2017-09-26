@@ -107,6 +107,7 @@ endfunction
 " projs#newsecfile(sec)
 " projs#newsecfile(sec,{ "git_add" : 1 })
 " projs#newsecfile(sec,{ "view" : 1 })
+" projs#newsecfile(sec,{ "prompt" : 0 })
 
 function! projs#newsecfile(sec,...)
 
@@ -123,7 +124,11 @@ function! projs#newsecfile(sec,...)
         let refadd = a:1 
         call extend(ref,refadd)
     endif
-    let prompt = get(ref,'prompt',1)
+
+		let o = base#varget('opts_PrjSecNew',{})
+
+		let prompt = get(o,'prompt',1)
+    let prompt = get(ref,'prompt',prompt)
 
     call projs#echo("Creating file:\n\t" . sec )
 
@@ -154,8 +159,8 @@ function! projs#newsecfile(sec,...)
 """newsec_bib
     elseif sec == 'bib'
 
-        let bibstyle = input('Bibliography style:','unsrt')
-        let bibfile  = input('Bibliography:','\PROJ.refs')
+        let bibstyle = base#input('Bibliography style:','unsrt')
+        let bibfile  = base#input('Bibliography:','\PROJ.refs')
 
         call add(lines,'\phantomsection')
         "call add(lines,'\renewcommand\bibname{<++>}')
@@ -223,7 +228,7 @@ function! projs#newsecfile(sec,...)
         let q_projtype = txtmy#text#quotes(projtype)
 
         call add(lines,' ')
-        call add(lines,'"""file _vim_ ')
+        call add(lines,'"""_vim_ ')
         call add(lines,' ')
         call add(lines,'let s:projtype ='.q_projtype)
         call add(lines,'let s:proj     ='.q_proj)
@@ -383,12 +388,14 @@ function! projs#newsecfile(sec,...)
             call add(lines,'copy '.origin.' '.dest)
             call add(lines,' ')
         endfor
+"""newsec_else
     else
 
         call add(lines,' ')
         call add(lines,'%%file ' . sec)
         call add(lines,' ')
 
+"""newsec_else_prompt
         if prompt 
           let cnt = input('Continue adding? (1/0):',1)
   
@@ -405,6 +412,15 @@ function! projs#newsecfile(sec,...)
                   call add(lines,' ')
               endif
           endif
+				else
+"""newsec_else_no_prompt
+						let seccmd='section'
+						let title = sec
+						let label = 'sec:'.sec
+
+            call add(lines,'\' . seccmd . '{'.title.'}')
+            call add(lines,'\label{'.label.'}')
+            call add(lines,' ')
         endif
  
     endif
@@ -1688,12 +1704,13 @@ endfunction
 
 function! projs#grep (...)
     let ref = {}
+
     if a:0 
-    let pat = a:1
-    if a:0 > 1 | let ref = a:2 | endif
-  else
-    let pat = input('Pattern to search for:','')
-  endif
+    	let pat = a:1
+    	if a:0 > 1 | let ref = a:2 | endif
+  	else
+    	let pat = input('Pattern to search for:','')
+  	endif
 
     call projs#rootcd()
 

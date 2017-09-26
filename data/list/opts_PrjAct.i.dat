@@ -2,6 +2,9 @@
 thisproj_tags_replace
 thisproj_saveas
 thisproj_newfile
+# change to project's own directory for sources defined as PROJSDIR/src/PROJ
+# 	( if it exists )
+thisproj_cd_src
 # overall actions for
 projs_tags_replace
 # build process
