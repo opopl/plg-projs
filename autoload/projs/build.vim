@@ -149,9 +149,8 @@ endfunction
 "
 "
 function! projs#build#is_pdfo (opt)
- let opt = a:opt
-
- let pdfo    = base#qw('latexmk single_run')
+ let opt  = a:opt
+ let pdfo = base#qw('latexmk single_run')
 
  let x = 0
  let x = base#inlist(opt,pdfo)
