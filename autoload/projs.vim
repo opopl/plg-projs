@@ -1119,24 +1119,35 @@ function! projs#filejoinlines (...)
 
     return lines
 
-
 endf
 
 function! projs#maps ()
     nnoremap <silent> ;;co :copen<CR>
     nnoremap <silent> ;;cc :cclose<CR>
 
-    nnoremap <buffer><silent> <F1> :PrjMake build_pdflatex<CR>
-    nnoremap <buffer><silent> <F2> :PrjMake single_run<CR>
-    nnoremap <buffer><silent> <F3> :PrjMake latexmk<CR>
-    nnoremap <buffer><silent> <F4> :PrjMake<CR>
-    nnoremap <buffer><silent> <F5> :PrjMakePrompt<CR>
+		if $COMPUTERNAME == 'APOPLAVSKIYNB'
+	    nnoremap <buffer><silent> ;mm :PrjMake<CR>
+	    nnoremap <buffer><silent> ;mp :PrjMake build_pdflatex<CR>
+	    nnoremap <buffer><silent> ;ms :PrjMake single_run<CR>
+	    nnoremap <buffer><silent> ;ml :PrjMake latexmk<CR>
+	    nnoremap <buffer><silent> ;v  :PrjPdfView<CR>
+	    nnoremap <buffer><silent> ;tg :TgUpdate<CR>
+	    nnoremap <buffer><silent> ;o  :OMNIFUNC<CR>
 
-    nnoremap <buffer><silent> <F6> :PrjSwitch<CR>
-    nnoremap <buffer><silent> <F7> :PrjPdfView<CR>
-    nnoremap <buffer><silent> <F8> :PrjUpdate<CR>
-    nnoremap <buffer><silent> <F9> :OMNIFUNC<CR>
-    nnoremap <buffer><silent> <F10> :TgUpdate<CR>
+	    nnoremap <buffer><silent> ;sw :PrjSwitch<CR>
+		else
+	    nnoremap <buffer><silent> <F1> :PrjMake build_pdflatex<CR>
+	    nnoremap <buffer><silent> <F2> :PrjMake single_run<CR>
+	    nnoremap <buffer><silent> <F3> :PrjMake latexmk<CR>
+	    nnoremap <buffer><silent> <F4> :PrjMake<CR>
+	    nnoremap <buffer><silent> <F5> :PrjMakePrompt<CR>
+	
+	    nnoremap <buffer><silent> <F6> :PrjSwitch<CR>
+	    nnoremap <buffer><silent> <F7> :PrjPdfView<CR>
+	    nnoremap <buffer><silent> <F8> :PrjUpdate<CR>
+	    nnoremap <buffer><silent> <F9> :OMNIFUNC<CR>
+	    nnoremap <buffer><silent> <F10> :TgUpdate<CR>
+		endif
 
     nnoremap <buffer><silent> <C-S> :GitSave<CR>
     
