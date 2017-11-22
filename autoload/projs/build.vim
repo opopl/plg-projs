@@ -81,6 +81,14 @@ function! projs#build#cleanup (...)
 
 endfunction
 
+" used in: 
+" 	projs#build#run
+" examples:
+" 	projs#build#setmake({ 
+" 		\	'opt'       : 'latexmk',
+" 		\	'texoutdir' : dir 
+" 		\	})
+"
 function! projs#build#setmake (ref)
  let ref = a:ref
 
@@ -232,7 +240,7 @@ function! projs#build#run (...)
  endif
 
  call projs#build#setmake({
- 			\ "opt"       : opt,
+ 				\ "opt"       : opt,
   			\ "texoutdir" : texoutdir,
  			\	})
 
@@ -240,7 +248,6 @@ function! projs#build#run (...)
  call projs#varset('build_starttime',starttime)
 
  let pdffile_tmp = base#file#catfile([ texoutdir, texjobname . '.pdf'])
-
 
  if projs#build#is_pdfo(opt)
   	echo 'PDF Build number     => '  . bnum 
