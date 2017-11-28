@@ -700,11 +700,14 @@ function! projs#action (...)
   let act = get(a:000,0,'')
 
   let sub = 'projs#action#'.act
-	try
-    exe 'call '.sub.'()'
-	catch 
-		call projs#warn('Failure to execute function ' . sub)
-	endtry
+
+  exe 'call '.sub.'()'
+
+	"try
+    "exe 'call '.sub.'()'
+	"catch 
+		"call projs#warn('Failure to execute function ' . sub)
+	"endtry
   
 endfunction
 

@@ -127,12 +127,16 @@ function! projs#action#pics_convert_to_jpg ()
 
 	call extend(pics,{ 'png_only' 	: png_only })
 
-	echo pics
 	for png in png_only
 		let file_png = base#file#catfile([ picdir, png . '.png' ])
 		let file_jpg = base#file#catfile([ picdir, png . '.jpg' ])
 
 		call base#image#convert(file_png,file_jpg)
+		if filereadable(file_jpg)
+			call base#file#delete({ 'file' : file_png })
+			let git_add = join(['git add',file_jpg,'-f'],' ')
+			call base#sys({ "cmds" : [git_add]})
+		endif
 	endfor
 
 endfunction
