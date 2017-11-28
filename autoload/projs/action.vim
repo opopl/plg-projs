@@ -102,6 +102,41 @@ function! projs#action#projs_tags_replace ()
 
 endfunction
 
+function! projs#action#pics_convert_to_jpg ()
+	let proj   = projs#proj#name()
+	let picdir = projs#proj#dir_pics()
+
+	let exts=base#qw('jpg png')
+	
+	let pics={}
+	for ext in exts
+		call extend(pics,{ 
+				\ ext 	: base#find({ 
+						\	"dirs"    : [picdir],
+						\	"exts"    : base#qw(ext),
+						\	"relpath" : 1,
+						\	"rmext"   : 1,
+						\	}),
+				\}
+				\	)
+	endfor
+
+	let jpgs     = get(pics,'jpg',[])
+	let pngs     = get(pics,'png',[])
+	let png_only = base#list#minus(pngs,jpgs)
+
+	call extend(pics,{ 'png_only' 	: png_only })
+
+	echo pics
+	for png in png_only
+		let file_png = base#file#catfile([ picdir, png . '.png' ])
+		let file_jpg = base#file#catfile([ picdir, png . '.jpg' ])
+
+		call base#image#convert(file_png,file_jpg)
+	endfor
+
+endfunction
+
 function! projs#action#buildmode_set ()
 	let buildmode=input('PROJS buildmode:','','custom,projs#complete#buildmodes')
 	

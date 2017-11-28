@@ -9,3 +9,5 @@ thisproj_cd_src
 projs_tags_replace
 # build process
 buildmode_set
+# pics
+pics_convert_to_jpg

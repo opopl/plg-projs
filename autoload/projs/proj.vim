@@ -12,6 +12,14 @@ function! projs#proj#name (...)
 	return proj
 endfunction
 
+function! projs#proj#dir_pics (...)
+	let proj = projs#proj#name()
+	let root = projs#root()
+
+	let dir = base#file#catfile([ root, 'pics', proj ])
+	return dir
+endfunction
+
 function! projs#proj#secname (...)
 
 	if a:0
