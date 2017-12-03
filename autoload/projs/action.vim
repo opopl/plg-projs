@@ -141,6 +141,27 @@ function! projs#action#pics_convert_to_jpg ()
 
 endfunction
 
+function! projs#action#files_copy_to_project ()
+	let exts_s = 'tex'
+	let exts_s = input('File extensions:',exts_s)
+
+	let files = projs#proj#files({ "exts" : base#qw(exts_s) })
+	let isnew = input('New project? (1/0):',0)
+
+	if isnew
+		let proj  = input('New project name:','','custom,projs#complete')
+	else
+		let proj = input('Project where to copy:','','custom,projs#complete')
+	endif
+
+	for f in files
+		let fpath=projs#path([f])
+		echo fpath
+		" code
+	endfor
+
+endfunction
+
 function! projs#action#buildmode_set ()
 	let buildmode=input('PROJS buildmode:','','custom,projs#complete#buildmodes')
 	

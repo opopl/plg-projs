@@ -200,6 +200,7 @@ function! projs#build#run (...)
 
  if opt == 'latexmk'
 		call projs#varset('buildmode','base_sys')
+		call projs#varset('buildmode','make')
  else
 		call projs#varset('buildmode','make')
  endif

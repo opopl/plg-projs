@@ -11,3 +11,5 @@ projs_tags_replace
 buildmode_set
 # pics
 pics_convert_to_jpg
+# 
+files_copy_to_project
