@@ -120,12 +120,14 @@ function! projs#newsecfile(sec,...)
         \   "prompt"  : 1, 
         \   }
 
+		call extend(ref,{ "prompt" : 0 })
+
     if a:0 
         let refadd = a:1 
         call extend(ref,refadd)
     endif
 
-		let o = base#varget('opts_PrjSecNew',{})
+		let o = base#varget('projs_opts_PrjSecNew',{})
 
 		let prompt = get(o,'prompt',1)
     let prompt = get(ref,'prompt',prompt)
@@ -151,6 +153,8 @@ function! projs#newsecfile(sec,...)
       call projs#warn('Problems while executing:'."\n\t".sub)
     endtry
 
+		let inref={'prompt' : prompt }
+
 """newsec__main__
     if sec == '_main_'
 
@@ -159,8 +163,8 @@ function! projs#newsecfile(sec,...)
 """newsec_bib
     elseif sec == 'bib'
 
-        let bibstyle = base#input('Bibliography style:','unsrt')
-        let bibfile  = base#input('Bibliography:','\PROJ.refs')
+        let bibstyle = base#input('Bibliography style:','unsrt',inref)
+        let bibfile  = base#input('Bibliography:','\PROJ.refs',inref)
 
         call add(lines,'\phantomsection')
         "call add(lines,'\renewcommand\bibname{<++>}')
@@ -794,7 +798,7 @@ function! projs#opensec (...)
   let vfile             = ''
   let vfiles            = []
 
-  if projs#var('secdirexists')
+  if projs#varget('secdirexists',0)
     let vfile = projs#path([ proj, sec . '.tex' ])
   else
     let vfile = projs#path([ proj . '.' . sec . '.tex' ])
