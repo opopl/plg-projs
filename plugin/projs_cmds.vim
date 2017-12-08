@@ -112,7 +112,7 @@ command! -nargs=0 CitnDatView  call s:CitnDatView()
 
 function! s:CitnDatView ()
 	let proj = projs#proj#name()
-	let datf  = projs#path([proj . '.citn.i.dat' ])
+	let datf = projs#path([proj . '.citn.i.dat' ])
 
 	call base#fileopen({ "files" : [ datf ] })
 endf
