@@ -31,8 +31,11 @@ function! projs#secfile (...)
     elseif sec == '_osecs_'
         let secfile = projs#path([proj.'.secorder.i.dat'])
 
-  elseif sec == '_dat_defs_'
-    let secfile = projs#path([ proj . '.defs.i.dat' ])
+    elseif sec == '_dat_defs_'
+      let secfile = projs#path([ proj . '.defs.i.dat' ])
+
+    elseif sec == '_dat_files_'
+      let secfile = projs#path([ proj . '.files.i.dat' ])
 
     elseif sec == '_dat_citn_'
         let secfile = projs#path([proj.'.citn.i.dat'])
@@ -807,7 +810,7 @@ function! projs#opensec (...)
   let vfile = projs#secfile(sec)
 
   if sec == '_main_'
-        for ext in projs#var('extensions_tex')
+        for ext in projs#varget('extensions_tex',[])
             let vfile = projs#path([ proj . '.' . ext ])
                 if filereadable(vfile)
                     call add(vfiles, vfile)
@@ -1788,7 +1791,11 @@ function! projs#update (...)
             \ "rmext" : 1,
             \ "relpath" : 1,
             \ })
-        call projs#var('piclist',piclist)
+        call projs#varset('piclist',piclist)
+
+"""projsupdate_listfiles
+    elseif opt == 'listfiles'
+        call projs#proj#files({ 'rw_f_listfiles' : 1 })
 
     elseif opt == 'secnamesbase'
         call projs#echo("Updating list of base sections",o)

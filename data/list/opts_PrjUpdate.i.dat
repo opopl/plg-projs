@@ -1,6 +1,10 @@
 secnames
 secnamesbase
+# list of files for the current project
+listfiles
+# list of all projects
 list
+# list of loaded projects
 loaded
 datvars
 varlist

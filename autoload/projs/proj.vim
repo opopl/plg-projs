@@ -103,6 +103,9 @@ endfunction
 "
 "let files = projs#proj#files ()
 
+"echo projs#proj#files ({ 'rw_f_listfiles' : 1})
+"echo projs#proj#files ()
+
 function! projs#proj#files (...)
 	let ref = {}
 	if a:0 | let ref = a:1 | endif
@@ -122,7 +125,7 @@ function! projs#proj#files (...)
 	let root   = projs#root()
 	let dirs   = [ root ]
 
-  let f_listfiles = base#file#catfile([ root, proj . '.files.txt' ])
+  let f_listfiles = projs#secfile('_dat_files') 
   if !get(ref,'rw_f_listfiles',0)
       if filereadable(f_listfiles)
           let files=readfile(f_listfiles)
@@ -161,7 +164,9 @@ function! projs#proj#files (...)
 		endif
 	endif
 
-  call writefile(files,f_listfiles)
+  if get(ref,'rw_f_listfiles',0)
+    call writefile(files,f_listfiles)
+  endif
 
 	return files
 	
