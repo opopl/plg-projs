@@ -1769,12 +1769,15 @@ function! projs#update (...)
     endif
 
     let o = { "prefix" : "(proj: ".proj.") "  }
+
+"""projsupdate_secnames
     if opt == 'secnames'
         call projs#echo("Updating list of sections",o)
 
         call projs#proj#secnames()
         call projs#proj#secnamesall()
 
+"""projsupdate_piclist
     elseif opt == 'piclist'
         call projs#echo("Updating list of pictures",o)
 

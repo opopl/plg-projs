@@ -122,6 +122,14 @@ function! projs#proj#files (...)
 	let root   = projs#root()
 	let dirs   = [ root ]
 
+  let f_listfiles = base#file#catfile([ root, proj . '.files.txt' ])
+  if !get(ref,'rw_f_listfiles',0)
+      if filereadable(f_listfiles)
+          let files=readfile(f_listfiles)
+          return files
+      endif
+  endif
+
 	let fref = {
 			\   'dirs'       :  dirs          ,
 			\   'relpath'    :  1             ,
@@ -153,6 +161,8 @@ function! projs#proj#files (...)
 		endif
 	endif
 
+  call writefile(files,f_listfiles)
+
 	return files
 	
 endfunction
@@ -180,7 +190,7 @@ function! projs#proj#secnames (...)
 		endif
 	endfor
 
- 	call projs#var('secnames',secnames)
+ 	call projs#varset('secnames',secnames)
 	call projs#proj#secnamesall()
 
 	return secnames
@@ -189,11 +199,11 @@ endfunction
 
 function! projs#proj#secnamesall (...)
 
-	let sall = projs#var('secnames')
-	call extend(sall,projs#var('secnamesbase'))
+	let sall = projs#varget('secnames',[])
+	call extend(sall,projs#varget('secnamesbase',[]))
 	let sall = sort(base#uniq(sall))
 
- 	call projs#var('secnamesall',sall)
+ 	call projs#varset('secnamesall',sall)
 
 	return sall
 
