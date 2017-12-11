@@ -13,3 +13,5 @@ buildmode_set
 pics_convert_to_jpg
 # 
 files_copy_to_project
+# 
+preamble_lang_set

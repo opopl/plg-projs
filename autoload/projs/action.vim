@@ -162,6 +162,12 @@ function! projs#action#files_copy_to_project ()
 
 endfunction
 
+function! projs#action#prjfiles_add_file_tag ()
+
+	let files = projs#proj#files({ "exts" : base#qw('tex') })
+
+endfunction
+
 function! projs#action#buildmode_set ()
 	let buildmode=input('PROJS buildmode:','','custom,projs#complete#buildmodes')
 	

@@ -128,7 +128,26 @@ function! projs#proj#files (...)
   let f_listfiles = projs#secfile('_dat_files') 
   if !get(ref,'rw_f_listfiles',0)
       if filereadable(f_listfiles)
-          let files=readfile(f_listfiles)
+          let content   = readfile(f_listfiles)
+					let f_include = 0
+
+					for line in content
+						" example ###ext_jpg
+						let pat = '^\s*###ext_\(\w*\)$'
+						if line =~ pat
+							let ext_f=split(substitute(line,pat,'\1','g'),',')
+							if base#inlist(ext_f,exts)
+									let f_include=1
+							else
+									let f_include=0
+							endif
+						elseif line =~ '^\s*#'
+						else
+								if f_include
+									call add(files,line)
+								endif
+						endif
+					endfor
           return files
       endif
   endif
