@@ -125,8 +125,10 @@ function! projs#proj#files (...)
 	let root   = projs#root()
 	let dirs   = [ root ]
 
-  let f_listfiles = projs#secfile('_dat_files') 
-  if !get(ref,'rw_f_listfiles',0)
+	let rw_f_listfiles = get(ref,'rw_f_listfiles',0)
+
+  let f_listfiles = projs#secfile('_dat_files_') 
+  if !rw_f_listfiles
       if filereadable(f_listfiles)
           let content   = readfile(f_listfiles)
 					let f_include = 0
