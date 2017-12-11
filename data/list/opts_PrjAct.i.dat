@@ -15,3 +15,6 @@ pics_convert_to_jpg
 files_copy_to_project
 # 
 preamble_lang_set
+# add %%file FILE tag at the start of each project's tex  file 
+# 	(if it is not there already)
+prjfiles_add_file_tag
