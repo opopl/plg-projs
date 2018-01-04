@@ -652,7 +652,7 @@ function! projs#viewproj (...)
     call projs#varset('secname',sec)
     call projs#varset('proj',proj)
     
-    call projs#opensec(projs#var('secname'))
+    call projs#opensec(projs#varget('secname',sec))
  
     if (exists("*make#makeprg"))
         call make#makeprg('projs_latexmk',{ 'echo' : 0 })
@@ -688,7 +688,7 @@ endf
 
 fun! projs#checksecdir()
 
-    call projs#var('secdirexists',0)
+    call projs#varset('secdirexists',0)
 
     let proj = projs#var('proj')
     let dir  = projs#path([ proj ])
@@ -1315,7 +1315,7 @@ function! projs#listfromfiles ()
         \ "ext"  : [ "tex" ]                 ,
         \ "relpath" : 1                      ,
         \ "subdirs" : 0                      ,
-        \ "pat"  : '^\(\w\+\)\.tex$' ,
+        \ "pat"     : '^\(\w\+\)\.tex$' ,
         \ })
         
     let exclude=projs#list#exclude()
@@ -1335,7 +1335,7 @@ function! projs#listfromfiles ()
         end
     endfor
 
-    call projs#var('list',nlist)
+    call projs#varset('list',nlist)
 
     return nlist
 endf    

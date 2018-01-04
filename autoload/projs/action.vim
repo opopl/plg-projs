@@ -12,6 +12,30 @@ function! projs#action#thisproj_cd_src (...)
 	call base#cd(dir)
 endf
 
+function! projs#action#thisproj_copy_to_a_new_project (...)
+	let proj    = projs#proj#name()
+	let newproj = input('New project:','','custom,projs#complete')
+
+  let ff      = projs#proj#files()
+  let root    = projs#root()
+  for f in ff
+     let newf=substitute(f,'^'.proj.'.',newproj.'.','g')
+
+     let old = base#file#catfile([ root , f ])
+     let new = base#file#catfile([ root , newf ])
+
+     call base#file#copy(old,new)
+  endfor
+
+	call projs#proj#name(newproj)
+  let list = projs#varget('list',[])
+  call add(list,newproj)
+  call projs#varset('list',list)
+
+  call projs#viewproj(newproj)
+
+endf
+
 """PrjAct_thisprojs_newfile
 
 function! projs#action#thisproj_newfile (...)

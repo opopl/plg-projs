@@ -2,6 +2,7 @@
 thisproj_tags_replace
 thisproj_saveas
 thisproj_newfile
+thisproj_copy_to_a_new_project
 # change to project's own directory for sources defined as PROJSDIR/src/PROJ
 # 	( if it exists )
 thisproj_cd_src
