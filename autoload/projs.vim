@@ -930,11 +930,13 @@ function! projs#echo(text,...)
         let prefix=get(opts,'prefix',prefix)
     endif
 
-    call base#echo({ 
-        \   "text" : a:text, 
-        \   "hl"   : "MoreMsg",
-        \   "prefix"  : prefix,
-        \   })
+  "  call base#echo({ 
+        "\   "text" : a:text, 
+        "\   "hl"   : "MoreMsg",
+        "\   "prefix"  : prefix,
+        "\   })
+
+		call base#log(prefix . ' ' . a:text)
 
 endfunction
 
