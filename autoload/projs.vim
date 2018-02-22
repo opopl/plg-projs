@@ -1125,7 +1125,6 @@ function! projs#maps ()
     nnoremap <silent> ;;co :copen<CR>
     nnoremap <silent> ;;cc :cclose<CR>
 
-		if $COMPUTERNAME == 'APOPLAVSKIYNB'
 	    nnoremap <buffer><silent> ;mm :PrjMake<CR>
 	    nnoremap <buffer><silent> ;mp :PrjMake build_pdflatex<CR>
 	    nnoremap <buffer><silent> ;ms :PrjMake single_run<CR>
@@ -1135,7 +1134,7 @@ function! projs#maps ()
 	    nnoremap <buffer><silent> ;o  :OMNIFUNC<CR>
 
 	    nnoremap <buffer><silent> ;sw :PrjSwitch<CR>
-		else
+
 	    nnoremap <buffer><silent> <F1> :PrjMake build_pdflatex<CR>
 	    nnoremap <buffer><silent> <F2> :PrjMake single_run<CR>
 	    nnoremap <buffer><silent> <F3> :PrjMake latexmk<CR>
@@ -1147,7 +1146,6 @@ function! projs#maps ()
 	    nnoremap <buffer><silent> <F8> :PrjUpdate<CR>
 	    nnoremap <buffer><silent> <F9> :OMNIFUNC<CR>
 	    nnoremap <buffer><silent> <F10> :TgUpdate<CR>
-		endif
 
     nnoremap <buffer><silent> <C-S> :GitSave<CR>
     
@@ -1197,7 +1195,7 @@ function! projs#init (...)
       return
     endif
 
-		call base#cd(root)
+		"call base#cd(root)
 
 		let ifile = projs#path(['_init_.vim'])
 		if filereadable(ifile)
