@@ -156,6 +156,8 @@ function! projs#newsecfile(sec,...)
 
     let lines = []
 
+		let tagsec=[' ','%%file '.sec,' ']
+
     try
       exe 'let lines='.sub.'()'
     catch 
@@ -175,6 +177,8 @@ function! projs#newsecfile(sec,...)
         let bibstyle = base#input('Bibliography style:','unsrt',inref)
         let bibfile  = base#input('Bibliography:','\PROJ.refs',inref)
 
+				call extend(lines,tagsec)
+
         call add(lines,'\phantomsection')
         "call add(lines,'\renewcommand\bibname{<++>}')
 
@@ -192,6 +196,8 @@ function! projs#newsecfile(sec,...)
 """newsec_index
     elseif sec == 'index'
 
+        call extend(lines,tagsec)
+
         call add(lines,'\clearpage')
         call add(lines,'\phantomsection')
         call add(lines,'\addcontentsline{toc}{chapter}{\indexname}')
@@ -199,22 +205,17 @@ function! projs#newsecfile(sec,...)
 
 """newsec_body
     elseif sec == 'body'
-
-        call add(lines,' ')
-        call add(lines,'%%file ' . sec)
-        call add(lines,' ')
+        call extend(lines,tagsec)
 
 """newsec_cfg
     elseif sec == 'cfg'
-
-        call add(lines,' ')
-        call add(lines,'%%file ' . sec)
-        call add(lines,' ')
+        call extend(lines,tagsec)
 
         call extend(lines,tex#lines('tex4ht_cfg'))
 
 """newsec_preamble
     elseif sec == 'preamble'
+        call extend(lines,tagsec)
 
         let packs = projs#varget('tex_packs_preamble',[])
 
@@ -222,10 +223,6 @@ function! projs#newsecfile(sec,...)
             \ 'fontenc'  : 'OT1,T2A,T3',
             \ 'inputenc' : 'utf8',
             \ }
-
-        call add(lines,' ')
-        call add(lines,'%%file '. sec)
-        call add(lines,' ')
 
         let ln  = projs#qw#rf('data tex preamble.tex')
         call extend(lines,ln)
