@@ -5,7 +5,7 @@ function! projs#pdf#view (...)
 	let pdffin  = projs#var('pdffin')
 	let pdffile = base#file#catfile([ pdffin, proj . '.pdf' ])
 
-  let viewer  = base#f#path('evince')
+  let viewer  = base#exefile#path('evince')
 
   if filereadable(pdffile)
      let ec= 'silent! !start '.viewer.' '.pdffile
