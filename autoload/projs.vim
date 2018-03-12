@@ -364,22 +364,26 @@ function! projs#newsecfile(sec,...)
         let latexopts .= ' -output-directory='. outdir_unix
 
         let lns = {
-            \ 'pdflatex'  : 'pdflatex '.latexopts.' '.proj ,
+            \ 'texexe'    : '%texexe% '  . latexopts .' '.proj ,
             \ 'bibtex'    : 'bibtex '    . proj            ,
             \ 'makeindex' : 'makeindex ' . proj            ,
             \ }
         let bibfile=projs#secfile('_bib_')
 
+				let texexe = input('LaTeX exe in build bat script:','pdflatex')
+
         call add(lines,' ')
         call add(lines,'set Bin=%~dp0')
+        call add(lines,'set texexe='.texexe)
         call add(lines,' ')
         call add(lines,'set outdir='.outdir_win)
         call add(lines,'md %outdir%')
         call add(lines,' ')
         call add(lines,'set bibfile='.bibfile)
+        call add(lines,' ')
         call add(lines,'copy %bibfile% %outdir%')
         call add(lines,' ')
-        call add(lines,lns.pdflatex  )
+        call add(lines,lns.texexe  )
         call add(lines,'rem --- bibtex makeindex --- ')
         call add(lines,'cd %outdir% ')
         call add(lines,lns.bibtex  )
@@ -387,8 +391,8 @@ function! projs#newsecfile(sec,...)
         call add(lines,'rem ------------------------ ')
         call add(lines,' ')
         call add(lines,'cd %Bin% ')
-        call add(lines,lns.pdflatex  )
-        call add(lines,lns.pdflatex  )
+        call add(lines,lns.texexe  )
+        call add(lines,lns.texexe  )
         call add(lines,' ')
 
         let origin = base#file#catfile([ outdir_win, proj.'.pdf'])
