@@ -1769,6 +1769,12 @@ function! projs#update (...)
         call projs#proj#secnames()
         call projs#proj#secnamesall()
 
+    elseif opt == 'list'
+        call projs#echo("Updating list of projects")
+
+        call projs#listfromfiles()
+
+
 """projsupdate_piclist
     elseif opt == 'piclist'
         call projs#echo("Updating list of pictures",o)
@@ -1790,11 +1796,6 @@ function! projs#update (...)
         call projs#echo("Updating list of base sections",o)
 
         call projs#varsetfromdat('secnamesbase')
-
-    elseif opt == 'list'
-        call projs#echo("Updating list of projects")
-
-        call projs#listfromfiles()
 
     elseif opt == 'usedpacks'
         call projs#echo("Updating list of used TeX packages",o)
