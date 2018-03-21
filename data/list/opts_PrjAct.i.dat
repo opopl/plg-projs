@@ -19,3 +19,5 @@ preamble_lang_set
 # add %%file FILE tag at the start of each project's tex  file 
 # 	(if it is not there already)
 prjfiles_add_file_tag
+csv_query
+cd_csvdir

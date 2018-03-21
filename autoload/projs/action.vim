@@ -126,6 +126,54 @@ function! projs#action#projs_tags_replace ()
 
 endfunction
 
+function! projs#action#cd_csvdir ()
+	let proj   = projs#proj#name()
+	let csvdir = projs#path([ 'csv' , proj ])
+
+	if !isdirectory(csvdir)
+		 call base#mkdir(csvdir)
+	endif
+
+	call base#cd(csvdir)
+
+endfunction
+
+"""prjact_csv_query
+function! projs#action#csv_query ()
+	let proj   = projs#proj#name()
+	let csvdir = projs#path([ 'csv' , proj ])
+
+perl << eof
+	use DBI;
+
+	my $warn=sub { VimWarn(@_); };
+
+	my $csvdir = VimVar('csvdir');
+
+	my $dbh = DBI->connect("dbi:CSV:", undef, undef, {
+		f_schema         => undef,
+		f_dir            => $csvdir,
+		f_dir_search     => [],
+		f_ext            => ".csv/r",
+		f_lock           => 2,
+		f_encoding       => "utf8",
+		csv_eol          => "\r\n",
+		csv_sep_char     => ",",
+		csv_quote_char   => '"',
+		csv_escape_char  => '"',
+		csv_class        => "Text::CSV_XS",
+		csv_null         => 1,
+		csv_tables       => {
+		info => { f_file => "info.csv" }
+		},
+		RaiseError       => 1,
+		PrintError       => 1,
+		FetchHashKeyName => "NAME_lc",
+	}) or $warn->( $DBI::errstr );
+eof
+
+endfunction
+
 function! projs#action#pics_convert_to_jpg ()
 	let proj   = projs#proj#name()
 	let picdir = projs#proj#dir_pics()
