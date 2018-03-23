@@ -97,5 +97,6 @@ function! projs#init#au (...)
 		au!
 		autocmd BufWinEnter,BufRead,BufNewFile *.cld setf tex
 		exe 'autocmd BufWinEnter,BufRead,BufNewFile '. root_u  .'/**/*.csv  call projs#au#file_onload_csv() '
+		exe 'autocmd BufWinEnter,BufRead,BufNewFile '. root_u  .'/**/*.vim  call projs#au#file_onload_vim() '
 	augroup end
 endfunction

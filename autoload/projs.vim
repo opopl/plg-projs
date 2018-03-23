@@ -28,6 +28,9 @@ function! projs#secfile (...)
     elseif sec == '_vim_'
         let secfile = projs#path([proj.'.vim'])
 
+    elseif sec == '_pl_'
+        let secfile = projs#path([proj.'.pl'])
+
     elseif sec == '_osecs_'
         let secfile = projs#path([proj.'.secorder.i.dat'])
 
@@ -230,6 +233,24 @@ function! projs#newsecfile(sec,...)
     elseif sec == '_dat_'
 
     elseif sec == '_dat_defs_'
+
+"""newsec__pl_
+    elseif sec == '_pl_'
+perl << eof
+			use Vim::Perl qw(:funcs :vars);
+			my $proj  = VimVar('proj');
+			my $lines = [];
+
+			push @lines,qq{
+				use strict;
+				use warnings;
+				use utf8;
+
+				use Data::Dumper;
+			};
+
+			VimLinesExtend('lines',$lines);
+eof
 
 """newsec__vim_
     elseif sec == '_vim_'
@@ -818,8 +839,6 @@ function! projs#opensec (...)
     let vfile = projs#path([ proj . '.' . sec . '.tex' ])
   endif
 
-  let vfile = projs#secfile(sec)
-
   if sec == '_main_'
         for ext in projs#varget('extensions_tex',[])
             let vfile = projs#path([ proj . '.' . ext ])
@@ -843,9 +862,14 @@ function! projs#opensec (...)
         call projs#filejoinlines()
     endif
 
-  elseif sec == '_pl_'
+  elseif sec == '_pl_all_'
     call extend(vfiles,base#splitglob('projs',proj . '.*.pl'))
+    call extend(vfiles,base#splitglob('projs',proj . '.pl'))
     let vfile=''
+
+	else
+
+  	let vfile = projs#secfile(sec)
   endif
 
   if strlen(vfile) 
