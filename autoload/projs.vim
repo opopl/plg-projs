@@ -238,18 +238,22 @@ function! projs#newsecfile(sec,...)
     elseif sec == '_pl_'
 perl << eof
 			use Vim::Perl qw(:funcs :vars);
+
 			my $proj  = VimVar('proj');
 			my $lines = [];
 
-			push @lines,qq{
+			push @$lines,map { s/^\s*//g; $_} split "\n" => qq{
 				use strict;
 				use warnings;
 				use utf8;
 
 				use Data::Dumper;
+				use FindBin qw(\$Bin \$Script);
+
+				my \$proj=\"$proj\";
 			};
 
-			VimLinesExtend('lines',$lines);
+			VimListExtend('lines',$lines);
 eof
 
 """newsec__vim_

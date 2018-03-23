@@ -14,7 +14,7 @@ function! projs#complete#vars (...)
  endif
 
   for varname in vars
-    call extend(comps,projs#var(varname))
+    call extend(comps,projs#varget(varname,[]))
   endfor
 
  let comps=base#uniq(sort(comps))
@@ -53,17 +53,12 @@ function! projs#complete#projsdirs (...)
   return projs#complete#vars([ 'projsdirs' ])
 endfunction
 
-function! projs#complete#secnamesbase (...)
-  return projs#complete#vars([ 'secnamesbase' ])
-endfunction
+
 
 function! projs#complete#projrootsec (...)
   return projs#complete#vars([ 'latex_sectionnames' ])
 endfunction
 
-function! projs#complete#secnamesall (...)
-  return projs#complete#vars([ 'secnamesall' ])
-endfunction
 
 function! projs#complete#prjgit (...)
 
@@ -137,6 +132,16 @@ endfunction
 function! projs#complete#secnames (...)
   "call projs#proj#secnames()
   return projs#complete#vars([ 'secnames' ])
+endfunction
+
+function! projs#complete#secnamesbase (...)
+  return projs#complete#vars([ 'secnamesbase' ])
+endfunction
+
+function! projs#complete#secnamesall (...)
+	let secnamesall=[]
+	call projs#proj#secnamesall()
+  return projs#complete#vars([ 'secnamesall' ])
 endfunction
 
 function! projs#complete#projsdirslist (...)
