@@ -90,8 +90,12 @@ function! projs#init#templates (...)
 endfunction
 
 function! projs#init#au (...)
+	let root   = projs#root()
+	let root_u = base#file#win2unix(root)
+
 	augroup plg_projs
 		au!
 		autocmd BufWinEnter,BufRead,BufNewFile *.cld setf tex
+		exe 'autocmd BufWinEnter,BufRead,BufNewFile '. root_u  .'/**/*.csv  call projs#au#file_onload_csv() '
 	augroup end
 endfunction

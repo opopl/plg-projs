@@ -1297,7 +1297,7 @@ function! projs#plgcd ()
 endf    
 
 function! projs#listfromdat ()
-    let file = ap#file#catfile([ projs#root(), 'PROJS.i.dat' ])
+		let file = projs#list_dat()
     let list = base#readdatfile({ 
             \ "file" : file, 
             \ "type" : "List", 
@@ -1308,6 +1308,19 @@ function! projs#listfromdat ()
     return list
 endf    
 
+function! projs#list_dat ()
+    let file = ap#file#catfile([ projs#root(), 'PROJS.i.dat' ])
+endfunction
+
+function! projs#list_write2dat ()
+		let file = projs#list_dat()
+    let list = projs#var("list",[])
+
+		if !len(list)
+			call projs#listfromfiles()
+		endif
+endfunction
+
 function! projs#listfromfiles ()
     let root = projs#root()
 
@@ -1316,7 +1329,7 @@ function! projs#listfromfiles ()
         \ "ext"  : [ "tex" ]                 ,
         \ "relpath" : 1                      ,
         \ "subdirs" : 0                      ,
-        \ "pat"     : '^\(\w\+\)\.tex$' ,
+        \ "pat"     : '^\(\w\+\)\.tex$' 		 , 
         \ })
         
     let exclude=projs#list#exclude()
