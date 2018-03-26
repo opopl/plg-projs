@@ -67,7 +67,7 @@ function! projs#proj#filesact (...)
 
  elseif act == 'view'
 	let extstr = input('File extensions:'."\n",'tex bib vim')
-	let exts = base#qwsort(extstr)
+	let exts   = base#qwsort(extstr)
 
 	let pfiles = projs#proj#files({ "proj" : proj, 'exts' : exts }) 
 
@@ -131,23 +131,15 @@ function! projs#proj#files (...)
   if !rw_f_listfiles
       if filereadable(f_listfiles)
           let content   = readfile(f_listfiles)
-					let f_include = 0
 
 					for line in content
-						" example ###ext_jpg
-						let pat = '^\s*###ext_\(\w*\)$'
-						if line =~ pat
-							let ext_f=split(substitute(line,pat,'\1','g'),',')
-							if base#inlist(ext_f,exts)
-									let f_include=1
-							else
-									let f_include=0
-							endif
-						elseif line =~ '^\s*#'
-						else
-								if f_include
-									call add(files,line)
-								endif
+						if line =~ '^\s*#'
+							continue
+						endif
+
+						let ext_f=matchstr(line,'\.\zs\w\+\ze$')
+						if base#inlist(ext_f,exts)
+								call add(files,line)
 						endif
 					endfor
           return files
