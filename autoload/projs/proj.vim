@@ -65,6 +65,11 @@ function! projs#proj#filesact (...)
  if act == 'list'
 	call projs#proj#listfiles()
 
+ elseif act == 'update'
+	call projs#proj#files({ 
+		\	'rw_f_listfiles' : 1 ,
+		\	})
+
  elseif act == 'view'
 	let extstr = input('File extensions:'."\n",'tex bib vim')
 	let exts   = base#qwsort(extstr)

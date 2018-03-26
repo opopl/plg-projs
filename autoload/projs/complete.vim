@@ -67,30 +67,17 @@ function! projs#complete#prjgit (...)
  return join(comps,"\n")
 endfunction
 
-function! projs#complete#prjfiles (...)
-
- let s  = ''
- let s .= ' list'
- let s .= ' view'
- let acts = base#qwsort(s)
-
- return join(acts,"\n")
-endfunction
 
 function! projs#complete#pics (...)
    return projs#complete#vars([ 'piclist' ])
 endfunction
 
+function! projs#complete#prjfiles (...)
+   return projs#complete#vars([ 'opts_PrjFiles' ])
+endfunction
+
 function! projs#complete#prjbuild (...)
-
- let s  = ''
- 	\ .	' View '
- 	\ .	' Cleanup '
- 	\ .	' Run '
- 	\ .	' List '
-
- let comps=base#qwsort(s)
- return join(comps,"\n")
+   return projs#complete#vars([ 'opts_PrjBuild' ])
 endfunction
 
 function! projs#complete#prjact (...)
