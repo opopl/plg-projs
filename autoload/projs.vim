@@ -1807,6 +1807,8 @@ function! projs#update (...)
     if opt == 'secnames'
         call projs#echo("Updating list of sections",o)
 
+        call projs#proj#files({ 'rw_f_listfiles' : 1 })
+
         call projs#proj#secnames()
         call projs#proj#secnamesall()
 
