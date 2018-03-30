@@ -840,7 +840,7 @@ function! projs#opensec (...)
   if projs#varget('secdirexists',0)
     let vfile = projs#path([ proj, sec . '.tex' ])
   else
-    let vfile = projs#path([ proj . '.' . sec . '.tex' ])
+		let vfile = projs#secfile(sec) 
   endif
 
   if sec == '_main_'
@@ -862,9 +862,9 @@ function! projs#opensec (...)
 
   elseif sec == '_join_'
 
-    if !filereadable(vfile)
+    "if !filereadable(vfile)
         call projs#filejoinlines()
-    endif
+    "endif
 
   elseif sec == '_pl_all_'
     call extend(vfiles,base#splitglob('projs',proj . '.*.pl'))
@@ -1082,16 +1082,16 @@ function! projs#filejoinlines (...)
 		let write_jfile = get(ref,'write_jfile',0)
 		""" end jfile handling ----------------------
 
-    let sf={}
+    let sf      = {}
     let sf[sec] = projs#secfile(sec)
-    let f=sf[sec]
+    let f       = sf[sec]
 
 		if !filereadable(f)
 			return []
 		endif
 
     let flines = readfile(f)
-    let lines = []
+    let lines  = []
 
     let pats={
         \ 'ii'    : '^\s*\\ii{\(\w\+\)}.*$',

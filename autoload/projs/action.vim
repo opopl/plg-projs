@@ -247,3 +247,9 @@ function! projs#action#buildmode_set ()
 	call projs#echo('Build mode set: ' . buildmode)
 
 endfunction
+
+function! projs#action#joinlines ()
+    let jlines =  projs#filejoinlines({ 'write_jfile' : 1 })
+		VSEC _join_
+endfunction
+

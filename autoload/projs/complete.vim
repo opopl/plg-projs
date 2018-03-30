@@ -118,7 +118,12 @@ endfunction
 
 function! projs#complete#secnames (...)
   "call projs#proj#secnames()
-  return projs#complete#vars([ 'secnames' ])
+	let comps = []
+
+	call extend(comps,base#varget('projs_secnames',[]))
+	call extend(comps,base#varget('projs_secnamesbase',[]))
+
+  return join(comps,"\n") 
 endfunction
 
 function! projs#complete#secnamesbase (...)
