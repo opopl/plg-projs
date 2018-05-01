@@ -239,25 +239,25 @@ function! projs#newsecfile(sec,...)
 """newsec__pl_
     elseif sec == '_pl_'
 
-"perl << eof
-			"use Vim::Perl qw(:funcs :vars);
+perl << eof
+			use Vim::Perl qw(:funcs :vars);
 
-			"my $proj  = VimVar('proj');
-			"my $lines = [];
+			my $proj  = VimVar('proj');
+			my $lines = [];
 
-			"push @$lines,map { s/^\s*//g; $_} split "\n" => qq{
-				"use strict;
-				"use warnings;
-				"use utf8;
+			push @$lines,map { s/^\s*//g; $_} split "\n" => qq{
+				use strict;
+				use warnings;
+				use utf8;
 
-				"use Data::Dumper;
-				"use FindBin qw(\$Bin \$Script);
+				use Data::Dumper;
+				use FindBin qw(\$Bin \$Script);
 
-				"my \$proj=\"$proj\";
-			"};
+				my \$proj=\"$proj\";
+			};
 
-			"VimListExtend('lines',$lines);
-"eof
+			VimListExtend('lines',$lines);
+eof
 
 """newsec__vim_
     elseif sec == '_vim_'
@@ -276,16 +276,6 @@ function! projs#newsecfile(sec,...)
         call add(lines,' ')
 
     elseif sec == '_bib_'
-
-"""newsec__build_perltex_
-    elseif sec == '_build_perltex_'
-
-        let opts_latex  = ' -file-line-error '
-        let opts_perltex  = ' --latex=pdflatex '
-
-        call add(lines,' ')
-        call add(lines,'perltex '.opts_perltex.' '.proj. ' '.opts_latex)
-        call add(lines,' ')
 
 """newsec__build_htlatex
     elseif sec == '_build_htlatex_'
@@ -373,7 +363,7 @@ function! projs#newsecfile(sec,...)
         let mf = projs#secfile('_main_')
         let ml = readfile(mf)
 
-        call filter(ml,'v:val !~ "^%%file _main_"')
+        call filter(ml,'v:val !~ "^%%file f_main"')
 
         call extend(lines,ml)
 
@@ -381,10 +371,14 @@ function! projs#newsecfile(sec,...)
 				let files = projs#proj#files()
 				call extend(lines,files)
 
-"""newsec__build_pdflatex
-    elseif sec == '_build_pdflatex_'
 
-        let outd = [ 'builds', proj, 'b' ]
+"""newsec__build_perltex_
+"""newsec__build_pdflatex
+    elseif base#inlist(sec,base#qw('_build_perltex_ _build_pdflatex_'))
+				let type = substitute(sec,'^_build_\(\w\+\)_$','\1','g')
+				let tex_exe = type
+
+        let outd = [ 'builds', proj, 'b_'.type ]
 
         let pcwin = [ '%Bin%' ]
         let pcunix = [ '.' ]
@@ -397,21 +391,24 @@ function! projs#newsecfile(sec,...)
         let outdir_unix = base#file#catfile(pcunix)
         let outdir_unix = base#file#win2unix(outdir_unix)
 
-        let latexopts  = ' -file-line-error '
+				let latexopts = ''
+				if type == 'perltex'
+        	let latexopts  .= ' --latex=pdflatex --nosafe'
+				endif
+
+        let latexopts .= ' -file-line-error '
         let latexopts .= ' -output-directory='. outdir_unix
 
         let lns = {
-            \ 'texexe'    : '%texexe% '  . latexopts .' '.proj ,
+            \ 'texcmd'    : '%tex_exe% ' . latexopts .' '.proj ,
             \ 'bibtex'    : 'bibtex '    . proj            ,
             \ 'makeindex' : 'makeindex ' . proj            ,
             \ }
         let bibfile=projs#secfile('_bib_')
 
-				let texexe = input('LaTeX exe in build bat script:','pdflatex')
-
         call add(lines,' ')
         call add(lines,'set Bin=%~dp0')
-        call add(lines,'set texexe='.texexe)
+        call add(lines,'set tex_exe='.tex_exe)
         call add(lines,' ')
         call add(lines,'set outdir='.outdir_win)
         call add(lines,'md %outdir%')
@@ -420,7 +417,7 @@ function! projs#newsecfile(sec,...)
         call add(lines,' ')
         call add(lines,'copy %bibfile% %outdir%')
         call add(lines,' ')
-        call add(lines,lns.texexe  )
+        call add(lines,lns.texcmd  )
         call add(lines,'rem --- bibtex makeindex --- ')
         call add(lines,'cd %outdir% ')
         call add(lines,lns.bibtex  )
@@ -428,8 +425,8 @@ function! projs#newsecfile(sec,...)
         call add(lines,'rem ------------------------ ')
         call add(lines,' ')
         call add(lines,'cd %Bin% ')
-        call add(lines,lns.texexe  )
-        call add(lines,lns.texexe  )
+        call add(lines,lns.texcmd  )
+        call add(lines,lns.texcmd  )
         call add(lines,' ')
 
         let origin = base#file#catfile([ outdir_win, proj.'.pdf'])
@@ -437,7 +434,8 @@ function! projs#newsecfile(sec,...)
         let dests = []
 
         call add(dests,'%Bin%\pdf_built\b_'.proj.'.pdf' )
-        call add(dests,'%PDFOUT%\b_'.proj.'.pdf' )
+        call add(dests,'%PDFOUT%\b_'.type.'_'.proj.'.pdf' )
+        call add(dests,'%PDFOUT%\'.proj.'.pdf' )
 
         for dest in dests
             call add(lines,'copy '.origin.' '.dest)

@@ -213,10 +213,16 @@ function! projs#build#run (...)
  if projs#build#is_pdfo(opt)
 	 let bnum      = projs#varget('buildnum',1)
 	 let texoutdir = base#file#catfile([ projs#builddir(), bnum ])
+
  elseif opt == 'build_htlatex'
 	 let texoutdir = base#file#catfile([ projs#builddir(), 'b_htlatex' ])
+
  elseif opt == 'build_perltex'
 	 let texoutdir = base#file#catfile([ projs#builddir(), 'b_perltex' ])
+
+ elseif opt == 'build_pdflatex'
+	 let texoutdir = base#file#catfile([ projs#builddir(), 'b_pdflatex' ])
+
  endif
 
  call base#mkdir(texoutdir)
