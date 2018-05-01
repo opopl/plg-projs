@@ -51,12 +51,46 @@ function! projs#sec#remove (...)
 
 endfunction
 
+function! projs#sec#onload (sec)
+	let sec=a:sec
+	call projs#sec#add(sec)
+
+endfunction
+
+function! projs#sec#add (sec)
+	let sec   = a:sec
+
+	let sfile = projs#secfile(sec)
+	let sfile = fnamemodify(sfile,':p:t')
+
+	let pfiles =	projs#proj#files()
+	if !base#inlist(sfile,pfiles)
+			call add(pfiles,sfile)
+
+			let f_listfiles=projs#secfile('_dat_files_')
+			call base#file#write_lines({ 
+				\	'lines' : pfiles, 
+				\	'file'  : f_listfiles, 
+				\})
+	endif
+
+	if !projs#sec#exists(sec)
+		let secnames    = base#varget('projs_secnames',[])
+		let secnamesall = base#varget('projs_secnamesall',[])
+
+		call add(secnames,sec)
+		call add(secnamesall,sec)
+
+		let secnamesall = base#uniq(secnamesall)
+		let secnames    = base#uniq(secnames)
+	endif
+	
+endfunction
+
 function! projs#sec#exists (...)
 	let sec = get(a:000,0,'')
-	let secnames = copy(projs#varget('secnames',[]))
+	let secnamesall = copy(base#varget('projs_secnamesall',[]))
 
-	call extend(secnames,projs#varget('secnamesbase',[]))
-
-	return base#inlist(sec,secnames)
+	return base#inlist(sec,secnamesall)
 
 endfunction

@@ -120,6 +120,9 @@ function! projs#build#setmake (ref)
  elseif opt == 'build_htlatex'
  	call make#makeprg('projs_build_htlatex',{ 'echo' : 0 })
 
+ elseif opt == 'build_perltex'
+ 	call make#makeprg('projs_build_perltex',{ 'echo' : 0 })
+
  endif
 
  call projs#varset('prjmake_opt',opt)
@@ -214,6 +217,8 @@ function! projs#build#run (...)
 	 let texoutdir = base#file#catfile([ projs#builddir(), bnum ])
  elseif opt == 'build_htlatex'
 	 let texoutdir = base#file#catfile([ projs#builddir(), 'b_htlatex' ])
+ elseif opt == 'build_perltex'
+	 let texoutdir = base#file#catfile([ projs#builddir(), 'b_perltex' ])
  endif
 
  call base#mkdir(texoutdir)
@@ -262,8 +267,8 @@ function! projs#build#run (...)
  if is_htmlo
  endif
 
- if opt =~ '^build_'
-	call projs#newsecfile('_'.opt.'_')
+ if opt =~ '^build_'	
+		call projs#newsecfile('_'.opt.'_')
  endif
 
  if prompt

@@ -22,6 +22,8 @@ function! projs#secfile (...)
     let proj = projs#proj#name()
     let secfile = ''
 
+    let runext = (has('win32')) ? 'bat' : 'sh' 
+
     if sec == '_main_'
         let secfile = projs#path([proj.'.tex'])
 
@@ -56,13 +58,13 @@ function! projs#secfile (...)
         let secfile = projs#path(['joins',proj.'.tex'])
 
     elseif sec == '_build_pdflatex_'
-        if has('win32')
-            let secfile = projs#path([ 'b_' . proj . '_pdflatex.bat' ])
-        endif
+        let secfile = projs#path([ 'b_' . proj . '_pdflatex.'.runext ])
+
+    elseif sec == '_build_perltex_'
+        let secfile = projs#path([ 'b_' . proj . '_perltex.'.runext ])
+
     elseif sec == '_build_htlatex_'
-        if has('win32')
-            let secfile = projs#path([ 'b_' . proj . '_htlatex.bat' ])
-        endif
+				let secfile = projs#path([ 'b_' . proj . '_htlatex.'.runext ])
     elseif sec == '_main_htlatex_'
             let secfile = projs#path([ proj . '.main_htlatex.tex' ])
     else
@@ -236,25 +238,26 @@ function! projs#newsecfile(sec,...)
 
 """newsec__pl_
     elseif sec == '_pl_'
-perl << eof
-			use Vim::Perl qw(:funcs :vars);
 
-			my $proj  = VimVar('proj');
-			my $lines = [];
+"perl << eof
+			"use Vim::Perl qw(:funcs :vars);
 
-			push @$lines,map { s/^\s*//g; $_} split "\n" => qq{
-				use strict;
-				use warnings;
-				use utf8;
+			"my $proj  = VimVar('proj');
+			"my $lines = [];
 
-				use Data::Dumper;
-				use FindBin qw(\$Bin \$Script);
+			"push @$lines,map { s/^\s*//g; $_} split "\n" => qq{
+				"use strict;
+				"use warnings;
+				"use utf8;
 
-				my \$proj=\"$proj\";
-			};
+				"use Data::Dumper;
+				"use FindBin qw(\$Bin \$Script);
 
-			VimListExtend('lines',$lines);
-eof
+				"my \$proj=\"$proj\";
+			"};
+
+			"VimListExtend('lines',$lines);
+"eof
 
 """newsec__vim_
     elseif sec == '_vim_'
@@ -273,6 +276,16 @@ eof
         call add(lines,' ')
 
     elseif sec == '_bib_'
+
+"""newsec__build_perltex_
+    elseif sec == '_build_perltex_'
+
+        let opts_latex  = ' -file-line-error '
+        let opts_perltex  = ' --latex=pdflatex '
+
+        call add(lines,' ')
+        call add(lines,'perltex '.opts_perltex.' '.proj. ' '.opts_latex)
+        call add(lines,' ')
 
 """newsec__build_htlatex
     elseif sec == '_build_htlatex_'
@@ -348,7 +361,6 @@ eof
         call add(lines,' ')
 
         call projs#newsecfile('_main_htlatex_')
-
 
     elseif sec == '_main_htlatex_'
 
@@ -831,6 +843,8 @@ function! projs#opensec (...)
     let cnt = input('Section does not exist, continue? (1/0):',1)
     if !cnt | return | endif
  endif
+
+	"call base#var
 
   call projs#varset("secname",sec)
 
@@ -1803,11 +1817,13 @@ function! projs#update (...)
 
     let o = { "prefix" : "(proj: ".proj.") "  }
 
-"""projsupdate_secnames
+"""prjupdate_secnames
     if opt == 'secnames'
         call projs#echo("Updating list of sections",o)
 
-        call projs#proj#files({ 'rw_f_listfiles' : 1 })
+				let rw_f_listfiles = 1
+				let rw_f_listfiles = input('Remove listfiles dat file? (1/0):',rw_f_listfiles)
+        call projs#proj#files({ 'rw_f_listfiles' : rw_f_listfiles })
 
         call projs#proj#secnames()
         call projs#proj#secnamesall()
@@ -1818,7 +1834,7 @@ function! projs#update (...)
         call projs#listfromfiles()
 
 
-"""projsupdate_piclist
+"""prjupdate_piclist
     elseif opt == 'piclist'
         call projs#echo("Updating list of pictures",o)
 

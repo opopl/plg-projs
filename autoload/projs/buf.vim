@@ -33,6 +33,7 @@ function! projs#buf#tex_tex ()
 			\	'call projs#proj#secname("' . b:sec .'")' ,
 			\	'call make#makeprg("'.mprg.'",{"echo":0})',
 			\	'call projs#onload()'                     ,
+			\	'call projs#sec#onload("'.b:sec.'")'      ,
 			\	] 
 
 	let fr = '  autocmd BufWinEnter,BufRead,BufEnter,BufWritePost,BufNewFile '

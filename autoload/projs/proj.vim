@@ -182,8 +182,11 @@ function! projs#proj#files (...)
 		endif
 	endif
 
-  if get(ref,'rw_f_listfiles',0)
-    call writefile(files,f_listfiles)
+  if rw_f_listfiles 
+		call base#file#write_lines({ 
+			\	'lines' : files, 
+			\	'file'  : f_listfiles, 
+			\})
   endif
 
 	return files
@@ -202,10 +205,13 @@ function! projs#proj#secnames (...)
 
 	let root   = projs#root()
 
- 	let pfiles = projs#proj#files({ "proj" : proj })
+ 	let pfiles = projs#proj#files({ 
+		\	"proj" : proj,
+		\	})
 
-	let secnames=[]
-	let pat = '^'.proj.'\.\(.*\).*\.tex$'
+	let secnames = []
+	let pat      = '^'.proj.'\.\(.*\).*\.tex$'
+
 	for pfile in pfiles
 		if ( pfile =~ pat )
 			let sec = substitute(pfile,pat,'\1','g')
@@ -266,10 +272,20 @@ function! projs#proj#listsecnames (...)
 	endif
 
 	let secnames = projs#proj#secnames(proj) 
+	let secnamesall = base#varget('projs_secnamesall',[])
+	let secnamesbase = base#varget('projs_secnamesbase',[])
 
-	for sec in secnames
-	  echo sec
-	endfor
+	let lines = []
+	call add(lines,'projs_secnames:')
+	call extend(lines,base#mapsub(secnames,'^','\t','g'))
+
+	call add(lines,'projs_secnamesall:')
+	call extend(lines,base#mapsub(secnamesall,'^','\t','g'))
+
+	call add(lines,'projs_secnamesbase:')
+	call extend(lines,base#mapsub(secnamesbase,'^','\t','g'))
+
+	call base#buf#open_split({ 'lines' : lines })
 	
 endfunction
 

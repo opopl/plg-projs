@@ -1,6 +1,7 @@
 _bib_
 _build_htlatex_
 _build_pdflatex_
+_build_perltex_
 _dat_
 _dat_citn_
 _dat_defs_
