@@ -197,9 +197,7 @@ function! projs#build#run (...)
 
  if prompt | let opt = input('Build opt: ',opt,'custom,projs#complete#prjmake') | endif
 
- echohl Title
- echo ' Stage latex: LaTeX invocation'
- echohl None
+ call base#log(' Stage latex: LaTeX invocation')
 
  if opt == 'latexmk'
 		call projs#varset('buildmode','base_sys')
@@ -256,7 +254,8 @@ function! projs#build#run (...)
  let pdffile_tmp = base#file#catfile([ texoutdir, texjobname . '.pdf'])
 
  if projs#build#is_pdfo(opt)
-  	echo 'PDF Build number     => '  . bnum 
+  	let txt = 'PDF Build number     => '  . bnum 
+		call base#log( split(txt,"\n") )
  endif
 
  let htmlo   = base#qw('build_htlatex')
@@ -284,21 +283,24 @@ function! projs#build#run (...)
 	 " verbose parameter is set at the beginning of the method
 	 " 		projs#build#run()
 	 if verbose
-		 echo '-------------------------'
-		 echo ' '
-		 echo 'Running make:'
-		 echo ' '
-		 echo ' Current directory:           ' . getcwd()
-		 echo ' '
-		 echo ' ( Vim opt ) &makeprg      => ' . &makeprg
-		 echo ' ( Vim opt ) &makeef       => ' . &makeef
-		 echo ' ( Vim opt ) &errorformat  => ' . &efm
-		 echo ' '
-		 echo ' Build opt                 => ' . opt 
-		 echo ' Texmode                   => ' . texmode
-		 echo ' '
-		 echo ' '
-		 echo '-------------------------'
+		 let txt=''
+		 let txt.= "\n" .  '-------------------------'
+		 let txt.= "\n" .  ' '
+		 let txt.= "\n" .  'Running make:'
+		 let txt.= "\n" .  ' '
+		 let txt.= "\n" .  ' Current directory:           ' . getcwd()
+		 let txt.= "\n" .  ' '
+		 let txt.= "\n" .  ' ( Vim opt ) &makeprg      => ' . &makeprg
+		 let txt.= "\n" .  ' ( Vim opt ) &makeef       => ' . &makeef
+		 let txt.= "\n" .  ' ( Vim opt ) &errorformat  => ' . &efm
+		 let txt.= "\n" .  ' '
+		 let txt.= "\n" .  ' Build opt                 => ' . opt 
+		 let txt.= "\n" .  ' Texmode                   => ' . texmode
+		 let txt.= "\n" .  ' '
+		 let txt.= "\n" .  ' '
+		 let txt.= "\n" .  '-------------------------'
+
+		 call base#log( split(txt,"\n") )
 	 endif
 	
 	 if index([ 'nonstopmode','batchmode' ],texmode) >= 0 
@@ -313,22 +315,24 @@ function! projs#build#run (...)
 	 " verbose parameter is set at the beginning of the method
 	 " 		projs#build#run()
 	 if verbose
-		 echo '-------------------------'
-		 echo ' '
-		 echo 'Running command:'
-		 echo ' ' . cmd
-		 echo ' '
-		 echo ' Current directory:           ' . getcwd()
-		 echo ' '
-		 echo ' Vim make-related options:'
-		 echo ' 		&makeprg      => ' . &makeprg
-		 echo ' 		&makeef       => ' . &makeef
-		 echo ' 		&errorformat  => ' . &efm
-		 echo ' '
-		 echo ' Build opt         => ' . opt 
-		 echo ' Texmode           => ' . texmode
-		 echo ' '
-		 echo '-------------------------'
+		 let txt.= "\n" .  '-------------------------'
+		 let txt.= "\n" .  ' '
+		 let txt.= "\n" .  'Running command:'
+		 let txt.= "\n" .  ' ' . cmd
+		 let txt.= "\n" .  ' '
+		 let txt.= "\n" .  ' Current directory:           ' . getcwd()
+		 let txt.= "\n" .  ' '
+		 let txt.= "\n" .  ' Vim make-related options:'
+		 let txt.= "\n" .  ' 		&makeprg      => ' . &makeprg
+		 let txt.= "\n" .  ' 		&makeef       => ' . &makeef
+		 let txt.= "\n" .  ' 		&errorformat  => ' . &efm
+		 let txt.= "\n" .  ' '
+		 let txt.= "\n" .  ' Build opt         => ' . opt 
+		 let txt.= "\n" .  ' Texmode           => ' . texmode
+		 let txt.= "\n" .  ' '
+		 let txt.= "\n" .  '-------------------------'
+
+		 call base#log( split(txt,"\n") )
 	 endif
 
 	 let ok = base#sys({ 
@@ -434,21 +438,20 @@ function! projs#build#qflist_process (...)
 	endif
  endfor
 
- call setqflist(newlist)
- let errcount = len(newlist)
-
- if !errcount
-      "redraw!
-      echohl ModeMsg
-      echomsg 'TEX BUILD OK:  ' . proj . timemsg
-      echohl None
- else
-      echohl ErrorMsg
-      echomsg 'TEX BUILD FAILURE:  ' . errcount . ' errors' . timemsg
-      echohl None
-  
-      copen
- endif
+	call setqflist(newlist)
+	let errcount = len(newlist)
+	
+	redraw!
+	if !errcount
+		echohl ModeMsg
+		echomsg 'TEX BUILD OK:  ' . proj . timemsg
+		echohl None
+	else
+		echohl ErrorMsg
+		echomsg 'TEX BUILD FAILURE:  ' . errcount . ' errors' . timemsg
+		echohl None
+		copen
+	endif
 
 	
 
