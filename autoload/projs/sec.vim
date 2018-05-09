@@ -52,6 +52,7 @@ function! projs#sec#remove (...)
 endfunction
 
 function! projs#sec#onload (sec)
+	return
 	let sec=a:sec
 	call projs#sec#add(sec)
 

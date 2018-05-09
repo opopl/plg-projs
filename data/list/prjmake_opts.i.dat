@@ -1,8 +1,8 @@
 single_run
 latexmk
-htlatex
-bibtex
-makeindex
 build_pdflatex
-build_perltex
-build_htlatex
+#build_perltex
+#build_htlatex
+#htlatex
+#bibtex
+#makeindex
