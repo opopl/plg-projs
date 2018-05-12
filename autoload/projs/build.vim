@@ -494,7 +494,7 @@ function! projs#build#files (...)
 	if get(ref,'add_pdf_built',1)
 		let fref = {
 			\ "dirs" : [pdfout],
-			\ "pat"  : '^'.proj.'\d\+'.'\.pdf',
+			\ "pat"  : '^'.proj.'\d+'.'\.pdf',
 			\ "relpath" : do.relpath,
 			\ "subdirs" : 0,
 			\ "exts"    : ["pdf"],

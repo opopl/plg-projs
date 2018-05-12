@@ -685,6 +685,7 @@ function! projs#viewproj (...)
         let sec='_main_'
     endif
 
+
     call projs#varset('secname',sec)
     call projs#varset('proj',proj)
     
@@ -1369,7 +1370,7 @@ function! projs#listfromfiles ()
         \ "ext"  : [ "tex" ]                 ,
         \ "relpath" : 1                      ,
         \ "subdirs" : 0                      ,
-        \ "pat"     : '^\(\w\+\)\.tex$' 		 , 
+        \ "pat"     : '^(\w+)\.tex$'    		 , 
         \ })
         
     let exclude=projs#list#exclude()

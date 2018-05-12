@@ -90,7 +90,8 @@ endfunction
 
 function! projs#sec#exists (...)
 	let sec = get(a:000,0,'')
-	let secnamesall = copy(base#varget('projs_secnamesall',[]))
+
+	let secnamesall = projs#proj#secnamesall ()
 
 	return base#inlist(sec,secnamesall)
 
