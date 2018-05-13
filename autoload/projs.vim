@@ -807,6 +807,11 @@ function! projs#onload (...)
   let ref = {}
   if a:0 | let ref = a:1 | endif
 
+	let prf={ 'prf' : 'projs#onload' }
+	call base#log([
+		\	'ref => ' . base#dump(ref),
+		\	],prf)
+
   let b:projs_onload_done=1
 
   let proj = projs#proj#name()
@@ -1683,6 +1688,11 @@ function! projs#buildnum (...)
  else
     let proj = projs#proj#name()
  endif
+
+ let prf={ 'prf' : 'projs#buildnum' }
+ call base#log([
+ 	\	'proj => ' . proj ,
+ 	\	],prf)
         
  """" --------------------- get build number, initialize output pdf directory
  let pdfout = projs#path([ 'pdf_built' ])
@@ -1693,10 +1703,11 @@ function! projs#buildnum (...)
     \ "dirs" : [ pdfout ], 
     \ "exts" : ["pdf"],
     \ "relpath" : 1,
+    \ "pat"     : '^'.proj.'(\d+)\.pdf',
     \ })
 
  let bnums = []
- let pat = '^'.proj.'\(\d\+\)\.pdf'
+ let pat = proj.'\(\d\+\)\.pdf'
  for pdf in pdfs
     if pdf =~ pat
         let bnum = substitute(pdf,pat,'\1','g')
@@ -1727,6 +1738,11 @@ endfunction
 function! projs#setbuildvars (...)
  let ref = {}
  if a:0 | let ref = a:1 | endif
+
+ let prf={ 'prf' : 'projs#setbuildvars' }
+ call base#log([
+ 	\	'ref => ' . base#dump(ref),
+ 	\	],prf)
         
  let proj = projs#proj#name()
 

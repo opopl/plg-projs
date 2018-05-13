@@ -24,7 +24,7 @@ function! projs#buf#tex_tex ()
 			\	"proj" : b:proj     ,
    		\	})
 
-	let  mprg='projs_pdflatex'
+	"let  mprg='projs_pdflatex'
 	let  mprg='projs_latexmk'
 
 	let aucmds = [ 
