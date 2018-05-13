@@ -58,9 +58,9 @@ function! projs#sec#onload (sec)
 	call base#log([
 		\	'sec => ' . sec,
 		\	],prf)
-	return
 	call projs#sec#add(sec)
 
+	return
 endfunction
 
 function! projs#sec#add (sec)
