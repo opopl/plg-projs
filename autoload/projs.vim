@@ -54,6 +54,9 @@ function! projs#secfile (...)
     elseif sec == '_bib_'
         let secfile = projs#path([proj.'.refs.bib'])
 
+    elseif sec == '_xml_'
+        let secfile = projs#path([proj.'.xml'])
+
     elseif sec == '_join_'
         let secfile = projs#path(['joins',proj.'.tex'])
 
@@ -65,10 +68,13 @@ function! projs#secfile (...)
 
     elseif sec == '_build_htlatex_'
 				let secfile = projs#path([ 'b_' . proj . '_htlatex.'.runext ])
+
     elseif sec == '_main_htlatex_'
-            let secfile = projs#path([ proj . '.main_htlatex.tex' ])
+        let secfile = projs#path([ proj . '.main_htlatex.tex' ])
+
     else
         let secfile = projs#path([proj.dot.sec.'.tex'])
+
     endif
 
     return secfile
