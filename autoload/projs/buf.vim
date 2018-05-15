@@ -27,13 +27,19 @@ function! projs#buf#tex_tex ()
 	"let  mprg='projs_pdflatex'
 	let  mprg='projs_latexmk'
 
-	let aucmds = [ 
+ " let aucmds = [ 
+			"\	'call projs#root("'.escape(b:root,'\').'")'           ,
+			"\	'call projs#proj#name("' . b:proj .'")'   ,
+			"\	'call projs#proj#secname("' . b:sec .'")' ,
+			"\	'call make#makeprg("'.mprg.'",{"echo":0})',
+			"\	'call projs#onload()'                     ,
+			"\	'call projs#sec#onload("'.b:sec.'")'      ,
+			"\	] 
+		let aucmds = [ 
 			\	'call projs#root("'.escape(b:root,'\').'")'           ,
 			\	'call projs#proj#name("' . b:proj .'")'   ,
 			\	'call projs#proj#secname("' . b:sec .'")' ,
-			\	'call make#makeprg("'.mprg.'",{"echo":0})',
 			\	'call projs#onload()'                     ,
-			\	'call projs#sec#onload("'.b:sec.'")'      ,
 			\	] 
 
 	let fr = '  autocmd BufWinEnter,BufRead,BufEnter,BufWritePost,BufNewFile '
