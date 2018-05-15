@@ -8,8 +8,13 @@ function! projs#pdf#view (...)
   let viewer  = base#exefile#path('evince')
 
   if filereadable(pdffile)
+		if has('win32')
      let ec= 'silent! !start '.viewer.' '.pdffile
-     exe ec
-     redraw!
+		else	
+     let ec= 'silent! !'.viewer.' '.pdffile . ' &'
+		endif
+
+    exe ec
+    redraw!
   endif
 endfunction
