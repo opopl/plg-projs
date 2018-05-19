@@ -167,7 +167,10 @@ function! projs#newsecfile(sec,...)
 
     let lines = []
 
-		let tagsec=[' ','%%file '.sec,' ']
+		let tagsec=[' ' , '%%file '.sec, ' ' ]
+
+		let keymap = 'ukrainian-jcuken'
+		"let keymap = input('Keymap:','','custom,txtmy#complete#keymap')
 
     try
       exe 'let lines='.sub.'()'
@@ -449,6 +452,10 @@ eof
         endfor
 """newsec_else
     else
+
+        if strlen(keymap)
+        	call add(lines,'% vim: keymap='.keymap)
+        endif
 
         call add(lines,' ')
         call add(lines,'%%file ' . sec)
@@ -916,7 +923,8 @@ function! projs#opensec (...)
   endfor
 
   call base#stl#set('projs')
-  KEYMAP russian-jcukenwin
+  "KEYMAP russian-jcukenwin
+  KEYMAP ukrainian-jcuken
 
   return 
 endf
