@@ -92,8 +92,10 @@ endfunction
 function! projs#build#setmake (ref)
  let ref = a:ref
 
- let opt        = get(ref,'opt')
- let texoutdir  = get(ref,'texoutdir')
+ let prompt = get(ref,'prompt',0)
+
+ let opt       = projs#varget('prjmake_opt','')
+ let texoutdir = projs#varget('texoutdir','')
 	
  let makeef=''
  let makeef = base#file#catfile([ texoutdir , 'make_'.opt.'.log' ])
@@ -131,16 +133,19 @@ function! projs#build#setmake (ref)
  	exe 'setlocal makeef='.makeef
  endif
 
+ if prompt
+		let makeprg=input('makeprg:',&makeprg)
+		exe 'setlocal makeprg='.escape(makeprg,' "\')
+	
+		let makeef=input('makeef:',&makeef)
+		exe 'setlocal makeef='.makeef
+ endif
+
 endfunction
 
-function! projs#build#aftermake (...)
- let ref ={}
-
- if a:0
-	let refadd = a:1
-	call extend(ref,refadd)
- endif
- let opt = get(ref,'opt')
+function! projs#build#aftermake ()
+ 
+ let opt    = projs#varget('prjmake_opt','')
 
  if opt == 'latexmk'
 
@@ -170,71 +175,23 @@ function! projs#build#is_pdfo (opt)
 
 endf
 
-function! projs#build#run (...)
- let verbose=1
+function! projs#build#set_pdfout (...)
+	let ref    = get(a:000,0,{})
+	let prompt = get(ref,'prompt',0)
 
- try
-    cclose
- catch
- endtry
+	let pdfout = projs#varget('pdfout','')
+	if prompt
+		 	let pdfout = input('pdfout: ',pdfout)
+			call projs#varset('pdfout',pdfout)
+	endif
+	return pdfout
+endf
 
- let opt =  projs#varget('prjmake_opt','latexmk')
+function! projs#build#set_texjobname (...)
+	let ref    = get(a:000,0,{})
+	let prompt = get(ref,'prompt',0)
 
- let ref = {
-				\	"prompt"    : 0,
-				\	"buildmode" : projs#varget('buildmode','make'),
-			 	\	}
-
- let refadd = get(a:000,0,{})
- call extend(ref,refadd)
-
- let buildmode = get(ref,'buildmode','')
-
- let prompt = get(ref,'prompt',0)
- let opt    = get(ref,'opt',opt)
-
- call projs#varset('prjmake_opt',opt)
-
- if prompt | let opt = input('Build opt: ',opt,'custom,projs#complete#prjmake') | endif
-
- call base#log(' Stage latex: LaTeX invocation')
-
- if opt == 'latexmk'
-		call projs#varset('buildmode','base_sys')
-		call projs#varset('buildmode','make')
- else
-		call projs#varset('buildmode','make')
- endif
-
- let proj = projs#proj#name()
- call projs#setbuildvars()
-
- let bnum=1
- if projs#build#is_pdfo(opt)
-	 let bnum      = projs#varget('buildnum',1)
-	 let texoutdir = base#file#catfile([ projs#builddir(), bnum ])
-
- elseif opt == 'build_htlatex'
-	 let texoutdir = base#file#catfile([ projs#builddir(), 'b_htlatex' ])
-
- elseif opt == 'build_perltex'
-	 let texoutdir = base#file#catfile([ projs#builddir(), 'b_perltex' ])
-
- elseif opt == 'build_pdflatex'
-	 let texoutdir = base#file#catfile([ projs#builddir(), 'b_pdflatex' ])
-
- endif
-
- call base#mkdir(texoutdir)
- call projs#varset('texoutdir',texoutdir)
-
- let texmode = projs#varget('texmode','')
- if !len(texmode) | call projs#warn('texmode is not defined!') | endif 
-
- if prompt
- 		let texmode = input('texmode: ',texmode,'custom,tex#complete#texmodes')
- endif
-
+	let proj = projs#proj#name()
  let texjobname = proj
 
  if prompt
@@ -242,48 +199,72 @@ function! projs#build#run (...)
  endif
 
  call projs#varset('texjobname',texjobname)
+ return texjobname
 
- let pdfout = projs#varget('pdfout')
- if prompt
-		 	let pdfout = input('pdfout: ',pdfout)
-			call projs#varset('pdfout',pdfout)
- endif
+endf
 
- call projs#build#setmake({
- 				\ "opt"       : opt,
-  			\ "texoutdir" : texoutdir,
- 			\	})
+function! projs#build#set_texmode (...)
+	let ref    = get(a:000,0,{})
+	let prompt = get(ref,'prompt',0)
 
- let starttime   = localtime()
- call projs#varset('build_starttime',starttime)
+	let texmode = projs#varget('texmode','')
+	if !len(texmode) | call projs#warn('texmode is not defined!') | endif 
 
- let pdffile_tmp = base#file#catfile([ texoutdir, texjobname . '.pdf'])
+	if prompt
+	 		let texmode = input('texmode: ',texmode,'custom,tex#complete#texmodes')
+	endif
+
+	return texmode
+
+endf
+
+function! projs#build#set_texoutdir (...)
+	let ref=get(a:000,0,{})
+	
+	let bnum = projs#var('buildnum')
+  let texoutdir = projs#varget('texoutdir','')
+
+ 	let opt    = projs#varget('prjmake_opt','')
+	
+	if projs#build#is_pdfo(opt)
+		let bnum      = projs#varget('buildnum',1)
+		let texoutdir = base#file#catfile([ projs#builddir(), bnum ])
+	
+	elseif opt == 'build_htlatex'
+		let texoutdir = base#file#catfile([ projs#builddir(), 'b_htlatex' ])
+	
+	elseif opt == 'build_perltex'
+		let texoutdir = base#file#catfile([ projs#builddir(), 'b_perltex' ])
+	
+	elseif opt == 'build_pdflatex'
+		let texoutdir = base#file#catfile([ projs#builddir(), 'b_pdflatex' ])
+	
+	endif
+
+ call base#mkdir(texoutdir)
+ call projs#varset('texoutdir',texoutdir)
+
+ return texoutdir
+endf
+
+function! projs#build#make_invoke (...)
+ let ref       = get(a:000,0,{})
+
+ let opt       = projs#varget('prjmake_opt','')
+ let buildmode = projs#varget('buildmode','')
+ let texmode   = projs#varget('texmode','')
+ let bnum      = projs#var('builnum',1)
+ let verbose   = projs#var('verbose',0)
 
  if projs#build#is_pdfo(opt)
   	let txt = 'PDF Build number     => '  . bnum 
 		call base#log( split(txt,"\n") )
  endif
 
- let htmlo   = base#qw('build_htlatex')
+ let ok = 0
 
- let is_htmlo = 0
- let is_htmlo = base#inlist(opt,htmlo)
-
- if is_htmlo
- endif
-
- if opt =~ '^build_'	
-		call projs#newsecfile('_'.opt.'_')
- endif
-
- if prompt
-		let makeprg=input('makeprg:',&makeprg)
-		exe 'setlocal makeprg='.escape(makeprg,' "\')
-	
-		let makeef=input('makeef:',&makeef)
-		exe 'setlocal makeef='.makeef
- endif
-
+ let starttime   = localtime()
+ call projs#varset('build_starttime',starttime)
 
  if buildmode == 'make'
 	 " verbose parameter is set at the beginning of the method
@@ -308,7 +289,7 @@ function! projs#build#run (...)
 
 		 call base#log( split(txt,"\n") )
 	 endif
-	
+
 	 if index([ 'nonstopmode','batchmode' ],texmode) >= 0 
 	   exe 'silent make!'
 	 elseif texmode == 'errorstopmode'
@@ -341,29 +322,93 @@ function! projs#build#run (...)
 		 call base#log( split(txt,"\n") )
 	 endif
 
-	 let ok = base#sys({ 
+	 	let ok = base#sys({ 
 			\ "cmds" : [ cmd ],
 			\	})
 
-	 let sysoutstr = base#varget('sysoutstr','')
-	 let sysout    = base#varget('sysout',[])
+		let sysoutstr = base#varget('sysoutstr','')
+	 	let sysout    = base#varget('sysout',[])
 
-	 let qflist=[]
-	 for line in sysout
-	 endfor
+		 if ok
+		 		echo 'BUILD OK'
+		 else
+		 		echo 'BUILD FAIL'
+		 		call base#text#bufsee({'lines':sysout})
+		 endif
+	endif
 
-	 if ok
-	 		echo 'BUILD OK'
-	 else
-	 		echo 'BUILD FAIL'
-	 		call base#text#bufsee({'lines':sysout})
-	 endif
+	return ok
 
+endfunction
+
+function! projs#build#run (...)
+ call projs#var('verbose',1)
+
+ try
+    cclose
+ catch
+ endtry
+
+ let opt =  projs#varget('prjmake_opt','latexmk')
+
+ let ref = {
+				\	"prompt"    : 0,
+				\	"buildmode" : projs#varget('buildmode','make'),
+			 	\	}
+
+ let refadd = get(a:000,0,{})
+ call extend(ref,refadd)
+
+ let buildmode = get(ref,'buildmode','')
+
+ let prompt = get(ref,'prompt',0)
+ let opt    = get(ref,'opt',opt)
+
+ if prompt | let opt = input('Build opt: ',opt,'custom,projs#complete#prjmake') | endif
+ call projs#varset('prjmake_opt',opt)
+
+ call base#log(' Stage latex: LaTeX invocation')
+
+ let proj = projs#proj#name()
+ call projs#setbuildvars()
+
+ let texoutdir   = projs#build#set_texoutdir()
+ let texmode     = projs#build#set_texmode({ 'prompt' : prompt })
+ let texjobname  = projs#build#set_texjobname({ 'prompt' : prompt })
+ let pdfout      = projs#build#set_pdfout({ 'prompt' : prompt })
+
+ call projs#build#setmake({
+  			\ "prompt"    : prompt,
+ 			\	})
+
+ if opt =~ '^build_'	
+		call projs#newsecfile('_'.opt.'_')
  endif
 
- call projs#build#aftermake({ "opt" : opt })
+ let ok = projs#build#make_invoke()
 
-	 "" pdf output
+ call projs#build#aftermake()
+ call projs#build#pdf_process()
+
+ call projs#build#qflist_process({ 
+		\	"prompt" : prompt,
+		\	})
+
+endfunction
+
+function! projs#build#pdf_process ()
+
+ 	let opt    = projs#varget('prjmake_opt','')
+	let bnum   = projs#var('buildnum')
+	let pdfout = projs#var('pdfout','')
+
+	let texoutdir  = projs#var('texoutdir','')
+	let texjobname = projs#var('texjobname','')
+
+	let proj   = projs#proj#name()
+
+ let pdffile_tmp = base#file#catfile([ texoutdir, texjobname . '.pdf'])
+
  if projs#build#is_pdfo(opt)
 	 let pdffile_final = base#file#catfile([ pdfout, proj .bnum.'.pdf'])
 	
@@ -384,21 +429,17 @@ function! projs#build#run (...)
 			let ok = base#file#copy(pdffile_tmp,dest)
 		
 			if ok
-			 	echo "PDF file copied to:"
-			 	echo " " . dest
+			 	let prf={ 'prf' : '' }
+			 	call base#log([
+			 		\	"PDF file copied to:",
+			 		\	"		" . dest,
+			 		\	],prf) 
 			endif
 		endfor
 	
 	 endif
-	 "" html output
- elseif is_htmlo
  endif
-
- call projs#build#qflist_process({ 
-		\	"prompt" : prompt, 
-		\	"opt" : opt 
-		\	})
-
+	
 endfunction
 
 function! projs#build#qflist_process (...)
@@ -407,6 +448,8 @@ function! projs#build#qflist_process (...)
  let proj      = projs#proj#name()
 
  let endtime   = localtime()
+ let starttime = projs#var('build_starttime')
+
  let buildtime = endtime-starttime
  let timemsg   = ' (' . buildtime . ' secs)'
 
