@@ -290,11 +290,23 @@ function! projs#build#make_invoke (...)
 		 call base#log( split(txt,"\n") )
 	 endif
 
-	 if index([ 'nonstopmode','batchmode' ],texmode) >= 0 
-	   exe 'silent make!'
-	 elseif texmode == 'errorstopmode'
-	   exe 'make!'
-	 endif
+ "  if exists(":AsyncMakeGreen")
+		 "if index([ 'nonstopmode','batchmode' ],texmode) >= 0 
+			 "exe 'silent AsyncMakeGreen'
+		 "elseif texmode == 'errorstopmode'
+			 "exe 'AsyncMakeGreen'
+		 "endif
+	 "else
+	 "endif
+	 "
+		 echo 'Executing make, texmode => ' . texmode 
+			 
+		 if index([ 'nonstopmode','batchmode' ],texmode) >= 0 
+		   exe 'silent make!'
+		 elseif texmode == 'errorstopmode'
+		   exe 'make!'
+		 endif
+
 
  elseif buildmode == 'base_sys'
 	 let cmd = &makeprg
@@ -342,7 +354,7 @@ function! projs#build#make_invoke (...)
 endfunction
 
 function! projs#build#run (...)
- call projs#var('verbose',1)
+ call projs#varset('verbose',1)
 
  try
     cclose
