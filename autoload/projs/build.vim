@@ -377,6 +377,9 @@ function! projs#build#run (...)
  let texjobname  = projs#build#set_texjobname({ 'prompt' : prompt })
  let pdfout      = projs#build#set_pdfout({ 'prompt' : prompt })
 
+ echo pdfout
+ return
+
  call projs#build#setmake({
   			\ "prompt"    : prompt,
  			\	})
@@ -399,8 +402,8 @@ endfunction
 function! projs#build#pdf_process ()
 
  	let opt    = projs#varget('prjmake_opt','')
-	let bnum   = projs#var('buildnum')
-	let pdfout = projs#var('pdfout','')
+	let bnum   = projs#varget('buildnum')
+	let pdfout = projs#varget('pdfout','')
 
 	let texoutdir  = projs#var('texoutdir','')
 	let texjobname = projs#var('texjobname','')

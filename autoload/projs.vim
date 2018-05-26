@@ -1764,7 +1764,7 @@ function! projs#setbuildvars (...)
  let texoutdir = base#file#catfile([ projs#builddir(), bnum ])
 
  call base#mkdir(texoutdir)
- call projs#var('texoutdir',texoutdir)
+ call projs#varset('texoutdir',texoutdir)
 
  let texmode    = projs#varget('texmode')
  let texjobname = proj
@@ -1776,18 +1776,22 @@ function! projs#setbuildvars (...)
  call projs#varset('texjobname',texjobname)
  call projs#varset('buildnum',bnum)
 
- if get(ref,'echo',1)
-     echo '---------- projs#setbuildvars(...)--------'
-     echo 'Setting latex build-related options:'
-		 echo ' '
-     echo '  buildnum         => '  . bnum
-     echo '  texjobname       => '  . texjobname
-     echo '  texmode          => '  . texmode
-		 echo ' '
-     echo '  buildmode        => '  . buildmode
-		 echo ' '
-     echo '---------- end projs#setbuildvars---------'
- endif
+	let txt =''
+	let txt.= "\n" . '---------- projs#setbuildvars(...)--------'
+	let txt.= "\n" . 'Setting latex build-related options:'
+	let txt.= "\n" . ' '
+	let txt.= "\n" . '  buildnum         => '  . bnum
+	let txt.= "\n" . '  texjobname       => '  . texjobname
+	let txt.= "\n" . '  texmode          => '  . texmode
+	let txt.= "\n" . ' '
+	let txt.= "\n" . '  buildmode        => '  . buildmode
+	let txt.= "\n" . ' '
+	let txt.= "\n" . '---------- end projs#setbuildvars---------'
+
+	let prf={ 'prf' : '' }
+	let log = split(txt,"\n")
+
+	call base#log(log,prf)
     
 endfunction
 
