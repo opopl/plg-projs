@@ -377,9 +377,6 @@ function! projs#build#run (...)
  let texjobname  = projs#build#set_texjobname({ 'prompt' : prompt })
  let pdfout      = projs#build#set_pdfout({ 'prompt' : prompt })
 
- echo pdfout
- return
-
  call projs#build#setmake({
   			\ "prompt"    : prompt,
  			\	})
