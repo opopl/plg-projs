@@ -402,8 +402,8 @@ function! projs#build#pdf_process ()
 	let bnum   = projs#varget('buildnum')
 	let pdfout = projs#varget('pdfout','')
 
-	let texoutdir  = projs#var('texoutdir','')
-	let texjobname = projs#var('texjobname','')
+	let texoutdir  = projs#varget('texoutdir','')
+	let texjobname = projs#varget('texjobname','')
 
 	let proj   = projs#proj#name()
 

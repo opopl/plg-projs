@@ -1771,8 +1771,6 @@ function! projs#setbuildvars (...)
 
  let buildmode    = projs#varget('buildmode','')
 
- let pdfout = projs#varget('pdfout')
-
  call projs#varset('texjobname',texjobname)
  call projs#varset('buildnum',bnum)
 
