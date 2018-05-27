@@ -132,6 +132,10 @@ function! projs#proj#files (...)
 
 	let rw_f_listfiles = get(ref,'rw_f_listfiles',0)
 
+	" ======================================
+	" start: section (A) reading dat file
+	" ======================================
+
   let f_listfiles = projs#secfile('_dat_files_') 
   if !rw_f_listfiles
       if filereadable(f_listfiles)
@@ -150,6 +154,11 @@ function! projs#proj#files (...)
           return files
       endif
   endif
+	" ======================================
+	" end: section (A) reading dat file
+	" ======================================
+	" start: section (B) locate files through base#find() calls
+	" ======================================
 
 	let fref = {
 			\   'dirs'       :  dirs          ,

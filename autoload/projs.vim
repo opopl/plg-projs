@@ -859,9 +859,9 @@ function! projs#opensec (...)
  if !projs#sec#exists(sec)
     let cnt = input('Section does not exist, continue? (1/0):',1)
     if !cnt | return | endif
- endif
 
-	"call base#var
+		call projs#sec#add(sec)
+ endif
 
   call projs#varset("secname",sec)
 
@@ -893,9 +893,7 @@ function! projs#opensec (...)
 
   elseif sec == '_join_'
 
-    "if !filereadable(vfile)
-        call projs#filejoinlines()
-    "endif
+		call projs#filejoinlines()
 
   elseif sec == '_pl_all_'
     call extend(vfiles,base#splitglob('projs',proj . '.*.pl'))
@@ -990,12 +988,6 @@ function! projs#echo(text,...)
         let opts=a:1
         let prefix=get(opts,'prefix',prefix)
     endif
-
-  "  call base#echo({ 
-        "\   "text" : a:text, 
-        "\   "hl"   : "MoreMsg",
-        "\   "prefix"  : prefix,
-        "\   })
 
 		call base#log(prefix . ' ' . a:text)
 
@@ -1852,9 +1844,7 @@ function! projs#update (...)
     if opt == 'secnames'
         call projs#echo("Updating list of sections",o)
 
-				let rw_f_listfiles = 1
-				let rw_f_listfiles = input('Remove listfiles dat file? (1/0):',rw_f_listfiles)
-        call projs#proj#files({ 'rw_f_listfiles' : rw_f_listfiles })
+        call projs#proj#files({ 'rw_f_listfiles' : 1 })
 
         call projs#proj#secnames()
         call projs#proj#secnamesall()
