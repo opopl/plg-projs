@@ -1276,7 +1276,7 @@ function! projs#init (...)
 
     if ! exists("proj") | let proj='' | endif
         
-    let projsdirs=projs#varget('projsdirs')
+    let projsdirs = projs#varget('projsdirs')
     call projs#varset('projsdirslist',projsdirs)
 
     " update list of projs plugin variables

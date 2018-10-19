@@ -436,12 +436,13 @@ function! projs#build#pdf_process ()
 	 		call add(dests,pdffile_env)
 	 endif
 	
-	 if filereadable(pdffile_tmp)
+	 let pfile = pdffile_tmp
+	 if filereadable(pfile) && getfsize(pfile)
 		for dest in dests
-			let ok = base#file#copy(pdffile_tmp,dest)
+			let ok = base#file#copy(pfile,dest)
 		
 			if ok
-			 	let prf={ 'prf' : '' }
+			 	let prf = { 'prf' : '' }
 			 	call base#log([
 			 		\	"PDF file copied to:",
 			 		\	"		" . dest,
@@ -449,6 +450,9 @@ function! projs#build#pdf_process ()
 			endif
 		endfor
 	
+	 else
+	 	 let prf = { 'prf' : '' }
+		 call base#log([ 'NO PDF file: ' , pfile],prf)
 	 endif
  endif
 	
