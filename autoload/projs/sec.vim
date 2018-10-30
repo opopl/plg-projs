@@ -15,16 +15,24 @@ function! projs#sec#rename (...)
 	let oldf = projs#secfile(old)
 	let newf = projs#secfile(new)
 
+	let oldf_base = projs#secfile_base(old)
+	let newf_base = projs#secfile_base(new)
+
 	call rename(oldf,newf)
 
 	let lines = readfile(newf)
 
 	let nlines = []
-	let pat = '^\(%%file\s\+\)\(\w\+\)\s*$'
+	let pats = {}
+	call extend(pats,{ '^\(%%file\s\+\)\(\w\+\)\s*$' : '\1'.new  })
+	call extend(pats,{ '^\(\\label{sec:\)'.old.'\(}\s*\)$' : '\1'.new.'\2' })
+	
 	for line in lines
-		if line =~ pat
-			let line = substitute(line,pat,'\1'.new,'g')
-		endif
+		for [pat,subpat] in items(pats)
+			if line =~ pat
+				let line = substitute(line,pat,subpat,'g')
+			endif
+		endfor
 
 		call add(nlines,line)
 	endfor
@@ -32,20 +40,28 @@ function! projs#sec#rename (...)
 	call writefile(nlines,newf)
 
  	let pfiles = projs#proj#files()
-perl << eof
-	use List::MoreUtils::XS qw(bremove);
-	
-	my $pfiles = VimVar('pfiles');
-	my $oldf   = VimVar('oldf');
+  let ex = {}
+  for pfile in pfiles
+    call extend(ex,{ pfile : 1 })
+  endfor
+  call extend(ex,{ newf_base : 1, oldf_base : 0 })
 
-	@$pfiles = bremove { $oldf cmp $_ }, @$pfiles ;
+	let pfiles=[]
+	for [file,infile] in items(ex)
+		if infile
+			call add(pfiles,file)
+		endif
+	endfor
 
-	VimLet('pfiles',$pfiles);
-	VimMsg(Dumper($pfiles));
-eof
-	echo pfiles
+  let f_listfiles = projs#secfile('_dat_files_') 
+
+	call base#file#write_lines({ 
+			\	'lines' : pfiles,
+			\	'file'  : f_listfiles,
+			\})
 
 	call projs#proj#secnames()
+	call base#fileopen({ 'files' : [newf]})
 	
 endfunction
 
