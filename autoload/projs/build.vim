@@ -61,21 +61,21 @@ function! projs#build#cleanup (...)
 		return
 	endif
 	
-	"echohl Title
-	"echo 'Files to remove:'
-	"echohl MoreMsg
-	"for bfile in bfiles
-		"echo "\t" . bfile
-	"endfor
-	"echohl None
-
-	"let rm = input('Remove files? (y/n):','y')
 	let rm = 'y'
 	if rm == 'y'
-		"echo "\n"
 		for bfile in bfiles
-			"echo "\t" . 'Removing file: ' . bfile 
-			call delete(bfile)
+			if filereadable(bfile)
+				  call delete(bfile)
+
+			elseif isdirectory(bfile)
+          if has('win32')
+            let cmd = 'rmdir ' . bfile
+            let ok = base#sys({ 
+	             \   "cmds"         : [cmd],
+	             \   "split_output" : 0,
+	             \   })
+          endif
+			endif
 		endfor
 	endif
 
