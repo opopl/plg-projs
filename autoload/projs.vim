@@ -190,6 +190,7 @@ function! projs#newsecfile(sec,...)
     let tagsec=[' ' , '%%file '.sec, ' ' ]
 
     let keymap = 'ukrainian-jcuken'
+    let keymap = 'russian-jcukenwin'
     "let keymap = input('Keymap:','','custom,txtmy#complete#keymap')
 
     try
