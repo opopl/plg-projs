@@ -121,9 +121,13 @@ function! projs#action#projs_tags_replace ()
 	let oldproj=projs#proj#name()
 
 	for proj in list
-		call projs#action#thisproj_tags_replace({ 'proj': proj})
+		call projs#action#thisproj_tags_replace({ 'proj': proj })
 	endfor
 
+endfunction
+
+function! projs#action#mk_tab ()
+	let proj   = projs#proj#name()
 endfunction
 
 function! projs#action#cd_csvdir ()
@@ -234,11 +238,38 @@ function! projs#action#files_copy_to_project ()
 
 endfunction
 
-function! projs#action#prjfiles_add_file_tag ()
+function! projs#action#prjfiles_add_file_tag (...)
 
 	let files = projs#proj#files({ "exts" : base#qw('tex') })
 
 endfunction
+
+function! projs#action#create_sec_tab (...)
+	let sec = input('Table file:','fig_')
+
+	let lines = []
+
+	call projs#newsecfile(sec,{ 
+		\	"prompt" : 0, 
+		\	'seccmd' : '',
+		\	'add_lines_after' : lines,
+		\	})
+
+endfunction
+
+function! projs#action#create_sec_fig (...)
+	let sec = input('Figure file:','fig_')
+
+	let lines = []
+
+	call projs#newsecfile(sec,{ 
+		\	"prompt" : 0, 
+		\	'seccmd' : '',
+		\	'add_lines_after' : lines,
+		\	})
+
+endfunction
+
 
 function! projs#action#buildmode_set ()
 	let buildmode=input('PROJS buildmode:','','custom,projs#complete#buildmodes')

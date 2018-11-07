@@ -158,6 +158,8 @@ function! projs#newsecfile(sec,...)
         \   "git_add" : 0, 
         \   "view"    : 0, 
         \   "prompt"  : 1, 
+        \   "seccmd"  : '', 
+        \   "lines"   : [], 
         \   }
 
     call extend(ref,{ "prompt" : 0 })
@@ -501,13 +503,16 @@ eof
           endif
         else
 """newsec_else_no_prompt
-            let seccmd='section'
-            let title = sec
-            let label = 'sec:'.sec
+            let seccmd= get(ref,'seccmd','section')
 
-            call add(lines,'\' . seccmd . '{'.title.'}')
-            call add(lines,'\label{'.label.'}')
-            call add(lines,' ')
+						if strlen(seccmd)
+	            let title = sec
+	            let label = 'sec:'.sec
+	
+	            call add(lines,'\' . seccmd . '{'.title.'}')
+	            call add(lines,'\label{'.label.'}')
+	            call add(lines,' ')
+						endif
         endif
  
     endif
@@ -791,12 +796,6 @@ function! projs#action (...)
 
   exe 'call '.sub.'()'
 
-  "try
-    "exe 'call '.sub.'()'
-  "catch 
-    "call projs#warn('Failure to execute function ' . sub)
-  "endtry
-  
 endfunction
 
 function! projs#switch (...)
