@@ -69,7 +69,7 @@ function! projs#build#cleanup (...)
 
 			elseif isdirectory(bfile)
           if has('win32')
-            let cmd = 'rmdir ' . bfile
+            let cmd = 'rmdir /q/s ' . bfile
             let ok = base#sys({ 
 	             \   "cmds"         : [cmd],
 	             \   "split_output" : 0,
