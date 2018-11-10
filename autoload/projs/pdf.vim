@@ -1,7 +1,8 @@
 
 function! projs#pdf#view (...)
 
-	let proj    = projs#proj#name()
+	let proj    = get(a:000,0,projs#proj#name())
+
 	let pdffin  = projs#var('pdffin')
 	let pdffile = base#file#catfile([ pdffin, proj . '.pdf' ])
 
