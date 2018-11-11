@@ -101,7 +101,7 @@ function! projs#build#setmake (ref)
  let makeef = base#file#catfile([ texoutdir , 'make_'.opt.'.log' ])
 
  if opt == 'single_run'
- 	call make#makeprg('projs_pdflatex',{ 'echo' : 0 })
+ 	call make#makeprg('projs_single_latex',{ 'echo' : 0 })
 
  elseif opt == 'latexmk'
  	call make#makeprg('projs_latexmk',{ 'echo' : 0 })
@@ -253,8 +253,8 @@ function! projs#build#make_invoke (...)
  let opt       = projs#varget('prjmake_opt','')
  let buildmode = projs#varget('buildmode','')
  let texmode   = projs#varget('texmode','')
- let bnum      = projs#var('builnum',1)
- let verbose   = projs#var('verbose',0)
+ let bnum      = projs#varget('builnum',1)
+ let verbose   = projs#varget('verbose',0)
 
  if projs#build#is_pdfo(opt)
   	let txt = 'PDF Build number     => '  . bnum 
@@ -361,7 +361,7 @@ function! projs#build#run (...)
  catch
  endtry
 
- let opt =  projs#varget('prjmake_opt','latexmk')
+ let opt =  projs#varget( 'prjmake_opt', 'latexmk')
 
  let ref = {
 				\	"prompt"    : 0,
@@ -376,33 +376,34 @@ function! projs#build#run (...)
  let prompt = get(ref,'prompt',0)
  let opt    = get(ref,'opt',opt)
 
- if prompt | let opt = input('Build opt: ',opt,'custom,projs#complete#prjmake') | endif
- call projs#varset('prjmake_opt',opt)
+ if prompt | let opt = input('Build opt: ', opt ,'custom,projs#complete#prjmake') | endif
+ call projs#varset('prjmake_opt' , opt)
 
  call base#log(' Stage latex: LaTeX invocation')
 
  let proj = projs#proj#name()
- call projs#setbuildvars()
 
- let texoutdir   = projs#build#set_texoutdir()
- let texmode     = projs#build#set_texmode({ 'prompt' : prompt })
- let texjobname  = projs#build#set_texjobname({ 'prompt' : prompt })
- let pdfout      = projs#build#set_pdfout({ 'prompt' : prompt })
+	call projs#setbuildvars()
 
- call projs#build#setmake({
-  			\ "prompt"    : prompt,
- 			\	})
+	let texoutdir   = projs#build#set_texoutdir()
+	let texmode     = projs#build#set_texmode({ 'prompt' : prompt })
+	let texjobname  = projs#build#set_texjobname({ 'prompt' : prompt })
+	let pdfout      = projs#build#set_pdfout({ 'prompt' : prompt })
 
- if opt =~ '^build_'	
+	call projs#build#setmake({
+		\ "prompt"    : prompt,
+		\	})
+
+	if opt =~ '^build_'	
 		call projs#newsecfile('_'.opt.'_')
- endif
+	endif
 
- let ok = projs#build#make_invoke()
-
- call projs#build#aftermake()
- call projs#build#pdf_process()
-
- call projs#build#qflist_process({ 
+	let ok = projs#build#make_invoke()
+	
+	call projs#build#aftermake()
+	call projs#build#pdf_process()
+	
+	call projs#build#qflist_process({ 
 		\	"prompt" : prompt,
 		\	})
 
@@ -478,7 +479,7 @@ function! projs#build#qflist_process (...)
  let keep = 0
  let newlist= []
 
- let i=0
+ let i = 0
  for item in qflist
 	let keep = 0
 

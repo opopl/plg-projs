@@ -14,7 +14,9 @@ function! projs#cmd#varset (...)
 	if !strlen(val)
 		unlet val
 		if vname == 'buildmode'
-			let val = input('Enter new value:','','custom,projs#complete#buildmodes')
+			let val = input('Enter new value for '.vname. ':','','custom,projs#complete#buildmodes')
+		else
+			let val = input('Enter new value for '.vname.':','')
 		endif
 	endif
 

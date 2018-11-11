@@ -1292,13 +1292,15 @@ function! projs#init (...)
     call base#mkdir(pdfout)
 
     let rootbuilddir = projs#path([ 'builds' ])
-    call projs#var('rootbuilddir',rootbuilddir)
+    call projs#varset('rootbuilddir',rootbuilddir)
     call base#mkdir(rootbuilddir)
 
     if ! exists("proj") | let proj='' | endif
         
     let projsdirs = projs#varget('projsdirs')
     call projs#varset('projsdirslist',projsdirs)
+
+    call projs#varset('exe_latex','pdflatex')
 
     " update list of projs plugin variables
     call projs#update#varlist()
