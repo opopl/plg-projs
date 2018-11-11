@@ -864,6 +864,9 @@ function! projs#onload (...)
   StatusLine projs
 
   call projs#maps()
+
+	let vf = projs#secfile('_vim_')
+	call base#vimfile#source({'files' : [vf]})
   
 endfunction
 
