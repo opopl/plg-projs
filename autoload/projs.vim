@@ -306,6 +306,8 @@ eof
         call add(lines,'call projs#proj#name(s:proj)')
         call add(lines,'call projs#proj#type(s:projtype)')
         call add(lines,' ')
+        call add(lines,'PrjVarSet exe_latex pdflatex ')
+        call add(lines,' ')
 
     elseif sec == '_bib_'
 
