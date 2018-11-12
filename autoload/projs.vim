@@ -865,11 +865,14 @@ function! projs#onload (...)
 
   StatusLine projs
 
+	let makeprg = make#varget('makeprg','projs_single_run')
+	call make#makeprg(makeprg)
+
   call projs#maps()
 
 	let vf = projs#secfile('_vim_')
 	call base#vimfile#source({'files' : [vf]})
-  
+
 endfunction
 
 function! projs#opensec (...)
