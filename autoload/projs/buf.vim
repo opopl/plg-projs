@@ -1,5 +1,4 @@
 
-
 function! projs#buf#vim ()
 	TgSet projs_this
 endfunction

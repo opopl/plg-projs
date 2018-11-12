@@ -853,8 +853,10 @@ function! projs#onload (...)
   let proj = get(ref,'proj',proj)
 
   setlocal ts=2
+
   "-------- needed for keymapping
   setlocal iminsert=0
+
   "-------- needed for tags
   setlocal isk=@,48-57,_,128-167,224-235
 
@@ -865,13 +867,27 @@ function! projs#onload (...)
 
   StatusLine projs
 
-	let makeprg = make#varget('makeprg','projs_single_run')
-	call make#makeprg(makeprg)
+	"call base#varset('projs_exe_latex','pdflatex')
+	"let makeprg = make#varget('makeprg','projs_single_run')
+	call make#makeprg()
 
   call projs#maps()
 
 	let vf = projs#secfile('_vim_')
-	call base#vimfile#source({'files' : [vf]})
+
+	call base#vimfile#source({ 'files' : [vf] })
+
+endfunction
+
+function! projs#exe_latex (...)
+
+ let exe_latex = projs#varget('exe_latex','')
+ if !strlen(exe_latex)
+ 		call projs#varset('exe_latex','pdflatex')
+ endif
+
+ let exe_latex = projs#varget('exe_latex')
+ return exe_latex
 
 endfunction
 
