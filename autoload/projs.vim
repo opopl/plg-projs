@@ -862,13 +862,9 @@ function! projs#onload (...)
 
   TgSet projs_this
 
-  "TgAdd plg_projs
-  "TgAdd plg_base
-
   StatusLine projs
 
-	"call base#varset('projs_exe_latex','pdflatex')
-	"let makeprg = make#varget('makeprg','projs_single_run')
+	call base#varset('projs_exe_latex','pdflatex')
 	call make#makeprg()
 
   call projs#maps()
