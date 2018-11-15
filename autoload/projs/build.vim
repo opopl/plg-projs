@@ -299,14 +299,13 @@ function! projs#build#make_invoke (...)
 	 "else
 	 "endif
 	 "
-		 echo 'Executing make, texmode => ' . texmode 
+		 echo 'make: prjmake_opt => ' . opt . ', texmode => ' . texmode . ', bnum => ' . bnum 
 			 
 		 if index([ 'nonstopmode','batchmode' ],texmode) >= 0 
 		   exe 'silent make!'
 		 elseif texmode == 'errorstopmode'
 		   exe 'make!'
 		 endif
-
 
  elseif buildmode == 'base_sys'
 	 let cmd = &makeprg
@@ -400,7 +399,6 @@ function! projs#build#run (...)
 
 	let ok = projs#build#make_invoke()
 	
-	call projs#build#aftermake()
 	call projs#build#pdf_process()
 	
 	call projs#build#qflist_process({ 
