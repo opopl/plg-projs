@@ -864,25 +864,27 @@ function! projs#onload (...)
 
   StatusLine projs
 
-	call base#varset('projs_exe_latex','pdflatex')
-	call make#makeprg()
+	call projs#exe_latex('pdflatex')
 
   call projs#maps()
 
 	let vf = projs#secfile('_vim_')
-
 	call base#vimfile#source({ 'files' : [vf] })
 
 endfunction
 
 function! projs#exe_latex (...)
+	let exe_latex = get(a:000,0,'pdflatex')
 
- let exe_latex = projs#varget('exe_latex','')
- if !strlen(exe_latex)
- 		call projs#varset('exe_latex','pdflatex')
- endif
+	let makeprg = make#varget('makeprg','projs_single_run')
 
- let exe_latex = projs#varget('exe_latex')
+	if a:0
+ 		call projs#varset('exe_latex',exe_latex)
+		call make#makeprg(makeprg)
+	else
+ 		let exe_latex = projs#varget('exe_latex',exe_latex)
+	endif
+	
  return exe_latex
 
 endfunction

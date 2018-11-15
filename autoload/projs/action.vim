@@ -130,6 +130,18 @@ function! projs#action#mk_tab ()
 	let proj   = projs#proj#name()
 endfunction
 
+function! projs#action#cd_builds ()
+	let proj   = projs#proj#name()
+	let bdir   = projs#path([ 'builds' , proj ])
+
+	if !isdirectory(bdir)
+		 call base#mkdir(bdir)
+	endif
+
+	call base#cd(bdir)
+
+endfunction
+
 function! projs#action#cd_csvdir ()
 	let proj   = projs#proj#name()
 	let csvdir = projs#path([ 'csv' , proj ])
