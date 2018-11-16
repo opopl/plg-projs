@@ -142,6 +142,18 @@ function! projs#action#cd_builds ()
 
 endfunction
 
+function! projs#action#cd_pics ()
+	let proj   = projs#proj#name()
+	let bdir   = projs#path([ 'pics' , proj ])
+
+	if !isdirectory(bdir)
+		 call base#mkdir(bdir)
+	endif
+
+	call base#cd(bdir)
+
+endfunction
+
 function! projs#action#cd_csvdir ()
 	let proj   = projs#proj#name()
 	let csvdir = projs#path([ 'csv' , proj ])
