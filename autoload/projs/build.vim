@@ -101,20 +101,20 @@ function! projs#build#setmake (ref)
  let makeef = base#file#catfile([ texoutdir , 'make_'.opt.'.log' ])
 
  if opt == 'single_run'
- 	call make#makeprg('projs_single_latex',{ 'echo' : 0 })
+    call make#makeprg('projs_single_latex',{ 'echo' : 0 })
 
  elseif opt == 'latexmk'
- 	call make#makeprg('projs_latexmk',{ 'echo' : 0 })
-	let makeef = base#file#catfile([ texoutdir , 'make.log' ])
+		call make#makeprg('projs_latexmk',{ 'echo' : 0 })
+		let makeef = base#file#catfile([ texoutdir , 'make.log' ])
 
  elseif opt == 'htlatex'
- 	call make#makeprg('projs_htlatex',{ 'echo' : 0 })
+    call make#makeprg('projs_htlatex',{ 'echo' : 0 })
 
  elseif opt == 'bibtex'
- 	call make#makeprg('projs_bibtex',{ 'echo' : 0 })
+    call make#makeprg('projs_bibtex',{ 'echo' : 0 })
 
  elseif opt == 'makeindex'
- 	call make#makeprg('projs_makeindex',{ 'echo' : 0 })
+    call make#makeprg('projs_makeindex',{ 'echo' : 0 })
 
  elseif opt == 'build_pdflatex'
  	call make#makeprg('projs_build_pdflatex',{ 'echo' : 0 })
