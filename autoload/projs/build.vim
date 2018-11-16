@@ -408,6 +408,7 @@ function! projs#build#run (...)
 endfunction
 
 function! projs#build#pdf_process ()
+  call base#log('begin: projs#build#pdf_process')
 
  	let opt    = projs#varget('prjmake_opt','')
 	let bnum   = projs#varget('buildnum')
@@ -454,7 +455,8 @@ function! projs#build#pdf_process ()
 		 call base#log([ 'NO PDF file: ' , pfile],prf)
 	 endif
  endif
-	
+
+ call base#log('end: projs#build#pdf_process')
 endfunction
 
 function! projs#build#qflist_process (...)
