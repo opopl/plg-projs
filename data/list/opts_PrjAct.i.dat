@@ -27,3 +27,4 @@ create_sec_fig
 cd_csvdir
 cd_builds
 cd_pics
+append_thisproj

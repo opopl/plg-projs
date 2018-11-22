@@ -268,6 +268,12 @@ function! projs#action#prjfiles_add_file_tag (...)
 
 endfunction
 
+function! projs#action#append_thisproj (...)	
+	let proj = projs#proj#name()
+	call append(line('.'),[proj])
+
+endfunction
+
 function! projs#action#create_sec_tab (...)
 	let sec = input('Table file:','fig_')
 
