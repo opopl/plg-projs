@@ -212,6 +212,8 @@ function! projs#newsecfile(sec,...)
 				let num = substitute(sec,'^fig_\(.*\)$','\1','g')
 				let num_dot = substitute(num,'_','.','g')
 
+        call extend(lines,tagsec)
+
 				call add(lines,'\renewcommand{\thefigure}{'.num_dot.'}')
 				call add(lines,'	')
 				call add(lines,'\begin{figure}[ht]')
