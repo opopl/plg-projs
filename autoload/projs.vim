@@ -153,6 +153,7 @@ function! projs#newsecfile(sec,...)
 
     let sec  = a:sec
     let proj = projs#proj#name()
+		let parent_sec = projs#varget('parent_sec','')
 
     let ref = { 
         \   "git_add" : 0, 
@@ -190,6 +191,7 @@ function! projs#newsecfile(sec,...)
     let lines = []
 
     let tagsec=[' ' , '%%file '.sec, ' ' ]
+		call extend(tagsec,[' ','%%parent ' . parent_sec ,' '])
 
     let keymap = 'ukrainian-jcuken'
     let keymap = 'russian-jcukenwin'
@@ -228,6 +230,19 @@ function! projs#newsecfile(sec,...)
 				call add(lines,'\end{figure}')
 				call add(lines,'	')
 
+    elseif sec == 'listfigs'
+
+        call extend(lines,tagsec)
+
+				call add(lines,' ')
+				call add(lines,'\phantomsection')
+				call add(lines,' ')
+				call add(lines,'\addcontentsline{toc}{chapter}{\listfigurename} ')
+				call add(lines,' ')
+				call add(lines,'\listoffigures')
+				call add(lines,'\newpage')
+				call add(lines,' ')
+ 
 """newsec_bib
     elseif sec == 'bib'
 
@@ -504,6 +519,7 @@ eof
 
         call add(lines,' ')
         call add(lines,'%%file ' . sec)
+        call add(lines,'%%parent ' . parent_sec )
         call add(lines,' ')
 
 """newsec_else_prompt
@@ -912,6 +928,8 @@ endfunction
 function! projs#opensec (...)
  let proj = projs#proj#name()
 
+ let parent_sec = projs#proj#secname()
+
  if a:0 == 1
     let sec=a:1
  else
@@ -975,12 +993,15 @@ function! projs#opensec (...)
 
   let vfiles = base#uniq(vfiles)
 
+ 	call projs#varset("parent_sec",parent_sec)
+
   for vfile in vfiles
     if !filereadable(vfile)
         call projs#newsecfile(sec)
     endif
     call base#fileopen(vfile) 
   endfor
+
 
   call base#stl#set('projs')
   "KEYMAP russian-jcukenwin
