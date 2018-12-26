@@ -230,6 +230,7 @@ function! projs#newsecfile(sec,...)
 				call add(lines,'\end{figure}')
 				call add(lines,'	')
 
+"""newsec_listfigs
     elseif sec == 'listfigs'
 
         call extend(lines,tagsec)
@@ -240,6 +241,20 @@ function! projs#newsecfile(sec,...)
 				call add(lines,'\addcontentsline{toc}{chapter}{\listfigurename} ')
 				call add(lines,' ')
 				call add(lines,'\listoffigures')
+				call add(lines,'\newpage')
+				call add(lines,' ')
+
+"""newsec_listtabs
+    elseif sec == 'listtabs'
+
+        call extend(lines,tagsec)
+
+				call add(lines,' ')
+				call add(lines,'\phantomsection')
+				call add(lines,' ')
+				call add(lines,'\addcontentsline{toc}{chapter}{\listtablename} ')
+				call add(lines,' ')
+				call add(lines,'\listoftables')
 				call add(lines,'\newpage')
 				call add(lines,' ')
  
@@ -655,7 +670,7 @@ function! projs#new (...)
   let nsecs_h = {
       \ "single_file"   : "_main_",
       \ "da_qa_report"  : "_main_ preamble body tests_run tb_vm_vs_test",
-      \ "regular"       : "_main_ preamble body cfg bib index",
+      \ "regular"       : "_main_ preamble body cfg bib index listfigs listtabs tabcont",
       \ }
   let nsecs_s = get(nsecs_h,projtype,'')
 
