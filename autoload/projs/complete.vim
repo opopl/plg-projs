@@ -84,6 +84,10 @@ function! projs#complete#prjact (...)
    return projs#complete#vars([ 'opts_PrjAct' ])
 endfunction
 
+function! projs#complete#prjdb (...)
+   return projs#complete#vars([ 'opts_PrjDB' ])
+endfunction
+
 function! projs#complete#prjinsert (...)
    return projs#complete#vars([ 'opts_PrjInsert' ])
 endfunction

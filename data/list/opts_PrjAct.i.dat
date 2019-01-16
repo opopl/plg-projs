@@ -30,3 +30,4 @@ cd_pics
 append_thisproj
 append_section
 git_add_pics
+mkdir_pics

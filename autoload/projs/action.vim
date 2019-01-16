@@ -130,6 +130,15 @@ function! projs#action#mk_tab ()
 	let proj   = projs#proj#name()
 endfunction
 
+function! projs#action#mkdir_pics ()
+	let proj   = projs#proj#name()
+	let bdir   = projs#path([ 'pics' , proj ])
+
+	if !isdirectory(bdir)
+		 call base#mkdir(bdir)
+	endif
+endfunction
+
 function! projs#action#cd_builds ()
 	let proj   = projs#proj#name()
 	let bdir   = projs#path([ 'builds' , proj ])
