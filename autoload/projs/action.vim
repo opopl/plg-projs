@@ -142,6 +142,11 @@ function! projs#action#cd_builds ()
 
 endfunction
 
+function! projs#action#git_add_pics ()
+				PrjAct cd_pics
+				exe '! git add * -f'
+endfunction
+
 function! projs#action#cd_pics ()
 	let proj   = projs#proj#name()
 	let bdir   = projs#path([ 'pics' , proj ])
