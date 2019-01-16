@@ -3,7 +3,7 @@
 function! projs#db#init ()
 	let db_file = projs#db#file()
 
-	let root = projs#root()
+	let root   = projs#root()
 	let rootid = projs#rootid()
 
 python << eof
@@ -48,16 +48,58 @@ for file in f:
 	if m:
 		proj = m.group(1)					
 		sec = m.group(2)					
-		#pprint([proj,sec])
 		c.execute('''insert into projs (root,rootid,proj,sec) values (?,?,?,?)''',[root,rootid,proj,sec])
-	if x>100:
-		break
 
 conn.commit()
 conn.close()
 
 eof
 
+
+endfunction
+
+function! projs#db#query (...)
+	let proj = projs#proj#name()
+	let proj = input('proj:',proj)
+
+	let query = 'select sec from projs where proj = "'.proj .'"'
+
+	let limit = input('limit:',10)
+	if limit
+		let query =  query . ' limit ' . limit 
+	endif
+
+	let root   = projs#root()
+	let rootid = projs#rootid()
+	let query  = input('query:',query)
+
+	let root   = projs#root()
+	let rootid = projs#rootid()
+
+	let db_file = projs#db#file()
+	let rows=[]
+
+python << eof
+
+from vim import *
+import sqlite3
+
+db_file = eval('db_file')
+root    = eval('root')
+rootid  = eval('rootid')
+query   = eval('query')
+
+conn = sqlite3.connect(db_file)
+c = conn.cursor()
+
+rows=[]
+for row in c.execute(query):
+	vim.command("let row='" + ''.join(row) + "'")
+	vim.command("call add(rows,row)")
+	rows.append(row)
+
+eof
+	call base#buf#open_split({ 'lines' : rows })
 
 endfunction
 
