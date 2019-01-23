@@ -25,12 +25,19 @@ c = conn.cursor()
 c.execute('''CREATE TABLE IF NOT EXISTS projs (
 	proj text, 
 	sec text, 
+	tags text, 
+	parent text,
+	fileid integer, 
 	rootid text, 
 	root text )''')
 
 c.execute('''CREATE TABLE IF NOT EXISTS files (
 	file text, 
+	fileid integer, 
 	rootid text, 
+	tags text, 
+	proj text, 
+	sec text, 
 	root text )''')
 
 f = []
@@ -38,7 +45,7 @@ for (dirpath, dirnames, filenames) in walk(root):
 	f.extend(filenames)
 	break
 
-p_texfile=re.compile('^(\w+)\.(.*)\.tex')
+p_texfile = re.compile('^(\w+)\.(.*)\.tex')
 
 x = 0
 h_projs = []
@@ -48,7 +55,10 @@ for file in f:
 	if m:
 		proj = m.group(1)					
 		sec = m.group(2)					
-		c.execute('''insert into projs (root,rootid,proj,sec) values (?,?,?,?)''',[root,rootid,proj,sec])
+		v_projs = [root,rootid,proj,sec]
+		v_files = [file,root,rootid,proj,sec]
+		c.execute('''insert into projs (root,rootid,proj,sec) values (?,?,?,?)''',v_projs)
+		c.execute('''insert into files (file,root,rootid,proj,sec) values (?,?,?,?,?)''',v_files)
 
 conn.commit()
 conn.close()
