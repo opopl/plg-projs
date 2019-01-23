@@ -1,14 +1,20 @@
 
+"""prjdb_fill_from_files
+function! projs#db#fill_from_files (...)
+	let ref = get(a:000,0,{})
+	let prompt = get(ref,'prompt',1)
 
-"""prjdb_init
-function! projs#db#init ()
 	let db_file = projs#db#file()
 
 	let root   = projs#root()
 	let rootid = projs#rootid()
 
 	let proj_select = projs#varget('db_proj_select','')
-	let proj_select = input('selected proj:',proj_select,'custom,projs#complete')
+	let proj_select = get(ref,'proj_select',proj_select)
+
+	if prompt
+		let proj_select = input('selected proj:',proj_select,'custom,projs#complete')
+	endif
 
 	call projs#varset('db_proj_select',proj_select)
 
@@ -16,12 +22,12 @@ python << eof
 
 from vim import *
 from os import walk
-from pprint import pprint
 
 import sqlite3
 import re
 
 db_file = eval('db_file')
+
 root    = eval('root')
 rootid  = eval('rootid')
 proj_select  = eval('proj_select')
@@ -29,43 +35,26 @@ proj_select  = eval('proj_select')
 conn = sqlite3.connect(db_file)
 c = conn.cursor()
 
-c.execute('''CREATE TABLE IF NOT EXISTS projs (
-	proj text, 
-	sec text, 
-	tags text, 
-	parent text,
-	author text,
-	fileid integer, 
-	rootid text, 
-	root text )''')
-
-c.execute('''CREATE TABLE IF NOT EXISTS files (
-	file text, 
-	fileid integer, 
-	rootid text, 
-	tags text, 
-	proj text, 
-	sec text, 
-	root text )''')
-
 f = []
 for (dirpath, dirnames, filenames) in walk(root):
 	f.extend(filenames)
 	break
 
-p_texfile = re.compile('^(\w+)\.(?:(.*)\.|)tex')
+p={}
 
-p_tags   = re.compile('^\s*%%tags (.*)$')
-p_author = re.compile('^\s*%%author (.*)$')
+p['texfile'] = re.compile('^(\w+)\.(?:(.*)\.|)tex')
+
+p['tags']   = re.compile('^\s*%%tags (.*)$')
+p['author'] = re.compile('^\s*%%author (.*)$')
 
 def get_data(filename):
 	data={}
 	with open(filename) as lines:
 		for line in lines:
-			m = p_tags.match(line)
+			m = p['tags'].match(line)
 			if m:
 				data['tags']=m.group(1)
-			m = p_author.match(line)
+			m = p['author'].match(line)
 			if m:
 				data['author']=m.group(1)
 	return data
@@ -73,7 +62,7 @@ def get_data(filename):
 x = 0
 h_projs = []
 for file in f:
-	m = p_texfile.match(file)
+	m = p['texfile'].match(file)
 	if m:
 		x+=1
 		proj = m.group(1)					
@@ -99,12 +88,18 @@ endfunction
 
 """prjdb_query
 function! projs#db#query (...)
+	let ref = get(a:000,0,{})
+	let query = get(ref,'query','')
+
 	let proj = projs#proj#name()
-	let proj = input('proj:',proj,'custom,projs#complete')
 
 	let fields = input('SELECT fields:','proj,sec,tags')
+	let query = 'SELECT '.fields.' FROM projs '
 
-	let query = 'SELECT '.fields.' FROM projs WHERE proj = "'.proj .'"'
+	let proj = input('proj:',proj,'custom,projs#complete')
+	if len(proj)
+		let query = query . ' WHERE proj = "'.proj .'"'
+	endif
 
 	let limit = input('limit:','')
 	if limit
@@ -113,6 +108,7 @@ function! projs#db#query (...)
 
 	let root   = projs#root()
 	let rootid = projs#rootid()
+
 	let query  = input('query:',query)
 
 	let root   = projs#root()
@@ -152,6 +148,46 @@ eof
 
 endfunction
 
+"""prjdb_create_tables
+function! projs#db#create_tables ()
+	let db_file = projs#db#file()
+python << eof
+
+from vim import *
+import sqlite3
+
+db_file = eval('db_file')
+
+conn = sqlite3.connect(db_file)
+c = conn.cursor()
+
+c.execute('''CREATE TABLE IF NOT EXISTS projs (
+	proj text, 
+	sec text, 
+	tags text, 
+	parent text,
+	author text,
+	fileid integer, 
+	rootid text, 
+	root text )''')
+
+c.execute('''CREATE TABLE IF NOT EXISTS files (
+	file text, 
+	fileid integer, 
+	rootid text, 
+	tags text, 
+	proj text, 
+	sec text, 
+	root text )''')
+
+conn.commit()
+conn.close()
+
+eof
+
+endfunction
+
+"""prjdb_drop_tables
 function! projs#db#drop_tables ()
 	let db_file = projs#db#file()
 
@@ -160,13 +196,16 @@ python << eof
 from vim import *
 import sqlite3
 
-db_file = vim.eval('db_file')
+db_file = eval('db_file')
 
 conn = sqlite3.connect(db_file)
 c = conn.cursor()
 
 c.execute('''DROP TABLE IF EXISTS projs''')
 c.execute('''DROP TABLE IF EXISTS files''')
+
+conn.commit()
+conn.close()
 
 eof
 
@@ -177,34 +216,6 @@ function! projs#db#file ()
 	let db_file = base#file#catfile([ root, 'projs.sqlite' ])
 
 	return db_file
-endfunction
-
-function! projs#db#update_from_files ()
-	let db = 'projs_'.projs_rootid
-
-	let meth = 'python'
-
-	if meth == 'python'
-python << eof
-						
-eof
-	elseif meth == 'perl'
-perl << eof
-	use DBI;
-	use Vim::Perl qw(:funcs :vars);
-
-	my $db  = VimVar('db');
-	my $dsn = "DBI:mysql:database=$db:host=localhost";
-	my $attr={
-		RaiseError        => 1,
-		PrintError        => 1,
-		mysql_enable_utf8 => 1,
-	};
-	my $dbh = DBI->connect($dsn,$user,$pwd,$attr) || $err->($DBI::errstr);
-eof
-
-	endif
-
 endfunction
 
 function! projs#db#action (...)

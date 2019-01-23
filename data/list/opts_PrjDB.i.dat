@@ -1,4 +1,5 @@
 update_from_files
-init
+fill_from_files
 drop_tables
+create_tables
 query

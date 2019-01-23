@@ -669,28 +669,12 @@ function! projs#new (...)
 
   let nsecs_h = {
       \ "single_file"   : "_main_",
-      \ "da_qa_report"  : "_main_ preamble body tests_run tb_vm_vs_test",
       \ "regular"       : "_main_ preamble body cfg bib index listfigs listtabs tabcont",
       \ }
   let nsecs_s = get(nsecs_h,projtype,'')
-
   let nsecs_s .= ' _vim_ '
 
-"""projtype_da_qa_report
-  if projtype == 'da_qa_report'
-    let vms_s    = input('Tested VMs:','winxp1 win7x64n1')
-    let tests_s  = input('Tests Run:','trial_forcetest licensed_forcetest LCS_license_generate')
-    let nsecs_s .= ' '.vms_s.' '
-
-    let tests = split(tests_s,' ')
-    let vms   = split(vms_s,' ')
-
-    call projs#varset('da_qa_tests',tests)
-    call projs#varset('da_qa_vms',vms)
-  endif
-
   let nsecs_s = input('Sections to be created:',nsecs_s)
-
   let nsecs = base#qw(nsecs_s)
 
   for sec in nsecs
@@ -701,7 +685,7 @@ function! projs#new (...)
   
   call base#echoredraw('Created new project: ' . proj)
   
-  call base#var('proj',proj)
+  call base#varset('proj',proj)
   
   call projs#listadd(proj)
   
