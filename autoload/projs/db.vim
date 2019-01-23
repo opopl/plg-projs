@@ -93,8 +93,9 @@ function! projs#db#query (...)
 
 	let proj = projs#proj#name()
 
+	let table = input('table:','projs')
 	let fields = input('SELECT fields:','proj,sec,tags')
-	let query = 'SELECT '.fields.' FROM projs '
+	let query = 'SELECT '. fields .' FROM ' . table
 
 	let proj = input('proj:',proj,'custom,projs#complete')
 	if len(proj)
