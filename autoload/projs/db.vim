@@ -80,6 +80,8 @@ for file in f:
 		if not ((proj_select) and ( proj == proj_select  )):
 			continue
 		sec = m.group(2)					
+		if not sec: 
+			sec = '_main_' 
 		data   = get_data(file)
 		tags   = data.get('tags','')
 		author = data.get('author','')
@@ -104,7 +106,7 @@ function! projs#db#query (...)
 
 	let query = 'SELECT '.fields.' FROM projs WHERE proj = "'.proj .'"'
 
-	let limit = input('limit:',10)
+	let limit = input('limit:','')
 	if limit
 		let query =  query . ' LIMIT ' . limit 
 	endif
