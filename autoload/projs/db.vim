@@ -1,10 +1,16 @@
 
 
+"""prjdb_init
 function! projs#db#init ()
 	let db_file = projs#db#file()
 
 	let root   = projs#root()
 	let rootid = projs#rootid()
+
+	let proj_select = projs#varget('db_proj_select','')
+	let proj_select = input('selected proj:',proj_select,'custom,projs#complete')
+
+	call projs#varset('db_proj_select',proj_select)
 
 python << eof
 
@@ -18,6 +24,7 @@ import re
 db_file = eval('db_file')
 root    = eval('root')
 rootid  = eval('rootid')
+proj_select  = eval('proj_select')
 
 conn = sqlite3.connect(db_file)
 c = conn.cursor()
@@ -27,6 +34,7 @@ c.execute('''CREATE TABLE IF NOT EXISTS projs (
 	sec text, 
 	tags text, 
 	parent text,
+	author text,
 	fileid integer, 
 	rootid text, 
 	root text )''')
@@ -45,38 +53,60 @@ for (dirpath, dirnames, filenames) in walk(root):
 	f.extend(filenames)
 	break
 
-p_texfile = re.compile('^(\w+)\.(.*)\.tex')
+p_texfile = re.compile('^(\w+)\.(?:(.*)\.|)tex')
+
+p_tags   = re.compile('^\s*%%tags (.*)$')
+p_author = re.compile('^\s*%%author (.*)$')
+
+def get_data(filename):
+	data={}
+	with open(filename) as lines:
+		for line in lines:
+			m = p_tags.match(line)
+			if m:
+				data['tags']=m.group(1)
+			m = p_author.match(line)
+			if m:
+				data['author']=m.group(1)
+	return data
 
 x = 0
 h_projs = []
 for file in f:
-	x+=1
-	m=p_texfile.match(file)
+	m = p_texfile.match(file)
 	if m:
+		x+=1
 		proj = m.group(1)					
+		if not ((proj_select) and ( proj == proj_select  )):
+			continue
 		sec = m.group(2)					
-		v_projs = [root,rootid,proj,sec]
-		v_files = [file,root,rootid,proj,sec]
-		c.execute('''insert into projs (root,rootid,proj,sec) values (?,?,?,?)''',v_projs)
-		c.execute('''insert into files (file,root,rootid,proj,sec) values (?,?,?,?,?)''',v_files)
+		data   = get_data(file)
+		tags   = data.get('tags','')
+		author = data.get('author','')
+		v_projs = [proj,sec,root,rootid,tags,author]
+		v_files = [file,root,rootid,proj,sec,tags]
+		c.execute('''insert into projs (proj,sec,root,rootid,tags,author) values (?,?,?,?,?,?)''',v_projs)
+		c.execute('''insert into files (file,root,rootid,proj,sec,tags) values (?,?,?,?,?,?)''',v_files)
 
 conn.commit()
 conn.close()
 
 eof
 
-
 endfunction
 
+"""prjdb_query
 function! projs#db#query (...)
 	let proj = projs#proj#name()
-	let proj = input('proj:',proj)
+	let proj = input('proj:',proj,'custom,projs#complete')
 
-	let query = 'select sec from projs where proj = "'.proj .'"'
+	let fields = input('SELECT fields:','proj,sec,tags')
+
+	let query = 'SELECT '.fields.' FROM projs WHERE proj = "'.proj .'"'
 
 	let limit = input('limit:',10)
 	if limit
-		let query =  query . ' limit ' . limit 
+		let query =  query . ' LIMIT ' . limit 
 	endif
 
 	let root   = projs#root()
@@ -103,9 +133,16 @@ conn = sqlite3.connect(db_file)
 c = conn.cursor()
 
 rows=[]
+
+lines=[]
+lines.extend([' ',query,' '])
+for line in lines:
+	command("let row='" + line + "'")
+	command("call add(rows,row)")
+
 for row in c.execute(query):
-	vim.command("let row='" + ''.join(row) + "'")
-	vim.command("call add(rows,row)")
+	command("let row='" + ' '.join(row) + "'")
+	command("call add(rows,row)")
 	rows.append(row)
 
 eof
