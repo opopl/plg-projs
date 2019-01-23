@@ -180,6 +180,39 @@ function! projs#action#cd_csvdir ()
 
 endfunction
 
+function! projs#action#git_save ()
+
+endfunction
+
+"""prjact_git_commit
+function! projs#action#git_commit ()
+	let proj = projs#proj#name()
+	let root = projs#root()
+	call base#cd(root)
+
+	let msg = ''
+	let msg = input('git commit msg:',msg)
+	let msg = '#'.proj.' '.msg
+
+	let cmds = []
+	call add(cmds,'git add '.proj.'.*.tex')
+	call add(cmds,'git add '.proj.'.tex')
+	call add(cmds,'git commit -m "'.msg.'"')
+
+	let ok = base#sys({ 
+		\	"cmds"         : cmds,
+		\	"split_output" : 1,
+		\	})
+	let out    = base#varget('sysout',[])
+	let outstr = base#varget('sysoutstr','')
+
+endfunction
+
+"""prjact_git_add_texfiles
+function! projs#action#git_add_texfiles ()
+
+endfunction
+
 """prjact_csv_query
 function! projs#action#csv_query ()
 	let proj   = projs#proj#name()

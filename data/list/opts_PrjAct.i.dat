@@ -29,5 +29,10 @@ cd_builds
 cd_pics
 append_thisproj
 append_section
+###git
 git_add_pics
+git_commit
+git_save
+git_add_texfiles
+###mkdir
 mkdir_pics
