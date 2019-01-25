@@ -1,7 +1,40 @@
 
+"""prjdb_create_tables
+function! projs#db#create_tables ()
+	let db_file = projs#db#file()
+python << eof
+
+from vim import *
+import sqlite3
+
+db_file = eval('db_file')
+
+conn = sqlite3.connect(db_file)
+c = conn.cursor()
+
+c.execute('''DROP TABLE IF EXISTS projs''')
+c.execute('''CREATE TABLE IF NOT EXISTS projs (
+	proj text not null, 
+	file text not null unique,
+	root text not null,
+	sec text, 
+	tags text, 
+	parent text,
+	author text,
+	pic text,
+	rootid text )''')
+
+conn.commit()
+conn.close()
+
+eof
+
+endfunction
+
+
 """prjdb_fill_from_files
 function! projs#db#fill_from_files (...)
-	let ref = get(a:000,0,{})
+	let ref    = get(a:000,0,{})
 	let prompt = get(ref,'prompt',1)
 
 	let db_file = projs#db#file()
@@ -62,6 +95,7 @@ def get_data(filename):
 x = 0
 h_projs = []
 for file in f:
+	fpath = os.path.join(root,file)
 	m = p['texfile'].match(file)
 	if m:
 		x+=1
@@ -71,14 +105,16 @@ for file in f:
 		sec = m.group(2)					
 		if not sec: 
 			sec = '_main_' 
-		data   = get_data(file)
+		data   = get_data(fpath)
 		tags   = data.get('tags','')
 		author = data.get('author','')
-		v_projs = [proj,sec,root,rootid,tags,author]
-		v_files = [file,root,rootid,proj,sec,tags]
-		c.execute('''insert into projs (proj,sec,root,rootid,tags,author) values (?,?,?,?,?,?)''',v_projs)
-		c.execute('''insert into files (file,root,rootid,proj,sec,tags) values (?,?,?,?,?,?)''',v_files)
-
+		v_projs = [proj,sec,file,root,rootid,tags,author]
+		q = '''insert into projs (proj,sec,file,root,rootid,tags,author) values (?,?,?,?,?,?,?)'''
+		try:
+			c.execute(q,v_projs)
+		except sqlite3.IntegrityError, e:
+			" "
+		
 conn.commit()
 conn.close()
 
@@ -149,44 +185,7 @@ eof
 
 endfunction
 
-"""prjdb_create_tables
-function! projs#db#create_tables ()
-	let db_file = projs#db#file()
-python << eof
 
-from vim import *
-import sqlite3
-
-db_file = eval('db_file')
-
-conn = sqlite3.connect(db_file)
-c = conn.cursor()
-
-c.execute('''CREATE TABLE IF NOT EXISTS projs (
-	proj text, 
-	sec text, 
-	tags text, 
-	parent text,
-	author text,
-	fileid integer, 
-	rootid text, 
-	root text )''')
-
-c.execute('''CREATE TABLE IF NOT EXISTS files (
-	file text, 
-	fileid integer, 
-	rootid text, 
-	tags text, 
-	proj text, 
-	sec text, 
-	root text )''')
-
-conn.commit()
-conn.close()
-
-eof
-
-endfunction
 
 """prjdb_drop_tables
 function! projs#db#drop_tables ()
@@ -203,7 +202,6 @@ conn = sqlite3.connect(db_file)
 c = conn.cursor()
 
 c.execute('''DROP TABLE IF EXISTS projs''')
-c.execute('''DROP TABLE IF EXISTS files''')
 
 conn.commit()
 conn.close()
