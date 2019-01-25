@@ -53,30 +53,19 @@ function! projs#db#fill_from_files (...)
 
 python << eof
 
-from vim import *
-from os import walk
 
+import vim
 import sqlite3
 import re
+import os
+import pprint
 
-db_file = eval('db_file')
+pp = pprint.PrettyPrinter(indent=4)
 
-root    = eval('root')
-rootid  = eval('rootid')
-proj_select  = eval('proj_select')
-
-conn = sqlite3.connect(db_file)
-c = conn.cursor()
-
-f = []
-for (dirpath, dirnames, filenames) in walk(root):
-	f.extend(filenames)
-	break
 
 p={}
 
 p['texfile'] = re.compile('^(\w+)\.(?:(.*)\.|)tex')
-
 p['tags']   = re.compile('^\s*%%tags (.*)$')
 p['author'] = re.compile('^\s*%%author (.*)$')
 
@@ -92,31 +81,49 @@ def get_data(filename):
 				data['author']=m.group(1)
 	return data
 
-x = 0
-h_projs = []
-for file in f:
-	fpath = os.path.join(root,file)
-	m = p['texfile'].match(file)
-	if m:
-		x+=1
-		proj = m.group(1)					
-		if not ((proj_select) and ( proj == proj_select  )):
-			continue
-		sec = m.group(2)					
-		if not sec: 
-			sec = '_main_' 
-		data   = get_data(fpath)
-		tags   = data.get('tags','')
-		author = data.get('author','')
-		v_projs = [proj,sec,file,root,rootid,tags,author]
-		q = '''insert into projs (proj,sec,file,root,rootid,tags,author) values (?,?,?,?,?,?,?)'''
-		try:
-			c.execute(q,v_projs)
-		except sqlite3.IntegrityError, e:
-			" "
-		
-conn.commit()
-conn.close()
+def db_fill_from_files(db_file,root,rootid,proj_select):
+	conn = sqlite3.connect(db_file)
+	c = conn.cursor()
+
+	f = []
+	for (dirpath, dirnames, filenames) in os.walk(root):
+		pp.pprint(dirnames)
+		pp.pprint(filenames)
+		f.extend(filenames)
+		break
+	
+	x = 0
+	h_projs = []
+	for file in f:
+		fpath = os.path.join(root,file)
+		m = p['texfile'].match(file)
+		if m:
+			x+=1
+			proj = m.group(1)					
+			if not ((proj_select) and ( proj == proj_select  )):
+				continue
+			sec = m.group(2)					
+			if not sec: 
+				sec = '_main_' 
+			data   = get_data(fpath)
+			tags   = data.get('tags','')
+			author = data.get('author','')
+			v_projs = [proj,sec,file,root,rootid,tags,author]
+			q = '''insert or ignore into projs (proj,sec,file,root,rootid,tags,author) values (?,?,?,?,?,?,?)'''
+			try:
+				c.execute(q,v_projs)
+			except sqlite3.IntegrityError, e:
+				vim.command('let e="' + e +'"')
+				vim.command('call base#log(e)')
+	conn.commit()
+	conn.close()
+
+db_file = vim.eval('db_file')
+root    = vim.eval('root')
+rootid  = vim.eval('rootid')
+proj_select  = vim.eval('proj_select')
+
+db_fill_from_files(db_file,root,rootid,proj_select)
 
 eof
 
