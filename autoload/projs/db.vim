@@ -53,7 +53,6 @@ function! projs#db#fill_from_files (...)
 
 python << eof
 
-
 import vim
 import sqlite3
 import re
@@ -61,7 +60,6 @@ import os
 import pprint
 
 pp = pprint.PrettyPrinter(indent=4)
-
 
 p={}
 
@@ -163,13 +161,13 @@ function! projs#db#query (...)
 
 python << eof
 
-from vim import *
 import sqlite3
+import vim
 
-db_file = eval('db_file')
-root    = eval('root')
-rootid  = eval('rootid')
-query   = eval('query')
+db_file = vim.eval('db_file')
+root    = vim.eval('root')
+rootid  = vim.eval('rootid')
+query   = vim.eval('query')
 
 conn = sqlite3.connect(db_file)
 c = conn.cursor()
@@ -179,12 +177,12 @@ rows=[]
 lines=[]
 lines.extend([' ',query,' '])
 for line in lines:
-	command("let row='" + line + "'")
-	command("call add(rows,row)")
+	vim.command("let row='" + line + "'")
+	vim.command("call add(rows,row)")
 
 for row in c.execute(query):
-	command("let row='" + ' '.join(row) + "'")
-	command("call add(rows,row)")
+	vim.command("let row='" + ' '.join(row) + "'")
+	vim.command("call add(rows,row)")
 	rows.append(row)
 
 eof
@@ -200,10 +198,10 @@ function! projs#db#drop_tables ()
 
 python << eof
 
-from vim import *
+import vim
 import sqlite3
 
-db_file = eval('db_file')
+db_file = vim.eval('db_file')
 
 conn = sqlite3.connect(db_file)
 c = conn.cursor()
