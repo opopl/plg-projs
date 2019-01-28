@@ -703,6 +703,11 @@ function! projs#new (...)
 
 endf
 
+function! projs#pylib ()
+	let pylib = base#qw#catpath('plg','projs python lib')
+	return pylib
+endfunction
+
 "" projs#selectproject ()
 "" projs#selectproject (pat)
 
