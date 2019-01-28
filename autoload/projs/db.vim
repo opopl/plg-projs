@@ -191,7 +191,6 @@ eof
 endfunction
 
 
-
 """prjdb_drop_tables
 function! projs#db#drop_tables ()
 	let db_file = projs#db#file()
