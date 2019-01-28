@@ -5,11 +5,11 @@ import pprint
 
 pp = pprint.PrettyPrinter(indent=4)
 
-p={}
-
-p['texfile'] = re.compile('^(\w+)\.(?:(.*)\.|)tex')
-p['tags']   = re.compile('^\s*%%tags (.*)$')
-p['author'] = re.compile('^\s*%%author (.*)$')
+p={ 'texfile' : re.compile('^(\w+)\.(?:(.*)\.|)tex'), 
+    'tags'    : re.compile('^\s*%%tags (.*)$'),
+    'author'  : re.compile('^\s*%%author (.*)$')
+   }
+print(p)
 
 def create_tables(db_file):
 	conn = sqlite3.connect(db_file)
