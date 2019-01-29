@@ -559,12 +559,12 @@ eof
             let seccmd= get(ref,'seccmd','section')
 
 						if strlen(seccmd)
-	            let title = sec
-	            let label = 'sec:'.sec
+							let title = sec
+							let label = 'sec:'.sec
 	
-	            call add(lines,'\' . seccmd . '{'.title.'}')
-	            call add(lines,'\label{'.label.'}')
-	            call add(lines,' ')
+							call add(lines,'\' . seccmd . '{'.title.'}')
+							call add(lines,'\label{'.label.'}')
+							call add(lines,' ')
 						endif
         endif
  
@@ -919,10 +919,10 @@ function! projs#exe_latex (...)
 	let makeprg = make#varget('makeprg','projs_single_run')
 
 	if a:0
- 		call projs#varset('exe_latex',exe_latex)
+		call projs#varset('exe_latex',exe_latex)
 		call make#makeprg(makeprg)
 	else
- 		let exe_latex = projs#varget('exe_latex',exe_latex)
+		let exe_latex = projs#varget('exe_latex',exe_latex)
 	endif
 	
  return exe_latex
@@ -997,7 +997,7 @@ function! projs#opensec (...)
 
   let vfiles = base#uniq(vfiles)
 
- 	call projs#varset("parent_sec",parent_sec)
+	call projs#varset("parent_sec",parent_sec)
 
   for vfile in vfiles
     if !filereadable(vfile)
@@ -1269,7 +1269,7 @@ function! projs#maps ()
       nnoremap <buffer><silent> ;mp :PrjMake build_pdflatex<CR>
       nnoremap <buffer><silent> ;ms :PrjMake single_run<CR>
       nnoremap <buffer><silent> ;ml :PrjMake latexmk<CR>
-      nnoremap <buffer><silent> ;rt :set et | retab<CR>
+      nnoremap <buffer><silent> ;rt :exe "set et | retab"<CR>
       nnoremap <buffer><silent> ;v  :PrjPdfView<CR>
       nnoremap <buffer><silent> ;tg :TgUpdate<CR>
       nnoremap <buffer><silent> ;o  :OMNIFUNC<CR>
