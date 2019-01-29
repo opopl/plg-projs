@@ -132,6 +132,11 @@ function! projs#sec#add (sec)
 		let secnamesall = base#uniq(secnamesall)
 		let secnames    = base#uniq(secnames)
 	endif
+
+python << eof
+	q = '''insert or ignore into projs (proj,sec,file,root,rootid,tags,author) values (?,?,?,?,?,?,?)'''
+	
+eof
 	
 endfunction
 

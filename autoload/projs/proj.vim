@@ -212,21 +212,7 @@ function! projs#proj#secnames (...)
 	let proj = projs#proj#name()
 	if a:0 | let proj = a:1 | endif
 
-	let root   = projs#root()
-
- 	let pfiles = projs#proj#files({ 
-		\	"proj" : proj,
-		\	})
-
-	let secnames = []
-	let pat      = '^'.proj.'\.\(.*\).*\.tex$'
-
-	for pfile in pfiles
-		if ( pfile =~ pat )
-			let sec = substitute(pfile,pat,'\1','g')
-			call add(secnames,sec)
-		endif
-	endfor
+	let secnames = projs#db#secnames()
 
  	call projs#varset('secnames',secnames)
 	call projs#proj#secnamesall()
