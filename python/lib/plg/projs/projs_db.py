@@ -9,7 +9,6 @@ p={ 'texfile' : re.compile('^(\w+)\.(?:(.*)\.|)tex'),
     'tags'    : re.compile('^\s*%%tags (.*)$'),
     'author'  : re.compile('^\s*%%author (.*)$')
    }
-print(p)
 
 def create_tables(db_file):
 	conn = sqlite3.connect(db_file)

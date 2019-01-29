@@ -12,10 +12,10 @@ import sqlite3
 
 pylib = vim.eval('projs#pylib()')
 sys.path.append(pylib)
-import projs_db
+import plg.projs.db as db
 
 db_file = vim.eval('db_file')
-projs_db.create_tables(db_file)
+db.create_tables(db_file)
 
 eof
 
@@ -42,14 +42,18 @@ import vim,sys,sqlite3,re,os,pprint
 
 pylib = vim.eval('projs#pylib()')
 sys.path.append(pylib)
-import projs_db
+import plg.projs.db as db
 
 db_file = vim.eval('projs#db#file()')
 root    = vim.eval('projs#root()')
 rootid  = vim.eval('projs#rootid()')
 proj_select  = vim.eval('proj_select')
 
-projs_db.fill_from_files(db_file,root,rootid,proj_select)
+def logfun(e):
+	vim.command('let e="' + e +'"')
+	vim.command('call base#log(e)')
+
+db.fill_from_files(db_file,root,rootid,proj_select,logfun)
 
 eof
 
@@ -125,18 +129,15 @@ function! projs#db#drop_tables ()
 
 python << eof
 
-import vim
+import vim,sys
 import sqlite3
 
-db_file = vim.eval('db_file')
+pylib = vim.eval('projs#pylib()')
+sys.path.append(pylib)
+import plg.projs.db as db
 
-conn = sqlite3.connect(db_file)
-c = conn.cursor()
-
-c.execute('''DROP TABLE IF EXISTS projs''')
-
-conn.commit()
-conn.close()
+db_file = vim.eval('projs#db#file()')
+db.drop_tables(db_file)
 
 eof
 
