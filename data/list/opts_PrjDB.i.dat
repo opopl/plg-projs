@@ -2,4 +2,4 @@ update_from_files
 fill_from_files
 drop_tables
 create_tables
-query
+query_split

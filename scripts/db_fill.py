@@ -28,7 +28,7 @@ db_file = os.path.join(root,'projs.sqlite')
 if args.db_file:
     db_file=args.db_file
 
-proj = 'book_css_meier'
+proj = ''
 
 def logfun(e):
     print(e)

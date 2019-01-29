@@ -68,20 +68,19 @@ def fill_from_files(db_file,root,rootid,proj_select,logfun):
 		if m:
 			x+=1
 			proj = m.group(1)					
-			if not ((proj_select) and ( proj == proj_select  )):
-				continue
-			sec = m.group(2)					
-			if not sec: 
-				sec = '_main_' 
-			data   = get_data(fpath)
-			tags   = data.get('tags','')
-			author = data.get('author','')
-			v_projs = [proj,sec,file,root,rootid,tags,author]
-			q = '''insert or ignore into projs (proj,sec,file,root,rootid,tags,author) values (?,?,?,?,?,?,?)'''
-			try:
-				c.execute(q,v_projs)
-			except sqlite3.IntegrityError, e:
-				logfun(e)
+			if ( not proj_select ) or ( proj == proj_select ):
+				sec = m.group(2)					
+				if not sec: 
+					sec = '_main_' 
+				data   = get_data(fpath)
+				tags   = data.get('tags','')
+				author = data.get('author','')
+				v_projs = [proj,sec,file,root,rootid,tags,author]
+				q = '''insert or ignore into projs (proj,sec,file,root,rootid,tags,author) values (?,?,?,?,?,?,?)'''
+				try:
+					c.execute(q,v_projs)
+				except sqlite3.IntegrityError, e:
+					logfun(e)
 	conn.commit()
 	conn.close()
 

@@ -59,10 +59,43 @@ eof
 
 endfunction
 
-"""prjdb_query
 function! projs#db#query (...)
 	let ref = get(a:000,0,{})
-	let query = get(ref,'query','')
+	let query      = get(ref,'query','')
+
+	let rows=[]
+
+"""prjdb_query
+python << eof
+
+import sqlite3,records
+import vim
+
+db_file = vim.eval('projs#db#file()')
+query   = vim.eval('query')
+
+conn = sqlite3.connect(db_file)
+c = conn.cursor()
+
+rows=[]
+
+lines=[]
+for line in lines:
+	vim.command("let row='" + line + "'")
+	vim.command("call add(rows,row)")
+
+for row in c.execute(query):
+	vim.command("let row='" + ' '.join(row) + "'")
+	vim.command("call add(rows,row)")
+	rows.append(row)
+
+eof
+	return rows
+
+endfunction
+
+function! projs#db#query_split (...)
+	let ref = get(a:000,0,{})
 
 	let proj = projs#proj#name()
 
@@ -80,46 +113,15 @@ function! projs#db#query (...)
 		let query =  query . ' LIMIT ' . limit 
 	endif
 
-	let root   = projs#root()
-	let rootid = projs#rootid()
-
 	let query  = input('query:',query)
 
-	let root   = projs#root()
-	let rootid = projs#rootid()
+	let rows = []
+	call extend(rows, [' ',query,' '])
 
-	let db_file = projs#db#file()
-	let rows=[]
+	let rows_q = projs#db#query({ 'query' : query })
+	call extend(rows,rows_q)
 
-python << eof
-
-import sqlite3
-import vim
-
-db_file = vim.eval('db_file')
-root    = vim.eval('root')
-rootid  = vim.eval('rootid')
-query   = vim.eval('query')
-
-conn = sqlite3.connect(db_file)
-c = conn.cursor()
-
-rows=[]
-
-lines=[]
-lines.extend([' ',query,' '])
-for line in lines:
-	vim.command("let row='" + line + "'")
-	vim.command("call add(rows,row)")
-
-for row in c.execute(query):
-	vim.command("let row='" + ' '.join(row) + "'")
-	vim.command("call add(rows,row)")
-	rows.append(row)
-
-eof
 	call base#buf#open_split({ 'lines' : rows })
-
 endfunction
 
 
@@ -141,6 +143,42 @@ db.drop_tables(db_file)
 
 eof
 
+endfunction
+
+function! projs#db#init_py ()
+python << eof
+
+import vim,sys
+import sqlite3
+
+pylib = vim.eval('projs#pylib()')
+sys.path.append(pylib)
+import plg.projs.db as db
+	
+eof
+endfunction
+
+
+function! projs#db#secnames (...)
+	call projs#db#init_py ()
+
+	let ref = get(a:000,0,{})
+	let proj = projs#proj#name()
+
+	if base#type(ref) == 'String'
+		let proj = ref
+	elseif base#type(ref) == 'Dictionary'
+		let proj = get(ref,'proj',proj)
+	endif
+
+
+	let q = 'SELECT sec FROM projs WHERE proj="'.proj.'"'
+	let ref = {
+			\	'query' : q,
+			\	'proj' : proj,
+			\	}
+	let rows = projs#db#query(ref)
+	return rows
 endfunction
 
 function! projs#db#file ()
