@@ -1,6 +1,8 @@
 <?php
 	$dir = getenv('PROJSDIR');
 
+	$conffile = 
+
 	if (isset($_GET['action'])) {
 		 $action = $_GET['action'];
 

@@ -34,5 +34,7 @@ git_add_pics
 git_commit
 git_save
 git_add_texfiles
+## 
+status
 ###mkdir
 mkdir_pics

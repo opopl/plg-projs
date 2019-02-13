@@ -184,6 +184,24 @@ function! projs#action#git_save ()
 
 endfunction
 
+"""prjact_status
+function! projs#action#status ()
+	let proj = projs#proj#name()
+	let root = projs#root()
+	call base#cd(root)
+
+	let status = []
+
+	let cmds = []
+	call add(cmds,'git status')
+
+	let ok = base#sys({ "cmds" : cmds})
+	call add(status,base#varget('sysout'))
+
+	call base#buf#open_split({ 'lines' : status })
+
+endfunction
+
 """prjact_git_commit
 function! projs#action#git_commit ()
 	let proj = projs#proj#name()
