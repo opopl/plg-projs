@@ -1688,18 +1688,26 @@ function! projs#datafiles (id)
     return files
 endfunction
 
+"Usage
+"  Rename current project to 'new':
+"    call projs#renameproject(new)
+"
+"  Rename project from 'old' to 'new':
+"    call projs#renameproject(old,new)
 
+function! projs#renameproject(...)
 
- 
-function! projs#renameproject(old,new)
+ let new = get(a:000,0,'')
+ let old = get(a:000,1,projs#proj#name())
 
- let old = a:old
- let new = a:new
+ if !strlen(new)
+			let new = input('New project name:','','custom,projs#complete')
+ endif
 
  call projs#rootcd()
  call projs#proj#name(old)
 
- let files = projs#proj#files({ "exts" : [] })
+ let files = projs#proj#files()
 
  call projs#proj#name(new)
  

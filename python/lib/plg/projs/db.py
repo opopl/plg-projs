@@ -40,7 +40,7 @@ def drop_tables(db_file):
 	conn.close()
 
 def get_data(filename):
-	data={}
+	data = {}
 	with open(filename) as lines:
 		for line in lines:
 			m = p['tags'].match(line)
@@ -76,7 +76,7 @@ def fill_from_files(db_file,root,rootid,proj_select,logfun):
 				tags   = data.get('tags','')
 				author = data.get('author','')
 				v_projs = [proj,sec,file,root,rootid,tags,author]
-				q = '''insert or ignore into projs (proj,sec,file,root,rootid,tags,author) values (?,?,?,?,?,?,?)'''
+				q='''insert or ignore into projs (proj,sec,file,root,rootid,tags,author) values (?,?,?,?,?,?,?)'''
 				try:
 					c.execute(q,v_projs)
 				except sqlite3.IntegrityError, e:
