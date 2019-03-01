@@ -67,9 +67,9 @@ def fill_from_files(db_file,root,rootid,proj_select,logfun):
 		m = p['texfile'].match(file)
 		if m:
 			x+=1
-			proj = m.group(1)					
+			proj = m.group(1)
 			if ( not proj_select ) or ( proj == proj_select ):
-				sec = m.group(2)					
+				sec = m.group(2)
 				if not sec: 
 					sec = '_main_' 
 				data   = get_data(fpath)
