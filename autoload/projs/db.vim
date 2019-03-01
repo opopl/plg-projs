@@ -2,16 +2,14 @@
 """prjdb_create_tables
 function! projs#db#create_tables ()
 	let db_file = projs#db#file()
-	let pylib = projs#pylib()
+	let pylib   = projs#pylib()
+
+	call pymy#py#add_lib(pylib)
 
 python << eof
 
 import vim
-import sys
 import sqlite3
-
-pylib = vim.eval('projs#pylib()')
-sys.path.append(pylib)
 import plg.projs.db as db
 
 db_file = vim.eval('db_file')
