@@ -1070,13 +1070,13 @@ endfunction
 
 function! projs#echo(text,...)
 
-    let prefix='--PROJS--'
+    let prefix='projs'
     if a:0
         let opts=a:1
         let prefix=get(opts,'prefix',prefix)
     endif
 
-    call base#log(prefix . ' ' . a:text)
+    call base#log(a:text,{ 'prf' : prefix})
 
 endfunction
 
