@@ -58,19 +58,22 @@ eof
 endfunction
 
 function! projs#db#query (...)
-	let ref = get(a:000,0,{})
-	let query      = get(ref,'query','')
+	let ref   = get(a:000,0,{})
+
+	let query  = get(ref,'query','')
+	let params = get(ref,'params',[])
 
 	let rows=[]
 
 """prjdb_query
 python << eof
 
-import sqlite3,records
+import sqlite3
 import vim
 
 db_file = vim.eval('projs#db#file()')
 query   = vim.eval('query')
+params  = vim.eval('params')
 
 conn = sqlite3.connect(db_file)
 c = conn.cursor()
@@ -82,7 +85,7 @@ for line in lines:
 	vim.command("let row='" + line + "'")
 	vim.command("call add(rows,row)")
 
-for row in c.execute(query):
+for row in c.execute(query,params):
 	vim.command("let row='" + ' '.join(row) + "'")
 	vim.command("call add(rows,row)")
 	rows.append(row)
@@ -169,11 +172,11 @@ function! projs#db#secnames (...)
 		let proj = get(ref,'proj',proj)
 	endif
 
-
-	let q = 'SELECT sec FROM projs WHERE proj="'.proj.'"'
+	let q = 'SELECT sec FROM projs WHERE proj = ?'
 	let ref = {
-			\	'query' : q,
-			\	'proj' : proj,
+			\	'query'  : q,
+			\	'params' : [proj],
+			\	'proj'   : proj,
 			\	}
 	let rows = projs#db#query(ref)
 	return rows

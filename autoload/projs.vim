@@ -1443,6 +1443,13 @@ function! projs#list_write2dat ()
 endfunction
 
 function! projs#listfromfiles ()
+		"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+		let msg = ['start']
+		let prf = {'plugin' : 'projs', 'func' : 'projs#listfromfiles'}
+		call base#log(msg,prf)
+		let l:start=localtime()
+		"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+		"
     let root = projs#root()
 
     let list = base#find({ 
@@ -1453,7 +1460,7 @@ function! projs#listfromfiles ()
         \ "pat"     : '^(\w+)\.tex$'         , 
         \ })
         
-    let exclude=projs#list#exclude()
+    let exclude = projs#list#exclude()
 
     let nlist=[]
     let found={}
@@ -1471,6 +1478,13 @@ function! projs#listfromfiles ()
     endfor
 
     call projs#varset('list',nlist)
+
+		"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+		let l:elapsed = localtime() - l:start
+		let msg = ['end, elapsed = ' . l:elapsed]
+		let prf = {'plugin' : 'projs', 'func' : 'projs#listfromfiles'}
+		call base#log(msg,prf)
+		"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
     return nlist
 endf    
