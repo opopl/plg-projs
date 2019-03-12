@@ -1063,20 +1063,16 @@ function! projs#initvars (...)
 endf
 
 function! projs#warn (text)
-    let prefix = "--PROJS--"
-    call base#warn({ "text" : a:text, "prefix" : prefix })
-    
+    call base#warn({ "text" : a:text, "plugin" : 'projs' })
 endfunction
 
 function! projs#echo(text,...)
 
-    let prefix='projs'
-    if a:0
-        let opts=a:1
-        let prefix=get(opts,'prefix',prefix)
-    endif
-
-    call base#log(a:text,{ 'prf' : prefix})
+	let opts = get(a:000,0,{})
+ 
+	let prf = { 'plugin' : 'projs'}
+	call extend(prf,opts)
+	call base#log(a:text,prf)
 
 endfunction
 
@@ -1309,6 +1305,10 @@ endfunction
 " ProjsInit DIRID
 
 function! projs#init (...)
+		let l:start = localtime()
+		let msg = ['start']
+		let prf = {'plugin' : 'projs', 'func' : 'projs#init'}
+		call base#log(msg,prf)
 
     " -------------------------------------------------
     " load variables from the corresponding dat files
@@ -1336,38 +1336,17 @@ function! projs#init (...)
       return
     endif
 
-    "call base#cd(root)
-
     let ifile = projs#path(['_init_.vim'])
     if filereadable(ifile)
       exe 'so '.ifile
     endif
 
-    let prefix="(projs#init) "
-    call projs#echo("Initializing projs plugin, \n\t projsdir => " . root ,{ "prefix" : prefix })
-  
-    let pdfout = projs#path([ 'pdf_built' ])
-
-    let pdffin = exists('$PDFOUT') ? $PDFOUT : base#qw#catfile('C: out pdf')
-
-    call projs#varset('pdffin',pdffin)
-    call base#mkdir(pdffin)
-
-    call projs#varset('prjmake_opt','latexmk')
-
-    call projs#varset('pdfout',pdfout)
-    call base#mkdir(pdfout)
-
-    let rootbuilddir = projs#path([ 'builds' ])
-    call projs#varset('rootbuilddir',rootbuilddir)
-    call base#mkdir(rootbuilddir)
+		let vars = projs#varget('init_vars',[])
+		for x in vars
+			call projs#init#var(x)
+		endfor
 
     if ! exists("proj") | let proj='' | endif
-        
-    let projsdirs = projs#varget('projsdirs')
-    call projs#varset('projsdirslist',projsdirs)
-
-    call projs#varset('exe_latex','pdflatex')
 
     " update list of projs plugin variables
     call projs#update#varlist()
@@ -1921,6 +1900,13 @@ function! projs#update_qw (s)
 endfunction
 
 function! projs#update (...)
+	"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+	let msg = ['start']
+	let prf = {'plugin' : 'projs', 'func' : 'projs#update'}
+	call base#log(msg,prf)
+	let l:start=localtime()
+	"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
   let opts = projs#varget('opts_PrjUpdate',base#qw('secnames list datvars'))
   let proj = projs#proj#name()
 

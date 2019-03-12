@@ -42,11 +42,22 @@ function! projs#init#root (...)
 
     call base#pathset({ 'projs' : root })
 
+		let msg = ['rootid = ' . rootid, 'root = ' . root ]
+		let prf = {'plugin' : 'projs', 'func' : 'projs#init#root'}
+		call base#log(msg,prf)
+
 		return [root,rootid]
 	
 endfunction
 
 function! projs#init#templates (...)
+	"xxxxxxxxxxxxxxxxxxxxxxxx
+	let msg = ['start']
+	let prf = {'plugin' : 'projs', 'func' : 'projs#init#templates'}
+	let l:start = localtime()
+	call base#log(msg,prf)
+	"xxxxxxxxxxxxxxxxxxxxxxxx
+
 	let tdir=base#qw#catpath('plg','projs templates')
 
 	if !isdirectory(tdir)
@@ -87,7 +98,51 @@ function! projs#init#templates (...)
 	endfor
 	call projs#update('varlist')
 
+
+	"xxxxxxxxxxxxxxxxxxxxxxxx
+	let l:elapsed = localtime()-l:start
+	let msg = ['end, elapsed = ' . l:elapsed]
+	let prf = {'plugin' : 'projs', 'func' : 'projs#init#templates'}
+	call base#log(msg,prf)
+	"xxxxxxxxxxxxxxxxxxxxxxxx
+
 endfunction
+
+function! projs#init#var (...)
+	let varname = get(a:000,0,'')
+
+	if varname == 'pdffin'
+		
+		let pdffin = exists('$PDFOUT') ? $PDFOUT : base#qw#catfile('C: out pdf')
+		
+		call projs#varset('pdffin',pdffin)
+		call base#mkdir(pdffin)
+
+	elseif varname == 'pdfout'
+		let pdfout = projs#path([ 'pdf_built' ])
+
+    call projs#varset('pdfout',pdfout)
+    call base#mkdir(pdfout)
+
+	elseif varname == 'prjmake_opt'
+    call projs#varset('prjmake_opt','latexmk')
+
+	elseif varname == 'rootbuilddir'
+    let rootbuilddir = projs#path([ 'builds' ])
+    call projs#varset('rootbuilddir',rootbuilddir)
+    call base#mkdir(rootbuilddir)
+
+	elseif varname == 'exe_latex'
+    call projs#varset('exe_latex','pdflatex')
+
+	elseif varname == 'projsdirs'
+    let projsdirs = projs#varget('projsdirs')
+    call projs#varset('projsdirslist',projsdirs)
+
+	endif
+
+endfunction
+
 
 function! projs#init#au (...)
 	let root   = projs#root()
