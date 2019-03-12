@@ -1922,11 +1922,9 @@ function! projs#update (...)
             \ })
     endif
 
-    let o = { "prefix" : "(proj: ".proj.") "  }
-
 """prjupdate_secnames
     if opt == 'secnames'
-        call projs#echo("Updating list of sections",o)
+        call projs#echo("Updating list of sections",prf)
 
         call projs#proj#files({ 'rw_f_listfiles' : 1 })
 
@@ -1934,20 +1932,19 @@ function! projs#update (...)
         call projs#proj#secnamesall()
 
     elseif opt == 'list'
-        call projs#echo("Updating list of projects")
+        call projs#echo("Updating list of projects",prf)
 
         call projs#listfromfiles()
 
-
 """prjupdate_piclist
     elseif opt == 'piclist'
-        call projs#echo("Updating list of pictures",o)
+        call projs#echo("Updating list of pictures",prf)
 
         let pdir = projs#path(['pics',proj])
         let piclist = base#find({ 
             \ "dirs"    : [pdir],
             \ "qw_exts" : 'jpg png eps',
-            \ "rmext" : 1,
+            \ "rmext"   : 1,
             \ "relpath" : 1,
             \ })
         call projs#varset('piclist',piclist)
@@ -1957,17 +1954,17 @@ function! projs#update (...)
         call projs#proj#files({ 'rw_f_listfiles' : 1 })
 
     elseif opt == 'secnamesbase'
-        call projs#echo("Updating list of base sections",o)
+        call projs#echo("Updating list of base sections",prf)
 
         call projs#varsetfromdat('secnamesbase')
 
     elseif opt == 'usedpacks'
-        call projs#echo("Updating list of used TeX packages",o)
+        call projs#echo("Updating list of used TeX packages",prf)
 
         call projs#update#usedpacks()
 
     elseif opt == 'varlist'
-        call projs#echo("Updating list of PROJS variables")
+        call projs#echo("Updating list of PROJS variables",prf)
 
         call projs#update#varlist()
 
@@ -1975,7 +1972,7 @@ function! projs#update (...)
         call projs#update#datvars()
 
     elseif opt == 'loaded'
-        call projs#echo("Updating list of loaded projects")
+        call projs#echo("Updating list of loaded projects",prf)
 
         call base#buffers#get()
     
@@ -1992,7 +1989,7 @@ function! projs#update (...)
           let proj = projs#namefromfile({ 'file' : file })
           call extend(loaded,{ proj : 1 })
         endfor
-        call projs#var('loaded',keys(loaded))
+        call projs#varset('loaded',keys(loaded))
 
     endif
     
