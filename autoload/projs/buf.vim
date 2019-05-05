@@ -21,20 +21,11 @@ function! projs#buf#tex_tex ()
 			\	"file" : b:basename ,
 			\	"type" : "basename" ,
 			\	"proj" : b:proj     ,
-   		\	})
+			\	})
 
-	"let  mprg='projs_pdflatex'
-	let  mprg='projs_latexmk'
+	let  mprg = 'projs_latexmk'
 
- " let aucmds = [ 
-			"\	'call projs#root("'.escape(b:root,'\').'")'           ,
-			"\	'call projs#proj#name("' . b:proj .'")'   ,
-			"\	'call projs#proj#secname("' . b:sec .'")' ,
-			"\	'call make#makeprg("'.mprg.'",{"echo":0})',
-			"\	'call projs#onload()'                     ,
-			"\	'call projs#sec#onload("'.b:sec.'")'      ,
-			"\	] 
-		let aucmds = [ 
+	let aucmds = [ 
 			\	'call projs#root("'.escape(b:root,'\').'")'           ,
 			\	'call projs#proj#name("' . b:proj .'")'   ,
 			\	'call projs#proj#secname("' . b:sec .'")' ,

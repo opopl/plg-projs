@@ -745,12 +745,12 @@ function! projs#viewproj (...)
         let proj = matchstr(a:1,'^\zs\w\+\ze')
         let sec  = matchstr(a:1,'^\w\+\.\zs\w\+\ze')
     else
-        let proj=projs#selectproject()
+        let proj = projs#selectproject()
     endif
     let proj = proj
 
-    if !projs#exists(proj)
-        let o = input('Project '.proj.' does not exist, create new? (1/0):',1)
+    if ! projs#exists(proj)
+        let o = input('Project ' . proj . ' does not exist, create new? (1/0):',1)
         if o
             call projs#new(proj)
             return 1
@@ -763,14 +763,13 @@ function! projs#viewproj (...)
     call projs#varset('secorderfile',f)
 
     if ! strlen(sec)
-        let sec='_main_'
+        let sec = '_main_'
     endif
-
 
     call projs#varset('secname',sec)
     call projs#varset('proj',proj)
     
-    call projs#opensec(projs#varget('secname',sec))
+    call projs#opensec(sec)
  
     if (exists("*make#makeprg"))
         call make#makeprg('projs_latexmk',{ 'echo' : 0 })
@@ -785,12 +784,12 @@ function! projs#viewproj (...)
     TgSet projs_this
     TgAdd plg_projs
 
-    let loaded=projs#varget('loaded',[])
+    let loaded = projs#varget('loaded',[])
 
-    call add(loaded,proj)
+    call add(loaded, proj)
     call projs#varset('loaded',loaded)
 
-    let u='piclist secnames usedpacks'
+    let u = 'piclist secnames usedpacks'
     call projs#update_qw(u)
 
 endfun
