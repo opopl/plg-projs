@@ -183,7 +183,7 @@ function! projs#db#secnames (...)
 endfunction
 
 function! projs#db#file ()
-	let root = projs#root()
+	let root    = projs#root()
 	let db_file = base#file#catfile([ root, 'projs.sqlite' ])
 
 	return db_file

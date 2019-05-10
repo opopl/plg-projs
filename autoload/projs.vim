@@ -150,9 +150,9 @@ endfunction
 " projs#newsecfile(sec,{ "prompt" : 0 })
 
 function! projs#newsecfile(sec,...)
+    let sec        = a:sec
 
-    let sec  = a:sec
-    let proj = projs#proj#name()
+    let proj       = projs#proj#name()
 		let parent_sec = projs#varget('parent_sec','')
 
     let ref = { 
@@ -190,7 +190,7 @@ function! projs#newsecfile(sec,...)
 
     let lines = []
 
-    let tagsec=[' ' , '%%file '.sec, ' ' ]
+    let tagsec = [' ' , '%%file '.sec, ' ' ]
 		call extend(tagsec,[' ','%%parent ' . parent_sec ,' '])
 
     let keymap = 'ukrainian-jcuken'
@@ -881,23 +881,26 @@ function! projs#onload (...)
   let ref = {}
   if a:0 | let ref = a:1 | endif
 
-  let prf={ 'prf' : 'projs#onload' }
-  call base#log([
-    \ 'ref => ' . base#dump(ref),
-    \ ],prf)
-
-  let b:projs_onload_done=1
-
-  let proj = projs#proj#name()
-  let proj = get(ref,'proj',proj)
-
-  setlocal ts=2
-
   "-------- needed for keymapping
   setlocal iminsert=0
 
   "-------- needed for tags
   setlocal isk=@,48-57,_,128-167,224-235
+
+  let done = base#eval("b:projs_onload_done")
+	if done | return | endif
+
+  let b:projs_onload_done=1
+  	
+  let prf = { 'prf' : 'projs#onload' }
+  call base#log([
+    \ 'ref => ' . base#dump(ref),
+    \ ],prf)
+
+  let proj = projs#proj#name()
+  let proj = get(ref,'proj',proj)
+
+  setlocal ts=2
 
   TgSet projs_this
 

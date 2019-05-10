@@ -88,15 +88,15 @@ function! projs#sec#delete (...)
 	let ok = base#file#delete({ 'file' : secfile })
 
 	if ok
-		call projs#echo('Section has been deleted: '.sec)
+		call projs#echo('Section has been deleted: ' . sec)
 	endif
 
 endfunction
 
 function! projs#sec#onload (sec)
-	let sec=a:sec
+	let sec = a:sec
 
-	let prf={ 'prf' : 'projs#sec#onload' }
+	let prf = { 'prf' : 'projs#sec#onload' }
 	call base#log([
 		\	'sec => ' . sec,
 		\	],prf)
@@ -108,21 +108,23 @@ endfunction
 function! projs#sec#add (sec)
 	let sec   = a:sec
 
+	let proj = projs#proj#name()
+
 	let sfile = projs#secfile(sec)
 	let sfile = fnamemodify(sfile,':p:t')
 
 	let pfiles =	projs#proj#files()
 	if !base#inlist(sfile,pfiles)
-			call add(pfiles,sfile)
-
-			let f_listfiles=projs#secfile('_dat_files_')
-			call base#file#write_lines({ 
-				\	'lines' : pfiles, 
-				\	'file'  : f_listfiles, 
-				\})
+		call add(pfiles,sfile)
+	
+		let f_listfiles = projs#secfile('_dat_files_')
+		call base#file#write_lines({ 
+			\	'lines' : pfiles, 
+			\	'file'  : f_listfiles, 
+			\})
 	endif
 
-	if !projs#sec#exists(sec)
+	if ! projs#sec#exists(sec)
 		let secnames    = base#varget('projs_secnames',[])
 		let secnamesall = base#varget('projs_secnamesall',[])
 
@@ -133,11 +135,28 @@ function! projs#sec#add (sec)
 		let secnames    = base#uniq(secnames)
 	endif
 
-python << eof
-	q = '''insert or ignore into projs (proj,sec,file,root,rootid,tags,author) values (?,?,?,?,?,?,?)'''
+	let dbfile  = projs#db#file()
 	
-eof
+	let t = "projs"
+	let h = {
+		\	"proj"   : proj,
+		\	"sec"    : sec,
+		\	"file"   : sfile,
+		\	"root"   : projs#root(),
+		\	"rootid" : projs#rootid(),
+		\	"tags"   : "",
+		\	"author" : "",
+		\	}
 	
+	let ref = {
+		\ "dbfile" : dbfile,
+		\ "i"      : "INSERT OR IGNORE",
+		\ "t"      : t,
+		\ "h"      : h,
+		\ }
+		
+	call pymy#sqlite#insert_hash(ref)
+
 endfunction
 
 function! projs#sec#exists (...)

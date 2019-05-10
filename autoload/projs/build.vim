@@ -301,7 +301,7 @@ function! projs#build#make_invoke (...)
 	 "
 		 echo 'make: prjmake_opt => ' . opt . ', texmode => ' . texmode . ', bnum => ' . bnum 
 			 
-		 if index([ 'nonstopmode','batchmode' ],texmode) >= 0 
+		 if index([ 'nonstopmode', 'batchmode' ], texmode) >= 0 
 		   exe 'silent make!'
 		 elseif texmode == 'errorstopmode'
 		   exe 'make!'
