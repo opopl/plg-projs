@@ -247,6 +247,57 @@ function! projs#build#set_texoutdir (...)
  return texoutdir
 endf
 
+function! projs#build#make_async (...)
+	let ref = get(a:000,0,{})
+
+	let env = {}
+	function env.get(temp_file) dict
+			let code = self.return_code
+
+			let b_data = {}
+
+			if filereadable(a:temp_file)
+				let out = readfile(a:temp_file)
+
+				if code == 0
+					redraw!
+					echohl IncSearch
+					echo 'SUCCESS: ' . url
+					echohl None
+				endif
+	
+				call extend(b_data,{ 
+					\	'output' : out,
+					\ })
+			endif
+
+			call base#varset('projs_build_data',b_data)
+
+			try
+				echo 'BB'	
+			catch 
+				echo v:exception
+			endtry
+
+			wincmd p
+	endfunction
+
+	let F = asc#tab_restore(env)
+
+	let r = { 
+		\	'cmd'   : cmd, 
+		\	'path'  : dir,
+		\	}
+	call extend(r,{ 'Fn' : F })
+	call asc#run(r)
+
+endfunction
+
+"Usage:
+"	call projs#build#make_invoke ({ ... })
+"
+
+
 function! projs#build#make_invoke (...)
  let ref       = get(a:000,0,{})
 
@@ -344,13 +395,28 @@ function! projs#build#make_invoke (...)
 		 		echo 'BUILD OK'
 		 else
 		 		echo 'BUILD FAIL'
-		 		call base#text#bufsee({'lines':sysout})
+		 		call base#text#bufsee({ 'lines' : sysout })
 		 endif
 	endif
 
 	return ok
 
 endfunction
+
+
+"Usage:
+"		call projs#build#run ()
+"		call projs#build#run ({ ... })
+"
+"Call tree:
+"
+"		Calls:
+"			projs#build#make_invoke
+"			projs#build#pdf_process
+"			projs#build#qflist_process
+"
+"		Called by:
+"			projs#prjmake
 
 function! projs#build#run (...)
  call projs#varset('verbose',1)

@@ -1770,6 +1770,18 @@ function! projs#prjmakeoption (...)
     return opt
 endfunction
 
+"Usage:
+"		call projs#prjmake ()
+"		call projs#prjmake (opt)
+"			where opt 
+"
+"Call tree:
+"		Calls:
+"			projs#build#run
+"
+"		Called by:
+"			PrjMake
+
 function! projs#prjmake (...)
     let opt = a:0 ? a:1 :  projs#prjmakeoption()
     call projs#build#run({ "opt" : opt })
