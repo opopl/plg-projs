@@ -358,6 +358,8 @@ function! projs#build#make_invoke (...)
 		   exe 'make!'
 		 endif
 
+ elseif buildmode == 'make_async'
+
  elseif buildmode == 'base_sys'
 	 let cmd = &makeprg
 
@@ -518,7 +520,7 @@ function! projs#build#pdf_process ()
 	
 	 else
 	 	 let prf = { 'prf' : '' }
-		 call base#log([ 'NO PDF file: ' , pfile],prf)
+		 call base#log([ 'NO PDF file: ' , pfile], prf)
 	 endif
  endif
 
