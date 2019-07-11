@@ -1,4 +1,4 @@
 texmode nonstopmode
 rootid texdocs
-#buildmode make
-buildmode make_async
+buildmode make
+#buildmode make_async

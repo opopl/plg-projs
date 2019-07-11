@@ -281,7 +281,7 @@ function! projs#build#make_async (...)
 					\ })
 			endif
 
-			call base#varset('projs_build_data',b_data)
+			call base#varset('projs_b_data',b_data)
 
 			try
 				echo 'BB'	
@@ -374,6 +374,12 @@ function! projs#build#make_invoke (...)
  elseif buildmode == 'make_async'
 	 let cmd  = &makeprg
 	 let path = base#qw#catpath('projs','')
+
+	 call projs#build#make_async({ 
+	 			\ 'cmd'  : cmd,
+	 			\ 'path' : path,
+	 			\	})
+	 return
 
  elseif buildmode == 'base_sys'
 	 let cmd = &makeprg
