@@ -247,8 +247,18 @@ function! projs#build#set_texoutdir (...)
  return texoutdir
 endf
 
+"Usage:
+"
+"		call projs#build#make_async ({ 
+"				\	'cmd'  : cmd,
+"				\	'path' : path,
+"				\	})
+
 function! projs#build#make_async (...)
 	let ref = get(a:000,0,{})
+
+	let cmd  = get(ref,'cmd','')
+	let path = get(ref,'path','')
 
 	let env = {}
 	function env.get(temp_file) dict
@@ -286,7 +296,7 @@ function! projs#build#make_async (...)
 
 	let r = { 
 		\	'cmd'   : cmd, 
-		\	'path'  : dir,
+		\	'path'  : path,
 		\	}
 	call extend(r,{ 'Fn' : F })
 	call asc#run(r)
@@ -294,8 +304,11 @@ function! projs#build#make_async (...)
 endfunction
 
 "Usage:
-"	call projs#build#make_invoke ({ ... })
+"		call projs#build#make_invoke ({ ... })
 "
+"Call tree:
+"		Called by:
+"			projs#build#run()
 
 
 function! projs#build#make_invoke (...)
@@ -359,6 +372,8 @@ function! projs#build#make_invoke (...)
 		 endif
 
  elseif buildmode == 'make_async'
+	 let cmd  = &makeprg
+	 let path = base#qw#catpath('projs','')
 
  elseif buildmode == 'base_sys'
 	 let cmd = &makeprg
