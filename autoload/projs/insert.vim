@@ -13,6 +13,28 @@ function! projs#insert#projname ()
 
 endfunction
 
+""" BaseDatView projs_opts_PrjInsert
+function! projs#insert#main ()
+	let proj = projs#proj#name()
+
+perl << eof
+	my $proj = VimVar('proj');
+	my $tt = q|
+		%%file _main_ 
+		%%file f_main
+		
+		\def\PROJ{%s}
+		\def\ii#1{\InputIfFileExists{\PROJ.#1.tex}{}{}}
+		\def\iif#1{\input{\PROJ/#1.tex}}
+		\def\idef#1{\InputIfFileExists{_def.#1.tex}{}{}}
+	|;
+	my $t = sprintf($tt,$proj);
+	VimLet('t',$t);
+eof
+	call append(line('.'),t)
+
+endfunction
+
 function! projs#insert#figure ()
 
 	let lines = []

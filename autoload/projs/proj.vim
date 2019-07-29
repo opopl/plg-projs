@@ -241,7 +241,8 @@ endfunction
 function! projs#proj#listfiles (...)
 	let proj = projs#proj#name()
 
-	let extstr = input('File extensions:'."\n",'tex bib vim')
+	let extstr = 'tex bib vim'
+	let extstr = input('File extensions:'."\n", extstr)
 	let exts = base#qwsort(extstr)
 
 	let pics = input('Include pics? 1/0:',1)
@@ -252,11 +253,10 @@ function! projs#proj#listfiles (...)
 		\	'pics' : pics,
 		\	 }) 
 
-	echo "\n".'--- List of project files ---'
-	for file in pfiles
-	  echo file
-	endfor
-	echo '-----------------------------'
+	let lines = []
+	call extend(lines,[ 'project files: '])
+	call extend(lines,base#map#add_tabs(pfiles) )
+	call base#buf#open_split({ 'lines' : lines })
 	
 endfunction
 

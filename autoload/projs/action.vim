@@ -195,8 +195,8 @@ function! projs#action#status ()
 	let cmds = []
 	call add(cmds,'git status')
 
-	let ok = base#sys({ "cmds" : cmds})
-	call add(status,base#varget('sysout'))
+	let ok = base#sys({ "cmds" : cmds })
+	call add(status, base#varget('sysout') )
 
 	call base#buf#open_split({ 'lines' : status })
 
@@ -209,7 +209,7 @@ function! projs#action#git_commit ()
 	call base#cd(root)
 
 	let msg = ''
-	let msg = input('git commit msg:',msg)
+	let msg = input('git commit msg: ',msg)
 	let msg = '#'.proj.' '.msg
 
 	let cmds = []
@@ -257,7 +257,9 @@ perl << eof
 		csv_class        => "Text::CSV_XS",
 		csv_null         => 1,
 		csv_tables       => {
-		info => { f_file => "info.csv" }
+			info => { 
+				f_file => "info.csv" 
+			}
 		},
 		RaiseError       => 1,
 		PrintError       => 1,
