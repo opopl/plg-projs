@@ -17,23 +17,22 @@ endfunction
 function! projs#insert#main ()
 	let proj = projs#proj#name()
 
-perl << eof
-	my $proj = VimVar('proj');
-	my $tt = q|
-		%%file _main_ 
-		%%file f_main
-		
-		\def\PROJ{_PROJ_}
-		\def\ii#1{\InputIfFileExists{\PROJ.#1.tex}{}{}}
-		\def\iif#1{\input{\PROJ/#1.tex}}
-		\def\idef#1{\InputIfFileExists{_def.#1.tex}{}{}}
-	|;
-	$tt =~ s/_PROJ_/$proj/g; 
-	my @t = split "\n", $tt;
-	VimLet('t',[@t]);
+python3 << eof
+import vim
+
+t = '''
+%%file _main_ 
+%%file f_main
+\def\PROJ{_PROJ_}
+\def\ii#1{\InputIfFileExists{\PROJ.#1.tex}{}{}}
+\def\iif#1{\input{\PROJ/#1.tex}}
+\def\idef#1{\InputIfFileExists{_def.#1.tex}{}{}}
+'''
+print(t)
+
 eof
-	echo t
-	call append(line('.'),t)
+	let t  = py3eval('t')
+	"call append(line('.'),t)
 
 endfunction
 
