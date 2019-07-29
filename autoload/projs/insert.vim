@@ -18,21 +18,23 @@ function! projs#insert#main ()
 	let proj = projs#proj#name()
 
 python3 << eof
-import vim
+import vim,re
+
+proj = vim.eval('proj')
 
 t = '''
-%%file _main_ 
-%%file f_main
-\def\PROJ{_PROJ_}
-\def\ii#1{\InputIfFileExists{\PROJ.#1.tex}{}{}}
-\def\iif#1{\input{\PROJ/#1.tex}}
-\def\idef#1{\InputIfFileExists{_def.#1.tex}{}{}}
+%%file _main_\n
+%%file f_main\n
+\\def\PROJ{_PROJ_}\n
+\\def\ii#1{\InputIfFileExists{\PROJ.#1.tex}{}{}}\n
+\\def\iif#1{\input{\PROJ/#1.tex}}\n
+\\def\idef#1{\InputIfFileExists{_def.#1.tex}{}{}}\n
 '''
-print(t)
+t = re.sub(r'_PROJ_',proj,t)
 
 eof
 	let t  = py3eval('t')
-	"call append(line('.'),t)
+	call append(line('.'),t)
 
 endfunction
 
