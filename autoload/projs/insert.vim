@@ -23,7 +23,7 @@ import vim,re
 proj = vim.eval('proj')
 
 t = '''
-%%file _main_\n
+%%file _main_
 %%file f_main\n
 \\def\PROJ{_PROJ_}\n
 \\def\ii#1{\InputIfFileExists{\PROJ.#1.tex}{}{}}\n
@@ -34,7 +34,8 @@ t = re.sub(r'_PROJ_',proj,t)
 
 eof
 	let t  = py3eval('t')
-	call append(line('.'),t)
+	let ta = split(t,"\n")
+	call append(line('.'),ta)
 
 endfunction
 

@@ -267,7 +267,7 @@ function! projs#newsecfile(sec,...)
         call extend(lines,tagsec)
 
         call add(lines,'\phantomsection')
-        "call add(lines,'\renewcommand\bibname{<++>}')
+        "call add(lines,'\renewcommand\bibname{}')
 
         call add(lines,'\addcontentsline{toc}{chapter}{\bibname}')
 
@@ -832,6 +832,16 @@ endfunction
 
 function! projs#action (...)
   let act = get(a:000,0,'')
+
+	let acts = base#varget('projs_opts_PrjAct',[])
+	let acts = sort(acts)
+	if ! strlen(act)
+		let lines = ['Possible PrjAct actions: ']
+		let acts_tab = base#map#add_tabs(acts,1)
+		call extend(lines,acts_tab)
+		call base#buf#open_split({ 'lines' : lines })
+		return
+	endif
 
   let sub = 'projs#action#'.act
 

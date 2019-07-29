@@ -78,6 +78,8 @@ function! projs#action#thisproj_tags_replace (...)
 	let pdir  = projs#root()
 
 	for f in files
+		let done = 0
+
 		let p = base#file#catfile([ pdir, f ])
 		if !filereadable(p)
 			continue
@@ -91,10 +93,19 @@ function! projs#action#thisproj_tags_replace (...)
 
 		for l in lines
 			if l =~ pat
-				let l = substitute(l,pat,'%%file \1','g')
+				let l = substitute(l, pat, '%%file \1' , 'g')
+				let done = 1
 			endif
 			call add(nlines,l)
 		endfor
+
+		if !done
+			let sec = matchstr(f, '^\w\+\.\zs\(\w\+\)\ze\..*\.tex$')		
+			" insert before the first item
+			if strlen(sec)
+				call extend(nlines,[ ' ', '%%file ' . sec , ' ' ],0)
+			endif
+		endif
 
 		call writefile(nlines,p)
 	endfor
