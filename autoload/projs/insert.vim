@@ -23,14 +23,16 @@ perl << eof
 		%%file _main_ 
 		%%file f_main
 		
-		\def\PROJ{%s}
+		\def\PROJ{_PROJ_}
 		\def\ii#1{\InputIfFileExists{\PROJ.#1.tex}{}{}}
 		\def\iif#1{\input{\PROJ/#1.tex}}
 		\def\idef#1{\InputIfFileExists{_def.#1.tex}{}{}}
 	|;
-	my $t = sprintf($tt,$proj);
-	VimLet('t',$t);
+	$tt =~ s/_PROJ_/$proj/g; 
+	my @t = split "\n", $tt;
+	VimLet('t',[@t]);
 eof
+	echo t
 	call append(line('.'),t)
 
 endfunction
