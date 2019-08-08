@@ -456,7 +456,7 @@ function! projs#build#run (...)
 				\	"buildmode" : projs#varget('buildmode','make'),
 			 	\	}
 
- let refadd = get(a:000,0,{})
+ let refadd = get(a:000, 0, {})
  call extend(ref,refadd)
 
  let buildmode = get(ref,'buildmode','')
@@ -473,10 +473,12 @@ function! projs#build#run (...)
 
 	call projs#setbuildvars()
 
+	let r_prompt = { 'prompt' : prompt }
+
 	let texoutdir   = projs#build#set_texoutdir()
-	let texmode     = projs#build#set_texmode({ 'prompt' : prompt })
-	let texjobname  = projs#build#set_texjobname({ 'prompt' : prompt })
-	let pdfout      = projs#build#set_pdfout({ 'prompt' : prompt })
+	let texmode     = projs#build#set_texmode(r_prompt)
+	let texjobname  = projs#build#set_texjobname(r_prompt)
+	let pdfout      = projs#build#set_pdfout(r_prompt)
 
 	call projs#build#setmake({
 		\ "prompt"    : prompt,

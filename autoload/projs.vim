@@ -582,7 +582,9 @@ eof
         exe 'split ' . file
     endif
     
+		return 1
 endfunction
+"""end_newsecfile
 
 function! projs#help (...)
     echo ' '

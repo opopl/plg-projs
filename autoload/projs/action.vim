@@ -356,6 +356,39 @@ function! projs#action#append_thisproj (...)
 
 endfunction
 
+function! projs#action#async_build ()	
+	let proj = projs#proj#name()
+	let root = projs#root()
+
+	"let cmd = 'pdflatex '
+	let secbat = '_build_pdflatex_'
+	let bat = projs#secfile(sec_bat)
+	if !filereadable(bat)
+		let o = { 'prompt' : 0 }
+		call projs#newsecfile(sec_bat,o)
+	endif
+	
+	let env = {
+		\	'proj' : proj,
+		\	'root' : root,
+		\	}
+	let cmd = bat
+
+	function env.get(temp_file) dict
+		let code = self.return_code
+	
+		if filereadable(a:temp_file)
+			let out = readfile(a:temp_file)
+		endif
+	endfunction
+	
+	call asc#run({ 
+		\	'cmd' : cmd, 
+		\	'Fn'  : asc#tab_restore(env) 
+		\	})
+
+endfunction
+
 function! projs#action#create_sec_tab (...)
 	let sec = input('Table file:','fig_')
 

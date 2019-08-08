@@ -38,3 +38,4 @@ git_add_texfiles
 status
 ###mkdir
 mkdir_pics
+async_build
