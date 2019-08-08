@@ -368,25 +368,44 @@ function! projs#action#async_build ()
 
 	let o = { 'prompt' : 0 }
 	call projs#newsecfile(sec_bat,o)
+
+	let start = localtime()
 	
 	let env = {
-		\	'proj' : proj,
-		\	'root' : root,
+		\	'proj'  : proj,
+		\	'root'  : root,
+		\	'start' : start,
 		\	}
 	let cmd = bat
-	call tex#efm#latex()
 
 	function env.get(temp_file) dict
 		let code = self.return_code
 		let root = self.root
+		let proj = self.proj
+		let start = self.start
+
+		let end = localtime()
+		let duration =  end - start
+		let s_dur = ' ' . string(duration) . ' (secs)'
 	
 		if filereadable(a:temp_file)
 			call tex#efm#latex()
-			call base#cd(root)
+			exe 'cd ' . root
 			exe 'cgetfile ' . a:temp_file
-			copen
-			let out = readfile(a:temp_file)
-		endif
+
+			let err = getqflist()
+
+			redraw!
+			if len(err)
+				echohl WarningMsg
+				echo 'BUILD FAIL: ' . proj . s_dur
+				copen
+			else
+				echohl MoreMsg
+				echo 'BUILD OK: ' . proj . s_dur
+			endif
+			echohl None
+		endi
 	endfunction
 	
 	call asc#run({ 
