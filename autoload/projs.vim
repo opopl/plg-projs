@@ -1282,9 +1282,10 @@ function! projs#filejoinlines (...)
 endf
 
 function! projs#maps ()
-    nnoremap <silent> ;;co :copen<CR>
-    nnoremap <silent> ;;cc :cclose<CR>
+    	nnoremap <silent> ;;co :copen<CR>
+    	nnoremap <silent> ;;cc :cclose<CR>
 
+      nnoremap <buffer><silent> ;ab :PrjAct async_build<CR>
       nnoremap <buffer><silent> ;mm :PrjMake<CR>
       nnoremap <buffer><silent> ;mp :PrjMake build_pdflatex<CR>
       nnoremap <buffer><silent> ;ms :PrjMake single_run<CR>

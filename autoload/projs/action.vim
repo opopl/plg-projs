@@ -379,9 +379,9 @@ function! projs#action#async_build ()
 	let cmd = bat
 
 	function env.get(temp_file) dict
-		let code = self.return_code
-		let root = self.root
-		let proj = self.proj
+		let code  = self.return_code
+		let root  = self.root
+		let proj  = self.proj
 		let start = self.start
 
 		let end = localtime()
@@ -392,9 +392,9 @@ function! projs#action#async_build ()
 			call tex#efm#latex()
 			exe 'cd ' . root
 			exe 'cgetfile ' . a:temp_file
-
+			
 			let err = getqflist()
-
+			
 			redraw!
 			if len(err)
 				echohl WarningMsg
