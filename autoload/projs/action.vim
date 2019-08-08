@@ -362,11 +362,12 @@ function! projs#action#async_build ()
 
 	"let cmd = 'pdflatex '
 	let secbat = '_build_pdflatex_'
-	let bat = projs#secfile(sec_bat)
-	if !filereadable(bat)
-		let o = { 'prompt' : 0 }
-		call projs#newsecfile(sec_bat,o)
-	endif
+	let bat    = projs#secfile(sec_bat)
+	"if !filereadable(bat)
+	"endif
+
+	let o = { 'prompt' : 0 }
+	call projs#newsecfile(sec_bat,o)
 	
 	let env = {
 		\	'proj' : proj,

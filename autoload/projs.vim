@@ -382,8 +382,8 @@ eof
         let outdir_unix = base#file#catfile(pcunix)
         let outdir_unix = base#file#win2unix(outdir_unix)
 
-        let latexopts  = ' -file-line-error '
-        let latexopts .= ' -output-directory='. outdir_unix
+        let tex_opts  = ' -file-line-error '
+        let tex_opts .= ' -output-directory='. outdir_unix
 
         call add(lines,' ')
         call add(lines,'set Bin=%~dp0')
@@ -475,24 +475,30 @@ eof
         let outdir_unix = base#file#catfile(pcunix)
         let outdir_unix = base#file#win2unix(outdir_unix)
 
-        let latexopts = ''
+        let tex_opts = []
         if type == 'perltex'
-          let latexopts  .= ' --latex=pdflatex --nosafe'
+					call add(tex_opts,'--latex=pdflatex --nosafe')
         endif
 
-        let latexopts .= ' -file-line-error '
-        let latexopts .= ' -output-directory='. outdir_unix
+				call add(tex_opts,' -file-line-error ')
+				call add(tex_opts,' -interaction nonstopmode ')
+				call add(tex_opts,' -output-directory='. outdir_unix)
 
         let lns = {
-            \ 'texcmd'    : '%tex_exe% ' . latexopts .' '.proj ,
+            \ 'texcmd'    : '%tex_exe% %tex_opts% ' . proj ,
             \ 'bibtex'    : 'bibtex '    . proj            ,
             \ 'makeindex' : 'makeindex ' . proj            ,
             \ }
-        let bibfile=projs#secfile('_bib_')
+        let bibfile = projs#secfile('_bib_')
 
         call add(lines,' ')
         call add(lines,'set Bin=%~dp0')
         call add(lines,'set tex_exe='.tex_exe)
+        call add(lines,' ')
+        call add(lines,'set tex_opts=')
+				for opt in tex_opts
+        	call add(lines,'set tex_opts=%tex_opts% ' . opt)
+				endfor
         call add(lines,' ')
         call add(lines,'set outdir='.outdir_win)
         call add(lines,'md %outdir%')
