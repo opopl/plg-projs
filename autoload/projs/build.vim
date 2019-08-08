@@ -456,20 +456,20 @@ function! projs#build#run (...)
 				\	"buildmode" : projs#varget('buildmode','make'),
 			 	\	}
 
- let refadd = get(a:000, 0, {})
- call extend(ref,refadd)
+	let refadd = get(a:000, 0, {})
+	call extend(ref, refadd)
 
- let buildmode = get(ref,'buildmode','')
+	let buildmode = get(ref,'buildmode','')
 
- let prompt = get(ref,'prompt',0)
- let opt    = get(ref,'opt',opt)
+	let prompt = get(ref,'prompt',0)
+	let opt    = get(ref,'opt',opt)
 
- if prompt | let opt = input('Build opt: ', opt ,'custom,projs#complete#prjmake') | endif
- call projs#varset('prjmake_opt' , opt)
+	if prompt | let opt = input('Build opt: ', opt ,'custom,projs#complete#prjmake') | endif
+	call projs#varset('prjmake_opt' , opt)
 
- call base#log(' Stage latex: LaTeX invocation')
+	call base#log(' Stage latex: LaTeX invocation')
 
- let proj = projs#proj#name()
+	let proj = projs#proj#name()
 
 	call projs#setbuildvars()
 
@@ -556,9 +556,8 @@ function! projs#build#qflist_process (...)
  let proj      = projs#proj#name()
 
  let endtime   = localtime()
- let starttime = projs#var('build_starttime')
 
- let buildtime = endtime-starttime
+ let buildtime = endtime - starttime
  let timemsg   = ' (' . buildtime . ' secs)'
 
  let qflist = copy(getqflist())
