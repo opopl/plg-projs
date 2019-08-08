@@ -407,7 +407,9 @@ function! projs#action#async_build ()
 			echohl None
 		endi
 	endfunction
-	
+
+	echo 'async_build: ' . proj
+
 	call asc#run({ 
 		\	'cmd' : cmd, 
 		\	'Fn'  : asc#tab_restore(env) 
