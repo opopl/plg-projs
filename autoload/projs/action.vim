@@ -374,13 +374,18 @@ function! projs#action#async_build ()
 		\	'root' : root,
 		\	}
 	let cmd = bat
+	call tex#efm#latex()
 
 	function env.get(temp_file) dict
 		let code = self.return_code
+		let root = self.root
 	
 		if filereadable(a:temp_file)
+			call tex#efm#latex()
+			call base#cd(root)
+			exe 'cgetfile ' . a:temp_file
+			copen
 			let out = readfile(a:temp_file)
-			call base#buf#open_split({ 'lines' : out })
 		endif
 	endfunction
 	
