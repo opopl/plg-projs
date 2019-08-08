@@ -361,8 +361,8 @@ function! projs#action#async_build ()
 	let root = projs#root()
 
 	"let cmd = 'pdflatex '
-	let secbat = '_build_pdflatex_'
-	let bat    = projs#secfile(sec_bat)
+	let sec_bat = '_build_pdflatex_'
+	let bat     = projs#secfile(sec_bat)
 	"if !filereadable(bat)
 	"endif
 
@@ -380,6 +380,7 @@ function! projs#action#async_build ()
 	
 		if filereadable(a:temp_file)
 			let out = readfile(a:temp_file)
+			call base#buf#open_split({ 'lines' : out })
 		endif
 	endfunction
 	
