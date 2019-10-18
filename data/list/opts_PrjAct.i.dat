@@ -39,3 +39,6 @@ status
 ###mkdir
 mkdir_pics
 async_build
+help
+pdf_view
+pdf_delete

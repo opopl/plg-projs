@@ -601,7 +601,7 @@ function! projs#help (...)
     echo 'PROJS PLUGIN HELP'
     echo ' '
 
-    let topics=base#qw('maps')
+    let topics = base#qw('maps')
 
     let topic = base#getfromchoosedialog({ 
             \ 'list'        : topics,
@@ -612,7 +612,7 @@ function! projs#help (...)
             \ })
 
     if topic == 'maps'
-        let yn=input('Show projs#maps() ? (1/0):',1)
+        let yn = input('Show projs#maps() ? (1/0):',1)
         if yn | call base#vim#showfun('projs#maps') | endif
     endif
 

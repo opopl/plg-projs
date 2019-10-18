@@ -350,6 +350,20 @@ function! projs#action#append_section (...)
 
 endfunction
 
+function! projs#action#pdf_view (...)	
+	call projs#pdf#view()
+
+endfunction
+
+function! projs#action#pdf_delete (...)	
+	call projs#pdf#delete()
+
+endfunction
+
+function! projs#action#help (...)	
+	call projs#help()
+endfunction
+
 function! projs#action#append_thisproj (...)	
 	let proj = projs#proj#name()
 	call append(line('.'),[proj])
