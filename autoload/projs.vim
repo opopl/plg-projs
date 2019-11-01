@@ -720,29 +720,48 @@ function! projs#pylib ()
 	return pylib
 endfunction
 
-"" projs#selectproject ()
-"" projs#selectproject (pat)
+"	Usage
+"
+"		projs#selectproject ()
+"		projs#selectproject (pat)
+"
+"	Call tree
+"		Called by
+"			projs#viewproj
 
 function! projs#selectproject (...)
     
     if a:0
-        let pat  = a:1
+ 			let pat  = a:1
     endif
 
-    let list = projs#list()
+		let list = projs#list()
+		let data_h = []
+		for p in list
+			call add(data_h, { 'proj' : p })
+		endfor
 
-    let proj=base#getfromchoosedialog({ 
-        \ 'list'        : list,
-        \ 'startopt'    : '',
-        \ 'header'      : "Available projects are: ",
-        \ 'numcols'     : 1,
-        \ 'bottom'      : "Choose a project by number: ",
-        \ })
+		let lines = pymy#data#tabulate({
+			\ 'data_h'  : data_h,
+			\ 'headers' : [ 'proj' ],
+			\ })
+
+		call base#buf#open_split({ 'lines' : lines })
+
+		let msg_a = [
+			\	"select project: ",	
+			\	]
+		let msg = join(msg_a,"\n")
+		
+		"let proj = base#input_we(msg,'',{ })
     return proj
     
 endfunction
 
-
+"	Purpose
+"		view project
+"	Usage
+"		call projs#viewproj (proj)
 
 function! projs#viewproj (...)
 
@@ -771,8 +790,8 @@ function! projs#viewproj (...)
 
     call projs#proj#name(proj)
 
-    let f = projs#secfile('_osecs_')
-    call projs#varset('secorderfile',f)
+    let f = projs#secfile( '_osecs_' )
+    call projs#varset( 'secorderfile', f)
 
     if ! strlen(sec)
         let sec = '_main_'
@@ -808,8 +827,8 @@ endfun
 
 fun! projs#complete (...)
 
-  let comps=[]
-  let comps=projs#list()
+  let comps = []
+  let comps = projs#list()
 
   return join(comps,"\n")
 endf
