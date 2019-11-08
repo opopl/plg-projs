@@ -1,8 +1,22 @@
 
+"
 """prjdb_create_tables
+
+"Usage
+"	projs#db#create_tables()
+"Call tree
+"	Calls
+"		projs#db#file
+"			projs#root
+"			db.create_tables from plg.projs.db
+"		projs#pylib
+"		pymy#py#add_lib
+
 function! projs#db#create_tables ()
 	let db_file = projs#db#file()
 	let pylib   = projs#pylib()
+
+	let sql_file = base#qw#catpath('plg projs data sql create_table_projs.sql')
 
 	call pymy#py#add_lib(pylib)
 
@@ -12,8 +26,10 @@ import vim
 import sqlite3
 import plg.projs.db as db
 
-db_file = vim.eval('db_file')
-db.create_tables(db_file)
+db_file  = vim.eval('db_file')
+sql_file = vim.eval('sql_file')
+
+db.create_tables( db_file, sql_file )
 
 eof
 
@@ -57,6 +73,12 @@ eof
 
 endfunction
 
+"Usage
+"	call projs#db#query ({ 
+"		\	'query'  : q,
+"		\	'params' : params,
+"		\	})
+
 function! projs#db#query (...)
 	let ref   = get(a:000,0,{})
 
@@ -78,9 +100,9 @@ params  = vim.eval('params')
 conn = sqlite3.connect(db_file)
 c = conn.cursor()
 
-rows=[]
+rows = []
 
-lines=[]
+lines = []
 for line in lines:
 	vim.command("let row='" + line + "'")
 	vim.command("call add(rows,row)")

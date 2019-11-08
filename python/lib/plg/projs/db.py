@@ -6,26 +6,18 @@ import os
 #import pprint
 #pp = pprint.PrettyPrinter(indent=4)
 
-p={ 'texfile' : re.compile('^(\w+)\.(?:(.*)\.|)tex'), 
+p = { 'texfile' : re.compile('^(\w+)\.(?:(.*)\.|)tex'), 
     'tags'    : re.compile('^\s*%%tags (.*)$'),
     'author'  : re.compile('^\s*%%author (.*)$')
    }
 
-def create_tables(db_file):
+def create_tables(db_file, sql_file):
 	conn = sqlite3.connect(db_file)
 	c = conn.cursor()
 	
 	c.execute('''DROP TABLE IF EXISTS projs''')
-	c.execute('''CREATE TABLE IF NOT EXISTS projs (
-		proj text not null, 
-		file text not null unique,
-		root text not null,
-		sec text, 
-		tags text, 
-		parent text,
-		author text,
-		pic text,
-		rootid text )''')
+	q = open(sql_file, 'r').read()
+	c.execute(q)
 	
 	conn.commit()
 	conn.close()
@@ -76,7 +68,7 @@ def fill_from_files(db_file,root,rootid,proj_select,logfun):
 				tags   = data.get('tags','')
 				author = data.get('author','')
 				v_projs = [proj,sec,file,root,rootid,tags,author]
-				q='''insert or ignore into projs (proj,sec,file,root,rootid,tags,author) values (?,?,?,?,?,?,?)'''
+				q='''INSERT OR IGNORE INTO projs (proj,sec,file,root,rootid,tags,author) VALUES (?,?,?,?,?,?,?)'''
 				try:
 					c.execute(q,v_projs)
 				except sqlite3.IntegrityError, e:
