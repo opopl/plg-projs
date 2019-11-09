@@ -746,14 +746,14 @@ function! projs#selectproject (...)
 			\ 'headers' : [ 'proj' ],
 			\ })
 
-		call base#buf#open_split({ 'lines' : lines })
+		"call base#buf#open_split({ 'lines' : lines })
 
 		let msg_a = [
 			\	"select project: ",	
 			\	]
 		let msg = join(msg_a,"\n")
 		
-		"let proj = base#input_we(msg,'',{ })
+		let proj = base#input_we(msg,'',{ 'complete' : 'custom,projs#complete' })
     return proj
     
 endfunction

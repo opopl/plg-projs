@@ -42,3 +42,4 @@ async_build
 help
 pdf_view
 pdf_delete
+gui_select_project

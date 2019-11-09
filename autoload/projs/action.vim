@@ -370,6 +370,19 @@ function! projs#action#append_thisproj (...)
 
 endfunction
 
+function! projs#action#gui_select_project (...)	
+	let projs = projs#list()
+
+	let r = {
+			\	'data'   : { 'projs' : projs },
+			\	'dir'    : base#qw#catpath('plg projs scripts'),
+			\	'script' : 'gui_select_project',
+			\	,
+			\	}
+	call base#script#run(r)	
+
+endfunction
+
 function! projs#action#async_build ()	
 	let proj = projs#proj#name()
 	let root = projs#root()
