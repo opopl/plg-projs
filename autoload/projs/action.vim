@@ -377,6 +377,7 @@ function! projs#action#gui_select_project (...)
 			\	'data'   : { 'projs' : projs },
 			\	'dir'    : base#qw#catpath('plg projs scripts'),
 			\	'script' : 'gui_select_project',
+			\	'args'   : [ '-r' ],
 			\	}
 	call base#script#run(r)	
 
