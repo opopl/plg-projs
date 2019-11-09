@@ -14,7 +14,6 @@ use Data::Dumper qw(Dumper);
 
 use Tk;
 use Tk::widgets;
-use Tk::ListBox;
 
 use FindBin qw( $Bin $Script );
 
@@ -34,11 +33,10 @@ sub tk_proc {
 
 	my @projs = @{$self->{data}->{projs} || []};
 
-	require Tk;
-	require Tk::widgets;
-	require Tk::ListBox;
+	my $lb = $mw->Scrolled("Listbox", 
+		-scrollbars => "e", 
+		-selectmode => "single")->pack( ); 
 
-	my $lb = $mw->ListBox->pack();
 	$lb->insert('end', @projs);
 
 	return $self;
