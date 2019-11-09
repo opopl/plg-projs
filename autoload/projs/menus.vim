@@ -31,7 +31,7 @@ function! projs#menus#set(...)
  		set tbis=large
  endif
 
- let levs={
+ let levs = {
 			 \	'FIGS' 			: 10,
 			 \	'TEX' 			: 11,
 			 \	'SECTIONS' 	: 12,
@@ -54,19 +54,69 @@ function! projs#menus#set(...)
 
 """_ToolBar
 
-	let menus_add=projs#varget('menus_add',[])
+	let menus_add = projs#varget('menus_add',[])
 	call base#menus#add(menus_add)
 
 """PROJS
- let lev=10
+ let lev = 10
  call projs#echo('Adding Menu: PROJS')
 
- let pdirs=projs#varget('projsdirs',[])
+ let pdirs = projs#varget('projsdirs',[])
+
+ call base#menu#clear('projs')
+
+ let items = []
+ 	call add(items, base#menu#sep() )
+	call add(items, {
+				\	'item' 	: '&PROJS.&ProjsInit',
+ 				\	'cmd'		:	'ProjsInit',
+ 				\	'lev'		:	lev,
+ 				\	})
+
+ call add(items, base#menu#sep() )
+
+ let acts = base#varget('projs_opts_PrjAct',[])
+ let acts = sort(acts)
+ let acts = base#uniq(acts)
+
+ for act in acts
+		call add(items, {
+				\	'item' 	: '&PROJS.&PrjAct.&' . act,
+ 				\	'cmd'		:	'PrjAct ' . act,
+ 				\	'lev'		:	lev,
+ 				\	})
+	 let lev+=10
+ endfor
+ call add(items, base#menu#sep() )
+
+ let opts_build = base#varget('projs_opts_PrjBuild',[])
+ for opt in opts_build
+		call add(items, {
+				\	'item' 	: '&PROJS.&PrjBuild.&' . opt,
+ 				\	'cmd'		:	'PrjBuild ' . opt,
+ 				\	'lev'		:	lev,
+ 				\	})
+	 let lev+=10
+ endfor
+
+ call add(items, base#menu#sep() )
+
+ let opts_make = base#varget('projs_prjmake_opts',[])
+ for opt in opts_make
+		call add(items, {
+				\	'item' 	: '&PROJS.&PrjMake.&' . opt,
+ 				\	'cmd'		:	'PrjMake ' . opt,
+ 				\	'lev'		:	lev,
+ 				\	})
+	 let lev+=10
+ endfor
+
+ call add(items, base#menu#sep() )
 
  for proj in sort(projs)
-   let lett=toupper(matchstr(proj,'^\zs\w\ze'))
+   let lett = toupper(matchstr(proj,'^\zs\w\ze'))
 
-	 call base#menu#additem({
+	 call add(items, {
 					\	'item' 	: '&PROJS.&LIST.&' . lett . '.&' . proj,
 	 				\	'cmd'		:	'PrjView ' . proj,
 	 				\	'lev'		:	lev,
@@ -76,7 +126,7 @@ function! projs#menus#set(...)
  endfor
 
  for pdir in sort(pdirs)
-	 call base#menu#additem({
+	 call add(items, {
 					\	'item' 	: '&PROJS.&DIRS.&' . pdir,
 	 				\	'cmd'		:	'ProjsInit ' . pdir,
 	 				\	'lev'		:	lev,
@@ -92,18 +142,18 @@ function! projs#menus#set(...)
 			\	]
 
 """PFILES
- let pfiles=[]
- let filesdat=base#catpath('projs',proj . '.files.i.dat' )
+ let pfiles = []
+ let filesdat = base#catpath('projs', proj . '.files.i.dat' )
 
  if filereadable(filesdat)
 	 let pfiles = base#readdatfile({	'file' : filesdat })
 	
 	 for fname in pfiles
-		 	 let pfile=base#catpath('projs',proj . '.' . fname)
+		 	 let pfile = base#catpath('projs',proj . '.' . fname)
 	
-			 let fname=substitute(fname,'\.','\\.','g')
+			 let fname = substitute(fname,'\.','\\.','g')
 				
-			 call base#menu#additem({
+			 call add(items, {
 						\	'item' 	: '&PFILES.&' . fname,
 		 				\	'cmd'		:	'call base#fileopen("' . pfile . '")',
 		 				\	'lev'		:	lev,
@@ -120,11 +170,11 @@ function! projs#menus#set(...)
 	 let efiles=base#readdatfile({	'file' : filesdat })
 	
 	 for fname in efiles
-		 	 let pfile=base#catpath('projs',fname)
+		 	 let pfile = base#catpath('projs',fname)
 	
-			 let fname=substitute(fname,'\.','\\.','g')
+			 let fname = substitute(fname,'\.','\\.','g')
 				
-			 call base#menu#additem({
+			 call add(items, {
 						\	'item' 	: '&EFILES.&' . fname,
 		 				\	'cmd'		:	'call base#fileopen("' . pfile . '")',
 		 				\	'lev'		:	lev,
@@ -137,14 +187,14 @@ function! projs#menus#set(...)
  "MenuAdd makefiles
 
 """SECTIONS
- let lev=10
- let secnames=projs#proj#secnames()
+ let lev = 10
+ let secnames = projs#proj#secnames()
 
  for sec in secnames
    	if sec =~ '^fig\.'
-	  		let fig=matchstr(sec,'^fig\.\zs.*\ze$')
+	  		let fig = matchstr(sec,'^fig\.\zs.*\ze$')
 
-		 		call base#menu#additem({
+		 		call add(items, {
 						\	'item' 	: '&PROJS.&FIGS.&' . fig,
 		 				\	'cmd'		:	'VSEC ' . sec,
 		 				\	'lev'		:	levs.FIGS . '.' . lev,
@@ -153,7 +203,7 @@ function! projs#menus#set(...)
 		else
 				let sec=substitute(sec,'\.','\\.','g')
 
-		 		call base#menu#additem({
+		 		call add(items, {
 						\	'item' 	: '&PROJS.&SECTIONS.&' . sec,
 		 				\	'lev'		:	levs.SECTIONS . '.' . lev,
 		 				\	'cmd'		:	'VSEC ' . sec,
@@ -166,12 +216,17 @@ function! projs#menus#set(...)
 """BASESECS
  let lev=10
  for sec in projs#varget('secnamesbase',[])
- 		call base#menu#additem({
+ 		call add(items, {
 						\	'item' 	: '&PROJS.&BASESECS.&' . sec,
 		 				\	'cmd'		:	'VSECBASE ' . sec,
 		 				\	'lev'		:	levs.BASESECS . '.' . lev,
 		 				\	})
+
 		let lev+=10
+ endfor
+
+ for item in items
+		call base#menu#additem(item)
  endfor
  
 endfunction
