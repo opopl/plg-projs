@@ -11,7 +11,10 @@ use strict;
 use warnings;
 
 use Data::Dumper qw(Dumper);
+
 use Tk;
+use Tk::widgets;
+use Tk::ListBox;
 
 use FindBin qw( $Bin $Script );
 
@@ -28,6 +31,15 @@ Will be called by C<tk_run()> method defined in L<Plg::Base::Dialog>
 
 sub tk_proc { 
 	my ($self, $mw) = @_;
+
+	my @projs = @{$self->{data}->{projs} || []};
+
+	require Tk;
+	require Tk::widgets;
+	require Tk::ListBox;
+
+	my $lb = $mw->ListBox->pack();
+	$lb->insert('end', @projs);
 
 	return $self;
 }
