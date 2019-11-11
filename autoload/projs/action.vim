@@ -394,7 +394,7 @@ function! projs#action#async_build ()
 	"endif
 
 	let o = { 'prompt' : 0 }
-	call projs#newsecfile(sec_bat,o)
+	call projs#sec#new(sec_bat,o)
 
 	let start = localtime()
 	
@@ -449,7 +449,7 @@ function! projs#action#create_sec_tab (...)
 
 	let lines = []
 
-	call projs#newsecfile(sec,{ 
+	call projs#sec#new(sec,{ 
 		\	"prompt" : 0, 
 		\	'seccmd' : '',
 		\	'add_lines_after' : lines,
@@ -462,9 +462,9 @@ function! projs#action#create_sec_fig (...)
 
 	let lines = []
 
-	call projs#newsecfile(sec,{ 
-		\	"prompt" : 0, 
-		\	'seccmd' : '',
+	call projs#sec#new(sec,{ 
+		\	"prompt"          : 0,
+		\	'seccmd'          : '',
 		\	'add_lines_after' : lines,
 		\	})
 

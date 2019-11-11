@@ -485,7 +485,7 @@ function! projs#build#run (...)
 		\	})
 
 	if opt =~ '^build_'	
-		call projs#newsecfile('_'.opt.'_')
+		call projs#sec#new('_'.opt.'_')
 	endif
 
 	let ok = projs#build#make_invoke()

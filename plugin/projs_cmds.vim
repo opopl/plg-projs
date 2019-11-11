@@ -107,10 +107,10 @@ command! -nargs=* -complete=custom,projs#complete#switch PrjSwitch
 	\ call projs#switch(<f-args>)
 
 command! -nargs=* -complete=custom,projs#complete#secnamesbase VSECBASE
-  	\ call projs#opensec(<f-args>) 
+  	\ call projs#sec#open(<f-args>) 
 
 command! -nargs=* -complete=custom,projs#complete#secnames     VSEC
-  	\ call projs#opensec(<f-args>) 
+  	\ call projs#sec#open(<f-args>) 
 
 command! -nargs=0 CitnTexToDat call s:CitnTexToDat()
 command! -nargs=0 CitnDatToTex call s:CitnDatToTex()
