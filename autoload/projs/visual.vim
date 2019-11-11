@@ -25,6 +25,7 @@ function! projs#visual#append_to_sec (start, end, ... )
       \  'lines' : lines,
       \  }
   call projs#sec#append(r)
+  call base#buf#cut({ 'start' : start, 'end' : end })
 
 endf
 
