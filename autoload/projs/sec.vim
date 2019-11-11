@@ -8,8 +8,26 @@
 "		projs#sec#rename(new, old)
 "
 "		projs#sec#open(sec)
+"		projs#sec#append({ sec : sec, lines : lines })
 "
 "---------------------------------
+"
+function! projs#sec#append (...)
+	let ref = get(a:000,0,{})
+
+	let sec   = get(ref,'sec','')
+	let lines = get(ref,'lines',[])
+
+	let file = projs#secfile(sec)
+
+	let r = {
+			\	'lines' : lines,
+			\	'file' : file,
+			\	'mode' : 'append',
+			\	}
+	call base#file#write_lines(r)
+
+endf
 
 "projs#sec#rename( new,old ) 
 
@@ -116,6 +134,11 @@ function! projs#sec#onload (sec)
 	return
 endfunction
 
+function! projs#sec#parent ()
+	let parent = projs#varget('parent_sec','')
+	return parent
+endfunction
+
 "	projs#sec#add
 "
 "	Purpose:
@@ -134,7 +157,7 @@ endfunction
 "			projs#sec#exists
 "			projs#db#file
 "		called by:
-"			<++>
+"			
 
 function! projs#sec#add (sec)
 	let sec   = a:sec
@@ -203,12 +226,13 @@ endfunction
 " projs#sec#new(sec,{ "git_add" : 1 })
 " projs#sec#new(sec,{ "view" : 1 })
 " projs#sec#new(sec,{ "prompt" : 0 })
+" projs#sec#new(sec,{ "rewrite" : 1 })
 
 function! projs#sec#new(sec,...)
     let sec        = a:sec
 
     let proj       = projs#proj#name()
-		let parent_sec = projs#varget('parent_sec','')
+		let parent_sec = projs#sec#parent()
 
     let ref = { 
         \   "git_add" : 0, 
@@ -221,9 +245,16 @@ function! projs#sec#new(sec,...)
     call extend(ref,{ "prompt" : 0 })
 
     if a:0 
-        let refadd = a:1 
-        call extend(ref,refadd)
+        let refadd = get(a:000,0,{})
+        call extend(ref, refadd)
     endif
+
+		let rw = get(ref,'rewrite',0)
+		if projs#sec#exists(sec)
+			if !rw
+				return
+			endif
+		endif
 
     let o = base#varget('projs_opts_PrjSecNew',{})
 
@@ -258,7 +289,7 @@ function! projs#sec#new(sec,...)
       call projs#warn('Problems while executing:'."\n\t".sub)
     endtry
 
-    let inref={'prompt' : prompt }
+    let inref = { 'prompt' : prompt }
 
 """newsec__main__
     if sec == '_main_'

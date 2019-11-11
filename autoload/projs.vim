@@ -532,8 +532,6 @@ function! projs#exe_latex (...)
 endfunction
 
 
-    
-
 function! projs#gensecdat (...)
  
  let f = projs#path([ proj . '.secs.i.dat' ])
