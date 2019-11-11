@@ -105,6 +105,26 @@ function! projs#sec#onload (sec)
 	return
 endfunction
 
+"	projs#sec#add
+"
+"	Purpose:
+"		
+"	Usage:
+"		call projs#sec#add (sec)
+"	Returns:
+"		
+"
+"	Call tree:
+"		calls:
+"			projs#proj#name
+"			projs#secfile
+"			projs#proj#files
+"			base#file#write_lines
+"			projs#sec#exists
+"			projs#db#file
+"		called by:
+"			<++>
+
 function! projs#sec#add (sec)
 	let sec   = a:sec
 
