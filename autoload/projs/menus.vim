@@ -65,11 +65,18 @@ function! projs#menus#set(...)
 
  call base#menu#clear('projs')
 
- let items = []
+ 	let items = []
  	call add(items, base#menu#sep() )
 	call add(items, {
 				\	'item' 	: '&PROJS.&ProjsInit',
  				\	'cmd'		:	'ProjsInit',
+ 				\	'lev'		:	lev,
+ 				\	})
+
+ 	call add(items, base#menu#sep() )
+	call add(items, {
+				\	'item' 	: '&PROJS.&MenuAdd\ projs',
+ 				\	'cmd'		:	'MenuAdd projs',
  				\	'lev'		:	lev,
  				\	})
 

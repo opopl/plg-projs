@@ -861,6 +861,16 @@ function! projs#htlatex (...)
     call projs#build#run({ "opt" : 'build_htlatex' })
 endfunction
 
+function! projs#visual (...)
+	let start = get(a:000, 0, '')
+	let end   = get(a:000, 1, '')
+	let act   = get(a:000, 2, '')
+
+	let sub = 'projs#visual#' . act . '(start,end)'
+	exe 'call ' . sub
+	
+endfunction
+
 function! projs#action (...)
   let act = get(a:000,0,'')
 
