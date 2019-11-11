@@ -20,7 +20,11 @@ function! projs#visual#append_to_sec (start, end, ... )
   endif
 
   let lines = base#vim#visual_selection()
-  call projs#sec#append({ 'sec' : sec, 'lines' : lines })
+  let r = {
+      \  'sec'   : sec,
+      \  'lines' : lines,
+      \  }
+  call projs#sec#append(r)
 
 endf
 
