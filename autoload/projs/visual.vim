@@ -25,7 +25,11 @@ function! projs#visual#append_to_sec (start, end, ... )
       \  'lines' : lines,
       \  }
   call projs#sec#append(r)
-  call base#buf#cut({ 'start' : start, 'end' : end })
+
+  let r_cut = { 
+    \ 'start' : start,
+    \ 'end'   : end }
+  call base#buf#cut(r_cut)
 
 endf
 
