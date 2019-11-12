@@ -349,7 +349,7 @@ function! projs#viewproj (...)
     call projs#varset('secname',sec)
     call projs#varset('proj',proj)
     
-    call projs#opensec(sec)
+    call projs#sec#open(sec)
  
     if (exists("*make#makeprg"))
         call make#makeprg('projs_latexmk',{ 'echo' : 0 })
@@ -470,7 +470,7 @@ function! projs#switch (...)
   let sec = 'body'
   let sec = input('Section to open:',sec,'custom,projs#complete#secnames')
 
-  call projs#opensec(sec)
+  call projs#sec#open(sec)
   
 endfunction
 
