@@ -152,14 +152,12 @@ endfunction
 function! projs#db#drop_tables ()
 	let db_file = projs#db#file()
 
+	call projs#db#init_py ()
+
 python << eof
 
 import vim,sys
 import sqlite3
-
-pylib = vim.eval('projs#pylib()')
-sys.path.append(pylib)
-import plg.projs.db as db
 
 db_file = vim.eval('projs#db#file()')
 db.drop_tables(db_file)
@@ -171,21 +169,23 @@ endfunction
 function! projs#db#init_py ()
 python << eof
 
-import vim,sys
-import sqlite3
+import vim, sys, sqlite3
 
 pylib = vim.eval('projs#pylib()')
-sys.path.append(pylib)
-import plg.projs.db as db
-	
+pylib += '/plg/projs'
+
+if not pylib in sys.path:
+  sys.path.append( pylib )
+
+import db
+
 eof
 endfunction
-
 
 function! projs#db#secnames (...)
 	call projs#db#init_py ()
 
-	let ref = get(a:000,0,{})
+	let ref  = get(a:000,0,{})
 	let proj = projs#proj#name()
 
 	if base#type(ref) == 'String'
