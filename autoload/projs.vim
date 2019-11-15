@@ -426,9 +426,19 @@ function! projs#action (...)
 	let acts = base#varget('projs_opts_PrjAct',[])
 	let acts = sort(acts)
 	if ! strlen(act)
-		let lines = ['Possible PrjAct actions: ']
-		let acts_tab = base#map#add_tabs(acts,1)
-		call extend(lines,acts_tab)
+		let desc = base#varget('projs_desc_PrjAct',{})
+		let info = []
+		for act in acts
+			call add(info,[ act, get(desc,act,'') ])
+		endfor
+		let lines = [ 'Possible PrjAct actions: ' ]
+		call extend(lines, pymy#data#tabulate({
+			\ 'data'    : info,
+			\ 'headers' : [ 'act', 'description'],
+			\ }))
+
+		"let acts_tab = base#map#add_tabs(acts,1)
+		"call extend(lines,acts_tab)
 		call base#buf#open_split({ 'lines' : lines })
 		return
 	endif

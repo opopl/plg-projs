@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 <top>
-	<var type="dict" name="desc_PrjAct" entry_name="act" >
+	<var type="dict" name="desc_PrjAct" entry_tag="act" >
 	  <act key="append_section"> </act>
 	  <act key="append_thisproj"> </act>
 	  <act key="async_build"> </act>
@@ -8,7 +8,8 @@
 	  <act key="cd_builds"> </act>
 	  <act key="cd_csvdir"> </act>
 		<act key="cd_pics"> 
-						change to the directory with pictures, e.g. pics/PROJ/ or pics/
+						change to the directory with pictures, 
+						e.g. pics/PROJ/ or pics/
 		</act>
 	  <act key="create_sec_fig"> </act>
 	  <act key="create_sec_tab"> </act>
