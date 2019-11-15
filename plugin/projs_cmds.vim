@@ -56,7 +56,7 @@ command! -nargs=* -complete=custom,projs#complete#varlist    PrjVarSet
 	\ call projs#cmd#varset(<f-args>)
 
 command! -nargs=* -complete=custom,projs#complete#secnamesall PrjSecNew
-	\ call projs#newsecfile(<f-args>,{ "view" : 1 })
+	\ call projs#sec#new(<f-args>,{ "view" : 1 })
 
 command! -nargs=* -complete=custom,projs#complete#secnames PrjSecRename
 	\ call projs#sec#rename(<f-args>)

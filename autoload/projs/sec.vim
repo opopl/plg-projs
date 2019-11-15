@@ -754,7 +754,7 @@ function! projs#sec#open (...)
 
   for vfile in vfiles
     if !filereadable(vfile)
-        call projs#newsecfile(sec)
+        call projs#sec#new(sec)
     endif
     call base#fileopen(vfile) 
   endfor

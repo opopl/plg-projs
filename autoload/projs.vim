@@ -4,7 +4,7 @@ function! projs#secfilecheck (...)
     let sfile = projs#secfile(sec)
 
     if !filereadable(sfile)
-        call projs#newsecfile(sec)
+        call projs#sec#new(sec)
     endif
 
     return 1
@@ -192,7 +192,7 @@ function! projs#new (...)
  let yn=input('Continue? (1/0): ',1)
  if !yn | return 0 | endif
 
- let newopts=projs#varget('PrjNew_opts',{})
+ let newopts = projs#varget('PrjNew_opts',{})
   
  if a:0
      let proj     = a:1
@@ -239,7 +239,7 @@ function! projs#new (...)
   let nsecs = base#qw(nsecs_s)
 
   for sec in nsecs
-     call projs#newsecfile(sec)
+     call projs#sec#new(sec)
   endfor
 
   call projs#proj#git_add()
