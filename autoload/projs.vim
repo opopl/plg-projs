@@ -1,105 +1,6 @@
 
-function! projs#secfilecheck (...)
-    let sec = a:1
-    let sfile = projs#secfile(sec)
-
-    if !filereadable(sfile)
-        call projs#sec#new(sec)
-    endif
-
-    return 1
-endf
-
-function! projs#secfile (...)
-  let proj = projs#proj#name()
-
-  let sec = projs#proj#secname()
-  let sec = get(a:000,0,sec)
-
-  let secfile = projs#path(projs#secfile_base_a(sec))
-  return secfile
-endf
-
-function! projs#secfile_base (...)
-  let sec = projs#proj#secname()
-  let sec = get(a:000,0,sec)
-
-  let sfile_a = projs#secfile_base_a(sec)
-
-  let sfile = base#file#catfile(sfile_a)
-  return sfile
-endf
-
-" projs#secfile (sec)
+" projs#sec#file (sec)
 "
-function! projs#secfile_base_a (...)
-    
-    let sec = projs#proj#secname()
-    let sec = get(a:000,0,sec)
-
-    let dot = '.'
-
-    let proj = projs#proj#name()
-    let sfile_a = []
-
-    let runext = (has('win32')) ? 'bat' : 'sh' 
-
-    if sec == '_main_'
-        let sfile_a = [proj.'.tex']
-
-    elseif sec == '_vim_'
-        let sfile_a = [proj.'.vim']
-
-    elseif sec == '_pl_'
-        let sfile_a = [proj.'.pl']
-
-    elseif sec == '_osecs_'
-        let sfile_a = [proj.'.secorder.i.dat']
-
-    elseif sec == '_dat_'
-        let sfile_a = [ proj . '.secs.i.dat' ]
-
-    elseif sec == '_dat_defs_'
-      let sfile_a = [ proj . '.defs.i.dat' ]
-
-    elseif sec == '_dat_files_'
-      let sfile_a = [ proj . '.files.i.dat' ]
-
-    elseif sec == '_dat_files_ext_'
-      let sfile_a = [ proj . '.files_ext.i.dat' ]
-
-    elseif sec == '_dat_citn_'
-        let sfile_a = [proj.'.citn.i.dat']
-
-    elseif sec == '_bib_'
-        let sfile_a = [proj.'.refs.bib']
-
-    elseif sec == '_xml_'
-        let sfile_a = [proj.'.xml']
-
-    elseif sec == '_join_'
-        let sfile_a = ['joins',proj.'.tex']
-
-    elseif sec == '_build_pdflatex_'
-        let sfile_a = [ 'b_' . proj . '_pdflatex.'.runext ]
-
-    elseif sec == '_build_perltex_'
-        let sfile_a = [ 'b_' . proj . '_perltex.'.runext ]
-
-    elseif sec == '_build_htlatex_'
-        let sfile_a = [ 'b_' . proj . '_htlatex.'.runext ]
-
-    elseif sec == '_main_htlatex_'
-        let sfile_a = [ proj . '.main_htlatex.tex' ]
-
-    else
-        let sfile_a = [proj.dot.sec.'.tex']
-
-    endif
-
-    return sfile_a
-    
-endfunction
 
 function! projs#namefromfile (...)
   let ref = {}
@@ -339,7 +240,7 @@ function! projs#viewproj (...)
 
     call projs#proj#name(proj)
 
-    let f = projs#secfile( '_osecs_' )
+    let f = projs#sec#file( '_osecs_' )
     call projs#varset( 'secorderfile', f)
 
     if ! strlen(sec)
@@ -520,7 +421,7 @@ function! projs#onload (...)
 
   call projs#maps()
 
-	let vf = projs#secfile('_vim_')
+	let vf = projs#sec#file('_vim_')
 	call base#vimfile#source({ 'files' : [vf] })
 
 endfunction
@@ -717,7 +618,7 @@ function! projs#filejoinlines (...)
     """ end jfile handling ----------------------
 
     let sf      = {}
-    let sf[sec] = projs#secfile(sec)
+    let sf[sec] = projs#sec#file(sec)
     let f       = sf[sec]
 
     if !filereadable(f)

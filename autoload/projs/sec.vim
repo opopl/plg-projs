@@ -18,7 +18,7 @@ function! projs#sec#append (...)
 	let sec   = get(ref,'sec','')
 	let lines = get(ref,'lines',[])
 
-	let file = projs#secfile(sec)
+	let file = projs#sec#file(sec)
 
 	let r = {
 			\	'lines' : lines,
@@ -41,11 +41,11 @@ function! projs#sec#rename (...)
 		let new = input('[sec='.old.' ] New section name: ','','custom,projs#complete#secnames')
 	endif
 
-	let oldf = projs#secfile(old)
-	let newf = projs#secfile(new)
+	let oldf = projs#sec#file(old)
+	let newf = projs#sec#file(new)
 
-	let oldf_base = projs#secfile_base(old)
-	let newf_base = projs#secfile_base(new)
+	let oldf_base = projs#sec#file_base(old)
+	let newf_base = projs#sec#file_base(new)
 
 	call rename(oldf,newf)
 
@@ -82,7 +82,7 @@ function! projs#sec#rename (...)
 		endif
 	endfor
 
-  let f_listfiles = projs#secfile('_dat_files_') 
+  let f_listfiles = projs#sec#file('_dat_files_') 
 
 	call base#file#write_lines({ 
 			\	'lines' : pfiles,
@@ -99,7 +99,7 @@ function! projs#sec#delete (...)
 	let sec = projs#proj#secname()
 	let sec = get(a:000,0,sec)
 
-	let secfile   = projs#secfile(sec)
+	let secfile   = projs#sec#file(sec)
 	let secfile_u = base#file#win2unix(secfile)
 
 	if filereadable(secfile)
@@ -139,6 +139,108 @@ function! projs#sec#parent ()
 	return parent
 endfunction
 
+function! projs#sec#file (...)
+  let proj = projs#proj#name()
+
+  let sec = projs#proj#secname()
+  let sec = get(a:000,0,sec)
+
+  let secfile = projs#path( projs#sec#file_base_a(sec) )
+  return secfile
+endf
+
+function! projs#sec#filecheck (...)
+    let sec = a:1
+    let sfile = projs#sec#file(sec)
+
+    if !filereadable(sfile)
+        call projs#sec#new(sec)
+    endif
+
+    return 1
+endf
+
+
+function! projs#sec#file_base (...)
+  let sec = projs#proj#secname()
+  let sec = get(a:000,0,sec)
+
+  let sfile_a = projs#sec#file_base_a(sec)
+
+  let sfile = base#file#catfile(sfile_a)
+  return sfile
+endf
+
+function! projs#sec#file_base_a (...)
+    
+    let sec = projs#proj#secname()
+    let sec = get(a:000,0,sec)
+
+    let dot = '.'
+
+    let proj = projs#proj#name()
+    let sfile_a = []
+
+    let runext = (has('win32')) ? 'bat' : 'sh' 
+
+    if sec == '_main_'
+        let sfile_a = [ proj.'.tex']
+
+    elseif sec == '_vim_'
+        let sfile_a = [ proj.'.vim']
+
+    elseif sec == '_pl_'
+        let sfile_a = [ proj.'.pl']
+
+    elseif sec == '_osecs_'
+        let sfile_a = [ proj.'.secorder.i.dat']
+
+    elseif sec == '_dat_'
+        let sfile_a = [ proj . '.secs.i.dat' ]
+
+    elseif sec == '_dat_defs_'
+      let sfile_a = [ proj . '.defs.i.dat' ]
+
+    elseif sec == '_dat_files_'
+      let sfile_a = [ proj . '.files.i.dat' ]
+
+    elseif sec == '_dat_files_ext_'
+      let sfile_a = [ proj . '.files_ext.i.dat' ]
+
+    elseif sec == '_dat_citn_'
+        let sfile_a = [ proj.'.citn.i.dat']
+
+    elseif sec == '_bib_'
+        let sfile_a = [ proj.'.refs.bib']
+
+    elseif sec == '_xml_'
+        let sfile_a = [ proj.'.xml' ]
+
+    elseif sec == '_join_'
+        let sfile_a = [ 'joins', proj . '.tex' ]
+
+    elseif sec == '_build_pdflatex_'
+        let sfile_a = [ 'b_' . proj . '_pdflatex.'.runext ]
+
+    elseif sec == '_build_perltex_'
+        let sfile_a = [ 'b_' . proj . '_perltex.'.runext ]
+
+    elseif sec == '_build_htlatex_'
+        let sfile_a = [ 'b_' . proj . '_htlatex.'.runext ]
+
+    elseif sec == '_main_htlatex_'
+        let sfile_a = [ proj . '.main_htlatex.tex' ]
+
+    else
+        let sfile_a = [proj.dot.sec.'.tex']
+
+    endif
+
+    return sfile_a
+    
+endfunction
+
+
 "	projs#sec#add
 "
 "	Purpose:
@@ -151,7 +253,7 @@ endfunction
 "	Call tree:
 "		calls:
 "			projs#proj#name
-"			projs#secfile
+"			projs#sec#file
 "			projs#proj#files
 "			base#file#write_lines
 "			projs#sec#exists
@@ -164,14 +266,14 @@ function! projs#sec#add (sec)
 
 	let proj = projs#proj#name()
 
-	let sfile = projs#secfile(sec)
+	let sfile = projs#sec#file(sec)
 	let sfile = fnamemodify(sfile,':p:t')
 
 	let pfiles =	projs#proj#files()
 	if !base#inlist(sfile,pfiles)
 		call add(pfiles,sfile)
 	
-		let f_listfiles = projs#secfile('_dat_files_')
+		let f_listfiles = projs#sec#file('_dat_files_')
 		call base#file#write_lines({ 
 			\	'lines' : pfiles, 
 			\	'file'  : f_listfiles, 
@@ -266,7 +368,7 @@ function! projs#sec#new(sec,...)
     let lines = []
     call extend(lines,get(ref,'add_lines_before',[]))
 
-    let file = projs#secfile(sec)
+    let file = projs#sec#file(sec)
 
     let secs = base#qw("preamble body")
 
@@ -452,7 +554,7 @@ eof
 
         let secc = base#qw('_main_htlatex_ cfg')
         for sec in secc
-            call projs#secfilecheck(sec)
+            call projs#sec#filecheck(sec)
         endfor
 
         let outd = [ 'builds', proj, 'b_htlatex' ]
@@ -530,7 +632,7 @@ eof
         call add(lines,'\nonstopmode')
         call add(lines,' ')
 
-        let mf = projs#secfile('_main_')
+        let mf = projs#sec#file('_main_')
         let ml = readfile(mf)
 
         call filter(ml,'v:val !~ "^%%file f_main"')
@@ -575,7 +677,7 @@ eof
             \ 'bibtex'    : 'bibtex '    . proj            ,
             \ 'makeindex' : 'makeindex ' . proj            ,
             \ }
-        let bibfile = projs#secfile('_bib_')
+        let bibfile = projs#sec#file('_bib_')
 
 				call add(lines,' ')
 				call add(lines,'@echo off ')
@@ -708,7 +810,7 @@ function! projs#sec#open (...)
   if projs#varget('secdirexists',0)
     let vfile = projs#path([ proj, sec . '.tex' ])
   else
-    let vfile = projs#secfile(sec) 
+    let vfile = projs#sec#file(sec) 
   endif
 
   if sec == '_main_'
@@ -739,7 +841,7 @@ function! projs#sec#open (...)
 
   else
 
-    let vfile = projs#secfile(sec)
+    let vfile = projs#sec#file(sec)
   endif
 
   if strlen(vfile) 
