@@ -136,7 +136,7 @@ function! projs#proj#files (...)
 	" start: section (A) reading dat file
 	" ======================================
 
-  let f_listfiles = projs#secfile('_dat_files_') 
+  let f_listfiles = projs#sec#file('_dat_files_') 
   if !rw_f_listfiles
       if filereadable(f_listfiles)
           let content   = readfile(f_listfiles)

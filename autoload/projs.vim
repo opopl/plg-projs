@@ -338,8 +338,6 @@ function! projs#action (...)
 			\ 'headers' : [ 'act', 'description'],
 			\ }))
 
-		"let acts_tab = base#map#add_tabs(acts,1)
-		"call extend(lines,acts_tab)
 		call base#buf#open_split({ 'lines' : lines })
 		return
 	endif

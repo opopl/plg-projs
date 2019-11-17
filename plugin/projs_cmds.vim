@@ -125,7 +125,7 @@ endf
 
 function! s:CitnTexToDat ()
 	let proj = projs#proj#name()
-	let texf = projs#secfile('citn')
+	let texf = projs#sec#file('citn')
 
 	if !filereadable(texf)
 		return
@@ -163,13 +163,15 @@ function! s:CitnDatToTex ()
 		return
 	endif
 
-	let texf = projs#secfile('citn')
+	let texf = projs#sec#file('citn')
 
-	let texlines=[]
+	let texlines = []
+
 	call add(texlines,' ')
 	call add(texlines,'%%file f_citn')
 	call add(texlines,' ')
 	call add(texlines,'\def\citn#1{%')
+	call add(texlines,' ')
 
 	let lines = readfile(datf)
 

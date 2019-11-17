@@ -389,7 +389,7 @@ function! projs#action#async_build ()
 
 	"let cmd = 'pdflatex '
 	let sec_bat = '_build_pdflatex_'
-	let bat     = projs#secfile(sec_bat)
+	let bat     = projs#sec#file(sec_bat)
 	"if !filereadable(bat)
 	"endif
 

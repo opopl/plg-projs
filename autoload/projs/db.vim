@@ -214,6 +214,24 @@ endfunction
 function! projs#db#action (...)
   let act = get(a:000,0,'')
 
+	let acts = base#varget('projs_opts_PrjDB',[])
+	let acts = sort(acts)
+	if ! strlen(act)
+		let desc = base#varget('projs_desc_PrjDB',{})
+		let info = []
+		for act in acts
+			call add(info,[ act, get(desc,act,'') ])
+		endfor
+		let lines = [ 'Possible PrjDB actions: ' ]
+		call extend(lines, pymy#data#tabulate({
+			\ 'data'    : info,
+			\ 'headers' : [ 'act', 'description' ],
+			\ }))
+
+		call base#buf#open_split({ 'lines' : lines })
+		return
+	endif
+
   let sub = 'projs#db#'.act
 
   exe 'call '.sub.'()'
