@@ -59,7 +59,7 @@ function! projs#newseclines#regular#listtabs (...)
 	return lines
 endfunction
 
-function! projs#newseclines#regular#title ()
+function! projs#newseclines#regular#title (...)
 	let lines = []
 
   call add(lines,' ')
@@ -70,13 +70,13 @@ function! projs#newseclines#regular#title ()
 	return lines
 endfunction
 
-function! projs#newseclines#regular#cfg ()
+function! projs#newseclines#regular#cfg (...)
 	let lines = []
 	call extend(lines, tex#lines('tex4ht_cfg') )
 	return lines
 endfunction
 
-function! projs#newseclines#regular#preamble ()
+function! projs#newseclines#regular#preamble (...)
 	let lines = []
 
 	let packs = projs#varget('tex_packs_preamble',[])
@@ -91,7 +91,7 @@ function! projs#newseclines#regular#preamble ()
 	return lines
 endfunction
 
-function! projs#newseclines#regular#index ()
+function! projs#newseclines#regular#index (...)
 	let lines = []
 
   call add(lines,'\clearpage')
@@ -102,11 +102,13 @@ function! projs#newseclines#regular#index ()
 	return lines
 endfunction
 
-function! projs#newseclines#regular#bib (inref)
+function! projs#newseclines#regular#bib (...)
+	let ref = get(a:000,0,{})
+
 	let lines = []
 
-  let bibstyle = base#input('Bibliography style:','unsrt',a:inref)
-  let bibfile  = base#input('Bibliography:','\PROJ.refs',a:inref)
+  let bibstyle = base#input('Bibliography style:','unsrt',ref)
+  let bibfile  = base#input('Bibliography:','\PROJ.refs',ref)
 
   call add(lines,'\phantomsection')
 
@@ -118,7 +120,7 @@ function! projs#newseclines#regular#bib (inref)
 	return lines
 endfunction
 
-function! projs#newseclines#regular#_pl_ ()
+function! projs#newseclines#regular#_pl_ (...)
 	let lines = []
 
 "perl << eof

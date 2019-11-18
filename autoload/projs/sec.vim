@@ -389,7 +389,7 @@ function! projs#sec#new(sec,...)
 			let r = {
 					\	'proj' : proj,
 					\	}
-      exe 'let lines='.sub.'(r)'
+      exe printf('call extend(lines,%s(r))',sub)
     catch 
       call projs#warn('Problems while executing:'."\n\t".sub)
     endtry
@@ -417,11 +417,10 @@ function! projs#sec#new(sec,...)
 					\	'proj' : proj,
 					\	'sec'  : sec,
 					\	}
-			call extend(lines , projs#newseclines##_build_tex_(r))
+			call extend(lines, projs#newseclines##_build_tex_(r))
 
 """newsec_else
     else
-
 
 """newsec_else_prompt
         if prompt 
