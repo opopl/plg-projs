@@ -372,22 +372,21 @@ function! projs#sec#new(sec,...)
 
     let secs = base#qw("preamble body")
 
-    let projtype = projs#varget('projtype','regular')
-
-    let sub = 'projs#newseclines#'.projtype.'#'.sec
-
     let lines = []
 
-    let tagsec = [' ' , '%%file ' . sec, ' ' ]
-		call extend(tagsec,[' ','%%parent ' . parent_sec ,' '])
-
-    call extend(lines,tagsec)
+		let rh = { 'sec' : sec, 'parent_sec' : parent_sec }
+    call extend(lines, projs#sec#header(rh) )
 
     let keymap = 'russian-jcukenwin'
     let keymap = input('Keymap:',keymap,'custom,txtmy#complete#keymap')
 
+    let projtype = projs#varget('projtype','regular')
+    let sub = 'projs#newseclines#'.projtype.'#'.sec
     try
-      exe 'let lines='.sub.'()'
+			let r = {
+					\	'proj' : proj,
+					\	}
+      exe 'let lines='.sub.'(r)'
     catch 
       call projs#warn('Problems while executing:'."\n\t".sub)
     endtry
@@ -402,13 +401,6 @@ function! projs#sec#new(sec,...)
     elseif sec =~ '^fig_'
 			call extend(lines,projs#newseclines#fig_num(sec))
 
-
-"""newsec_body
-    elseif sec == 'body'
-        call extend(lines,tagsec)
-
-    elseif sec == '_dat_defs_'
-
 """newsec__vim_
     elseif sec == '_vim_'
 			let r = {
@@ -417,120 +409,19 @@ function! projs#sec#new(sec,...)
 					\	}
 			call extend(lines,projs#newseclines#_vim_(r))
 
-"""newsec__build_htlatex
-    elseif sec == '_build_htlatex_'
-
-    
-    elseif sec == '_main_htlatex_'
-
-        call add(lines,' ')
-        call add(lines,'%%file '. sec)
-        call add(lines,' ')
-        call add(lines,'\nonstopmode')
-        call add(lines,' ')
-
-        let mf = projs#sec#file('_main_')
-        let ml = readfile(mf)
-
-        call filter(ml,'v:val !~ "^%%file f_main"')
-
-        call extend(lines,ml)
-
-    elseif sec == '_dat_files_'
-        let files = projs#proj#files()
-        call extend(lines,files)
-
-
-"""newsec__build_perltex_
-"""newsec__build_pdflatex
     elseif base#inlist(sec,base#qw('_build_perltex_ _build_pdflatex_'))
-        let type = substitute(sec,'^_build_\(\w\+\)_$','\1','g')
-        let tex_exe = type
+			let r = {
+					\	'proj' : proj,
+					\	'sec'  : sec,
+					\	}
+			call extend(lines , projs#newseclines##_build_tex_(r))
 
-        let outd = [ 'builds', proj, 'b_'.type ]
-
-        let pcwin = [ '%Bin%' ]
-        let pcunix = [ '.' ]
-
-        call extend(pcwin,outd)
-        call extend(pcunix,outd)
-
-        let outdir_win = base#file#catfile(pcwin)
-
-        let outdir_unix = base#file#catfile(pcunix)
-        let outdir_unix = base#file#win2unix(outdir_unix)
-
-        let tex_opts = []
-        if type == 'perltex'
-					call add(tex_opts,'--latex=pdflatex --nosafe')
-        endif
-
-				call add(tex_opts,' -file-line-error ')
-				call add(tex_opts,' -interaction nonstopmode ')
-				call add(tex_opts,' -output-directory='. outdir_unix)
-
-        let lns = {
-            \ 'texcmd'    : '%tex_exe% %tex_opts% ' . proj ,
-            \ 'bibtex'    : 'bibtex '    . proj            ,
-            \ 'makeindex' : 'makeindex ' . proj            ,
-            \ }
-        let bibfile = projs#sec#file('_bib_')
-
-				call add(lines,' ')
-				call add(lines,'@echo off ')
-				call add(lines,' ')
-				call add(lines,'set Bin=%~dp0')
-				call add(lines,'cd %Bin%')
-				call add(lines,' ')
-				call add(lines,'set tex_exe='.tex_exe)
-				call add(lines,' ')
-				call add(lines,'set tex_opts=')
-				for opt in tex_opts
-					call add(lines,'set tex_opts=%tex_opts% ' . opt)
-				endfor
-				call add(lines,' ')
-				call add(lines,'set outdir='.outdir_win)
-				call add(lines,'md %outdir%')
-				call add(lines,' ')
-				call add(lines,'set bibfile='.bibfile)
-				call add(lines,' ')
-				call add(lines,'copy %bibfile% %outdir%')
-				call add(lines,' ')
-				call add(lines,lns.texcmd  )
-				call add(lines,'rem --- bibtex makeindex --- ')
-				call add(lines,'cd %outdir% ')
-				call add(lines,lns.bibtex  )
-				call add(lines,lns.makeindex  )
-				call add(lines,'rem ------------------------ ')
-				call add(lines,' ')
-				call add(lines,'cd %Bin% ')
-				call add(lines,lns.texcmd  )
-				call add(lines,lns.texcmd  )
-				call add(lines,' ')
-
-        let origin = base#file#catfile([ outdir_win, proj.'.pdf'])
-
-        let dests = []
-
-        call add(dests,'%Bin%\pdf_built\b_'.proj.'.pdf' )
-        call add(dests,'%PDFOUT%\b_'.type.'_'.proj.'.pdf' )
-        call add(dests,'%PDFOUT%\'.proj.'.pdf' )
-
-        for dest in dests
-            call add(lines,'copy '.origin.' '.dest)
-            call add(lines,' ')
-        endfor
 """newsec_else
     else
 
         if strlen(keymap)
           call add(lines,'% vim: keymap='.keymap)
         endif
-
-        call add(lines,' ')
-        call add(lines,'%%file ' . sec)
-        call add(lines,'%%parent ' . parent_sec )
-        call add(lines,' ')
 
 """newsec_else_prompt
         if prompt 
@@ -664,4 +555,17 @@ function! projs#sec#open (...)
   KEYMAP ukrainian-jcuken
 
   return 
+endf
+
+
+function! projs#sec#header (...)
+	let ref=get(a:000,0,{})
+
+	let sec        = get(ref,'sec','')
+	let parent_sec = get(ref,'parent_sec','')
+	
+  let header = [' ' , '%%file ' . sec, ' ' ]
+	call extend(header,[' ','%%parent ' . parent_sec ,' '])
+
+	return header
 endf

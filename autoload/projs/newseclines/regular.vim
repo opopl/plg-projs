@@ -169,6 +169,8 @@ function! projs#newseclines#regular#_build_htlatex_(...)
 	
 	let tex_opts  = ' -file-line-error '
 	let tex_opts .= ' -output-directory='. outdir_unix
+
+	let lines = []
 	
 	call add(lines,' ')
 	call add(lines,'set Bin=%~dp0')
@@ -224,3 +226,34 @@ function! projs#newseclines#regular#_build_htlatex_(...)
 	return lines
 endfunction
 
+function! projs#newseclines#regular#_main_htlatex_(...)
+	let ref = get(a:000,0,{})
+
+	let sec = get(ref,'sec','')
+
+	let lines = []
+	
+	call add(lines,' ')
+	call add(lines,'%%file '. sec)
+	call add(lines,' ')
+	call add(lines,'\nonstopmode')
+	call add(lines,' ')
+	
+	let mf = projs#sec#file('_main_')
+	let ml = readfile(mf)
+	
+	call filter(ml,'v:val !~ "^%%file f_main"')
+	
+	call extend(lines,ml)
+
+	return lines
+endfunction
+
+function! projs#newseclines#regular#_dat_files_(...)
+	let lines = []
+
+	let files = projs#proj#files()
+	call extend(lines,files)
+
+	return lines
+endfunction
