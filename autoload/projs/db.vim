@@ -252,17 +252,29 @@ function! projs#db#tags (...)
 	let proj = projs#proj#name()
 	let proj = get(ref,'proj',proj)
 
-	let q = 'SELECT tags FROM projs WHERE proj = ? AND file = ?'
+	let file = get(ref,'file','')
+	let file = fnamemodify(file,':t')
+
+	let q = 'SELECT DISTINCT tags FROM projs WHERE proj = ?'
 	let p = [ proj ]
+
+	if strlen(file)
+		let q .= ' AND file = ?'
+		call add(p, file)
+	endif
 
 	let dbfile = projs#db#file()
 	
-	let tags = pymy#sqlite#query_fetchone({
+	let tlist = pymy#sqlite#query_as_list({
 		\	'dbfile' : dbfile,
 		\	'p'      : p,
 		\	'q'      : q,
 		\	})
-	let tags_a = split(tags,",")
+	let tags_a = [] 
+	for t in tlist
+		call extend(tags_a,split(t,','))
+	endfor
+	let tags_a = base#uniq(tags_a)
 
 	return tags_a
 endfunction
@@ -276,7 +288,8 @@ function! projs#db#buf_tags_append (...)
 	let file = b:file
 	let file = get(ref,'file',file)
 
-	let tags = projs#db#tags({ 'file' : file, 'proj' : proj })
+	let r = { 'file' : file, 'proj' : proj }
+	let tags = projs#db#tags(r)
 
 endfunction
 
