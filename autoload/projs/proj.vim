@@ -284,6 +284,17 @@ function! projs#proj#listsecnames (...)
 	
 endfunction
 
+function! projs#proj#db_remove(proj)
+ let proj = a:proj
+
+	let q = 'DELETE FROM projs WHERE proj = ?'
+	let ref = {
+			\	'query'  : q,
+			\	'params' : [ proj ],
+			\	}
+	call projs#db#query(ref)
+endfunction
+
 function! projs#proj#removefromdat(proj)
 
  call base#echo({ 'text' : 'Removing project from PROJS dat file...'})
@@ -336,6 +347,7 @@ function! projs#proj#remove(proj)
  call filter(projs,"v:val != proj") 
 
  call projs#proj#removefromdat(proj)
+ call projs#proj#db_remove(proj)
 
  let pfiles = projs#proj#files({ "proj" : proj })
  call map(pfiles,'projs#path([ v:val ])')

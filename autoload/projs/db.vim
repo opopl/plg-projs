@@ -204,6 +204,18 @@ function! projs#db#secnames (...)
 	return rows
 endfunction
 
+function! projs#db#list (...)
+	let ref  = get(a:000,0,{})
+
+	let q = 'SELECT DISTINCT proj FROM projs ORDER BY proj'
+	let ref = {
+			\	'query'  : q,
+			\	'params' : [],
+			\	}
+	let rows = projs#db#query(ref)
+	return rows
+endfunction
+
 function! projs#db#file ()
 	let root    = projs#root()
 	let db_file = base#file#catfile([ root, 'projs.sqlite' ])
