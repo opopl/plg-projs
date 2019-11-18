@@ -90,7 +90,7 @@ function! projs#new (...)
  echo " "
  echo delim
 
- let yn=input('Continue? (1/0): ',1)
+ let yn = input('Continue? (1/0): ',1)
  if !yn | return 0 | endif
 
  let newopts = projs#varget('PrjNew_opts',{})
@@ -151,7 +151,7 @@ function! projs#new (...)
   
   call projs#listadd(proj)
   
-  let loadmain=input('Load the main project file? (1/0): ', 1)
+  let loadmain = input('Load the main project file? (1/0): ', 1)
   if loadmain 
     VSECBASE _main_
   endif
@@ -216,10 +216,6 @@ endfunction
 function! projs#viewproj (...)
 
     call projs#rootcd()
-
-     """ delete buffers from the previously loaded project
-     "RFUN DC_Proj_BufsDelete
-     "BuffersWipeAll
 
     let sec = ''
     if a:0

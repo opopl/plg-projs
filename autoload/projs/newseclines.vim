@@ -28,3 +28,29 @@ function! projs#newseclines#fig_num (sec)
 
 	return lines
 endfunction
+
+function! projs#newseclines#regular#_vim_ (...)
+	let ref = get(a:000,0,{})
+
+	let lines = []
+
+	let proj      = get(ref,'proj','')
+	let projtype  = get(ref,'projtype','')
+
+  let q_proj     = txtmy#text#quotes(proj)
+  let q_projtype = txtmy#text#quotes(projtype)
+
+  call add(lines,' ')
+  call add(lines,'"""_vim_ ')
+  call add(lines,' ')
+  call add(lines,'let s:projtype ='.q_projtype)
+  call add(lines,'let s:proj     ='.q_proj)
+  call add(lines,' ')
+  call add(lines,'call projs#proj#name(s:proj)')
+  call add(lines,'call projs#proj#type(s:projtype)')
+  call add(lines,' ')
+  call add(lines,'PrjVarSet exe_latex pdflatex ')
+  call add(lines,' ')
+
+	return lines
+endfunction

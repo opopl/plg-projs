@@ -121,25 +121,106 @@ endfunction
 function! projs#newseclines#regular#_pl_ ()
 	let lines = []
 
-perl << eof
-      use Vim::Perl qw(:funcs :vars);
+"perl << eof
+   "use Vim::Perl qw(:funcs :vars);
 
-      my $proj  = VimVar('proj');
-      my $lines = [];
+   "my $proj  = VimVar('proj');
+   "my $lines = [];
 
-      push @$lines,map { s/^\s*//g; $_} split "\n" => qq{
-        use strict;
-        use warnings;
-        use utf8;
+   "push @$lines,map { s/^\s*//g; $_} split "\n" => qq{
+     "use strict;
+     "use warnings;
+     "use utf8;
 
-        use Data::Dumper;
-        use FindBin qw(\$Bin \$Script);
+     "use Data::Dumper;
+     "use FindBin qw(\$Bin \$Script);
 
-        my \$proj=\"$proj\";
-      };
+     "my \$proj=\"$proj\";
+   "};
 
-      VimListExtend('lines',$lines);
-eof
-	return lines
+   "VimListExtend('lines',$lines);
+"eof
+	"return lines
 
 endfunction
+
+function! projs#newseclines#regular#_build_htlatex_(...)
+	let ref  = get(a:000,0,{})
+
+	let proj = get(ref,'proj','')
+
+  let secc = base#qw('_main_htlatex_ cfg')
+  for sec in secc
+    call projs#sec#filecheck(sec)
+  endfor
+
+	let outd = [ 'builds', proj, 'b_htlatex' ]
+	
+	let pcwin = [ '%Bin%' ]
+	let pcunix = [ '.' ]
+	
+	call extend(pcwin,outd)
+	call extend(pcunix,outd)
+	
+	let outdir_win = base#file#catfile(pcwin)
+	
+	let outdir_unix = base#file#catfile(pcunix)
+	let outdir_unix = base#file#win2unix(outdir_unix)
+	
+	let tex_opts  = ' -file-line-error '
+	let tex_opts .= ' -output-directory='. outdir_unix
+	
+	call add(lines,' ')
+	call add(lines,'set Bin=%~dp0')
+	call add(lines,' ')
+	call add(lines,'set htmout='.base#path('htmlout') )
+	call add(lines,'set htmloutdir=%htmlout%\'.proj)
+	call add(lines,'set htmloutdir_pics=%htmloutdir%\pics\'.proj)
+	call add(lines,' ')
+	
+	call add(lines,'if exist %htmloutdir% rmdir /q/s  %htmloutdir% ')
+	call add(lines,' ')
+	call add(lines,'md %htmloutdir%')
+	call add(lines,'md %htmloutdir_pics%')
+	call add(lines,' ')
+	call add(lines,'set outdir='.outdir_win)
+	call add(lines,'set outdir_pics=%outdir%\pics\'.proj)
+	call add(lines,' ')
+	
+	call add(lines,'if  exist %outdir% rmdir /q/s  %outdir% ')
+	call add(lines,' ')
+	call add(lines,'md %outdir%')
+	call add(lines,'md %outdir_pics%')
+	call add(lines,' ')
+	call add(lines,'cd %Bin%')
+	call add(lines,' ')
+	call add(lines,'copy '.proj.'.*.tex %outdir%' )
+	call add(lines,'copy '.proj.'.tex %outdir%' )
+	call add(lines,'copy *.sty %outdir%' )
+	call add(lines,'copy _def.*.tex %outdir%' )
+	call add(lines,'copy inc.*.tex %outdir%' )
+	call add(lines,' ')
+	call add(lines,'copy pics\'.proj.'\*.jpg %outdir_pics%\' )
+	call add(lines,'copy pics\'.proj.'\*.png %outdir_pics%\' )
+	call add(lines,' ')
+	call add(lines,'cd %outdir%')
+	call add(lines,' ')
+	call add(lines,'copy '.proj.'.cfg.tex main.cfg' )
+	call add(lines,'copy '.proj.'.main_htlatex.tex main.tex' )
+	call add(lines,' ')
+	call add(lines,'htlatex main main')
+	call add(lines,' ')
+	call add(lines,'copy *.html %htmloutdir%\ ')
+	call add(lines,'copy *.png %htmloutdir%\ ')
+	call add(lines,' ')
+	call add(lines,'copy %outdir_pics%\*.png %htmloutdir_pics%')
+	call add(lines,'copy %outdir_pics%\*.jpg %htmloutdir_pics%')
+	call add(lines,' ')
+	call add(lines,'cd %Bin% ')
+	call add(lines,' ')
+	
+	call projs#sec#new('_main_htlatex_')
+
+	return lines
+endfunction
+
