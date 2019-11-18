@@ -223,7 +223,7 @@ endfunction
 
 function! projs#proj#secnamesall (...)
 
-	let sall = projs#proj#secnames()
+	let sall = projs#varget('secnames',[])
 	call extend(sall,projs#varget('secnamesbase',[]))
 	let sall = sort(base#uniq(sall))
 

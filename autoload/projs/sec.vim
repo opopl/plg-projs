@@ -361,7 +361,7 @@ function! projs#sec#new(sec,...)
     let o = base#varget('projs_opts_PrjSecNew',{})
 
     let prompt = get(o,'prompt',1)
-    let prompt = get(ref,'prompt',prompt)
+		let prompt = get(ref,'prompt',prompt)
 
     call projs#echo("Creating file:\n\t" . sec )
 
