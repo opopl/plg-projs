@@ -318,9 +318,12 @@ endfunction
 function! projs#sec#exists (...)
 	let sec = get(a:000,0,'')
 
-	let secnamesall = projs#proj#secnamesall ()
+	let sec_file = projs#sec#file(sec)
 
-	return base#inlist(sec,secnamesall)
+	let ok = 1
+	let ok = ok && filereadable(sec_file)
+
+	return ok
 
 endfunction
 
