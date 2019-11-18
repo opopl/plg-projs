@@ -374,11 +374,14 @@ function! projs#sec#new(sec,...)
 
     let lines = []
 
-		let rh = { 'sec' : sec, 'parent_sec' : parent_sec }
-    call extend(lines, projs#sec#header(rh) )
+		let keymap = projs#select#keymap()
 
-    let keymap = 'russian-jcukenwin'
-    let keymap = input('Keymap:',keymap,'custom,txtmy#complete#keymap')
+		let rh = { 
+			\	'sec'        : sec,
+			\	'keymap'     : keymap,
+			\	'parent_sec' : parent_sec ,
+	 		\	}
+    call extend(lines, projs#sec#header(rh) )
 
     let projtype = projs#varget('projtype','regular')
     let sub = 'projs#newseclines#'.projtype.'#'.sec
@@ -419,9 +422,6 @@ function! projs#sec#new(sec,...)
 """newsec_else
     else
 
-        if strlen(keymap)
-          call add(lines,'% vim: keymap='.keymap)
-        endif
 
 """newsec_else_prompt
         if prompt 
@@ -562,10 +562,17 @@ function! projs#sec#header (...)
 	let ref=get(a:000,0,{})
 
 	let sec        = get(ref,'sec','')
+	let keymap     = get(ref,'keymap','')
 	let parent_sec = get(ref,'parent_sec','')
 	
-  let header = [' ' , '%%file ' . sec, ' ' ]
-	call extend(header,[' ','%%parent ' . parent_sec ,' '])
+  let header = []
+
+	if strlen(keymap)
+		call add(header,'% vim: keymap=' . keymap )
+	endif
+
+	call extend(header,[ ' ' , '%%file ' . sec, ' ' ])
+	call extend(header,[ ' ','%%parent ' . parent_sec ,' '])
 
 	return header
 endf

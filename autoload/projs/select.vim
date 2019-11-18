@@ -12,6 +12,13 @@ function! projs#select#projtype ()
 
 endfunction
 
+function! projs#select#keymap ()
+
+    let keymap = 'russian-jcukenwin'
+    let keymap = input('Keymap:',keymap,'custom,txtmy#complete#keymap')
+		return keymap
+endfunction
+
 function! projs#select#projstruct ()
  let list = projs#varget('projectstructures',[])
 
