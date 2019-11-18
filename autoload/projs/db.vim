@@ -204,6 +204,23 @@ function! projs#db#secnames (...)
 	return rows
 endfunction
 
+function! projs#db#files ()
+	call projs#db#init_py ()
+
+	let ref  = get(a:000,0,{})
+
+	let proj = projs#proj#name()
+	let proj = get(ref,'proj',proj)
+
+	let q = 'SELECT file FROM projs WHERE proj = ?'
+	let ref = {
+			\	'query'  : q,
+			\	'params' : [proj],
+			\	}
+	let rows = projs#db#query(ref)
+	return rows
+endfunction
+
 function! projs#db#list (...)
 	let ref  = get(a:000,0,{})
 
@@ -221,6 +238,13 @@ function! projs#db#file ()
 	let db_file = base#file#catfile([ root, 'projs.sqlite' ])
 
 	return db_file
+endfunction
+
+function! projs#db#thisproj_list_files (...)
+	let files = projs#db#files()
+
+	call base#buf#open_split({ 'lines' : files })
+
 endfunction
 
 
