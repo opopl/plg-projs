@@ -371,9 +371,7 @@ function! projs#sec#new(sec,...)
     let lines = []
     call extend(lines, get(ref, 'add_lines_before', [] ) )
 
-    let file = projs#sec#file(sec)
-
-    let secs = base#qw("preamble body")
+    let sec_file = projs#sec#file(sec)
 
     let lines = []
 
@@ -399,12 +397,7 @@ function! projs#sec#new(sec,...)
 
     let inref = { 'prompt' : prompt }
 
-"""newsec__main__
-    if sec == '_main_'
-
-      let file = projs#path([ proj.'.tex'])
-
-    elseif sec =~ '^fig_'
+    if sec =~ '^fig_'
 			call extend(lines,projs#newseclines#fig_num(sec))
 
 """newsec__vim_
@@ -422,52 +415,27 @@ function! projs#sec#new(sec,...)
 					\	}
 			call extend(lines, projs#newseclines##_build_tex_(r))
 
-"""newsec_else
     else
-
-"""newsec_else_prompt
         if prompt 
-          let cnt = input('Continue adding? (1/0):',1)
-  
-          if cnt
-              let addsec = input('Add sectioning? (1/0):',1)
-              if addsec
-                  let seccmd = input('Sectioning command: ','section','custom,tex#complete#seccmds')
-  
-                  let title = input('Title: ',sec)
-                  let label = input('Label: ','sec:'.sec)
-  
-                  call add(lines,'\' . seccmd . '{'.title.'}')
-                  call add(lines,'\label{'.label.'}')
-                  call add(lines,' ')
-              endif
-          endif
+					call extend(lines, projs#sec#lines_prompt(r))
         else
-"""newsec_else_no_prompt
-            let seccmd= get(ref,'seccmd','section')
-
-						if strlen(seccmd)
-							let title = sec
-							let label = 'sec:'.sec
-	
-							call add(lines,'\' . seccmd . '{'.title.'}')
-							call add(lines,'\label{'.label.'}')
-							call add(lines,' ')
-						endif
+					let r_sc = copy(r)
+					call extend(r_sc,{ 'seccmd' : get(ref,'seccmd','section') })
+					call extend(lines, projs#sec#lines_seccmd(r_sc))
         endif
  
     endif
 
     call extend(lines,get(ref,'add_lines_after',[]))
 
-    call writefile(lines,file)
+    call writefile(lines,sec_file)
 
     if get(ref,'git_add')
-        call base#sys("git add " . file)
+        call base#sys("git add " . shellescape(sec_file))
     endif
 
     if get(ref,'view')
-        exe 'split ' . file
+        exe 'split ' . sec_file
     endif
     
 		return 1
@@ -577,4 +545,50 @@ function! projs#sec#header (...)
 	call extend(header,[ ' ','%%parent ' . parent_sec ,' '])
 
 	return header
+endf
+
+function! projs#sec#lines_seccmd (...)
+	let ref = get(a:000,0,{})
+
+	let sec    = get(ref,'sec','')
+	let seccmd = get(ref,'seccmd','')
+
+	let lines = []
+
+	if strlen(seccmd)
+		let title = sec
+		let label = 'sec:'.sec
+
+		call add(lines,'\' . seccmd . '{'.title.'}')
+		call add(lines,'\label{'.label.'}')
+		call add(lines,' ')
+	endif
+
+	return lines
+endf
+
+function! projs#sec#lines_prompt (...)
+	let ref = get(a:000,0,{})
+
+	let sec = get(ref,'sec','')
+
+	let cnt = input('Continue adding? (1/0):',1)
+
+	let lines = []
+  
+	if cnt
+		let addsec = input('Add sectioning? (1/0):',1)
+		if addsec
+			let seccmd = input('Sectioning command: ','section','custom,tex#complete#seccmds')
+			
+			let title = input('Title: ',sec)
+			let label = input('Label: ','sec:' . sec)
+			
+			call add(lines,'\' . seccmd . '{'.title.'}')
+			call add(lines,'\label{'.label.'}')
+			call add(lines,' ')
+		endif
+	endif
+
+	return lines
 endf
