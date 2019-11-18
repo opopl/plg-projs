@@ -246,7 +246,7 @@ function! projs#db#thisproj_list_files (...)
 	call base#buf#open_split({ 'lines' : files })
 endfunction
 
-function! projs#db#tags (...)
+function! projs#db#tags_get (...)
 	let ref = get(a:000,0,{})
 
 	let proj = projs#proj#name()
@@ -289,7 +289,10 @@ function! projs#db#buf_tags_append (...)
 	let file = get(ref,'file',file)
 
 	let r = { 'file' : file, 'proj' : proj }
-	let tags = projs#db#tags(r)
+	let tags_a = projs#db#tags_get(r)
+
+	let tags_i = input('tags:','')
+	call extend(tags_a,split(tags_i,','))
 
 endfunction
 
