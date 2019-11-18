@@ -329,6 +329,8 @@ endfunction
 " projs#sec#new(sec,{ "view" : 1 })
 " projs#sec#new(sec,{ "prompt" : 0 })
 " projs#sec#new(sec,{ "rewrite" : 1 })
+"
+" end of function: end_projs_sec_new
 
 function! projs#sec#new(sec,...)
     let sec        = a:sec
@@ -352,10 +354,8 @@ function! projs#sec#new(sec,...)
     endif
 
 		let rw = get(ref,'rewrite',0)
-		if projs#sec#exists(sec)
-			if !rw
+		if projs#sec#exists(sec) && !rw
 				return
-			endif
 		endif
 
     let o = base#varget('projs_opts_PrjSecNew',{})
@@ -366,7 +366,7 @@ function! projs#sec#new(sec,...)
     call projs#echo("Creating file:\n\t" . sec )
 
     let lines = []
-    call extend(lines,get(ref,'add_lines_before',[]))
+    call extend(lines, get(ref, 'add_lines_before', [] ) )
 
     let file = projs#sec#file(sec)
 
@@ -378,12 +378,13 @@ function! projs#sec#new(sec,...)
 
     let lines = []
 
-    let tagsec = [' ' , '%%file '.sec, ' ' ]
+    let tagsec = [' ' , '%%file ' . sec, ' ' ]
 		call extend(tagsec,[' ','%%parent ' . parent_sec ,' '])
 
-    let keymap = 'ukrainian-jcuken'
+    call extend(lines,tagsec)
+
     let keymap = 'russian-jcukenwin'
-    "let keymap = input('Keymap:','','custom,txtmy#complete#keymap')
+    let keymap = input('Keymap:',keymap,'custom,txtmy#complete#keymap')
 
     try
       exe 'let lines='.sub.'()'
@@ -399,135 +400,14 @@ function! projs#sec#new(sec,...)
       let file = projs#path([ proj.'.tex'])
 
     elseif sec =~ '^fig_'
-				let num = substitute(sec,'^fig_\(.*\)$','\1','g')
-				let num_dot = substitute(num,'_','.','g')
+			call extend(lines,projs#newseclines#fig_num(sec))
 
-        call extend(lines,tagsec)
-
-				call add(lines,'\renewcommand{\thefigure}{'.num_dot.'}')
-				call add(lines,'	')
-				call add(lines,'\begin{figure}[ht]')
-				call add(lines,'	\begin{center}')
-				call add(lines,'		\PrjPicW{'.num.'}{0.7}')
-				call add(lines,'	\end{center}')
-				call add(lines,'	')
-				call add(lines,'	\caption{')
-				call add(lines,'	')
-				call add(lines,'	}')
-				call add(lines,'	\label{fig:'.num.'}')
-				call add(lines,'\end{figure}')
-				call add(lines,'	')
-
-"""newsec_listfigs
-    elseif sec == 'listfigs'
-
-        call extend(lines,tagsec)
-
-				call add(lines,' ')
-				call add(lines,'\phantomsection')
-				call add(lines,' ')
-				call add(lines,'\addcontentsline{toc}{chapter}{\listfigurename} ')
-				call add(lines,' ')
-				call add(lines,'\listoffigures')
-				call add(lines,'\newpage')
-				call add(lines,' ')
-
-"""newsec_listtabs
-    elseif sec == 'listtabs'
-
-        call extend(lines,tagsec)
-
-				call add(lines,' ')
-				call add(lines,'\phantomsection')
-				call add(lines,' ')
-				call add(lines,'\addcontentsline{toc}{chapter}{\listtablename} ')
-				call add(lines,' ')
-				call add(lines,'\listoftables')
-				call add(lines,'\newpage')
-				call add(lines,' ')
- 
-"""newsec_bib
-    elseif sec == 'bib'
-
-        let bibstyle = base#input('Bibliography style:','unsrt',inref)
-        let bibfile  = base#input('Bibliography:','\PROJ.refs',inref)
-
-        call extend(lines,tagsec)
-
-        call add(lines,'\phantomsection')
-        "call add(lines,'\renewcommand\bibname{}')
-
-        call add(lines,'\addcontentsline{toc}{chapter}{\bibname}')
-
-        call add(lines,'\bibliographystyle{'.bibstyle.'}')
-        call add(lines,'\bibliography{'.bibfile.'}')
-"""newsec_title
-    elseif sec == 'title'
-        call add(lines,' ')
-        call add(lines,'\begin{titlepage}')
-        call add(lines,' ')
-        call add(lines,'\end{titlepage}')
-
-"""newsec_index
-    elseif sec == 'index'
-
-        call extend(lines,tagsec)
-
-        call add(lines,'\clearpage')
-        call add(lines,'\phantomsection')
-        call add(lines,'\addcontentsline{toc}{chapter}{\indexname}')
-        call add(lines,'\printindex')
 
 """newsec_body
     elseif sec == 'body'
         call extend(lines,tagsec)
 
-"""newsec_cfg
-    elseif sec == 'cfg'
-        call extend(lines,tagsec)
-
-        call extend(lines,tex#lines('tex4ht_cfg'))
-
-"""newsec_preamble
-    elseif sec == 'preamble'
-        call extend(lines,tagsec)
-
-        let packs = projs#varget('tex_packs_preamble',[])
-
-        let packopts = {
-            \ 'fontenc'  : 'OT1,T2A,T3',
-            \ 'inputenc' : 'utf8',
-            \ }
-
-        let ln  = projs#qw#rf('data tex preamble.tex')
-        call extend(lines,ln)
-
-    elseif sec == '_dat_'
-
     elseif sec == '_dat_defs_'
-
-"""newsec__pl_
-    elseif sec == '_pl_'
-
-perl << eof
-      use Vim::Perl qw(:funcs :vars);
-
-      my $proj  = VimVar('proj');
-      my $lines = [];
-
-      push @$lines,map { s/^\s*//g; $_} split "\n" => qq{
-        use strict;
-        use warnings;
-        use utf8;
-
-        use Data::Dumper;
-        use FindBin qw(\$Bin \$Script);
-
-        my \$proj=\"$proj\";
-      };
-
-      VimListExtend('lines',$lines);
-eof
 
 """newsec__vim_
     elseif sec == '_vim_'
