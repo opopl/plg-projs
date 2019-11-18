@@ -464,22 +464,22 @@ function! projs#proj#git (...)
 endfunction
 
 function! projs#proj#git_add ()
-  let texfiles=projs#varget('texfiles',[])
+  let texfiles = projs#varget('texfiles',[])
 
-  let newopts=projs#varget('PrjNew_opts',{})
+  let newopts = projs#varget('PrjNew_opts',{})
 
   let git_add = get(newopts,'git_add',0)
-  let git_add = input('Add each new file to git? (1/0)',git_add)
+  let git_add = input('Add each new file to git? (1/0): ',git_add)
 
-  if git_add
-         for file in values(texfiles)
-             if filereadable(file)
-                if ! base#sys("git add " . file )
-                    return 0
-                endif
-             endif
-         endfor
-   endif
+	if !git_add | return | endif
+	
+	for file in values(texfiles)
+		if filereadable(file)
+			if ! base#sys("git add " . file )
+				return 0
+			endif
+		endif
+	endfor
 
         
 endfunction
