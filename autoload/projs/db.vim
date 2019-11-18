@@ -55,8 +55,8 @@ python << eof
 import vim,sys,sqlite3,re,os,pprint
 
 pylib = vim.eval('projs#pylib()')
-sys.path.append(pylib)
-import plg.projs.db as db
+sys.path.append(pylib + '/plg/projs')
+import db 
 
 db_file = vim.eval('projs#db#file()')
 root    = vim.eval('projs#root()')
@@ -221,6 +221,13 @@ function! projs#db#file ()
 	let db_file = base#file#catfile([ root, 'projs.sqlite' ])
 
 	return db_file
+endfunction
+
+
+function! projs#db#thisproj_list_secs (...)
+	let secs = projs#db#secnames()
+
+	call base#buf#open_split({ 'lines' : secs })
 endfunction
 
 function! projs#db#action (...)
