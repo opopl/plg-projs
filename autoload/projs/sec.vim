@@ -375,13 +375,15 @@ function! projs#sec#new(sec,...)
 
     let lines = []
 
-		let keymap = projs#select#keymap()
-
 		let rh = { 
 			\	'sec'        : sec,
-			\	'keymap'     : keymap,
-			\	'parent_sec' : parent_sec ,
+			\	'parent_sec' : parent_sec,
 	 		\	}
+
+		if fnamemodify(sec_file,':p:e') == 'tex'
+			let keymap = projs#select#keymap()
+			call extend(rh,{ 'keymap' : keymap })
+		endif
     call extend(lines, projs#sec#header(rh) )
 
     let projtype = projs#varget('projtype','regular')
@@ -413,7 +415,7 @@ function! projs#sec#new(sec,...)
 					\	'proj' : proj,
 					\	'sec'  : sec,
 					\	}
-			call extend(lines, projs#newseclines##_build_tex_(r))
+			call extend(lines, projs#newseclines#_build_tex_(r))
 
     else
         if prompt 

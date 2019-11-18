@@ -204,10 +204,10 @@ function! projs#db#secnames (...)
 	return rows
 endfunction
 
-function! projs#db#files ()
-	call projs#db#init_py ()
-
+function! projs#db#files (...)
 	let ref  = get(a:000,0,{})
+
+	call projs#db#init_py ()
 
 	let proj = projs#proj#name()
 	let proj = get(ref,'proj',proj)
@@ -244,9 +244,41 @@ function! projs#db#thisproj_list_files (...)
 	let files = projs#db#files()
 
 	call base#buf#open_split({ 'lines' : files })
-
 endfunction
 
+function! projs#db#tags (...)
+	let ref = get(a:000,0,{})
+
+	let proj = projs#proj#name()
+	let proj = get(ref,'proj',proj)
+
+	let q = 'SELECT tags FROM projs WHERE proj = ? AND file = ?'
+	let p = [ proj ]
+
+	let dbfile = projs#db#file()
+	
+	let tags = pymy#sqlite#query_fetchone({
+		\	'dbfile' : dbfile,
+		\	'p'      : p,
+		\	'q'      : q,
+		\	})
+	let tags_a = split(tags,",")
+
+	return tags_a
+endfunction
+
+function! projs#db#buf_tags_append (...)
+	let ref = get(a:000,0,{})
+
+	let proj = projs#proj#name()
+	let proj = get(ref,'proj',proj)
+
+	let file = b:file
+	let file = get(ref,'file',file)
+
+	let tags = projs#db#tags({ 'file' : file, 'proj' : proj })
+
+endfunction
 
 function! projs#db#thisproj_list_secs (...)
 	let secs = projs#db#secnames()

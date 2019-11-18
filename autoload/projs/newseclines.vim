@@ -55,91 +55,90 @@ function! projs#newseclines#_vim_ (...)
 	return lines
 endfunction
 
-
 function! projs#newseclines#_build_tex_ (...)
-		let ref = get(a:000,0,{})
+	let ref = get(a:000,0,{})
 		
-		let proj = get(ref,'proj','')
-		let sec  = get(ref,'sec','')
+	let proj = get(ref,'proj','')
+	let sec  = get(ref,'sec','')
 	
-		let lines = []
+	let lines = []
 
-		let type = substitute(sec,'^_build_\(\w\+\)_$','\1','g')
-		let tex_exe = type
+	let type = substitute(sec,'^_build_\(\w\+\)_$','\1','g')
+	let tex_exe = type
 		
-		let outd = [ 'builds', proj, 'b_' . type ]
+	let outd = [ 'builds', proj, 'b_' . type ]
 		
-		let pcwin = [ '%Bin%' ]
-		let pcunix = [ '.' ]
+	let pcwin = [ '%Bin%' ]
+	let pcunix = [ '.' ]
 
-		call extend(pcwin,outd)
-		call extend(pcunix,outd)
+	call extend(pcwin,outd)
+	call extend(pcunix,outd)
 		
-		let outdir_win = base#file#catfile(pcwin)
+	let outdir_win = base#file#catfile(pcwin)
 		
-		let outdir_unix = base#file#catfile(pcunix)
-		let outdir_unix = base#file#win2unix(outdir_unix)
+	let outdir_unix = base#file#catfile(pcunix)
+	let outdir_unix = base#file#win2unix(outdir_unix)
 		
-		let tex_opts = []
-		if type == 'perltex'
-			call add(tex_opts,'--latex=pdflatex --nosafe')
-		endif
+	let tex_opts = []
+	if type == 'perltex'
+		call add(tex_opts,'--latex=pdflatex --nosafe')
+	endif
 
-		call add(tex_opts,' -file-line-error ')
-		call add(tex_opts,' -interaction nonstopmode ')
-		call add(tex_opts,' -output-directory='. outdir_unix)
+	call add(tex_opts,' -file-line-error ')
+	call add(tex_opts,' -interaction nonstopmode ')
+	call add(tex_opts,' -output-directory='. outdir_unix)
 		
-		let lns = {
+	let lns = {
 		\ 'texcmd'    : '%tex_exe% %tex_opts% ' . proj ,
 		\ 'bibtex'    : 'bibtex '    . proj            ,
 		\ 'makeindex' : 'makeindex ' . proj            ,
 		\ }
-		let bibfile = projs#sec#file('_bib_')
+	let bibfile = projs#sec#file('_bib_')
 
-		call add(lines,' ')
-		call add(lines,'@echo off ')
-		call add(lines,' ')
-		call add(lines,'set Bin=%~dp0')
-		call add(lines,'cd %Bin%')
-		call add(lines,' ')
-		call add(lines,'set tex_exe='.tex_exe)
-		call add(lines,' ')
-		call add(lines,'set tex_opts=')
-		for opt in tex_opts
-		call add(lines,'set tex_opts=%tex_opts% ' . opt)
-		endfor
-		call add(lines,' ')
-		call add(lines,'set outdir='.outdir_win)
-		call add(lines,'md %outdir%')
-		call add(lines,' ')
-		call add(lines,'set bibfile='.bibfile)
-		call add(lines,' ')
-		call add(lines,'copy %bibfile% %outdir%')
-		call add(lines,' ')
-		call add(lines,lns.texcmd  )
-		call add(lines,'rem --- bibtex makeindex --- ')
-		call add(lines,'cd %outdir% ')
-		call add(lines,lns.bibtex  )
-		call add(lines,lns.makeindex  )
-		call add(lines,'rem ------------------------ ')
-		call add(lines,' ')
-		call add(lines,'cd %Bin% ')
-		call add(lines,lns.texcmd  )
-		call add(lines,lns.texcmd  )
-		call add(lines,' ')
+	call add(lines,' ')
+	call add(lines,'@echo off ')
+	call add(lines,' ')
+	call add(lines,'set Bin=%~dp0')
+	call add(lines,'cd %Bin%')
+	call add(lines,' ')
+	call add(lines,'set tex_exe='.tex_exe)
+	call add(lines,' ')
+	call add(lines,'set tex_opts=')
+	for opt in tex_opts
+	call add(lines,'set tex_opts=%tex_opts% ' . opt)
+	endfor
+	call add(lines,' ')
+	call add(lines,'set outdir='.outdir_win)
+	call add(lines,'md %outdir%')
+	call add(lines,' ')
+	call add(lines,'set bibfile='.bibfile)
+	call add(lines,' ')
+	call add(lines,'copy %bibfile% %outdir%')
+	call add(lines,' ')
+	call add(lines,lns.texcmd  )
+	call add(lines,'rem --- bibtex makeindex --- ')
+	call add(lines,'cd %outdir% ')
+	call add(lines,lns.bibtex  )
+	call add(lines,lns.makeindex  )
+	call add(lines,'rem ------------------------ ')
+	call add(lines,' ')
+	call add(lines,'cd %Bin% ')
+	call add(lines,lns.texcmd  )
+	call add(lines,lns.texcmd  )
+	call add(lines,' ')
 
-		let origin = base#file#catfile([ outdir_win, proj.'.pdf'])
-		
-		let dests = []
-		
-		call add(dests,'%Bin%\pdf_built\b_'.proj.'.pdf' )
-		call add(dests,'%PDFOUT%\b_'.type.'_'.proj.'.pdf' )
-		call add(dests,'%PDFOUT%\'.proj.'.pdf' )
-		
-		for dest in dests
-			call add(lines,'copy '.origin.' '.dest)
-			call add(lines,' ')
-		endfor
+	let origin = base#file#catfile([ outdir_win, proj.'.pdf'])
+	
+	let dests = []
+	
+	call add(dests,'%Bin%\pdf_built\b_'.proj.'.pdf' )
+	call add(dests,'%PDFOUT%\b_'.type.'_'.proj.'.pdf' )
+	call add(dests,'%PDFOUT%\'.proj.'.pdf' )
+	
+	for dest in dests
+		call add(lines,'copy '.origin.' '.dest)
+		call add(lines,' ')
+	endfor
 
 		return lines
 endfunction
