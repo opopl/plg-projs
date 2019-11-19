@@ -35,7 +35,6 @@ eof
 
 endfunction
 
-
 """prjdb_fill_from_files
 function! projs#db#fill_from_files (...)
 	let ref    = get(a:000,0,{})
@@ -243,18 +242,27 @@ endfunction
 function! projs#db#tags_get (...)
 	let ref = get(a:000,0,{})
 
-	let proj = projs#proj#name()
-	let proj = get(ref,'proj',proj)
+	let proj = get(ref,'proj','')
 
 	let file = get(ref,'file','')
 	let file = fnamemodify(file,':t')
 
-	let q = 'SELECT DISTINCT tags FROM projs WHERE proj = ?'
-	let p = [ proj ]
+	let q = 'SELECT DISTINCT tags FROM projs'
+	let p = []
 
-	if strlen(file)
-		let q .= ' AND file = ?'
-		call add(p, file)
+	if strlen(proj) || strlen(file)
+		let cond = []
+		if strlen(proj)
+			call add(cond,' proj = ? ')
+			call add(p, proj)
+		endif
+
+		if strlen(file)
+			call add(cond,' file = ? ')
+			call add(p, file)
+		endif
+
+		let q .= ' WHERE ' . join(cond,' AND ')
 	endif
 
 	let dbfile = projs#db#file()
@@ -271,56 +279,6 @@ function! projs#db#tags_get (...)
 	let tags_a = base#uniq(tags_a)
 
 	return tags_a
-endfunction
-
-function! projs#db#buf_tags_append (...)
-	let ref = get(a:000,0,{})
-
-	let proj = b:proj
-	let proj = get(ref,'proj',proj)
-
-	let file = b:file
-	let file = get(ref,'file',file)
-	let file = fnamemodify(file,':t')
-
-	let r = { 'file' : file, 'proj' : proj }
-	let tags_a = projs#db#tags_get(r)
-
-	call base#varset('this',tags_a)
-
-	let tags_i = input('tags: ','','custom,base#complete#this')
-	call extend(tags_a,split(tags_i,','))
-	
-	let tags_a = base#uniq(tags_a)
-	let tags = join(tags_a, ',')
-
-	call pymy#sqlite#update_hash({
-		\	'dbfile' : projs#db#file(),
-		\	'h' : { 'tags' : tags },
-		\	't' : 'projs',
-		\	'u' : 'UPDATE',
-		\	'w' : { 'proj' : proj, 'file' : file },
-		\	})
-
-endfunction
-
-function! projs#db#thisproj_data (...)
-	let proj = projs#proj#name()
-	
-	let q = 'SELECT sec, tags, file FROM projs WHERE proj = ?'
-	let p = [ proj ]
-	let [ rows_h, cols ] = pymy#sqlite#query({
-		\	'dbfile' : projs#db#file(),
-		\	'p'      : p,
-		\	'q'      : q,
-		\	})
-
-	let lines = pymy#data#tabulate({
-		\ 'data_h'  : rows_h,
-		\ 'headers' : cols,
-		\ })
-
-	call base#buf#open_split({ 'lines' : lines })
 endfunction
 
 function! projs#db#action (...)
@@ -344,7 +302,7 @@ function! projs#db#action (...)
 		return
 	endif
 
-  let sub = 'projs#db#'.act
+  let sub = 'projs#db_cmd#'.act
 
   exe 'call '.sub.'()'
 
