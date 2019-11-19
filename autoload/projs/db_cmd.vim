@@ -55,7 +55,7 @@ function! projs#db_cmd#search (...)
 	call base#varset('this',tags_a)
 	let tag = input('tags: ','','custom,base#complete#this')
 
-	let q = 'SELECT sec, tags, file FROM projs WHERE proj = ?'
+	let q = 'SELECT fid FROM tags WHERE tag = ?'
 endfunction
 
 function! projs#db_cmd#thisproj_data (...)

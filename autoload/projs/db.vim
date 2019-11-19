@@ -16,15 +16,16 @@ function! projs#db#create_tables ()
 	let db_file = projs#db#file()
 	let pylib   = projs#pylib()
 
-	let sql_file = base#qw#catpath('plg projs data sql create_table_projs.sql')
+	let tables   = base#qw('projs tags')
 
-	call pymy#py#add_lib(pylib)
-
+	call pymy#py#add_lib( pylib . '/plg/projs' )
+	for table in tables
+		let sql_file = base#qw#catpath('plg projs data sql create_table_' . table . '.sql')
 python << eof
 
 import vim
 import sqlite3
-import plg.projs.db as db
+import db
 
 db_file  = vim.eval('db_file')
 sql_file = vim.eval('sql_file')
@@ -32,6 +33,7 @@ sql_file = vim.eval('sql_file')
 db.create_tables( db_file, sql_file )
 
 eof
+	endfor
 
 endfunction
 

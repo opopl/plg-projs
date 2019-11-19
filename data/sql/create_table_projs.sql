@@ -1,12 +1,17 @@
 
 CREATE TABLE IF NOT EXISTS projs (
-    proj text not null, 
-    file text not null unique,
-    root text not null,
-    sec text, 
-    tags text, 
-    parent text,
-    author text,
-    pic text,
-    rootid text 
+    -- project id
+    pid INTEGER,
+    -- file id
+    fid INTEGER,
+    -- project name
+    proj TEXT NOT NULL, 
+    file TEXT NOT NULL UNIQUE,
+    root TEXT NOT NULL,
+    sec TEXT, 
+    tags TEXT, 
+    parent TEXT,
+    author TEXT,
+    pic TEXT,
+    rootid TEXT 
 );
