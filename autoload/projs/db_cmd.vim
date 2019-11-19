@@ -50,8 +50,10 @@ endfunction
 function! projs#db_cmd#search (...)
 	let proj = projs#proj#name()
 
-	let tags = projs#db#tags_get()
-	let tag = input()
+	let tags_a = projs#db#tags_get()
+
+	call base#varset('this',tags_a)
+	let tag = input('tags: ','','custom,base#complete#this')
 
 	let q = 'SELECT sec, tags, file FROM projs WHERE proj = ?'
 endfunction

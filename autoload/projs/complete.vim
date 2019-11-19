@@ -128,7 +128,7 @@ function! projs#complete#secnames (...)
   "call projs#proj#secnames()
 	let comps = []
 
-	call extend(comps,base#varget('projs_secnames',[]))
+	call extend(comps,projs#db#secnames())
 	call extend(comps,base#varget('projs_secnamesbase',[]))
 
   return join(comps,"\n") 
