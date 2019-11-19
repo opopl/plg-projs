@@ -281,12 +281,26 @@ function! projs#db#buf_tags_append (...)
 
 	let file = b:file
 	let file = get(ref,'file',file)
+	let file = fnamemodify(file,':t')
 
 	let r = { 'file' : file, 'proj' : proj }
 	let tags_a = projs#db#tags_get(r)
 
-	let tags_i = input('tags:','')
+	call base#varset('this',tags_a)
+
+	let tags_i = input('tags: ','','custom,base#complete#this')
 	call extend(tags_a,split(tags_i,','))
+	
+	let tags_a = base#uniq(tags_a)
+	let tags = join(tags_a, ',')
+
+	call pymy#sqlite#update_hash({
+		\	'dbfile' : projs#db#file(),
+		\	'h' : { 'tags' : tags },
+		\	't' : 'projs',
+		\	'u' : 'UPDATE',
+		\	'w' : { 'proj' : proj, 'file' : file },
+		\	})
 
 endfunction
 
