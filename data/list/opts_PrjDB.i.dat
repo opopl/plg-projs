@@ -3,6 +3,5 @@ fill_from_files
 drop_tables
 create_tables
 query_split
-thisproj_list_secs
-thisproj_list_files
+thisproj_data
 buf_tags_append

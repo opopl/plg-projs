@@ -240,12 +240,6 @@ function! projs#db#file ()
 	return db_file
 endfunction
 
-function! projs#db#thisproj_list_files (...)
-	let files = projs#db#files()
-
-	call base#buf#open_split({ 'lines' : files })
-endfunction
-
 function! projs#db#tags_get (...)
 	let ref = get(a:000,0,{})
 
@@ -282,7 +276,7 @@ endfunction
 function! projs#db#buf_tags_append (...)
 	let ref = get(a:000,0,{})
 
-	let proj = projs#proj#name()
+	let proj = b:proj
 	let proj = get(ref,'proj',proj)
 
 	let file = b:file
@@ -296,10 +290,23 @@ function! projs#db#buf_tags_append (...)
 
 endfunction
 
-function! projs#db#thisproj_list_secs (...)
-	let secs = projs#db#secnames()
+function! projs#db#thisproj_data (...)
+	let proj = projs#proj#name()
+	
+	let q = 'SELECT sec, tags, file FROM projs WHERE proj = ?'
+	let p = [ proj ]
+	let [ rows_h, cols ] = pymy#sqlite#query({
+		\	'dbfile' : projs#db#file(),
+		\	'p'      : p,
+		\	'q'      : q,
+		\	})
 
-	call base#buf#open_split({ 'lines' : secs })
+	let lines = pymy#data#tabulate({
+		\ 'data_h'  : rows_h,
+		\ 'headers' : cols,
+		\ })
+
+	call base#buf#open_split({ 'lines' : lines })
 endfunction
 
 function! projs#db#action (...)
