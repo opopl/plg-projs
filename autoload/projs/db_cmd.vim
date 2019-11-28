@@ -26,7 +26,10 @@ function! projs#db_cmd#buf_tags_append (...)
 	let file = get(ref,'file',file)
 	let file = fnamemodify(file,':t')
 
-	let r = { 'file' : file, 'proj' : proj }
+	let r = { 
+		\	'file' : file, 
+		\	'proj' : proj 
+		\	}
 	let tags_a = projs#db#tags_get(r)
 
 	call base#varset('this',tags_a)

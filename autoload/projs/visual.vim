@@ -69,5 +69,10 @@ eof
         \  }
     call projs#sec#new(sec, r)
   endfor
+  TgUpdate projs_this
+  for sec in secs
+    call base#tg#go(sec)
+  endfor
+
   
 endfunction
