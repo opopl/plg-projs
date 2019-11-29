@@ -212,6 +212,9 @@ endfunction
 "   view project
 " Usage
 "   call projs#viewproj (proj)
+" Call tree
+"   Calls:
+"     projs#new
 
 function! projs#viewproj (...)
 
