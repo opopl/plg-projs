@@ -166,52 +166,52 @@ function! projs#new (...)
 endf
 
 function! projs#pylib ()
-	let pylib = base#qw#catpath('plg','projs python lib')
-	return pylib
+  let pylib = base#qw#catpath('plg','projs python lib')
+  return pylib
 endfunction
 
-"	Usage
+" Usage
 "
-"		projs#selectproject ()
-"		projs#selectproject (pat)
+"   projs#selectproject ()
+"   projs#selectproject (pat)
 "
-"	Call tree
-"		Called by
-"			projs#viewproj
+" Call tree
+"   Called by
+"     projs#viewproj
 
 function! projs#selectproject (...)
     
     if a:0
- 			let pat  = a:1
+      let pat  = a:1
     endif
 
-		let list = projs#list()
-		let data_h = []
-		for p in list
-			call add(data_h, { 'proj' : p })
-		endfor
+    let list = projs#list()
+    let data_h = []
+    for p in list
+      call add(data_h, { 'proj' : p })
+    endfor
 
-		let lines = pymy#data#tabulate({
-			\ 'data_h'  : data_h,
-			\ 'headers' : [ 'proj' ],
-			\ })
+    let lines = pymy#data#tabulate({
+      \ 'data_h'  : data_h,
+      \ 'headers' : [ 'proj' ],
+      \ })
 
-		"call base#buf#open_split({ 'lines' : lines })
+    "call base#buf#open_split({ 'lines' : lines })
 
-		let msg_a = [
-			\	"select project: ",	
-			\	]
-		let msg = join(msg_a,"\n")
-		
-		let proj = base#input_we(msg,'',{ 'complete' : 'custom,projs#complete' })
+    let msg_a = [
+      \ "select project: ", 
+      \ ]
+    let msg = join(msg_a,"\n")
+    
+    let proj = base#input_we(msg,'',{ 'complete' : 'custom,projs#complete' })
     return proj
     
 endfunction
 
-"	Purpose
-"		view project
-"	Usage
-"		call projs#viewproj (proj)
+" Purpose
+"   view project
+" Usage
+"   call projs#viewproj (proj)
 
 function! projs#viewproj (...)
 
@@ -308,35 +308,35 @@ function! projs#htlatex (...)
 endfunction
 
 function! projs#visual (...)
-	let start = get(a:000, 0, '')
-	let end   = get(a:000, 1, '')
-	let act   = get(a:000, 2, '')
+  let start = get(a:000, 0, '')
+  let end   = get(a:000, 1, '')
+  let act   = get(a:000, 2, '')
 
-	let sub = 'projs#visual#' . act . '(start,end)'
-	exe 'call ' . sub
-	
+  let sub = 'projs#visual#' . act . '(start,end)'
+  exe 'call ' . sub
+  
 endfunction
 
 function! projs#action (...)
   let act = get(a:000,0,'')
 
-	let acts = base#varget('projs_opts_PrjAct',[])
-	let acts = sort(acts)
-	if ! strlen(act)
-		let desc = base#varget('projs_desc_PrjAct',{})
-		let info = []
-		for act in acts
-			call add(info,[ act, get(desc,act,'') ])
-		endfor
-		let lines = [ 'Possible PrjAct actions: ' ]
-		call extend(lines, pymy#data#tabulate({
-			\ 'data'    : info,
-			\ 'headers' : [ 'act', 'description'],
-			\ }))
+  let acts = base#varget('projs_opts_PrjAct',[])
+  let acts = sort(acts)
+  if ! strlen(act)
+    let desc = base#varget('projs_desc_PrjAct',{})
+    let info = []
+    for act in acts
+      call add(info,[ act, get(desc,act,'') ])
+    endfor
+    let lines = [ 'Possible PrjAct actions: ' ]
+    call extend(lines, pymy#data#tabulate({
+      \ 'data'    : info,
+      \ 'headers' : [ 'act', 'description'],
+      \ }))
 
-		call base#buf#open_split({ 'lines' : lines })
-		return
-	endif
+    call base#buf#open_split({ 'lines' : lines })
+    return
+  endif
 
   let sub = 'projs#action#'.act
 
@@ -393,10 +393,10 @@ function! projs#onload (...)
   setlocal isk=@,48-57,_,128-167,224-235
 
   let done = base#eval("b:projs_onload_done")
-	if done | return | endif
+  if done | return | endif
 
   let b:projs_onload_done=1
-  	
+    
   let prf = { 'prf' : 'projs#onload' }
   call base#log([
     \ 'ref => ' . base#dump(ref),
@@ -411,27 +411,27 @@ function! projs#onload (...)
 
   StatusLine projs
 
-	call projs#exe_latex('pdflatex')
+  call projs#exe_latex('pdflatex')
 
   call projs#maps()
 
-	let vf = projs#sec#file('_vim_')
-	call base#vimfile#source({ 'files' : [vf] })
+  let vf = projs#sec#file('_vim_')
+  call base#vimfile#source({ 'files' : [vf] })
 
 endfunction
 
 function! projs#exe_latex (...)
-	let exe_latex = get(a:000,0,'pdflatex')
+  let exe_latex = get(a:000,0,'pdflatex')
 
-	let makeprg = make#varget('makeprg','projs_single_run')
+  let makeprg = make#varget('makeprg','projs_single_run')
 
-	if a:0
-		call projs#varset('exe_latex',exe_latex)
-		call make#makeprg(makeprg)
-	else
-		let exe_latex = projs#varget('exe_latex',exe_latex)
-	endif
-	
+  if a:0
+    call projs#varset('exe_latex',exe_latex)
+    call make#makeprg(makeprg)
+  else
+    let exe_latex = projs#varget('exe_latex',exe_latex)
+  endif
+  
  return exe_latex
 
 endfunction
@@ -490,11 +490,11 @@ endfunction
 
 function! projs#echo(text,...)
 
-	let opts = get(a:000,0,{})
+  let opts = get(a:000,0,{})
  
-	let prf = { 'plugin' : 'projs'}
-	call extend(prf,opts)
-	call base#log(a:text,prf)
+  let prf = { 'plugin' : 'projs'}
+  call extend(prf,opts)
+  call base#log(a:text,prf)
 
 endfunction
 
@@ -680,8 +680,8 @@ function! projs#filejoinlines (...)
 endf
 
 function! projs#maps ()
-    	nnoremap <silent> ;;co :copen<CR>
-    	nnoremap <silent> ;;cc :cclose<CR>
+      nnoremap <silent> ;;co :copen<CR>
+      nnoremap <silent> ;;cc :cclose<CR>
 
       nnoremap <buffer><silent> ;ab :PrjAct async_build<CR>
       nnoremap <buffer><silent> ;mm :PrjMake<CR>
@@ -728,10 +728,10 @@ endfunction
 " ProjsInit DIRID
 
 function! projs#init (...)
-		let l:start = localtime()
-		let msg = ['start']
-		let prf = {'plugin' : 'projs', 'func' : 'projs#init'}
-		call base#log(msg,prf)
+    let l:start = localtime()
+    let msg = ['start']
+    let prf = {'plugin' : 'projs', 'func' : 'projs#init'}
+    call base#log(msg,prf)
 
     " -------------------------------------------------
     " load variables from the corresponding dat files
@@ -764,10 +764,10 @@ function! projs#init (...)
       exe 'so '.ifile
     endif
 
-		let vars = projs#varget('init_vars',[])
-		for x in vars
-			call projs#init#var(x)
-		endfor
+    let vars = projs#varget('init_vars',[])
+    for x in vars
+      call projs#init#var(x)
+    endfor
 
     if ! exists("proj") | let proj='' | endif
 
@@ -866,13 +866,13 @@ function! projs#list_write2dat ()
 endfunction
 
 function! projs#listfromfiles ()
-		"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-		let msg = ['start']
-		let prf = {'plugin' : 'projs', 'func' : 'projs#listfromfiles'}
-		call base#log(msg,prf)
-		let l:start=localtime()
-		"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-		"
+    "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+    let msg = ['start']
+    let prf = {'plugin' : 'projs', 'func' : 'projs#listfromfiles'}
+    call base#log(msg,prf)
+    let l:start=localtime()
+    "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+    "
     let root = projs#root()
 
     let list = base#find({ 
@@ -902,12 +902,12 @@ function! projs#listfromfiles ()
 
     call projs#varset('list',nlist)
 
-		"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-		let l:elapsed = localtime() - l:start
-		let msg = ['end, elapsed = ' . l:elapsed]
-		let prf = {'plugin' : 'projs', 'func' : 'projs#listfromfiles'}
-		call base#log(msg,prf)
-		"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+    "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+    let l:elapsed = localtime() - l:start
+    let msg = ['end, elapsed = ' . l:elapsed]
+    let prf = {'plugin' : 'projs', 'func' : 'projs#listfromfiles'}
+    call base#log(msg,prf)
+    "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
     return nlist
 endf    
@@ -1117,7 +1117,7 @@ function! projs#renameproject(...)
  let old = get(a:000,1,projs#proj#name())
 
  if !strlen(new)
-			let new = input('New project name:','','custom,projs#complete')
+      let new = input('New project name:','','custom,projs#complete')
  endif
 
  call projs#rootcd()
@@ -1192,16 +1192,16 @@ function! projs#prjmakeoption (...)
 endfunction
 
 "Usage:
-"		call projs#prjmake ()
-"		call projs#prjmake (opt)
-"			where opt 
+"   call projs#prjmake ()
+"   call projs#prjmake (opt)
+"     where opt 
 "
 "Call tree:
-"		Calls:
-"			projs#build#run
+"   Calls:
+"     projs#build#run
 "
-"		Called by:
-"			PrjMake
+"   Called by:
+"     PrjMake
 
 function! projs#prjmake (...)
     let opt = a:0 ? a:1 :  projs#prjmakeoption()
@@ -1349,12 +1349,12 @@ function! projs#update_qw (s)
 endfunction
 
 function! projs#update (...)
-	"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-	let msg = ['start']
-	let prf = {'plugin' : 'projs', 'func' : 'projs#update'}
-	call base#log(msg,prf)
-	let l:start=localtime()
-	"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+  "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+  let msg = ['start']
+  let prf = {'plugin' : 'projs', 'func' : 'projs#update'}
+  call base#log(msg,prf)
+  let l:start=localtime()
+  "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
   let opts = projs#varget('opts_PrjUpdate',base#qw('secnames list datvars'))
   let proj = projs#proj#name()
