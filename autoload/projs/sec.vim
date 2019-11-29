@@ -1,142 +1,142 @@
 
 "---------------------------------
 "
-"	Section-related functions:
+" Section-related functions:
 "
-"		projs#sec#new(sec)
+"   projs#sec#new(sec)
 "
-"		projs#sec#rename(new, old)
+"   projs#sec#rename(new, old)
 "
-"		projs#sec#open(sec)
-"		projs#sec#append({ sec : sec, lines : lines })
+"   projs#sec#open(sec)
+"   projs#sec#append({ sec : sec, lines : lines })
 "
 "---------------------------------
 "
 function! projs#sec#append (...)
-	let ref = get(a:000,0,{})
+  let ref = get(a:000,0,{})
 
-	let sec   = get(ref,'sec','')
-	let lines = get(ref,'lines',[])
+  let sec   = get(ref,'sec','')
+  let lines = get(ref,'lines',[])
 
-	let file = projs#sec#file(sec)
+  let file = projs#sec#file(sec)
 
-	let r = {
-			\	'lines' : lines,
-			\	'file' : file,
-			\	'mode' : 'append',
-			\	}
-	call base#file#write_lines(r)
+  let r = {
+      \ 'lines' : lines,
+      \ 'file' : file,
+      \ 'mode' : 'append',
+      \ }
+  call base#file#write_lines(r)
 
 endf
 
 "projs#sec#rename( new,old ) 
 
 function! projs#sec#rename (...)
-	let new = get(a:000,0,'')
+  let new = get(a:000,0,'')
 
-	let old = projs#proj#secname()
-	let old = get(a:000,1,old)
+  let old = projs#proj#secname()
+  let old = get(a:000,1,old)
 
-	if !strlen(new)
-		let new = input('[sec='.old.' ] New section name: ','','custom,projs#complete#secnames')
-	endif
+  if !strlen(new)
+    let new = input('[sec='.old.' ] New section name: ','','custom,projs#complete#secnames')
+  endif
 
-	let oldf = projs#sec#file(old)
-	let newf = projs#sec#file(new)
+  let oldf = projs#sec#file(old)
+  let newf = projs#sec#file(new)
 
-	let oldf_base = projs#sec#file_base(old)
-	let newf_base = projs#sec#file_base(new)
+  let oldf_base = projs#sec#file_base(old)
+  let newf_base = projs#sec#file_base(new)
 
-	call rename(oldf,newf)
+  call rename(oldf,newf)
 
-	let lines = readfile(newf)
+  let lines = readfile(newf)
 
-	let nlines = []
-	let pats = {}
-	call extend(pats,{ '^\(%%file\s\+\)\(\w\+\)\s*$' : '\1'.new  })
-	call extend(pats,{ '^\(\\label{sec:\)'.old.'\(}\s*\)$' : '\1'.new.'\2' })
-	
-	for line in lines
-		for [pat,subpat] in items(pats)
-			if line =~ pat
-				let line = substitute(line,pat,subpat,'g')
-			endif
-		endfor
+  let nlines = []
+  let pats = {}
+  call extend(pats,{ '^\(%%file\s\+\)\(\w\+\)\s*$' : '\1'.new  })
+  call extend(pats,{ '^\(\\label{sec:\)'.old.'\(}\s*\)$' : '\1'.new.'\2' })
+  
+  for line in lines
+    for [pat,subpat] in items(pats)
+      if line =~ pat
+        let line = substitute(line,pat,subpat,'g')
+      endif
+    endfor
 
-		call add(nlines,line)
-	endfor
+    call add(nlines,line)
+  endfor
 
-	call writefile(nlines,newf)
+  call writefile(nlines,newf)
 
- 	let pfiles = projs#proj#files()
+  let pfiles = projs#proj#files()
   let ex = {}
   for pfile in pfiles
     call extend(ex,{ pfile : 1 })
   endfor
   call extend(ex,{ newf_base : 1, oldf_base : 0 })
 
-	let pfiles=[]
-	for [file,infile] in items(ex)
-		if infile
-			call add(pfiles,file)
-		endif
-	endfor
+  let pfiles=[]
+  for [file,infile] in items(ex)
+    if infile
+      call add(pfiles,file)
+    endif
+  endfor
 
   let f_listfiles = projs#sec#file('_dat_files_') 
 
-	call base#file#write_lines({ 
-			\	'lines' : pfiles,
-			\	'file'  : f_listfiles,
-			\})
+  call base#file#write_lines({ 
+      \ 'lines' : pfiles,
+      \ 'file'  : f_listfiles,
+      \})
 
-	call projs#proj#secnames()
-	call base#fileopen({ 'files' : [newf]})
-	
+  call projs#proj#secnames()
+  call base#fileopen({ 'files' : [newf]})
+  
 endfunction
 
 function! projs#sec#delete (...)
 
-	let sec = projs#proj#secname()
-	let sec = get(a:000,0,sec)
+  let sec = projs#proj#secname()
+  let sec = get(a:000,0,sec)
 
-	let secfile   = projs#sec#file(sec)
-	let secfile_u = base#file#win2unix(secfile)
+  let secfile   = projs#sec#file(sec)
+  let secfile_u = base#file#win2unix(secfile)
 
-	if filereadable(secfile)
-		let cmd = 'git rm ' . secfile_u . ' --cached '
-		let ok = base#sys({ 
-			\	"cmds"         : [cmd],
-			\	"split_output" : 0,
-			\	"skip_errors"  : 1,
-			\	})
-	else
-		call projs#warn('Section file does not exist for: '.sec)
-		return
-	endif
+  if filereadable(secfile)
+    let cmd = 'git rm ' . secfile_u . ' --cached '
+    let ok = base#sys({ 
+      \ "cmds"         : [cmd],
+      \ "split_output" : 0,
+      \ "skip_errors"  : 1,
+      \ })
+  else
+    call projs#warn('Section file does not exist for: '.sec)
+    return
+  endif
 
-	let ok = base#file#delete({ 'file' : secfile })
+  let ok = base#file#delete({ 'file' : secfile })
 
-	if ok
-		call projs#echo('Section has been deleted: ' . sec)
-	endif
+  if ok
+    call projs#echo('Section has been deleted: ' . sec)
+  endif
 
 endfunction
 
 function! projs#sec#onload (sec)
-	let sec = a:sec
+  let sec = a:sec
 
-	let prf = { 'prf' : 'projs#sec#onload' }
-	call base#log([
-		\	'sec => ' . sec,
-		\	],prf)
-	call projs#sec#add(sec)
+  let prf = { 'prf' : 'projs#sec#onload' }
+  call base#log([
+    \ 'sec => ' . sec,
+    \ ],prf)
+  call projs#sec#add(sec)
 
-	return
+  return
 endfunction
 
 function! projs#sec#parent ()
-	let parent = projs#varget('parent_sec','')
-	return parent
+  let parent = projs#varget('parent_sec','')
+  return parent
 endfunction
 
 function! projs#sec#file (...)
@@ -241,89 +241,89 @@ function! projs#sec#file_base_a (...)
 endfunction
 
 
-"	projs#sec#add
+" projs#sec#add
 "
-"	Purpose:
-"		
-"	Usage:
-"		call projs#sec#add (sec)
-"	Returns:
-"		
+" Purpose:
+"   
+" Usage:
+"   call projs#sec#add (sec)
+" Returns:
+"   
 "
-"	Call tree:
-"		calls:
-"			projs#proj#name
-"			projs#sec#file
-"			projs#proj#files
-"			base#file#write_lines
-"			projs#sec#exists
-"			projs#db#file
-"		called by:
-"			
+" Call tree:
+"   calls:
+"     projs#proj#name
+"     projs#sec#file
+"     projs#proj#files
+"     base#file#write_lines
+"     projs#sec#exists
+"     projs#db#file
+"   called by:
+"     
 
 function! projs#sec#add (sec)
-	let sec   = a:sec
+  let sec   = a:sec
 
-	let proj = projs#proj#name()
+  let proj = projs#proj#name()
 
-	let sfile = projs#sec#file(sec)
-	let sfile = fnamemodify(sfile,':p:t')
+  let sfile = projs#sec#file(sec)
+  let sfile = fnamemodify(sfile,':p:t')
 
-	let pfiles =	projs#proj#files()
-	if !base#inlist(sfile,pfiles)
-		call add(pfiles,sfile)
-	
-		let f_listfiles = projs#sec#file('_dat_files_')
-		call base#file#write_lines({ 
-			\	'lines' : pfiles, 
-			\	'file'  : f_listfiles, 
-			\})
-	endif
+  let pfiles =  projs#proj#files()
+  if !base#inlist(sfile,pfiles)
+    call add(pfiles,sfile)
+  
+    let f_listfiles = projs#sec#file('_dat_files_')
+    call base#file#write_lines({ 
+      \ 'lines' : pfiles, 
+      \ 'file'  : f_listfiles, 
+      \})
+  endif
 
-	if ! projs#sec#exists(sec)
-		let secnames    = base#varget('projs_secnames',[])
-		let secnamesall = base#varget('projs_secnamesall',[])
+  if ! projs#sec#exists(sec)
+    let secnames    = base#varget('projs_secnames',[])
+    let secnamesall = base#varget('projs_secnamesall',[])
 
-		call add(secnames,sec)
-		call add(secnamesall,sec)
+    call add(secnames,sec)
+    call add(secnamesall,sec)
 
-		let secnamesall = base#uniq(secnamesall)
-		let secnames    = base#uniq(secnames)
-	endif
+    let secnamesall = base#uniq(secnamesall)
+    let secnames    = base#uniq(secnames)
+  endif
 
-	let dbfile  = projs#db#file()
-	
-	let t = "projs"
-	let h = {
-		\	"proj"   : proj,
-		\	"sec"    : sec,
-		\	"file"   : sfile,
-		\	"root"   : projs#root(),
-		\	"rootid" : projs#rootid(),
-		\	"tags"   : "",
-		\	"author" : "",
-		\	}
-	
-	let ref = {
-		\ "dbfile" : dbfile,
-		\ "i"      : "INSERT OR IGNORE",
-		\ "t"      : t,
-		\ "h"      : h,
-		\ }
-		
-	call pymy#sqlite#insert_hash(ref)
+  let dbfile  = projs#db#file()
+  
+  let t = "projs"
+  let h = {
+    \ "proj"   : proj,
+    \ "sec"    : sec,
+    \ "file"   : sfile,
+    \ "root"   : projs#root(),
+    \ "rootid" : projs#rootid(),
+    \ "tags"   : "",
+    \ "author" : "",
+    \ }
+  
+  let ref = {
+    \ "dbfile" : dbfile,
+    \ "i"      : "INSERT OR IGNORE",
+    \ "t"      : t,
+    \ "h"      : h,
+    \ }
+    
+  call pymy#sqlite#insert_hash(ref)
 
 endfunction
 
 function! projs#sec#exists (...)
-	let sec = get(a:000,0,'')
+  let sec = get(a:000,0,'')
 
-	let sec_file = projs#sec#file(sec)
+  let sec_file = projs#sec#file(sec)
 
-	let ok = 1
-	let ok = ok && filereadable(sec_file)
+  let ok = 1
+  let ok = ok && filereadable(sec_file)
 
-	return ok
+  return ok
 
 endfunction
 
@@ -339,32 +339,30 @@ function! projs#sec#new(sec,...)
     let sec        = a:sec
 
     let proj       = projs#proj#name()
-		let parent_sec = projs#sec#parent()
+    let parent_sec = projs#sec#parent()
 
     let ref = { 
         \   "git_add" : 0, 
         \   "view"    : 0, 
-        \   "prompt"  : 1, 
+        \   "prompt"  : 0, 
         \   "seccmd"  : '', 
         \   "lines"   : [], 
         \   }
-
-    call extend(ref,{ "prompt" : 0 })
 
     if a:0 
         let refadd = get(a:000,0,{})
         call extend(ref, refadd)
     endif
 
-		let rw = get(ref,'rewrite',0)
-		if projs#sec#exists(sec) && !rw
-				return
-		endif
+    let rw = get(ref,'rewrite',0)
+    if projs#sec#exists(sec) && !rw
+        return
+    endif
 
     let o = base#varget('projs_opts_PrjSecNew',{})
 
     let prompt = get(o,'prompt',1)
-		let prompt = get(ref,'prompt',prompt)
+    let prompt = get(ref,'prompt',prompt)
 
     call projs#echo("Creating file:\n\t" . sec )
 
@@ -375,23 +373,25 @@ function! projs#sec#new(sec,...)
 
     let lines = []
 
-		let rh = { 
-			\	'sec'        : sec,
-			\	'parent_sec' : parent_sec,
-	 		\	}
+    let rh = { 
+      \ 'sec'        : sec,
+      \ 'parent_sec' : parent_sec,
+      \ }
 
-		if fnamemodify(sec_file,':p:e') == 'tex'
-			let keymap = projs#select#keymap()
-			call extend(rh,{ 'keymap' : keymap })
-		endif
+    if fnamemodify(sec_file,':p:e') == 'tex'
+      let keymap = projs#select#keymap({ 'prompt' : prompt })
+      if strlen(keymap)
+        call extend(rh,{ 'keymap' : keymap })
+      endif
+    endif
     call extend(lines, projs#sec#header(rh) )
 
     let projtype = projs#varget('projtype','regular')
     let sub = 'projs#newseclines#'.projtype.'#'.sec
     try
-			let r = {
-					\	'proj' : proj,
-					\	}
+      let r = {
+          \ 'proj' : proj,
+          \ }
       exe printf('call extend(lines,%s(r))',sub)
     catch 
       call projs#warn('Problems while executing:'."\n\t".sub)
@@ -400,30 +400,30 @@ function! projs#sec#new(sec,...)
     let inref = { 'prompt' : prompt }
 
     if sec =~ '^fig_'
-			call extend(lines,projs#newseclines#fig_num(sec))
+      call extend(lines,projs#newseclines#fig_num(sec))
 
 """newsec__vim_
     elseif sec == '_vim_'
-			let r = {
-					\	'proj'     : proj,
-					\	'projtype' : projtype,
-					\	}
-			call extend(lines,projs#newseclines#_vim_(r))
+      let r = {
+          \ 'proj'     : proj,
+          \ 'projtype' : projtype,
+          \ }
+      call extend(lines,projs#newseclines#_vim_(r))
 
     elseif base#inlist(sec,base#qw('_build_perltex_ _build_pdflatex_'))
-			let r = {
-					\	'proj' : proj,
-					\	'sec'  : sec,
-					\	}
-			call extend(lines, projs#newseclines#_build_tex_(r))
+      let r = {
+          \ 'proj' : proj,
+          \ 'sec'  : sec,
+          \ }
+      call extend(lines, projs#newseclines#_build_tex_(r))
 
     else
         if prompt 
-					call extend(lines, projs#sec#lines_prompt(r))
+          call extend(lines, projs#sec#lines_prompt(r))
         else
-					let r_sc = copy(r)
-					call extend(r_sc,{ 'seccmd' : get(ref,'seccmd','section') })
-					call extend(lines, projs#sec#lines_seccmd(r_sc))
+          let r_sc = copy(r)
+          call extend(r_sc,{ 'seccmd' : get(ref,'seccmd','section') })
+          call extend(lines, projs#sec#lines_seccmd(r_sc))
         endif
  
     endif
@@ -440,7 +440,7 @@ function! projs#sec#new(sec,...)
         exe 'split ' . sec_file
     endif
     
-		return 1
+    return 1
 endfunction
 """end_projs_sec_new
 
@@ -512,7 +512,7 @@ function! projs#sec#open (...)
 
   let vfiles = base#uniq(vfiles)
 
-	call projs#varset("parent_sec",parent_sec)
+  call projs#varset("parent_sec",parent_sec)
 
   for vfile in vfiles
     if !filereadable(vfile)
@@ -531,66 +531,66 @@ endf
 
 
 function! projs#sec#header (...)
-	let ref=get(a:000,0,{})
+  let ref=get(a:000,0,{})
 
-	let sec        = get(ref,'sec','')
-	let keymap     = get(ref,'keymap','')
-	let parent_sec = get(ref,'parent_sec','')
-	
+  let sec        = get(ref,'sec','')
+  let keymap     = get(ref,'keymap','')
+  let parent_sec = get(ref,'parent_sec','')
+  
   let header = []
 
-	if strlen(keymap)
-		call add(header,'% vim: keymap=' . keymap )
-	endif
+  if strlen(keymap)
+    call add(header,'% vim: keymap=' . keymap )
+  endif
 
-	call extend(header,[ '%%file ' . sec])
-	call extend(header,[ '%%parent ' . parent_sec ])
+  call extend(header,[ '%%file ' . sec])
+  call extend(header,[ '%%parent ' . parent_sec ])
 
-	return header
+  return header
 endf
 
 function! projs#sec#lines_seccmd (...)
-	let ref = get(a:000,0,{})
+  let ref = get(a:000,0,{})
 
-	let sec    = get(ref,'sec','')
-	let seccmd = get(ref,'seccmd','')
+  let sec    = get(ref,'sec','')
+  let seccmd = get(ref,'seccmd','')
 
-	let lines = []
+  let lines = []
 
-	if strlen(seccmd)
-		let title = sec
-		let label = 'sec:'.sec
+  if strlen(seccmd)
+    let title = sec
+    let label = 'sec:'.sec
 
-		call add(lines,'\' . seccmd . '{'.title.'}')
-		call add(lines,'\label{'.label.'}')
-		call add(lines,' ')
-	endif
+    call add(lines,'\' . seccmd . '{'.title.'}')
+    call add(lines,'\label{'.label.'}')
+    call add(lines,' ')
+  endif
 
-	return lines
+  return lines
 endf
 
 function! projs#sec#lines_prompt (...)
-	let ref = get(a:000,0,{})
+  let ref = get(a:000,0,{})
 
-	let sec = get(ref,'sec','')
+  let sec = get(ref,'sec','')
 
-	let cnt = input('Continue adding? (1/0):',1)
+  let cnt = input('Continue adding? (1/0):',1)
 
-	let lines = []
+  let lines = []
   
-	if cnt
-		let addsec = input('Add sectioning? (1/0):',1)
-		if addsec
-			let seccmd = input('Sectioning command: ','section','custom,tex#complete#seccmds')
-			
-			let title = input('Title: ',sec)
-			let label = input('Label: ','sec:' . sec)
-			
-			call add(lines,'\' . seccmd . '{'.title.'}')
-			call add(lines,'\label{'.label.'}')
-			call add(lines,' ')
-		endif
-	endif
+  if cnt
+    let addsec = input('Add sectioning? (1/0):',1)
+    if addsec
+      let seccmd = input('Sectioning command: ','section','custom,tex#complete#seccmds')
+      
+      let title = input('Title: ',sec)
+      let label = input('Label: ','sec:' . sec)
+      
+      call add(lines,'\' . seccmd . '{'.title.'}')
+      call add(lines,'\label{'.label.'}')
+      call add(lines,' ')
+    endif
+  endif
 
-	return lines
+  return lines
 endf

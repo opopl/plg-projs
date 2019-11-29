@@ -12,11 +12,16 @@ function! projs#select#projtype ()
 
 endfunction
 
-function! projs#select#keymap ()
+function! projs#select#keymap (...)
+  let ref = get(a:000,0,{})
 
-    let keymap = 'russian-jcukenwin'
+  let prompt = get(ref,'prompt',0)
+
+  let keymap = 'russian-jcukenwin'
+  if prompt
     let keymap = input('Keymap:',keymap,'custom,txtmy#complete#keymap')
-		return keymap
+  endif
+  return keymap
 endfunction
 
 function! projs#select#projstruct ()
