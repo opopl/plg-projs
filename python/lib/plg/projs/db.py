@@ -43,20 +43,20 @@ def get_data(filename):
         data['author']=m.group(1)
   return data
 
-def cleanup(root,proj):
+def cleanup(db_file,root,proj):
   conn = sqlite3.connect(db_file)
   c = conn.cursor()
 
-  q='''SELECT sec,file FROM projs WHERE proj = ?'''
-  c.execute(q,v_projs)
-  secs_rm = []
-  rows = c.fetchall()
-
-  fpath = os.path.join(root,file)
+  q='''SELECT file FROM projs WHERE proj = ?'''
+  for row in c.execute(q,[ proj ])
+    file  = row[0]
+    fpath = os.path.join(root,file)
+    if not os.path.isfile(fpath):
+      q = '''DELETE FROM projs WHERE proj = ? AND file = ?'''
+      c.execute(q,[ proj, file ])
 
   conn.commit()
   conn.close()
-
 
 def fill_from_files(db_file,root,rootid,proj_select,logfun):
   conn = sqlite3.connect(db_file)

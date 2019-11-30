@@ -73,6 +73,7 @@ def logfun(e):
   vim.command('call base#log(e)')
 
 db.fill_from_files(db_file,root,rootid,proj_select,logfun)
+db.cleanup(db_file,root,proj_select)
 
 eof
 
