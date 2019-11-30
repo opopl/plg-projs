@@ -697,6 +697,11 @@ function! projs#maps ()
       nnoremap <buffer><silent> ;o  :OMNIFUNC<CR>
 
       nnoremap <buffer><silent> ;sw :PrjSwitch<CR>
+      nnoremap <buffer><silent> ;tp :TgUpdate projs_this<CR>
+
+      nnoremap <buffer><silent> ;wp :tag preamble<CR>
+      nnoremap <buffer><silent> ;wm :tag f_main<CR>
+      nnoremap <buffer><silent> ;wb :tag body<CR>
 
       nnoremap <buffer><silent> <F1> :PrjMake build_pdflatex<CR>
       nnoremap <buffer><silent> <F2> :PrjMake single_run<CR>

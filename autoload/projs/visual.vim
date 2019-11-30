@@ -34,7 +34,6 @@ function! projs#visual#append_to_sec (start, end, ... )
 endf
 
 function! projs#visual#ii_to_new_secs (start, end, ... )
-
   let start = a:start
   let end   = a:end
 
@@ -64,17 +63,80 @@ eof
   let secs = py3eval('secs')
   for sec in secs
     let r = {
-        \  'git_add' : 1,
-        \  'rewrite' : 0,
+        \  'git_add'    : 1,
+        \  'rewrite'    : 0,
+        \  'parent_sec' : b:sec,
         \  }
     call projs#sec#new(sec, r)
   endfor
 
-  let cmds_done = ['echo 222']
-  for sec in secs
-    call add(cmds_done, printf('call base#tg#go("%s")',sec) )
-  endfor
-  let opts = { 'cmds_done' : cmds_done }
-  call base#tg#update('projs_this',opts)
+  let s:obj = { 'secs' : secs }
+  function! s:obj.init () dict
+    let yn = input('Sections have been created, open the sections now? 1/0: ', 0 )
+
+    let secs = self.secs
+
+    if yn
+      for sec in secs
+        call base#tg#go(sec)
+      endfor
+    endif
+  endfunction
   
+  call base#tg#update('projs_this',{ 'Fc_done' : s:obj.init })
+  
+endfunction
+
+"" split on subsubsection
+function! projs#visual#split_ss2 (start, end, ... )
+  let start  = a:start
+  let end    = a:end
+
+  let msg    = 'section prefix: '
+  let sec    = exists('b:sec') ? b:sec : ''
+  let prefix = base#input_we(msg,sec,{ 'complete' : 'custom,projs#complete#secnames' })
+
+python3 << eof
+import vim,re
+from itertools import repeat
+
+start = int(vim.eval('start'))
+end   = int(vim.eval('end'))
+
+b = vim.current.buffer
+
+secs = []
+
+data      = {}
+sec_lines = []
+sec       = ''
+
+prefix    = vim.eval('prefix')
+
+for k in range(start, end + 1, 1):
+  i = k - 1
+  n = k - start + 1
+  m = re.search(r'^\\subsubsection{(.*)}\s*$', b[i])
+  if m:
+    if len(sec):
+      data.update({ sec : sec_lines })
+    sec_lines = [ b[i] ]
+    sec = m.group(1)
+    sec = re.sub(r'\s','_',sec)
+    sec = prefix + sec
+    secs.append(sec)
+  else:
+    sec_lines.append( b[i] )
+
+tex_lines = []
+for sec in secs:
+  tex_lines.append('\\ii{%s}' % (sec))
+
+eof
+  let secs      = py3eval('secs')
+  let data      = py3eval('data')
+  let tex_lines = py3eval('tex_lines')
+
+  call base#buf#open_split({ 'lines' : tex_lines })
+
 endfunction

@@ -354,6 +354,8 @@ function! projs#sec#new(sec,...)
         call extend(ref, refadd)
     endif
 
+		let parent_sec = get(ref,'parent_sec',parent_sec)
+
     let rw = get(ref,'rewrite',0)
     if projs#sec#exists(sec) && !rw
         return

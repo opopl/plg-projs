@@ -58,3 +58,12 @@ function! projs#select#sec ()
 
 endfunction
 
+function! projs#select#sec_input ()
+  let msg_a = [
+    \  "section: ",  
+    \  ]
+  let msg = join(msg_a,"\n")
+  let sec = exists('b:sec') ? b:sec : ''
+  let sec = base#input_we(msg,sec,{ 'complete' : 'custom,projs#complete#secnames' })
+  return sec
+endfunction
