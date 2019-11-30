@@ -16,6 +16,25 @@ function! projs#db_cmd#drop_tables ()
   call projs#db#drop_tables ()
 endf
 
+function! projs#db_cmd#buf_data (...)
+  let ref = get(a:000,0,{})
+
+  let proj = b:proj
+  let proj = get(ref,'proj',proj)
+
+  let file = b:file
+  let file = get(ref,'file',file)
+  let file = fnamemodify(file,':t')
+
+  let r = { 
+    \ 'file' : file, 
+    \ 'proj' : proj 
+    \ }
+  let data = projs#db#data_get(r)
+  let dump = base#dump(data)
+  call base#buf#open_split({ 'text' : dump })
+endf
+
 function! projs#db_cmd#buf_tags_append (...)
   let ref = get(a:000,0,{})
 

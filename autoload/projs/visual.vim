@@ -69,10 +69,12 @@ eof
         \  }
     call projs#sec#new(sec, r)
   endfor
-  TgUpdate projs_this
-  for sec in secs
-    call base#tg#go(sec)
-  endfor
 
+  let cmds_done = ['echo 222']
+  for sec in secs
+    call add(cmds_done, printf('call base#tg#go("%s")',sec) )
+  endfor
+  let opts = { 'cmds_done' : cmds_done }
+  call base#tg#update('projs_this',opts)
   
 endfunction

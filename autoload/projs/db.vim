@@ -245,6 +245,42 @@ function! projs#db#file ()
   return db_file
 endfunction
 
+function! projs#db#data_get (...)
+  let ref = get(a:000,0,{})
+
+  let proj = get(ref,'proj','')
+
+  let file = get(ref,'file','')
+  let file = fnamemodify(file,':t')
+
+  let q = 'SELECT * FROM projs'
+  let p = []
+
+  if strlen(proj) || strlen(file)
+    let cond = []
+    if strlen(proj)
+      call add(cond,' proj = ? ')
+      call add(p, proj)
+    endif
+
+    if strlen(file)
+      call add(cond,' file = ? ')
+      call add(p, file)
+    endif
+
+    let q .= ' WHERE ' . join(cond,' AND ')
+  endif
+
+  let dbfile = projs#db#file()
+
+  let rows = pymy#sqlite#query({
+    \ 'dbfile' : dbfile,
+    \ 'p'      : p,
+    \ 'q'      : q,
+    \ })
+	return rows
+endfunction
+
 function! projs#db#tags_get (...)
   let ref = get(a:000,0,{})
 
