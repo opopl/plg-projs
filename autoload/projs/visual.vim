@@ -92,6 +92,8 @@ function! projs#visual#split_ss2 (start, end, ... )
   let start  = a:start
   let end    = a:end
 
+  call base#CD('texdocs')
+
   let msg    = 'section prefix: '
   let sec    = exists('b:sec') ? b:sec : ''
   let prefix = base#input_we(msg,sec,{ 'complete' : 'custom,projs#complete#secnames' })
@@ -147,13 +149,14 @@ eof
         \  'rewrite'    : 0,
         \  'parent_sec' : b:sec,
         \  }
+    call projs#sec#delete(sec)
     call projs#sec#new(sec, r)
     let sec_text = get(data,sec,'')
 
-"    let ra = { 
-      "\ 'sec'  : sec, 
-      "\ 'text' : sec_text }
-    "call projs#sec#append(ra)
+    let ra = { 
+      \ 'sec'  : sec, 
+      \ 'text' : sec_text }
+    call projs#sec#append(ra)
   endfor
 
   "call base#buf#cut({ 'start' : start, 'end' : end })

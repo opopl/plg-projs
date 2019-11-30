@@ -97,16 +97,39 @@ function! projs#sec#rename (...)
   
 endfunction
 
+"Usage:
+"  call projs#sec#delete (sec)
+"
+"Call tree:
+"  Calls:
+"    projs#proj#secname
+"    projs#sec#file
+
 function! projs#sec#delete (...)
 
   let sec = projs#proj#secname()
   let sec = get(a:000,0,sec)
 
+  call projs#sec#delete_from_vcs(sec)
+  call projs#sec#delete_from_db(sec)
+  call projs#sec#delete_from_fs(sec)
+
+  if ok
+    call projs#echo('Section has been deleted: ' . sec)
+  endif
+
+endfunction
+
+function! projs#sec#delete_from_vcs (sec,...)
+  let sec = a:sec 
+
   let secfile   = projs#sec#file(sec)
-  let secfile_u = base#file#win2unix(secfile)
 
   if filereadable(secfile)
-    let cmd = 'git rm ' . secfile_u . ' --cached '
+    let dirname = fnamemodify(secfile,':p:h')
+    let bname   = fnamemodify(secfile,':p:t')
+    call base#cd(dirname)
+    let cmd = 'git rm ' . bname . ' --cached '
     let ok = base#sys({ 
       \ "cmds"         : [cmd],
       \ "split_output" : 0,
@@ -117,12 +140,35 @@ function! projs#sec#delete (...)
     return
   endif
 
+endfunction
+
+
+function! projs#sec#delete_from_fs (sec,...)
+  let sec = a:sec 
+
+  let secfile   = projs#sec#file(sec)
+
   let ok = base#file#delete({ 'file' : secfile })
+  return ok
+endfunction
 
-  if ok
-    call projs#echo('Section has been deleted: ' . sec)
-  endif
+function! projs#sec#delete_from_db (sec,...)
+  let sec = a:sec 
 
+  let ref = get(a:000,0,{})
+
+  let dbfile  = projs#db#file()
+
+  let proj = projs#proj#name()
+
+  let r = {
+      \  'q' : 'DELETE FROM projs WHERE proj = ? AND sec = ?',
+      \  'p' : [ proj, sec ],
+      \  }
+  call pymy#sqlite#query(r)
+  let ok = 1
+
+  return ok
 endfunction
 
 function! projs#sec#onload (sec)
@@ -279,6 +325,8 @@ function! projs#sec#add_to_dat (sec)
       \})
   endif
 endfunction
+
+
 
 function! projs#sec#add_to_db (sec,...)
   let ref = get(a:000,0,{})
@@ -472,7 +520,9 @@ function! projs#sec#new(sec,...)
     call projs#sec#add(sec)
 
     if get(ref,'git_add')
-        call base#sys("git add " . shellescape(sec_file))
+      let dir = fnamemodify(sec_file,':p:h')
+      let bname = fnamemodify(sec_file,':p:t')
+      call base#sys("git add " . bname)
     endif
 
     if get(ref,'view')

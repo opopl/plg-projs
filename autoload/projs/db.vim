@@ -60,7 +60,7 @@ python << eof
 import vim,sys,sqlite3,re,os,pprint
 
 pylib = vim.eval('projs#pylib()')
-sys.path.append(pylib + '/plg/projs')
+sys.path.append( pylib + '/plg/projs' )
 import db 
 
 db_file     = vim.eval('projs#db#file()')
@@ -69,11 +69,11 @@ rootid      = vim.eval('projs#rootid()')
 proj_select = vim.eval('proj_select')
 
 def logfun(e):
-  vim.command('let e="' + e +'"')
+  vim.command('let e="' + e + '"')
   vim.command('call base#log(e)')
 
-db.fill_from_files(db_file,root,rootid,proj_select,logfun)
-db.cleanup(db_file,root,proj_select)
+db.fill_from_files(db_file, root, rootid, proj_select, logfun)
+db.cleanup(db_file, root, proj_select)
 
 eof
 
@@ -91,7 +91,7 @@ function! projs#db#query (...)
   let query  = get(ref,'query','')
   let params = get(ref,'params',[])
 
-  let rows=[]
+  let rows = []
 
 """prjdb_query
 python << eof
@@ -279,7 +279,7 @@ function! projs#db#data_get (...)
     \ 'p'      : p,
     \ 'q'      : q,
     \ })
-	return rows
+  return rows
 endfunction
 
 function! projs#db#tags_get (...)
