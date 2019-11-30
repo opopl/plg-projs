@@ -130,6 +130,9 @@ for k in range(start, end + 1, 1):
   else:
     sec_lines.append( b[i] )
 
+if len(sec):
+  data.update({ sec : sec_lines })
+
 tex_lines = []
 for sec in secs:
   tex_lines.append('\\ii{%s}' % (sec))
@@ -139,23 +142,21 @@ eof
   let data      = py3eval('data')
   let tex_lines = py3eval('tex_lines')
 
-  "call base#buf#open_split({ 'lines' : tex_lines })
-  "let dump = base#dump(data)
-  "call base#buf#open_split({ 'text' : dump })
-
   for sec in secs
     let r = {
-        \  'git_add'    : 1,
+        \  'git_add'    : 0,
         \  'rewrite'    : 0,
         \  'parent_sec' : b:sec,
         \  }
     call projs#sec#delete(sec)
     call projs#sec#new(sec, r)
-    let sec_text = get(data,sec,'')
+
+    let sec_lines = get(data,sec,[])
+    call extend(sec_lines,[ ' ' ],0)
 
     let ra = { 
-      \ 'sec'  : sec, 
-      \ 'text' : sec_text }
+      \ 'sec'   : sec, 
+      \ 'lines' : sec_lines }
     call projs#sec#append(ra)
   endfor
 

@@ -110,9 +110,10 @@ function! projs#sec#delete (...)
   let sec = projs#proj#secname()
   let sec = get(a:000,0,sec)
 
-  call projs#sec#delete_from_vcs(sec)
-  call projs#sec#delete_from_db(sec)
-  call projs#sec#delete_from_fs(sec)
+  let ok = 1
+  let ok = ok && projs#sec#delete_from_vcs(sec)
+  let ok = ok && projs#sec#delete_from_db(sec)
+  let ok = ok && projs#sec#delete_from_fs(sec)
 
   if ok
     call projs#echo('Section has been deleted: ' . sec)
