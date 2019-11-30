@@ -160,7 +160,7 @@ eof
     call projs#sec#append(ra)
   endfor
 
-  "call base#buf#cut({ 'start' : start, 'end' : end })
-  "call append(line('.'),tex_lines)
+  call base#buf#cut({ 'start' : start, 'end' : end })
+  call append(line('.'),tex_lines)
 
 endfunction
