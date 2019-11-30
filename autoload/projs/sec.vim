@@ -17,13 +17,16 @@ function! projs#sec#append (...)
 
   let sec   = get(ref,'sec','')
   let lines = get(ref,'lines',[])
+  let text  = get(ref,'text','')
+  
+  call extend(lines, split(text,"\n") )
 
   let file = projs#sec#file(sec)
 
   let r = {
       \ 'lines' : lines,
-      \ 'file' : file,
-      \ 'mode' : 'append',
+      \ 'file'  : file,
+      \ 'mode'  : 'append',
       \ }
   call base#file#write_lines(r)
 
@@ -240,10 +243,87 @@ function! projs#sec#file_base_a (...)
     
 endfunction
 
+"call tree
+"  called by
+"    projs#sec#add
+
+function! projs#sec#add_to_secnames (sec)
+  let sec = a:sec 
+
+  if ! projs#sec#exists(sec)
+    let secnames    = base#varref('projs_secnames',[])
+    let secnamesall = base#varref('projs_secnamesall',[])
+
+    call add(secnames,sec)
+    call add(secnamesall,sec)
+
+    let secnamesall = base#uniq(secnamesall)
+    let secnames    = base#uniq(secnames)
+  endif
+endfunction
+
+function! projs#sec#add_to_dat (sec)
+  let sec = a:sec 
+
+  let sfile = projs#sec#file(sec)
+  let sfile = fnamemodify(sfile,':p:t')
+
+  let pfiles =  projs#proj#files()
+  if !base#inlist(sfile, pfiles)
+    call add(pfiles,sfile)
+  
+    let f_listfiles = projs#sec#file('_dat_files_')
+    call base#file#write_lines({ 
+      \ 'lines' : pfiles, 
+      \ 'file'  : f_listfiles, 
+      \})
+  endif
+endfunction
+
+function! projs#sec#add_to_db (sec,...)
+  let ref = get(a:000,0,{})
+
+  let tags   = get(ref,'tags','')
+  let author = get(ref,'author','')
+
+  let sec = a:sec 
+
+  let dbfile  = projs#db#file()
+
+  let sfile = projs#sec#file(sec)
+  let sfile = fnamemodify(sfile,':p:t')
+
+  let proj = projs#proj#name()
+  
+  let t = "projs"
+  let h = {
+    \ "proj"   : proj,
+    \ "sec"    : sec,
+    \ "file"   : sfile,
+    \ "root"   : projs#root(),
+    \ "rootid" : projs#rootid(),
+    \ "tags"   : tags,
+    \ "author" : author,
+    \ }
+  
+  let ref = {
+    \ "dbfile" : dbfile,
+    \ "i"      : "INSERT OR IGNORE",
+    \ "t"      : t,
+    \ "h"      : h,
+    \ }
+    
+  call pymy#sqlite#insert_hash(ref)
+
+endfunction
 
 " projs#sec#add
 "
 " Purpose:
+"   - add sec to the list of sections in dat-file: _dat_files_
+"   - add sec to var: projs_secnames
+"   - add sec to var: projs_secnamesall
+"   - add sec to db
 "   
 " Usage:
 "   call projs#sec#add (sec)
@@ -259,60 +339,16 @@ endfunction
 "     projs#sec#exists
 "     projs#db#file
 "   called by:
-"     
+"     projs#sec#new
 
 function! projs#sec#add (sec)
   let sec   = a:sec
 
-  let proj = projs#proj#name()
+  call projs#sec#add_to_secnames(sec)
+  call projs#sec#add_to_dat(sec)
+  call projs#sec#add_to_db(sec)
 
-  let sfile = projs#sec#file(sec)
-  let sfile = fnamemodify(sfile,':p:t')
-
-  let pfiles =  projs#proj#files()
-  if !base#inlist(sfile,pfiles)
-    call add(pfiles,sfile)
-  
-    let f_listfiles = projs#sec#file('_dat_files_')
-    call base#file#write_lines({ 
-      \ 'lines' : pfiles, 
-      \ 'file'  : f_listfiles, 
-      \})
-  endif
-
-  if ! projs#sec#exists(sec)
-    let secnames    = base#varget('projs_secnames',[])
-    let secnamesall = base#varget('projs_secnamesall',[])
-
-    call add(secnames,sec)
-    call add(secnamesall,sec)
-
-    let secnamesall = base#uniq(secnamesall)
-    let secnames    = base#uniq(secnames)
-  endif
-
-  let dbfile  = projs#db#file()
-  
-  let t = "projs"
-  let h = {
-    \ "proj"   : proj,
-    \ "sec"    : sec,
-    \ "file"   : sfile,
-    \ "root"   : projs#root(),
-    \ "rootid" : projs#rootid(),
-    \ "tags"   : "",
-    \ "author" : "",
-    \ }
-  
-  let ref = {
-    \ "dbfile" : dbfile,
-    \ "i"      : "INSERT OR IGNORE",
-    \ "t"      : t,
-    \ "h"      : h,
-    \ }
-    
-  call pymy#sqlite#insert_hash(ref)
-
+  return 1
 endfunction
 
 function! projs#sec#exists (...)
@@ -354,7 +390,7 @@ function! projs#sec#new(sec,...)
         call extend(ref, refadd)
     endif
 
-		let parent_sec = get(ref,'parent_sec',parent_sec)
+    let parent_sec = get(ref,'parent_sec',parent_sec)
 
     let rw = get(ref,'rewrite',0)
     if projs#sec#exists(sec) && !rw
@@ -433,6 +469,7 @@ function! projs#sec#new(sec,...)
     call extend(lines,get(ref,'add_lines_after',[]))
 
     call writefile(lines,sec_file)
+    call projs#sec#add(sec)
 
     if get(ref,'git_add')
         call base#sys("git add " . shellescape(sec_file))
