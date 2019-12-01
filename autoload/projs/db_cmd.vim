@@ -78,6 +78,7 @@ function! projs#db_cmd#search (...)
   let tag = input('tags: ','','custom,base#complete#this')
 
   let q = 'SELECT fid FROM tags WHERE tag = ?'
+  let p = [ tag ]
 endfunction
 
 function! projs#db_cmd#thisproj_data (...)
@@ -97,4 +98,74 @@ function! projs#db_cmd#thisproj_data (...)
     \ })
 
   call base#buf#open_split({ 'lines' : lines })
+endfunction
+
+function! projs#db_cmd#_backup (...)
+  let dbfile = projs#db#file()
+
+  " backup location
+  let dbfile_b = projs#db#file_backup()
+  
+  let msg_a = [
+    \ "------------------------", 
+    \ "PROJS DATABASE BACKUP",  
+    \ "------------------------", 
+    \ "Current database location: ",  
+    \ "  " . dbfile,  
+    \ "Backup location: ",  
+    \ "  " . dbfile_b,  
+    \ "Are you sure to do backup? (1/0): ", 
+    \ ]
+  let msg = join(msg_a,"\n")
+  let do_backup = base#input_we(msg,0,{ })
+
+  if ! do_backup
+    redraw!
+    echohl WarningMsg
+    echo 'Projs Backup Aborted.'
+    echohl None
+    return
+  else
+    call base#file#copy(dbfile, dbfile_b)
+    redraw!
+    echohl MoreMsg
+    echo 'Projs Backup OK'
+    echohl None
+    return
+  endif
+endfunction
+
+function! projs#db_cmd#_restore (...)
+  let dbfile = projs#db#file()
+
+  " backup location
+  let dbfile_b = projs#db#file_backup()
+  
+  let msg_a = [
+    \ "------------------------", 
+    \ "PROJS DATABASE RESTORE (FROM BACKUP)",  
+    \ "------------------------", 
+    \ "Current database location: ",  
+    \ "  " . dbfile,  
+    \ "Backup location (from where to restore): ",  
+    \ "  " . dbfile_b,  
+    \ "Are you sure to do restore? (1/0): ", 
+    \ ]
+  let msg = join(msg_a,"\n")
+  let do_restore = base#input_we(msg,0,{ })
+
+  if ! do_restore
+    redraw!
+    echohl WarningMsg
+    echo 'Projs Restore Aborted.'
+    echohl None
+    return
+  else
+    call base#file#copy(dbfile_b, dbfile)
+    redraw!
+    echohl MoreMsg
+    echo 'Projs Restore OK'
+    echohl None
+    return
+  endif
 endfunction

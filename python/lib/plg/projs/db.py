@@ -2,22 +2,26 @@
 import sqlite3
 import re
 import os
+import sqlparse,sys
 
 #import pprint
 #pp = pprint.PrettyPrinter(indent=4)
 
 p = { 'texfile' : re.compile('^(\w+)\.(?:(.*)\.|)tex'), 
-    'tags'    : re.compile('^\s*%%tags (.*)$'),
-    'author'  : re.compile('^\s*%%author (.*)$')
+    'tags'      : re.compile('^\s*%%tags (.*)$'),
+    'author'    : re.compile('^\s*%%author (.*)$')
    }
 
 def create_tables(db_file, sql_file):
   conn = sqlite3.connect(db_file)
   c = conn.cursor()
   
-  c.execute('''DROP TABLE IF EXISTS projs''')
-  q = open(sql_file, 'r').read()
-  c.execute(q)
+  sql = open(sql_file, 'r').read()
+  for q in sqlparse.split(sql):
+    try:
+        c.execute(q)
+    except e:
+        print("Errors ",sys.exc_info()[0]," for sqlite query: " + q )
   
   conn.commit()
   conn.close()
@@ -48,7 +52,9 @@ def cleanup(db_file,root,proj):
   c = conn.cursor()
 
   q='''SELECT file FROM projs WHERE proj = ?'''
-  for row in c.execute(q,[ proj ])
+  c.execute(q,[ proj ])
+  rows = c.fetchall()
+  for row in rows:
     file  = row[0]
     fpath = os.path.join(root,file)
     if not os.path.isfile(fpath):
