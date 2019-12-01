@@ -13,6 +13,15 @@ function! projs#db_cmd#query_split (...)
 endf
 
 function! projs#db_cmd#drop_tables ()
+  let do_drop = input('This will drop projs tables; are you sure? (1/0): ',0)
+  if !do_drop
+    redraw!
+    echohl WarningMsg
+    echo 'Dropping aborted'
+    echohl None
+    return
+  endif
+
   call projs#db#drop_tables ()
 endf
 
