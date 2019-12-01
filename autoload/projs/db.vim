@@ -246,9 +246,13 @@ function! projs#db#file ()
   return db_file
 endfunction
 
+"call tree
+"  called by
+"    projs#db_cmd#_backup 
+
 function! projs#db#file_backup ()
-	let db_file_b = base#qw#catpath('db backup projs.sqlite')
-	return db_file_b
+  let db_file_b = base#qw#catpath('db backup projs.sqlite')
+  return db_file_b
 endfunction
 
 function! projs#db#data_get (...)

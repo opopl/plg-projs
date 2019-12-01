@@ -105,20 +105,30 @@ function! projs#db_cmd#_backup (...)
 
   " backup location
   let dbfile_b = projs#db#file_backup()
-  
+
+  let data   = pymy#sqlite#db_data({ 'dbfile' : dbfile })
+  let data_b = pymy#sqlite#db_data({ 'dbfile' : dbfile_b })
+
   let msg_a = [
     \ "------------------------", 
     \ "PROJS DATABASE BACKUP",  
     \ "------------------------", 
-    \ "Current database location: ",  
-    \ "  " . dbfile,  
-    \ "Backup location: ",  
-    \ "  " . dbfile_b,  
+    \ "  CURRENT database location: ",  
+    \ "    " . dbfile,  
+    \ "    Size: " . data.size(),  
+    \ "    Tables: ",  
+    \ "       " . data.tables_str(),
+    \ "  BACKUP location: ",  
+    \ "    " . dbfile_b,  
+    \ "    Size: " . data_b.size(),  
+    \ "    Tables: ",  
+    \ "       " . data_b.tables_str(),
     \ "Are you sure to do backup? (1/0): ", 
     \ ]
   let msg = join(msg_a,"\n")
   let do_backup = base#input_we(msg,0,{ })
 
+  let tables = pymy#sqlite#list_of_tables(ref)
   if ! do_backup
     redraw!
     echohl WarningMsg
