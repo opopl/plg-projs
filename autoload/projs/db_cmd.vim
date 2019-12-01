@@ -128,7 +128,6 @@ function! projs#db_cmd#_backup (...)
   let msg = join(msg_a,"\n")
   let do_backup = base#input_we(msg,0,{ })
 
-  let tables = pymy#sqlite#list_of_tables(ref)
   if ! do_backup
     redraw!
     echohl WarningMsg
