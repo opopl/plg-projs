@@ -384,6 +384,10 @@ endfunction
 
 "call projs#onload ()
 "call projs#onload ({ 'proj' : proj })
+"
+"call tree
+"   calls
+"     projs#maps
 
 function! projs#onload (...)
   let ref = {}
@@ -683,40 +687,25 @@ function! projs#filejoinlines (...)
 endf
 
 function! projs#maps ()
-      nnoremap <silent> ;;co :copen<CR>
-      nnoremap <silent> ;;cc :cclose<CR>
 
-      nnoremap <buffer><silent> ;ab :PrjAct async_build<CR>
-      nnoremap <buffer><silent> ;mm :PrjMake<CR>
-      nnoremap <buffer><silent> ;mp :PrjMake build_pdflatex<CR>
-      nnoremap <buffer><silent> ;ms :PrjMake single_run<CR>
-      nnoremap <buffer><silent> ;ml :PrjMake latexmk<CR>
-      nnoremap <buffer><silent> ;rt :exe "set et | retab"<CR>
-      nnoremap <buffer><silent> ;v  :PrjPdfView<CR>
-      nnoremap <buffer><silent> ;tg :TgUpdate<CR>
-      nnoremap <buffer><silent> ;o  :OMNIFUNC<CR>
+  let maps = {
+        \ 'nnoremap' :
+          \ {
+          \  '<F1>'  : 'PrjAct async_build'  ,
+          \  ';ab'   : 'PrjAct async_build'  ,
+          \  '<F2>'  : 'PrjPdfView'  ,
+          \  ';v'    : 'PrjPdfView'          ,
+          \  ';tp'  : 'TgUpdate projs_this' ,
+          \  ';wp'  : 'tag preamble'        ,
+          \  ';wm'  : 'tag f_main'          ,
+          \  ';wb'  : 'tag body'            ,
+          \ }
+        \ }
 
-      nnoremap <buffer><silent> ;sw :PrjSwitch<CR>
-      nnoremap <buffer><silent> ;tp :TgUpdate projs_this<CR>
-
-      nnoremap <buffer><silent> ;wp :tag preamble<CR>
-      nnoremap <buffer><silent> ;wm :tag f_main<CR>
-      nnoremap <buffer><silent> ;wb :tag body<CR>
-
-      nnoremap <buffer><silent> <F1> :PrjMake build_pdflatex<CR>
-      nnoremap <buffer><silent> <F2> :PrjMake single_run<CR>
-      nnoremap <buffer><silent> <F3> :PrjMake latexmk<CR>
-      nnoremap <buffer><silent> <F4> :PrjMake<CR>
-      nnoremap <buffer><silent> <F5> :PrjMakePrompt<CR>
+  for [map,mp] in items(maps)
+    call base#buf#map_add(mp,{ 'map' : map })
+  endfor
   
-      nnoremap <buffer><silent> <F6> :PrjSwitch<CR>
-      nnoremap <buffer><silent> <F7> :PrjPdfView<CR>
-      nnoremap <buffer><silent> <F8> :PrjUpdate<CR>
-      nnoremap <buffer><silent> <F9> :OMNIFUNC<CR>
-      nnoremap <buffer><silent> <F10> :TgUpdate<CR>
-
-    nnoremap <buffer><silent> <C-S> :GitSave<CR>
-    
 endfunction
 
 function! projs#builddir (...)
