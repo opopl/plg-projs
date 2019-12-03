@@ -140,9 +140,6 @@ function! projs#sec#rename (...)
 
   call projs#sec#rename_adjust(old, new)
 
-
-
-
   call projs#proj#secnames()
   call base#fileopen({ 'files' : [newf]})
   

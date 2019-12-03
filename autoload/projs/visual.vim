@@ -33,34 +33,22 @@ function! projs#visual#append_to_sec (start, end, ... )
 
 endf
 
+function! projs#visual#ii_rename (start, end, ... )
+  let start = a:start
+  let end   = a:end
+
+endf
+
+function! projs#visual#_ii_secs (start, end, ... )
+
+endf
+
 function! projs#visual#ii_to_new_secs (start, end, ... )
   let start = a:start
   let end   = a:end
 
-  let lines = base#vim#visual_selection()
+  let secs = projs#visual#ii#secs(start,end)
 
-python3 << eof
-import vim,re
-from itertools import repeat
-
-lines = vim.eval('lines')
-start = int(vim.eval('start'))
-end   = int(vim.eval('end'))
-
-b = vim.current.buffer
-
-secs = []
-
-for k in range(start, end + 1, 1):
-  i = k - 1
-  n = k - start + 1
-  m = re.search(r'^\\ii{(\w+)}', b[i])
-  if m:
-    sec = m.group(1)
-    secs.append(sec)
-
-eof
-  let secs = py3eval('secs')
   for sec in secs
     let r = {
         \  'git_add'    : 1,
