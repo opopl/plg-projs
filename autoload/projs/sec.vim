@@ -32,45 +32,22 @@ function! projs#sec#append (...)
 
 endf
 
-"projs#sec#rename( new,old ) 
+"Usage:
+"   call projs#sec#rename_mv (old, new)
 
-function! projs#sec#rename (...)
+function! projs#sec#rename_mv (...)
   let new = get(a:000,0,'')
-
-  let old = projs#proj#secname()
   let old = get(a:000,1,old)
+endf
 
-  while !strlen(new)
-		let msg = printf('[ sec=%s ] New section name: ',old)
-    let new = input(msg,'','custom,projs#complete#secnames')
-  endw
+function! projs#sec#rename_adjust (...)
+  let old = get(a:000,0,'')
+  let new = get(a:000,1,'')
 
-  let oldf = projs#sec#file(old)
   let newf = projs#sec#file(new)
 
   let oldf_base = projs#sec#file_base(old)
   let newf_base = projs#sec#file_base(new)
-
-	let msg_a = [
-		\	" ",	
-		\	"Old: " . oldf,	
-		\	"New: " . oldf,	
-		\	" ",	
-		\	"This will rename sections, old => new",	
-		\	" ",	
-		\	"Are you sure? (1/0): ",	
-		\	]
-	let msg = join(msg_a,"\n")
-	let do_rename = base#input_we(msg,0,{ })
-	if !do_rename
-		redraw!
-		echohl MoreMsg
-		echo 'Rename aborted'
-		echohl None
-		return 
-	endif
-
-  call rename(oldf,newf)
 
   let lines = readfile(newf)
 
@@ -98,8 +75,8 @@ function! projs#sec#rename (...)
   endfor
   call extend(ex,{ newf_base : 1, oldf_base : 0 })
 
-  let pfiles=[]
-  for [file,infile] in items(ex)
+  let pfiles = []
+  for [ file, infile ] in items(ex)
     if infile
       call add(pfiles,file)
     endif
@@ -111,6 +88,60 @@ function! projs#sec#rename (...)
       \ 'lines' : pfiles,
       \ 'file'  : f_listfiles,
       \})
+
+endf
+
+"Usage:
+"   call projs#sec#rename (old, new)
+"   call projs#sec#rename (new)
+
+function! projs#sec#rename (...)
+
+  let old = projs#proj#secname()
+  if a:0 == 2
+    let old = get(a:000,0,old)
+    let new = get(a:000,1,'')
+
+  elseif a:0 == 1
+    let new = get(a:000,0,'')
+  endif
+
+  while !strlen(new)
+    let msg = printf('[ sec=%s ] New section name: ',old)
+    let new = input(msg,'','custom,projs#complete#secnames')
+  endw
+
+  let oldf = projs#sec#file(old)
+  let newf = projs#sec#file(new)
+
+  let oldf_base = projs#sec#file_base(old)
+  let newf_base = projs#sec#file_base(new)
+
+  let msg_a = [
+    \ " ",  
+    \ "Old: " . oldf, 
+    \ "New: " . newf, 
+    \ " ",
+    \ "This will rename sections, old => new",  
+    \ " ",  
+    \ "Are you sure? (1/0): ",  
+    \ ]
+  let msg = join(msg_a,"\n")
+  let do_rename = base#input_we(msg,0,{ })
+  if !do_rename
+    redraw!
+    echohl MoreMsg
+    echo 'Rename aborted'
+    echohl None
+    return 
+  endif
+
+  call rename(oldf,newf)
+
+  call projs#sec#rename_adjust(old, new)
+
+
+
 
   call projs#proj#secnames()
   call base#fileopen({ 'files' : [newf]})
