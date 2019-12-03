@@ -383,6 +383,39 @@ function! projs#action#gui_select_project (...)
 
 endfunction
 
+function! projs#action#async_build_Fc (self,temp_file) 
+  let self      = a:self
+  let temp_file = a:temp_file
+
+    let code  = self.return_code
+    let root  = self.root
+    let proj  = self.proj
+    let start = self.start
+
+    let end = localtime()
+    let duration =  end - start
+    let s_dur = ' ' . string(duration) . ' (secs)'
+  
+    if filereadable(a:temp_file)
+      call tex#efm#latex()
+      exe 'cd ' . root
+      exe 'cgetfile ' . a:temp_file
+      
+      let err = getqflist()
+      
+      redraw!
+      if len(err)
+        echohl WarningMsg
+        echo 'BUILD FAIL: ' . proj . s_dur
+        BaseAct copen
+      else
+        echohl MoreMsg
+        echo 'BUILD OK: ' . proj . s_dur
+      endif
+      echohl None
+    endif
+endfunction
+
 function! projs#action#async_build () 
   let proj = projs#proj#name()
   let root = projs#root()
@@ -406,33 +439,9 @@ function! projs#action#async_build ()
   let cmd = bat
 
   function env.get(temp_file) dict
-    let code  = self.return_code
-    let root  = self.root
-    let proj  = self.proj
-    let start = self.start
+    call projs#action#async_build_Fc(self,a:temp_file)
 
-    let end = localtime()
-    let duration =  end - start
-    let s_dur = ' ' . string(duration) . ' (secs)'
-  
-    if filereadable(a:temp_file)
-      call tex#efm#latex()
-      exe 'cd ' . root
-      exe 'cgetfile ' . a:temp_file
-      
-      let err = getqflist()
-      
-      redraw!
-      if len(err)
-        echohl WarningMsg
-        echo 'BUILD FAIL: ' . proj . s_dur
-        copen
-      else
-        echohl MoreMsg
-        echo 'BUILD OK: ' . proj . s_dur
-      endif
-      echohl None
-    endi
+
   endfunction
 
   echo 'async_build: ' . proj
