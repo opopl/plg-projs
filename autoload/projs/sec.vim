@@ -40,15 +40,35 @@ function! projs#sec#rename (...)
   let old = projs#proj#secname()
   let old = get(a:000,1,old)
 
-  if !strlen(new)
-    let new = input('[sec='.old.' ] New section name: ','','custom,projs#complete#secnames')
-  endif
+  while !strlen(new)
+		let msg = printf('[ sec=%s ] New section name: ',old)
+    let new = input(msg,'','custom,projs#complete#secnames')
+  endw
 
   let oldf = projs#sec#file(old)
   let newf = projs#sec#file(new)
 
   let oldf_base = projs#sec#file_base(old)
   let newf_base = projs#sec#file_base(new)
+
+	let msg_a = [
+		\	" ",	
+		\	"Old: " . oldf,	
+		\	"New: " . oldf,	
+		\	" ",	
+		\	"This will rename sections, old => new",	
+		\	" ",	
+		\	"Are you sure? (1/0): ",	
+		\	]
+	let msg = join(msg_a,"\n")
+	let do_rename = base#input_we(msg,0,{ })
+	if !do_rename
+		redraw!
+		echohl MoreMsg
+		echo 'Rename aborted'
+		echohl None
+		return 
+	endif
 
   call rename(oldf,newf)
 
