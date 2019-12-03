@@ -37,9 +37,27 @@ function! projs#visual#ii_rename (start, end, ... )
   let start = a:start
   let end   = a:end
 
-endf
+  let secs = projs#visual#ii#secs(start,end)
 
-function! projs#visual#_ii_secs (start, end, ... )
+  if !len(secs)
+    redraw!
+    echohl WarningMsg
+    echo "No sections selected!"
+    echohl None
+    return
+  endif
+
+  for sec in secs
+    let msg_a = [
+      \  "II RENAME",  
+      \  "",  
+      \  "New section: ",  
+      \  ]
+    let msg = join(msg_a,"\n")
+    let new = base#input_we(msg,'',{ 'complete' : 'custom,projs#complete#secnames'})
+
+    call projs#sec#rename(sec, new)
+  endfor
 
 endf
 
