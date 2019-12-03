@@ -24,7 +24,7 @@ function! projs#db#create_tables ()
 python << eof
 
 import vim
-import sqlite3
+import sqlite3,sqlparse
 import db
 
 db_file  = vim.eval('db_file')

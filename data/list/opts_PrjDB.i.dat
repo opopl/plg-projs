@@ -6,6 +6,7 @@ query_split
 thisproj_data
 buf_tags_append
 buf_data
+buf_url_insert
 search
 _backup
 _restore

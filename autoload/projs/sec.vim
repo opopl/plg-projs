@@ -98,12 +98,14 @@ endf
 function! projs#sec#rename (...)
 
   let old = projs#proj#secname()
+  let new = ''
+
   if a:0 == 2
     let old = get(a:000,0,old)
-    let new = get(a:000,1,'')
+    let new = get(a:000,1,new)
 
   elseif a:0 == 1
-    let new = get(a:000,0,'')
+    let new = get(a:000,0,new)
   endif
 
   while !strlen(new)

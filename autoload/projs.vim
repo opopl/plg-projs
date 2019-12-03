@@ -693,12 +693,16 @@ function! projs#maps ()
           \ {
           \  '<F1>'  : 'PrjAct async_build'  ,
           \  ';ab'   : 'PrjAct async_build'  ,
-          \  '<F2>'  : 'PrjPdfView'  ,
+          \  '<F2>'  : 'PrjPdfView'          ,
+          \  '<F3>'  : 'copen'               ,
+          \  '<F4>'  : 'cclose'              ,
+          \  '<F5>'  : 'PrjDB thisproj_data' ,
+          \  '<F10>' : 'TgUpdate projs_this' ,
           \  ';v'    : 'PrjPdfView'          ,
-          \  ';tp'  : 'TgUpdate projs_this' ,
-          \  ';wp'  : 'tag preamble'        ,
-          \  ';wm'  : 'tag f_main'          ,
-          \  ';wb'  : 'tag body'            ,
+          \  ';tp'   : 'TgUpdate projs_this' ,
+          \  ';wp'   : 'tag preamble'        ,
+          \  ';wm'   : 'tag f_main'          ,
+          \  ';wb'   : 'tag body'            ,
           \ }
         \ }
 

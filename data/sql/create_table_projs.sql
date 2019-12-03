@@ -13,5 +13,8 @@ CREATE TABLE IF NOT EXISTS projs (
     parent TEXT,
     author TEXT,
     pic TEXT,
-    rootid TEXT 
+    rootid TEXT,
+    url TEXT
 );
+
+ALTER TABLE projs ADD COLUMN url TEXT;

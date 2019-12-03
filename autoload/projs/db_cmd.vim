@@ -44,6 +44,31 @@ function! projs#db_cmd#buf_data (...)
   call base#buf#open_split({ 'text' : dump })
 endf
 
+function! projs#db_cmd#buf_url_insert (...)
+  let ref = get(a:000,0,{})
+
+	let msg_a = [
+		\	"(PrjDB) This buffer URL: ",	
+		\	]
+	let msg = join(msg_a,"\n")
+	let url = base#input_we(msg,'',{ })
+
+  let proj = b:proj
+  let proj = get(ref,'proj',proj)
+
+  let file = b:file
+  let file = get(ref,'file',file)
+  let file = fnamemodify(file,':t')
+
+  call pymy#sqlite#update_hash({
+    \ 'dbfile' : projs#db#file(),
+    \ 'h' : { 'url' : url },
+    \ 't' : 'projs',
+    \ 'u' : 'UPDATE',
+    \ 'w' : { 'proj' : proj, 'file' : file },
+    \ })
+endf
+
 function! projs#db_cmd#buf_tags_append (...)
   let ref = get(a:000,0,{})
 
