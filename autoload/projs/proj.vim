@@ -210,9 +210,10 @@ endfunction
 
 function! projs#proj#secnames (...)
 	let proj = projs#proj#name()
-	if a:0 | let proj = a:1 | endif
+	let proj = get(a:000,0,proj)
 
 	let secnames = projs#db#secnames()
+	let secnames = sort(secnames)
 
  	call projs#varset('secnames',secnames)
 	call projs#proj#secnamesall()
@@ -266,8 +267,8 @@ function! projs#proj#listsecnames (...)
 		let proj = a:1
 	endif
 
-	let secnames = projs#proj#secnames(proj) 
-	let secnamesall = base#varget('projs_secnamesall',[])
+	let secnames     = projs#proj#secnames(proj)
+	let secnamesall  = base#varget('projs_secnamesall',[])
 	let secnamesbase = base#varget('projs_secnamesbase',[])
 
 	let lines = []
@@ -280,7 +281,16 @@ function! projs#proj#listsecnames (...)
 	call add(lines,'projs_secnamesbase:')
 	call extend(lines,base#mapsub(secnamesbase,'^','\t','g'))
 
-	call base#buf#open_split({ 'lines' : lines })
+	let cmds_pre = [ 
+		\ 'resize 99',
+		\ "vnoremap <silent><buffer> v :'<,'>call projs#sec_vis#open()<CR>",
+		\	]
+
+	call base#buf#open_split({ 
+		\	'lines'    : lines, 
+		\	'cmds_pre' : cmds_pre,
+		\	'stl_add'  : [ 'V[ v - open section ]' ]
+		\	})
 	
 endfunction
 
