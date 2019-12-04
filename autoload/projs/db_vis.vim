@@ -4,7 +4,7 @@ function! projs#db_vis#update ()
 
   for line in lines
     let col = matchstr(line,'^\s*\d\+\s\+\zs\(\w\+\)\ze.*$')
-    let val = matchstr(line,'^\s*\d\+\s\+\w\+\zs.*\ze$')
+    let val = matchstr(line,'^\s*\d\+\s\+\w\+\s*\zs.*\ze$')
   endfor
 
   let sec  = projs#proj#secname()
@@ -12,7 +12,6 @@ function! projs#db_vis#update ()
   let root = projs#root()
 
   let file = projs#sec#file(sec)
-  let file_path = join([root,file], '/')
 
   let new_val = input(printf('[ "%s" column ] new value: ',col), val)
 
@@ -26,15 +25,15 @@ function! projs#db_vis#update ()
   if col == 'url'
     let url = new_val
     let lines_tex = []
-    call add(lines_tex,printf('%%url %s',url) )
+    call add(lines_tex,printf('%%%%url %s',url) )
     call add(lines_tex,' ' )
     call add(lines_tex,printf('\url{%s}',url) )
     let r = {
           \   'lines'  : lines_tex,
-          \   'file'   : file_path,
+          \   'file'   : file,
           \   'mode'   : 'append',
-          \   }
-    let do_append = input('Append url lines? 1/0: ',1)
+          \ }
+    let do_append = input('Append url lines? (1/0): ',1)
     if do_append
       call base#file#write_lines(r)  
     endif
