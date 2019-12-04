@@ -9,6 +9,10 @@ function! projs#db_vis#update ()
 
   let sec  = projs#proj#secname()
   let proj = projs#proj#name()
+  let root = projs#root()
+
+  let file = projs#sec#file(sec)
+  let file_path = join([root,file], '/')
 
   let new_val = input(printf('[ "%s" column ] new value: ',col), val)
 
@@ -18,6 +22,23 @@ function! projs#db_vis#update ()
   let h = {
     \  col : new_val,
     \  }
+
+  if col == 'url'
+    let url = new_val
+    let lines_tex = []
+    call add(lines_tex,printf('%%url %s',url) )
+    call add(lines_tex,' ' )
+    call add(lines_tex,printf('\url{%s}',url) )
+    let r = {
+          \   'lines'  : lines_tex,
+          \   'file'   : file_path,
+          \   'mode'   : 'append',
+          \   }
+    let do_append = input('Append url lines? 1/0: ',1)
+    if do_append
+      call base#file#write_lines(r)  
+    endif
+  endif
 
   let w = {
       \  'sec'  : sec,
