@@ -56,16 +56,27 @@ function! projs#db_cmd#buf_url_insert (...)
   let proj = b:proj
   let proj = get(ref,'proj',proj)
 
-  let file = b:file
-  let file = get(ref,'file',file)
-  let file = fnamemodify(file,':t')
+  let file     = b:file
+  let file     = get(ref,'file',file)
+  let file_rel = fnamemodify(file,':t')
+
+python3 << eof
+import vim
+import in_place
+
+file_rel = vim.eval('file_rel')
+	
+eof
 
   call pymy#sqlite#update_hash({
     \ 'dbfile' : projs#db#file(),
     \ 'h' : { 'url' : url },
     \ 't' : 'projs',
     \ 'u' : 'UPDATE',
-    \ 'w' : { 'proj' : proj, 'file' : file },
+    \ 'w' : { 
+			\	'proj' : proj, 
+			\	'file' : file_rel 
+			\	},
     \ })
 endf
 

@@ -697,6 +697,7 @@ function! projs#maps ()
           \  '<F3>'  : 'copen'               ,
           \  '<F4>'  : 'cclose'              ,
           \  '<F5>'  : 'PrjDB thisproj_data' ,
+          \  '<F8>'  : 'PrjListSecs' ,
           \  '<F10>' : 'TgUpdate projs_this' ,
           \  ';v'    : 'PrjPdfView'          ,
           \  ';tp'   : 'TgUpdate projs_this' ,

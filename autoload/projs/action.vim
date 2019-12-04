@@ -387,14 +387,14 @@ function! projs#action#async_build_Fc (self,temp_file)
   let self      = a:self
   let temp_file = a:temp_file
 
-    let code  = self.return_code
-    let root  = self.root
-    let proj  = self.proj
-    let start = self.start
+  let code  = self.return_code
+  let root  = self.root
+  let proj  = self.proj
+  let start = self.start
 
-    let end = localtime()
-    let duration =  end - start
-    let s_dur = ' ' . string(duration) . ' (secs)'
+  let end = localtime()
+  let duration =  end - start
+  let s_dur = ' ' . string(duration) . ' (secs)'
   
     if filereadable(a:temp_file)
       call tex#efm#latex()
@@ -440,8 +440,6 @@ function! projs#action#async_build ()
 
   function env.get(temp_file) dict
     call projs#action#async_build_Fc(self,a:temp_file)
-
-
   endfunction
 
   echo 'async_build: ' . proj
