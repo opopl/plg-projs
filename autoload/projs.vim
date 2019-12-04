@@ -337,7 +337,10 @@ function! projs#action (...)
       \ 'headers' : [ 'act', 'description'],
       \ }))
 
-    call base#buf#open_split({ 'lines' : lines })
+    call base#buf#open_split({ 
+      \ 'lines'    : lines ,
+      \ 'cmds_pre' : ['resize 99'] ,
+      \ })
     return
   endif
 
