@@ -283,12 +283,12 @@ function! projs#db#data_get (...)
 
   let dbfile = projs#db#file()
 
-  let rows = pymy#sqlite#query({
+  let [ rows_h, cols ] = pymy#sqlite#query({
     \ 'dbfile' : dbfile,
     \ 'p'      : p,
     \ 'q'      : q,
     \ })
-  return rows
+  return [ rows_h, cols ]
 endfunction
 
 function! projs#db#tags_get (...)

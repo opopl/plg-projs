@@ -28,7 +28,7 @@ endf
 function! projs#db_cmd#buf_data (...)
   let ref = get(a:000,0,{})
 
-  let proj = b:proj
+  let proj = exists('b:proj') ? b:proj : projs#proj#name()
   let proj = get(ref,'proj',proj)
 
   let file = b:file
@@ -39,19 +39,47 @@ function! projs#db_cmd#buf_data (...)
     \ 'file' : file, 
     \ 'proj' : proj 
     \ }
-  let data = projs#db#data_get(r)
-  let dump = base#dump(data)
-  call base#buf#open_split({ 'text' : dump })
+
+  let [ rows_h, cols ] = projs#db#data_get(r)
+  let row_h            = get(rows_h,0,{})
+
+  let data_kv = []
+  for col in cols
+    call add(data_kv,{ 
+      \ 'key'   : col,
+      \ 'value' : get(row_h,col,'') })
+  endfor
+
+  let lines = pymy#data#tabulate({
+    \ 'data_h'  : data_kv,
+    \ 'headers' : [ 'key', 'value' ],
+    \ })
+
+  let cmds = [
+    \ 'resize 99',
+    \ "vnoremap <silent><buffer> u :'<,'>call projs#db_vis#update()<CR>",
+    \ ]
+
+  call base#buf#open_split({ 
+    \ 'lines'    : lines ,
+    \ 'cmds_pre' : cmds ,
+    \ 'stl_add'  : [ 
+        \ '%4* V[ u - update ]' , 
+        \ '%2* %{projs#proj#name()} %0*' ,
+        \ '%1* %{projs#proj#secname()} %0*', 
+        \ ],
+    \ })
+  return
 endf
 
 function! projs#db_cmd#buf_url_insert (...)
   let ref = get(a:000,0,{})
 
-	let msg_a = [
-		\	"(PrjDB) This buffer URL: ",	
-		\	]
-	let msg = join(msg_a,"\n")
-	let url = base#input_we(msg,'',{ })
+  let msg_a = [
+    \ "(PrjDB) This buffer URL: ",  
+    \ ]
+  let msg = join(msg_a,"\n")
+  let url = base#input_we(msg,'',{ })
 
   let proj = b:proj
   let proj = get(ref,'proj',proj)
@@ -65,7 +93,7 @@ import vim
 import in_place
 
 file_rel = vim.eval('file_rel')
-	
+  
 eof
 
   call pymy#sqlite#update_hash({
@@ -74,9 +102,9 @@ eof
     \ 't' : 'projs',
     \ 'u' : 'UPDATE',
     \ 'w' : { 
-			\	'proj' : proj, 
-			\	'file' : file_rel 
-			\	},
+      \ 'proj' : proj, 
+      \ 'file' : file_rel 
+      \ },
     \ })
 endf
 
