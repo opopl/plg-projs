@@ -420,15 +420,53 @@ function! projs#action#async_build_Fc (self,temp_file)
 endfunction
 
 function! projs#action#excel_import (...) 
+  let ref = get(a:000,0,{})
+
+  let proj     = get(ref,'proj',projs#proj#name())
+  let file_sht = get(ref,'file','')
+
+  let xdir = projs#path([ 'data' , proj, 'sht' ])
+
+  if !strlen(file_sht)
+    let files = base#find({ 
+      \  "dirs"        : [xdir],
+      \  "exts"        : ['xls'],
+      \  "cwd"         : 1,
+      \  "relpath"     : 0,
+      \  "subdirs"     : 1,
+      \  "fnamemodify" : '',
+      \  })
+  
+    for file in files
+      call projs#action#excel_import({ 'file' : file })
+    endfor
+
+    return 
+  endif
+
+  let file_base = fnamemodify(file_sht,':r')
+
 python3 << eof
 import vim
-import pywin32
 
 import os
 import sqlite3
-import pywin32
-#from pywin32.client import constants, Dispatch
-	
+import win32com
+
+ROW_SPAN = (14, 21)
+COL_SPAN = (2, 7)
+
+file_sht = vim.eval('file_sht')
+
+from win32com.client import constants, Dispatch
+app = Dispatch("Excel.Application")
+app.Visible = True
+ws = app.Workbooks.Open(file_sht).Sheets(0)
+
+exceldata = [[ ws.Cells(row, col).Value 
+              for col in xrange(COL_SPAN[0], COL_SPAN[1])] 
+             for row in xrange(ROW_SPAN[0], ROW_SPAN[1])]
+  
 eof
 endfunction
 
