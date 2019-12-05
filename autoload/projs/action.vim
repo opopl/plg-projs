@@ -471,7 +471,7 @@ eof
 endfunction
 
 function! projs#action#xls_render (...) 
-  let ref=get(a:000,0,{})
+  let ref = get(a:000,0,{})
 
   let proj = get(ref,'proj',projs#proj#name())
   let file = get(ref,'file','')
@@ -482,7 +482,6 @@ function! projs#action#xls_render (...)
     let files = base#find({ 
       \  "dirs"    : [xdir],
       \  "exts"    : ['xls'],
-      \  "cwd"     : 1,
       \  "relpath" : 0,
       \  "subdirs" : 1,
       \  "fnamemodify" : '',
@@ -495,7 +494,12 @@ function! projs#action#xls_render (...)
     return 
   endif
 
+  if !filereadable(file)
+    return 
+  endif
+
   let file_base = fnamemodify(file,':r')
+  let file_db   = file_base . '.db'
 
 python3 << eof
 import vim
@@ -503,16 +507,21 @@ import sqlite3
 import pandas as pd
 
 file_base = vim.eval('file_base')
-file_xls  = vim.eval('file')
-print(file_xls)
 
-con = sqlite3.connect(file_base + ".db")
+file_xls  = vim.eval('file')
+file_db   = vim.eval('file_db')
+
+print(file_xls)
+print(file_db)
+
+con = sqlite3.connect(file_db)
 wb  = pd.ExcelFile(file_xls)
 
 for sheet in wb.sheet_names:
+  df = pd.read_excel(file_xls,sheet_name = sheet)
   print(sheet)
-  df = pd.read_excel(file_xls,sheetname=None)
-#  df.to_sql(sheet, con, index=False,if_exists="replace")
+  print(df)
+  #df.to_sql(sheet, con, index=False, if_exists="replace" )
 
 con.commit()
 con.close()
