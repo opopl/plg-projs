@@ -709,6 +709,9 @@ function! projs#maps ()
           \  ';wm'   : 'tag f_main'          ,
           \  ';wb'   : 'tag body'            ,
           \ }
+          \ 'vnoremap' : {
+            \  '?'   : 'PrjVisual help'            ,
+          \ }
         \ }
 
   for [map,mp] in items(maps)

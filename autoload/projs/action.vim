@@ -462,8 +462,9 @@ for sheet in wb.sheet_names:
   print(sheet)
   df = pd.read_excel(file_xls,sheetname=None)
 #  df.to_sql(sheet, con, index=False,if_exists="replace")
-#con.commit()
-#con.close()
+
+con.commit()
+con.close()
 eof
 endfunction
 

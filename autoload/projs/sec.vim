@@ -696,10 +696,13 @@ function! projs#sec#open (...)
       \ 'load_buf' : load_buf,
       \ }) 
 
+    let buf_nums = get(res,'buf_nums',[])
+    let bufnr    = get(buf_nums,0,'')
+
     call projs#sec#bufnr({ 
       \ 'sec'    : sec,
       \ 'proj'   : proj,
-      \ 'bufnr'  : res.bufnr 
+      \ 'bufnr'  : bufnr
       \ })
 
   endfor
