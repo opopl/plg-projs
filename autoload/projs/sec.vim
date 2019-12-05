@@ -625,7 +625,7 @@ function! projs#sec#open (...)
  let load_buf = get(opts,'load_buf',0)
 
  if !strlen(sec)
-    let sec=projs#select#sec()
+    let sec = projs#select#sec()
  endif
 
  if !projs#sec#exists(sec)
@@ -691,9 +691,10 @@ function! projs#sec#open (...)
     if !filereadable(vfile)
       call projs#sec#new(sec)
     endif
+
     let res = base#fileopen({ 
-      \ 'files'    : [vfile] ,
-      \ 'load_buf' : load_buf,
+      \ 'files'    : [ vfile ],
+      \ 'load_buf' :  load_buf,
       \ }) 
 
     let buf_nums = get(res,'buf_nums',[])

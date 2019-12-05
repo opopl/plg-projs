@@ -708,8 +708,8 @@ function! projs#maps ()
           \  ';wp'   : 'tag preamble'        ,
           \  ';wm'   : 'tag f_main'          ,
           \  ';wb'   : 'tag body'            ,
-          \ }
-          \ 'vnoremap' : {
+          \ },
+       \ 'vnoremap' : {
             \  '?'   : 'PrjVisual help'            ,
           \ }
         \ }

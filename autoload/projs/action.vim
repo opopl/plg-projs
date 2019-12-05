@@ -419,6 +419,19 @@ function! projs#action#async_build_Fc (self,temp_file)
     endif
 endfunction
 
+function! projs#action#excel_import (...) 
+python3 << eof
+import vim
+import pywin32
+
+import os
+import sqlite3
+import pywin32
+#from pywin32.client import constants, Dispatch
+	
+eof
+endfunction
+
 function! projs#action#xls_render (...) 
   let ref=get(a:000,0,{})
 
