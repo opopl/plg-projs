@@ -43,3 +43,4 @@ help
 pdf_view
 pdf_delete
 gui_select_project
+xlsx_render

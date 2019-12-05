@@ -1,3 +1,6 @@
+if 0
+BaseDatView 
+endif
 
 function! projs#action#thisproj_cd_src (...)
 
@@ -414,6 +417,23 @@ function! projs#action#async_build_Fc (self,temp_file)
       endif
       echohl None
     endif
+endfunction
+
+function! projs#action#xlsx_render () 
+python3 << eof
+import vim
+import sqlite3
+import pandas as pd
+
+filename="script"
+con=sqlite3.connect(filename+".db")
+wb=pd.ExcelFile(filename+'.xlsx')
+for sheet in wb.sheet_names:
+        df=pd.read_excel(filename+'.xlsx',sheetname=sheet)
+        df.to_sql(sheet,con, index=False,if_exists="replace")
+con.commit()
+con.close()
+eof
 endfunction
 
 function! projs#action#async_build () 
