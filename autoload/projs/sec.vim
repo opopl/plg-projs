@@ -601,9 +601,11 @@ function! projs#sec#open (...)
 
  let parent_sec = projs#proj#secname()
 
- if a:0 == 1
-    let sec=a:1
- else
+ let sec      = get(a:000,0,'')
+ let opts     = get(a:000,1,{})
+ let load_buf = get(opts,'load_buf',0)
+
+ if !strlen(sec)
     let sec=projs#select#sec()
  endif
 
@@ -670,7 +672,10 @@ function! projs#sec#open (...)
     if !filereadable(vfile)
       call projs#sec#new(sec)
     endif
-    let res = base#fileopen({ 'files' : [vfile] }) 
+    let res = base#fileopen({ 
+      \ 'files'    : [vfile] ,
+      \ 'load_buf' : load_buf,
+      \ }) 
 
     call projs#sec#bufnr({ 
       \ 'sec'    : sec,
@@ -699,9 +704,9 @@ function! projs#sec#bufnr (...)
     let proj = get(a:000,1,proj)
 
   elseif base#type(ref) == 'Dictionary'
-	  let bufnr = get(ref,'bufnr','')
-	  let sec   = get(ref,'sec',sec)
-	  let proj  = get(ref,'proj',proj)
+    let bufnr = get(ref,'bufnr','')
+    let sec   = get(ref,'sec',sec)
+    let proj  = get(ref,'proj',proj)
   endif
 
   let bfs = base#varref('projs_sec_bufs',{})
@@ -711,8 +716,8 @@ function! projs#sec#bufnr (...)
     let bufnr = get(bs,sec,'')
     return bufnr
   else
-	  call extend(bs,{ sec : bufnr })
-	  call extend(bfs,{ proj : bs })
+    call extend(bs,{ sec : bufnr })
+    call extend(bfs,{ proj : bs })
   endif
 endf
 
