@@ -62,7 +62,7 @@ command! -nargs=* -complete=custom,projs#complete#secnames PrjSecRename
   \ call projs#sec#rename(<f-args>)
 
 command! -nargs=* -complete=custom,projs#complete#secnames PrjSecDelete
-  \ call projs#sec#delete(<f-args>)
+  \ call projs#sec#delete_prompt(<f-args>)
 
 command! -nargs=* -complete=custom,projs#complete#defs     PrjDefShow
   \ call projs#def#show(<f-args>) 

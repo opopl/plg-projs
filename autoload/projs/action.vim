@@ -419,20 +419,51 @@ function! projs#action#async_build_Fc (self,temp_file)
     endif
 endfunction
 
-function! projs#action#xlsx_render () 
+function! projs#action#xls_render (...) 
+  let ref=get(a:000,0,{})
+
+  let proj = get(ref,'proj',projs#proj#name())
+  let file = get(ref,'file','')
+
+  let xdir   = projs#path([ 'data' , proj, 'xls' ])
+
+  if !strlen(file)
+    let files = base#find({ 
+      \  "dirs"    : [xdir],
+      \  "exts"    : ['xls'],
+      \  "cwd"     : 1,
+      \  "relpath" : 0,
+      \  "subdirs" : 1,
+      \  "fnamemodify" : '',
+      \  })
+  
+    for file in files
+      call projs#action#xls_render({ 'file' : file })
+    endfor
+
+    return 
+  endif
+
+  let file_base = fnamemodify(file,':r')
+
 python3 << eof
 import vim
 import sqlite3
 import pandas as pd
 
-filename="script"
-con=sqlite3.connect(filename+".db")
-wb=pd.ExcelFile(filename+'.xlsx')
+file_base = vim.eval('file_base')
+file_xls  = vim.eval('file')
+print(file_xls)
+
+con = sqlite3.connect(file_base + ".db")
+wb  = pd.ExcelFile(file_xls)
+
 for sheet in wb.sheet_names:
-        df=pd.read_excel(filename+'.xlsx',sheetname=sheet)
-        df.to_sql(sheet,con, index=False,if_exists="replace")
-con.commit()
-con.close()
+  print(sheet)
+  df = pd.read_excel(file_xls,sheetname=None)
+#  df.to_sql(sheet, con, index=False,if_exists="replace")
+#con.commit()
+#con.close()
 eof
 endfunction
 

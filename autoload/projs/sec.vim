@@ -147,6 +147,12 @@ function! projs#sec#rename (...)
   
 endfunction
 
+function! projs#sec#delete_prompt (...)
+  let sec = projs#proj#secname()
+  let sec = get(a:000,0,sec)
+  call projs#sec#delete(sec,{ 'prompt' : 1})
+endfunction
+
 "Usage:
 "  call projs#sec#delete (sec)
 "
@@ -160,10 +166,23 @@ function! projs#sec#delete (...)
   let sec = projs#proj#secname()
   let sec = get(a:000,0,sec)
 
+  let opts = {}
+  let opts = get(a:000,1,opts)
+
+  let prompt = get(opts,'prompt',0)
+
   let ok = 1
   let ok = ok && projs#sec#delete_from_vcs(sec)
   let ok = ok && projs#sec#delete_from_db(sec)
   let ok = ok && projs#sec#delete_from_fs(sec)
+
+  if prompt
+    let do_del = input(printf('[ %s ] Delete section? (1/0): ',sec),0)
+    if !do_del
+      call base#rdwe('deletion aborted')
+      return
+    endif
+  endif
 
   if ok
     call projs#echo('Section has been deleted: ' . sec)
