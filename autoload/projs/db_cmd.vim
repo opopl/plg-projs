@@ -72,6 +72,9 @@ function! projs#db_cmd#buf_data (...)
   return
 endf
 
+function! projs#db_cmd#buf_url_fetch (...)
+endf
+
 function! projs#db_cmd#buf_url_insert (...)
   let ref = get(a:000,0,{})
 

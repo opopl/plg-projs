@@ -450,6 +450,18 @@ function! projs#sec#add (sec)
   return 1
 endfunction
 
+function! projs#sec#buf (sec)
+	let sec = a:sec
+
+	let sfile = projs#sec#file(sec)
+	let w = {
+			\	'root' : projs#root(),
+			\	'file_full' : sfile,
+			\	}
+	let bufs = base#buffers#get().with(w).bufs
+	return get(bufs,0,{})
+endfunction
+
 function! projs#sec#exists (...)
   let sec = get(a:000,0,'')
 
