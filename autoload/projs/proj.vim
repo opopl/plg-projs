@@ -314,6 +314,9 @@ function! projs#proj#listsecnames (...)
 
     call extend(cmds_pre,cmds)
   endfor
+  for tf in tagfiles()
+    call extend(cmds_pre,[ 'setlocal tags+='.escape(tf,' ') ])
+  endfor
 
   call base#buf#open_split({ 
     \ 'lines'    : lines, 
