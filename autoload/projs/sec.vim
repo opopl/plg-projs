@@ -451,15 +451,15 @@ function! projs#sec#add (sec)
 endfunction
 
 function! projs#sec#buf (sec)
-	let sec = a:sec
+  let sec = a:sec
 
-	let sfile = projs#sec#file(sec)
-	let w = {
-			\	'root'      : projs#root(),
-			\	'file_full' : sfile,
-			\	}
-	let bufs = base#buffers#get().with(w).bufs
-	return get(bufs,0,{})
+  let sfile = projs#sec#file(sec)
+  let w = {
+      \ 'root'      : projs#root(),
+      \ 'file_full' : sfile,
+      \ }
+  let bufs = base#buffers#get().with(w).bufs
+  return get(bufs,0,{})
 endfunction
 
 function! projs#sec#exists (...)
@@ -668,17 +668,52 @@ function! projs#sec#open (...)
 
   for vfile in vfiles
     if !filereadable(vfile)
-        call projs#sec#new(sec)
+      call projs#sec#new(sec)
     endif
-    call base#fileopen(vfile) 
-  endfor
+    let res = base#fileopen({ 'files' : [vfile] }) 
 
+    call projs#sec#bufnr({ 
+      \ 'sec'    : sec,
+      \ 'proj'   : proj,
+      \ 'bufnr'  : res.bufnr 
+      \ })
+
+  endfor
 
   call base#stl#set('projs')
   "KEYMAP russian-jcukenwin
   KEYMAP ukrainian-jcuken
 
   return 
+endf
+
+function! projs#sec#bufnr (...)
+  let ref = get(a:000,0,{})
+
+  let proj  = projs#proj#name()
+  let bufnr = ''
+  let sec   = projs#proj#secname()
+
+  if base#type(ref) == 'String'
+    let sec  = get(a:000,0,sec)
+    let proj = get(a:000,1,proj)
+
+  elseif base#type(ref) == 'Dictionary'
+	  let bufnr = get(ref,'bufnr','')
+	  let sec   = get(ref,'sec',sec)
+	  let proj  = get(ref,'proj',proj)
+  endif
+
+  let bfs = base#varref('projs_sec_bufs',{})
+  let bs  = get(bfs,proj,{})
+
+  if !len(bufnr)
+    let bufnr = get(bs,sec,'')
+    return bufnr
+  else
+	  call extend(bs,{ sec : bufnr })
+	  call extend(bfs,{ proj : bs })
+  endif
 endf
 
 

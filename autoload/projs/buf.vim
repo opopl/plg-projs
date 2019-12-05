@@ -23,6 +23,12 @@ function! projs#buf#tex_tex ()
       \ "proj" : b:proj     ,
       \ })
 
+  call projs#sec#bufnr({ 
+     \ 'sec'   : b:sec,
+     \ 'proj'  : b:proj,
+     \ 'bufnr' : b:bufnr 
+     \  })
+
   let  mprg = 'projs_latexmk'
 
   let aucmds = [ 
