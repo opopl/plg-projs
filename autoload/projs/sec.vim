@@ -171,11 +171,6 @@ function! projs#sec#delete (...)
 
   let prompt = get(opts,'prompt',0)
 
-  let ok = 1
-  let ok = ok && projs#sec#delete_from_vcs(sec)
-  let ok = ok && projs#sec#delete_from_db(sec)
-  let ok = ok && projs#sec#delete_from_fs(sec)
-
   if prompt
     let do_del = input(printf('[ %s ] Delete section? (1/0): ',sec),0)
     if !do_del
@@ -183,6 +178,11 @@ function! projs#sec#delete (...)
       return
     endif
   endif
+
+  let ok = 1
+  let ok = ok && projs#sec#delete_from_vcs(sec)
+  let ok = ok && projs#sec#delete_from_db(sec)
+  let ok = ok && projs#sec#delete_from_fs(sec)
 
   if ok
     call projs#echo('Section has been deleted: ' . sec)
