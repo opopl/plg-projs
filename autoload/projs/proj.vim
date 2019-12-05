@@ -282,13 +282,14 @@ function! projs#proj#listsecnames (...)
       continue
     endif
     call add(data_h,{ 'buf' : bnr, 'sec' : sec })
+    call add(bufsecs,sec)
   endfor
-  let bufsecs = pymy#data#tabulate({
+  let lines_bufsecs = pymy#data#tabulate({
     \ 'data_h'  : data_h,
     \ 'headers' : headers,
     \ })
   call add(lines,'(buf) projs_secnames:')
-  call extend(lines,base#mapsub(bufsecs,'^','\t','g'))
+  call extend(lines,base#mapsub(lines_bufsecs,'^','\t','g'))
 
   call add(lines,'projs_secnames:')
   call extend(lines,base#mapsub(secnames,'^','\t','g'))
@@ -303,6 +304,16 @@ function! projs#proj#listsecnames (...)
     \ 'resize 99',
     \ "vnoremap <silent><buffer> v :'<,'>call projs#sec_vis#open()<CR>",
     \ ]
+
+  for sec in bufsecs
+    let cmds = []
+
+    let hl = 'MoreMsg'
+    call add(cmds, printf('call matchadd("%s","\\s\\+%s\\s\\+")',hl,sec))
+    call add(cmds, printf('call matchadd("%s","\\s\\+%s$")',hl,sec))
+
+    call extend(cmds_pre,cmds)
+  endfor
 
   call base#buf#open_split({ 
     \ 'lines'    : lines, 
