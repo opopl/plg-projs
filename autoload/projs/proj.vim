@@ -272,6 +272,25 @@ function! projs#proj#listsecnames (...)
 	let secnamesbase = base#varget('projs_secnamesbase',[])
 
 	let lines = []
+
+	let bufsecs = []
+	let data_h = []
+	let headers = [ 'buf' , 'sec' ]
+	for sec in secnamesall
+		let b = projs#sec#buf(sec)
+		if ! len(keys(b))
+			continue
+		endif
+		let num = b.num
+		call add(data_h,{ 'buf' : num, 'sec' : sec })
+	endfor
+	let bufsecs = pymy#data#tabulate({
+		\ 'data_h'  : data_h,
+		\ 'headers' : headers,
+		\ })
+	call add(lines,'(buf) projs_secnames:')
+	call extend(lines,base#mapsub(bufsecs,'^','\t','g'))
+
 	call add(lines,'projs_secnames:')
 	call extend(lines,base#mapsub(secnames,'^','\t','g'))
 

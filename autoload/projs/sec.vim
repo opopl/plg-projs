@@ -455,7 +455,7 @@ function! projs#sec#buf (sec)
 
 	let sfile = projs#sec#file(sec)
 	let w = {
-			\	'root' : projs#root(),
+			\	'root'      : projs#root(),
 			\	'file_full' : sfile,
 			\	}
 	let bufs = base#buffers#get().with(w).bufs
