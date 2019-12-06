@@ -263,14 +263,21 @@ function! projs#db#data_get (...)
   let file = get(ref,'file','')
   let file = fnamemodify(file,':t')
 
+  let sec = get(ref,'sec','')
+
   let q = 'SELECT * FROM projs'
   let p = []
 
-  if strlen(proj) || strlen(file)
+  if strlen(proj) || strlen(file) || strlen(sec)
     let cond = []
     if strlen(proj)
       call add(cond,' proj = ? ')
       call add(p, proj)
+    endif
+
+    if strlen(sec)
+      call add(cond,' sec = ? ')
+      call add(p, sec)
     endif
 
     if strlen(file)

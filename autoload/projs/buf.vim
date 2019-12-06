@@ -34,6 +34,16 @@ function! projs#buf#tex_tex ()
      \ 'bufnr' : b:bufnr 
      \  })
 
+  let [ rows_h, cols ] = projs#db#data_get({ 
+    \ 'proj' : b:proj,
+    \ 'sec ' : b:sec,
+    \ })
+  let b:db_data = get(rows_h,0,{})
+  let url       = get(b:db_data,'url','')
+  if strlen(url)
+    let b:url = url
+  endif
+
   let  mprg = 'projs_latexmk'
 
   let aucmds = [ 
