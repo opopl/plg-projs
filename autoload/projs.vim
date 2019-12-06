@@ -405,7 +405,7 @@ function! projs#onload (...)
   let done = base#eval("b:projs_onload_done")
   if done | return | endif
 
-  let b:projs_onload_done=1
+  let b:projs_onload_done = 1
     
   let prf = { 'prf' : 'projs#onload' }
   call base#log([

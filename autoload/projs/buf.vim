@@ -3,6 +3,11 @@ function! projs#buf#vim ()
   TgSet projs_this
 endfunction
 
+if 0
+Used in:
+  ftplugin/tex.vim
+endif
+
 function! projs#buf#tex_tex ()
 
   call projs#onload()

@@ -13,13 +13,13 @@ call base#buf#start()
 "if ( ( b:dirname == b:root ) && ( b:ext == 'tex' ) )
 
 if ( b:dirname == b:root )
-	if b:ext == 'tex'
-		call projs#buf#tex_tex()
+  if b:ext == 'tex'
+    call projs#buf#tex_tex()
 
-	elseif b:ext == 'sty'
-		call projs#buf#tex_sty()
-	endif
-	
+  elseif b:ext == 'sty'
+    call projs#buf#tex_sty()
+  endif
+  
 endif
 
 
