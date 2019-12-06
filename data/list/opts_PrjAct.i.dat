@@ -29,6 +29,7 @@ cd_builds
 cd_pics
 append_thisproj
 append_section
+append_label
 ###git
 git_add_pics
 git_commit

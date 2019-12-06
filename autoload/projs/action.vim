@@ -347,6 +347,14 @@ function! projs#action#prjfiles_add_file_tag (...)
   let files = projs#proj#files({ "exts" : base#qw('tex') })
 endfunction
 
+function! projs#action#append_label (...) 
+  let sec = projs#proj#secname()
+	let lines = []
+
+	call add(lines,printf('\label{sec:%s}',sec))
+  call append(line('.'),lines)
+endfunction
+
 function! projs#action#append_section (...) 
   let sec = projs#proj#secname()
   call append(line('.'),[sec])
@@ -414,6 +422,7 @@ function! projs#action#async_build_Fc (self,temp_file)
       else
         echohl MoreMsg
         echo 'BUILD OK: ' . proj . s_dur
+				cclose
       endif
       echohl None
     endif
