@@ -701,7 +701,7 @@ function! projs#maps ()
           \  '<F4>'  : 'cclose'              ,
           \  '<F5>'  : 'PrjDB thisproj_data' ,
           \  '<F6>'  : 'PrjDB buf_data' ,
-          \  '<F7>'  : 'GitSave' ,
+          \  '<F7>'  : 'call projs#git#save()' ,
           \  '<F8>'  : 'PrjListSecs' ,
           \  '<F10>' : 'TgUpdate projs_this' ,
           \  ';v'    : 'PrjPdfView'          ,
