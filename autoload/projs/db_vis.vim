@@ -23,9 +23,10 @@ function! projs#db_vis#update ()
     \  }
 
   if col == 'url'
+    let url = new_val
+
     let b:url = url
 
-    let url = new_val
     let lines_tex = []
     call add(lines_tex,printf('%%%%url %s',url) )
     call add(lines_tex,' ' )
