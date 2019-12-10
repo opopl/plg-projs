@@ -268,13 +268,41 @@ eof
 endfunction
 
 function! projs#action#buf_update ()
+  call base#buf#start()
+
+  if !exists("b:sec") 
+    call base#rdwe('not a TeX project file! abort')
+    return
+  endif
 python3 << eof
 import vim
 
 file = vim.eval('b:file')
 sec  = vim.eval('b:sec')
-eof
 
+f = open(file,'r')
+url = ''
+for line in f:
+  m = re.match(r'%%url\s+(.*)$',line)
+  if m:
+    url = m.group(1)
+eof
+  let url = py3eval('url')
+  if strlen(strlen(url))
+    let b:url = url
+  endif
+
+  call base#rdw('OK: buf_update')
+
+endfunction
+
+function! projs#action#url_fetch ()
+  if !exists("b:url")
+    call base#rdwe('b:url does not exist! abort')
+    return
+  endif
+
+  call idephp#curl#run({ 'args' : b:url, 'insecure' : 1 })
 endfunction
 
 """prjact_csv_query
