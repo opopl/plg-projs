@@ -246,15 +246,16 @@ function! projs#action#git_add_texfiles ()
 endfunction
 
 function! projs#action#vim_files_adjust ()
-	let vim_files = base#find({ 
-		\	"dirs"    : [projs#root()],
-		\	"exts"    : base#qw('vim'),
-		\	"cwd"     : 1,
-		\	"relpath" : 1,
-		\	"subdirs" : 1,
-		\	"fnamemodify" : '',
-		\	})
-	echo vim_files
+python3 << eof
+import vim,os
+projs = vim.eval('projs#list()')
+root  = vim.eval('projs#root()')
+
+for proj in projs:
+  vim_file = '/'.join([root,proj + '.vim'])
+  if os.path.isfile(vim_file):
+  
+eof
 endfunction
 
 """prjact_csv_query
@@ -265,7 +266,7 @@ function! projs#action#csv_query ()
 perl << eof
   use DBI;
 
-  my $warn=sub { VimWarn(@_); };
+  my $warn = sub { VimWarn(@_); };
 
   my $csvdir = VimVar('csvdir');
 
@@ -361,9 +362,9 @@ endfunction
 
 function! projs#action#append_label (...) 
   let sec = projs#proj#secname()
-	let lines = []
+  let lines = []
 
-	call add(lines,printf('\label{sec:%s}',sec))
+  call add(lines,printf('\label{sec:%s}',sec))
   call append(line('.'),lines)
 endfunction
 
@@ -434,7 +435,7 @@ function! projs#action#async_build_Fc (self,temp_file)
       else
         echohl MoreMsg
         echo 'BUILD OK: ' . proj . s_dur
-				cclose
+        cclose
       endif
       echohl None
     endif
