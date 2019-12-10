@@ -93,6 +93,10 @@ function! projs#visual#ii_to_new_secs (start, end, ... )
   
 endfunction
 
+function! projs#visual#help (...)
+  call base#bufact_common#help ({ 'map_types' : base#qw('vnoremap') })
+endfunction
+
 "" split on subsubsection
 function! projs#visual#split_ss2 (start, end, ... )
   let start  = a:start

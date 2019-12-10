@@ -1,39 +1,4 @@
 <?xml version="1.0" ?>
-<top>
-	<var type="dict" name="desc_PrjAct" entry_tag="act" >
-	  <act key="append_section"> </act>
-	  <act key="append_thisproj"> </act>
-	  <act key="async_build"> </act>
-	  <act key="buildmode_set"> </act>
-	  <act key="cd_builds"> </act>
-	  <act key="cd_csvdir"> </act>
-		<act key="cd_pics"> 
-						change to the directory with pictures, 
-						e.g. pics/PROJ/ or pics/
-		</act>
-	  <act key="create_sec_fig"> </act>
-	  <act key="create_sec_tab"> </act>
-	  <act key="csv_query"> </act>
-	  <act key="files_copy_to_project"> </act>
-	  <act key="git_add_pics"> </act>
-	  <act key="git_add_texfiles"> </act>
-	  <act key="git_commit"> </act>
-	  <act key="git_save"> </act>
-	  <act key="gui_select_project"> </act>
-	  <act key="help"> </act>
-	  <act key="joinlines"> </act>
-	  <act key="mkdir_pics"> </act>
-	  <act key="pdf_delete"> </act>
-	  <act key="pdf_view"> </act>
-	  <act key="pics_convert_to_jpg"> </act>
-	  <act key="preamble_lang_set"> </act>
-	  <act key="prjfiles_add_file_tag"> </act>
-	  <act key="projs_tags_replace"> </act>
-	  <act key="status"> </act>
-	  <act key="thisproj_cd_src"> </act>
-	  <act key="thisproj_copy_to_a_new_project"> </act>
-	  <act key="thisproj_newfile"> </act>
-	  <act key="thisproj_saveas"> </act>
-	  <act key="thisproj_tags_replace"> </act>
-	</var>
-</top>
+<pj>
+ <files_load/>
+</pj>

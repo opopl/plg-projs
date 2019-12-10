@@ -308,6 +308,12 @@ function! projs#sec#file_base_a (...)
     elseif sec == '_vim_'
         let sfile_a = [ proj.'.vim']
 
+    elseif sec == '_sql_'
+        let sfile_a = [ proj.'.sql']
+
+    elseif sec == '_xml_'
+        let sfile_a = [ proj.'.xml' ]
+
     elseif sec == '_pl_'
         let sfile_a = [ proj.'.pl']
 
@@ -332,8 +338,6 @@ function! projs#sec#file_base_a (...)
     elseif sec == '_bib_'
         let sfile_a = [ proj.'.refs.bib']
 
-    elseif sec == '_xml_'
-        let sfile_a = [ proj.'.xml' ]
 
     elseif sec == '_join_'
         let sfile_a = [ 'joins', proj . '.tex' ]

@@ -245,6 +245,18 @@ function! projs#action#git_add_texfiles ()
 
 endfunction
 
+function! projs#action#vim_files_adjust ()
+	let vim_files = base#find({ 
+		\	"dirs"    : [projs#root()],
+		\	"exts"    : base#qw('vim'),
+		\	"cwd"     : 1,
+		\	"relpath" : 1,
+		\	"subdirs" : 1,
+		\	"fnamemodify" : '',
+		\	})
+	echo vim_files
+endfunction
+
 """prjact_csv_query
 function! projs#action#csv_query ()
   let proj   = projs#proj#name()

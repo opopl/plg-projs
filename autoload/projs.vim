@@ -711,7 +711,8 @@ function! projs#maps ()
           \  ';wb'   : 'tag body'            ,
           \ },
        \ 'vnoremap' : {
-            \  '?'   : 'PrjVisual help'            ,
+            \  '?'      : 'PrjVisual help'            ,
+            \  '<F1>'   : 'VENCLOSE verbatim'            ,
           \ }
         \ }
 
