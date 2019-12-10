@@ -712,7 +712,8 @@ function! projs#maps ()
           \ },
        \ 'vnoremap' : {
             \  '?'      : 'PrjVisual help'            ,
-            \  '<F1>'   : 'VENCLOSE verbatim'            ,
+            \  '<F1>'   : 'VENCLOSE verbatim'         ,
+            \  '<F2>'   : 'PrjVisual ii_to_new_secs'  ,
           \ }
         \ }
 

@@ -47,3 +47,4 @@ gui_select_project
 xls_render
 excel_import
 vim_files_adjust
+buf_update

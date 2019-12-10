@@ -247,15 +247,34 @@ endfunction
 
 function! projs#action#vim_files_adjust ()
 python3 << eof
-import vim,os
+import vim,os,re,fileinput
+import in_place
+
 projs = vim.eval('projs#list()')
 root  = vim.eval('projs#root()')
 
 for proj in projs:
-  vim_file = '/'.join([root,proj + '.vim'])
+  vim_file = '/'.join([ root, proj + '.vim' ])
   if os.path.isfile(vim_file):
+    with in_place.InPlace(vim_file) as f:
+      for line in f:
+        if re.match(r'^%%file',line):
+          line = re.sub(r'^%%file\s+(\w+)',r'"""file \1',line)
+        if re.match(r'^%%parent',line):
+          line = re.sub(r'^%%parent\s+(\w+)',r'"""parent \1',line)
+        f.write(line)
   
 eof
+endfunction
+
+function! projs#action#buf_update ()
+python3 << eof
+import vim
+
+file = vim.eval('b:file')
+sec  = vim.eval('b:sec')
+eof
+
 endfunction
 
 """prjact_csv_query
