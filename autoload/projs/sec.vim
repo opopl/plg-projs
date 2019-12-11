@@ -619,6 +619,11 @@ function! projs#sec#new(sec,...)
 endfunction
 """end_projs_sec_new
 
+function! projs#sec#open_load_buf (sec,...)
+  let sec = a:sec
+  call projs#sec#open(sec,{ 'load_buf' : 1 })
+endfunction
+
 function! projs#sec#open (...)
  let proj = projs#proj#name()
 
