@@ -44,6 +44,8 @@ function! projs#buf#tex_tex ()
     let b:url = url
   endif
 
+  "call projs
+
   let  mprg = 'projs_latexmk'
 
   let aucmds = [ 
@@ -67,5 +69,34 @@ function! projs#buf#tex_tex ()
 endfunction
 
 function! projs#buf#tex_sty ()
+
+endfunction
+
+function! projs#buf#update ()
+  call base#buf#start()
+
+  if !exists("b:sec") 
+    call base#rdwe('not a TeX project file! abort')
+    return
+  endif
+python3 << eof
+import vim
+
+file = vim.eval('b:file')
+sec  = vim.eval('b:sec')
+
+f = open(file,'r')
+url = ''
+for line in f:
+  m = re.match(r'%%url\s+(.*)$',line)
+  if m:
+    url = m.group(1)
+eof
+  let url = py3eval('url')
+  if strlen(strlen(url))
+    let b:url = url
+  endif
+
+  call base#rdw('OK: buf_update')
 
 endfunction

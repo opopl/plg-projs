@@ -110,7 +110,7 @@ command! -nargs=* -complete=custom,projs#complete#secnamesbase VSECBASE
     \ call projs#sec#open(<f-args>) 
 
 command! -nargs=* -complete=custom,projs#complete#secnames     VSEC
-    \ call projs#sec#open(<f-args>) 
+    \ call projs#sec#open_load_buf(<f-args>) 
 
 command! -nargs=0 CitnTexToDat call s:CitnTexToDat()
 command! -nargs=0 CitnDatToTex call s:CitnDatToTex()

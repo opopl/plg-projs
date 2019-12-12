@@ -268,32 +268,7 @@ eof
 endfunction
 
 function! projs#action#buf_update ()
-  call base#buf#start()
-
-  if !exists("b:sec") 
-    call base#rdwe('not a TeX project file! abort')
-    return
-  endif
-python3 << eof
-import vim
-
-file = vim.eval('b:file')
-sec  = vim.eval('b:sec')
-
-f = open(file,'r')
-url = ''
-for line in f:
-  m = re.match(r'%%url\s+(.*)$',line)
-  if m:
-    url = m.group(1)
-eof
-  let url = py3eval('url')
-  if strlen(strlen(url))
-    let b:url = url
-  endif
-
-  call base#rdw('OK: buf_update')
-
+  call projs#buf#update()
 endfunction
 
 function! projs#action#url_fetch ()
@@ -302,7 +277,15 @@ function! projs#action#url_fetch ()
     return
   endif
 
-  call idephp#curl#run({ 'args' : b:url, 'insecure' : 1 })
+  let sec = (b:sec == '_main_' ) ? b:sec : ''
+  let bname = join([ b:proj, sec, 'html' ],'.')
+  let ofile = join([ b:dirname, bname ], '/')
+
+  call idephp#curl#run({ 
+    \ 'url'         : b:url,
+    \ 'insecure'    : 1 ,
+    \ 'output_file' : ofile
+    \ })
 endfunction
 
 """prjact_csv_query
