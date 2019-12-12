@@ -49,3 +49,4 @@ excel_import
 vim_files_adjust
 buf_update
 url_fetch
+url_delete_fetched

@@ -271,17 +271,22 @@ function! projs#action#buf_update ()
   call projs#buf#update()
 endfunction
 
+function! projs#action#url_delete_fetched ()
+  if !exists("b:url")
+    call base#rdwe('b:url does not exist! abort')
+    return
+  endif
+endfunction
+
 function! projs#action#url_fetch ()
   if !exists("b:url")
     call base#rdwe('b:url does not exist! abort')
     return
   endif
 
-  let sec = ( b:sec != '_main_' ) ? b:sec : ''
-  let bname = join(filter([ b:proj, sec, 'html' ],'strlen(v:val) > 0' ), '.')
 
-  let ofile = join([ projs#url_dir(), bname ], '/')
-  call base#mkdir(projs#url_dir())
+
+  let ofile = projs#buf#url_file()
 
   call base#rdw(ofile)
 

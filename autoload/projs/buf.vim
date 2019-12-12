@@ -72,6 +72,17 @@ function! projs#buf#tex_sty ()
 
 endfunction
 
+function! projs#buf#url_file ()
+
+  let sec = ( b:sec != '_main_' ) ? b:sec : ''
+  let bname = join(filter([ b:proj, sec, 'html' ],'strlen(v:val) > 0' ), '.')
+
+  let ofile = join([ projs#url_dir(), bname ], '/')
+  call base#mkdir(projs#url_dir())
+
+	return ofile
+endfunction
+
 function! projs#buf#update ()
   call base#buf#start()
 
