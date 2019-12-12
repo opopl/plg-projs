@@ -329,6 +329,23 @@ function! projs#action#url_fetch ()
       call base#rdwe('FAIL: URL FETCH')
     endif
 
+    let cmd = printf('htw --file %s --cmd vh_convert',shellescape(ofile))
+    
+    let env = {}
+    function env.get(temp_file) dict
+      let code = self.return_code
+    
+      if filereadable(a:temp_file)
+        let out = readfile(a:temp_file)
+        call base#buf#open_split({ 'lines' : out })
+      endif
+    endfunction
+    
+    call asc#run({ 
+      \  'cmd' : cmd, 
+      \  'Fn'  : asc#tab_restore(env) 
+      \  })
+
   endfunction
   
   let Fc = s:obj.init
