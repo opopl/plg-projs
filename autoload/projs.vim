@@ -823,6 +823,11 @@ function! projs#root (...)
     return projs#var('root')
 endf    
 
+function! projs#url_dir ()
+  let url_dir = join([ projs#root(), 'html', 'url' ],'/')
+  return url_dir
+endf    
+
 function! projs#rootid ()
     return projs#varget('rootid','')
 endf  

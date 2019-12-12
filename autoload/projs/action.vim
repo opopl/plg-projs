@@ -279,7 +279,9 @@ function! projs#action#url_fetch ()
 
   let sec = ( b:sec != '_main_' ) ? b:sec : ''
   let bname = join(filter([ b:proj, sec, 'html' ],'strlen(v:val) > 0' ), '.')
-  let ofile = join([ b:dirname, bname ], '/')
+
+  let ofile = join([ projs#url_dir(), bname ], '/')
+  call base#mkdir(projs#url_dir())
 
   call base#rdw(ofile)
 
@@ -288,6 +290,7 @@ function! projs#action#url_fetch ()
     \ 'insecure'    : 1 ,
     \ 'output_file' : ofile
     \ })
+
 endfunction
 
 """prjact_csv_query
