@@ -285,8 +285,6 @@ function! projs#action#url_fetch ()
 
   call base#rdw(ofile)
 
-  let ok = 1
-
   let old_mtime = filereadable(ofile) ? base#file#mtime(ofile) : ''
 
   let s:obj = {}
@@ -297,6 +295,25 @@ function! projs#action#url_fetch ()
     let old_mtime = get(ref,'old_mtime','')
 
     let mtime = base#file#mtime(ofile)
+
+    let ok = 0 
+
+    """ file exists already
+    if len(old_mtime) 
+     if (str2nr(mtime) > str2nr(old_mtime) )
+      let ok = 1
+     endif
+    else
+      if filereadable(ofile)
+        let ok = 1
+      endif
+    endif
+
+    if ok
+      call base#rdw('SUCCESS: URL FETCH')
+    else
+      call base#rdwe('FAIL: URL FETCH')
+    endif
 
   endfunction
   
