@@ -276,6 +276,17 @@ function! projs#action#url_delete_fetched ()
     call base#rdwe('b:url does not exist! abort')
     return
   endif
+
+  let ofile = projs#buf#url_file()
+
+  if filereadable(ofile)
+    call delete(ofile)
+    if !filereadable(ofile)
+      call base#rdw('OK: deleting url fetched file.')
+    endif
+  else
+      call base#rdw('url_delete_fetched: nothing to delete!','Title')
+  endif
 endfunction
 
 function! projs#action#url_fetch ()
@@ -283,8 +294,6 @@ function! projs#action#url_fetch ()
     call base#rdwe('b:url does not exist! abort')
     return
   endif
-
-
 
   let ofile = projs#buf#url_file()
 
