@@ -278,8 +278,10 @@ function! projs#action#url_fetch ()
   endif
 
   let sec = ( b:sec != '_main_' ) ? b:sec : ''
-  let bname = join([ b:proj, sec, 'html' ],'.')
+  let bname = join(filter([ b:proj, sec, 'html' ],'strlen(v:val) > 0' ), '.')
   let ofile = join([ b:dirname, bname ], '/')
+
+  call base#rdw(ofile)
 
   call idephp#curl#run({ 
     \ 'url'         : b:url,
