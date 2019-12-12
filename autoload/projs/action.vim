@@ -285,10 +285,33 @@ function! projs#action#url_fetch ()
 
   call base#rdw(ofile)
 
+  let ok = 1
+
+  let old_mtime = filereadable(ofile) ? base#file#mtime(ofile) : ''
+
+  let s:obj = {}
+  function! s:obj.init (...) dict
+    let ref = get(a:000,0,{})
+
+    let ofile     = get(ref,'ofile','')
+    let old_mtime = get(ref,'old_mtime','')
+
+    let mtime = base#file#mtime(ofile)
+
+  ndfunction
+  
+  let Fc = s:obj.init
+  let Fc_args = [{ 
+    \ 'ofile'     : ofile,
+    \ 'old_mtime' : old_mtime,
+    \ }]
+
   call idephp#curl#run({ 
     \ 'url'         : b:url,
     \ 'insecure'    : 1 ,
-    \ 'output_file' : ofile
+    \ 'output_file' : ofile,
+    \ 'Fc'          : Fc,
+    \ 'Fc_args'     : Fc_args,
     \ })
 
 endfunction
