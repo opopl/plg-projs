@@ -298,7 +298,7 @@ function! projs#action#url_fetch ()
 
     let mtime = base#file#mtime(ofile)
 
-  ndfunction
+  endfunction
   
   let Fc = s:obj.init
   let Fc_args = [{ 
