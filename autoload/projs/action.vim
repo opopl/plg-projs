@@ -277,7 +277,7 @@ function! projs#action#url_fetch ()
     return
   endif
 
-  let sec = (b:sec == '_main_' ) ? b:sec : ''
+  let sec = ( b:sec != '_main_' ) ? b:sec : ''
   let bname = join([ b:proj, sec, 'html' ],'.')
   let ofile = join([ b:dirname, bname ], '/')
 
