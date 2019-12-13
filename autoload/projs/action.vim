@@ -281,6 +281,24 @@ function! projs#action#url_view_html ()
   if !filereadable(ofile)
     call projs#action#url_fetch()
   endif
+
+  let s:obj = { 
+    \ 'proj' : b:proj ,
+    \ 'sec'  : b:sec ,
+    \ 'url'  : b:url ,
+    \ }
+  function! s:obj.init () dict
+    let b:proj = self.proj
+    let b:sec  = self.sec
+    let b:url  = self.url
+  endfunction
+  
+  let Fc = s:obj.init
+  call base#fileopen({ 
+    \ 'files'    : [ ofile ],
+    \ 'load_buf' : 1,
+    \ 'Fc'       : Fc,
+    \ })
 endfunction
 
 function! projs#action#url_view_txt ()
