@@ -284,8 +284,8 @@ function! projs#action#url_view_html ()
 
   let s:obj = { 
     \ 'proj' : b:proj ,
-    \ 'sec'  : b:sec ,
-    \ 'url'  : b:url ,
+    \ 'sec'  : b:sec  ,
+    \ 'url'  : b:url  ,
     \ }
 
   function! s:obj.init () dict
