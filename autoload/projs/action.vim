@@ -287,6 +287,7 @@ function! projs#action#url_view_html ()
     \ 'sec'  : b:sec ,
     \ 'url'  : b:url ,
     \ }
+
   function! s:obj.init () dict
     let b:proj = self.proj
     let b:sec  = self.sec
