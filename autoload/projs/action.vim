@@ -247,21 +247,21 @@ endfunction
 
 function! projs#action#vim_files_adjust ()
 python3 << eof
-import vim,os,re,fileinput
+import vim,os,re
 import in_place
 
 projs = vim.eval('projs#list()')
 root  = vim.eval('projs#root()')
 
+p = re.compile(r'^%%(file|parent)\s+(.*)$')
+j = 0
 for proj in projs:
   vim_file = '/'.join([ root, proj + '.vim' ])
   if os.path.isfile(vim_file):
     with in_place.InPlace(vim_file) as f:
       for line in f:
-        if re.match(r'^%%file',line):
-          line = re.sub(r'^%%file\s+(\w+)',r'"""file \1',line)
-        if re.match(r'^%%parent',line):
-          line = re.sub(r'^%%parent\s+(\w+)',r'"""parent \1',line)
+        if re.match(p,line):
+          line = re.sub(p,r'"""\1 \2',line)
         f.write(line)
   
 eof
@@ -278,9 +278,9 @@ function! projs#action#url_view_html ()
   endif
 
   let ofile = projs#buf#url_file()
-	if !filereadable(ofile)
-		call projs#action#url_fetch()
-	endif
+  if !filereadable(ofile)
+    call projs#action#url_fetch()
+  endif
 endfunction
 
 function! projs#action#url_view_txt ()
