@@ -271,6 +271,25 @@ function! projs#action#buf_update ()
   call projs#buf#update()
 endfunction
 
+function! projs#action#url_view_html ()
+  if !exists("b:url")
+    call base#rdwe('b:url does not exist! abort')
+    return
+  endif
+
+  let ofile = projs#buf#url_file()
+	if !filereadable(ofile)
+		call projs#action#url_fetch()
+	endif
+endfunction
+
+function! projs#action#url_view_txt ()
+  if !exists("b:url")
+    call base#rdwe('b:url does not exist! abort')
+    return
+  endif
+endfunction
+
 function! projs#action#url_delete_fetched ()
   if !exists("b:url")
     call base#rdwe('b:url does not exist! abort')

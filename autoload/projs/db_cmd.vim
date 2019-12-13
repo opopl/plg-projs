@@ -145,7 +145,11 @@ function! projs#db_cmd#buf_tags_append (...)
 
 endfunction
 
-function! projs#db_cmd#search (...)
+""" fill the 'tags' table
+function! projs#db_cmd#fill_tags ()
+endfunction
+
+function! projs#db_cmd#search ()
   let proj = projs#proj#name()
 
   let tags_a = projs#db#tags_get()
