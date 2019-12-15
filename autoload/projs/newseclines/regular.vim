@@ -67,7 +67,9 @@ text = '''
 \newpage
 %%% ENDTOC %%% 
 '''
+print(text)
 eof
+return 
   let text  = py3eval('text')
   let text  = escape(text,'\')
   let lines = split(text,"\n")
