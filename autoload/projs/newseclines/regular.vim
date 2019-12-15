@@ -54,24 +54,21 @@ endfunction
 function! projs#newseclines#regular#tabcont (...)
   let lines = []
 python3 << eof
-text = '''
+text = r'''
 %%% TOC %%% 
-\phantomsection
+\\phantomsection
  
-\hypertarget{toc}{}
-\bookmark[dest=toc,rellevel=1,keeplevel=1]{\contentsname}
+\\hypertarget{toc}{}
+\\bookmark[dest=toc,rellevel=1,keeplevel=1]{\contentsname}
  
-\addcontentsline{toc}{chapter}{\contentsname}
+\\addcontentsline{toc}{chapter}{\contentsname}
  
-\tableofcontents
-\newpage
+\\tableofcontents
+\\newpage
 %%% ENDTOC %%% 
 '''
-print(text)
 eof
-return 
   let text  = py3eval('text')
-  let text  = escape(text,'\')
   let lines = split(text,"\n")
 
   return lines
