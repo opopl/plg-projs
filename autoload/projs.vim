@@ -131,7 +131,7 @@ function! projs#new (...)
 
   let nsecs_h = {
       \ "single_file"   : "_main_",
-      \ "regular"       : "_main_ preamble body cfg bib index listfigs listtabs tabcont",
+      \ "regular"       : base#varget('projs_secs_regular',[]),
       \ }
   let nsecs_s = get(nsecs_h,projtype,'')
   let nsecs_s .= ' _vim_ '
