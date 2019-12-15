@@ -562,6 +562,7 @@ function! projs#sec#new(sec,...)
 
     let projtype = projs#varget('projtype','regular')
     let sub = 'projs#newseclines#'.projtype.'#'.sec
+
     try
       let r = {
           \ 'proj' : proj,
