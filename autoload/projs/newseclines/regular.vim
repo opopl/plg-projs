@@ -54,8 +54,7 @@ endfunction
 function! projs#newseclines#regular#tabcont (...)
   let lines = []
 python3 << eof
-import vim
-l = '''
+text = '''
 %%% TOC %%% 
 \phantomsection
  
@@ -68,9 +67,10 @@ l = '''
 \newpage
 %%% ENDTOC %%% 
 '''
-lines = l.split("\n")
 eof
-  let lines = py3eval('lines')
+  let text  = py3eval('text')
+  let text  = escape(text,'\')
+  let lines = split(text,"\n")
 
   return lines
 endfunction
