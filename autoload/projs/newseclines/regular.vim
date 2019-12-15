@@ -44,6 +44,30 @@ function! projs#newseclines#regular#listfigs (...)
 	return lines
 endfunction
 
+function! projs#newseclines#regular#tabcont (...)
+	let lines = []
+python3 << eof
+import vim
+l = '''
+%%% TOC %%% 
+\phantomsection
+ 
+\hypertarget{toc}{}
+\bookmark[dest=toc,rellevel=1,keeplevel=1]{\contentsname}
+ 
+\addcontentsline{toc}{chapter}{\contentsname}
+ 
+\tableofcontents
+\newpage
+%%% ENDTOC %%% 
+'''
+lines = l.split("\n")
+eof
+	let lines = py3eval('lines')
+
+	return lines
+endfunction
+
 function! projs#newseclines#regular#listtabs (...)
 	let lines = []
 
