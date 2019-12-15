@@ -545,12 +545,14 @@ function! projs#sec#new(sec,...)
 
     let lines = []
 
+    let sec_ext = fnamemodify(sec_file,':p:e')
     let rh = { 
       \ 'sec'        : sec,
+      \ 'ext'        : sec_ext,
       \ 'parent_sec' : parent_sec,
       \ }
 
-    if fnamemodify(sec_file,':p:e') == 'tex'
+    if sec_ext == 'tex'
       let keymap = projs#select#keymap({ 'prompt' : prompt })
       if strlen(keymap)
         call extend(rh,{ 'keymap' : keymap })
@@ -755,20 +757,28 @@ endf
 
 
 function! projs#sec#header (...)
-  let ref=get(a:000,0,{})
+  let ref = get(a:000,0,{})
 
   let sec        = get(ref,'sec','')
+  let ext        = get(ref,'ext','')
   let keymap     = get(ref,'keymap','')
   let parent_sec = get(ref,'parent_sec','')
   
   let header = []
 
-  if strlen(keymap)
-    call add(header,'% vim: keymap=' . keymap )
-  endif
+  if ext == 'tex'
+	  if strlen(keymap)
+	    call add(header,'% vim: keymap=' . keymap )
+	  endif
+	
+	  call extend(header,[ '%%file ' . sec])
+	  call extend(header,[ '%%parent ' . parent_sec ])
 
-  call extend(header,[ '%%file ' . sec])
-  call extend(header,[ '%%parent ' . parent_sec ])
+  elseif ext == 'vim'
+
+	  call extend(header,[ '"""file ' . sec])
+	  call extend(header,[ '"""parent ' . parent_sec ])
+  endif
 
   return header
 endf
