@@ -242,6 +242,25 @@ endfunction
 
 """prjact_git_add_texfiles
 function! projs#action#git_add_texfiles ()
+  let cmd = 'git add *.tex'
+
+  let root = projs#root()
+  call base#cd(root)
+
+  let env = { 'cmd' : cmd }
+  function env.get(temp_file) dict
+    let code = self.return_code
+    let cmd  = get(self,'cmd','')
+  
+    if code == 0
+      call base#rdw(printf('OK: %s',cmd))
+    endif
+  endfunction
+  
+  call asc#run({ 
+    \ 'cmd' : cmd, 
+    \ 'Fn'  : asc#tab_restore(env) 
+    \ })
 
 endfunction
 
