@@ -194,6 +194,10 @@ function! projs#action#cd_csvdir ()
 
 endfunction
 
+function! projs#action#maps_update ()
+  call projs#maps()
+endfunction
+
 function! projs#action#git_save ()
 
 endfunction
@@ -298,7 +302,12 @@ function! projs#action#url_view_html ()
 
   let ofile = projs#buf#url_file()
   if !filereadable(ofile)
-    call projs#action#url_fetch()
+    let do_fetch = input('do URL fetching via CURL? (1/0):',1)
+    if do_fetch
+      call projs#action#url_fetch()
+    else
+      let do_open_empty = input('open empty file? (1/0):',1)
+    endif
   endif
 
   let s:obj = { 
