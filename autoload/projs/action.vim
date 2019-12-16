@@ -323,11 +323,12 @@ function! projs#action#url_view_html ()
   endfunction
   
   let Fc = s:obj.init
-  call base#fileopen({ 
+  let r = { 
     \ 'files'    : [ ofile ],
     \ 'load_buf' : 1,
     \ 'Fc'       : Fc,
-    \ })
+    \ }
+  call base#fileopen(r)
 endfunction
 
 function! projs#action#url_view_txt ()
