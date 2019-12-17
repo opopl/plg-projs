@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 <top>
-  <var entry_tag="act" name="projs_desc_PrjDB" type="dict">
+  <var entry_tag="act" name="desc_PrjDB" type="dict">
     <act key="_backup"> 
       backup the database
     </act>
