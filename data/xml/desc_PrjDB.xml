@@ -1,0 +1,19 @@
+<?xml version="1.0" ?>
+<top>
+  <var entry_tag="act" name="projs_desc_PrjDB" type="dict">
+    <act key="_backup"> 
+      backup the database
+    </act>
+    <act key="_restore"> </act>
+    <act key="buf_data"> </act>
+    <act key="buf_tags_append"> </act>
+    <act key="buf_url_fetch"> </act>
+    <act key="create_tables"> </act>
+    <act key="drop_tables"> </act>
+    <act key="fill_from_files"> </act>
+    <act key="query_split"> </act>
+    <act key="search"> </act>
+    <act key="thisproj_data"> </act>
+    <act key="update_from_files"> </act>
+  </var>
+</top>
