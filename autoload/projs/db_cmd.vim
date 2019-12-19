@@ -164,44 +164,49 @@ c      = conn.cursor()
 
 # index files
 print('indexing files...')
-q = 'SELECT file,tags FROM projs'
-c.execute(q)
-rows = c.fetchall()
-fid  = 1
-i = 0
-for row in rows:
-  file = row['file']
-  tags = row['tags'].split(',') 
-  tags = list(filter(f_nz,tags))
-  for tag in tags:
-    fids_str = ''
-    c.execute('''
-      SELECT 
-        fid 
-      FROM 
-        projs 
-      WHERE 
-        tags LIKE "_tg_,%" 
-          OR
-        tags LIKE "%,_tg_" 
-          OR
-        tags LIKE "%,_tg_,%" 
-          OR
-        tags = "_tg_"
-      '''.replace('_tg_',tag))
-    c.row_factory = lambda cursor, row: row[0]
-    fids = c.fetchall()
-    fids = list(set(fids))
-    fids.sort()
-    fids = list(map(f_str,fids))
-    fids_str = ",".join(fids)
-    rank = len(fids)
-    q = '''INSERT OR REPLACE INTO tags (tag,rank,fids) VALUES (?,?,?)'''
-    c.execute(q,(tag,rank,fids_str))
-  q = '''UPDATE projs SET fid = ? WHERE file = ?'''
-  c.execute(q,(fid, file))
-  fid+=1
-  i+=1
+
+try:
+  q = 'SELECT file,tags FROM projs'
+  c.execute(q)
+  rows = c.fetchall()
+  fid  = 1
+  i = 0
+  for row in rows:
+    file = row['file']
+    tags = row['tags'].split(',') 
+    tags = list(filter(f_nz,tags))
+    for tag in tags:
+      fids_str = ''
+      c.execute('''
+        SELECT 
+          fid 
+        FROM 
+          projs 
+        WHERE 
+          tags LIKE "_tg_,%" 
+            OR
+          tags LIKE "%,_tg_" 
+            OR
+          tags LIKE "%,_tg_,%" 
+            OR
+          tags = "_tg_"
+        '''.replace('_tg_',tag))
+      c.row_factory = lambda cursor, row: row[0]
+      fids = c.fetchall()
+      fids = list(set(fids))
+      fids.sort()
+      fids = list(map(f_str,fids))
+      fids_str = ",".join(fids)
+      rank = len(fids)
+      q = '''INSERT OR REPLACE INTO tags (tag,rank,fids) VALUES (?,?,?)'''
+      c.execute(q,(tag,rank,fids_str))
+    q = '''UPDATE projs SET fid = ? WHERE file = ?'''
+    c.execute(q,(fid, file))
+    fid+=1
+    i+=1
+finally:
+  conn.commit()
+  conn.close()
 
 # index projects
 #print('indexing projects...')
@@ -216,12 +221,6 @@ for row in rows:
 #  c.execute(q,( pid, proj ) )
 #  pid+=1
 
-#c.execute('''
-#  INSERT INTO tags (tag,) VALUES ()
-#''')
-
-conn.commit()
-conn.close()
   
 eof
 
