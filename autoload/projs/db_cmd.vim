@@ -156,19 +156,34 @@ import sqlite3
 
 dbfile = vim.eval('dbfile')
 conn   = sqlite3.connect(dbfile)
-c = conn.cursor()
+c      = conn.cursor()
 
+# index files
+print('indexing files...')
 q = 'SELECT file FROM projs'
 c.execute(q)
 rows = c.fetchall()
 fid  = 1
-i=0
+i = 0
 for row in rows:
   file = row[0]
   i+=1
   q = '''UPDATE projs SET fid = ? WHERE file = ?'''
   c.execute(q,(fid, file))
   fid+=1
+
+# index projects
+print('indexing projects...')
+q = 'SELECT DISTINCT proj FROM projs'
+c.execute(q)
+rows = c.fetchall()
+pid  = 1
+i = 0
+for row in rows:
+  proj = row[0]
+  q = '''UPDATE projs SET pid = ? WHERE proj = ?'''
+  c.execute(q,(pid, file))
+  pid+=1
 
 #c.execute('''
 #  INSERT INTO tags (tag,) VALUES ()
