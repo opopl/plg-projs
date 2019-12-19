@@ -193,10 +193,11 @@ for row in rows:
     fids = c.fetchall()
     fids = list(set(fids))
     fids.sort()
-    fids = map(f_str,fids)
+    fids = list(map(f_str,fids))
     fids_str = ",".join(fids)
-    q = '''INSERT OR REPLACE INTO tags (tag,fids) VALUES (?,?)'''
-    c.execute(q,(tag,fids_str))
+    rank = len(fids)
+    q = '''INSERT OR REPLACE INTO tags (tag,rank,fids) VALUES (?,?,?)'''
+    c.execute(q,(tag,rank,fids_str))
   q = '''UPDATE projs SET fid = ? WHERE file = ?'''
   c.execute(q,(fid, file))
   fid+=1
