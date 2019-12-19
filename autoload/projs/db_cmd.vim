@@ -147,7 +147,6 @@ endfunction
 
 """ fill the 'tags' table
 function! projs#db_cmd#fill_tags ()
-  let q = 'SELECT file FROM projs'
 
   let dbfile = projs#db#file()
 python3 << eof
