@@ -244,18 +244,22 @@ function! projs#db_cmd#search ()
     \ 'q'      : q,
     \ })
 
+  let data_h = []
   for fid in split(fids,",")
-    let q = 'SELECT proj, sec, file FROM projs WHERE fid = ?'
+    let q = 'SELECT * FROM projs WHERE fid = ?'
     let p = [ fid ]
     let [ rwh, cols ] = pymy#sqlite#query_first({
       \ 'dbfile' : dbfile,
       \ 'p'      : p,
       \ 'q'      : q,
       \ })
-    let proj = get(rwh,'proj','')
-    let sec  = get(rwh,'sec','')
-    let file = get(rwh,'file','')
+    call add(data_h,rwh)
   endfor
+  let lines = pymy#data#tabulate({
+    \ 'data_h'  : data_h,
+    \ 'headers' : ['proj','sec', 'tags' ],
+    \ })
+  call base#buf#open_split({ 'lines' : lines })
 endfunction
 
 function! projs#db_cmd#thisproj_data (...)
