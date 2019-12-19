@@ -154,6 +154,8 @@ python3 << eof
 import vim
 import sqlite3
 
+def f(x): return len(x) > 0
+
 dbfile = vim.eval('dbfile')
 conn   = sqlite3.connect(dbfile)
 conn.row_factory = sqlite3.Row
@@ -168,32 +170,42 @@ fid  = 1
 i = 0
 for row in rows:
   file = row['file']
-  tags = row['tags'].split(',')
+  tags = row['tags'].split(',') 
+  tags = list(filter(f,tags))
   for tag in tags:
     fids_str = ''
-    c.execute('''SELECT fid FROM projs WHERE ''',(tag))
+    c.execute('''
+      SELECT 
+        fid 
+      FROM 
+        projs 
+      WHERE 
+        tags LIKE "?%"
+      ''', (tag))
     c.row_factory = lambda cursor, row: row[0]
     fids = c.fetchall()
     fids_str = "\n".join(fids)
+    print(fids_str)
+    print(fids)
     q = '''INSERT OR REPLACE INTO tags (tag,fids) VALUES (?,?)'''
-    c.execute(q,(tag,fids))
-  i+=1
+    c.execute(q,(tag,fids_str))
   q = '''UPDATE projs SET fid = ? WHERE file = ?'''
   c.execute(q,(fid, file))
   fid+=1
+  i+=1
 
 # index projects
-print('indexing projects...')
-q = 'SELECT DISTINCT proj FROM projs'
-c.execute(q)
-rows = c.fetchall()
-pid  = 1
-i = 0
-for row in rows:
-  proj = row[0]
-  q = '''UPDATE projs SET pid = ? WHERE proj = ?'''
-  c.execute(q,( pid, proj ) )
-  pid+=1
+#print('indexing projects...')
+#q = 'SELECT DISTINCT proj FROM projs'
+#c.execute(q)
+#rows = c.fetchall()
+#pid  = 1
+#i = 0
+#for row in rows:
+#  proj = row[0]
+#  q = '''UPDATE projs SET pid = ? WHERE proj = ?'''
+#  c.execute(q,( pid, proj ) )
+#  pid+=1
 
 #c.execute('''
 #  INSERT INTO tags (tag,) VALUES ()
