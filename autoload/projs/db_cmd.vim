@@ -196,9 +196,8 @@ for row in rows:
     fids.sort()
     fids = map(f_str,fids)
     fids_str = ",".join(fids)
-    print(tag + ' ' + fids_str)
-#    q = '''INSERT OR REPLACE INTO tags (tag,fids) VALUES (?,?)'''
-#    c.execute(q,(tag,fids_str))
+    q = '''INSERT OR REPLACE INTO tags (tag,fids) VALUES (?,?)'''
+    c.execute(q,(tag,fids_str))
   q = '''UPDATE projs SET fid = ? WHERE file = ?'''
   c.execute(q,(fid, file))
   fid+=1
