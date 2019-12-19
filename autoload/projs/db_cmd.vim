@@ -156,17 +156,27 @@ import sqlite3
 
 dbfile = vim.eval('dbfile')
 conn   = sqlite3.connect(dbfile)
+conn.row_factory = sqlite3.Row
 c      = conn.cursor()
 
 # index files
 print('indexing files...')
-q = 'SELECT file FROM projs'
+q = 'SELECT file,tags FROM projs'
 c.execute(q)
 rows = c.fetchall()
 fid  = 1
 i = 0
 for row in rows:
-  file = row[0]
+  file = row['file']
+  tags = row['tags'].split(',')
+  for tag in tags:
+    fids_str = ''
+    c.execute('''SELECT fid FROM projs WHERE ''',(tag))
+    c.row_factory = lambda cursor, row: row[0]
+    fids = c.fetchall()
+    fids_str = "\n".join(fids)
+    q = '''INSERT OR REPLACE INTO tags (tag,fids) VALUES (?,?)'''
+    c.execute(q,(tag,fids))
   i+=1
   q = '''UPDATE projs SET fid = ? WHERE file = ?'''
   c.execute(q,(fid, file))
