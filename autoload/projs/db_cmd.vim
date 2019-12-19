@@ -180,8 +180,14 @@ for row in rows:
       FROM 
         projs 
       WHERE 
-        tags LIKE "?%"
-      ''', (tag))
+        tags LIKE "_tg_,%" 
+          OR
+        tags LIKE "%,_tg_" 
+          OR
+        tags LIKE "%,_tg_,%" 
+          OR
+        tags = "_tg_"
+      '''.replace('_tg_',tag))
     c.row_factory = lambda cursor, row: row[0]
     fids = c.fetchall()
     fids_str = "\n".join(fids)
