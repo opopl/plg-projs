@@ -156,8 +156,25 @@ import sqlite3
 
 dbfile = vim.eval('dbfile')
 conn   = sqlite3.connect(dbfile)
-
 c = conn.cursor()
+
+q = 'SELECT file FROM projs'
+c.execute(q)
+rows = c.fetchall()
+fid  = 1
+i=0
+for row in rows:
+  file = row[0]
+  i+=1
+  if i == 5:
+    break
+  q = '''UPDATE projs SET fid = ? WHERE file = ?'''
+  c.execute(q,(fid, file))
+  fid+=1
+
+#c.execute('''
+#  INSERT INTO tags (tag,) VALUES ()
+#''')
 
 conn.commit()
 conn.close()

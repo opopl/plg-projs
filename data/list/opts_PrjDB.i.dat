@@ -1,5 +1,6 @@
 update_from_files
 fill_from_files
+fill_tags
 drop_tables
 create_tables
 query_split
