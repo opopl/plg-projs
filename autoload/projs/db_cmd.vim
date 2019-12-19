@@ -166,8 +166,6 @@ i=0
 for row in rows:
   file = row[0]
   i+=1
-  if i == 5:
-    break
   q = '''UPDATE projs SET fid = ? WHERE file = ?'''
   c.execute(q,(fid, file))
   fid+=1
