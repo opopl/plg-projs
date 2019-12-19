@@ -153,8 +153,10 @@ function! projs#db_cmd#fill_tags ()
 python3 << eof
 import vim
 import sqlite3
+import numpy as np
 
-def f(x): return len(x) > 0
+def f_nz(x): return len(x) > 0
+def f_str(x): return str(x)
 
 dbfile = vim.eval('dbfile')
 conn   = sqlite3.connect(dbfile)
@@ -171,7 +173,7 @@ i = 0
 for row in rows:
   file = row['file']
   tags = row['tags'].split(',') 
-  tags = list(filter(f,tags))
+  tags = list(filter(f_nz,tags))
   for tag in tags:
     fids_str = ''
     c.execute('''
@@ -190,11 +192,13 @@ for row in rows:
       '''.replace('_tg_',tag))
     c.row_factory = lambda cursor, row: row[0]
     fids = c.fetchall()
-    fids_str = "\n".join(fids)
-    print(fids_str)
-    print(fids)
-    q = '''INSERT OR REPLACE INTO tags (tag,fids) VALUES (?,?)'''
-    c.execute(q,(tag,fids_str))
+    fids = list(set(fids))
+    fids.sort()
+    fids = map(f_str,fids)
+    fids_str = ",".join(fids)
+    print(tag + ' ' + fids_str)
+#    q = '''INSERT OR REPLACE INTO tags (tag,fids) VALUES (?,?)'''
+#    c.execute(q,(tag,fids_str))
   q = '''UPDATE projs SET fid = ? WHERE file = ?'''
   c.execute(q,(fid, file))
   fid+=1
