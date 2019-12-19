@@ -147,6 +147,24 @@ endfunction
 
 """ fill the 'tags' table
 function! projs#db_cmd#fill_tags ()
+  let q = 'SELECT file FROM projs'
+
+  let dbfile = projs#db#file()
+python3 << eof
+import vim
+import sqlite3
+
+dbfile = vim.eval('dbfile')
+conn   = sqlite3.connect(dbfile)
+
+c = conn.cursor()
+
+conn.commit()
+conn.close()
+  
+eof
+
+
 endfunction
 
 function! projs#db_cmd#search ()
