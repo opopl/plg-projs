@@ -182,7 +182,7 @@ i = 0
 for row in rows:
   proj = row[0]
   q = '''UPDATE projs SET pid = ? WHERE proj = ?'''
-  c.execute(q,(pid, file))
+  c.execute(q,( pid, file ) )
   pid+=1
 
 #c.execute('''
