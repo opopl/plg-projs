@@ -147,7 +147,6 @@ endfunction
 
 """ fill the 'tags' table
 function! projs#db_cmd#fill_tags ()
-
   let dbfile = projs#db#file()
 python3 << eof
 import vim
@@ -157,10 +156,10 @@ import numpy as np
 def f_nz(x): return len(x) > 0
 def f_str(x): return str(x)
 
-dbfile = vim.eval('dbfile')
-conn   = sqlite3.connect(dbfile)
+dbfile           = vim.eval('dbfile')
+conn             = sqlite3.connect(dbfile)
 conn.row_factory = sqlite3.Row
-c      = conn.cursor()
+c                = conn.cursor()
 
 # index files
 print('indexing files...')
