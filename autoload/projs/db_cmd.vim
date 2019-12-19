@@ -234,8 +234,28 @@ function! projs#db_cmd#search ()
   call base#varset('this',tags_a)
   let tag = input('tags: ','','custom,base#complete#this')
 
-  let q = 'SELECT fid FROM tags WHERE tag = ?'
+  let q = 'SELECT fids FROM tags WHERE tag = ?'
   let p = [ tag ]
+
+  let dbfile = projs#db#file()
+  let fids = pymy#sqlite#query_fetchone({
+    \ 'dbfile' : dbfile,
+    \ 'p'      : p,
+    \ 'q'      : q,
+    \ })
+
+  for fid in split(fids,",")
+    let q = 'SELECT proj, sec, file FROM projs WHERE fid = ?'
+    let p = [ fid ]
+    let [ rwh, cols ] = pymy#sqlite#query_first({
+      \ 'dbfile' : dbfile,
+      \ 'p'      : p,
+      \ 'q'      : q,
+      \ })
+    let proj = get(rwh,'proj','')
+    let sec  = get(rwh,'sec','')
+    let file = get(rwh,'file','')
+  endfor
 endfunction
 
 function! projs#db_cmd#thisproj_data (...)
