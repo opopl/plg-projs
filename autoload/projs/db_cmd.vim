@@ -389,7 +389,8 @@ function! projs#db_cmd#sec_add_tags (...)
 
   let data = []
   for sec in sort(secs)
-    let tags_a = projs#db#tags_get
+    let tags_a = projs#db#tags_get({ 'sec' : sec, 'proj' : proj })
+    let tags = join(tags_a, ',')
     let r = { 
       \ 'sec'  : sec,
       \ 'tags' : tags

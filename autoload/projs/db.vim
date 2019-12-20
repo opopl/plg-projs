@@ -344,6 +344,7 @@ function! projs#db#tags_get (...)
     call extend(tags_a,split(t,','))
   endfor
   let tags_a = base#uniq(tags_a)
+  let tags_a = sort(tags_a)
 
   return tags_a
 endfunction
