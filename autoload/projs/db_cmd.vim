@@ -265,7 +265,7 @@ function! projs#db_cmd#search ()
     \ ]
   let cmds_after = [
     \ 'resize99',
-    \ 'vnoremap <silent><buffer> v call projs#db_cmd#search#visual_open()',
+    \ 'vnoremap <silent><buffer> v :call projs#db_cmd#search#visual_open()<CR>',
     \ ]
   call base#buf#open_split({ 
     \ 'lines'      : lines ,
