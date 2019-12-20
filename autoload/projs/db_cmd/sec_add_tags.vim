@@ -12,7 +12,13 @@ endf
 
 function! projs#db_cmd#sec_add_tags#view()
   let secs = s:visual_secs()
+	if !len(secs) 
+		return 
+	endif
+	q
+
   for sec in secs
+    call projs#sec#open_load_buf(sec)
   endfor
 endf
 
