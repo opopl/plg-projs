@@ -304,23 +304,31 @@ function! projs#db#tags_get (...)
   let proj = get(ref,'proj','')
 
   let file = get(ref,'file','')
+  let sec  = get(ref,'sec','')
+
   let file = fnamemodify(file,':t')
+
+  let h = { 'file' : file }
+  for k in base#qw('proj sec')
+    let v = get(ref,k,'')
+    if len(v)
+      call extend(h,{ k : v })
+    endif
+  endfor
 
   let q = 'SELECT DISTINCT tags FROM projs'
   let p = []
 
-  if strlen(proj) || strlen(file)
-    let cond = []
-    if strlen(proj)
-      call add(cond,' proj = ? ')
-      call add(p, proj)
+  let cond = []
+  for k in base#qw('proj file sec')
+    let v = get(h,k,'')
+    if strlen(v)
+      call add(cond,printf(' %s = ? ',k))
+      call add(p, v)
     endif
+  endfor
 
-    if strlen(file)
-      call add(cond,' file = ? ')
-      call add(p, file)
-    endif
-
+  if len(cond)
     let q .= ' WHERE ' . join(cond,' AND ')
   endif
 
