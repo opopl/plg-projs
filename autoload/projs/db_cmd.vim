@@ -373,3 +373,19 @@ function! projs#db_cmd#_restore (...)
     return
   endif
 endfunction
+
+function! projs#db_cmd#sec_add_tags (...)
+  let msg_a = [
+    \  "Select proj: ",  
+    \  ]
+  let msg  = join(msg_a,"\n")
+  let proj = base#input_we(msg,'',{ 'complete' : 'custom,projs#complete' })
+
+  call projs#proj#name(proj)
+
+  let msg_a = [
+    \  "Select sec: ",  
+    \  ]
+  let msg  = join(msg_a,"\n")
+  let sec = base#input_we(msg,'',{ 'complete' : 'custom,projs#complete#secnames' })
+endfunction
