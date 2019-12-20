@@ -379,7 +379,9 @@ function! projs#db_cmd#sec_add_tags (...)
     \  "Select proj: ",  
     \  ]
   let msg  = join(msg_a,"\n")
-  let proj = base#input_we(msg,'',{ 'complete' : 'custom,projs#complete' })
+  let proj = base#input_we(msg,'',{ 
+    \ 'complete' : 'custom,projs#complete' 
+    \ })
 
   call projs#proj#name(proj)
 
