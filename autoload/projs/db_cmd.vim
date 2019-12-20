@@ -257,9 +257,21 @@ function! projs#db_cmd#search ()
   endfor
   let lines = pymy#data#tabulate({
     \ 'data_h'  : data_h,
-    \ 'headers' : ['proj','sec', 'tags' ],
+    \ 'headers' : [ 'proj','sec', 'tags' ],
     \ })
-  call base#buf#open_split({ 'lines' : lines })
+
+  let stl_add = [
+    \ '[ %2* v - view %0* ]'
+    \ ]
+  let cmds_after = [
+    \ 'resize99',
+    \ 'vnoremap <silent><buffer> v call projs#db_cmd#search#visual_open()',
+    \ ]
+  call base#buf#open_split({ 
+    \ 'lines'      : lines ,
+    \ 'cmds_after' : cmds_after,
+    \ 'stl_add'    : stl_add,
+    \ })
 endfunction
 
 function! projs#db_cmd#thisproj_data (...)
