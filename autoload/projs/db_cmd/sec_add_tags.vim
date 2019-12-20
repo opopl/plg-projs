@@ -1,4 +1,9 @@
 
+if 0
+  called by:
+    projs#db_cmd#sec_add_tags
+endif
+
 function! projs#db_cmd#sec_add_tags#update()
   let lines = base#vim#visual_selection()
 

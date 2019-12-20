@@ -384,13 +384,7 @@ function! projs#db_cmd#sec_add_tags (...)
     \ })
 
   call projs#proj#name(proj)
-
-  "let msg_a = [
-    "\  "Select sec: ",  
-    "\  ]
-  "let msg  = join(msg_a,"\n")
-  "let sec = base#input_we(msg,'',{ 'complete' : 'custom,projs#complete#secnames' })
-
+ 
   let secs = projs#db#secnames({ 'proj' : proj })
 
   let data_secs = []
@@ -406,11 +400,11 @@ function! projs#db_cmd#sec_add_tags (...)
 
   let cmds_after = [ 
     \ 'resize99',
-    \ 'vnoremap <silent><buffer> v :call projs#db_cmd#sec_add_tags#visual_open()<CR>',
+    \ 'vnoremap <silent><buffer> u :call projs#db_cmd#sec_add_tags#update()<CR>',
     \ ]
 
   let stl_add = [
-      \  '[ %3* v - view %0* ]'  
+      \  '[ %3* u - update %0* ]'  
       \  ]
 
   call base#buf#open_split({ 
