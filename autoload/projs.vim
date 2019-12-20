@@ -339,14 +339,15 @@ function! projs#action (...)
 
     call extend(lines, pymy#data#tabulate({
       \ 'data'    : info,
-      \ 'headers' : [ 'act', 'description'],
+      \ 'headers' : [ 'act', 'description' ],
       \ }))
 
     let s:obj = { 'proj' : proj }
     function! s:obj.init (...) dict
       let proj = self.proj
-      call matchadd('Search','\s\+'.proj.'\s\+')
-      call matchadd('Search',proj)
+      let hl = 'WildMenu'
+      call matchadd(hl,'\s\+'.proj.'\s\+')
+      call matchadd(hl,proj)
     endfunction
     
     let Fc = s:obj.init
