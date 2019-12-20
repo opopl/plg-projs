@@ -400,7 +400,7 @@ function! projs#db_cmd#sec_add_tags (...)
 
   let lines = pymy#data#tabulate({
     \ 'data_h'    : data,
-    \ 'headers'   : ['sec','tags'],
+    \ 'headers'   : [ 'sec','tags' ],
     \ })
   call insert(lines,[ 'List of Sections' ])
 

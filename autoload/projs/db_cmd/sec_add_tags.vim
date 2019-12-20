@@ -28,7 +28,7 @@ python3 << eof
 import vim,re
 
 lines = vim.eval('lines')
-p = re.compile(r'^\s*\d+\s+(\w+)\s*$')
+p = re.compile(r'^\s*\d+\s+(\w+)(\s+.*|\s*)$')
 secs = []
 for line in lines:
   m = p.match(line)
