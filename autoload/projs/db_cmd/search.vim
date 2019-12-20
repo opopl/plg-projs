@@ -12,7 +12,7 @@ for line in lines:
   m = p.match(line)
   if m:
     proj = m.group(1)
-    proj = m.group(2)
+    sec  = m.group(2)
   
 eof
   endif
