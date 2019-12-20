@@ -331,15 +331,30 @@ function! projs#action (...)
     for act in acts
       call add(info,[ act, get(desc,act,'') ])
     endfor
-    let lines = [ 'Possible PrjAct actions: ' ]
+    let proj = projs#proj#name()
+    let lines = [ 
+      \ 'Current project:' , "\t" . proj,
+      \ 'Possible PrjAct actions: ' 
+      \ ]
+
     call extend(lines, pymy#data#tabulate({
       \ 'data'    : info,
       \ 'headers' : [ 'act', 'description'],
       \ }))
 
+    let s:obj = { 'proj' : proj }
+    function! s:obj.init (...) dict
+      let proj = self.proj
+      call matchadd('Search','\s\+'.proj.'\s\+')
+      call matchadd('Search',proj)
+    endfunction
+    
+    let Fc = s:obj.init
+
     call base#buf#open_split({ 
       \ 'lines'    : lines ,
       \ 'cmds_pre' : ['resize 99'] ,
+      \ 'Fc'       : Fc,
       \ })
     return
   endif
