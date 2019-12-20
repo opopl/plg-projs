@@ -407,10 +407,11 @@ function! projs#db_cmd#sec_add_tags (...)
   let cmds_after = [ 
     \ 'resize99',
     \ 'vnoremap <silent><buffer> u :call projs#db_cmd#sec_add_tags#update()<CR>',
+    \ 'vnoremap <silent><buffer> v :call projs#db_cmd#sec_add_tags#view()<CR>',
     \ ]
 
   let stl_add = [
-      \  '[ %3* u - update %0* ]'  
+      \  '[ %3* u - update %4* v - view %0* ]'  
       \  ]
 
   call base#buf#open_split({ 

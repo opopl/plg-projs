@@ -5,8 +5,19 @@ if 0
 endif
 
 function! projs#db_cmd#sec_add_tags#update()
-  let lines = base#vim#visual_selection()
+  let secs = s:visual_secs()
+  for sec in secs
+  endfor
+endf
 
+function! projs#db_cmd#sec_add_tags#view()
+  let secs = s:visual_secs()
+  for sec in secs
+  endfor
+endf
+
+function! s:visual_secs()
+  let lines = base#vim#visual_selection()
 python3 << eof
 import vim,re
 
@@ -21,6 +32,5 @@ for line in lines:
 
 eof
   let secs = py3eval('secs')
-  for sec in secs
-  endfor
+  return secs
 endf
