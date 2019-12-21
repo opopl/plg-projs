@@ -15,10 +15,10 @@ function! projs#namefromfile (...)
 endfunction
 
 "call projs#secfromfile ({ 
-"		\	"file" : file, 
-"		\	"type" : "basename", 
-"		\	"proj" : proj 
-"		\	})
+"   \ "file" : file, 
+"   \ "type" : "basename", 
+"   \ "proj" : proj 
+"   \ })
 
 function! projs#secfromfile (...)
     let ref = {}
@@ -30,7 +30,7 @@ function! projs#secfromfile (...)
     let type = get(ref,'type','basename')
     let proj = get(ref,'proj',proj)
 
-		let sec = ''
+    let sec = ''
     if type == 'basename'
         let basename = file 
     
@@ -1172,9 +1172,9 @@ function! projs#renameproject(...)
     let bn = fnamemodify(nf,':p:t')
     let sec = projs#secfromfile({ "file" : bn })
     if sec == '_main_'
-        let lines=readfile(nf)
-        let nlines=[]
-        let changed=0
+        let lines = readfile(nf)
+        let nlines = []
+        let changed = 0
         for line in lines
             if line =~ '^\def\PROJ{'.old.'}'
                 let line = '\def\PROJ{'.new.'}'
