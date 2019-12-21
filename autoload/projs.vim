@@ -14,7 +14,11 @@ function! projs#namefromfile (...)
 
 endfunction
 
-"call projs#secfromfile ({ "file" : file, "type" : "basename", "proj" : proj })
+"call projs#secfromfile ({ 
+"		\	"file" : file, 
+"		\	"type" : "basename", 
+"		\	"proj" : proj 
+"		\	})
 
 function! projs#secfromfile (...)
     let ref = {}
@@ -26,6 +30,7 @@ function! projs#secfromfile (...)
     let type = get(ref,'type','basename')
     let proj = get(ref,'proj',proj)
 
+		let sec = ''
     if type == 'basename'
         let basename = file 
     
