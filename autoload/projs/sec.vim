@@ -756,6 +756,12 @@ function! projs#sec#bufnr (...)
   endif
 endf
 
+if 0
+  call tree
+    called by:
+      projs#sec#new
+endif
+
 
 function! projs#sec#header (...)
   let ref = get(a:000,0,{})
