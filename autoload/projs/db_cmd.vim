@@ -153,8 +153,22 @@ import vim
 import sqlite3
 import numpy as np
 
-def f_nz(x): return len(x) > 0
-def f_str(x): return str(x)
+def f_nz(x): 
+  ok = 0
+  if (x is not None ) and (len(x) > 0): 
+    ok = 1
+  return ok
+
+def f_none(x): 
+  ok = 0
+  if (x is not None ): 
+    ok = 1
+  return ok
+
+def f_str(x): 
+  if x is None:
+    return ''
+  return str(x)
 
 dbfile           = vim.eval('dbfile')
 conn             = sqlite3.connect(dbfile)
@@ -176,7 +190,7 @@ try:
     tags = list(filter(f_nz,tags))
     for tag in tags:
       fids_str = ''
-      c.execute('''
+      q = '''
         SELECT 
           fid 
         FROM 
@@ -189,20 +203,33 @@ try:
           tags LIKE "%,_tg_,%" 
             OR
           tags = "_tg_"
-        '''.replace('_tg_',tag))
+        '''.replace('_tg_',tag)
+      try:
+        c.execute(q)
+      except:
+        print('error for query: ' + q)
       c.row_factory = lambda cursor, row: row[0]
       fids = c.fetchall()
+      fids = filter(f_none,fids)
       fids = list(set(fids))
       fids.sort()
-      fids = list(map(f_str,fids))
-      fids_str = ",".join(fids)
-      rank = len(fids)
-      q = '''INSERT OR REPLACE INTO tags (tag,rank,fids) VALUES (?,?,?)'''
-      c.execute(q,(tag,rank,fids_str))
+      try:
+        fids = list(map(f_str,fids))
+        fids_str = ",".join(fids)
+        rank = len(fids)
+        q = '''INSERT OR REPLACE INTO tags (tag,rank,fids) VALUES (?,?,?)'''
+        c.execute(q,(tag,rank,fids_str))
+      except:
+        print('error for query: ' + q)
     q = '''UPDATE projs SET fid = ? WHERE file = ?'''
-    c.execute(q,(fid, file))
+    try:
+      c.execute(q,(fid, file))
+    except:
+      print('error for query: ' + q)
     fid+=1
     i+=1
+except TypeError as e:
+  print(e)
 finally:
   conn.commit()
   conn.close()
