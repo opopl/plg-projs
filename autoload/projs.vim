@@ -730,7 +730,7 @@ function! projs#maps ()
           \  ';wp'   : 'tag preamble'        ,
           \  ';wm'   : 'tag f_main'          ,
           \  ';wb'   : 'tag body'            ,
-          \  '<C-T>'   : 'PrjDB fill_tags'   ,
+          \  '<S-T>'   : 'PrjDB fill_tags'   ,
           \ },
        \ 'vnoremap' : {
             \  '?'      : 'PrjVisual help'            ,
