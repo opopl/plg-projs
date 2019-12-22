@@ -768,17 +768,17 @@ function! projs#sec#header (...)
   let header = []
 
   if ext == 'tex'
-	  if strlen(keymap)
-	    call add(header,'% vim: keymap=' . keymap )
-	  endif
-	
-	  call extend(header,[ '%%file ' . sec])
-	  call extend(header,[ '%%parent ' . parent_sec ])
+    if strlen(keymap)
+      call add(header,'% vim: keymap=' . keymap )
+    endif
+  
+    call extend(header,[ '%%file ' . sec])
+    call extend(header,[ '%%parent ' . parent_sec ])
 
   elseif ext == 'vim'
 
-	  call extend(header,[ '"""file ' . sec])
-	  call extend(header,[ '"""parent ' . parent_sec ])
+    call extend(header,[ '"""file ' . sec])
+    call extend(header,[ '"""parent ' . parent_sec ])
   endif
 
   return header
