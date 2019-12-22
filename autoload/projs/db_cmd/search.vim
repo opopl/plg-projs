@@ -27,7 +27,7 @@ eof
     let proj = get(rwh,'proj','')
     let sec  = get(rwh,'sec','')
     call projs#proj#name(proj)
-    call projs#sec#open(sec)
+    call projs#sec#open_load_buf(sec)
   endfor
   
 endfunction
