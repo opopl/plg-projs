@@ -731,7 +731,7 @@ function! projs#maps ()
           \  ';wm'   : 'tag f_main'          ,
           \  ';wb'   : 'tag body'            ,
           \  '<S-T>'   : 'PrjDB fill_tags'   ,
-          \  '<S-A>'   : 'PrjAct git_add_texfiles'   ,
+          \  '<C-A>'   : 'PrjAct git_add_texfiles'   ,
           \ },
        \ 'vnoremap' : {
             \  '?'      : 'PrjVisual help'            ,

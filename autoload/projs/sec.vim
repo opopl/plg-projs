@@ -778,8 +778,12 @@ function! projs#sec#header (...)
       call add(header,'% vim: keymap=' . keymap )
     endif
   
+    call extend(header,[ '%%beginhead '])
+    call extend(header,[ ' ' ])
     call extend(header,[ '%%file ' . sec])
     call extend(header,[ '%%parent ' . parent_sec ])
+    call extend(header,[ ' ' ])
+    call extend(header,[ '%%endhead '])
 
   elseif ext == 'vim'
 
