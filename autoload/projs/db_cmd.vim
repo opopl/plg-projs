@@ -72,7 +72,41 @@ function! projs#db_cmd#buf_data (...)
   return
 endf
 
-function! projs#db_cmd#buf_url_fetch (...)
+function! projs#db_cmd#buf_url_fetch (...)  
+
+  let url = ''
+
+  if !exists("b:url")
+    let file = fnamemodify(':p:t',b:file)
+    let url_db =  projs#db#url({ 
+      \ 'file' : file })
+    let url = url_db
+  else
+    let url = b:url
+  endif
+
+  if !strlen(url)
+    call base#rdwe('url not defined!')
+    return 
+  endif
+
+  let cmd = printf('links -dump %s', shellescape(url) )
+
+  let env = { 'file' : b:file }
+  function env.get(temp_file) dict
+    let code = self.return_code
+  
+    if filereadable(a:temp_file)
+      let out = readfile(a:temp_file)
+      call base#append#arr(out)
+      "call base#buf#open_split({ 'lines' : out })
+    endif
+  endfunction
+  
+  call asc#run({ 
+    \ 'cmd' : cmd, 
+    \ 'Fn'  : asc#tab_restore(env) 
+    \ })
 endf
 
 function! projs#db_cmd#buf_url_insert (...)
