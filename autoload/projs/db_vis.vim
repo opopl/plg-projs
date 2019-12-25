@@ -43,7 +43,7 @@ url       = vim.eval('url')
 is_head = 0
 
 url_cmt_done = 0
-url_cmt_tex  = 0
+url_tex_done = 0
 
 url_cmt = '%%url ' + url
 url_tex = r'\url{' + url + '}'
@@ -54,19 +54,23 @@ lines = f.read().splitlines()
 
 try:
   for line in lines:
+      end_head = 0
+      after_head = 0
       if re.match(r'^%%url\s+', line):
         url_cmt_done = 1
-      if re.match(r'^\url\{.*\}\s*$', line):
+      if re.match(r'^\\url\{.*\}\s*$', line):
         url_tex_done = 1
       if re.match(r'^%%beginhead', line):
         is_head = 1
       if re.match(r'^%%endhead', line):
         is_head = 0
-        if !url_cmt_done:
+        end_head = 1
+        if url_cmt_done == 0:
           lines_w.append(url_cmt)
-        if !url_tex_done:
-          lines_w.append(url_tex)
       lines_w.append(line)
+
+  if url_tex_done == 0:
+     lines_w.append(url_tex)
 finally:
   f.close()
 
