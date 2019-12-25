@@ -56,15 +56,14 @@ function! projs#newseclines#regular#tabcont (...)
 python3 << eof
 text = r'''
 %%% TOC %%% 
+
 \\phantomsection
- 
-\\hypertarget{toc}{}
-\\bookmark[dest=toc,rellevel=1,keeplevel=1]{\contentsname}
  
 \\addcontentsline{toc}{chapter}{\contentsname}
  
 \\tableofcontents
 \\newpage
+
 %%% ENDTOC %%% 
 '''
 eof
