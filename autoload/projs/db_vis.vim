@@ -33,7 +33,6 @@ function! projs#db_vis#update ()
     let b:url = url
 
     let lines_tex = []
-    call add(lines_tex,' ' )
     call add(lines_tex,printf('%%%%url %s',url) )
     call add(lines_tex,' ' )
     call add(lines_tex,printf('\url{%s}',url) )
