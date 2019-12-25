@@ -33,6 +33,7 @@ function! projs#db_vis#update ()
     let b:url = url
 
     let lines_tex = []
+    call add(lines_tex,' ' )
     call add(lines_tex,printf('%%%%url %s',url) )
     call add(lines_tex,' ' )
     call add(lines_tex,printf('\url{%s}',url) )
@@ -42,12 +43,24 @@ function! projs#db_vis#update ()
 python3 << eof
 import vim,in_place,re
 
-file = vim.eval('file')
+file      = vim.eval('file')
 lines_tex = vim.eval('lines_tex')
 
-with in_place.InPlace(file) as fp:
-  for line in fp:
-    if re.match()
+is_head = 0
+
+lines = []
+with open(file,'r') as f:
+  for line in f:
+    if re.match(r'^%%beginhead', line):
+      is_head = 1
+    if re.match(r'^%%endhead', line):
+      is_head = 0
+      lines.append(tex_lines)
+    lines.append(line)
+
+f = open(file,'w+')
+f.write(lines)
+f.close()
   
 eof
     endif
