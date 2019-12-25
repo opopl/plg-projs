@@ -45,8 +45,14 @@ is_head = 0
 url_cmt_done = 0
 url_tex_done = 0
 
-url_cmt = '%%url ' + url
-url_tex = r'\url{' + url + '}'
+url_cmt = '%%url ' + url 
+url_tex = [ 
+  r'{ \small'          ,
+  r'\vspace{0.5cm}'    ,
+  r'\url{' + url + '}' ,
+  r'\vspace{0.5cm}'    ,
+  r'}'                 ,
+]
 
 lines_w = []
 f = open(file,'r')
@@ -70,7 +76,7 @@ try:
       lines_w.append(line)
 
   if url_tex_done == 0:
-     lines_w.append(url_tex)
+     lines_w.extend(url_tex)
 finally:
   f.close()
 
