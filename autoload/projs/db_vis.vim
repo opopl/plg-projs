@@ -1,4 +1,9 @@
 
+if 0
+  used in:
+    projs#db_cmd#buf_data
+endif
+
 function! projs#db_vis#update ()
   let lines = base#vim#visual_selection()
 
@@ -31,14 +36,20 @@ function! projs#db_vis#update ()
     call add(lines_tex,printf('%%%%url %s',url) )
     call add(lines_tex,' ' )
     call add(lines_tex,printf('\url{%s}',url) )
-    let r = {
-          \   'lines'  : lines_tex,
-          \   'file'   : file,
-          \   'mode'   : 'append',
-          \ }
-    let do_append = input('Append url lines? (1/0): ',1)
-    if do_append
-      call base#file#write_lines(r)  
+
+    let do_insert = input('Insert url lines? (1/0): ',1)
+    if do_insert
+python3 << eof
+import vim,in_place,re
+
+file = vim.eval('file')
+lines_tex = vim.eval('lines_tex')
+
+with in_place.InPlace(file) as fp:
+  for line in fp:
+    if re.match()
+  
+eof
     endif
   endif
 
