@@ -44,6 +44,7 @@ import vim,in_place,re
 
 file      = vim.eval('file')
 lines_tex = vim.eval('lines_tex')
+url       = vim.eval('url')
 
 is_head = 0
 
