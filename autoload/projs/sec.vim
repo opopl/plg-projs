@@ -473,6 +473,14 @@ function! projs#sec#add (sec)
   return 1
 endfunction
 
+function! projs#sec#insert_url (...)
+  let ref = get(a:000,0,{})
+
+  let sec = get(ref,'sec','')
+  let url = get(ref,'url','')
+
+endfunction
+
 function! projs#sec#buf (sec)
   let sec = a:sec
 

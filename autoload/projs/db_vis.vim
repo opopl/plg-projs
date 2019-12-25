@@ -34,6 +34,7 @@ function! projs#db_vis#update ()
 
     let do_insert = input('Insert url lines? (1/0): ',1)
     if do_insert
+      call projs#sec#insert_url({ 'url' : url, 'sec' : sec })
 python3 << eof
 import vim,in_place,re
 
