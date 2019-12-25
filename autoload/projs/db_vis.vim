@@ -54,12 +54,13 @@ with open(file,'r') as f:
       is_head = 1
     if re.match(r'^%%endhead', line):
       is_head = 0
-      lines.append(lines_tex)
+      lines.extend(lines_tex)
     lines.append(line)
 
 f = open(file,'w+')
 try:
-  f.writelines(lines)
+  for line in lines:
+    f.write(line)
 finally:
   f.close()
   
