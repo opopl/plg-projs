@@ -479,6 +479,64 @@ function! projs#sec#insert_url (...)
   let sec = get(ref,'sec','')
   let url = get(ref,'url','')
 
+  let file = projs#sec#file(sec)
+python3 << eof
+import vim,in_place,re
+
+file      = vim.eval('file')
+url       = vim.eval('url')
+
+is_head = 0
+
+url_cmt_done = 0
+url_tex_done = 0
+
+url_cmt = '%%url ' + url 
+url_tex = [ 
+  r'{ \small'          ,
+  r'\vspace{0.5cm}'    ,
+  r'\url{' + url + '}' ,
+  r'\vspace{0.5cm}'    ,
+  r'}'                 ,
+]
+
+lines_w = []
+f = open(file,'r')
+lines = f.read().splitlines()
+
+try:
+  for line in lines:
+      end_head = 0
+      after_head = 0
+      if re.match(r'^%%url\s+', line):
+        url_cmt_done = 1
+      if re.match(r'^\\url\{.*\}\s*$', line):
+        url_tex_done = 1
+      if re.match(r'^%%beginhead', line):
+        is_head = 1
+      if re.match(r'^%%endhead', line):
+        is_head = 0
+        end_head = 1
+        if url_cmt_done == 0:
+          lines_w.append(url_cmt)
+      lines_w.append(line)
+
+  if url_tex_done == 0:
+     lines_w.extend(url_tex)
+finally:
+  f.close()
+
+f = open(file,'w+')
+try:
+  for line in lines_w:
+    f.write(line)
+    f.write("\n")
+finally:
+  f.close()
+  
+eof
+
+
 endfunction
 
 function! projs#sec#buf (sec)
