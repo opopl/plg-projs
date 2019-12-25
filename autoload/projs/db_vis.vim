@@ -47,20 +47,26 @@ lines_tex = vim.eval('lines_tex')
 
 is_head = 0
 
-lines = []
-with open(file,'r') as f:
-  for line in f:
-    if re.match(r'^%%beginhead', line):
-      is_head = 1
-    if re.match(r'^%%endhead', line):
-      is_head = 0
-      lines.extend(lines_tex)
-    lines.append(line)
+lines_w = []
+f = open(file,'r')
+lines = f.read().splitlines()
+
+try:
+  for line in lines:
+      if re.match(r'^%%beginhead', line):
+        is_head = 1
+      if re.match(r'^%%endhead', line):
+        is_head = 0
+        lines_w.extend(lines_tex)
+      lines_w.append(line)
+finally:
+  f.close()
 
 f = open(file,'w+')
 try:
-  for line in lines:
+  for line in lines_w:
     f.write(line)
+    f.write("\n")
 finally:
   f.close()
   
