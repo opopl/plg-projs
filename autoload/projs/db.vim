@@ -192,19 +192,19 @@ function! projs#db#url (...)
   let ref  = get(a:000,0,{})
 
   let proj = projs#proj#name()
-	let proj = get(ref,'proj','')
+  let proj = get(ref,'proj','')
 
-	let file = get(ref,'file','')
+  let file = get(ref,'file','')
 
   let q = 'SELECT url FROM projs ' 
-		\	. ' WHERE proj = ? AND file = ?'
+    \ . ' WHERE proj = ? AND file = ?'
 
-	let dbfile = projs#db#file()
+  let dbfile = projs#db#file()
 
   let ref = {
       \ 'dbfile' : dbfile,
       \ 'q'      : q,
-      \ 'p'      : [ proj , file ],
+      \ 'p'      : [ proj, file ],
       \ }
 
   let url = pymy#sqlite#query_fetchone(ref)
