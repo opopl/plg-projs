@@ -192,7 +192,7 @@ function! projs#db#url (...)
   let ref  = get(a:000,0,{})
 
   let proj = projs#proj#name()
-  let proj = get(ref,'proj','')
+  let proj = get(ref,'proj',proj)
 
   let file = get(ref,'file','')
 

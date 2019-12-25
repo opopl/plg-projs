@@ -77,9 +77,8 @@ function! projs#db_cmd#buf_url_fetch (...)
   let url = ''
 
   if !exists("b:url")
-    let file = fnamemodify(':p:t',b:file)
     let url_db =  projs#db#url({ 
-      \ 'file' : file })
+      \ 'file' : b:basename })
     let url = url_db
   else
     let url = b:url
@@ -92,7 +91,7 @@ function! projs#db_cmd#buf_url_fetch (...)
 
   let cmd = printf('links -dump %s', shellescape(url) )
 
-  let env = { 'file' : b:file }
+  let env = { 'file' : b:basename }
   function env.get(temp_file) dict
     let code = self.return_code
   
