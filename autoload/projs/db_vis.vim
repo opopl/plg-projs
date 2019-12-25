@@ -32,21 +32,21 @@ function! projs#db_vis#update ()
 
     let b:url = url
 
-    let lines_tex = []
-    call add(lines_tex,printf('%%%%url %s',url) )
-    call add(lines_tex,' ' )
-    call add(lines_tex,printf('\url{%s}',url) )
-
     let do_insert = input('Insert url lines? (1/0): ',1)
     if do_insert
 python3 << eof
 import vim,in_place,re
 
 file      = vim.eval('file')
-lines_tex = vim.eval('lines_tex')
 url       = vim.eval('url')
 
 is_head = 0
+
+url_cmt_done = 0
+url_cmt_tex  = 0
+
+url_cmt = '%%url ' + url
+url_tex = r'\url{' + url + '}'
 
 lines_w = []
 f = open(file,'r')
@@ -54,11 +54,18 @@ lines = f.read().splitlines()
 
 try:
   for line in lines:
+      if re.match(r'^%%url\s+', line):
+        url_cmt_done = 1
+      if re.match(r'^\url\{.*\}\s*$', line):
+        url_tex_done = 1
       if re.match(r'^%%beginhead', line):
         is_head = 1
       if re.match(r'^%%endhead', line):
         is_head = 0
-        lines_w.extend(lines_tex)
+        if !url_cmt_done:
+          lines_w.append(url_cmt)
+        if !url_tex_done:
+          lines_w.append(url_tex)
       lines_w.append(line)
 finally:
   f.close()
