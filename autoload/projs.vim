@@ -741,7 +741,7 @@ function! projs#maps ()
           \ }
         \ }
 
-  for [map,mp] in items(maps)
+  for [ map, mp ] in items(maps)
     call base#buf#map_add(mp,{ 'map' : map })
   endfor
 
