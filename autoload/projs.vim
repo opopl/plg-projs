@@ -730,8 +730,9 @@ function! projs#maps ()
           \  ';wp'   : 'tag preamble'        ,
           \  ';wm'   : 'tag f_main'          ,
           \  ';wb'   : 'tag body'            ,
-          \  '<S-T>'   : 'PrjDB fill_tags'   ,
-          \  '<C-A>'   : 'PrjAct git_add_texfiles'   ,
+          \  '<S-T>' : 'PrjDB fill_tags'   ,
+          \  '<C-A>' : 'PrjAct git_add_texfiles'   ,
+          \  '<C-M>' : 'PrjAct maps_update'   ,
           \ },
        \ 'vnoremap' : {
             \  '?'      : 'PrjVisual help'            ,
@@ -743,6 +744,8 @@ function! projs#maps ()
   for [map,mp] in items(maps)
     call base#buf#map_add(mp,{ 'map' : map })
   endfor
+
+  call base#rdw('OK: projs#maps')
   
 endfunction
 
