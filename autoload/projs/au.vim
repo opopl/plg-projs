@@ -18,9 +18,18 @@ function! projs#au#file_onload_bat ()
     return 
   endif
 
-  let proj = matchstr(b:basename, '^b_\zs\w\+\ze_\(pdflatex\|htlatex\)\.bat$')
+  let pat = '^b_\zs\w\+\ze_\(pdflatex\|htlatex\)\.bat$'
+  let res = matchlist(b:basename, pat)
+
+  let proj = get(res,0,'')
+  let mode = get(res,1,'')
+
   if len(proj)
     let b:proj = proj
+  endif
+
+  if len(mode)
+    let b:sec = printf('_build_%s_',mode)
   endif
 endfunction
 
