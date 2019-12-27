@@ -328,21 +328,21 @@ endfunction
 function! projs#buf_cmd (...)
   let act = get(a:000,0,'')
 
-	if !exists("b:sec")
-		return
-	endif
+  if !exists("b:sec")
+    return
+  endif
 
   let acts = base#varget('projs_opts_PrjBuf',[])
   let acts = sort(acts)
 
-	if ! strlen(act)
+  if ! strlen(act)
     let desc = base#varget('projs_desc_PrjBuf',{})
     let info = []
     for act in acts
       call add(info,[ act, get(desc,act,'') ])
     endfor
     let proj = projs#proj#name()
-		let sec  = b:sec
+    let sec  = b:sec
     let lines = [ 
       \ 'Current project:' , "\t" . proj,
       \ 'Current section:' , "\t" . sec,
@@ -458,12 +458,14 @@ function! projs#switch (...)
   
 endfunction
 
-"call projs#onload ()
-"call projs#onload ({ 'proj' : proj })
-"
-"call tree
-"   calls
-"     projs#maps
+if 0
+  call projs#onload ()
+  call projs#onload ({ 'proj' : proj })
+  
+  call tree
+     calls
+       projs#maps
+endif
 
 function! projs#onload (...)
   let ref = {}
