@@ -18,14 +18,18 @@ function! projs#html_out#view (...)
 	let hfile = projs#html_out#file()
 
 	let browser = base#envvar('browser','')
+	if len(browser)
+		call base#rdwe('No browser defined!')
+		return 
+	endif
 
-	let cmd = join([browser,shellescape(hfile)],' ' )
+	let cmd = join([shellescape(browser),shellescape(hfile)],' ' )
 	
 	let env = {}
 	function env.get(temp_file) dict
 		let code = self.return_code
 
-		call base#rdw('OK: browser open')
+		call base#rdw(printf('OK[projs]: browser open html'))
 	endfunction
 	
 	call asc#run({ 
