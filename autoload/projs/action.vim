@@ -595,9 +595,9 @@ function! projs#action#async_build_Fc (self,temp_file)
   let proj  = self.proj
   let start = self.start
 
-  let end = localtime()
-  let duration =  end - start
-  let s_dur = ' ' . string(duration) . ' (secs)'
+  let end      = localtime()
+  let duration = end - start
+  let s_dur    = ' ' . string(duration) . ' (secs)'
   
     if filereadable(a:temp_file)
       call tex#efm#latex()
@@ -729,6 +729,15 @@ con.close()
 eof
 endfunction
 
+if 0
+  call tree
+    calls
+      projs#proj#name
+      projs#root
+      projs#sec#file
+      projs#sec#new
+endif
+
 function! projs#action#async_build () 
   let proj = projs#proj#name()
   let root = projs#root()
@@ -752,7 +761,7 @@ function! projs#action#async_build ()
     call projs#action#async_build_Fc(self,a:temp_file)
   endfunction
 
-  echo 'async_build: ' . proj
+  echo printf('async_build: %s, mode: %s',proj,sec_bat)
 
   call asc#run({ 
     \ 'cmd' : cmd, 
