@@ -5,8 +5,8 @@ function! projs#buf_cmd#sec_new (...)
 		return 
 	endif
 
-	call projs#sec#new(b:sec)
-	edit!
+	call projs#sec#new(b:sec,{ 'rewrite' : 1 })
+	edit! 
 
 	call base#rdw('OK: sec_new')
 	
