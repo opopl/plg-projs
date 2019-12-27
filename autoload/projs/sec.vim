@@ -782,8 +782,8 @@ function! projs#sec#open (...)
 		let Fc = s:obj.init
     let res = base#fileopen({ 
       \ 'files'    : [ vfile ],
-      \ 'load_buf' :  load_buf,
-      \ 'Fc'       :  Fc,
+      \ 'load_buf' : load_buf,
+      \ 'Fc'       : Fc,
       \ }) 
 
     let buf_nums = get(res,'buf_nums',[])
