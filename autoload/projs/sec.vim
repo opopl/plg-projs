@@ -770,9 +770,20 @@ function! projs#sec#open (...)
       call projs#sec#new(sec)
     endif
 
+		let s:obj = { 
+			\	'sec'  : sec ,
+			\	'proj' : proj ,
+			\	}
+		function! s:obj.init (...) dict
+			let b:sec  = self.sec
+			let b:proj = self.proj
+		endfunction
+		
+		let Fc = s:obj.init
     let res = base#fileopen({ 
       \ 'files'    : [ vfile ],
       \ 'load_buf' :  load_buf,
+      \ 'Fc'       :  Fc,
       \ }) 
 
     let buf_nums = get(res,'buf_nums',[])
