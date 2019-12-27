@@ -580,6 +580,12 @@ function! projs#action#gui_select_project (...)
 
 endfunction
 
+if 0
+  call tree
+    called by
+      projs#action#async_build
+endif
+
 function! projs#action#async_build_Fc (self,temp_file) 
   let self      = a:self
   let temp_file = a:temp_file
@@ -602,13 +608,13 @@ function! projs#action#async_build_Fc (self,temp_file)
       
       redraw!
       if len(err)
-        echohl WarningMsg
-        echo 'BUILD FAIL: ' . proj . s_dur
+        let msg = 'BUILD FAIL: ' . proj . s_dur
+        call base#rdwe(msg)
         BaseAct copen
       else
-        echohl MoreMsg
-        echo 'BUILD OK: ' . proj . s_dur
-        cclose
+        let msg = 'BUILD OK: ' . proj . s_dur
+        call base#rdw(msg)
+        BaseAct cclose
       endif
       echohl None
     endif
@@ -727,11 +733,8 @@ function! projs#action#async_build ()
   let proj = projs#proj#name()
   let root = projs#root()
 
-  "let cmd = 'pdflatex '
   let sec_bat = '_build_pdflatex_'
   let bat     = projs#sec#file(sec_bat)
-  "if !filereadable(bat)
-  "endif
 
   let o = { 'prompt' : 0 }
   call projs#sec#new(sec_bat,o)

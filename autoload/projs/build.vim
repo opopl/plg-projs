@@ -247,6 +247,12 @@ function! projs#build#set_texoutdir (...)
  return texoutdir
 endf
 
+if 0
+  call tree
+      called by
+        projs#build#make_async
+endif
+
 function! projs#build#make_async_Fc (self,temp_file)
   let self      = a:self
   let temp_file = a:temp_file
@@ -255,8 +261,8 @@ function! projs#build#make_async_Fc (self,temp_file)
 
   let b_data = {}
 
-  if filereadable(a:temp_file)
-    let out = readfile(a:temp_file)
+  if filereadable(temp_file)
+    let out = readfile(temp_file)
 
     if code == 0
           redraw!
@@ -311,12 +317,14 @@ function! projs#build#make_async (...)
 
 endfunction
 
-"Usage:
-"   call projs#build#make_invoke ({ ... })
-"
-"Call tree:
-"   Called by:
-"     projs#build#run()
+if 0
+  Usage:
+     call projs#build#make_invoke ({ ... })
+  
+  Call tree:
+     Called by:
+       projs#build#rn
+endif
 
 
 function! projs#build#make_invoke (...)
