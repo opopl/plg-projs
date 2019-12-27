@@ -826,3 +826,7 @@ function! projs#action#joinlines ()
     VSEC _join_
 endfunction
 
+function! projs#action#html_out_view ()
+	let proj = projs#proj#name()
+endfunction
+
