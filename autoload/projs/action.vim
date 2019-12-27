@@ -599,25 +599,25 @@ function! projs#action#async_build_Fc (self,temp_file)
   let duration = end - start
   let s_dur    = ' ' . string(duration) . ' (secs)'
   
-    if filereadable(a:temp_file)
-      call tex#efm#latex()
-      exe 'cd ' . root
-      exe 'cgetfile ' . a:temp_file
-      
-      let err = getqflist()
-      
-      redraw!
-      if len(err)
-        let msg = 'BUILD FAIL: ' . proj . s_dur
-        call base#rdwe(msg)
-        BaseAct copen
-      else
-        let msg = 'BUILD OK: ' . proj . s_dur
-        call base#rdw(msg)
-        BaseAct cclose
-      endif
-      echohl None
+  if filereadable(a:temp_file)
+    call tex#efm#latex()
+    exe 'cd ' . root
+    exe 'cgetfile ' . a:temp_file
+    
+    let err = getqflist()
+    
+    redraw!
+    if len(err)
+      let msg = 'BUILD FAIL: ' . proj . s_dur
+      call base#rdwe(msg)
+      BaseAct copen
+    else
+      let msg = 'BUILD OK: ' . proj . s_dur
+      call base#rdw(msg)
+      BaseAct cclose
     endif
+    echohl None
+  endif
 endfunction
 
 function! projs#action#excel_import (...) 
@@ -730,7 +730,11 @@ eof
 endfunction
 
 if 0
-  call tree
+  Usage
+    projs#action#async_build()
+    projs#action#async_build({ 'sec_bat' : '_build_htlatex_' })
+    projs#action#async_build({ 'sec_bat' : '_build_pdflatex_' })
+  Call tree
     calls
       projs#proj#name
       projs#root
@@ -739,7 +743,7 @@ if 0
 endif
 
 function! projs#action#async_build (...) 
-  let ref=get(a:000,0,{})
+  let ref = get(a:000,0,{})
 
   let root = projs#root()
 
@@ -774,6 +778,10 @@ function! projs#action#async_build (...)
     \ 'Fn'  : asc#tab_restore(env) 
     \ })
 
+endfunction
+
+function! projs#action#async_build_htlatex () 
+  call projs#action#async_build({ 'sec_bat' : '_build_htlatex_' })
 endfunction
 
 function! projs#action#create_sec_tab (...)

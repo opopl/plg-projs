@@ -733,6 +733,7 @@ function! projs#maps ()
           \  '<S-T>' : 'PrjDB fill_tags'   ,
           \  '<C-A>' : 'PrjAct git_add_texfiles'   ,
           \  '<C-M>' : 'PrjAct maps_update'   ,
+          \  '<C-H>' : 'PrjAct async_build_htlatex'   ,
           \ },
        \ 'vnoremap' : {
             \  '?'      : 'PrjVisual help'            ,
