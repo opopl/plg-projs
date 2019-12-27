@@ -160,5 +160,6 @@ function! projs#init#au (...)
 
     exe 'autocmd BufWinEnter,BufRead,BufNewFile '. root_u  .'/makefile  call projs#au#file_onload_make() '
     exe 'autocmd BufWinEnter,BufRead,BufNewFile '. root_u  .'/*.mk      call projs#au#file_onload_make() '
+    autocmd BufWinEnter,BufRead,BufNewFile *.bat call projs#au#file_onload_bat()
   augroup end
 endfunction

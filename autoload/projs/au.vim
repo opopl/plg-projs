@@ -8,6 +8,15 @@ function! projs#au#file_onload_csv ()
 	
 endfunction
 
+function! projs#au#file_onload_bat ()
+	call base#buf#start()
+
+	let root = projs#root()
+
+	let reldir = base#file#reldir(b:dirname,root)
+	echo reldir
+endfunction
+
 function! projs#au#file_onload_vim ()
 	call base#buf#start()
 	
