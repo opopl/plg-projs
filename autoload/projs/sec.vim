@@ -862,6 +862,9 @@ function! projs#sec#header (...)
     call extend(header,[ ' ' ])
     call extend(header,[ '%%endhead '])
 
+	elseif ext == 'bat'
+    call extend(header,[ 'rem file ' . sec])
+
   elseif ext == 'vim'
 
     call extend(header,[ '"""file ' . sec])
