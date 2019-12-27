@@ -785,6 +785,7 @@ function! projs#maps ()
           \  ';wm'   : 'tag f_main'          ,
           \  ';wb'   : 'tag body'            ,
           \  '<S-T>' : 'PrjDB fill_tags'   ,
+          \  '<S-Y>' : 'PrjAct html_out_view'   ,
           \  '<C-A>' : 'PrjAct git_add_texfiles'   ,
           \  '<C-M>' : 'PrjAct maps_update'   ,
           \  '<C-H>' : 'PrjAct async_build_htlatex'   ,
