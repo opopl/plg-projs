@@ -18,7 +18,7 @@ function! projs#html_out#view (...)
 	let hfile = projs#html_out#file()
 
 	let browser = base#envvar('browser','')
-	if len(browser)
+	if !len(browser)
 		call base#rdwe('No browser defined!')
 		return 
 	endif
