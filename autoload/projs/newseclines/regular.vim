@@ -99,6 +99,7 @@ function! projs#newseclines#regular#title (...)
   return lines
 endfunction
 
+"""sec_cfg
 function! projs#newseclines#regular#cfg (...)
   let lines = []
   call extend(lines, tex#lines('tex4ht_cfg') )

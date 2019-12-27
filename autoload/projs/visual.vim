@@ -108,6 +108,14 @@ function! projs#visual#split_ss2 (start, end, ... )
   let sec    = exists('b:sec') ? b:sec : ''
   let prefix = base#input_we(msg,sec,{ 'complete' : 'custom,projs#complete#secnames' })
 
+	let msg_a = [
+		\	"e.g. subsubsection ",	
+		\	"",	
+		\	"split_macro:",	
+		\	]
+	let msg = join(msg_a,"\n")
+	let split_macro = base#input_we(msg,'subsubsection',{ })
+
 python3 << eof
 import vim,re
 from itertools import repeat
@@ -123,12 +131,13 @@ data      = {}
 sec_lines = []
 sec       = ''
 
-prefix    = vim.eval('prefix')
+prefix      = vim.eval('prefix')
+split_macro = vim.eval('split_macro')
 
 for k in range(start, end + 1, 1):
   i = k - 1
   n = k - start + 1
-  m = re.search(r'^\\subsubsection{(.*)}\s*$', b[i])
+  m = re.search(r'^\\' + split_macro + '{(.*)}\s*$', b[i])
   if m:
     if len(sec):
       data.update({ sec : sec_lines })
