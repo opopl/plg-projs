@@ -34,6 +34,7 @@ function! projs#au#file_onload_bat ()
 
   StatusLine projs
   TgSet projs_this
+	PrjAct maps_update
 endfunction
 
 function! projs#au#file_onload_vim ()
