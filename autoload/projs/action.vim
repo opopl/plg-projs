@@ -827,6 +827,6 @@ function! projs#action#joinlines ()
 endfunction
 
 function! projs#action#html_out_view ()
-	let proj = projs#proj#name()
+	call projs#html_out#view ()
 endfunction
 
