@@ -1,11 +1,40 @@
 \Preamble{xhtml,frames,4,index=2,next,charset=utf-8,javascript}
 
-\input{_cfg.collapsibleList.tex}
-\input{_cfg.frames-two.tex}
+%\input{_cfg.collapsibleList.tex}
+%\input{_cfg.frames-two.tex}
+
+\Css{
+  .verbatim,.verb {
+    font-weight      : bold;
+    background-color : gray;
+    color            : white;
+  }
+} 
+
+\ifOption{frames}{%
+	\Configure{frames}%
+			 {\HorFrames[
+				   frameborder="yes" 
+	               border="1"  
+				   %framespacing="1" 
+	               rows="*"]{*,3*}  
+			   \Frame[ name="tex4ht-menu" frameborder="2" ]{tex4ht-toc}  
+			   \Frame[ name="tex4ht-main" frameborder="2" ]{tex4ht-body}
+			 }  
+	{\let\contentsname=\empty \tableofcontents}  
+}{}
+  
+\Configure{graphics*}  
+    {pdf}  
+    {\Needs{"convert '\csname Gin@base\endcsname.pdf'  
+                          '\csname Gin@base\endcsname.png'"}%  
+     \Picture[pict]{\csname Gin@base\endcsname.png}%  
+     \special{t4ht+@File: \csname Gin@base\endcsname.png}
+    }  
 
 \begin{document}
 
-\input{_cfg.TOC.tex}
+%\input{_cfg.TOC.tex}
 
 \EndPreamble
 

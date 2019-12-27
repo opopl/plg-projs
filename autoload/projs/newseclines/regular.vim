@@ -102,7 +102,10 @@ endfunction
 """sec_cfg
 function! projs#newseclines#regular#cfg (...)
   let lines = []
-  call extend(lines, tex#lines('tex4ht_cfg') )
+  "call extend(lines, tex#lines('tex4ht_cfg') )
+
+	let file = base#qw#catpath('plg projs data tex tex4ht_cfg.tex')
+	call extend(lines,readfile(file))
   return lines
 endfunction
 
