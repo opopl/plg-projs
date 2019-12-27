@@ -325,6 +325,58 @@ function! projs#visual (...)
   
 endfunction
 
+function! projs#buf_cmd (...)
+  let act = get(a:000,0,'')
+
+	if !exists("b:sec")
+		return
+	endif
+
+  let acts = base#varget('projs_opts_PrjBuf',[])
+  let acts = sort(acts)
+
+	if ! strlen(act)
+    let desc = base#varget('projs_desc_PrjBuf',{})
+    let info = []
+    for act in acts
+      call add(info,[ act, get(desc,act,'') ])
+    endfor
+    let proj = projs#proj#name()
+		let sec  = b:sec
+    let lines = [ 
+      \ 'Current project:' , "\t" . proj,
+      \ 'Current section:' , "\t" . sec,
+      \ 'Possible PrjBuf actions: ' 
+      \ ]
+
+    call extend(lines, pymy#data#tabulate({
+      \ 'data'    : info,
+      \ 'headers' : [ 'act', 'description' ],
+      \ }))
+
+    let s:obj = { 'proj' : proj }
+    function! s:obj.init (...) dict
+      let proj = self.proj
+      let hl = 'WildMenu'
+      call matchadd(hl,'\s\+'.proj.'\s\+')
+      call matchadd(hl,proj)
+    endfunction
+    
+    let Fc = s:obj.init
+
+    call base#buf#open_split({ 
+      \ 'lines'    : lines ,
+      \ 'cmds_pre' : ['resize 99'] ,
+      \ 'Fc'       : Fc,
+      \ })
+    return
+  endif
+
+  let sub = 'projs#buf_cmd#'.act
+
+  exe 'call '.sub.'()'
+endfunction
+
 function! projs#action (...)
   let act = get(a:000,0,'')
 
