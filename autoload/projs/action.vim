@@ -738,11 +738,17 @@ if 0
       projs#sec#new
 endif
 
-function! projs#action#async_build () 
-  let proj = projs#proj#name()
+function! projs#action#async_build (...) 
+  let ref=get(a:000,0,{})
+
   let root = projs#root()
 
+  let proj = projs#proj#name()
+  let proj = get(ref,'proj',proj)
+
   let sec_bat = '_build_pdflatex_'
+  let sec_bat = get(ref,'sec_bat',sec_bat)
+
   let bat     = projs#sec#file(sec_bat)
 
   let o = { 'prompt' : 0 }
