@@ -105,7 +105,7 @@ function! projs#newseclines#_build_tex_ (...)
 	call add(lines,' ')
 	call add(lines,'set tex_opts=')
 	for opt in tex_opts
-	call add(lines,'set tex_opts=%tex_opts% ' . opt)
+		call add(lines,'set tex_opts=%tex_opts% ' . opt)
 	endfor
 	call add(lines,' ')
 	call add(lines,'set outdir='.outdir_win)
