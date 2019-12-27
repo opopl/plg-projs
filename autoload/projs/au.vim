@@ -31,6 +31,9 @@ function! projs#au#file_onload_bat ()
   if len(mode)
     let b:sec = printf('_build_%s_',mode)
   endif
+
+  StatusLine projs
+  TgSet projs_this
 endfunction
 
 function! projs#au#file_onload_vim ()
