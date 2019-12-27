@@ -590,10 +590,11 @@ function! projs#action#async_build_Fc (self,temp_file)
   let self      = a:self
   let temp_file = a:temp_file
 
-  let code  = self.return_code
-  let root  = self.root
-  let proj  = self.proj
-  let start = self.start
+  let code    = self.return_code
+  let root    = self.root
+  let proj    = self.proj
+  let start   = self.start
+  let mode    = self.mode
 
   let end      = localtime()
   let duration = end - start
@@ -608,11 +609,11 @@ function! projs#action#async_build_Fc (self,temp_file)
     
     redraw!
     if len(err)
-      let msg = 'BUILD FAIL: ' . proj . s_dur
+      let msg = printf('BUILD FAIL: %s %s, mode: %s',proj,s_dur,mode)
       call base#rdwe(msg)
       BaseAct copen
     else
-      let msg = 'BUILD OK: ' . proj . s_dur
+      let msg = printf('BUILD OK: %s %s, mode: %s',proj,s_dur,mode)
       call base#rdw(msg)
       BaseAct cclose
     endif
@@ -764,6 +765,7 @@ function! projs#action#async_build (...)
     \ 'proj'  : proj,
     \ 'root'  : root,
     \ 'start' : start,
+    \ 'mode'  : sec_bat,
     \ }
   let cmd = bat
 
