@@ -830,18 +830,22 @@ function! projs#action#html_out_view ()
   call projs#html_out#view ()
 endfunction
 
+if 0
+  see also:
+endif
+
 function! projs#action#_plg_tex_view ()
   let dir = base#qw#catpath('plg projs data tex')
 
-  let ln = ['dir:',"  ".dir]
+  let ln = ['dir:',"  " . dir]
 
   call base#find#open_split({
       \ 'opts_find' : { 
             \ "dirs"    : [dir],
             \ "dirids"  : [],
             \ "exts"    : base#qw('tex sty'),
-            \ "cwd"     : 1,
             \ "relpath" : 1,
+            \ "cwd"     : 0,
             \ "subdirs" : 1,
             \ "fnamemodify" : '',
             \ },
