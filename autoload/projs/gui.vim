@@ -7,7 +7,7 @@ function! projs#gui#proj_toolbar ()
       \ 'data'   : { 'projs' : projs, 'proj' : proj },
       \ 'dir'    : base#qw#catpath('plg projs scripts gui'),
       \ 'script' : 'proj_toolbar',
-      \ 'args'   : [ '-r' ],
+      \ 'args'   : [ '' ],
       \ }
   call base#script#run(r) 
 	
