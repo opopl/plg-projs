@@ -833,52 +833,22 @@ endfunction
 function! projs#action#_plg_tex_view ()
   let dir = base#qw#catpath('plg projs data tex')
 
-  let files = base#find({ 
-    \ "dirs"    : [dir],
-    \ "dirids"  : [],
-    \ "exts"    : base#qw('tex sty'),
-    \ "cwd"     : 1,
-    \ "relpath" : 1,
-    \ "subdirs" : 1,
-    \ "fnamemodify" : '',
-    \ })
-  let files = base#uniq(files)
-  let files = sort(files)
+  call base#find#open_split({
+      \ 'opts_find' : { 
+            \ "dirs"    : [dir],
+            \ "dirids"  : [],
+            \ "exts"    : base#qw('tex sty'),
+            \ "cwd"     : 1,
+            \ "relpath" : 1,
+            \ "subdirs" : 1,
+            \ "fnamemodify" : '',
+            \ },
+      \ 'opts_split' : {
+          \ 'title'   : 'List of TeX template files : ',
+          \ 'headers' : ['file'],
+          \ }
+      \ })
 
-  let info = []
-  for file in files
-    call add(info,[ file ])
-  endfor
-
-  let lines = [ 'List of TeX template files: ' ]
-  call extend(lines, pymy#data#tabulate({
-    \ 'data'    : info,
-    \ 'headers' : [ 'file' ],
-    \ }))
-  
-  let s:obj = {  'dir' : dir }
-  function! s:obj.init (...) dict
-    let r = {
-        \  'dir'  : self.dir,
-        \  'mode' : 'num',
-        \  }
-    call base#varset('ref_vis_act_open_file',r)
-
-    resize 999
-    vnoremap <silent><buffer> v :'<,'>call base#vis_act#open_file()<CR>
-    
-  endfunction
-  
-  let Fc = s:obj.init
-
-  let stl_add = [
-    \ '[ %3* v - view %0* ]'
-    \ ]
-  call base#buf#open_split({ 
-    \ 'lines'   : lines,
-    \ 'stl_add' : stl_add,
-    \ 'Fc'      : Fc,
-    \ })
-  return
+    return
 endfunction
 
