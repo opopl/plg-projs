@@ -1,11 +1,24 @@
+
 \Preamble{xhtml,frames,4,index=2,next,charset=utf-8,javascript}
 
 %\input{_cfg.collapsibleList.tex}
 %\input{_cfg.frames-two.tex}
 
+% Don't output xml version tag
 \Configure{VERSION}{}
+
 \Configure{DOCTYPE}{\HCode{<!DOCTYPE html>\Hnewline}}
 \Configure{HTML}{\HCode{<html>\Hnewline}}{\HCode{\Hnewline</html>}}
+
+% We don't want to translate font suggestions with ugly wrappers like
+% <span class="cmti-10"> for italic text
+\NoFonts
+
+% Set custom page title
+%\Configure{TITLE+}{__TITLE__}
+
+% Reset <head>, aka delete all default boilerplate
+\Configure{@HEAD}{}
 
 \Css{
   .verbatim,.verb {
