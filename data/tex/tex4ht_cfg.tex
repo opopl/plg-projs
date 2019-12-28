@@ -32,16 +32,16 @@
 
 
 \ifOption{frames}{%
-	\Configure{frames}%
-			 {\HorFrames[
-				   frameborder="yes" 
-	               border="1"  
-				   %framespacing="1" 
-	               rows="*"]{*,3*}  
-			   \Frame[ name="tex4ht-menu" frameborder="2" ]{tex4ht-toc}  
-			   \Frame[ name="tex4ht-main" frameborder="2" ]{tex4ht-body}
-			 }  
-	{\let\contentsname=\empty \tableofcontents}  
+    \Configure{frames}%
+             {\HorFrames[
+                   frameborder="yes" 
+                   border="1"  
+                   %framespacing="1" 
+                   rows="*"]{*,3*}  
+               \Frame[ name="tex4ht-menu" frameborder="2" ]{tex4ht-toc}  
+               \Frame[ name="tex4ht-main" frameborder="2" ]{tex4ht-body}
+             }  
+    {\let\contentsname=\empty \tableofcontents}  
 }{}
   
 \Configure{graphics*}  

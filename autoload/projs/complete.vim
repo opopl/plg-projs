@@ -84,6 +84,10 @@ function! projs#complete#prjact (...)
    return projs#complete#vars([ 'opts_PrjAct' ])
 endfunction
 
+function! projs#complete#prjgui (...)
+   return projs#complete#vars([ 'opts_PrjGui' ])
+endfunction
+
 function! projs#complete#prjbuf (...)
    return projs#complete#vars([ 'opts_PrjBuf' ])
 endfunction

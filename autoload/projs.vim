@@ -377,6 +377,50 @@ function! projs#buf_cmd (...)
   exe 'call '.sub.'()'
 endfunction
 
+function! projs#gui (...)
+  let act = get(a:000,0,'')
+
+  let acts = base#varget('projs_opts_PrjGui',[])
+  let acts = sort(acts)
+  if ! strlen(act)
+    let desc = base#varget('projs_desc_PrjGui',{})
+    let info = []
+    for act in acts
+      call add(info,[ act, get(desc,act,'') ])
+    endfor
+    let proj = projs#proj#name()
+    let lines = [ 
+      \ 'Current project:' , "\t" . proj,
+      \ 'Possible PrjGui actions: ' 
+      \ ]
+
+    call extend(lines, pymy#data#tabulate({
+      \ 'data'    : info,
+      \ 'headers' : [ 'act', 'description' ],
+      \ }))
+
+    let s:obj = { 'proj' : proj }
+    function! s:obj.init (...) dict
+      let proj = self.proj
+      let hl = 'WildMenu'
+      call matchadd(hl,'\s\+'.proj.'\s\+')
+      call matchadd(hl,proj)
+    endfunction
+    
+    let Fc = s:obj.init
+
+    call base#buf#open_split({ 
+      \ 'lines'    : lines ,
+      \ 'cmds_pre' : ['resize 99'] ,
+      \ 'Fc'       : Fc,
+      \ })
+    return
+  endif
+
+  exe printf('call projs#gui#%s()',act)
+
+endfunction
+
 function! projs#action (...)
   let act = get(a:000,0,'')
 

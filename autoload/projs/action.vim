@@ -568,16 +568,7 @@ function! projs#action#append_thisproj (...)
 endfunction
 
 function! projs#action#gui_select_project (...) 
-  let projs = projs#list()
-
-  let r = {
-      \ 'data'   : { 'projs' : projs },
-      \ 'dir'    : base#qw#catpath('plg projs scripts'),
-      \ 'script' : 'gui_select_project',
-      \ 'args'   : [ '-r' ],
-      \ }
-  call base#script#run(r) 
-
+  
 endfunction
 
 if 0
