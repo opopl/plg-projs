@@ -833,6 +833,8 @@ endfunction
 function! projs#action#_plg_tex_view ()
   let dir = base#qw#catpath('plg projs data tex')
 
+  let ln = ['dir:',"  ".dir]
+
   call base#find#open_split({
       \ 'opts_find' : { 
             \ "dirs"    : [dir],
@@ -844,8 +846,9 @@ function! projs#action#_plg_tex_view ()
             \ "fnamemodify" : '',
             \ },
       \ 'opts_split' : {
-          \ 'title'   : 'List of TeX template files : ',
-          \ 'headers' : ['file'],
+          \ 'title'              : 'List of TeX template files',
+          \ 'table_headers'      : ['file'],
+          \ 'lines_before_table' : ln,
           \ }
       \ })
 
