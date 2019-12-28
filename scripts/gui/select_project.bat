@@ -3,5 +3,5 @@
 
 set Bin=%~dp0
 
-perl %Bin%\gui_select_project.pl %*
+perl %Bin%\select_project.pl %*
 

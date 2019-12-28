@@ -9,7 +9,7 @@ function! projs#gui#select_project ()
   let r = {
       \ 'data'   : { 'projs' : projs },
       \ 'dir'    : base#qw#catpath('plg projs scripts gui'),
-      \ 'script' : 'gui_select_project',
+      \ 'script' : 'select_project',
       \ 'args'   : [ '-r' ],
       \ }
   call base#script#run(r) 
