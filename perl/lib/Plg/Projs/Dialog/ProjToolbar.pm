@@ -37,7 +37,7 @@ sub tk_proc {
     $mw->title($proj);
     $mw->geometry("400x100+0+0"); 
 
-    my $expr = ':ls';
+    my $expr = 'projs#action#async_build()';
     my @args = (    
         'gvim',
         '--servername ',$servername,
