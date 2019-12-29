@@ -7,9 +7,15 @@ function! projs#gui#proj_toolbar ()
 		\	'projs' : projs, 
 		\	'proj'  : proj ,
 		\	'vim'  : { 
-			\	'servername' : v:servername ,
+			\	'servername' : v:servername,
 			\	}
 		\	}
+
+if 0
+	TgAdd perl_inc_plg_projs
+	TgAdd perl_inc_plg_base
+	TgGo Plg::Projs::Dialog::ProjToolbar
+endif
 
   let r = {
       \ 'data'   : data,
