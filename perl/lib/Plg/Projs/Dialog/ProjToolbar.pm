@@ -53,9 +53,6 @@ sub tk_proc {
 		})
     )->pack;
 
-
-
-
     return $self;
 }
 
