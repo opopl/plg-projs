@@ -851,7 +851,7 @@ function! projs#action#_plg_tex_view ()
     return
 endfunction
 
-function! projs#action#tex4ht_mkdir ()
+function! projs#action#tex4ht_mk_dirs ()
 	let dirs = [ '', 'js' , 'css' ]
 
 	for dir in dirs
