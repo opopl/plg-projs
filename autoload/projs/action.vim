@@ -770,6 +770,7 @@ function! projs#action#async_build (...)
     \ 'cmd' : cmd, 
     \ 'Fn'  : asc#tab_restore(env) 
     \ })
+  return 1
 
 endfunction
 

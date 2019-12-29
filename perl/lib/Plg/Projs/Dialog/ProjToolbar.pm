@@ -37,25 +37,33 @@ sub tk_proc {
     $mw->title($proj);
     $mw->geometry("400x100+0+0"); 
 
-    my $expr = 'projs#action#async_build()';
-    my @args = (    
+    my $expr_pdf = 'projs#action#async_build()';
+    my $expr_html = 'projs#action#async_build_htlatex()';
+    my $args_pdf = [    
         'gvim',
         '--servername ',$servername,
-        '--remote-expr',$expr
-    );
-    my $cmd = join(" " => @args);
+        '--remote-expr',$expr_pdf
+    ];
+    my $args_html = [    
+        'gvim',
+        '--servername ',$servername,
+        '--remote-expr',$expr_html
+    ];
+
+    my $cmd_pdf = join(" " => @$args_pdf);
+    my $cmd_html = join(" " => @$args_html);
 
     $mw->Button(
-        -text    => 'async_build',
+        -text    => 'Build PDF',
         -command => sub {
-            system("$cmd");
+            system("$cmd_pdf");
+        } )->pack;
+    $mw->Button(
+        -text    => 'Build HTML',
+        -command => sub {
+            system("$cmd_html");
         } )->pack;
 
-    my $lb = $mw->Scrolled("Listbox", 
-        -scrollbars => "e", 
-        -selectmode => "single")->pack( ); 
-
-    #$lb->insert('end', @projs);
 
     return $self;
 }
