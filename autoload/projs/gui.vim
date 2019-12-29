@@ -1,4 +1,10 @@
 
+if 0
+	TgAdd perl_inc_plg_projs
+	TgAdd perl_inc_plg_base
+	TgGo Plg::Projs::Dialog::ProjToolbar
+endif
+
 function! projs#gui#proj_toolbar ()
 	let projs = projs#list()
 	let proj  = projs#proj#name()
@@ -10,12 +16,6 @@ function! projs#gui#proj_toolbar ()
 			\	'servername' : v:servername,
 			\	}
 		\	}
-
-if 0
-	TgAdd perl_inc_plg_projs
-	TgAdd perl_inc_plg_base
-	TgGo Plg::Projs::Dialog::ProjToolbar
-endif
 
   let r = {
       \ 'data'   : data,
