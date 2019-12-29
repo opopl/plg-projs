@@ -29,31 +29,49 @@ Will be called by C<tk_run()> method defined in L<Plg::Base::Dialog>
 =cut
 
 sub tk_proc { 
-	my ($self, $mw) = @_;
+    my ($self, $mw) = @_;
 
-	my $proj = $self->{data}->{proj} || '';
+    my $proj       = $self->{data}->{proj} || '';
+    my $servername = $self->{data}->{vim}->{servername} || '';
 
-	my $lb = $mw->Scrolled("Listbox", 
-		-scrollbars => "e", 
-		-selectmode => "single")->pack( ); 
+    $mw->title($proj);
+    $mw->geometry("400x100+0+0"); 
 
-	#$lb->insert('end', @projs);
+    my $expr = 'ls';
+    my @args = (    
+        'gvim',
+        '--servername ',$servername,
+        '--remote-expr',$expr
+    );
+    my $cmd = join(" " => @args);
 
-	return $self;
+    $mw->Button(
+        -text    => 'async_build',
+        -command => sub {
+            system("$cmd");
+        } )->pack;
+
+    my $lb = $mw->Scrolled("Listbox", 
+        -scrollbars => "e", 
+        -selectmode => "single")->pack( ); 
+
+    #$lb->insert('end', @projs);
+
+    return $self;
 }
 
 sub init {
-	my $self = shift;
+    my $self = shift;
 
-	$self->SUPER::init();
+    $self->SUPER::init();
 
-	my $h = { };
-		
-	my @k = keys %$h;
+    my $h = { };
+        
+    my @k = keys %$h;
 
-	for(@k){ $self->{$_} = $h->{$_} unless defined $self->{$_}; }
+    for(@k){ $self->{$_} = $h->{$_} unless defined $self->{$_}; }
 
-	return $self;
+    return $self;
 }
 
 1;

@@ -2,6 +2,7 @@
 if 0
 	TgAdd perl_inc_plg_projs
 	TgAdd perl_inc_plg_base
+	TgGo Plg::Base::Dialog
 	TgGo Plg::Projs::Dialog::ProjToolbar
 endif
 
