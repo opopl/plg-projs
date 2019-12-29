@@ -12,6 +12,15 @@ function! projs#proj#name (...)
   return proj
 endfunction
 
+function! projs#proj#dir_tex4ht ()
+  let proj = projs#proj#name()
+  let root = projs#root()
+
+	let dir = join([root,'data',proj,'tex4ht'], '/')
+	let dir = base#file#win2unix(dir)
+	return dir
+endfunction
+
 function! projs#proj#dir_pics (...)
   let proj = projs#proj#name()
   let root = projs#root()

@@ -851,3 +851,11 @@ function! projs#action#_plg_tex_view ()
     return
 endfunction
 
+function! projs#action#tex4ht_css_view ()
+
+	let dir = projs#proj#dir_tex4ht()
+endfunction
+
+function! projs#action#tex4ht_js_view ()
+	let proj = projs#proj#name()
+endfunction
