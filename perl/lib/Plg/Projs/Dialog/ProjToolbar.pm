@@ -44,8 +44,6 @@ sub tk_proc {
 		->tk_frame_view
 		;
 
-
-
    $mw->Button(
         -text    => 'tabcont',
         -command => $self->_vim_server_sub({
