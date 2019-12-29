@@ -56,5 +56,5 @@ url_view_txt
 maps_update
 html_out_view
 _plg_tex_view
-tex4ht_cd_css
-tex4ht_cd_js
+tex4ht_css_view
+tex4ht_js_view
