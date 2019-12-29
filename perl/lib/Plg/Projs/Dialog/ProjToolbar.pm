@@ -44,14 +44,35 @@ sub tk_proc {
         -command => $self->_vim_server_sub({
 			'expr'  => 'projs#vim_server#async_build()'
 		})
-    )->pack;
+    )->pack(-side => 'left');
 
     $mw->Button(
         -text    => 'Build HTML',
         -command => $self->_vim_server_sub({
 			'expr'  => 'projs#vim_server#async_build_htlatex()'
 		})
-    )->pack;
+    )->pack(-side => 'left');
+
+    $mw->Button(
+        -text    => 'View HTML',
+        -command => $self->_vim_server_sub({
+			'expr'  => 'projs#vim_server#html_out_view()'
+		})
+    )->pack(-side => 'left');
+
+    $mw->Button(
+        -text    => 'View PDF',
+        -command => $self->_vim_server_sub({
+			'expr'  => 'projs#vim_server#pdf_out_view()'
+		})
+    )->pack(-side => 'left');
+
+   $mw->Button(
+        -text    => 'tabcont',
+        -command => $self->_vim_server_sub({
+			'expr'  => "projs#vim_server#sec_open('tabcont')"
+		})
+    )->pack(-side => 'left');
 
     return $self;
 }

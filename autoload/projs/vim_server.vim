@@ -14,3 +14,13 @@ function! projs#vim_server#sec_open (...)
   call projs#sec#open(sec)
   return ''
 endfunction
+
+function! projs#vim_server#html_out_view (...)
+  call projs#action#html_out_view()
+  return ''
+endfunction
+
+function! projs#vim_server#pdf_out_view (...)
+  PrjPdfView
+  return ''
+endfunction
