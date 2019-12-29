@@ -37,35 +37,61 @@ sub tk_proc {
     $mw->title($proj);
     $mw->geometry("400x100+0+0"); 
 
-    my $expr_pdf = 'projs#action#async_build()';
-    my $expr_html = 'projs#action#async_build_htlatex()';
-    my $args_pdf = [    
-        'gvim',
-        '--servername ',$servername,
-        '--remote-expr',$expr_pdf
-    ];
-    my $args_html = [    
-        'gvim',
-        '--servername ',$servername,
-        '--remote-expr',$expr_html
-    ];
-
-    my $cmd_pdf = join(" " => @$args_pdf);
-    my $cmd_html = join(" " => @$args_html);
+    my $expr = 'projs#vim_server#async_build_htlatex()';
 
     $mw->Button(
         -text    => 'Build PDF',
-        -command => sub {
-            system("$cmd_pdf");
-        } )->pack;
+        -command => $self->_vim_server_sub({
+			'expr'  => 'projs#vim_server#async_build()'
+		})
+    )->pack;
+
     $mw->Button(
         -text    => 'Build HTML',
-        -command => sub {
-            system("$cmd_html");
-        } )->pack;
+        -command => $self->_vim_server_sub({
+			'expr'  => 'projs#vim_server#async_build_htlatex()'
+		})
+    )->pack;
+
+
 
 
     return $self;
+}
+
+sub _vim_servername {
+    my ($self) = @_;
+
+    my $servername = $self->{data}->{vim}->{servername} || '';
+	return $servername;
+}
+
+sub _vim_server_sub {
+    my ($self, $ref) = @_;
+
+	$ref ||= {};
+	my $expr = $ref->{expr} || '';
+
+	return sub { 
+		my $cmd = $self->_vim_server_cmd({ 'expr'  => $expr });
+		system("$cmd");
+	};
+}
+
+sub _vim_server_cmd {
+    my ($self,$ref) = @_;
+
+	$ref ||= {};
+	my $expr = $ref->{expr} || '';
+
+    my $args = [    
+        'gvim',
+        '--servername ',$self->_vim_servername,
+        '--remote-expr',$expr
+    ];
+
+    my $cmd = join(" " => @$args);
+	return $cmd;
 }
 
 sub init {
