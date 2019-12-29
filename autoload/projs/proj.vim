@@ -12,11 +12,16 @@ function! projs#proj#name (...)
   return proj
 endfunction
 
-function! projs#proj#dir_tex4ht ()
+function! projs#proj#dir_tex4ht (...)
+	let qw = get(a:000,0,'')
+
   let proj = projs#proj#name()
   let root = projs#root()
 
-	let dir = join([root,'data',proj,'tex4ht'], '/')
+	let args = [ root, 'data', proj, 'tex4ht' ]
+	call extend(args,split(qw,' '))
+
+	let dir = join(args, '/')
 	let dir = base#file#win2unix(dir)
 	return dir
 endfunction
