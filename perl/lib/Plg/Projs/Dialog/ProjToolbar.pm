@@ -42,9 +42,20 @@ sub tk_proc {
 	$self
 		->tk_frame_build
 		->tk_frame_view
+		->tk_frame_secs
 		;
 
-   $mw->Button(
+    return $self;
+}
+
+sub tk_frame_secs { 
+    my ($self) = @_;
+
+	my $mw = $self->{mw};
+
+	my $fr_secs = $mw->Frame()->pack(-side => 'top', -fill => 'x');
+
+    $fr_secs->Button(
         -text    => 'tabcont',
         -command => $self->_vim_server_sub({
 			'expr'  => "projs#vim_server#sec_open('tabcont')"
