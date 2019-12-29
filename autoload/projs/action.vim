@@ -851,11 +851,21 @@ function! projs#action#_plg_tex_view ()
     return
 endfunction
 
-function! projs#action#tex4ht_css_view ()
+function! projs#action#tex4ht_mkdir ()
+	let dirs = [ '', 'js' , 'css' ]
 
-	let dir = projs#proj#dir_tex4ht()
+	for dir in dirs
+		let dir = projs#proj#dir_tex4ht(dir)
+		call base#mkdir(dir)
+	endfor
+	
+endfunction
+
+function! projs#action#tex4ht_css_view ()
+	let dir = projs#proj#dir_tex4ht('css')
+
 endfunction
 
 function! projs#action#tex4ht_js_view ()
-	let proj = projs#proj#name()
+	let dir = projs#proj#dir_tex4ht('js')
 endfunction
