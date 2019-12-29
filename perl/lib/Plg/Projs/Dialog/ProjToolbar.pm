@@ -31,46 +31,73 @@ Will be called by C<tk_run()> method defined in L<Plg::Base::Dialog>
 sub tk_proc { 
     my ($self, $mw) = @_;
 
+	$self->{mw} = $mw;
+
     my $proj       = $self->{data}->{proj} || '';
     my $servername = $self->{data}->{vim}->{servername} || '';
 
     $mw->title($proj);
     $mw->geometry("400x100+0+0"); 
 
-    my $expr = 'projs#vim_server#async_build_htlatex()';
+	$self
+		->tk_frame_build
+		->tk_frame_view
+		;
 
-    $mw->Button(
-        -text    => 'Build PDF',
+
+
+   $mw->Button(
+        -text    => 'tabcont',
         -command => $self->_vim_server_sub({
-			'expr'  => 'projs#vim_server#async_build()'
+			'expr'  => "projs#vim_server#sec_open('tabcont')"
 		})
     )->pack(-side => 'left');
 
-    $mw->Button(
-        -text    => 'Build HTML',
-        -command => $self->_vim_server_sub({
-			'expr'  => 'projs#vim_server#async_build_htlatex()'
-		})
-    )->pack(-side => 'left');
+    return $self;
+}
 
-    $mw->Button(
+sub tk_frame_view { 
+    my ($self) = @_;
+
+	my $mw = $self->{mw};
+
+	my $fr_view = $mw->Frame()->pack(-side => 'top', -fill => 'x');
+
+    $fr_view->Button(
         -text    => 'View HTML',
         -command => $self->_vim_server_sub({
 			'expr'  => 'projs#vim_server#html_out_view()'
 		})
     )->pack(-side => 'left');
 
-    $mw->Button(
+    $fr_view->Button(
         -text    => 'View PDF',
         -command => $self->_vim_server_sub({
 			'expr'  => 'projs#vim_server#pdf_out_view()'
 		})
     )->pack(-side => 'left');
 
-   $mw->Button(
-        -text    => 'tabcont',
+    return $self;
+}
+
+sub tk_frame_build { 
+    my ($self) = @_;
+
+	my $mw = $self->{mw};
+
+	my $fr_build = $mw->Frame()->pack(-side => 'top', -fill => 'x');
+
+    $fr_build->Button(
+        -text    => 'Build PDF',
         -command => $self->_vim_server_sub({
-			'expr'  => "projs#vim_server#sec_open('tabcont')"
+			'expr'  => 'projs#vim_server#async_build()'
+		})
+    )->pack(-side => 'left');
+
+    $fr_build->Button(
+        -text    => 'Build HTML',
+        -command => $self->_vim_server_sub({
+			'expr'  => 'projs#vim_server#async_build_htlatex()'
 		})
     )->pack(-side => 'left');
 
