@@ -247,6 +247,8 @@ function! projs#db#files (...)
    call extend(w,{ 'proj' : proj })
   endif
 
+  let cond = ''
+
   let tags   = get(ref,'tags',[])
   let cond_a = []
   if len(tags)
@@ -262,7 +264,6 @@ function! projs#db#files (...)
       let c = substitute(c,'_tg_',tg,'g')
       call add(cond_a,c)
     endfor
-     
   endif
 
   let dbfile = projs#db#file()
