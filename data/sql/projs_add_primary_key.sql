@@ -1,5 +1,5 @@
 
-CREATE TABLE IF NOT EXISTS projs (
+CREATE TABLE IF NOT EXISTS projs_new (
     -- project id
     pid INTEGER PRIMARY KEY,
     -- file id
@@ -17,6 +17,8 @@ CREATE TABLE IF NOT EXISTS projs (
     url TEXT
 );
 
-ALTER TABLE projs ADD COLUMN url TEXT;
-ALTER TABLE projs ADD COLUMN fid INTEGER;
-ALTER TABLE projs ADD COLUMN pid INTEGER;
+INSERT INTO projs_new (
+   	pid,fid,proj,file,root,sec,tags,parent,author,pic,rootid,url)
+SELECT 
+	pid,fid,proj,file,root,sec,tags,parent,author,pic,rootid,url
+FROM projs
