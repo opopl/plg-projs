@@ -1481,24 +1481,52 @@ function! projs#grep (...)
         \ 'Enter grep choice:',
         \ ]
 
-    let choice = input(msg_choice_a,1)
+    let choice = input(join(msg_choice_a,"\n"),1)
+
+    call projs#rootcd()
 
     " grep over this project files
     if choice == 1
+      let exts_s = 'tex vim bib'
+      let exts_s = input('project file extensions: ',exts_s)
+
+      let exts  = base#qw(exts_s)
+      let files = projs#proj#files ({ "exts" : exts })
+
+      let args = [ 'grep', '-iRnH', shellescape(pat) ]
+      call extend(args, files)
+
+      let cmd = join(args, ' ')
+
+      let env = { 
+        \ 'files' : files,
+        \ 'pat'   : pat,
+        \ }
+      function env.get(temp_file) dict
+        let code = self.return_code
+      
+        if filereadable(a:temp_file)
+          exe 'cgetfile ' . a:temp_file
+          copen
+          "let out = readfile(a:temp_file)
+          "call base#buf#open_split({ 'lines' : out })
+        endif
+      endfunction
+      
+      call asc#run({ 
+        \  'cmd' : cmd, 
+        \  'Fn'  : asc#tab_restore(env) 
+        \  })
 
     " grep over projsdir
     elseif choice == 2
     endif
 
-    call projs#rootcd()
 
-    let exts  = base#qw('tex vim bib')
-    let files = projs#proj#files ({ "exts" : exts })
-
-    call base#grep({ 
-        \ "pat"   : pat   ,
-        \ "files" : files ,
-        \ })
+    "call base#grep({ 
+        "\ "pat"   : pat   ,
+        "\ "files" : files ,
+        "\ })
     
 endfunction
 
