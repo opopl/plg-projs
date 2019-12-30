@@ -1493,29 +1493,10 @@ function! projs#grep (...)
       let exts  = base#qw(exts_s)
       let files = projs#proj#files ({ "exts" : exts })
 
-      let args = [ 'grep', '-iRnH', shellescape(pat) ]
-      call extend(args, files)
-
-      let cmd = join(args, ' ')
-
-      let env = { 
+      call base#grep#async({ 
         \ 'files' : files,
-        \ 'pat'   : pat,
-        \ }
-      function env.get(temp_file) dict
-        let code = self.return_code
+        \ 'pat'   : pat })
       
-        if filereadable(a:temp_file)
-          exe 'cgetfile ' . a:temp_file
-          BaseAct copen
-        endif
-      endfunction
-      
-      call asc#run({ 
-        \  'cmd' : cmd, 
-        \  'Fn'  : asc#tab_restore(env) 
-        \  })
-
     " grep over projsdir
     elseif choice == 2
     endif
