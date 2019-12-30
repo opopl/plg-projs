@@ -1491,7 +1491,9 @@ function! projs#grep (...)
       let exts_s = input('project file extensions: ',exts_s)
 
       let exts  = base#qw(exts_s)
-      let files = projs#proj#files({ "exts" : exts })
+      let files = projs#proj#files({ 
+        \ "exts" : exts,
+        \  })
 
     " grep over projsdir
     elseif choice == 2

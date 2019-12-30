@@ -234,6 +234,27 @@ function! projs#db#secnames (...)
   return rows
 endfunction
 
+if 0
+  -------------------
+  projs#db#files
+  -------------------
+
+  usage:
+    let files = projs#db#files()
+    echo files
+
+    let files = projs#db#files({ 'proj' : 'acw' })
+    echo files
+
+    let files = projs#db#files({ 
+      \ 'tags' : ['doctrine'],
+      \ })
+    echo files
+
+  called by:
+  -------------------
+endif
+
 function! projs#db#files (...)
   let ref  = get(a:000,0,{})
 
