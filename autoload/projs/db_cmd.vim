@@ -77,6 +77,8 @@ function! projs#db_cmd#buf_url_view_in_browser()
   let url_db =  projs#db#url({ 
       \ 'file' : b:basename })
 
+  call base#html#view_in_browser({ 'url' : url_db })
+ 
 endf
 
 function! projs#db_cmd#buf_url_fetch (...)  
