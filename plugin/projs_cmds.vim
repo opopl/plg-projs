@@ -91,6 +91,9 @@ command! -nargs=* -complete=custom,projs#complete#prjbuild PrjBuild
 command! -nargs=* -complete=custom,projs#complete#prjact PrjAct
   \ call projs#action(<f-args>)
 
+command! -nargs=* -complete=custom,projs#complete#prjtab PrjTab
+  \ call projs#tables(<f-args>)
+
 command! -nargs=* -complete=custom,projs#complete#prjgui PrjGui
   \ call projs#gui(<f-args>)
 

@@ -34,8 +34,5 @@ CREATE TABLE IF NOT EXISTS tags_new (
 INSERT INTO tags_new (tag,fids,rank,pids)
     tag,fids,rank,pids
 SELECT 
+    tag,fids,rank,pids
 FROM tags;
-
-);
-
-

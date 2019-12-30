@@ -59,14 +59,11 @@ function! projs#complete#projrootsec (...)
   return projs#complete#vars([ 'latex_sectionnames' ])
 endfunction
 
-
 function! projs#complete#prjgit (...)
-
- let comps=projs#proj#gitcmds()
+ let comps = projs#proj#gitcmds()
 
  return join(comps,"\n")
 endfunction
-
 
 function! projs#complete#pics (...)
    return projs#complete#vars([ 'piclist' ])
@@ -82,6 +79,10 @@ endfunction
 
 function! projs#complete#prjact (...)
    return projs#complete#vars([ 'opts_PrjAct' ])
+endfunction
+
+function! projs#complete#prjtab (...)
+   return projs#complete#vars([ 'opts_PrjTab' ])
 endfunction
 
 function! projs#complete#prjgui (...)
