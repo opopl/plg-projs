@@ -37,7 +37,7 @@ sub tk_proc {
     my $servername = $self->{data}->{vim}->{servername} || '';
 
     $mw->title($proj);
-    $mw->geometry("400x100+0+0"); 
+    $mw->geometry("400x200+0+0"); 
 
     $self
         ->tk_frame_build
@@ -53,13 +53,28 @@ sub tk_frame_secs {
 
     my $mw = $self->{mw};
 
-    my $fr_secs = $mw->Frame()->pack(-side => 'top', -fill => 'x');
+    my $fr_secs = $mw->Frame();
+
+	$mw->Label( 
+		-text => 'Sections', 
+		-height => 2,
+  	)->pack;
+		
+	$fr_secs->pack(-side => 'top', -fill => 'x');
+
+	$mw->Frame( 
+		-height => 2, 
+		-bg => 'black',
+  	)->pack( 
+		-side => 'top', 
+		-fill => 'x' );
 
     my $secs = [qw(
         _main_
         body 
         preamble 
         tabcont
+        cfg
     )];
 
     foreach my $sec (@$secs) {
