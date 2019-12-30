@@ -171,6 +171,13 @@ sub tk_frame_build {
         })
     )->pack(-side => 'left');
 
+    $fr_build->Button(
+        -text    => 'Cleanup',
+        -command => $self->_vim_server_sub({
+            'expr'  => 'projs#vim_server#build_cleanup()'
+        })
+    )->pack(-side => 'left');
+
     return $self;
 }
 

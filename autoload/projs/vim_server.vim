@@ -11,7 +11,7 @@ endfunction
 
 function! projs#vim_server#sec_open (...)
   let sec = get(a:000,0,'')
-  call projs#sec#open(sec)
+  call projs#sec#open_load_buf(sec)
   return ''
 endfunction
 
