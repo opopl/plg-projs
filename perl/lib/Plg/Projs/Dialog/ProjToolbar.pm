@@ -50,14 +50,29 @@ sub tk_proc {
 
     $self
         ->tk_frame_build
+        ->tk_sep_hz
         ->tk_frame_view
+        ->tk_sep_hz
         ->tk_frame_secs
         ;
 
     return $self;
 }
 
+sub tk_sep_hz {
+    my ($self) = @_;
 
+    my $mw = $self->{mw};
+
+    $mw->Tk::Separator( 
+        -orient => 'horizontal')
+    ->pack( 
+        -side => 'top', 
+        -fill => 'x' 
+    );
+
+    return $self;
+}
 
 sub tk_frame_secs { 
     my ($self) = @_;
@@ -106,6 +121,11 @@ sub tk_frame_view {
 
     my $mw = $self->{mw};
 
+    $mw->Label( 
+        -text => 'View', 
+        -height => 2,
+    )->pack;
+
     my $fr_view = $mw->Frame()->pack(-side => 'top', -fill => 'x');
 
     $fr_view->Button(
@@ -129,6 +149,11 @@ sub tk_frame_build {
     my ($self) = @_;
 
     my $mw = $self->{mw};
+
+    $mw->Label( 
+        -text => 'Build', 
+        -height => 2,
+    )->pack;
 
     my $fr_build = $mw->Frame()->pack(-side => 'top', -fill => 'x');
 
