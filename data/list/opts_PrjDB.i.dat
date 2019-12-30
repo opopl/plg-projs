@@ -8,6 +8,7 @@ thisproj_data
 buf_tags_append
 buf_data
 buf_url_fetch
+buf_url_view_in_browser
 search
 _backup
 _restore
