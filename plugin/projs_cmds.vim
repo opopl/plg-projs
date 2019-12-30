@@ -1,5 +1,4 @@
 
-
 command! -nargs=* -complete=custom,projs#complete            PV
   \ call projs#viewproj(<f-args>) 
 
@@ -7,7 +6,7 @@ command! -nargs=* -complete=custom,projs#complete            PN
   \ call projs#new(<f-args>) 
 
 "command! -nargs=* -complete=custom,projs#complete#projsdirslist
-command! -nargs=* -complete=custom,projs#complete#projsdirs          ProjsInit
+command! -nargs=* -complete=custom,projs#complete#projsdirs ProjsInit
   \ call projs#init(<f-args>)
 
 command! -nargs=* -complete=custom,projs#complete#varlist    ProjsVarEcho 

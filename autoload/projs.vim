@@ -1459,15 +1459,43 @@ function! projs#git (...)
     
 endfunction
 
-function! projs#grep (...)
+if 0
+  call tree
+    called by PrjGrep (plugin/projs_cmds.vim)
+endif
+
+function! projs#grep_cmd (...)
     let ref = {}
+
+    let proj = projs#proj#name()
+
+    let pat = input('Pattern to search for:','')
+
+    let msg_choice_a = [
+        \ 'Grep over projects:' ,
+        \ 'Choices:',
+        \ '',
+        \ '  1 - grep over project files - ' . proj,
+        \ '  2 - grep over projsdir',
+        \ '',
+        \ 'Enter grep choice:',
+        \ ]
+
+    let choice = input(msg_choice_a,1)
+
+    " grep over this project files
+    if choice == 1
+
+    " grep over projsdir
+    elseif choice == 1
+    endif
 
     if a:0 
       let pat = a:1
       if a:0 > 1 | let ref = a:2 | endif
     else
-      let pat = input('Pattern to search for:','')
     endif
+
 
     call projs#rootcd()
 
