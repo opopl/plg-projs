@@ -22,6 +22,15 @@ use lib "$Bin/../perl/lib";
 
 use base qw( Plg::Base::Dialog );
 
+#https://www.perlmonks.org/?node_id=1185809
+sub Tk::Separator
+{
+  my ($self, %rest ) = @_;
+  my $direction = delete $rest{'-orient'} // 'horizontal';
+  $self->Frame( %{ {%rest, -bg => 'black',
+    $direction eq 'vertical' ? '-width' : '-height' => 2 } } );
+}
+
 =head2 tk_proc
 
 Will be called by C<tk_run()> method defined in L<Plg::Base::Dialog>
@@ -48,6 +57,8 @@ sub tk_proc {
     return $self;
 }
 
+
+
 sub tk_frame_secs { 
     my ($self) = @_;
 
@@ -55,19 +66,19 @@ sub tk_frame_secs {
 
     my $fr_secs = $mw->Frame();
 
-	$mw->Label( 
-		-text => 'Sections', 
-		-height => 2,
-  	)->pack;
-		
-	$fr_secs->pack(-side => 'top', -fill => 'x');
+    $mw->Label( 
+        -text => 'Sections', 
+        -height => 2,
+    )->pack;
+        
+    $fr_secs->pack(-side => 'top', -fill => 'x');
 
-	$mw->Frame( 
-		-height => 2, 
-		-bg => 'black',
-  	)->pack( 
-		-side => 'top', 
-		-fill => 'x' );
+    $mw->Frame( 
+        -height => 2, 
+        -bg => 'black',
+    )->pack( 
+        -side => 'top', 
+        -fill => 'x' );
 
     my $secs = [qw(
         _main_
