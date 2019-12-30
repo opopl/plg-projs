@@ -1464,7 +1464,7 @@ if 0
     called by PrjGrep (plugin/projs_cmds.vim)
 endif
 
-function! projs#grep_cmd (...)
+function! projs#grep (...)
     let ref = {}
 
     let proj = projs#proj#name()
