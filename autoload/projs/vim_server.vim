@@ -24,3 +24,8 @@ function! projs#vim_server#pdf_out_view (...)
   PrjPdfView
   return ''
 endfunction
+
+function! projs#vim_server#build_cleanup (...)
+  PrjBuild Cleanup
+  return ''
+endfunction
