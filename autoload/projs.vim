@@ -1507,9 +1507,7 @@ function! projs#grep (...)
       
         if filereadable(a:temp_file)
           exe 'cgetfile ' . a:temp_file
-          copen
-          "let out = readfile(a:temp_file)
-          "call base#buf#open_split({ 'lines' : out })
+          BaseAct copen
         endif
       endfunction
       
