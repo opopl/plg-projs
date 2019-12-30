@@ -242,13 +242,45 @@ function! projs#db#files (...)
   let proj = projs#proj#name()
   let proj = get(ref,'proj',proj)
 
-  let q = 'SELECT file FROM projs WHERE proj = ?'
-  let ref = {
-      \ 'query'  : q,
-      \ 'params' : [proj],
-      \ }
-  let rows = projs#db#query(ref)
-  return rows
+  let w = {}
+  if strlen(proj)
+   call extend(w,{ 'proj' : proj })
+  endif
+
+  let tags   = get(ref,'tags',[])
+  let cond_a = []
+  if len(tags)
+    for tg in tags
+      let c  = ''
+      let c .= '('
+      let c .=  'tags LIKE "_tg_"         '
+      let c .= '  OR '
+      let c .= '    tags LIKE "_tg_,%"     '
+      let c .= '  OR '
+      let c .= '    tags LIKE "%,_tg_,%"    '
+      let c .= ')'
+      let c = substitute(c,'_tg_',tg,'g')
+      call add(cond_a,c)
+    endfor
+     
+  endif
+
+  let dbfile = projs#db#file()
+  
+  let [ rows_h, cols ] = pymy#sqlite#select({
+    \  'dbfile' : dbfile,
+    \  't'      : 'projs',
+    \  'f'      : base#qw('file'),
+    \  'w'      : w,
+    \  'cond'   : cond,
+    \  })
+
+  let files = [] 
+  for rh in rows_h
+    call add(files, get(rh,'file','') )
+  endfor
+
+  return files
 endfunction
 
 function! projs#db#list (...)
