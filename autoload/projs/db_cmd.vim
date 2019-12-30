@@ -72,7 +72,7 @@ function! projs#db_cmd#buf_data (...)
   return
 endf
 
-function! projs#db_cmd#buf_url_view_in_browser
+function! projs#db_cmd#buf_url_view_in_browser()
   let url = ''
   let url_db =  projs#db#url({ 
       \ 'file' : b:basename })
