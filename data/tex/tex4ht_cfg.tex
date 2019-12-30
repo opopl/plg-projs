@@ -43,14 +43,23 @@
              }  
     {\let\contentsname=\empty \tableofcontents}  
 }{}
+
+\newcommand{\thealt}{No alt test was set.}
+\renewcommand{\nextalt}[1]{\renewcommand{\thealt}{#1}}
+
+\Configure{graphics*}{jpg}{
+\Picture[\HCode{\thealt}]{\csname Gin@base\endcsname.jpg}}
+
+\Configure{graphics*}{png}{
+\Picture[\HCode{\thealt}]{\csname Gin@base\endcsname.png}}
   
 \Configure{graphics*}  
-    {pdf}  
-    {\Needs{"convert '\csname Gin@base\endcsname.pdf'  
-                          '\csname Gin@base\endcsname.png'"}%  
-     \Picture[pict]{\csname Gin@base\endcsname.png}%  
-     \special{t4ht+@File: \csname Gin@base\endcsname.png}
-    }  
+{pdf}  
+{%
+	\Needs{"imconvert \csname Gin@base\endcsname.pdf \csname Gin@base\endcsname.png"}%  
+	\Picture[pict]{\csname Gin@base\endcsname.png}%  
+	\special{t4ht+@File: \csname Gin@base\endcsname.png}
+}%  
 
 \begin{document}
 

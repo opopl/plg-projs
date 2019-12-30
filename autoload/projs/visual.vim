@@ -106,15 +106,19 @@ function! projs#visual#split_ss2 (start, end, ... )
 
   let msg    = 'section prefix: '
   let sec    = exists('b:sec') ? b:sec : ''
-  let prefix = base#input_we(msg,sec,{ 'complete' : 'custom,projs#complete#secnames' })
+  let prefix = input(msg,sec,'custom,projs#complete#secnames' )
 
-	let msg_a = [
-		\	"e.g. subsubsection ",	
-		\	"",	
-		\	"split_macro:",	
-		\	]
-	let msg = join(msg_a,"\n")
-	let split_macro = base#input_we(msg,'subsubsection',{ })
+  let msg_a = [
+    \ "e.g. subsubsection ",  
+    \ "", 
+    \ "   spaces will be replaced by '_' ", 
+    \ "   other non-word symbols will be replaced by '_' ", 
+    \ "   letters converted to lowercase",  
+    \ "", 
+    \ "split_macro:", 
+    \ ]
+  let msg = join(msg_a,"\n")
+  let split_macro = base#input_we(msg,'subsubsection',{ })
 
 python3 << eof
 import vim,re
@@ -144,6 +148,8 @@ for k in range(start, end + 1, 1):
     sec_lines = [ b[i] ]
     sec = m.group(1)
     sec = re.sub(r'\s','_',sec)
+    sec = re.sub(r'[\.]','_',sec)
+    sec = sec.lower()
     sec = prefix + sec
     secs.append(sec)
   else:
@@ -181,5 +187,7 @@ eof
 
   call base#buf#cut({ 'start' : start, 'end' : end })
   call append(line('.'),tex_lines)
+
+  call base#tg#update('projs_this')
 
 endfunction
