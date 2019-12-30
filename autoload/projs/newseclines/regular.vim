@@ -104,8 +104,8 @@ function! projs#newseclines#regular#cfg (...)
   let lines = []
   "call extend(lines, tex#lines('tex4ht_cfg') )
 
-	let file = base#qw#catpath('plg projs data tex tex4ht_cfg.tex')
-	call extend(lines,readfile(file))
+  let file = base#qw#catpath('plg projs data tex tex4ht_cfg.tex')
+  call extend(lines,readfile(file))
   return lines
 endfunction
 
@@ -222,7 +222,10 @@ function! projs#newseclines#regular#_build_htlatex_(...)
   call add(lines,'md %htmloutdir%')
   call add(lines,'md %htmloutdir_pics%')
   call add(lines,' ')
-  call add(lines,'set outdir='.outdir_win)
+
+  call add(lines,'set outdir=%Bin%\builds\%proj%\b_htlatex')
+  "call add(lines,'set outdir='.outdir_win)
+  "
   call add(lines,'set outdir_pics=%outdir%\pics\%proj%')
   call add(lines,' ')
   
