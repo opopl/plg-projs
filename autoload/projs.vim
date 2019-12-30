@@ -1487,15 +1487,8 @@ function! projs#grep (...)
     if choice == 1
 
     " grep over projsdir
-    elseif choice == 1
+    elseif choice == 2
     endif
-
-    if a:0 
-      let pat = a:1
-      if a:0 > 1 | let ref = a:2 | endif
-    else
-    endif
-
 
     call projs#rootcd()
 
