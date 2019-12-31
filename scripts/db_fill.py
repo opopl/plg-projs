@@ -9,7 +9,7 @@ parser.add_argument("-r", "--root",help="root",default="")
 parser.add_argument("--rootid", help="rootid",default="")
 parser.add_argument("--db_file", help="db_file",default="")
 
-args=parser.parse_args()
+args = parser.parse_args()
 
 dirname=os.path.dirname(os.path.realpath(__file__))
 pylib=os.path.join(dirname,'..','python','lib')

@@ -190,6 +190,8 @@ endfunction
 """ fill the 'tags' table
 function! projs#db_cmd#fill_tags ()
   let dbfile = projs#db#file()
+
+	let script = base#qw#catpath('plg projs sc',)
 python3 << eof
 import vim
 import sqlite3
