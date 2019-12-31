@@ -105,6 +105,7 @@ endfunction
 
 if 0
 	echo projs#complete#db_tags('doctrine')
+	echo projs#complete#db_tags('doctrine,orm')
 endif
 
 function! projs#complete#db_tags (...)
@@ -120,7 +121,7 @@ function! projs#complete#db_tags (...)
 		call extend(comps,tags)
 	else
 
-  	let parts = split(arg, ',')
+  	let parts = split(arg, ',' , 1)
 		call map(parts,'base#trim(v:val)')
 
 		while len(parts)
