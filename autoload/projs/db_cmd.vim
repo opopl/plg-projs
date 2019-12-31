@@ -208,7 +208,7 @@ function! projs#db_cmd#search ()
     let cond = ' WHERE ' . join(cond_a, ' AND ')
   endif
 
-  let dbfile = base#dbfile()
+  let dbfile = projs#db#file()
   
   let [ rows_h, cols ] = pymy#sqlite#select({
     \  'dbfile' : dbfile,
