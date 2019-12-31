@@ -1498,6 +1498,7 @@ function! projs#grep (...)
     " grep over projsdir
     elseif choice == 2
 
+			let tags = inpu
       let files = [ '*.tex' ]
     endif
 

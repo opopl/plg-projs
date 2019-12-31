@@ -93,6 +93,11 @@ function! projs#complete#prjbuf (...)
    return projs#complete#vars([ 'opts_PrjBuf' ])
 endfunction
 
+function! projs#complete#db_tags (...)
+	let comps = projs#db#tags_get()
+	return join(comps,"\n")
+endfunction
+
 function! projs#complete#prjdb (...)
    return projs#complete#vars([ 'opts_PrjDB' ])
 endfunction
