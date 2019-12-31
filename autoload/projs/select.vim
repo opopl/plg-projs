@@ -58,6 +58,17 @@ function! projs#select#sec ()
 
 endfunction
 
+function! projs#select#tags ()
+  let msg_a = [
+    \  "DB tags selection (separated by commas) ",  
+    \  " ",  
+    \  "tags: ",  
+    \  ]
+  let msg = join(msg_a,"\n")
+	let tags = input(msg,'','custom,projs#complete#db_tags')
+	return tags
+endfunction
+
 function! projs#select#sec_input ()
   let msg_a = [
     \  "section: ",  
