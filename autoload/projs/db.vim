@@ -37,6 +37,48 @@ eof
 
 endfunction
 
+function! projs#db#fill_tags (...)
+  let dbfile = projs#db#file()
+
+  let script = base#qw#catpath('plg projs scripts db_fill_tags.py3')
+  let py3 = 'C:\Python_372_64bit\python.EXE'
+
+  let dbfile_e = shellescape(dbfile)
+  let args = [ shellescape(py3), shellescape(script) ]
+  call extend(args,[ '--dbfile' , dbfile_e ])
+  let cmd = join(args, ' ')
+  
+  let env = {}
+  function env.get(temp_file) dict
+    let code = self.return_code
+  
+    let ok  = 1
+    let out = []
+    if filereadable(a:temp_file)
+      let out = readfile(a:temp_file)
+      for line in out
+        if line !~ '^ok'
+          let ok = 0
+        endif
+      endfor
+    endif
+
+    if ok
+      call base#rdw('ok: fill_tags')
+    else
+      call base#rdwe('fail: fill_tags')
+    endif
+  endfunction
+  
+  call asc#run({ 
+    \ 'cmd' : cmd, 
+    \ 'Fn'  : asc#tab_restore(env) 
+    \ })
+  return 1
+
+
+endfunction
+
 "Call tree
 "  Calls:
 "    projs#db_cmd#fill_from_files
