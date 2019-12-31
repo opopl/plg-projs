@@ -360,6 +360,11 @@ function! projs#db#file_backup ()
   return db_file_b
 endfunction
 
+function! projs#db#file_backup_flash ()
+  let db_file_b = join([ 'f:', 'db', 'projs.sqlite' ], '/')
+  return db_file_b
+endfunction
+
 function! projs#db#data_get (...)
   let ref = get(a:000,0,{})
 
