@@ -191,7 +191,31 @@ endfunction
 function! projs#db_cmd#fill_tags ()
   let dbfile = projs#db#file()
 
-	let script = base#qw#catpath('plg projs scripts db_fill_tags.py')
+	let script = base#qw#catpath('plg projs scripts db_fill_tags.py3')
+	let py3 = 'C:\Python_372_64bit\python.EXE'
+
+	let dbfile_e = shellescape(dbfile)
+	let args = [shellescape(py3), shellescape(script)]
+	call extend(args,['--db_file',dbfile_e ])
+	let cmd = join(args, ' ')
+	
+	let env = {}
+	function env.get(temp_file) dict
+		let code = self.return_code
+	
+		let out = []
+		if filereadable(a:temp_file)
+			let out = readfile(a:temp_file)
+			call base#buf#open_split({ 'lines' : out })
+		endif
+	endfunction
+	
+	call asc#run({ 
+		\	'cmd' : cmd, 
+		\	'Fn'  : asc#tab_restore(env) 
+		\	})
+	return 
+
 python3 << eof
 import vim
 import sqlite3
@@ -395,18 +419,10 @@ function! projs#db_cmd#_backup (...)
   let do_backup = base#input_we(msg,0,{ })
 
   if ! do_backup
-    redraw!
-    echohl WarningMsg
-    echo 'Projs Backup Aborted.'
-    echohl None
-    return
+		call base#rdwe('Projs Backup Aborted.')
   else
     call base#file#copy(dbfile, dbfile_b)
-    redraw!
-    echohl MoreMsg
-    echo 'Projs Backup OK'
-    echohl None
-    return
+		call base#rdw('Projs Backup OK.')
   endif
 endfunction
 
