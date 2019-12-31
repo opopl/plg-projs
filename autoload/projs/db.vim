@@ -295,15 +295,15 @@ function! projs#db#files (...)
   if len(tags_a)
     for tg in tags_a
       let c  = ''
-      let c .= '('
-      let c .=  'tags LIKE "_tg_"         '
-      let c .= '  OR '
-      let c .= '    tags LIKE "_tg_,%"     '
-      let c .= '  OR '
-      let c .= '    tags LIKE "%,_tg_,%"    '
-      let c .= '  OR '
-      let c .= '    tags LIKE "%,_tg_,"     '
-      let c .= ')'
+      let c .= ' (                    '
+      let c .= ' tags LIKE "_tg_"     '
+      let c .= ' OR                   '
+      let c .= ' tags LIKE "_tg_,%"   '
+      let c .= ' OR                   '
+      let c .= ' tags LIKE "%,_tg_,%" '
+      let c .= ' OR                   '
+      let c .= ' tags LIKE "%,_tg_,"  '
+      let c .= ' )                    '
       let c = substitute(c,'_tg_',tg,'g')
       call add(cond_a,c)
     endfor
