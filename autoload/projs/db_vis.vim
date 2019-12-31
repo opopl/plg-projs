@@ -55,7 +55,7 @@ function! projs#db_vis#update ()
   call pymy#sqlite#update_hash(ref)
 
   if col == 'tags'
-		call projs#db_cmd#fill_tags()
+    call projs#db_cmd#fill_tags()
   endif
 
   

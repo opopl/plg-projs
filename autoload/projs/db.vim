@@ -306,23 +306,10 @@ if 0
   -------------------
 endif
 
-function! projs#db#files (...)
+function! projs#db#cond_tags (...)
   let ref  = get(a:000,0,{})
 
-  call projs#db#init_py ()
-
-  let proj = projs#proj#name()
-  let proj = get(ref,'proj',proj)
-
-  let w = {}
-  if strlen(proj)
-   call extend(w,{ 'proj' : proj })
-  endif
-
-  let cond = ''
-
-  let tags   = get(ref,'tags',[])
-  let tags_a = []
+  let tags = get(ref,'tags',[])
 
   if type(tags) == type([])
     let tags_a = tags
@@ -351,7 +338,30 @@ function! projs#db#files (...)
     endfor
   endif
 
+  return cond_a
+endif
+
+function! projs#db#files (...)
+  let ref  = get(a:000,0,{})
+
+  call projs#db#init_py ()
+
+  let proj = projs#proj#name()
+  let proj = get(ref,'proj',proj)
+
+  let w = {}
+  if strlen(proj)
+   call extend(w,{ 'proj' : proj })
+  endif
+
   let cond = ''
+
+  let tags   = get(ref,'tags',[])
+  let tags_a = []
+
+  let cond = ''
+  let cond_a = projs#db#cond_tags({ 'tags' : tags })
+
   if len(cond_a)
     let cond = ' WHERE ' . join(cond_a, ' AND ')
   endif

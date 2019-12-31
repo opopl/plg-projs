@@ -189,6 +189,7 @@ endfunction
 
 """ fill the 'tags' table
 function! projs#db_cmd#fill_tags ()
+  call projs#db#fill_tags()
 endfunction
 
 function! projs#db_cmd#search ()
@@ -198,6 +199,10 @@ function! projs#db_cmd#search ()
 
   call base#varset('this',tags_a)
   let tag = input('tags: ','','custom,base#complete#this')
+
+
+
+
 
   let q = 'SELECT fids FROM tags WHERE tag = ?'
   let p = [ tag ]
@@ -262,46 +267,46 @@ function! projs#db_cmd#_backup (...)
   let dbfile = projs#db#file()
 
   " backup location
-	let dbfiles_b = []
+  let dbfiles_b = []
 
-	call extend(dbfiles_b,[
- 			\	projs#db#file_backup(),
- 			\	projs#db#file_backup_flash(),
-			\	])
+  call extend(dbfiles_b,[
+      \ projs#db#file_backup(),
+      \ projs#db#file_backup_flash(),
+      \ ])
 
-	for dbfile_b in dbfiles_b
-	  let data   = pymy#sqlite#db_data({ 'dbfile' : dbfile })
-	  let data_b = pymy#sqlite#db_data({ 'dbfile' : dbfile_b })
-	
-	  let msg_a = [
-	    \ "------------------------", 
-	    \ "PROJS DATABASE BACKUP",  
-	    \ "------------------------", 
-	    \ "  CURRENT database location: ",  
-	    \ "    " . dbfile,  
-	    \ "    Size:  " . data.size(),  
-	    \ "    mtime: " . data.mtime(),  
-	    \ "    Tables: ",  
-	    \ "       " . data.tables_str(),
-	    \ "  BACKUP location: ",  
-	    \ "    " . dbfile_b,  
-	    \ "    Size:  " . data_b.size(),  
-	    \ "    mtime: " . data_b.mtime(),  
-	    \ "    Tables: ",  
-	    \ "       " . data_b.tables_str(),
-	    \ "Are you sure to do backup? (1/0): ", 
-	    \ ]
-	  let msg = join(msg_a,"\n")
-	  let do_backup = base#input_we(msg,0,{ })
-	
-	  if ! do_backup
-			call base#rdwe('Projs Backup Aborted.')
-	  else
-	    call base#file#copy(dbfile, dbfile_b)
-			call base#rdw('Projs Backup OK.')
-	  endif
+  for dbfile_b in dbfiles_b
+    let data   = pymy#sqlite#db_data({ 'dbfile' : dbfile })
+    let data_b = pymy#sqlite#db_data({ 'dbfile' : dbfile_b })
+  
+    let msg_a = [
+      \ "------------------------", 
+      \ "PROJS DATABASE BACKUP",  
+      \ "------------------------", 
+      \ "  CURRENT database location: ",  
+      \ "    " . dbfile,  
+      \ "    Size:  " . data.size(),  
+      \ "    mtime: " . data.mtime(),  
+      \ "    Tables: ",  
+      \ "       " . data.tables_str(),
+      \ "  BACKUP location: ",  
+      \ "    " . dbfile_b,  
+      \ "    Size:  " . data_b.size(),  
+      \ "    mtime: " . data_b.mtime(),  
+      \ "    Tables: ",  
+      \ "       " . data_b.tables_str(),
+      \ "Are you sure to do backup? (1/0): ", 
+      \ ]
+    let msg = join(msg_a,"\n")
+    let do_backup = base#input_we(msg,0,{ })
+  
+    if ! do_backup
+      call base#rdwe('Projs Backup Aborted.')
+    else
+      call base#file#copy(dbfile, dbfile_b)
+      call base#rdw('Projs Backup OK.')
+    endif
 
-	endfor
+  endfor
 endfunction
 
 function! projs#db_cmd#_restore (...)
