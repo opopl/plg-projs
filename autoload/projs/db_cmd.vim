@@ -195,8 +195,8 @@ function! projs#db_cmd#fill_tags ()
 	let py3 = 'C:\Python_372_64bit\python.EXE'
 
 	let dbfile_e = shellescape(dbfile)
-	let args = [shellescape(py3), shellescape(script)]
-	call extend(args,['--dbfile',dbfile_e ])
+	let args = [ shellescape(py3), shellescape(script) ]
+	call extend(args,[ '--dbfile' , dbfile_e ])
 	let cmd = join(args, ' ')
 	
 	let env = {}

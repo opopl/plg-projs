@@ -37,8 +37,8 @@ if len(sys.argv) == 1:
 
 dbfile = args.dbfile
 
-if not db_file:
-  print('db_file not provided!')
+if not dbfile:
+  print('dbfile not provided!')
   sys.exit()
 
 conn             = sqlite3.connect(dbfile)
@@ -46,7 +46,6 @@ conn.row_factory = sqlite3.Row
 c                = conn.cursor()
 
 try:
-  print('indexing files...')
   q = 'SELECT file,tags FROM projs'
   c.execute(q)
   rows = c.fetchall()
@@ -96,9 +95,9 @@ try:
       print('error for query: ' + q)
     fid+=1
     i+=1
+  print('ok: indexed files')
 
   #index projects
-  print('indexing projects...')
   q = 'SELECT DISTINCT proj FROM projs'
   c.row_factory = sqlite3.Row
   c.execute(q)
@@ -110,13 +109,12 @@ try:
     q = '''UPDATE projs SET pid = ? WHERE proj = ?'''
     c.execute(q,( pid, proj ) )
     pid+=1
+  print('ok: indexed projects')
 except TypeError as e:
-  print(e)
+  print('error:' + e)
 except:
-  print("Unexpected error:", sys.exc_info()[0])
+  print("error: ", sys.exc_info()[0])
   raise
 finally:
   conn.commit()
   conn.close()
-eof
-
