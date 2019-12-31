@@ -29,10 +29,18 @@ parser = argparse.ArgumentParser(usage=usage)
 
 parser.add_argument("--db_file", help="db_file",default="")
 
+
+
 args = parser.parse_args()
 
 if len(sys.argv) == 1:
   parser.print_help()
+  sys.exit()
+
+db_file=args.db_file
+
+if not db_file:
+  print('db_file not provided!')
   sys.exit()
 
 dbfile           = vim.eval('dbfile')
