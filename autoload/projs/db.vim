@@ -251,6 +251,15 @@ if 0
       \ })
     echo files
 
+    let files = projs#db#files({ 
+      \ 'tags' : base#qw('doctrine orm'),
+      \ })
+    echo files
+
+    let files = projs#db#files({ 
+      \ 'tags' : 'doctrine,orm',
+      \ })
+    echo files
   called by:
   -------------------
 endif
@@ -271,9 +280,20 @@ function! projs#db#files (...)
   let cond = ''
 
   let tags   = get(ref,'tags',[])
+  let tags_a = []
+
+  if type(tags) == type([])
+    let tags_a = tags
+
+  elseif type(tags) == type('')
+    let tags_a = split(tags,',')
+
+  endif
+
   let cond_a = []
-  if len(tags)
-    for tg in tags
+
+  if len(tags_a)
+    for tg in tags_a
       let c  = ''
       let c .= '('
       let c .=  'tags LIKE "_tg_"         '
@@ -287,8 +307,10 @@ function! projs#db#files (...)
     endfor
   endif
 
+  let cond = ' WHERE ' . join(cond_a, ' AND ')
+
   let dbfile = projs#db#file()
-  
+
   let [ rows_h, cols ] = pymy#sqlite#select({
     \  'dbfile' : dbfile,
     \  't'      : 'projs',
