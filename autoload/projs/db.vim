@@ -301,6 +301,8 @@ function! projs#db#files (...)
       let c .= '    tags LIKE "_tg_,%"     '
       let c .= '  OR '
       let c .= '    tags LIKE "%,_tg_,%"    '
+      let c .= '  OR '
+      let c .= '    tags LIKE "%,_tg_,"     '
       let c .= ')'
       let c = substitute(c,'_tg_',tg,'g')
       call add(cond_a,c)
