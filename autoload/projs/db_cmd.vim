@@ -217,8 +217,9 @@ function! projs#db_cmd#search ()
     \  'w'      : {},
     \  'cond'   : cond,
     \  })
+
   let fids = []
-  for rh n rows_h
+  for rh in rows_h
     call add(fids,get(rh,'fid',''))
   endfor
 
