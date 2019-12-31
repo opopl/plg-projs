@@ -1465,11 +1465,17 @@ if 0
 endif
 
 function! projs#grep (...)
-    let ref = {}
+		let ref=get(a:000,0,{})
 
     let proj = projs#proj#name()
 
-    let pat = input('Pattern to search for:','','custom,projs#complete#hist_grep')
+		let pat = get(ref,'pat','')
+
+		if !strlen(pat)
+    	let pat = input('Pattern to search for:',
+				\	'',
+				\	'custom,projs#complete#hist_grep')
+		endif
 
   	let hist = base#varref('projs_hist_grep',[])
 		call add(hist,pat)

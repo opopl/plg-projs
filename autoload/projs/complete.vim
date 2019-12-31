@@ -46,7 +46,10 @@ fun! projs#complete#htlatex (...)
 endfunction
 
 function! projs#complete#hist_grep (...)
-  let hist = base#varget('projs_hist_grep',[])
+  let hist = base#varref('projs_hist_grep',[])
+  let hist = base#uniq(hist)
+  let hist = sort(hist)
+
   let comps = []
   call extend(comps,hist)
   return join(comps,"\n")
