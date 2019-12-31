@@ -1,7 +1,9 @@
 
-import vim
 import sqlite3
 import numpy as np
+
+import sys,os
+import getopt,argparse
 
 def f_nz(x): 
   ok = 0
@@ -20,7 +22,21 @@ def f_str(x):
     return ''
   return str(x)
 
+usage='''
+This script will index tags within the "projs" sqlite database
+'''
+parser = argparse.ArgumentParser(usage=usage)
+
+parser.add_argument("--db_file", help="db_file",default="")
+
+args = parser.parse_args()
+
+if len(sys.argv) == 1:
+  parser.print_help()
+  sys.exit()
+
 dbfile           = vim.eval('dbfile')
+
 conn             = sqlite3.connect(dbfile)
 conn.row_factory = sqlite3.Row
 c                = conn.cursor()
