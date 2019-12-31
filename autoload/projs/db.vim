@@ -307,7 +307,10 @@ function! projs#db#files (...)
     endfor
   endif
 
-  let cond = ' WHERE ' . join(cond_a, ' AND ')
+  let cond = ''
+  if len(cond_a)
+    let cond = ' WHERE ' . join(cond_a, ' AND ')
+  endif
 
   let dbfile = projs#db#file()
 

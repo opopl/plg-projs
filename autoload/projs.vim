@@ -1498,8 +1498,13 @@ function! projs#grep (...)
     " grep over projsdir
     elseif choice == 2
 
-			let tags = inpu
-      let files = [ '*.tex' ]
+			let tags = projs#select#tags()
+
+			if strlen(tags)
+				let files = projs#db#files({ 'tags' : tags })
+			else
+      	let files = [ '*.tex' ]
+			endif
     endif
 
     call base#grep#async({ 
