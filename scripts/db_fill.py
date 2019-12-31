@@ -3,13 +3,22 @@ import sys,os
 import getopt,argparse
 
 import argparse
-parser = argparse.ArgumentParser()
+
+usage='''
+This script will fill the "projs" sqlite database
+'''
+parser = argparse.ArgumentParser(usage=usage)
+
 parser.add_argument("-p", "--proj", help="select_project",default="")
 parser.add_argument("-r", "--root",help="root",default="")
 parser.add_argument("--rootid", help="rootid",default="")
 parser.add_argument("--db_file", help="db_file",default="")
 
 args = parser.parse_args()
+
+if len(sys.argv) == 1:
+  parser.print_help()
+  sys.exit()
 
 dirname=os.path.dirname(os.path.realpath(__file__))
 pylib=os.path.join(dirname,'..','python','lib')
