@@ -27,7 +27,7 @@ This script will index tags within the "projs" sqlite database
 '''
 parser = argparse.ArgumentParser(usage=usage)
 
-parser.add_argument("--db_file", help="db_file",default="")
+parser.add_argument("--dbfile", help="dbfile",default="")
 
 args = parser.parse_args()
 
@@ -35,13 +35,11 @@ if len(sys.argv) == 1:
   parser.print_help()
   sys.exit()
 
-db_file = args.db_file
+dbfile = args.dbfile
 
 if not db_file:
   print('db_file not provided!')
   sys.exit()
-
-dbfile           = vim.eval('dbfile')
 
 conn             = sqlite3.connect(dbfile)
 conn.row_factory = sqlite3.Row
