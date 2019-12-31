@@ -191,7 +191,7 @@ endfunction
 function! projs#db_cmd#fill_tags ()
   let dbfile = projs#db#file()
 
-	let script = base#qw#catpath('plg projs sc',)
+	let script = base#qw#catpath('plg projs scripts db_fill_tags.py')
 python3 << eof
 import vim
 import sqlite3
