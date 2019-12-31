@@ -45,6 +45,13 @@ fun! projs#complete#htlatex (...)
   return projs#complete#vars([ 'opts_PrjHTLATEX' ])
 endfunction
 
+function! projs#complete#hist_grep (...)
+  let hist = base#varget('projs_hist_grep',[])
+  let comps = []
+  call extend(comps,hist)
+  return join(comps,"\n")
+endfunction
+
 function! projs#complete#buildmodes (...)
   return projs#complete#vars([ 'buildmodes' ])
 endfunction
@@ -94,8 +101,8 @@ function! projs#complete#prjbuf (...)
 endfunction
 
 function! projs#complete#db_tags (...)
-	let comps = projs#db#tags_get()
-	return join(comps,"\n")
+  let comps = projs#db#tags_get()
+  return join(comps,"\n")
 endfunction
 
 function! projs#complete#prjdb (...)
@@ -111,13 +118,13 @@ function! projs#complete#prjinsert (...)
 endfunction
 
 function! projs#complete#templates_vim (...)
-	 let comps = keys(projs#varget('templates_vim',{}))
- 	 return join(comps,"\n")
+   let comps = keys(projs#varget('templates_vim',{}))
+   return join(comps,"\n")
 endfunction
 
 function! projs#complete#templates_tex (...)
-	 let comps = keys(projs#varget('templates_tex',{}))
- 	 return join(comps,"\n")
+   let comps = keys(projs#varget('templates_tex',{}))
+   return join(comps,"\n")
 endfunction
 
 function! projs#complete#update (...)
@@ -125,10 +132,10 @@ function! projs#complete#update (...)
 endfunction
 
 function! projs#complete#varlist (...)
-   	let varlist = projs#varlist()
-   	let comps   = varlist
+    let varlist = projs#varlist()
+    let comps   = varlist
 
- 	return join(comps,"\n")
+  return join(comps,"\n")
 endfunction
 
 function! projs#complete#grep (...)
@@ -140,10 +147,10 @@ endfunction
 
 function! projs#complete#secnames (...)
   "call projs#proj#secnames()
-	let comps = []
+  let comps = []
 
-	call extend(comps,projs#db#secnames())
-	call extend(comps,base#varget('projs_secnamesbase',[]))
+  call extend(comps,projs#db#secnames())
+  call extend(comps,base#varget('projs_secnamesbase',[]))
 
   return join(comps,"\n") 
 endfunction
@@ -153,8 +160,8 @@ function! projs#complete#secnamesbase (...)
 endfunction
 
 function! projs#complete#secnamesall (...)
-	let secnamesall=[]
-	call projs#proj#secnamesall()
+  let secnamesall=[]
+  call projs#proj#secnamesall()
   return projs#complete#vars([ 'secnamesall' ])
 endfunction
 

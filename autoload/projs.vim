@@ -1469,7 +1469,10 @@ function! projs#grep (...)
 
     let proj = projs#proj#name()
 
-    let pat = input('Pattern to search for:','')
+    let pat = input('Pattern to search for:','','custom,projs#complete#hist_grep')
+
+  	let hist = base#varref('projs_hist_grep',[])
+		call add(hist,pat)
 
     let msg_choice_a = [
         \ 'Grep over projects:' ,
@@ -1506,6 +1509,11 @@ function! projs#grep (...)
       	let files = [ '*.tex' ]
 			endif
     endif
+
+		if !len(files)
+			call base#rdwe('projs#grep: no files!')
+			return 
+		endif
 
     call base#grep#async({ 
       \ 'files' : files,
