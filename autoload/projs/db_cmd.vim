@@ -200,7 +200,11 @@ function! projs#db_cmd#search ()
   let dbfile = projs#db#file()
 
   call base#varset('this',tags_a)
-  let tags = input('tags: ','','custom,base#complete#this')
+  let tags = input('tags: ','','custom,projs#complete#db_tags')
+
+  if !len(tags)
+    return 
+  endif
 
   let cond_a = projs#db#cond_tags({ 'tags' : tags })
 

@@ -103,8 +103,38 @@ function! projs#complete#prjbuf (...)
    return projs#complete#vars([ 'opts_PrjBuf' ])
 endfunction
 
+if 0
+	echo projs#complete#db_tags('doctrine')
+endif
+
 function! projs#complete#db_tags (...)
-  let comps = projs#db#tags_get()
+  let arg  = get(a:000,0,'')
+  let line = get(a:000,1,'')
+  let pos  = get(a:000,2,'')
+
+  let tags = projs#db#tags_get()
+
+  let comps = []
+
+	if !strlen(arg)
+		call extend(comps,tags)
+	else
+
+  	let parts = split(arg, ',')
+		call map(parts,'base#trim(v:val)')
+
+		while len(parts)
+			let last = remove(parts,-1)
+			let prev = join(parts, ',')
+	
+			if strlen(prev)
+				call extend(comps,map( copy(tags), printf('"%s," . v:val',prev) ))
+			else
+				call extend(comps,tags)
+			endif
+		endw
+	endif
+
   return join(comps,"\n")
 endfunction
 
