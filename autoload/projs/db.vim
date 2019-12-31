@@ -339,7 +339,7 @@ function! projs#db#cond_tags (...)
   endif
 
   return cond_a
-endif
+endf
 
 function! projs#db#files (...)
   let ref  = get(a:000,0,{})
@@ -359,7 +359,7 @@ function! projs#db#files (...)
   let tags   = get(ref,'tags',[])
   let tags_a = []
 
-  let cond = ''
+  let cond   = ''
   let cond_a = projs#db#cond_tags({ 'tags' : tags })
 
   if len(cond_a)

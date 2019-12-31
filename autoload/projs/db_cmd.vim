@@ -197,25 +197,33 @@ function! projs#db_cmd#search ()
 
   let tags_a = projs#db#tags_get()
 
-  call base#varset('this',tags_a)
-  let tag = input('tags: ','','custom,base#complete#this')
-
-
-
-
-
-  let q = 'SELECT fids FROM tags WHERE tag = ?'
-  let p = [ tag ]
-
   let dbfile = projs#db#file()
-  let fids = pymy#sqlite#query_fetchone({
-    \ 'dbfile' : dbfile,
-    \ 'p'      : p,
-    \ 'q'      : q,
-    \ })
+
+  call base#varset('this',tags_a)
+  let tags = input('tags: ','','custom,base#complete#this')
+
+  let cond_a = projs#db#cond_tags({ 'tags' : tags })
+
+  if len(cond_a)
+    let cond = ' WHERE ' . join(cond_a, ' AND ')
+  endif
+
+  let dbfile = base#dbfile()
+  
+  let [ rows_h, cols ] = pymy#sqlite#select({
+    \  'dbfile' : dbfile,
+    \  't'      : 'projs',
+    \  'f'      : base#qw('fid'),
+    \  'w'      : {},
+    \  'cond'   : cond,
+    \  })
+  let fids = []
+  for rh n rows_h
+    call add(fids,get(rh,'fid',''))
+  endfor
 
   let data_h = []
-  for fid in split(fids,",")
+  for fid in fids
     let q = 'SELECT * FROM projs WHERE fid = ?'
     let p = [ fid ]
     let [ rwh, cols ] = pymy#sqlite#query_first({
