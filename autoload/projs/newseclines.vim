@@ -72,10 +72,10 @@ function! projs#newseclines#_build_tex_ (...)
   
   let lines = []
 
-  let type = substitute(sec,'^_build_\(\w\+\)_$','\1','g')
+  let type    = substitute(sec,'^_build_\(\w\+\)_$','\1','g')
   let tex_exe = type
     
-  let outd = [ 'builds', proj, 'b_' . type ]
+  let outd = [ 'builds', '%proj%', 'b_' . type ]
     
   let pcwin = [ '%Bin%' ]
   let pcunix = [ '.' ]
@@ -102,15 +102,16 @@ function! projs#newseclines#_build_tex_ (...)
     \ 'bibtex'    : 'bibtex %proj%'               ,
     \ 'makeindex' : 'makeindex %proj%'            ,
     \ }
+
   let bibfile = projs#sec#file('_bib_')
 
   call add(lines,' ')
-  call add(lines,'@echo off ')
+  call add(lines,'@echo off ' )
   call add(lines,' ')
   call add(lines,'set Bin=%~dp0')
   call add(lines,'cd %Bin%')
   call add(lines,' ')
-  call add(lines,'set tex_exe='.tex_exe)
+  call add(lines,'set tex_exe=' . tex_exe)
   call add(lines,' ')
   call add(lines,'set tex_opts=')
   call add(lines,' ')
@@ -141,18 +142,18 @@ function! projs#newseclines#_build_tex_ (...)
   call add(lines,lns.texcmd  )
   call add(lines,' ')
 
-  let origin = base#file#catfile([ outdir_win, proj.'.pdf'])
+  let origin = base#file#catfile([ outdir_win, '%proj%.pdf' ])
   
   let dests = []
   
-  call add(dests,'%Bin%\pdf_built\b_'.proj.'.pdf' )
-  call add(dests,'%PDFOUT%\b_'.type.'_'.proj.'.pdf' )
-  call add(dests,'%PDFOUT%\'.proj.'.pdf' )
+  call add(dests,'%Bin%\pdf_built\b_%proj%.pdf' )
+  call add(dests,'%PDFOUT%\b_'.type.'_%proj%.pdf' )
+  call add(dests,'%PDFOUT%\%proj%.pdf' )
   
   for dest in dests
     call add(lines,'copy '.origin.' '.dest)
     call add(lines,' ')
   endfor
 
-    return lines
+  return lines
 endfunction
