@@ -200,7 +200,7 @@ function! projs#db_cmd#search ()
 
   let dbfile = projs#db#file()
 
-  let tags = input('tags: ','','custom,projs#complete#db_tags')
+  let tags = input('tags: ', '', 'custom,projs#complete#db_tags')
 
   if !len(tags)
     return 
