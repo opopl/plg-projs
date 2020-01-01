@@ -213,8 +213,8 @@ function! projs#db_cmd#search ()
 
 	let data_h = projs#db#search(r)
 
-  let head_s = 'proj,sec,tags'
-  let head_s = input('headers (comma-separated): ',head_s)
+  let head_s  = 'proj,sec,tags'
+  let head_s  = input('headers (comma-separated): ',head_s)
   let headers = split(head_s,',')
 
   let lines = pymy#data#tabulate({
