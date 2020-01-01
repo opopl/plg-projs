@@ -225,15 +225,18 @@ function! projs#db_cmd#search ()
   let stl_add = [
     \ '[ %2* v - view %0* ]'
     \ ]
+
   let cmds_after = [
     \ 'resize99',
     \ 'vnoremap <silent><buffer> v :call projs#db_cmd#search#visual_open()<CR>',
     \ ]
+
   call base#buf#open_split({ 
     \ 'lines'      : lines ,
     \ 'cmds_after' : cmds_after,
     \ 'stl_add'    : stl_add,
     \ })
+
 endfunction
 
 function! projs#db_cmd#thisproj_data (...)
