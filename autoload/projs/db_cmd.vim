@@ -239,9 +239,9 @@ function! projs#db_cmd#search ()
     call add(data_h,rwh)
   endfor
 
-	let head_s = 'proj,sec,tags'
-	let head_s = input('headers (comma-separated): ',head_s)
-	let headers = split(head_s,',')
+  let head_s = 'proj,sec,tags'
+  let head_s = input('headers (comma-separated): ',head_s)
+  let headers = split(head_s,',')
 
   let lines = pymy#data#tabulate({
     \ 'data_h'  : data_h  ,
