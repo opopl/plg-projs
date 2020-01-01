@@ -98,9 +98,9 @@ function! projs#newseclines#_build_tex_ (...)
   call add(tex_opts,' -output-directory='. outdir_unix)
     
   let lns = {
-    \ 'texcmd'    : '%tex_exe% %tex_opts% ' . proj ,
-    \ 'bibtex'    : 'bibtex '    . proj            ,
-    \ 'makeindex' : 'makeindex ' . proj            ,
+    \ 'texcmd'    : '%tex_exe% %tex_opts% %proj%' ,
+    \ 'bibtex'    : 'bibtex %proj%'               ,
+    \ 'makeindex' : 'makeindex %proj%'            ,
     \ }
   let bibfile = projs#sec#file('_bib_')
 
