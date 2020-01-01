@@ -206,7 +206,12 @@ function! projs#db_cmd#search ()
     return 
   endif
 
-	let data_h = projs#db#search({ 'tags' : tags })
+	let r = {}
+	if len(tags)
+		call extend(r,{ 'tags' : tags })
+	endif
+
+	let data_h = projs#db#search(r)
 
   let head_s = 'proj,sec,tags'
   let head_s = input('headers (comma-separated): ',head_s)
