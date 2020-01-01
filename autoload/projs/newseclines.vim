@@ -57,8 +57,8 @@ endfunction
 
 if 0
   usage
-
-    let projs#newseclines#_build_tex_ (...)
+    let lines = projs#newseclines#_build_tex_ ({ 'sec' : '_build_pdflatex_' })
+    echo lines
   call tree
     called by
       projs#sec#new
@@ -111,6 +111,8 @@ function! projs#newseclines#_build_tex_ (...)
   call add(lines,'set Bin=%~dp0')
   call add(lines,'cd %Bin%')
   call add(lines,' ')
+  call add(lines,printf('set proj=%s',proj))
+  call add(lines,' ')
   call add(lines,'set tex_exe=' . tex_exe)
   call add(lines,' ')
   call add(lines,'set tex_opts=')
@@ -120,8 +122,6 @@ function! projs#newseclines#_build_tex_ (...)
     call add(lines,'set tex_opts=%tex_opts% ' . opt)
   endfor
 
-  call add(lines,' ')
-  call add(lines,printf('set proj=%s',proj))
   call add(lines,' ')
   call add(lines,'set outdir='.outdir_win)
   call add(lines,'md %outdir%')
