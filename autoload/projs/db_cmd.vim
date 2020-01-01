@@ -202,9 +202,7 @@ function! projs#db_cmd#search ()
 
   let tags = input('tags: ', '', 'custom,projs#complete#db_tags')
 
-  if !len(tags)
-    return 
-  endif
+  if !len(tags) | return | endif
 
 	let r = {}
 	if len(tags)
@@ -215,7 +213,7 @@ function! projs#db_cmd#search ()
 
   let head_s  = 'proj,sec,tags'
   let head_s  = input('headers (comma-separated): ',head_s)
-  let headers = split(head_s,',')
+  let headers = split(head_s, ',' )
 
   let lines = pymy#data#tabulate({
     \ 'data_h'  : data_h  ,
