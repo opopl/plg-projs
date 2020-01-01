@@ -195,49 +195,18 @@ endfunction
 function! projs#db_cmd#search ()
   let proj = projs#proj#name()
 
-  let tags_a = projs#db#tags_get()
+  "let tags_a = projs#db#tags_get()
+  "call base#varset('this',tags_a)
 
   let dbfile = projs#db#file()
 
-  call base#varset('this',tags_a)
   let tags = input('tags: ','','custom,projs#complete#db_tags')
 
   if !len(tags)
     return 
   endif
 
-  let cond_a = projs#db#cond_tags({ 'tags' : tags })
-
-  if len(cond_a)
-    let cond = ' WHERE ' . join(cond_a, ' AND ')
-  endif
-
-  let dbfile = projs#db#file()
-  
-  let [ rows_h, cols ] = pymy#sqlite#select({
-    \  'dbfile' : dbfile,
-    \  't'      : 'projs',
-    \  'f'      : base#qw('fid'),
-    \  'w'      : {},
-    \  'cond'   : cond,
-    \  })
-
-  let fids = []
-  for rh in rows_h
-    call add(fids,get(rh,'fid',''))
-  endfor
-
-  let data_h = []
-  for fid in fids
-    let q = 'SELECT * FROM projs WHERE fid = ?'
-    let p = [ fid ]
-    let [ rwh, cols ] = pymy#sqlite#query_first({
-      \ 'dbfile' : dbfile,
-      \ 'p'      : p,
-      \ 'q'      : q,
-      \ })
-    call add(data_h,rwh)
-  endfor
+	let data_h = projs#db#search({ 'tags' : tags })
 
   let head_s = 'proj,sec,tags'
   let head_s = input('headers (comma-separated): ',head_s)

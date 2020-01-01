@@ -277,6 +277,55 @@ function! projs#db#secnames (...)
 endfunction
 
 if 0
+  call tree
+    called by
+      projs#db_cmd#search
+endif
+
+function! projs#db#search (...)
+  let ref  = get(a:000,0,{})
+
+  let tags = get(ref,'tags',[])
+
+  let dbfile = projs#db#file()
+
+  let cond_a = projs#db#cond_tags({ 'tags' : tags })
+
+  if len(cond_a)
+    let cond = ' WHERE ' . join(cond_a, ' AND ')
+  endif
+
+  let dbfile = projs#db#file()
+  
+  let [ rows_h, cols ] = pymy#sqlite#select({
+    \  'dbfile' : dbfile,
+    \  't'      : 'projs',
+    \  'f'      : base#qw('fid'),
+    \  'w'      : {},
+    \  'cond'   : cond,
+    \  })
+
+  let fids = []
+  for rh in rows_h
+    call add(fids,get(rh,'fid',''))
+  endfor
+
+  let data_h = []
+  for fid in fids
+    let q = 'SELECT * FROM projs WHERE fid = ?'
+    let p = [ fid ]
+    let [ rwh, cols ] = pymy#sqlite#query_first({
+      \ 'dbfile' : dbfile,
+      \ 'p'      : p,
+      \ 'q'      : q,
+      \ })
+    call add(data_h,rwh)
+  endfor
+
+  return data_h
+endfunction
+
+if 0
   -------------------
   projs#db#files
   -------------------
