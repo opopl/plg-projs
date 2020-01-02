@@ -200,16 +200,46 @@ function! projs#db_cmd#search ()
 
   let dbfile = projs#db#file()
 
-  let tags = input('tags: ', '', 'custom,projs#complete#db_tags')
+  let msg_a = [
+      \  '  ',  
+      \  'available modes ',  
+      \  '  ',  
+      \  '  1 - by tags',  
+      \  '  2 - by full url',  
+      \  '  3 - by url host',  
+      \  '  ',  
+      \  'select mode: ',  
+      \  ]
+  let mode = input( join(msg_a, "\n"), 1)
 
-  if !len(tags) | return | endif
+  let tags     = ''
+  let url      = ''
+  let url_host = ''
 
-	let r = {}
-	if len(tags)
-		call extend(r,{ 'tags' : tags })
-	endif
+  """ select by tags
+  if mode == 1
+    let tags = input('tags: ', '', 'custom,projs#complete#db_tags')
 
-	let data_h = projs#db#search(r)
+  " full_url
+  elseif mode == 2
+    let url = input('url: ', '')
+
+  " url_host
+  elseif mode == 3
+    let url_host = input('url host: ', '')
+
+  endif
+
+  let r = {}
+  if len(tags)
+    call extend(r,{ 'tags' : tags })
+  endif
+
+  if len(url)
+    call extend(r,{ 'url' : url })
+  endif
+
+  let data_h = projs#db#search(r)
 
   let head_s  = 'proj,sec,tags'
   let head_s  = input('headers (comma-separated): ',head_s)
