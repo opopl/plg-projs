@@ -126,7 +126,7 @@ function! projs#newseclines#_build_tex_ (...)
   call add(lines,'set outdir='.outdir_win)
   call add(lines,'md %outdir%')
   call add(lines,' ')
-  call add(lines,'set bibfile='.bibfile)
+  call add(lines,'set bibfile=%projsdir%\%proj%.refs.bib')
   call add(lines,' ')
   call add(lines,'copy %bibfile% %outdir%')
   call add(lines,' ')
@@ -142,7 +142,8 @@ function! projs#newseclines#_build_tex_ (...)
   call add(lines,lns.texcmd  )
   call add(lines,' ')
 
-  let origin = base#file#catfile([ outdir_win, '%proj%.pdf' ])
+  "let origin = base#file#catfile([ outdir_win, '%proj%.pdf' ])
+  let origin = '%outdir%\%proj%.pdf'
   
   let dests = []
   

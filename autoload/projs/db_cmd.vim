@@ -85,12 +85,14 @@ function! projs#db_cmd#buf_url_fetch (...)
 
   let url = ''
 
-  if !exists("b:url")
-    let url_db =  projs#db#url({ 
-      \ 'file' : b:basename })
-    let url = url_db
-  else
-    let url = b:url
+  let url_db =  projs#db#url({ 
+    \ 'file' : b:basename })
+  let url = url_db
+
+  if !strlen('url_db')
+    if exists("b:url")
+      let url = b:url
+    endif
   endif
 
   if !strlen(url)
