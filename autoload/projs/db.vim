@@ -2,15 +2,17 @@
 "
 """prjdb_create_tables
 
-"Usage
-" projs#db#create_tables()
-"Call tree
-" Calls
-"   projs#db#file
-"     projs#root
-"     db.create_tables from plg.projs.db
-"   projs#pylib
-"   pymy#py#add_lib
+if 0
+  Usage
+    projs#db#create_tables()
+  Call tree
+    Calls
+        projs#db#file
+          projs#root
+          db.create_tables from plg.projs.db
+        projs#pylib
+        pymy#py#add_lib
+endif
 
 function! projs#db#create_tables ()
   let db_file = projs#db#file()
@@ -444,6 +446,12 @@ function! projs#db#list (...)
   let rows = projs#db#query(ref)
   return rows
 endfunction
+
+if 0
+  call tree
+    called by
+      projs#action#info
+endif
 
 function! projs#db#file ()
   let root    = projs#root()

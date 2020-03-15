@@ -533,6 +533,25 @@ function! projs#action#prjfiles_add_file_tag (...)
   let files = projs#proj#files({ "exts" : base#qw('tex') })
 endfunction
 
+function! projs#action#info (...) 
+	let lines = []
+
+	call add(lines,'PROJS INFO')
+
+	let root = projs#root()
+
+	call add(lines,'ROOT:')
+	call add(lines,"\t" . root)
+
+	let dbfile = projs#db#file()
+	call add(lines,'DBFILE:')
+	call add(lines,"\t" . dbfile)
+
+	call base#buf#open_split({ 'lines' : lines })
+
+endfunction
+
+
 function! projs#action#append_label (...) 
   let sec = projs#proj#secname()
   let lines = []
