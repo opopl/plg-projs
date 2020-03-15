@@ -602,6 +602,11 @@ endf
 ""     proj is unlet in the end of the function body
 
 " former DC_PrjRemove
+"
+if 0
+  call in 
+    plugin/projs_init.vim
+endif
 
 
 function! projs#initvars (...)
@@ -864,11 +869,17 @@ endfunction
 "
 "
 " ProjsInit DIRID
+"
+
+if 0
+  call in 
+    plugin/projs_init.vim
+endif
 
 function! projs#init (...)
     let l:start = localtime()
-    let msg = ['start']
-    let prf = {'plugin' : 'projs', 'func' : 'projs#init'}
+    let msg = [ 'start' ]
+    let prf = { 'plugin' : 'projs', 'func' : 'projs#init' }
     call base#log(msg,prf)
 
     " -------------------------------------------------
@@ -1465,20 +1476,20 @@ if 0
 endif
 
 function! projs#grep (...)
-		let ref=get(a:000,0,{})
+    let ref=get(a:000,0,{})
 
     let proj = projs#proj#name()
 
-		let pat = get(ref,'pat','')
+    let pat = get(ref,'pat','')
 
-		if !strlen(pat)
-    	let pat = input('Pattern to search for:',
-				\	'',
-				\	'custom,projs#complete#hist_grep')
-		endif
+    if !strlen(pat)
+      let pat = input('Pattern to search for:',
+        \ '',
+        \ 'custom,projs#complete#hist_grep')
+    endif
 
-  	let hist = base#varref('projs_hist_grep',[])
-		call add(hist,pat)
+    let hist = base#varref('projs_hist_grep',[])
+    call add(hist,pat)
 
     let msg_choice_a = [
         \ 'Grep over projects:' ,
@@ -1507,19 +1518,19 @@ function! projs#grep (...)
     " grep over projsdir
     elseif choice == 2
 
-			let tags = projs#select#tags()
+      let tags = projs#select#tags()
 
-			if strlen(tags)
-				let files = projs#db#files({ 'tags' : tags })
-			else
-      	let files = [ '*.tex' ]
-			endif
+      if strlen(tags)
+        let files = projs#db#files({ 'tags' : tags })
+      else
+        let files = [ '*.tex' ]
+      endif
     endif
 
-		if !len(files)
-			call base#rdwe('projs#grep: no files!')
-			return 
-		endif
+    if !len(files)
+      call base#rdwe('projs#grep: no files!')
+      return 
+    endif
 
     call base#grep#async({ 
       \ 'files' : files,
