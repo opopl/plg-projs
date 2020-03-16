@@ -1079,9 +1079,24 @@ function! projs#piclist ()
   return list
 endf    
 
-"let list = projs#list ()
-"let list = projs#list ({ 'get' : 'fromfiles' })
-"let list = projs#list ({ 'get' : 'fromvar' })
+if 0
+  projs#list
+
+  Purpose:
+    get the list of projects
+  Usage:
+    let list = projs#list ()
+    let list = projs#list ({ 'get' : 'fromfiles' })
+    let list = projs#list ({ 'get' : 'fromvar' })
+  Returns:
+    array - list of projects
+  Call tree:
+    calls:
+      
+    called by:
+      
+endif
+
 
 function! projs#list (...)
     let refdef={ 

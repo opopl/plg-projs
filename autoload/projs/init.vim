@@ -153,10 +153,11 @@ if 0
   Returns:
     Nothing 
   Call tree:
-    calls:
-      <++>
+      
     called by:
-      <++>
+    uses:
+      projs#complete
+      
 endif
 
 function! projs#init#cmds (...)
