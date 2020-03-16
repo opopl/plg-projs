@@ -161,9 +161,12 @@ if 0
 endif
 
 function! projs#init#cmds (...)
+
+"""PV
   command! -nargs=* -complete=custom,projs#complete            PV
     \ call projs#viewproj(<f-args>) 
   
+"""PN
   command! -nargs=* -complete=custom,projs#complete            PN
     \ call projs#new(<f-args>) 
   
@@ -198,6 +201,7 @@ function! projs#init#cmds (...)
   command! -nargs=* -complete=custom,projs#complete            PrjRename
     \ call projs#renameproject(<f-args>)
   
+"""PrjRemove
   command! -nargs=* -complete=custom,projs#complete            PrjRemove
     \ call projs#proj#remove(<f-args>)
   

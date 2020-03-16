@@ -1097,27 +1097,27 @@ if 0
       
 endif
 
-
 function! projs#list (...)
-    let refdef={ 
-          \ 'get' : 'fromvar'
-          \ }
-    let ref  = refdef
-    let refa = get(a:000,0,{})
-
-    call extend(ref,refa)
+    let ref = get(a:000,0,{})
 
     let gt = get(ref,'get')
-    while 1
+
+    let gts = base#qw('fromdb fromvar fromfiles')
+
+    let list = []
+    while !len(list)
+      let gt = remove(gts,-1)
+
       if gt == 'fromvar'
         let list = projs#varget('list',[])
-        if ! len(list) 
-          let gt = 'fromfiles' 
-          continue
-        endif
+
+      elseif gt == 'fromdb'
+        let list = projs#db#list()
+
       elseif gt == 'fromfiles'
         let list = projs#listfromfiles()
       endif
+
       break
     endw
 
