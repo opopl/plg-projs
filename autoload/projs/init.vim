@@ -143,6 +143,146 @@ function! projs#init#var (...)
 
 endfunction
 
+if 0
+	projs#init#cmds
+
+	Purpose:
+		initialize PROJS plugin commands
+	Usage:
+		call projs#init#cmds ()
+	Returns:
+		Nothing	
+	Call tree:
+		calls:
+			<++>
+		called by:
+			<++>
+endif
+
+function! projs#init#cmds (...)
+	command! -nargs=* -complete=custom,projs#complete            PV
+	  \ call projs#viewproj(<f-args>) 
+	
+	command! -nargs=* -complete=custom,projs#complete            PN
+	  \ call projs#new(<f-args>) 
+	
+	"command! -nargs=* -complete=custom,projs#complete#projsdirslist
+	command! -nargs=* -complete=custom,projs#complete#projsdirs ProjsInit
+	  \ call projs#init(<f-args>)
+	
+	command! -nargs=* -complete=custom,projs#complete#varlist    ProjsVarEcho 
+	  \ call projs#varecho(<f-args>)
+	
+	command! -nargs=* -complete=custom,projs#complete#gitcmds    ProjsGit
+	  \ call projs#git(<f-args>)
+	
+	command! -nargs=* -complete=custom,projs#complete#projsload  ProjsLoad
+	  \ call projs#load(<f-args>)
+	
+	command! -nargs=* -complete=custom,projs#complete            PrjView
+	  \ call projs#viewproj(<f-args>) 
+	
+	command! -nargs=* -complete=custom,projs#complete            PrjNew
+	  \ call projs#new(<f-args>) 
+	
+	command! -nargs=* -complete=custom,projs#complete            PrjPdfView
+	  \ call projs#pdf#view(<f-args>) 
+	
+	command! -nargs=* -complete=custom,projs#complete#prjmake    PrjMake
+	  \ call projs#prjmake(<f-args>)
+	
+	command! -nargs=* -complete=custom,projs#complete#prjmake    PrjMakePrompt
+	  \ call projs#prjmakeprompt(<f-args>)
+	
+	command! -nargs=* -complete=custom,projs#complete            PrjRename
+	  \ call projs#renameproject(<f-args>)
+	
+	command! -nargs=* -complete=custom,projs#complete            PrjRemove
+	  \ call projs#proj#remove(<f-args>)
+	
+	command! -nargs=* -complete=custom,projs#complete#secnames   PrjJoin
+	  \ call projs#filejoinlines({ 'write_jfile' : 1 })
+	
+	command! -nargs=* -complete=custom,projs#complete#grep       PrjGrep
+	  \ call projs#grep(<f-args>)
+	
+	command! -nargs=* -complete=custom,projs#complete#update     PrjUpdate
+	  \ call projs#update(<f-args>)
+	
+	command! -nargs=* -complete=custom,projs#complete#varlist    PrjVarEcho
+	  \ call projs#varecho(<f-args>)
+	
+	command! -nargs=* -complete=custom,projs#complete#varlist    PrjVarSet
+	  \ call projs#cmd#varset(<f-args>)
+	
+	command! -nargs=* -complete=custom,projs#complete#secnamesall PrjSecNew
+	  \ call projs#sec#new(<f-args>,{ "view" : 1 })
+	
+	command! -nargs=* -complete=custom,projs#complete#secnames PrjSecRename
+	  \ call projs#sec#rename(<f-args>)
+	
+	command! -nargs=* -complete=custom,projs#complete#secnames PrjSecDelete
+	  \ call projs#sec#delete_prompt(<f-args>)
+	
+	command! -nargs=* -complete=custom,projs#complete#defs     PrjDefShow
+	  \ call projs#def#show(<f-args>) 
+	
+	command! -nargs=*             PrjDefNew
+	  \ call projs#def#new(<f-args>) 
+	
+	command! -nargs=* -complete=custom,projs#complete#prjfiles PrjFiles
+	  \ call projs#proj#filesact(<f-args>)
+	
+	command! -nargs=* -complete=custom,projs#complete          PrjListSecs 
+	  \ call projs#proj#listsecnames(<f-args>)
+	
+	command! -nargs=* -complete=custom,projs#complete#prjgit   PrjGit 
+	  \ call projs#proj#git(<f-args>)
+	
+	"command! -nargs=* -complete=custom,projs#complete
+	  "\ PrjMake call projs#prjmake(<f-args>)
+	
+	"command! -nargs=* -complete=custom,projs#complete PrjBuildCleanup 
+	  "\ call projs#build#cleanup(<f-args>)
+	
+	command! -nargs=* -complete=custom,projs#complete#prjbuild PrjBuild
+	  \ call projs#build#action(<f-args>)
+	
+	command! -nargs=* -complete=custom,projs#complete#prjact PrjAct
+	  \ call projs#action(<f-args>)
+	
+	"command! -nargs=* -complete=custom,projs#complete#prjtab PrjTab
+	  "\ call projs#tables(<f-args>)
+	
+	command! -nargs=* -complete=custom,projs#complete#prjgui PrjGui
+	  \ call projs#gui(<f-args>)
+	
+	command! -nargs=* -complete=custom,projs#complete#prjbuf PrjBuf
+	  \ call projs#buf_cmd(<f-args>)
+	
+	command! -nargs=* -range -complete=custom,projs#complete#prjvisual
+	  \ PrjVisual call projs#visual(<line1>,<line2>,<f-args>)
+	
+	command! -nargs=* -complete=custom,projs#complete#prjdb PrjDB
+	  \ call projs#db#action(<f-args>)
+	
+	command! -nargs=* -complete=custom,projs#complete#htlatex PrjHtlatex
+	  \ call projs#htlatex(<f-args>)
+	
+	command! -nargs=* -complete=custom,projs#complete#prjinsert PrjInsert
+	  \ call projs#insert(<f-args>)
+	
+	command! -nargs=* -complete=custom,projs#complete#switch PrjSwitch
+	  \ call projs#switch(<f-args>)
+	
+	command! -nargs=* -complete=custom,projs#complete#secnamesbase VSECBASE
+	    \ call projs#sec#open(<f-args>) 
+	
+	command! -nargs=* -complete=custom,projs#complete#secnames     VSEC
+	    \ call projs#sec#open_load_buf(<f-args>) 
+
+endfunction
+
 
 "Call tree
 " Called by

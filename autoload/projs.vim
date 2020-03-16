@@ -73,14 +73,13 @@ function! projs#help (...)
 
 endfunction
 
-"
-"
-"""projs_new
-
-"" projs#new()
-"" projs#new(proj)
-"" projs#new(proj,{ git_add : 1 })
-"
+if 0
+  projs_new
+  
+  projs#new()
+  projs#new(proj)
+  projs#new(proj,{ git_add : 1 })
+endif
 
 function! projs#new (...)
  call base#echoprefix('(projs#new)')
@@ -213,26 +212,35 @@ function! projs#selectproject (...)
     
 endfunction
 
-" Purpose
-"   view project
-" Usage
-"   call projs#viewproj (proj)
-" Call tree
-"   Calls:
-"     projs#new
+if 0
+ Purpose
+   view project
+ Usage
+   call projs#viewproj (proj)
+   PV 
+   PV proj
+ Call tree
+   Calls:
+     projs#rootcd
+     projs#new
+     projs#selectproject
+     projs#proj#name
+     projs#sec#file
+     projs#exists
+endif
 
 function! projs#viewproj (...)
 
     call projs#rootcd()
 
     let sec = ''
+    let proj = ''
     if a:0
         let proj = matchstr(a:1,'^\zs\w\+\ze')
         let sec  = matchstr(a:1,'^\w\+\.\zs\w\+\ze')
     else
         let proj = projs#selectproject()
     endif
-    let proj = proj
 
     if ! projs#exists(proj)
         let o = input('Project ' . proj . ' does not exist, create new? (1/0):',1)
@@ -262,7 +270,7 @@ function! projs#viewproj (...)
 
     let vimf = projs#path([ proj . '.vim' ])
     if filereadable(vimf)
-        call projs#echo('Found project vim file, executing:' . "\n\t".vimf)
+        call projs#echo('Found project vim file, executing:' . "\n\t" . vimf)
         exe 'source ' . vimf
     endif
 
