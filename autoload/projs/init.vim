@@ -171,9 +171,12 @@ function! projs#init#cmds (...)
     \ call projs#new(<f-args>) 
   
   "command! -nargs=* -complete=custom,projs#complete#projsdirslist
+  "
+"""ProjsInit
   command! -nargs=* -complete=custom,projs#complete#projsdirs ProjsInit
     \ call projs#init(<f-args>)
   
+"""ProjsVarEcho
   command! -nargs=* -complete=custom,projs#complete#varlist    ProjsVarEcho 
     \ call projs#varecho(<f-args>)
   
@@ -183,9 +186,11 @@ function! projs#init#cmds (...)
   command! -nargs=* -complete=custom,projs#complete#projsload  ProjsLoad
     \ call projs#load(<f-args>)
   
+"""PrjView
   command! -nargs=* -complete=custom,projs#complete            PrjView
     \ call projs#viewproj(<f-args>) 
   
+"""PrjNew
   command! -nargs=* -complete=custom,projs#complete            PrjNew
     \ call projs#new(<f-args>) 
   
@@ -198,6 +203,7 @@ function! projs#init#cmds (...)
   command! -nargs=* -complete=custom,projs#complete#prjmake    PrjMakePrompt
     \ call projs#prjmakeprompt(<f-args>)
   
+"""PrjRename
   command! -nargs=* -complete=custom,projs#complete            PrjRename
     \ call projs#renameproject(<f-args>)
   

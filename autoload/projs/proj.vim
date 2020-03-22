@@ -382,10 +382,17 @@ function! projs#proj#removefromdat(proj)
 
 endfunction
 
-function! projs#proj#remove(proj)
+"used by: PrjRemove
+
+function! projs#proj#remove(...)
+
+ let proj   = get(a:000,0,'')
+
+ if !len(proj)
+   let proj = projs#selectproject()
+ endif
 
  let ok     = 0
- let proj   = a:proj
  let prefix = '(projs#proj#remove) '
 
  call base#echoprefix(prefix)
