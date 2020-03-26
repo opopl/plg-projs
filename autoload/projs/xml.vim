@@ -1,7 +1,5 @@
 
 if 0
-	
-
 	Purpose:
 		
 	Usage:
@@ -16,25 +14,47 @@ endif
 function! projs#xml#update_col(...)
   let ref = get(a:000,0,{})
 
-  let col = get(ref,'col','')
-  let val = get(ref,'val','')
-
-  let sec = get(ref,'sec','')
-  let proj = get(ref,'proj','')
-
   let xmlfile = get(ref,'xmlfile',projs#xmlfile())
+
+  let proj = get(ref,'proj','')
+  let sec = get(ref,'sec','')
+  let col = get(ref,'col','')
+
+  let val = get(ref,'val','')
 
 python3 << eof
 import vim
 import xml.etree.ElementTree as ET
 
 xmlfile = vim.eval('xmlfile')
-sec = vim.eval('sec')
+
+
+def prettify(elem):
+    """Return a pretty-printed XML string for the Element.
+    """
+    rough_string = ElementTree.tostring(elem, 'utf-8')
+    reparsed = minidom.parseString(rough_string)
+    return reparsed.toprettyxml(indent="  ")
+
 proj = vim.eval('proj')
-val = vim.eval('val')
+sec = vim.eval('sec')
 col = vim.eval('col')
+
+val = vim.eval('val')
 
 tree = ET.ElementTree(file=xmlfile)
 root = tree.getroot()
+
+xpath = './/projs/proj[@name="{}"]/sec[@name="{}"]/{}'.format(proj,sec,col)
+for e in root.findall(xpath):
+	e.text = val
+
+xml = prettify(root)
 eof
+	let xml = py3eval('xml')
+	let r = {
+	      \   'lines'  : xmllines,
+	      \   'file'   : projs#xmlfile(),
+	      \   }
+	call base#file#write_lines(r)	
 endf

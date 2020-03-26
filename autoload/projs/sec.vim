@@ -473,6 +473,16 @@ function! projs#sec#add (sec)
   return 1
 endfunction
 
+function! projs#sec#select (...)
+  let ref = get(a:000,0,{})
+
+  let proj = get(ref,'proj','')
+
+	let q = 'SELECT sec FROM projs WHERE proj = ?'
+	pymy#sqlite#query_fetchone
+
+endfunction
+
 function! projs#sec#insert_url (...)
   let ref = get(a:000,0,{})
 

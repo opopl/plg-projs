@@ -889,6 +889,48 @@ function! projs#action#tex4ht_js_view ()
 	let dir = projs#proj#dir_tex4ht('js')
 endfunction
 
+function! projs#action#_xmlfile_view()
+	let xmlfile = projs#xmlfile()
+	call base#fileopen({ 
+		\	'files'    : [xmlfile] ,
+		\	'load_buf' : 1,
+		\	})
+	
+endfunction
+
+function! projs#action#_xml_update_col()
+	let xmlfile = projs#xmlfile()
+
+	let proj = projs#selectproject()
+	let r = {
+		\	'q'      : 'SELECT sec FROM projs WHERE proj = ?',
+		\	'p'      : [proj],
+		\	'dbfile' : projs#db#file(),
+		\	}
+	let secs = pymy#sqlite#query_as_list(r)
+	call base#varset('this',secs)
+
+	let msg_a = [
+		\	printf("[proj=%s]select section:",proj),	
+		\	]
+	let msg = join(msg_a,"\n")
+	let sec = base#input_we(msg,'',{ 'complete' : 'custom,base#complete#this' })
+
+	let col = 'tags'
+
+	let val = input(printf('[proj=%s,sec=%s,col=%s] new value:',proj,sec,col),'')
+
+	let r = {
+			\	'proj' : proj,
+			\	'sec' : sec,
+			\	'val' : val,
+			\	'col' : col,
+			\	'xmlfile' : xmlfile,
+			\	}
+	call projs#xml#update_col(r)
+
+endfunction
+
 
 function! projs#action#view_db_fill_tags_py3()
 	let file = base#qw#catpath('plg projs scripts db_fill_tags.py3')
