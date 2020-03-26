@@ -52,6 +52,12 @@ for e in root.findall(xpath):
 xml = prettify(root)
 eof
 	let xml = py3eval('xml')
+
+	" remove empty (spaces-only) lines
+	let xmllines = filter(
+		\	split(xml,"\n"),
+		\	'match(v:val,"^\\zs\\s*\\ze$") == -1')
+
 	let r = {
 	      \   'lines'  : xmllines,
 	      \   'file'   : projs#xmlfile(),
