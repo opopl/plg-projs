@@ -21,6 +21,7 @@ function! projs#db_vis#update ()
   let new_val = input(printf('[ "%s" column ] new value: ',col), val)
 
   let dbfile = projs#db#file()
+  let xmlfile =  projs#xmlfile()
 
 	call projs#db#update_col({ 
 		\	'col'    : col,
@@ -29,6 +30,14 @@ function! projs#db_vis#update ()
 		\	'sec'    : sec,
 		\	'prompt' : 1,
 		\	'dbfile' : dbfile,
+		\	})
+
+	call projs#xml#update_col({ 
+		\	'col'    : col,
+		\	'val'    : new_val,
+		\	'proj'   : proj,
+		\	'sec'    : sec,
+		\	'xmlfile' : xmlfile,
 		\	})
   
 endfunction

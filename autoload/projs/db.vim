@@ -58,7 +58,6 @@ function! projs#db#fill_tags (...)
     let out = []
     if filereadable(a:temp_file)
       let out = readfile(a:temp_file)
-			call base#buf#open_split({ 'lines' : out })
       for line in out
         if line !~ '^ok'
           let ok = 0
@@ -570,28 +569,28 @@ function! projs#db#tags_get (...)
 endfunction
 
 if 0
-	
-	call projs#db#update_col({ 
-		\	'col'  : col,
-		\	'val'  : new_val,
-		\	'proj' : proj,
-		\	'sec'  : sec,
-		\	'dbfile'  : dbfile,
-		\	'prompt'  : 1,
-		\	})
+  
+  call projs#db#update_col({ 
+    \ 'col'  : col,
+    \ 'val'  : new_val,
+    \ 'proj' : proj,
+    \ 'sec'  : sec,
+    \ 'dbfile'  : dbfile,
+    \ 'prompt'  : 1,
+    \ })
 endif
 
 function! projs#db#update_col(...)
-	let ref = get(a:000,0,{})
+  let ref = get(a:000,0,{})
 
-	let col = get(ref,'col','')
-	let val = get(ref,'val','')
+  let col = get(ref,'col','')
+  let val = get(ref,'val','')
 
-	let sec = get(ref,'sec','')
-	let proj = get(ref,'proj','')
+  let sec = get(ref,'sec','')
+  let proj = get(ref,'proj','')
 
-	let prompt = get(ref,'prompt',0)
-	let dbfile = get(ref,'dbfile',projs#db#file())
+  let prompt = get(ref,'prompt',0)
+  let dbfile = get(ref,'dbfile',projs#db#file())
 
   let t = "projs"
   let h = {
@@ -603,10 +602,10 @@ function! projs#db#update_col(...)
 
     let b:url = url
 
-		let do_insert = 1
-		if prompt
-    	let do_insert = input('Insert url lines? (1/0): ',do_insert)
-		endif
+    let do_insert = 1
+    if prompt
+      let do_insert = input('Insert url lines? (1/0): ',do_insert)
+    endif
     if do_insert
       call projs#sec#insert_url({ 
         \ 'url' : url, 
@@ -631,7 +630,7 @@ function! projs#db#update_col(...)
   if col == 'tags'
     call projs#db_cmd#fill_tags()
   endif
-	
+  
 endfunction
 
 "  projs#db#action
