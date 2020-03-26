@@ -45,7 +45,7 @@ val = vim.eval('val')
 tree = ET.ElementTree(file=xmlfile)
 root = tree.getroot()
 
-xpath = './/projs/proj[@name="{}"]/sec[@name="{}"]/{}'.format(proj,sec,col)
+xpath = './/proj[@name="{}"]/sec[@name="{}"]/{}'.format(proj,sec,col)
 for e in root.findall(xpath):
 	e.text = val
 
