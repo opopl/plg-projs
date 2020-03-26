@@ -25,6 +25,7 @@ function! projs#xml#update_col(...)
 python3 << eof
 import vim
 import xml.etree.ElementTree as ET
+import xml.dom.minidom as minidom
 
 xmlfile = vim.eval('xmlfile')
 

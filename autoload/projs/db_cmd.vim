@@ -327,7 +327,6 @@ for r in rows_projs:
   proj = r['proj']
   e_proj = SubElement(e_root,'proj')
   e_proj.attrib['name'] = proj
-  #i+=1
   q = 'SELECT sec FROM projs WHERE proj = ?'
   c.execute(q,(proj,))
   rows_secs = c.fetchall()
@@ -342,7 +341,7 @@ for r in rows_projs:
       for k in rss.keys():
         if k not in ['proj','sec']:
 	        e_k = SubElement(e_sec,k)
-	        val = str(rp[k])
+	        val = str(rss[k])
 	        e_k.text = val
 
 conn.close()
