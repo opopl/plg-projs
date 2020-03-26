@@ -568,6 +568,71 @@ function! projs#db#tags_get (...)
   return tags_a
 endfunction
 
+if 0
+	
+	call projs#db#update_col({ 
+		\	'col'  : col,
+		\	'val'  : new_val,
+		\	'proj' : proj,
+		\	'sec'  : sec,
+		\	'dbfile'  : dbfile,
+		\	'prompt'  : 1,
+		\	})
+endif
+
+function! projs#db#update_col(...)
+	let ref = get(a:000,0,{})
+
+	let col = get(ref,'col','')
+	let val = get(ref,'val','')
+
+	let sec = get(ref,'sec','')
+	let proj = get(ref,'proj','')
+
+	let prompt = get(ref,'prompt',0)
+	let dbfile = get(ref,'dbfile',projs#db#file())
+
+  let t = "projs"
+  let h = {
+    \  col : val,
+    \  }
+
+  if col == 'url'
+    let url = val
+
+    let b:url = url
+
+		let do_insert = 1
+		if prompt
+    	let do_insert = input('Insert url lines? (1/0): ',do_insert)
+		endif
+    if do_insert
+      call projs#sec#insert_url({ 
+        \ 'url' : url, 
+        \ 'sec' : sec })
+    endif
+  endif
+
+  let w = {
+      \  'sec'  : sec,
+      \  'proj' : proj,
+      \  }
+  
+  let ref = {
+    \ "dbfile" : dbfile,
+    \ "t"      : t,
+    \ "h"      : h,
+    \ "w"      : w
+    \ }
+    
+  call pymy#sqlite#update_hash(ref)
+
+  if col == 'tags'
+    call projs#db_cmd#fill_tags()
+  endif
+	
+endfunction
+
 "  projs#db#action
 "
 "  Purpose:

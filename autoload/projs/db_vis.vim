@@ -21,42 +21,14 @@ function! projs#db_vis#update ()
   let new_val = input(printf('[ "%s" column ] new value: ',col), val)
 
   let dbfile = projs#db#file()
-  
-  let t = "projs"
-  let h = {
-    \  col : new_val,
-    \  }
 
-  if col == 'url'
-    let url = new_val
-
-    let b:url = url
-
-    let do_insert = input('Insert url lines? (1/0): ',1)
-    if do_insert
-      call projs#sec#insert_url({ 
-        \ 'url' : url, 
-        \ 'sec' : sec })
-    endif
-  endif
-
-  let w = {
-      \  'sec'  : sec,
-      \  'proj' : proj,
-      \  }
-  
-  let ref = {
-    \ "dbfile" : dbfile,
-    \ "t"      : t,
-    \ "h"      : h,
-    \ "w"      : w
-    \ }
-    
-  call pymy#sqlite#update_hash(ref)
-
-  if col == 'tags'
-    call projs#db_cmd#fill_tags()
-  endif
-
+	call projs#db#update_col({ 
+		\	'col'    : col,
+		\	'val'    : new_val,
+		\	'proj'   : proj,
+		\	'sec'    : sec,
+		\	'prompt' : 1,
+		\	'dbfile' : dbfile,
+		\	})
   
 endfunction

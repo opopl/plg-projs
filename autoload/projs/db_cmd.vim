@@ -293,9 +293,8 @@ function! projs#db_cmd#load_to_xml (...)
 endfunction
 
 function! projs#db_cmd#save_to_xml (...)
-  let root = projs#root()
-  let xmlfile = join([root,'projs.xml'], '/')
-  let dbfile = projs#db#file()
+  let xmlfile = projs#xmlfile() 
+  let dbfile  = projs#db#file()
 python3 << eof
 import vim
 import xml.etree.ElementTree as ET
@@ -351,10 +350,13 @@ xml = prettify(e_root)
 eof
   let xml = py3eval('xml')
   let xmllines = split(xml,"\n")
-  call base#buf#open_split({ 
-    \ 'lines'    : xmllines,
-    \ 'cmds_pre' : ['setlocal ft=xml'],
-    \ })
+  let r = {
+        \   'lines'  : xmllines,
+        \   'file'   : xmlfile,
+        \   'prompt' : 0,
+        \   'mode'   : 'rewrite',
+        \   }
+  call base#file#write_lines(r)  
 
 endfunction
 

@@ -957,6 +957,12 @@ function! projs#listwrite2dat (...)
     
 endfunction
 
+function! projs#xmlfile (...)
+  let root = projs#root()
+  let xmlfile = join([root,'projs.xml'], '/')
+	return xmlfile
+endfunction
+
 " get the value of root dir
 " set the value of root dir
 
