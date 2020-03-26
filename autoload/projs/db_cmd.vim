@@ -320,23 +320,41 @@ conn.row_factory = sqlite3.Row
 c = conn.cursor()
 
 e_root = Element('projs')
-e_root.set('version', '1.0')
 
-for r in c.execute('SELECT DISTINCT proj FROM projs ORDER BY proj'):
+i=0
+c.execute('SELECT DISTINCT proj FROM projs ORDER BY proj')
+rows_projs = c.fetchall()
+for r in rows_projs:
   proj = r['proj']
   e_proj = SubElement(e_root,'proj')
   e_proj.attrib['name'] = proj
-  for rp in c.execute('SELECT * FROM projs WHERE proj = ? ',(proj,)):
-    for k in rp.keys():
-      e_k = SubElement(e_proj,k)
-      e_k.text = rp[k]
+  #i+=1
+  q = 'SELECT sec FROM projs WHERE proj = ?'
+  c.execute(q,(proj,))
+  rows_secs = c.fetchall()
+  for rs in rows_secs:
+    sec = rs['sec']
+    e_sec = SubElement(e_proj,'sec')
+    e_sec.attrib['name'] = sec
+    q = 'SELECT * FROM projs WHERE proj = ? and sec = ? '
+    c.execute(q,(proj,sec,))
+    rows = c.fetchall()
+    for rss in rows:
+      for k in rss.keys():
+        if k not in ['proj','sec']:
+	        e_k = SubElement(e_sec,k)
+	        val = str(rp[k])
+	        e_k.text = val
 
 conn.close()
-#xml = prettify(e_root)
+xml = prettify(e_root)
 eof
-  "let xml = py3eval('xml')
-  "let xmllines = split(xml,"\n")
-  "call base#buf#open_split({ 'lines' : xmllines })
+  let xml = py3eval('xml')
+  let xmllines = split(xml,"\n")
+  call base#buf#open_split({ 
+    \ 'lines'    : xmllines,
+    \ 'cmds_pre' : ['setlocal ft=xml'],
+    \ })
 
 endfunction
 
