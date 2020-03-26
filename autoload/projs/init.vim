@@ -194,6 +194,7 @@ function! projs#init#cmds (...)
   command! -nargs=* -complete=custom,projs#complete            PrjNew
     \ call projs#new(<f-args>) 
   
+"""PrjPdfView
   command! -nargs=* -complete=custom,projs#complete            PrjPdfView
     \ call projs#pdf#view(<f-args>) 
   
@@ -259,6 +260,7 @@ function! projs#init#cmds (...)
   command! -nargs=* -complete=custom,projs#complete#prjbuild PrjBuild
     \ call projs#build#action(<f-args>)
   
+"""PrjAct
   command! -nargs=* -complete=custom,projs#complete#prjact PrjAct
     \ call projs#action(<f-args>)
   
@@ -268,12 +270,15 @@ function! projs#init#cmds (...)
   command! -nargs=* -complete=custom,projs#complete#prjgui PrjGui
     \ call projs#gui(<f-args>)
   
+"""PrjBuf
   command! -nargs=* -complete=custom,projs#complete#prjbuf PrjBuf
     \ call projs#buf_cmd(<f-args>)
   
+"""PrjVisual
   command! -nargs=* -range -complete=custom,projs#complete#prjvisual
     \ PrjVisual call projs#visual(<line1>,<line2>,<f-args>)
   
+"""PrjDB
   command! -nargs=* -complete=custom,projs#complete#prjdb PrjDB
     \ call projs#db#action(<f-args>)
   

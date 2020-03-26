@@ -13,3 +13,5 @@ search
 _backup
 _restore
 sec_add_tags
+save_to_xml
+load_from_xml

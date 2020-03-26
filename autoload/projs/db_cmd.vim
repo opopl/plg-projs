@@ -288,6 +288,58 @@ function! projs#db_cmd#thisproj_data (...)
   call base#buf#open_split({ 'lines' : lines })
 endfunction
 
+function! projs#db_cmd#load_to_xml (...)
+
+endfunction
+
+function! projs#db_cmd#save_to_xml (...)
+  let root = projs#root()
+  let xmlfile = join([root,'projs.xml'], '/')
+  let dbfile = projs#db#file()
+python3 << eof
+import vim
+import xml.etree.ElementTree as ET
+from xml.etree.ElementTree import Element, SubElement, Comment, tostring
+from xml.dom import minidom
+
+import sqlite3
+
+def prettify(elem):
+    """Return a pretty-printed XML string for the Element.
+    """
+    rough_string = ElementTree.tostring(elem, 'utf-8')
+    reparsed = minidom.parseString(rough_string)
+    return reparsed.toprettyxml(indent="  ")
+
+xmlfile = vim.eval('xmlfile')
+dbfile  = vim.eval('dbfile')
+
+conn = sqlite3.connect(dbfile)
+conn.row_factory = sqlite3.Row 
+
+c = conn.cursor()
+
+e_root = Element('projs')
+e_root.set('version', '1.0')
+
+for r in c.execute('SELECT DISTINCT proj FROM projs ORDER BY proj'):
+  proj = r['proj']
+  e_proj = SubElement(e_root,'proj')
+  e_proj.attrib['name'] = proj
+  for rp in c.execute('SELECT * FROM projs WHERE proj = ? ',(proj,)):
+    for k in rp.keys():
+      e_k = SubElement(e_proj,k)
+      e_k.text = rp[k]
+
+conn.close()
+#xml = prettify(e_root)
+eof
+  "let xml = py3eval('xml')
+  "let xmllines = split(xml,"\n")
+  "call base#buf#open_split({ 'lines' : xmllines })
+
+endfunction
+
 function! projs#db_cmd#_backup (...)
   let dbfile = projs#db#file()
 
