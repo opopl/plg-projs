@@ -58,6 +58,7 @@ function! projs#db#fill_tags (...)
     let out = []
     if filereadable(a:temp_file)
       let out = readfile(a:temp_file)
+			call base#buf#open_split({ 'lines' : out })
       for line in out
         if line !~ '^ok'
           let ok = 0

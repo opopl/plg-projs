@@ -888,3 +888,13 @@ endfunction
 function! projs#action#tex4ht_js_view ()
 	let dir = projs#proj#dir_tex4ht('js')
 endfunction
+
+
+function! projs#action#view_db_fill_tags_py3()
+	let file = base#qw#catpath('plg projs scripts db_fill_tags.py3')
+	call base#fileopen({ 
+		\	'files'    : [file] ,
+		\	'load_buf' : 1,
+		\	})
+
+endfunction

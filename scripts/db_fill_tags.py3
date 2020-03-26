@@ -98,18 +98,18 @@ try:
   print('ok: indexed files')
 
   #index projects
-  q = 'SELECT DISTINCT proj FROM projs'
-  c.row_factory = sqlite3.Row
-  c.execute(q)
-  rows = c.fetchall()
-  pid  = 1
-  i = 0
-  for row in rows:
-    proj = row['proj']
-    q = '''UPDATE projs SET pid = ? WHERE proj = ?'''
-    c.execute(q,( pid, proj ) )
-    pid+=1
-  print('ok: indexed projects')
+#  q = 'SELECT DISTINCT proj FROM projs'
+#  c.row_factory = sqlite3.Row
+#  c.execute(q)
+#  rows = c.fetchall()
+#  pid  = 1
+#  i = 0
+#  for row in rows:
+#    proj = row['proj']
+#    q = '''UPDATE projs SET pid = ? WHERE proj = ?'''
+#    c.execute(q,( pid, proj ) )
+#    pid+=1
+#  print('ok: indexed projects')
 except TypeError as e:
   print('error:' + e)
 except:

@@ -60,3 +60,4 @@ tex4ht_mk_dirs
 tex4ht_css_view
 tex4ht_js_view
 info
+view_db_fill_tags_py3
