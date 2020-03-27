@@ -1,4 +1,11 @@
 
+
+
+function! projs#xml#cols()
+	let cols = base#varget('projs_xml_cols',[])
+	return cols
+endf
+
 if 0
 	Purpose:
 		
@@ -33,7 +40,7 @@ xmlfile = vim.eval('xmlfile')
 def prettify(elem):
     """Return a pretty-printed XML string for the Element.
     """
-    rough_string = ElementTree.tostring(elem, 'utf-8')
+    rough_string = ET.tostring(elem, 'utf-8')
     reparsed = minidom.parseString(rough_string)
     return reparsed.toprettyxml(indent="  ")
 

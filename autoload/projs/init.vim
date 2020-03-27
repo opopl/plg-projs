@@ -288,12 +288,15 @@ function! projs#init#cmds (...)
   command! -nargs=* -complete=custom,projs#complete#prjinsert PrjInsert
     \ call projs#insert(<f-args>)
   
+"""PrjSwitch
   command! -nargs=* -complete=custom,projs#complete#switch PrjSwitch
     \ call projs#switch(<f-args>)
   
+"""VSECBASE
   command! -nargs=* -complete=custom,projs#complete#secnamesbase VSECBASE
       \ call projs#sec#open(<f-args>) 
   
+"""VSEC
   command! -nargs=* -complete=custom,projs#complete#secnames     VSEC
       \ call projs#sec#open_load_buf(<f-args>) 
 

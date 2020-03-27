@@ -401,6 +401,53 @@ function! projs#sec#add_to_dat (sec)
 endfunction
 
 
+function! projs#sec#add_to_xml (sec,...)
+  let ref=get(a:000,0,{})
+
+  let sec = a:sec
+  let proj = get(ref,'proj','')
+  let xmlfile = projs#xmlfile()
+  let cols = projs#xml#cols()
+
+python3 << eof
+import vim
+import xml.etree.ElementTree as ET
+import xml.dom.minidom as minidom
+from xml.etree.ElementTree import Element, SubElement, Comment, tostring
+
+def prettify(elem):
+    """Return a pretty-printed XML string for the Element.
+    """
+    rough_string = ET.tostring(elem, 'utf-8')
+    reparsed = minidom.parseString(rough_string)
+    return reparsed.toprettyxml(indent="  ")
+
+sec     = vim.eval('sec')
+xmlfile = vim.eval('xmlfile')
+proj    = vim.eval('proj')
+
+cols = vim.eval('cols')
+
+tree = ET.ElementTree(file=xmlfile)
+root = tree.getroot()
+
+e_sec = Element('sec')
+for col in cols:
+  e_col = Element(col)
+
+for e in root.findall('.//proj[@name={}]'.format(proj))
+  e.append(e_sec)
+ 
+xml = prettify(root)
+eof
+  let xml = py3eval('xml')
+  let r = {
+        \   'lines'  : split(xml,"\n"),
+        \   'file'   : xmlfile,
+        \ }
+  call base#file#write_lines(r)
+
+endfunction
 
 function! projs#sec#add_to_db (sec,...)
   let ref = get(a:000,0,{})
@@ -469,6 +516,7 @@ function! projs#sec#add (sec)
   call projs#sec#add_to_secnames(sec)
   call projs#sec#add_to_dat(sec)
   call projs#sec#add_to_db(sec)
+  "call projs#sec#add_to_xml(sec)
 
   return 1
 endfunction
@@ -478,8 +526,8 @@ function! projs#sec#select (...)
 
   let proj = get(ref,'proj','')
 
-	let q = 'SELECT sec FROM projs WHERE proj = ?'
-	pymy#sqlite#query_fetchone
+  let q = 'SELECT sec FROM projs WHERE proj = ?'
+  pymy#sqlite#query_fetchone
 
 endfunction
 
@@ -780,16 +828,16 @@ function! projs#sec#open (...)
       call projs#sec#new(sec)
     endif
 
-		let s:obj = { 
-			\	'sec'  : sec ,
-			\	'proj' : proj ,
-			\	}
-		function! s:obj.init (...) dict
-			let b:sec  = self.sec
-			let b:proj = self.proj
-		endfunction
-		
-		let Fc = s:obj.init
+    let s:obj = { 
+      \ 'sec'  : sec ,
+      \ 'proj' : proj ,
+      \ }
+    function! s:obj.init (...) dict
+      let b:sec  = self.sec
+      let b:proj = self.proj
+    endfunction
+    
+    let Fc = s:obj.init
     let res = base#fileopen({ 
       \ 'files'    : [ vfile ],
       \ 'load_buf' : load_buf,
@@ -872,7 +920,7 @@ function! projs#sec#header (...)
     call extend(header,[ ' ' ])
     call extend(header,[ '%%endhead '])
 
-	elseif ext == 'bat'
+  elseif ext == 'bat'
     call extend(header,[ 'rem file ' . sec])
 
   elseif ext == 'vim'

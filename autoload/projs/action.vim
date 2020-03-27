@@ -413,15 +413,17 @@ function! projs#action#url_fetch ()
       call base#rdwe('FAIL: URL FETCH')
     endif
 
-    let cmd = printf('htw --file %s --cmd vh_convert',shellescape(ofile))
-    
+    "let cmd = printf('htw --file %s --cmd vh_convert',shellescape(ofile))
+    let cmd = printf('links -dump -force-html -html-tables 1 %s',shellescape(ofile))
+
     let env = {}
     function env.get(temp_file) dict
       let code = self.return_code
     
       if filereadable(a:temp_file)
         let out = readfile(a:temp_file)
-        call base#buf#open_split({ 'lines' : out })
+        "call base#buf#open_split({ 'lines' : out })
+				call append('$',out)
       endif
     endfunction
     
