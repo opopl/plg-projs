@@ -14,10 +14,10 @@ call base#buf#start()
 
 if ( b:dirname == b:root )
   if b:ext == 'tex'
-    call projs#buf#tex_tex()
+    call projs#buf#onload_tex_tex()
 
   elseif b:ext == 'sty'
-    call projs#buf#tex_sty()
+    call projs#buf#onload_tex_sty()
   endif
   
 endif

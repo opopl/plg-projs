@@ -238,7 +238,8 @@ function! projs#db#url (...)
   let proj = projs#proj#name()
   let proj = get(ref,'proj',proj)
 
-  let file = get(ref,'file','')
+	let file = exists('b:basename') ? b:basename : ''
+  let file = get(ref,'file',file)
 
   let q = 'SELECT url FROM projs ' 
     \ . ' WHERE proj = ? AND file = ?'

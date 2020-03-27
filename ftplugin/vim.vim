@@ -14,6 +14,6 @@ call base#buf#start()
 
 if ( b:dirname == b:root )
 	if b:ext == 'vim'
-		call projs#buf#vim()
+		call projs#buf#onload_vim()
 	endif
 endif

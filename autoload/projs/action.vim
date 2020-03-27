@@ -357,10 +357,27 @@ function! projs#action#url_delete_fetched ()
 endfunction
 
 function! projs#action#url_fetch ()
-  if !exists("b:url")
-    call base#rdwe('b:url does not exist! abort')
-    return
-  endif
+		let proj = b:proj 
+		let file = b:basename
+
+		let url = ''
+		let urls = [
+				\	exists('b:url') ? b:url : '',
+				\	projs#db#url(),
+				\	projs#buf#url(),
+				\	] 
+
+		while !strlen(url)
+			let url = remove(urls,0)
+			if strlen(url)
+				break
+			endif
+		endw
+
+		if !strlen(url)
+    	call base#rdwe('url does not exist!')
+    	return
+		endif
 
   let ofile = projs#buf#url_file()
 
@@ -422,7 +439,7 @@ function! projs#action#url_fetch ()
     \ }]
 
   call idephp#curl#run({ 
-    \ 'url'         : b:url,
+    \ 'url'         : url,
     \ 'insecure'    : 1 ,
     \ 'output_file' : ofile,
     \ 'Fc'          : Fc,
