@@ -312,10 +312,51 @@ endf
 function! projs#insert (...)
   let ins = get(a:000,0,'')
 
-  let sub = 'projs#insert#'.ins
-  "if exists("*".sub)
-    exe 'call '.sub.'()'
-  "endif
+	let proj = projs#proj#name()
+
+	let acts = base#varget('projs_opts_PrjInsert',[])
+  let acts = sort(acts)
+
+  if  strlen(ins)
+	  let sub = 'projs#insert#'.ins
+	  exe 'call '.sub.'()'
+	else
+    let desc = base#varget('projs_desc_PrjInsert',{})
+    let info = []
+    for act in acts
+      call add(info,[ act, get(desc,act,'') ])
+    endfor
+    let proj = projs#proj#name()
+    let lines = [ 
+      \ 'Current project:' , "\t" . proj,
+      \ 'Current section:' , "\t" . projs#buf#sec(),
+      \ 'Possible PrjInsert actions: ' 
+      \ ]
+
+    call extend(lines, pymy#data#tabulate({
+      \ 'data'    : info,
+      \ 'headers' : [ 'act', 'description' ],
+      \ }))
+
+    let s:obj = { 'proj' : proj }
+    function! s:obj.init (...) dict
+      let proj = self.proj
+      let hl = 'WildMenu'
+      call matchadd(hl,'\s\+'.proj.'\s\+')
+      call matchadd(hl,proj)
+    endfunction
+    
+    let Fc = s:obj.init
+
+    call base#buf#open_split({ 
+      \ 'lines'    : lines ,
+      \ 'cmds_pre' : ['resize 99'] ,
+      \ 'Fc'       : Fc,
+      \ })
+    return
+  endif
+
+
   
 endfunction
 

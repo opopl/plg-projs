@@ -89,6 +89,11 @@ function! projs#buf#onload_tex_tex ()
   
 endfunction
 
+function! projs#buf#sec ()
+	return exists('b:sec') ? b:sec : ''
+
+endfunction
+
 function! projs#buf#onload_tex_sty ()
 
 endfunction

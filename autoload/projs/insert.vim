@@ -42,6 +42,15 @@ eof
 
 endfunction
 
+function! projs#insert#def_iii ()
+
+	let sec = projs#buf#sec()
+	let c = printf('\def\jj#1{\InputIfFileExists{\PROJ.%s.#1.tex}{}{}}',sec)
+
+	call append('.',c)
+
+endfunction
+
 function! projs#insert#figure ()
 
   let lines = []

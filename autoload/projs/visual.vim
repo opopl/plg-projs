@@ -93,6 +93,17 @@ function! projs#visual#ii_to_new_secs (start, end, ... )
   
 endfunction
 
+function! projs#visual#delete_empty_lines (...)
+	exe "'<,'>s/^\s*$//g"
+
+endfunction
+
+function! projs#visual#trim (...)
+	exe "'<,'>s/\s*$//g"
+	exe "'<,'>s/^\s*//g"
+
+endfunction
+
 function! projs#visual#help (...)
   call base#bufact_common#help ({ 'map_types' : base#qw('vnoremap') })
 endfunction

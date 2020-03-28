@@ -261,6 +261,9 @@ function! projs#init#cmds (...)
     \ call projs#build#action(<f-args>)
   
 """PrjAct
+if 0
+	BaseDatView projs_opts_PrjAct
+endif
   command! -nargs=* -complete=custom,projs#complete#prjact PrjAct
     \ call projs#action(<f-args>)
   
@@ -275,6 +278,9 @@ function! projs#init#cmds (...)
     \ call projs#buf_cmd(<f-args>)
   
 """PrjVisual
+if 0
+	BaseDatView projs_opts_PrjVisual
+endif
   command! -nargs=* -range -complete=custom,projs#complete#prjvisual
     \ PrjVisual call projs#visual(<line1>,<line2>,<f-args>)
   
@@ -285,6 +291,7 @@ function! projs#init#cmds (...)
   command! -nargs=* -complete=custom,projs#complete#htlatex PrjHtlatex
     \ call projs#htlatex(<f-args>)
   
+"""PrjInsert
   command! -nargs=* -complete=custom,projs#complete#prjinsert PrjInsert
     \ call projs#insert(<f-args>)
   

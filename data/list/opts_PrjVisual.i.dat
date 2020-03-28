@@ -3,3 +3,5 @@ ii_rename
 append_to_sec
 split_ss2
 help
+delete_empty_lines
+trim
