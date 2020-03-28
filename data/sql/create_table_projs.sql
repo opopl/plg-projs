@@ -1,9 +1,9 @@
 
 CREATE TABLE IF NOT EXISTS projs (
     -- project id
-    pid INTEGER PRIMARY KEY,
+    pid INTEGER,
     -- file id
-    fid INTEGER,
+    fid INTEGER PRIMARY KEY,
     -- project name
     proj TEXT NOT NULL, 
     file TEXT NOT NULL UNIQUE,
