@@ -359,6 +359,43 @@ eof
 
 endfunction
 
+function! projs#db_cmd#pids_update (...)
+  let dbfile = projs#db#file()
+
+	let q = 'SELECT DISTINCT proj FROM projs'
+	let p = []
+	
+	let projs = pymy#sqlite#query_as_list({
+		\	'dbfile' : dbfile,
+		\	'p'      : [],
+		\	'q'      : q,
+		\	})
+
+	let pid = 1 
+	for proj in projs	
+			let t = "projs"
+			let h = {
+				\	"pid" : pid,
+				\	}
+
+			let w = {
+				\	"proj" : proj,
+				\	}
+			
+			let ref = {
+				\ "dbfile" : dbfile,
+				\ "u" : "UPDATE",
+				\ "t" : t, 
+				\ "h" : h, 
+				\ "w" : w, 
+				\ }
+				
+			call pymy#sqlite#update_hash(ref)
+			let pid += 1
+	endfor
+
+endfunction
+
 function! projs#db_cmd#_backup (...)
   let dbfile = projs#db#file()
 
