@@ -23,7 +23,7 @@ secs = []
 for k in range(start, end + 1, 1):
   i = k - 1
   n = k - start + 1
-  m = re.search(r'^\\ii{(\w+)}', b[i])
+  m = re.search(r'^\s*\\ii{(.*)}\s*$', b[i])
   if m:
     sec = m.group(1)
     secs.append(sec)

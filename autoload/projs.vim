@@ -568,7 +568,7 @@ function! projs#onload (...)
   setlocal iminsert=0
 
   "-------- needed for tags
-  setlocal isk=@,48-57,_,128-167,224-235
+  setlocal isk=@,48-57,_,128-167,224-235,.
 
   let done = base#eval("b:projs_onload_done")
   if done | return | endif
