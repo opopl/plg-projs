@@ -232,13 +232,49 @@ import db
 eof
 endfunction
 
+function! projs#db#url_set (...)
+  let ref  = get(a:000,0,{})
+
+  let proj = projs#proj#name()
+  let proj = get(ref,'proj',proj)
+
+  let url = get(ref,'url','')
+
+  let file = exists('b:basename') ? b:basename : ''
+  let file = get(ref,'file',file)
+
+  let dbfile  = projs#db#file()
+  let dbfile  = get(ref,'dbfile',dbfile)
+  
+  let t = "projs"
+  let h = {
+    \ "url" : url,
+    \ }
+  
+  let w = {
+    \ "proj" : proj,
+    \ "file" : file,
+    \ }
+  
+  let ref = {
+    \ "dbfile" : dbfile,
+    \ "u" : "UPDATE",
+    \ "t" : t, 
+    \ "h" : h, 
+    \ "w" : w, 
+    \ }
+    
+  call pymy#sqlite#update_hash(ref)
+
+endfunction
+
 function! projs#db#url (...)
   let ref  = get(a:000,0,{})
 
   let proj = projs#proj#name()
   let proj = get(ref,'proj',proj)
 
-	let file = exists('b:basename') ? b:basename : ''
+  let file = exists('b:basename') ? b:basename : ''
   let file = get(ref,'file',file)
 
   let q = 'SELECT url FROM projs ' 

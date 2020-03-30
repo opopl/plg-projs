@@ -356,6 +356,16 @@ function! projs#action#url_delete_fetched ()
   endif
 endfunction
 
+function! projs#action#url_insert ()
+
+	let url = projs#db#url()
+
+  call projs#sec#insert_url({ 
+        \ 'url' : url, 
+        \ 'sec' : projs#buf#sec() })
+
+endfunction
+
 function! projs#action#url_fetch ()
 		let proj = b:proj 
 		let file = b:basename
@@ -367,7 +377,7 @@ function! projs#action#url_fetch ()
 				\	projs#buf#url(),
 				\	] 
 
-		while !strlen(url)
+		while !strlen(url) && len(urls)
 			let url = remove(urls,0)
 			if strlen(url)
 				break
@@ -375,8 +385,15 @@ function! projs#action#url_fetch ()
 		endw
 
 		if !strlen(url)
-    	call base#rdwe('url does not exist!')
-    	return
+			let url = projs#select#url()
+			let b:url = url
+			call projs#db#url_set({
+				\	'url' : url
+		 		\		})
+
+      call projs#sec#insert_url({ 
+        \ 'url' : url, 
+        \ 'sec' : projs#buf#sec() })
 		endif
 
   let ofile = projs#buf#url_file()

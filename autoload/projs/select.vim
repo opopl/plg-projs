@@ -12,6 +12,16 @@ function! projs#select#projtype ()
 
 endfunction
 
+if 0
+  called by
+    projs#action#url_fetch
+endif
+
+function! projs#select#url (...)
+    let url = input('url:','')
+    return url
+endfunction
+
 function! projs#select#keymap (...)
   let ref = get(a:000,0,{})
 
@@ -65,8 +75,8 @@ function! projs#select#tags ()
     \  "tags: ",  
     \  ]
   let msg = join(msg_a,"\n")
-	let tags = input(msg,'','custom,projs#complete#db_tags')
-	return tags
+  let tags = input(msg,'','custom,projs#complete#db_tags')
+  return tags
 endfunction
 
 function! projs#select#sec_input ()

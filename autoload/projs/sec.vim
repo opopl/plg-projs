@@ -527,7 +527,14 @@ function! projs#sec#select (...)
   let proj = get(ref,'proj','')
 
   let q = 'SELECT sec FROM projs WHERE proj = ?'
-  pymy#sqlite#query_fetchone
+  let dbfile = projs#db#file()
+  let r = {
+  	\	'q'      : q,
+  	\	'p'      : [proj],
+  	\	'dbfile' : dbfile,
+  	\	}
+  let sec = pymy#sqlite#query_fetchone(r)
+	return sec
 
 endfunction
 
@@ -584,15 +591,17 @@ try:
 finally:
   f.close()
 
-f = open(file,'w+')
-try:
-  for line in lines_w:
-    f.write(line)
-    f.write("\n")
-finally:
-  f.close()
+#f = open(file,'w+')
+#try:
+#  for line in lines_w:
+#    f.write(line)
+#    f.write("\n")
+#finally:
+#  f.close()
   
 eof
+	let lines = py3eval('lines_w')
+	call append('.',lines)
 
 
 endfunction
