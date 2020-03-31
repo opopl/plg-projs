@@ -877,6 +877,48 @@ function! projs#action#html_out_view ()
   call projs#html_out#view ()
 endfunction
 
+function! projs#action#add_to_db ()
+	let dbfile = projs#db#file()
+
+	let proj = projs#proj#name()
+	let sec  = projs#buf#sec()
+
+	let root   = projs#root()
+	let rootid = projs#rootid()
+
+	let pid = projs#db#pid()
+
+	let fid_last = projs#db#fid_last()
+	let fid      = fid_last + 1
+
+	let t = "projs"
+	let h = {
+		\	"proj"   : proj,
+		\	"sec"    : sec,
+		\	"root"   : root,
+		\	"rootid" : rootid,
+		\	"file"   : b:basename,
+		\	"pid"    : pid,
+		\	"fid"    : fid,
+		\	}
+	
+	let ref = {
+		\ "dbfile" : projs#db#file(),
+		\ "i"      : "INSERT",
+		\ "t"      : t,
+		\ "h"      : h,
+		\ }
+		
+	call pymy#sqlite#insert_hash(ref)
+	
+	let [ rows_h, cols ] = pymy#sqlite#query({
+		\	'dbfile' : dbfile,
+		\	'p'      : p,
+		\	'q'      : q,
+		\	})
+
+endfunction
+
 if 0
   see also:
 endif

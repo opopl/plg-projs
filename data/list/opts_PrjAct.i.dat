@@ -41,6 +41,7 @@ status
 mkdir_pics
 async_build
 async_build_htlatex
+add_to_db
 help
 pdf_view
 pdf_delete
