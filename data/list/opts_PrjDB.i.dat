@@ -2,6 +2,7 @@ update_from_files
 fill_from_files
 fill_tags
 pids_update
+thisproj_pid_to_null
 drop_tables
 create_tables
 query_split

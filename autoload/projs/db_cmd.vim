@@ -396,6 +396,24 @@ function! projs#db_cmd#pids_update (...)
 
 endfunction
 
+function! projs#db_cmd#thisproj_pid_to_null (...)
+	let files = projs#db#files()
+
+	let proj = projs#proj#name()
+	let dbfile = projs#db#file()
+
+	for file in files
+		let q = 'UPDATE projs SET pid = NULL WHERE proj = ? AND file = ? '
+		let p = [proj , file ]
+		let [ rows_h, cols ] = pymy#sqlite#query({
+			\	'dbfile' : dbfile,
+			\	'p'      : p,
+			\	'q'      : q,
+			\	})
+	endfor
+
+endfunction
+
 function! projs#db_cmd#_backup (...)
   let dbfile = projs#db#file()
 

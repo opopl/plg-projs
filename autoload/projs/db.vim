@@ -698,7 +698,7 @@ function! projs#db#pid ()
 	let proj = projs#proj#name()
 
 	let r = {
-		\	'q'      : 'SELECT pid FROM projs WHERE proj = ?',
+		\	'q'      : 'SELECT pid FROM projs WHERE proj = ? and pid IS NOT NULL',
 		\	'p'      : [proj],
 		\	'dbfile' : projs#db#file(),
 		\	}
