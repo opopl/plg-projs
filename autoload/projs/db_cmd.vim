@@ -404,7 +404,7 @@ function! projs#db_cmd#thisproj_pid_to_null (...)
 
 	for file in files
 		let q = 'UPDATE projs SET pid = NULL WHERE proj = ? AND file = ? '
-		let p = [proj , file ]
+		let p = [ proj , file ]
 		let [ rows_h, cols ] = pymy#sqlite#query({
 			\	'dbfile' : dbfile,
 			\	'p'      : p,
