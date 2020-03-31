@@ -904,19 +904,13 @@ function! projs#action#add_to_db ()
 	
 	let ref = {
 		\ "dbfile" : projs#db#file(),
-		\ "i"      : "INSERT",
+		\ "i"      : "INSERT OR REPLACE",
 		\ "t"      : t,
 		\ "h"      : h,
 		\ }
 		
 	call pymy#sqlite#insert_hash(ref)
 	
-	let [ rows_h, cols ] = pymy#sqlite#query({
-		\	'dbfile' : dbfile,
-		\	'p'      : p,
-		\	'q'      : q,
-		\	})
-
 endfunction
 
 if 0

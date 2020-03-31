@@ -682,23 +682,30 @@ function! projs#db#fid_last ()
 	return str2nr(fid)
 endfunction
 
+function! projs#db#pid_max ()
+		let dbfile = projs#db#file()
+		let r = {
+			\	'q'      : 'SELECT MAX(pid)+1 FROM projs',
+			\	'p'      : [],
+			\	'dbfile' : dbfile,
+			\	}
+		let pid = pymy#sqlite#query_fetchone(r)
+		let pid = str2nr(pid)
+		return pid 
+endfunction
+
 function! projs#db#pid ()
-	let dbfile = projs#db#file()
 	let proj = projs#proj#name()
 
 	let r = {
 		\	'q'      : 'SELECT pid FROM projs WHERE proj = ?',
 		\	'p'      : [proj],
-		\	'dbfile' : dbfile,
+		\	'dbfile' : projs#db#file(),
 		\	}
 	let pid = pymy#sqlite#query_fetchone(r)
 	if !len(pid)
-		let r = {
-			\	'q'      : 'SELECT MAX(pid) FROM projs',
-			\	'p'      : [],
-			\	'dbfile' : dbfile,
-			\	}
-		let pid = pymy#sqlite#query_fetchone(r)
+		let pid = projs#db#pid_max()
+		let pid = pid + 1
 	endif
 	return pid
 endfunction
