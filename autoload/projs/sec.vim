@@ -645,11 +645,12 @@ function! projs#sec#new(sec,...)
     let parent_sec = projs#sec#parent()
 
     let ref = { 
-        \   "git_add" : 0, 
-        \   "view"    : 0, 
-        \   "prompt"  : 0, 
-        \   "seccmd"  : '', 
-        \   "lines"   : [], 
+        \   "git_add"    : 0,
+        \   "view"       : 0,
+        \   "prompt"     : 0,
+        \   "seccmd"     : '',
+        \   "parent_sec" : projs#buf#sec(),
+        \   "lines"      : [],
         \   }
 
     if a:0 

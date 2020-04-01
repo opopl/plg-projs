@@ -923,12 +923,17 @@ function! projs#action#verb_new ()
 
   let num = 1
   if len(files)
-    let nums = map(files,'matchstr(v:val,printf("^%s.verb_\zs\d\+\ze",proj))')
+    let pat = printf("^%s.verb_\\zs\\d\\+\\ze.*$",proj)
+    let nums = map(copy(files),'matchstr(v:val,pat)')
     let num = max(nums) + 1
   endif
 
   let sec = printf('verb_%s',num)
-  call projs#sec#new(sec,{ 'view' : 1 })
+  call projs#sec#new(sec)
+  call base#rdw(printf('created new section: %s',sec))
+
+  call append('.',printf('\ii{%s}',sec))
+  TgUpdate projs_this
 
 endfunction
 
