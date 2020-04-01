@@ -358,7 +358,7 @@ endfunction
 
 function! projs#action#url_insert ()
 
-	let url = projs#db#url()
+  let url = projs#db#url()
 
   call projs#sec#insert_url({ 
         \ 'url' : url, 
@@ -367,34 +367,34 @@ function! projs#action#url_insert ()
 endfunction
 
 function! projs#action#url_fetch ()
-		let proj = b:proj 
-		let file = b:basename
+    let proj = b:proj 
+    let file = b:basename
 
-		let url = ''
-		let urls = [
-				\	exists('b:url') ? b:url : '',
-				\	projs#db#url(),
-				\	projs#buf#url(),
-				\	] 
+    let url = ''
+    let urls = [
+        \ exists('b:url') ? b:url : '',
+        \ projs#db#url(),
+        \ projs#buf#url(),
+        \ ] 
 
-		while !strlen(url) && len(urls)
-			let url = remove(urls,0)
-			if strlen(url)
-				break
-			endif
-		endw
+    while !strlen(url) && len(urls)
+      let url = remove(urls,0)
+      if strlen(url)
+        break
+      endif
+    endw
 
-		if !strlen(url)
-			let url = projs#select#url()
-			let b:url = url
-			call projs#db#url_set({
-				\	'url' : url
-		 		\		})
+    if !strlen(url)
+      let url = projs#select#url()
+      let b:url = url
+      call projs#db#url_set({
+        \ 'url' : url
+        \   })
 
       call projs#sec#insert_url({ 
         \ 'url' : url, 
         \ 'sec' : projs#buf#sec() })
-		endif
+    endif
 
   let ofile = projs#buf#url_file()
 
@@ -440,7 +440,7 @@ function! projs#action#url_fetch ()
       if filereadable(a:temp_file)
         let out = readfile(a:temp_file)
         "call base#buf#open_split({ 'lines' : out })
-				call append('$',out)
+        call append('$',out)
       endif
     endfunction
     
@@ -570,20 +570,20 @@ function! projs#action#prjfiles_add_file_tag (...)
 endfunction
 
 function! projs#action#info (...) 
-	let lines = []
+  let lines = []
 
-	call add(lines,'PROJS INFO')
+  call add(lines,'PROJS INFO')
 
-	let root = projs#root()
+  let root = projs#root()
 
-	call add(lines,'ROOT:')
-	call add(lines,"\t" . root)
+  call add(lines,'ROOT:')
+  call add(lines,"\t" . root)
 
-	let dbfile = projs#db#file()
-	call add(lines,'DBFILE:')
-	call add(lines,"\t" . dbfile)
+  let dbfile = projs#db#file()
+  call add(lines,'DBFILE:')
+  call add(lines,"\t" . dbfile)
 
-	call base#buf#open_split({ 'lines' : lines })
+  call base#buf#open_split({ 'lines' : lines })
 
 endfunction
 
@@ -878,39 +878,58 @@ function! projs#action#html_out_view ()
 endfunction
 
 function! projs#action#add_to_db ()
-	let dbfile = projs#db#file()
+  let dbfile = projs#db#file()
 
-	let proj = projs#proj#name()
-	let sec  = projs#buf#sec()
+  let proj = projs#proj#name()
+  let sec  = projs#buf#sec()
 
-	let root   = projs#root()
-	let rootid = projs#rootid()
+  let root   = projs#root()
+  let rootid = projs#rootid()
 
-	let pid = projs#db#pid()
+  let pid = projs#db#pid()
 
-	let fid_last = projs#db#fid_last()
-	let fid      = fid_last + 1
+  let fid_last = projs#db#fid_last()
+  let fid      = fid_last + 1
 
-	let t = "projs"
-	let h = {
-		\	"proj"   : proj,
-		\	"sec"    : sec,
-		\	"root"   : root,
-		\	"rootid" : rootid,
-		\	"file"   : b:basename,
-		\	"pid"    : pid,
-		\	"fid"    : fid,
-		\	}
-	
-	let ref = {
-		\ "dbfile" : projs#db#file(),
-		\ "i"      : "INSERT OR REPLACE",
-		\ "t"      : t,
-		\ "h"      : h,
-		\ }
-		
-	call pymy#sqlite#insert_hash(ref)
-	
+  let t = "projs"
+  let h = {
+    \ "proj"   : proj,
+    \ "sec"    : sec,
+    \ "root"   : root,
+    \ "rootid" : rootid,
+    \ "file"   : b:basename,
+    \ "pid"    : pid,
+    \ "fid"    : fid,
+    \ }
+  
+  let ref = {
+    \ "dbfile" : projs#db#file(),
+    \ "i"      : "INSERT OR REPLACE",
+    \ "t"      : t,
+    \ "h"      : h,
+    \ }
+    
+  call pymy#sqlite#insert_hash(ref)
+  
+endfunction
+
+function! projs#action#verb_new ()
+  let dir = projs#root()
+  let proj = projs#proj#name()
+
+  let files = projs#db#files()
+
+  let files = filter(files,'v:val =~ printf("^%s.verb_",proj)')
+
+  let num = 1
+  if len(files)
+    let nums = map(files,'matchstr(v:val,printf("^%s.verb_\zs\d\+\ze",proj))')
+    let num = max(nums) + 1
+  endif
+
+  let sec = printf('verb_%s',num)
+  call projs#sec#new(sec,{ 'view' : 1 })
+
 endfunction
 
 if 0
@@ -943,72 +962,72 @@ function! projs#action#_plg_tex_view ()
 endfunction
 
 function! projs#action#tex4ht_mk_dirs ()
-	let dirs = [ '', 'js' , 'css' ]
+  let dirs = [ '', 'js' , 'css' ]
 
-	for dir in dirs
-		let dir = projs#proj#dir_tex4ht(dir)
-		call base#mkdir(dir)
-	endfor
-	
+  for dir in dirs
+    let dir = projs#proj#dir_tex4ht(dir)
+    call base#mkdir(dir)
+  endfor
+  
 endfunction
 
 function! projs#action#tex4ht_css_view ()
-	let dir = projs#proj#dir_tex4ht('css')
+  let dir = projs#proj#dir_tex4ht('css')
 
 endfunction
 
 function! projs#action#tex4ht_js_view ()
-	let dir = projs#proj#dir_tex4ht('js')
+  let dir = projs#proj#dir_tex4ht('js')
 endfunction
 
 function! projs#action#_xmlfile_view()
-	let xmlfile = projs#xmlfile()
-	call base#fileopen({ 
-		\	'files'    : [xmlfile] ,
-		\	'load_buf' : 1,
-		\	})
-	
+  let xmlfile = projs#xmlfile()
+  call base#fileopen({ 
+    \ 'files'    : [xmlfile] ,
+    \ 'load_buf' : 1,
+    \ })
+  
 endfunction
 
 function! projs#action#_xml_update_col()
-	let xmlfile = projs#xmlfile()
+  let xmlfile = projs#xmlfile()
 
-	let proj = projs#selectproject()
-	let r = {
-		\	'q'      : 'SELECT sec FROM projs WHERE proj = ?',
-		\	'p'      : [proj],
-		\	'dbfile' : projs#db#file(),
-		\	}
-	let secs = pymy#sqlite#query_as_list(r)
-	call base#varset('this',secs)
+  let proj = projs#selectproject()
+  let r = {
+    \ 'q'      : 'SELECT sec FROM projs WHERE proj = ?',
+    \ 'p'      : [proj],
+    \ 'dbfile' : projs#db#file(),
+    \ }
+  let secs = pymy#sqlite#query_as_list(r)
+  call base#varset('this',secs)
 
-	let msg_a = [
-		\	printf("[proj=%s]select section:",proj),	
-		\	]
-	let msg = join(msg_a,"\n")
-	let sec = base#input_we(msg,'',{ 'complete' : 'custom,base#complete#this' })
+  let msg_a = [
+    \ printf("[proj=%s]select section:",proj),  
+    \ ]
+  let msg = join(msg_a,"\n")
+  let sec = base#input_we(msg,'',{ 'complete' : 'custom,base#complete#this' })
 
-	let col = 'tags'
+  let col = 'tags'
 
-	let val = input(printf('[proj=%s,sec=%s,col=%s] new value:',proj,sec,col),'')
+  let val = input(printf('[proj=%s,sec=%s,col=%s] new value:',proj,sec,col),'')
 
-	let r = {
-			\	'proj' : proj,
-			\	'sec' : sec,
-			\	'val' : val,
-			\	'col' : col,
-			\	'xmlfile' : xmlfile,
-			\	}
-	call projs#xml#update_col(r)
+  let r = {
+      \ 'proj' : proj,
+      \ 'sec' : sec,
+      \ 'val' : val,
+      \ 'col' : col,
+      \ 'xmlfile' : xmlfile,
+      \ }
+  call projs#xml#update_col(r)
 
 endfunction
 
 
 function! projs#action#view_db_fill_tags_py3()
-	let file = base#qw#catpath('plg projs scripts db_fill_tags.py3')
-	call base#fileopen({ 
-		\	'files'    : [file] ,
-		\	'load_buf' : 1,
-		\	})
+  let file = base#qw#catpath('plg projs scripts db_fill_tags.py3')
+  call base#fileopen({ 
+    \ 'files'    : [file] ,
+    \ 'load_buf' : 1,
+    \ })
 
 endfunction
