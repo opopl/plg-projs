@@ -11,6 +11,7 @@ CREATE TABLE IF NOT EXISTS projs (
     sec TEXT, 
     tags TEXT, 
     parent TEXT,
+    projtype TEXT,
     author TEXT,
     pic TEXT,
     rootid TEXT,
@@ -20,3 +21,4 @@ CREATE TABLE IF NOT EXISTS projs (
 ALTER TABLE projs ADD COLUMN url TEXT;
 ALTER TABLE projs ADD COLUMN fid INTEGER;
 ALTER TABLE projs ADD COLUMN pid INTEGER;
+ALTER TABLE projs ADD COLUMN projtype TEXT;

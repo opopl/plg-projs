@@ -206,13 +206,19 @@ function! projs#newseclines#regular#_build_htlatex_(...)
   let tex_opts .= ' -output-directory='. outdir_unix
 
   let lines = []
+
+	let htmlout = base#path('htmlout')
   
   call add(lines,' ')
   call add(lines,'set Bin=%~dp0')
   call add(lines,' ')
   call add(lines,printf('set proj=%s',proj) )
   call add(lines,' ')
-  call add(lines,'set htmlout='.base#path('htmlout') )
+
+	if len(htmlout)
+  	call add(lines,'set htmlout='.htmlout )
+	endif
+
   call add(lines,'set htmloutdir=%htmlout%\%proj%')
   call add(lines,'set htmloutdir_pics=%htmloutdir%\pics\%proj%')
   call add(lines,' ')
