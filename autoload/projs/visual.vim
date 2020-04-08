@@ -203,3 +203,34 @@ eof
   call base#tg#update('projs_this')
 
 endfunction
+
+function! projs#visual#cut_to_verb (start,end,...)
+  let start  = a:start
+  let end    = a:end
+
+	let sec = projs#sec#verb_new()
+	let file = projs#sec#file(sec)
+
+  call projs#sec#new(sec,{ 'git_add' : 1 })
+  TgUpdate projs_this
+
+	let lines = ['\begin{verbatim}' ]
+	call extend(lines,base#vim#visual_selection())
+	call extend(lines,[ '\end{verbatim}' ])
+
+	call base#buf#cut({ 'start' : start, 'end' : end })
+
+	call append('.',printf('\ii{%s}',sec))
+
+	let r = {
+	      \   'lines'  : lines,
+	      \   'file'   : file,
+	      \   'prompt' : 0,
+	      \   'mode'   : 'append',
+	      \   }
+	call base#file#write_lines(r)	
+
+  call base#rdw(printf('visual selection cut to new section: %s',sec))
+
+endfunction
+

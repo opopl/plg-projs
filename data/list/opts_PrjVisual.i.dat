@@ -5,3 +5,4 @@ split_ss2
 help
 delete_empty_lines
 trim
+cut_to_verb

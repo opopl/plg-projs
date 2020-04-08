@@ -630,6 +630,30 @@ function! projs#sec#exists (...)
 
 endfunction
 
+if 0
+	called by
+		projs#visual#cut_to_verb
+endif
+
+function! projs#sec#verb_new()
+  let dir = projs#root()
+  let proj = projs#proj#name()
+
+  let files = projs#db#files()
+
+  let files = filter(files,'v:val =~ printf("^%s.verb_",proj)')
+
+  let num = 1
+  if len(files)
+    let pat = printf("^%s.verb_\\zs\\d\\+\\ze.*$",proj)
+    let nums = map(copy(files),'matchstr(v:val,pat)')
+    let num = max(nums) + 1
+  endif
+
+  let sec = printf('verb_%s',num)
+	return sec
+endfunction
+
 " projs#sec#new(sec)
 " projs#sec#new(sec,{ "git_add" : 1 })
 " projs#sec#new(sec,{ "view" : 1 })
