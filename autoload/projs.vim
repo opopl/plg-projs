@@ -950,14 +950,14 @@ function! projs#init (...)
     let rootid = projs#varget('rootid','')
     let rootid = get(a:000,0,rootid)
 
-    let [root,rootid] = projs#init#root(rootid)
+    let [ root, rootid ] = projs#init#root(rootid)
 
     if !strlen(rootid)
       call projs#warn('rootid is NOT defined! Aborting init.')
       return
     endif
 
-    let ifile = projs#path(['_init_.vim'])
+    let ifile = projs#path([ '_init_.vim' ])
     if filereadable(ifile)
       exe 'so '.ifile
     endif
