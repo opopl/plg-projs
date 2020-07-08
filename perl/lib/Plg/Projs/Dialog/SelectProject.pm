@@ -21,6 +21,7 @@ use lib "$Bin/../../base/perl/lib";
 use lib "$Bin/../perl/lib";
 
 use base qw( Plg::Base::Dialog );
+use Base::Arg qw( hash_update );
 
 =head2 tk_proc
 
@@ -48,10 +49,7 @@ sub init {
     $self->SUPER::init();
 
     my $h = { };
-        
-    my @k = keys %$h;
-
-    for(@k){ $self->{$_} = $h->{$_} unless defined $self->{$_}; }
+    hash_update($self, $h, { keep_already_defined => 1 });
 
     return $self;
 }
