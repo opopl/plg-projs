@@ -29,31 +29,31 @@ Will be called by C<tk_run()> method defined in L<Plg::Base::Dialog>
 =cut
 
 sub tk_proc { 
-	my ($self, $mw) = @_;
+    my ($self, $mw) = @_;
 
-	my @projs = @{$self->{data}->{projs} || []};
+    my @projs = @{$self->{data}->{projs} || []};
 
-	my $lb = $mw->Scrolled("Listbox", 
-		-scrollbars => "e", 
-		-selectmode => "single")->pack( ); 
+    my $lb = $mw->Scrolled("Listbox", 
+        -scrollbars => "e", 
+        -selectmode => "single")->pack( ); 
 
-	$lb->insert('end', @projs);
+    $lb->insert('end', @projs);
 
-	return $self;
+    return $self;
 }
 
 sub init {
-	my $self = shift;
+    my $self = shift;
 
-	$self->SUPER::init();
+    $self->SUPER::init();
 
-	my $h = { };
-		
-	my @k = keys %$h;
+    my $h = { };
+        
+    my @k = keys %$h;
 
-	for(@k){ $self->{$_} = $h->{$_} unless defined $self->{$_}; }
+    for(@k){ $self->{$_} = $h->{$_} unless defined $self->{$_}; }
 
-	return $self;
+    return $self;
 }
 
 1;

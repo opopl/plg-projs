@@ -622,10 +622,6 @@ function! projs#action#append_thisproj (...)
 
 endfunction
 
-function! projs#action#gui_select_project (...) 
-  
-endfunction
-
 if 0
   call tree
     called by
