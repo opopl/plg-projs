@@ -22,6 +22,8 @@ use lib "$Bin/../perl/lib";
 
 use base qw( Plg::Base::Dialog );
 
+use Base::Arg qw(hash_update);
+
 #https://www.perlmonks.org/?node_id=1185809
 sub Tk::Separator
 {
@@ -151,7 +153,7 @@ sub tk_frame_build {
     my $mw = $self->{mw};
 
     $mw->Label( 
-        -text => 'Build', 
+        -text   => 'Build', 
         -height => 2,
     )->pack;
 
