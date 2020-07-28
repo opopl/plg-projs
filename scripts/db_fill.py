@@ -28,30 +28,30 @@ pylib   = os.path.join(dirname,'..','python','lib')
 sys.path.append(pylib)
 import plg.projs.db as db
 
-root=os.path.abspath("")
+root = os.path.abspath("")
 if args.root:
-    root = args.root
+  root = args.root
 
 rootid=""
 if args.rootid:
-    rootid = args.rootid
+  rootid = args.rootid
 
 db_file = os.path.join(root,'projs.sqlite')
 if args.db_file:
-    db_file = args.db_file
+  db_file = args.db_file
 
 proj = ''
 
 def logfun(e):
-    print(e)
+  print(e)
 
 if args.list:
-    list = args.list
-    projs = list.split(",")
-    for proj in projs:
-        db.fill_from_files( db_file, root, rootid, proj, logfun )
-    return
-
-db.drop_tables(db_file)
-db.create_tables(db_file)
-db.fill_from_files(db_file, root, rootid, proj, logfun)
+  list = args.list
+  projs = list.split(",")
+  for proj in projs:
+    db.fill_from_files( db_file, root, rootid, proj, logfun )
+  return
+else:
+  db.drop_tables(db_file)
+  db.create_tables(db_file)
+  db.fill_from_files(db_file, root, rootid, proj, logfun)

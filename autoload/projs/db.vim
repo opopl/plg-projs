@@ -108,9 +108,9 @@ function! projs#db#fill_from_files (...)
   let all = get(ref, 'all' , 0)
 
   if prompt
-    let all = input('all (1/0)? :',1)
+    let all = input('all (1/0)? :', 1)
     if !all
-      let proj_select = input('selected proj:',proj_select,'custom,projs#complete')
+      let proj_select = input('selected proj:', proj_select, 'custom,projs#complete' )
     endif
   endif
 
