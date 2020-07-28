@@ -128,12 +128,19 @@ function! projs#db#fill_from_files (...)
     return 1
   endif
 
-  call projs#varset('db_proj_select',proj_select)
+  call projs#varset('db_proj_select', proj_select)
 
   let db_fill_py = base#qw#catpath('plg','projs scripts db_fill.py')
   let py2_exe    = base#envvar('PY2_EXE','C:\Python27\python.exe')
 
-  let cmd = join([ shellescape(py2_exe), shellescape(db_fill_py) ],' ' )
+  let cmd = join([ 
+      \ shellescape(py2_exe), 
+      \ shellescape(db_fill_py),
+      \ "--root"   , projs#root(),
+      \ "--projs"  , join(projs, ","),
+      \ "--dbfile" , projs#db#file(),
+    \ ],
+    \ ' ' )
   
   let env = {}
   function env.get(temp_file) dict

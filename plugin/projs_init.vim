@@ -1,5 +1,6 @@
 
 let rootid = 'texdocs'
+let rootid = 'p_saintrussia'
 
 call projs#initvars()
 
