@@ -49,7 +49,7 @@ if args.list:
     list = args.list
     projs = list.split(",")
     for proj in projs:
-        db.fill_from_files(db_file, root, rootid, proj, logfun)
+        db.fill_from_files( db_file, root, rootid, proj, logfun )
     return
 
 db.drop_tables(db_file)
