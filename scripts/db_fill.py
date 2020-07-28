@@ -13,6 +13,7 @@ parser.add_argument("-p", "--proj", help="select_project",default="")
 parser.add_argument("-r", "--root",help="root",default="")
 parser.add_argument("--rootid", help="rootid",default="")
 parser.add_argument("--db_file", help="db_file",default="")
+parser.add_argument("-a", "--all", help="fill all projects",default=1)
 
 args = parser.parse_args()
 

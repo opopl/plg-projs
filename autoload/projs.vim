@@ -312,15 +312,15 @@ endf
 function! projs#insert (...)
   let ins = get(a:000,0,'')
 
-	let proj = projs#proj#name()
+  let proj = projs#proj#name()
 
-	let acts = base#varget('projs_opts_PrjInsert',[])
+  let acts = base#varget('projs_opts_PrjInsert',[])
   let acts = sort(acts)
 
   if  strlen(ins)
-	  let sub = 'projs#insert#'.ins
-	  exe 'call '.sub.'()'
-	else
+    let sub = 'projs#insert#'.ins
+    exe 'call '.sub.'()'
+  else
     let desc = base#varget('projs_desc_PrjInsert',{})
     let info = []
     for act in acts
@@ -921,11 +921,20 @@ endfunction
 "
 
 if 0
-  call in 
-    plugin/projs_init.vim
+  Call tree
+    Used by 
+      ProjsInit
+    Called in
+      plugin/projs_init.vim
+  Usage
+    call projs#init()
+    call projs#init(rootid)
 endif
 
 function! projs#init (...)
+    let rootid = projs#varget('rootid','')
+    let rootid = get(a:000,0,rootid)
+
     let l:start = localtime()
     let msg = [ 'start' ]
     let prf = { 'plugin' : 'projs', 'func' : 'projs#init' }
@@ -947,9 +956,6 @@ function! projs#init (...)
     "   templates_tex, templates_vim
     call projs#init#templates()
 
-    let rootid = projs#varget('rootid','')
-    let rootid = get(a:000,0,rootid)
-
     let [ root, rootid ] = projs#init#root(rootid)
 
     if !strlen(rootid)
@@ -967,6 +973,8 @@ function! projs#init (...)
       call projs#init#var(x)
     endfor
 
+    call projs#db#create_tables()
+
     if ! exists("proj") | let proj='' | endif
 
     " update list of projs plugin variables
@@ -974,6 +982,7 @@ function! projs#init (...)
 
     " update list of projects
     call projs#update('list')
+
 
     "MenuAdd projs
 
@@ -1001,7 +1010,7 @@ endfunction
 function! projs#xmlfile (...)
   let root = projs#root()
   let xmlfile = join([root,'projs.xml'], '/')
-	return xmlfile
+  return xmlfile
 endfunction
 
 " get the value of root dir

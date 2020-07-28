@@ -49,7 +49,7 @@ def get_data(filename):
         data['author']=m.group(1)
   return data
 
-def cleanup(db_file,root,proj):
+def cleanup(db_file, root, proj):
   conn = sqlite3.connect(db_file)
   c = conn.cursor()
 

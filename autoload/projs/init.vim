@@ -13,17 +13,10 @@
 "   return [root,rootid]
 
 function! projs#init#root (...)
-
     let rootid = projs#varget('rootid','')
-    let rootid = get(a:000,0,'')
+    let rootid = get(a:000,0,rootid)
 
-    let root   = projs#varget('root',base#envvar('PROJSDIR'))
-
-    if !len(root)
-      let rootid = projs#varget('rootid','texdocs')
-      call projs#varset('rootid',rootid)
-    endif
-
+		let root = ''
     if len(rootid)
       let dir     = base#path(rootid)
 

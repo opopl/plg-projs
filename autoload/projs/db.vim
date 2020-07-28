@@ -39,14 +39,21 @@ eof
 
 endfunction
 
+if 0
+  Usage:
+    projs#db#fill_tags()
+endif
+
 function! projs#db#fill_tags (...)
   let dbfile = projs#db#file()
 
   let script = base#qw#catpath('plg projs scripts db_fill_tags.py3')
   let py3 = 'C:\Python_372_64bit\python.EXE'
+  let py3 = base#envvar('PY3_EXE',py3)
 
   let dbfile_e = shellescape(dbfile)
-  let args = [ shellescape(py3), shellescape(script) ]
+  let args     = [ shellescape(py3), shellescape(script) ]
+
   call extend(args,[ '--dbfile' , dbfile_e ])
   let cmd = join(args, ' ')
   
@@ -81,11 +88,16 @@ function! projs#db#fill_tags (...)
 
 endfunction
 
-"Call tree
-"  Calls:
-"    projs#db_cmd#fill_from_files
+if 0
+  Usage
+   projs#db_cmd#fill_from_files({
+      \ 'prompt'      : prompt,
+      \ 'proj_select' : proj,
+      \ 'all'         : 1,
+      \ })
 
-"""prjdb_fill_from_files
+endif
+
 function! projs#db#fill_from_files (...)
   let ref    = get(a:000,0,{})
   let prompt = get(ref,'prompt',1)
@@ -93,33 +105,75 @@ function! projs#db#fill_from_files (...)
   let proj_select = projs#varget('db_proj_select',projs#proj#name())
   let proj_select = get(ref,'proj_select',proj_select)
 
+  let all = get(ref, 'all' , 0)
+
   if prompt
-    let proj_select = input('selected proj:',proj_select,'custom,projs#complete')
+    let all = input('all (1/0)? :',1)
+    if !all
+      let proj_select = input('selected proj:',proj_select,'custom,projs#complete')
+    endif
+  endif
+
+  if all
+    let projs = projs#list()
+    for proj in projs
+      let msg = [ 'project: ' . proj ]
+      let prf = { 'plugin' : 'projs', 'func' : 'projs#db#fill_from_files' }
+      call base#log(msg, prf)
+      call projs#db#fill_from_files({
+            \ 'proj_select' : proj,
+            \ 'prompt'      : 0,
+            \ })
+    endfor
+    return 1
   endif
 
   call projs#varset('db_proj_select',proj_select)
 
-python << eof
+  let db_fill_py = base#qw#catpath('plg','projs scripts db_fill.py')
+  let py2_exe    = base#envvar('PY2_EXE','C:\Python27\python.exe')
 
-import vim,sys,sqlite3,re,os,pprint
+  let cmd = join([ shellescape(py2_exe), shellescape(db_fill_py) ],' ' )
+  
+  let env = {}
+  function env.get(temp_file) dict
+    let temp_file = a:temp_file
+    let code = self.return_code
+  
+    if filereadable(a:temp_file)
+      let out = readfile(a:temp_file)
+      if len(out)
+        call base#buf#open_split({ 'lines' : out })
+      endif
+    endif
+  endfunction
+  
+  call asc#run({ 
+    \  'cmd' : cmd, 
+    \  'Fn'  : asc#tab_restore(env) 
+    \  })
 
-pylib = vim.eval('projs#pylib()')
-sys.path.append( pylib + '/plg/projs' )
-import db 
+"python << eof
 
-db_file     = vim.eval('projs#db#file()')
-root        = vim.eval('projs#root()')
-rootid      = vim.eval('projs#rootid()')
-proj_select = vim.eval('proj_select')
+"import vim,sys,sqlite3,re,os,pprint
 
-def logfun(e):
-  vim.command('let e="' + e + '"')
-  vim.command('call base#log(e)')
+"pylib = vim.eval('projs#pylib()')
+"sys.path.append( pylib + '/plg/projs' )
+"import db 
 
-db.fill_from_files(db_file, root, rootid, proj_select, logfun)
-db.cleanup(db_file, root, proj_select)
+"db_file     = vim.eval('projs#db#file()')
+"root        = vim.eval('projs#root()')
+"rootid      = vim.eval('projs#rootid()')
+"proj_select = vim.eval('proj_select')
 
-eof
+"def logfun(e):
+  "vim.command('let e="' + e + '"')
+  "vim.command('call base#log(e)')
+
+"db.fill_from_files(db_file, root, rootid, proj_select, logfun)
+"#db.cleanup(db_file, root, proj_select)
+
+"eof
 
 endfunction
 
@@ -671,43 +725,43 @@ function! projs#db#update_col(...)
 endfunction
 
 function! projs#db#fid_last ()
-	let dbfile = projs#db#file()
+  let dbfile = projs#db#file()
 
-	let r = {
-		\	'q'      : 'SELECT MAX(fid) FROM projs',
-		\	'p'      : [],
-		\	'dbfile' : dbfile,
-		\	}
-	let fid = pymy#sqlite#query_fetchone(r)
-	return str2nr(fid)
+  let r = {
+    \ 'q'      : 'SELECT MAX(fid) FROM projs',
+    \ 'p'      : [],
+    \ 'dbfile' : dbfile,
+    \ }
+  let fid = pymy#sqlite#query_fetchone(r)
+  return str2nr(fid)
 endfunction
 
 function! projs#db#pid_max ()
-		let dbfile = projs#db#file()
-		let r = {
-			\	'q'      : 'SELECT MAX(pid)+1 FROM projs',
-			\	'p'      : [],
-			\	'dbfile' : dbfile,
-			\	}
-		let pid = pymy#sqlite#query_fetchone(r)
-		let pid = str2nr(pid)
-		return pid 
+    let dbfile = projs#db#file()
+    let r = {
+      \ 'q'      : 'SELECT MAX(pid)+1 FROM projs',
+      \ 'p'      : [],
+      \ 'dbfile' : dbfile,
+      \ }
+    let pid = pymy#sqlite#query_fetchone(r)
+    let pid = str2nr(pid)
+    return pid 
 endfunction
 
 function! projs#db#pid ()
-	let proj = projs#proj#name()
+  let proj = projs#proj#name()
 
-	let r = {
-		\	'q'      : 'SELECT pid FROM projs WHERE proj = ? and pid IS NOT NULL',
-		\	'p'      : [proj],
-		\	'dbfile' : projs#db#file(),
-		\	}
-	let pid = pymy#sqlite#query_fetchone(r)
-	if !len(pid)
-		let pid = projs#db#pid_max()
-		let pid = pid + 1
-	endif
-	return pid
+  let r = {
+    \ 'q'      : 'SELECT pid FROM projs WHERE proj = ? and pid IS NOT NULL',
+    \ 'p'      : [proj],
+    \ 'dbfile' : projs#db#file(),
+    \ }
+  let pid = pymy#sqlite#query_fetchone(r)
+  if !len(pid)
+    let pid = projs#db#pid_max()
+    let pid = pid + 1
+  endif
+  return pid
 endfunction
 
 "  projs#db#action
