@@ -768,14 +768,16 @@ function! projs#sec#new(sec,...)
 
         if len(sec_type)
           let bw = base#word('insert_plus')
-          "call extend(lines, [ printf('  '), printf('\clearpage') ])
+          let rootid = projs#rootid()
+
+          let src_f = '{\small\LaTeX~section: \verb|%s| project: \verb|%s| rootid: \verb|%s|}'
 
           call extend(lines, [
             \ printf('\%s{%s}' , sec_type, bw),
             \ printf('\%s{%s}' , 'url', bw),
             \ printf('  '),
             \ printf('\vspace{%s}','0.5cm'),
-            \ printf('\LaTeX~section: \verb|%s|',sec),
+            \ printf(src_f, sec, proj, rootid),
             \ printf('\vspace{%s}','0.5cm'),
             \ printf('  '),
             \ ])

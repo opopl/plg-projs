@@ -62,13 +62,17 @@ function! projs#visual#ii_rename (start, end, ... )
 endf
 
 """prjvisual_ii_to_new_secs
+"""ii_to_new_secs
+
 function! projs#visual#ii_to_new_secs (start, end, ... )
   let start = a:start
   let end   = a:end
 
   let secs = projs#visual#ii#secs(start,end)
 
-  let sec_type = input('section type:','','custom,projs#complete#sectypes')
+	let sec_type = 'subsection'
+  let sec_type = input('section type:',sec_type,'custom,projs#complete#sectypes')
+
   for sec in secs
     let r = {
         \  'git_add'    : 1,
@@ -81,7 +85,7 @@ function! projs#visual#ii_to_new_secs (start, end, ... )
 
   let s:obj = { 'secs' : secs }
   function! s:obj.init () dict
-    let yn = input('Sections have been created, open the sections now? 1/0: ', 0 )
+    let yn = input('Sections have been created, open the sections now? 1/0: ', 1 )
 
     let secs = self.secs
 

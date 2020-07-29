@@ -47,7 +47,7 @@ function! projs#pdf#path (...)
 	let proj    = get(a:000,0,projs#proj#name())
 
 	let pdffin  = projs#varget('pdffin','')
-	let pdffile = base#file#catfile([ pdffin, proj . '.pdf' ])
+	let pdffile = base#file#catfile([ pdffin, projs#rootid(), proj . '.pdf' ])
 
 	return pdffile
 endfunction
