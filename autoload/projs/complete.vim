@@ -179,6 +179,14 @@ function! projs#complete#grep (...)
 
 endfunction
 
+function! projs#complete#sectypes (...)
+  let comps = []
+
+  call extend(comps,base#varget('projs_sectypes',[]))
+
+  return join(comps,"\n") 
+endfunction
+
 function! projs#complete#secnames (...)
   "call projs#proj#secnames()
   let comps = []

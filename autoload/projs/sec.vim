@@ -675,6 +675,7 @@ function! projs#sec#new(sec,...)
         \   "seccmd"     : '',
         \   "parent_sec" : projs#buf#sec(),
         \   "lines"      : [],
+        \   "sec_type"   : '',
         \   }
 
     if a:0 
@@ -683,8 +684,9 @@ function! projs#sec#new(sec,...)
     endif
 
     let parent_sec = get(ref,'parent_sec',parent_sec)
+    let sec_type   = get(ref,'sec_type','')
 
-    let rw = get(ref,'rewrite',0)
+    let rw = get(ref, 'rewrite', 0)
     if projs#sec#exists(sec) && !rw
         return
     endif
@@ -758,6 +760,14 @@ function! projs#sec#new(sec,...)
           call extend(r_sc,{ 'seccmd' : get(ref,'seccmd','section') })
           call extend(lines, projs#sec#lines_seccmd(r_sc))
         endif
+
+				if len(sec_type)
+          call extend(lines, [
+						\	printf('\clearpage' , ''),
+						\	printf('\%s{<++>}' , sec_type),
+						\	printf('\%s{<++>}' , 'url'),
+						\])
+				endif
  
     endif
 

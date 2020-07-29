@@ -67,11 +67,13 @@ function! projs#visual#ii_to_new_secs (start, end, ... )
 
   let secs = projs#visual#ii#secs(start,end)
 
+  let sec_type = input('section type:','','projs#complete#sectypes')
   for sec in secs
     let r = {
         \  'git_add'    : 1,
         \  'rewrite'    : 0,
         \  'parent_sec' : b:sec,
+        \  'sec_type'   : sec_type,
         \  }
     call projs#sec#new(sec, r)
   endfor
@@ -94,13 +96,13 @@ function! projs#visual#ii_to_new_secs (start, end, ... )
 endfunction
 
 function! projs#visual#delete_empty_lines (...)
-	exe "'<,'>s/^\s*$//g"
+  exe "'<,'>s/^\s*$//g"
 
 endfunction
 
 function! projs#visual#trim (...)
-	exe "'<,'>s/\s*$//g"
-	exe "'<,'>s/^\s*//g"
+  exe "'<,'>s/\s*$//g"
+  exe "'<,'>s/^\s*//g"
 
 endfunction
 
@@ -208,27 +210,27 @@ function! projs#visual#cut_to_verb (start,end,...)
   let start  = a:start
   let end    = a:end
 
-	let sec = projs#sec#verb_new()
-	let file = projs#sec#file(sec)
+  let sec = projs#sec#verb_new()
+  let file = projs#sec#file(sec)
 
   call projs#sec#new(sec,{ 'git_add' : 1 })
   TgUpdate projs_this
 
-	let lines = ['\begin{verbatim}' ]
-	call extend(lines,base#vim#visual_selection())
-	call extend(lines,[ '\end{verbatim}' ])
+  let lines = ['\begin{verbatim}' ]
+  call extend(lines,base#vim#visual_selection())
+  call extend(lines,[ '\end{verbatim}' ])
 
-	call base#buf#cut({ 'start' : start, 'end' : end })
+  call base#buf#cut({ 'start' : start, 'end' : end })
 
-	call append('.',printf('\ii{%s}',sec))
+  call append('.',printf('\ii{%s}',sec))
 
-	let r = {
-	      \   'lines'  : lines,
-	      \   'file'   : file,
-	      \   'prompt' : 0,
-	      \   'mode'   : 'append',
-	      \   }
-	call base#file#write_lines(r)	
+  let r = {
+        \   'lines'  : lines,
+        \   'file'   : file,
+        \   'prompt' : 0,
+        \   'mode'   : 'append',
+        \   }
+  call base#file#write_lines(r) 
 
   call base#rdw(printf('visual selection cut to new section: %s',sec))
 

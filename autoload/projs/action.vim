@@ -628,6 +628,7 @@ if 0
       projs#action#async_build
 endif
 
+
 function! projs#action#async_build_Fc (self,temp_file) 
   let self      = a:self
   let temp_file = a:temp_file
@@ -785,6 +786,8 @@ if 0
       projs#sec#new
 endif
 
+"""prjact_async_build
+
 function! projs#action#async_build (...) 
   let ref = get(a:000,0,{})
 
@@ -798,7 +801,10 @@ function! projs#action#async_build (...)
 
   let bat     = projs#sec#file(sec_bat)
 
-  let o = { 'prompt' : 0 }
+  let o = { 
+		\	'prompt'  : 0,
+		\	'rewrite' : 1,
+		\	}
   call projs#sec#new(sec_bat,o)
 
   let start = localtime()

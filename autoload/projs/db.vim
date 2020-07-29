@@ -102,50 +102,48 @@ function! projs#db#fill_from_files (...)
   let ref    = get(a:000,0,{})
   let prompt = get(ref,'prompt',1)
 
-  let proj_select = projs#varget('db_proj_select',projs#proj#name())
-  let proj_select = get(ref,'proj_select',proj_select)
+  let proj = projs#varget('db_proj_select',projs#proj#name())
+  let proj = get(ref,'proj_select',proj)
 
   let all = get(ref, 'all' , 0)
 
   if prompt
     let all = input('all (1/0)? :', 1)
     if !all
-      let proj_select = input('selected proj:', proj_select, 'custom,projs#complete' )
+      let proj = input('selected proj:', proj, 'custom,projs#complete' )
     endif
   endif
 
+  let projs = []
   if all
     let projs = projs#list()
-    for proj in projs
-      let msg = [ 'project: ' . proj ]
-      let prf = { 'plugin' : 'projs', 'func' : 'projs#db#fill_from_files' }
-      call base#log(msg, prf)
-      call projs#db#fill_from_files({
-            \ 'proj_select' : proj,
-            \ 'prompt'      : 0,
-            \ })
-    endfor
-    return 1
   endif
 
-  call projs#varset('db_proj_select', proj_select)
+  call projs#varset('db_proj_select', proj)
 
   let db_fill_py = base#qw#catpath('plg','projs scripts db_fill.py')
   let py2_exe    = base#envvar('PY2_EXE','C:\Python27\python.exe')
 
-  let cmd = join([ 
+  let cmd_a = [ 
       \ shellescape(py2_exe), 
       \ shellescape(db_fill_py),
       \ "--root"   , projs#root(),
-      \ "--projs"  , join(projs, ","),
       \ "--dbfile" , projs#db#file(),
-    \ ],
-    \ ' ' )
+    \ ]
+
+  if len(projs)
+    let projs_s = join(projs, ",")
+    call extend(cmd_a,[ '--list', projs_s ])
+  else
+    call extend(cmd_a,[ '--proj', proj ])
+  endif
+
+  let cmd = join(cmd_a, ' ')
   
   let env = {}
   function env.get(temp_file) dict
     let temp_file = a:temp_file
-    let code = self.return_code
+    let code      = self.return_code
   
     if filereadable(a:temp_file)
       let out = readfile(a:temp_file)
