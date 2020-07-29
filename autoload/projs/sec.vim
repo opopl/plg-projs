@@ -661,6 +661,10 @@ endfunction
 " projs#sec#new(sec,{ "rewrite" : 1 })
 "
 " end of function: end_projs_sec_new
+"
+if 0
+	<++>
+endif
 
 function! projs#sec#new(sec,...)
     let sec        = a:sec

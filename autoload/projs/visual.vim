@@ -61,13 +61,14 @@ function! projs#visual#ii_rename (start, end, ... )
 
 endf
 
+"""prjvisual_ii_to_new_secs
 function! projs#visual#ii_to_new_secs (start, end, ... )
   let start = a:start
   let end   = a:end
 
   let secs = projs#visual#ii#secs(start,end)
 
-  let sec_type = input('section type:','','projs#complete#sectypes')
+  let sec_type = input('section type:','','custom,projs#complete#sectypes')
   for sec in secs
     let r = {
         \  'git_add'    : 1,
