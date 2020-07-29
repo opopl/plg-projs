@@ -124,7 +124,9 @@ function! projs#newseclines#_build_tex_ (...)
 
   call add(lines,' ')
   call add(lines,'set outdir='.outdir_win)
-  call add(lines,printf('set outdir_pdf=%PDFOUT%\%s', projs#rootid() ))
+  call add(lines,' ')
+  call add(lines,printf('set outdir_pdf=%%PDFOUT%%\%s', projs#rootid() ))
+  call add(lines,printf('set outdir_pdf_b=%%outdir_pdf%%\b_%s', type ))
   call add(lines,' ')
   call add(lines,'md %outdir%')
   call add(lines,' ')
@@ -140,6 +142,7 @@ function! projs#newseclines#_build_tex_ (...)
   call add(lines,'rem ------------------------ ')
   call add(lines,' ')
   call add(lines,'md %outdir_pdf%')
+  call add(lines,'md %outdir_pdf_b%')
   call add(lines,' ')
   call add(lines,'cd %Bin% ')
   call add(lines,lns.texcmd  )
@@ -152,7 +155,7 @@ function! projs#newseclines#_build_tex_ (...)
   let dests = []
   
   call add(dests,'%Bin%\pdf_built\b_%proj%.pdf' )
-  call add(dests,'%outdir_pdf%\b_'.type.'_%proj%.pdf' )
+  call add(dests,'%outdir_pdf_b%\%proj%.pdf' )
   call add(dests,'%outdir_pdf%\%proj%.pdf' )
   
   for dest in dests

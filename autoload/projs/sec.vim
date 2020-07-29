@@ -529,12 +529,12 @@ function! projs#sec#select (...)
   let q = 'SELECT sec FROM projs WHERE proj = ?'
   let dbfile = projs#db#file()
   let r = {
-  	\	'q'      : q,
-  	\	'p'      : [proj],
-  	\	'dbfile' : dbfile,
-  	\	}
+    \ 'q'      : q,
+    \ 'p'      : [proj],
+    \ 'dbfile' : dbfile,
+    \ }
   let sec = pymy#sqlite#query_fetchone(r)
-	return sec
+  return sec
 
 endfunction
 
@@ -600,8 +600,8 @@ finally:
 #  f.close()
   
 eof
-	let lines = py3eval('lines_w')
-	call append('.',lines)
+  let lines = py3eval('lines_w')
+  call append('.',lines)
 
 
 endfunction
@@ -631,8 +631,8 @@ function! projs#sec#exists (...)
 endfunction
 
 if 0
-	called by
-		projs#visual#cut_to_verb
+  called by
+    projs#visual#cut_to_verb
 endif
 
 function! projs#sec#verb_new()
@@ -651,7 +651,7 @@ function! projs#sec#verb_new()
   endif
 
   let sec = printf('verb_%s',num)
-	return sec
+  return sec
 endfunction
 
 " projs#sec#new(sec)
@@ -663,7 +663,8 @@ endfunction
 " end of function: end_projs_sec_new
 "
 if 0
-	<++>
+  Usage
+    call projs#sec#new(sec,{...})
 endif
 
 function! projs#sec#new(sec,...)
@@ -765,13 +766,16 @@ function! projs#sec#new(sec,...)
           call extend(lines, projs#sec#lines_seccmd(r_sc))
         endif
 
-				if len(sec_type)
+        if len(sec_type)
+          let bw = base#word('insert_plus')
+          "call extend(lines, [ printf('  '), printf('\clearpage') ])
+
           call extend(lines, [
-						\	printf('\clearpage' , ''),
-						\	printf('\%s{<++>}' , sec_type),
-						\	printf('\%s{<++>}' , 'url'),
-						\])
-				endif
+            \ printf('\%s{%s}' , sec_type, bw),
+            \ printf('\%s{%s}' , 'url', bw),
+            \ printf('  '),
+            \ ])
+        endif
  
     endif
 
