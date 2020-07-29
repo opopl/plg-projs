@@ -774,6 +774,10 @@ function! projs#sec#new(sec,...)
             \ printf('\%s{%s}' , sec_type, bw),
             \ printf('\%s{%s}' , 'url', bw),
             \ printf('  '),
+            \ printf('\vspace{%s}','0.5cm'),
+            \ printf('\LaTeX~section: \verb|%s|',sec),
+            \ printf('\vspace{%s}','0.5cm'),
+            \ printf('  '),
             \ ])
         endif
  
