@@ -939,6 +939,45 @@ function! projs#action#verb_new ()
 
 endfunction
 
+function! projs#action#list_projs ()
+	let projs = projs#list()
+
+	let proj = projs#proj#name()
+
+	let data = []
+	for proj in projs
+		call add(data,[proj,''])
+	endfor
+
+  let lines = [ 
+      \ 'Current project:' , "\t" . proj,
+      \ '		List of Projects: ' 
+      \ ]
+
+  call extend(lines, pymy#data#tabulate({
+      \ 'data'    : data,
+      \ 'headers' : [ 'project', 'description' ],
+      \ }))
+
+	let s:obj = { 'proj' : proj }
+  function! s:obj.init (...) dict
+      let proj = self.proj
+      let hl = 'WildMenu'
+      call matchadd(hl,'\s\+'.proj.'\s\+')
+      call matchadd(hl,proj)
+  endfunction
+    
+  let Fc = s:obj.init
+
+  call base#buf#open_split({ 
+      \ 'lines'    : lines ,
+      \ 'cmds_pre' : ['resize 99'] ,
+      \ 'Fc'       : Fc,
+      \ })
+  return
+
+endfunction
+
 if 0
   see also:
 endif
