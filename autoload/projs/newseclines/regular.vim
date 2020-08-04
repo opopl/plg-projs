@@ -76,6 +76,7 @@ text = r'''
 '''
 eof
   let text  = py3eval('text')
+	let text  = substitute(text,'\\','\','g')
   let lines = split(text,"\n")
 
   return lines

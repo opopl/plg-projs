@@ -770,7 +770,11 @@ function! projs#sec#new(sec,...)
           let bw = base#word('insert_plus')
           let rootid = projs#rootid()
 
-          let src_f = '{\small\LaTeX~section: \verb|%s| project: \verb|%s| rootid: \verb|%s|}'
+          let src_f = ''
+					let src_f .= '{\ifDEBUG' . "\n"
+					let src_f .= '\small\LaTeX~section: \verb|%s| project: \verb|%s| rootid: \verb|%s|'
+					let src_f .= '}' . "\n"
+
 
           call extend(lines, [
             \ printf('\%s{%s}' , sec_type, bw),
