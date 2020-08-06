@@ -773,11 +773,12 @@ function! projs#sec#new(sec,...)
 					"let src_f .= '\small\LaTeX~section: \verb|%s| project: \verb|%s| rootid: \verb|%s|'
 
 					let s_a = [' ']
- "         call add(s_a,'{')
-					"call add(s_a,'\ifDEBUG')
-					"call add(s_a,'\small')
-					call add(s_a,'\LaTeX~section: \verb|%s| project: \verb|%s| rootid: \verb|%s|	')
-					"call add(s_a,'}')
+					call add(s_a,'{')
+					call add(s_a,'\ifDEBUG')
+					call add(s_a,'\small')
+					call add(s_a,'\LaTeX~section: \verb|%s| project: \verb|%s| rootid: \verb|%s| ')
+					call add(s_a,'\fi')
+					call add(s_a,'}')
 
           let src_f = join(s_a, "")
 
