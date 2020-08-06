@@ -1,3 +1,32 @@
+snippet kua
+	%vim:keymap=ukrainian-jcuken
+snippet kru
+	%vim:keymap=russian-jcukenwin
+snippet csname
+	\csname ${1}\endcsname
+snippet rl
+	\relax
+snippet ifcsname
+	\expandafter\ifx\csname ${1}\endcsname ${2}
+		${3}
+	\fi
+snippet ifxu
+	\ifx ${1}\Undefined
+		${2}
+	\fi
+snippet loop
+	\newcount\i
+	\i=0
+	\loop
+			\message{tocNesting{\i} : \tocNesting{\i}}
+			\advance\i by 1
+	\ifnum\i<${1}\repeat
+snippet msg
+	\message{${1}}
+snippet hbox
+	\hbox{${1}}
+snippet vbox
+	\vbox{${1}}
 snippet noind
 	\noindent
 snippet cite

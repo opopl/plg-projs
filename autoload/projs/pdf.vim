@@ -30,6 +30,7 @@ function! projs#pdf#view (...)
 	endif
 
   let viewer  = base#exefile#path('evince')
+  let viewer  = base#exefile#path('okular')
 
   if filereadable(pdffile)
 		if has('win32')
