@@ -625,15 +625,16 @@ function! projs#build#qflist_process (...)
     copen
   endif
 
-  
-
 endfunction
 
-" echo projs#build#files({ 
-"   \ "exts" : ["pdf"],
-"   \ "add_pdf_built" : 1,
-"   \ "add_other" : 1,
-"   \ })
+if 0
+	Usage
+ 		echo projs#build#files({ 
+		   \ "exts" : ["pdf"],
+		   \ "add_pdf_built" : 1,
+		   \ "add_other" : 1,
+		   \ })
+endif
 
 function! projs#build#files (...)
   let ref = {}
@@ -652,7 +653,7 @@ function! projs#build#files (...)
   let do ={}
 
   for d in keys(defs)
-    let do[d]=get(ref,d,defs[d])
+    let do[d] = get(ref,d,defs[d])
   endfor
 
 
@@ -676,10 +677,10 @@ function! projs#build#files (...)
     let files = []
   
     let fref = {
-      \ "dirs" : [builddir],
+      \ "dirs"    : [builddir],
       \ "relpath" : do.relpath,
       \ "subdirs" : 1,
-      \ "exts"    :  exts_other,
+      \ "exts"    : exts_other,
       \ }
   
     let files = base#find(fref)
