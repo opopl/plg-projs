@@ -53,6 +53,16 @@ function! projs#build#action (...)
   endif
 endfunction
 
+if 0
+	Tags
+		PrjBuild_Cleanup
+	Called by
+		projs#build#action
+		PrjBuild Cleanup
+	See also
+		projs#build#files
+endif
+
 function! projs#build#cleanup (...)
   let bfiles = projs#build#files()
 
@@ -627,30 +637,41 @@ function! projs#build#qflist_process (...)
 
 endfunction
 
+"""help_projs_build_files
 if 0
 	Usage
+ 		let files =  projs#build#files(ref) 
+
+	Examples
  		echo projs#build#files({ 
-		   \ "exts" : ["pdf"],
+		   \ "exts"          : base#qw("pdf"),
 		   \ "add_pdf_built" : 1,
-		   \ "add_other" : 1,
+		   \ "add_other"     : 1,
 		   \ })
+
+		let files = projs#build#files() | echo files
+
+	Input Options
+		exts          : DICT
+		add_pdf_built : 1/0
+		add_other     : 1/0
+		relpath       : 1/0
 endif
 
 function! projs#build#files (...)
-  let ref = {}
-  if a:0 | let ref = a:1 | endif
+	let ref = get(a:000,0,{})
 
-  let exts_other = get(ref,'exts',[ ])
+  let exts_other = get(ref,'exts',[])
 
   let pdfout = projs#var('pdfout')
   let proj   = projs#proj#name()
 
   let bfiles = []
 
-  let defs={
+  let defs = {
     \ 'relpath' : 0
     \ }
-  let do ={}
+  let do = {}
 
   for d in keys(defs)
     let do[d] = get(ref,d,defs[d])
@@ -660,8 +681,8 @@ function! projs#build#files (...)
   " ---------------- get built (PDF/other extension) files
   if get(ref,'add_pdf_built',1)
     let fref = {
-      \ "dirs" : [pdfout],
-      \ "pat"  : '^'.proj.'\d+'.'\.pdf',
+      \ "dirs"    : [ pdfout ],
+      \ "pat"     : '^'.proj.'\d+'.'\.pdf',
       \ "relpath" : do.relpath,
       \ "subdirs" : 0,
       \ "exts"    : ["pdf"],
