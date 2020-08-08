@@ -29,6 +29,10 @@ function! projs#build#action (...)
   if act == 'Cleanup'
     call projs#build#cleanup()
 
+	elseif act == 'List'
+
+	elseif act == 'Run'
+
 """PrjBuild_View
   elseif act == 'View'
     let extstr ='aux log'
@@ -48,6 +52,7 @@ function! projs#build#action (...)
       \ 'numcols'     : 1,
       \ 'bottom'      : "Choose a file by number: ",
       \ })
+
     call base#fileopen(file)
 
   endif
@@ -649,24 +654,33 @@ if 0
 		   \ "add_other"     : 1,
 		   \ })
 
+ 		echo projs#build#files({ 
+		   \ "exts"          : base#qw("pdf aux log"),
+		   \ "add_pdf_built" : 1,
+		   \ "add_other"     : 1,
+		   \ "relpath"       : 1,
+		   \ })
+
 		let files = projs#build#files() | echo files
 
 	Input Options
 		exts          : DICT
 		add_pdf_built : 1/0
 		add_other     : 1/0
-		relpath       : 1/0
+		relpath       : 1/0 - full path (0) relative path (1)
 endif
 
 function! projs#build#files (...)
 	let ref = get(a:000,0,{})
+
+	""" to be returned: array of build files
+  let bfiles = []
 
   let exts_other = get(ref,'exts',[])
 
   let pdfout = projs#var('pdfout')
   let proj   = projs#proj#name()
 
-  let bfiles = []
 
   let defs = {
     \ 'relpath' : 0
@@ -674,7 +688,8 @@ function! projs#build#files (...)
   let do = {}
 
   for d in keys(defs)
-    let do[d] = get(ref,d,defs[d])
+		let default = get(defs,d,'')
+    let do[d]   = get(ref,d,default)
   endfor
 
 
