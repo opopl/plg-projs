@@ -796,32 +796,33 @@ function! projs#action#async_build (...)
   let proj = projs#proj#name()
   let proj = get(ref,'proj',proj)
 
-  let sec_bat = '_build_pdflatex_'
-  let sec_bat = get(ref,'sec_bat',sec_bat)
+  let mode = '_bb_pdflatex_'
+  "let sec_bat = get(ref,'sec_bat',sec_bat)
 
-  let bat     = projs#sec#file(sec_bat)
+  "let bat     = projs#sec#file(sec_bat)
 
-  let o = { 
-		\	'prompt'  : 0,
-		\	'rewrite' : 1,
-		\	}
-  call projs#sec#new(sec_bat,o)
+  "let o = { 
+    "\  'prompt'  : 0,
+    "\  'rewrite' : 1,
+    "\  }
+  "call projs#sec#new(sec_bat,o)
 
   let start = localtime()
+  call chdir(root)
+  let cmd = join([ 'bb_pdflatex.bat', proj], ' ' )
   
   let env = {
     \ 'proj'  : proj,
     \ 'root'  : root,
     \ 'start' : start,
-    \ 'mode'  : sec_bat,
+    \ 'mode'  : mode,
     \ }
-  let cmd = bat
 
   function env.get(temp_file) dict
     call projs#action#async_build_Fc(self,a:temp_file)
   endfunction
 
-  echo printf('async_build: %s, mode: %s',proj,sec_bat)
+  echo printf('async_build: %s, mode: %s', proj, mode)
 
   call asc#run({ 
     \ 'cmd' : cmd, 
@@ -940,18 +941,18 @@ function! projs#action#verb_new ()
 endfunction
 
 function! projs#action#list_projs ()
-	let projs = projs#list()
+  let projs = projs#list()
 
-	let proj = projs#proj#name()
+  let proj = projs#proj#name()
 
-	let data = []
-	for proj in projs
-		call add(data,[proj,''])
-	endfor
+  let data = []
+  for proj in projs
+    call add(data,[proj,''])
+  endfor
 
   let lines = [ 
       \ 'Current project:' , "\t" . proj,
-      \ '		List of Projects: ' 
+      \ '   List of Projects: ' 
       \ ]
 
   call extend(lines, pymy#data#tabulate({
@@ -959,7 +960,7 @@ function! projs#action#list_projs ()
       \ 'headers' : [ 'project', 'description' ],
       \ }))
 
-	let s:obj = { 'proj' : proj }
+  let s:obj = { 'proj' : proj }
   function! s:obj.init (...) dict
       let proj = self.proj
       let hl = 'WildMenu'
