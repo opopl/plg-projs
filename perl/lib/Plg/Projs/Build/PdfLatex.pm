@@ -91,10 +91,13 @@ sub run {
 
     my $log_dir = catfile(qw(log txt),$proj);
     mkpath $log_dir;
-    my $out_file = catfile($log_dir, qq{pdflatex.txt });
-    print $out_file . "\n";
 
-    my $cmd_tex = join(" ", @$self{qw( tex_exe tex_opts )}, $proj, sprintf('>%s 2>&1 ',$out_file) );
+    #my $out_file = catfile($log_dir, qq{pdflatex.txt });
+    #print $out_file . "\n";
+    #my @redir = sprintf('>%s 2>&1 ',$out_file);
+    #my $cmd_tex = join(" ", @$self{qw( tex_exe tex_opts )}, $proj, @redir  );
+    
+    my $cmd_tex = join(" ", @$self{qw( tex_exe tex_opts )}, $proj );
     system($cmd_tex);
 
     chdir $self->{out_dir};
@@ -125,12 +128,12 @@ sub run {
             m/^\s*\\item\s+(\w+)/ && do { $ind_items{$1} = []; };
 
             m{^\s*\\lettergroup\{(.+)\}$} && do {
-	            s{
-	                ^\s*\\lettergroup\{(.+)\}$
-	            }{
-	             \\hypertarget{ind-$i}{}\n\\bookmark[level=$level,dest=ind-$i]{$1}\n 
-	             \\lettergroup{$1}
-	            }gmx;
+                s{
+                    ^\s*\\lettergroup\{(.+)\}$
+                }{
+                 \\hypertarget{ind-$i}{}\n\\bookmark[level=$level,dest=ind-$i]{$1}\n 
+                 \\lettergroup{$1}
+                }gmx;
 
                 $i++;
             };
@@ -140,7 +143,7 @@ sub run {
         }
         close(F);
         write_file($ind_file,join("\n",@out) . "\n");
-        print Dumper(\%ind_items) . "\n";
+        #print Dumper(\%ind_items) . "\n";
 
     }
     #return ;
