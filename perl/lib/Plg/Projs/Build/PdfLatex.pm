@@ -74,6 +74,48 @@ sub init {
     return $self;
 }
 
+sub process_ind_file {
+    my ($self, $ind_file, $level) = @_;
+
+    unless (-e $ind_file){
+        return $self;
+    }
+
+   my %ind_items;
+
+   my @out;
+   my $theindex=0;
+   open(F,"<:encoding(utf-8)", "$ind_file") || die $!;
+
+   my $i=0;
+   while(<F>){
+       chomp;
+       m/^\\begin\{theindex\}/ && do { $theindex=1; };
+       m/^\\end\{theindex\}/ && do { $theindex=0; };
+       next unless $theindex;
+
+       m/^\s*\\item\s+(\w+)/ && do { $ind_items{$1} = []; };
+
+       m{^\s*\\lettergroup\{(.+)\}$} && do {
+           s{
+               ^\s*\\lettergroup\{(.+)\}$
+           }{
+            \\hypertarget{ind-$i}{}\n\\bookmark[level=$level,dest=ind-$i]{$1}\n 
+            \\lettergroup{$1}
+           }gmx;
+
+           $i++;
+       };
+
+       push @out, $_;
+
+   }
+   close(F);
+   write_file($ind_file,join("\n",@out) . "\n");
+
+    return $self;
+}
+
 sub run {
     my ($self) = @_;
 
@@ -85,8 +127,8 @@ sub run {
         my $dir = $self->{$dirid};
         mkpath $dir;
     }
-    my $projbib = catfile( $self->{out_dir}, "$proj.bib");
-    copy( $self->{bib_file}, $projbib ) 
+    my $proj_bib = catfile( $self->{out_dir}, "$proj.bib");
+    copy( $self->{bib_file}, $proj_bib ) 
         if -e $self->{bib_file};
 
     my $log_dir = catfile(qw(log txt),$proj);
@@ -96,56 +138,21 @@ sub run {
     #print $out_file . "\n";
     #my @redir = sprintf('>%s 2>&1 ',$out_file);
     #my $cmd_tex = join(" ", @$self{qw( tex_exe tex_opts )}, $proj, @redir  );
+    #system(qq{ makeindex $proj } );
+    #system(qq{ texindy -L russian -C utf8 -M latin-alph.xdy $proj.idx });
+#\makeindex [options = -L russian -C utf8 -M latin-alph.xdy]
     
     my $cmd_tex = join(" ", @$self{qw( tex_exe tex_opts )}, $proj );
     system($cmd_tex);
 
     chdir $self->{out_dir};
-    system(qq{ bibtex $proj } ) if -e $projbib;
-    #system(qq{ makeindex $proj } );
-    #system(qq{ texindy -L russian -C utf8 -M latin-alph.xdy $proj.idx });
+    
+    system(qq{ bibtex $proj } ) if -e $proj_bib;
     system(qq{ texindy -L russian -C utf8 $proj.idx });
-#\makeindex [options = -L russian -C utf8 -M latin-alph.xdy]
 
     my $ind_file = catfile("$proj.ind");
+    #$self->process_ind_file($ind_file, 1);;
 
-    my $level = 1;
-
-    if (-e $ind_file) {
-        my %ind_items;
-
-        my @out;
-        my $theindex=0;
-        open(F,"<:encoding(utf-8)", "$ind_file") || die $!;
-
-        my $i=0;
-        while(<F>){
-            chomp;
-            m/^\\begin\{theindex\}/ && do { $theindex=1; };
-            m/^\\end\{theindex\}/ && do { $theindex=0; };
-            next unless $theindex;
-
-            m/^\s*\\item\s+(\w+)/ && do { $ind_items{$1} = []; };
-
-            m{^\s*\\lettergroup\{(.+)\}$} && do {
-                s{
-                    ^\s*\\lettergroup\{(.+)\}$
-                }{
-                 \\hypertarget{ind-$i}{}\n\\bookmark[level=$level,dest=ind-$i]{$1}\n 
-                 \\lettergroup{$1}
-                }gmx;
-
-                $i++;
-            };
-
-            push @out, $_;
-
-        }
-        close(F);
-        write_file($ind_file,join("\n",@out) . "\n");
-        #print Dumper(\%ind_items) . "\n";
-
-    }
     #return ;
     chdir $self->{root};
 
