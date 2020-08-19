@@ -233,6 +233,7 @@ sub cmd_img_by_tags {
         q   => $q,
         p   => [],
     });
+
     my $first = shift @{$res->[0]->{rows} || []};
 
     my $path = shift @$first;

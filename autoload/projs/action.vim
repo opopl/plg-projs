@@ -873,7 +873,9 @@ function! projs#action#buildmode_set ()
 endfunction
 
 function! projs#action#joinlines ()
-    let jlines =  projs#filejoinlines({ 'write_jfile' : 1 })
+    let jlines = projs#filejoinlines({ 
+			\	'write_jfile' : 1 
+			\	})
     VSEC _join_
 endfunction
 
