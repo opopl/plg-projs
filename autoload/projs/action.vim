@@ -786,9 +786,7 @@ if 0
       projs#sec#new
 endif
 
-"""prjact_async_build
-
-function! projs#action#async_build (...) 
+function! projs#action#async_build_pwg (...) 
   let ref = get(a:000,0,{})
 
   let root    = projs#root()
@@ -798,15 +796,43 @@ function! projs#action#async_build (...)
   let proj = get(ref,'proj',proj)
 
   let mode = '_bb_pdflatex_'
-  "let sec_bat = get(ref,'sec_bat',sec_bat)
 
-  "let bat     = projs#sec#file(sec_bat)
+  let start = localtime()
+  call chdir(root)
+  let cmd = join([ 'bb_pdflatex.bat', proj, root_id,'-c','insert_pwg' ], ' ' )
+  
+  let env = {
+    \ 'proj'  : proj,
+    \ 'root'  : root,
+    \ 'start' : start,
+    \ 'mode'  : mode,
+    \ }
 
-  "let o = { 
-    "\  'prompt'  : 0,
-    "\  'rewrite' : 1,
-    "\  }
-  "call projs#sec#new(sec_bat,o)
+  function env.get(temp_file) dict
+    call projs#action#async_build_Fc(self,a:temp_file)
+  endfunction
+
+  echo printf('async_build_pwg: %s, mode: %s', proj, mode)
+
+  call asc#run({ 
+    \ 'cmd' : cmd, 
+    \ 'Fn'  : asc#tab_restore(env) 
+    \ })
+  return 1
+endf
+
+"""prjact_async_build
+
+function! projs#action#async_build_bare (...) 
+  let ref = get(a:000,0,{})
+
+  let root    = projs#root()
+  let root_id = projs#rootid()
+
+  let proj = projs#proj#name()
+  let proj = get(ref,'proj',proj)
+
+  let mode = '_bb_pdflatex_'
 
   let start = localtime()
   call chdir(root)
@@ -823,7 +849,7 @@ function! projs#action#async_build (...)
     call projs#action#async_build_Fc(self,a:temp_file)
   endfunction
 
-  echo printf('async_build: %s, mode: %s', proj, mode)
+  echo printf('async_build_bare: %s, mode: %s', proj, mode)
 
   call asc#run({ 
     \ 'cmd' : cmd, 

@@ -6,6 +6,7 @@ use warnings;
 
 use File::Spec::Functions qw(catfile);
 use File::Path qw( mkpath );
+use File::Basename qw(basename dirname);
 use File::Copy qw( copy );
 use FindBin qw($Bin $Script);
 use Plg::Projs::Piwigo::SQL;
@@ -26,6 +27,8 @@ binmode STDOUT, ":utf8";
 #);
 
 #
+use File::Dat::Utils qw(readarr);
+
 use File::Slurp::Unicode;
 use Data::Dumper qw(Dumper);
 use Getopt::Long qw(GetOptions);
@@ -136,7 +139,7 @@ sub init {
     push @$tex_opts_a, 
         '-file-line-error',
         '-interaction nonstopmode',
-        qq{ -output-directory=./ } . $h->{build_dir_unix},
+        sprintf(qq{ -output-directory=./%s}, $h->{build_dir_unix}),
         ;
 
     my $tex_opts = join(" ", @$tex_opts_a);
@@ -215,6 +218,12 @@ sub _file_sec {
                 join("." => ( $self->{proj}, 'tex' )) 
             ) 
         },
+        '_bib_' => sub { 
+            catfile(
+                $self->{root},
+                join("." => ( $self->{proj}, 'refs.bib' )) 
+            ) 
+        },
     };
 
     my $ss = $s->{$sec} || sub { 
@@ -228,6 +237,83 @@ sub _file_sec {
     return $f;
 }
 
+sub _file_ii_exclude {
+    my ($self) = @_;
+            
+    catfile(
+      $self->{root},
+      join("." => ( $self->{proj}, 'ii_exclude.i.dat' )) 
+    );
+
+}
+
+sub _file_ii_include {
+    my ($self) = @_;
+            
+    catfile(
+      $self->{root},
+      join("." => ( $self->{proj}, 'ii_include.i.dat' )) 
+    );
+
+}
+
+sub _ii_exclude {
+    my ($self) = @_;
+
+    my (@exclude);
+    my $f_in = $self->_file_ii_exclude;
+
+    my @base = $self->_ii_base;
+
+    return @exclude;
+}
+
+sub _ii_base {
+    my ($self) = @_;
+
+    my @base;
+    push @base,
+        qw(body preamble index bib),
+        qw(preamble.index),
+        qw(preamble.packages),
+        qw(preamble.acrobat_menu),
+        qw(titlepage),
+        qw(listfigs listtabs),
+        qw(tabcont),
+        ;
+    return @base;
+}
+
+sub _ii_include {
+    my ($self) = @_;
+
+    my (@include);
+    my $f_in = $self->_file_ii_include;
+
+    my @base = $self->_ii_base;
+
+    if (-e $f_in) {
+        my @i = readarr($f_in);
+
+        for(@i){
+            /^_all_$/ && do {
+                $self->{ii_include_all} = 1;
+                next;
+            };
+
+            /^_base_$/ && do {
+                push @include, @base;
+                next;
+            };
+
+            push @include, $_;
+        }
+    }else{
+        $self->{ii_include_all} = 1;
+    }
+    return @include;
+}
+
 sub _join_lines {
     my ($self, $sec) = @_;
 
@@ -235,6 +321,9 @@ sub _join_lines {
 
     my $proj = $self->{proj};
     chdir $self->{root};
+
+    my @include = $self->_ii_include;
+    my @exclude = $self->_ii_exclude;
 
     my $jfile = $self->_file_joined;
     mkpath $self->{src_dir};
@@ -259,6 +348,13 @@ sub _join_lines {
 
         m/$pats->{ii}/ && do {
             my $ii_sec   = $1;
+
+            my $iall = $self->{ii_include_all};
+            my $inc = $iall || ( !$iall && grep { /^$ii_sec$/ } @include )
+                ? 1 : 0;
+
+            next unless $inc;
+
             my @ii_lines = $self->_join_lines($ii_sec);
 
             push @lines, 
@@ -294,7 +390,19 @@ sub _join_lines {
     return @lines;
 }
 
-sub cmd_insert_img {
+sub cmd_build_pwg {
+    my ($self) = @_;
+
+    $self->cmd_insert_pwg;
+
+    my $cmd = sprintf("latexmk -pdf %s",$self->{proj});
+    chdir $self->{src_dir};
+    system($cmd);
+
+    return $self;
+}
+
+sub cmd_insert_pwg {
     my ($self) = @_;
 
     my $pwg = Plg::Projs::Piwigo::SQL->new;
@@ -302,6 +410,7 @@ sub cmd_insert_img {
     $self
         ->cmd_join
         ->copy_sty
+        ->copy_bib
         ;
 
     my $jfile  = $self->_file_joined;
@@ -385,6 +494,27 @@ sub cmd_join {
     return $self;
 }
 
+sub copy_bib {
+    my ($self) = @_;
+
+    my $root = $self->{root};
+
+    my @bib; 
+    push @bib, 
+        $self->_file_sec('_bib_');
+
+    mkpath $self->{src_dir};
+
+    foreach(@bib) {
+        my $bib_src     = $_;
+        my $bib_dest    = catfile($self->{src_dir},basename($_));
+
+        copy($bib_src, $bib_dest);
+    }
+
+    return $self;
+}
+
 sub copy_sty {
     my ($self) = @_;
 
@@ -458,22 +588,30 @@ sub run {
 
     $self->run_cmd;
 
+    mkpath $self->{build_dir};
+
     my $proj = $self->{proj};
     my $root = $self->{root};
 
-    my @dirids = qw( out_dir out_dir_pdf out_dir_pdf_b );
+    my @dirids = qw( 
+        out_dir 
+        out_dir_pdf 
+        out_dir_pdf_b 
+    );
+
     foreach my $dirid (@dirids) {
         my $dir = $self->{$dirid};
         mkpath $dir;
     }
-    my $proj_bib = catfile( $self->{out_dir}, "$proj.bib");
+
+    my $proj_bib = catfile( $self->{out_dir}, "$proj.bib" );
     copy( $self->{bib_file}, $proj_bib ) 
         if -e $self->{bib_file};
 
     my $cmd_tex = join(" ", @$self{qw( tex_exe tex_opts )}, $proj );
     system($cmd_tex);
 
-    chdir $self->{out_dir};
+    chdir $self->{build_dir};
     
     system(qq{ bibtex $proj } ) if -e $proj_bib;
     system(qq{ texindy -L russian -C utf8 $proj.idx });
@@ -487,7 +625,7 @@ sub run {
     system($cmd_tex);
     system($cmd_tex);
 
-    my $built_pdf = catfile($self->{out_dir}, "$proj.pdf");
+    my $built_pdf = catfile($self->{build_dir}, "$proj.pdf");
 
     if (! -e $built_pdf) {
         warn 'NO PDF FILE!' . "\n";

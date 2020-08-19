@@ -238,7 +238,6 @@ sub cmd_img_by_tags {
         q   => $q,
         p   => [],
     });
-print Dumper($rows) . "\n";
 
     my $first = shift @$rows;
     
@@ -252,11 +251,11 @@ print Dumper($rows) . "\n";
     }
 
     if (-e $full_path) {
-	    $self->{img} = {
-	        path       => $full_path,
-			#comment    => decode('utf8',$comment),
-	        comment    => $comment,
-	    };
+        $self->{img} = {
+            path       => $full_path,
+            #comment    => decode('utf8',$comment),
+            comment    => $comment,
+        };
     }
 
     $self;

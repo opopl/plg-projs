@@ -323,6 +323,12 @@ function! projs#sec#file_base_a (...)
     elseif sec == '_dat_'
         let sfile_a = [ proj . '.secs.i.dat' ]
 
+    elseif sec == '_ii_include_'
+      let sfile_a = [ proj . '.ii_include.i.dat' ]
+
+    elseif sec == '_ii_exclude_'
+      let sfile_a = [ proj . '.ii_exclude.i.dat' ]
+
     elseif sec == '_dat_defs_'
       let sfile_a = [ proj . '.defs.i.dat' ]
 

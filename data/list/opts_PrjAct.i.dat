@@ -39,7 +39,8 @@ git_add_texfiles
 status
 ###mkdir
 mkdir_pics
-async_build
+async_build_bare
+async_build_pwg
 async_build_htlatex
 add_to_db
 help
