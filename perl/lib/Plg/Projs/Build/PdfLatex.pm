@@ -443,8 +443,9 @@ sub cmd_insert_pwg {
     my @jlines = read_file $jfile;
 
     my @nlines;
-    my $is_img = 0;
     my $width = 0.5;
+
+    my ($is_img, $is_fig, $is_cmt);
 
     my @tags;
     push @tags, 
@@ -454,11 +455,44 @@ sub cmd_insert_pwg {
     foreach(@jlines) {
         chomp;
 
-        m/^%%%\s+img_begin/ && do { 
+        m/^\s*\\ifcmt/ && do { 
+            $is_cmt = 1;
+            next;
+        };
+
+        m/^\s*\\fi/ && do { 
+            $is_cmt = 0;
+            next;
+        };
+
+        unless($is_cmt){
+            push @nlines, $_;
+            next;
+        }
+
+        m/^\s*fig_begin/ && do { 
+            $is_fig = 1; 
+
+            push @nlines,
+                q{ \\begin{figure}[ht] };
+
+            next;
+        };
+
+        m/^\s*fig_end/ && do { 
+            $is_fig = 0; 
+
+            push @nlines,
+                q{ \\end{figure} };
+            
+            next;
+        };
+
+        m/^\s*img_begin/ && do { 
             $is_img = 1; next;
         };
 
-        m/^%%%\s+img_end/ && do { 
+        m/^\s*img_end/ && do { 
             $is_img = 0; 
 
             my @tags_all;
@@ -470,7 +504,6 @@ sub cmd_insert_pwg {
                     q{%tags: } . $tt;
             }
 
-
             local @ARGV = qw( -c img_by_tags );
             push @ARGV, 
                 qw( -t ), join("," => @tags_all);
@@ -480,21 +513,22 @@ sub cmd_insert_pwg {
             $icapt =~ s/\r\n/\n/g;
 
             push @nlines,
-                q{ \\begin{figure}[ht] },
-                sprintf('\\includegraphics[width=%s\\textwidth]{%s}', $width, $ipath),
-                sprintf('\\caption{%s}',$icapt),
-                q{ \\end{figure} };
+                sprintf('\\includegraphics[width=%s\\textwidth]{%s}', $width, $ipath);
+
+            if ($is_fig) {
+                push @nlines, sprintf('\\caption{%s}',$icapt);
+            }
             
             next;
         };
 
-        m/^%%%\s+width\s+(.*)/ && do { 
+        m/^\s*width\s+(.*)/ && do { 
             next unless $is_img;
 
             $width = $1; next;
         };
 
-        m/^%%%\s+tags\s+(.*)/ && do { 
+        m/^\s*tags\s+(.*)/ && do { 
             next unless $is_img;
 
             my $tags = $1;
@@ -505,7 +539,6 @@ sub cmd_insert_pwg {
             next;
         };
 
-        push @nlines, $_;
     }
     write_file($jfile,join("\n",@nlines) . "\n");
 
