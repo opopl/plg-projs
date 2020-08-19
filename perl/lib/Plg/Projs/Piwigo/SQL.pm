@@ -10,6 +10,10 @@ use Getopt::Long qw(GetOptions);
 use Data::Dumper qw(Dumper);
 use File::Spec::Functions qw(catfile);
 
+use utf8; 
+use open qw(:utf8 :std);
+use Encode;
+
 use Base::DB qw(
     dbh_insert_hash
     dbh_select
@@ -105,11 +109,17 @@ sub dhelp {
 }
 
 sub run {
-    my ($self) = @_;
+    my ($self, $ref) = @_;
 
-    $self->get_opt;
+    my $cmd;
+    unless (keys %$ref) {
+        $self->get_opt;
+        $cmd = $self->{opt}->{cmd};
+    }else{
+        $cmd = $ref->{cmd} || '';
+    }
 
-    if ( my $cmd = $self->{opt}->{cmd} ) {
+    if ($cmd) {
         my $sub = 'cmd_' . $cmd;
         if ($self->can($sub)){
             $self->$sub;
@@ -123,10 +133,13 @@ sub init_db {
     my ($self) = @_;
 
     $self->{dbh} = dbi_connect({
-        user   => $self->{user},
-        pwd    => $self->{pwd},
-        dbfile => $self->{dbfile},
-        driver => $self->{driver},
+        user              => $self->{user},
+        pwd               => $self->{pwd},
+        dbfile            => $self->{dbfile},
+        driver            => $self->{driver},
+        attr => {
+            mysql_enable_utf8 => 1,
+        }
     });
 
     return $self;
@@ -135,13 +148,21 @@ sub init_db {
 sub ct_collected {
     my ($self) = @_;
 
-    my $q = qq{
+    my $q = '';
+    
+    $q .= qq{
+        SET CHARACTER SET utf8;
+        SET NAMES utf8;
+    };
+
+    $q .= qq{
         DROP TABLE IF EXISTS collected;
 
         CREATE TABLE collected SELECT 
           piwigo_images.id,
           piwigo_images.file,
           piwigo_images.path,
+          piwigo_images.comment,
           piwigo_tags.name as tag,
           piwigo_image_tag.tag_id
         FROM ( 
@@ -166,34 +187,11 @@ sub ct_collected {
     return $self;
 }
 
-sub ct_files {
-    my ($self) = @_;
-
-    my $q = qq{
-        DROP TABLE IF EXISTS files;
-
-        CREATE TABLE files (
-            path VARCHAR(255),
-            tags TINYTEXT
-        ); 
-    };
-
-    dbh_do({
-        q   => $q,
-        dbh => $self->{dbh},
-    });
-
-
-
-    return $self;
-}
-
-sub cmd_ct_files {
+sub cmd_ct_collected {
     my ($self) = @_;
 
     $self
         ->ct_collected
-        #->ct_files
         ;
 
     return $self;
@@ -201,6 +199,8 @@ sub cmd_ct_files {
 
 sub cmd_img_by_tags {
     my ($self, $tags_s) = @_;
+
+    $self->ct_collected;
 
     $tags_s ||= $self->{opt}->{tags};
     $tags_s ||= '';
@@ -214,13 +214,12 @@ sub cmd_img_by_tags {
              qq{ WHERE tag IN ( },
              join( "," => map { "'" . $_ . "'" } @tags_a ),
              qq{)},
-             #qq{ HAVING COUNT(*) = } . scalar @tags_a
              ;
     } 
 
     my $q = qq{
         SELECT 
-            path, tag
+            path, comment, tag
         FROM 
             collected
     } 
@@ -228,24 +227,36 @@ sub cmd_img_by_tags {
         . qq{ HAVING COUNT(*) = } . scalar @tags_a 
         ;
 
-    my $res = dbh_selectall_arrayref({
+    #my $res = dbh_selectall_arrayref({
+        #dbh => $self->{dbh},
+        #q   => $q,
+        #p   => [],
+    #});
+
+    my ($rows, $cols) = dbh_select({
         dbh => $self->{dbh},
         q   => $q,
         p   => [],
     });
+print Dumper($rows) . "\n";
 
-    my $first = shift @{$res->[0]->{rows} || []};
-
-    my $path = shift @$first;
-
-    if ($^O eq 'MSWin32') {
-        $path =~ s/\//\\/g;
-    }
+    my $first = shift @$rows;
+    
+    my $path = $first->{path};
+    my $comment = $first->{comment};
 
     my $full_path = catfile($self->{piwigo},$path);
 
+    if ($^O eq 'MSWin32') {
+        $full_path =~ s/\\/\//g;
+    }
+
     if (-e $full_path) {
-        print 'OK' . "\n";
+	    $self->{img} = {
+	        path       => $full_path,
+			#comment    => decode('utf8',$comment),
+	        comment    => $comment,
+	    };
     }
 
     $self;

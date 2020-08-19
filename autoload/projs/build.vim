@@ -35,7 +35,7 @@ function! projs#build#action (...)
 
 """PrjBuild_View
   elseif act == 'View'
-    let extstr ='aux log'
+    let extstr ='tex aux log'
     let extstr = input('Extensions for files:',extstr)
 
     let exts = base#qwsort(extstr)
@@ -53,7 +53,10 @@ function! projs#build#action (...)
       \ 'bottom'      : "Choose a file by number: ",
       \ })
 
-    call base#fileopen(file)
+    call base#fileopen({ 
+			\	'files'    : [ file ],
+			\	'load_buf' : 1,
+			\	})
 
   endif
 endfunction

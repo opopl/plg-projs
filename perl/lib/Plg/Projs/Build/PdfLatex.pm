@@ -8,6 +8,12 @@ use File::Spec::Functions qw(catfile);
 use File::Path qw( mkpath );
 use File::Copy qw( copy );
 use FindBin qw($Bin $Script);
+use Plg::Projs::Piwigo::SQL;
+
+use utf8; 
+use Encode;
+#use open qw(:utf8 :std);
+binmode STDOUT, ":utf8";
 
 #use File::Slurp qw(
 #qw(
@@ -191,15 +197,38 @@ sub process_ind_file {
    return $self;
 }
 
-sub _sec_file {
-    my ($self, $sec) = @_;
+sub _file_joined {
+    my ($self) = @_;
 
-    catfile($self->{root},join("." => ( $self->{proj}, $sec, 'tex' )) );
+    my $jfile = catfile($self->{src_dir},$self->{proj} . '.tex');
 
-
+    return $jfile;
 }
 
-sub join_lines {
+sub _file_sec {
+    my ($self, $sec) = @_;
+
+    my $s = {
+        '_main_' => sub { 
+            catfile(
+                $self->{root},
+                join("." => ( $self->{proj}, 'tex' )) 
+            ) 
+        },
+    };
+
+    my $ss = $s->{$sec} || sub { 
+            catfile(
+                $self->{root},
+                join("." => ( $self->{proj}, $sec, 'tex' )) 
+            );
+    };
+    my $f = $ss->();
+
+    return $f;
+}
+
+sub _join_lines {
     my ($self, $sec) = @_;
 
     $sec ||= '_main_';
@@ -207,11 +236,10 @@ sub join_lines {
     my $proj = $self->{proj};
     chdir $self->{root};
 
-    my $jfile = catfile($self->{src_dir},$proj . '.tex');
+    my $jfile = $self->_file_joined;
+    mkpath $self->{src_dir};
 
-    my  $sf      = {};
-    $sf->{$sec} = $self->_sec_file($sec);
-    my $f       = $sf->{$sec};
+    my $f = $self->_file_sec($sec);
 
     if (!-e $f){ return (); }
 
@@ -219,9 +247,9 @@ sub join_lines {
     my @flines = read_file $f;
 
     my $pats = {
-         'ii'    => '^\s*\\ii{(.+)}.*$',
-         'iifig' => '^\s*\\iifig{(.+)}.*$',
-         'input' => '^\s*\\input{(.*)}.*$',
+         'ii'    => '^\s*\\\\ii\{(.+)\}.*$',
+         'iifig' => '^\s*\\\\iifig\{(.+)\}.*$',
+         'input' => '^\s*\\\\input\{(.*)\}.*$',
     };
 
     my $delim = '%' x 50;  
@@ -231,7 +259,7 @@ sub join_lines {
 
         m/$pats->{ii}/ && do {
             my $ii_sec   = $1;
-            my @ii_lines = $self->join_lines($ii_sec);
+            my @ii_lines = $self->_join_lines($ii_sec);
 
             push @lines, 
                 $delim,
@@ -244,7 +272,7 @@ sub join_lines {
 
         m/$pats->{iifig}/ && do {
             my $fig_sec   = 'fig.' . $1;
-            my @fig_lines = $self->join_lines($fig_sec);
+            my @fig_lines = $self->_join_lines($fig_sec);
 
             push @lines, 
                 $delim,
@@ -259,7 +287,7 @@ sub join_lines {
         push @lines, $_;
     }
 
-    if ($sec eq '_main') {
+    if ($sec eq '_main_') {
         write_file($jfile,join("\n",@lines) . "\n");
     }
 
@@ -269,16 +297,110 @@ sub join_lines {
 sub cmd_insert_img {
     my ($self) = @_;
 
+    my $pwg = Plg::Projs::Piwigo::SQL->new;
+
     $self
-        ->cmd_copy_to_builds
+        ->cmd_join
+        ->copy_sty
         ;
 
-    foreach my $file (@{ $self->{files} || [] }) {
-        my $path = catfile($self->{src_dir},$file);
-        next unless -e $path;
-        next unless ($file =~ /\.tex$/);
+    my $jfile  = $self->_file_joined;
+    my @jlines = read_file $jfile;
 
-        print $path . "\n";
+    my @nlines;
+    my $is_img = 0;
+    my $width = 0.5;
+
+    my @tags;
+    push @tags, 
+        [ qw(projs), $self->{root_id}, $self->{proj} ]
+        ;
+
+    foreach(@jlines) {
+        chomp;
+
+        m/^%%%\s+img_begin/ && do { 
+            $is_img = 1; next;
+        };
+
+        m/^%%%\s+img_end/ && do { 
+            $is_img = 0; 
+
+            my @tags_all;
+            foreach my $tline (@tags) {
+                my $tt = join("," => @$tline);
+
+                push @tags_all, $tt;
+                push @nlines, 
+                    q{%tags: } . $tt;
+            }
+
+
+            local @ARGV = qw( -c img_by_tags );
+            push @ARGV, 
+                qw( -t ), join("," => @tags_all);
+            $pwg->run;
+            my $ipath = $pwg->{img}->{path};
+            my $icapt = $pwg->{img}->{comment} || '';
+            $icapt =~ s/\r\n/\n/g;
+
+            push @nlines,
+                q{ \\begin{figure}[ht] },
+                sprintf('\\includegraphics[width=%s\\textwidth]{%s}', $width, $ipath),
+                sprintf('\\caption{%s}',$icapt),
+                q{ \\end{figure} };
+            
+            next;
+        };
+
+        m/^%%%\s+width\s+(.*)/ && do { 
+            next unless $is_img;
+
+            $width = $1; next;
+        };
+
+        m/^%%%\s+tags\s+(.*)/ && do { 
+            next unless $is_img;
+
+            my $tags = $1;
+            $tags =~ s/\s+//g;
+
+            push @tags, [ split("," => $tags) ];
+
+            next;
+        };
+
+        push @nlines, $_;
+    }
+    write_file($jfile,join("\n",@nlines) . "\n");
+
+    return $self;
+}
+
+sub cmd_join {
+    my ($self) = @_;
+
+    $self->_join_lines;
+
+    return $self;
+}
+
+sub copy_sty {
+    my ($self) = @_;
+
+    my $root = $self->{root};
+
+    my @sty; 
+    push @sty, 
+        qw(projs.sty);
+
+    mkpath $self->{src_dir};
+
+    foreach(@sty) {
+        my $sty_src     = catfile($root,$_);
+        my $sty_dest    = catfile($self->{src_dir},$_);
+
+        copy($sty_src, $sty_dest);
     }
 
     return $self;
