@@ -1,3 +1,4 @@
+
 package Plg::Projs::Build::PdfLatex;
 
 use strict;
@@ -6,6 +7,8 @@ use warnings;
 use File::Spec::Functions qw(catfile);
 use File::Path qw( mkpath );
 use File::Copy qw( copy );
+use FindBin qw($Bin $Script);
+
 #use File::Slurp qw(
 #qw(
 #  append_file
@@ -36,7 +39,17 @@ sub new
 sub init {
     my ($self) = @_;
 
-    my $proj = shift @ARGV;
+	unless (@ARGV) {
+		print qq{
+	Usage:
+		$Script PROJ ROOT_ID
+		} . "\n";
+		exit 0;
+	}
+
+    my $proj    = shift @ARGV;
+    my $root_id = shift @ARGV;
+
     my $tex_opts_a = [];
 
     print $proj . "\n";
@@ -52,6 +65,7 @@ sub init {
     my $root = $self->{root};
 
     my $pdfout = $ENV{PDFOUT};
+
     my $h = {
         proj       => $proj,
         pdfout     => $pdfout,
@@ -59,8 +73,8 @@ sub init {
         tex_opts   => $tex_opts,
         tex_opts_a => $tex_opts_a,
         out_dir     => catfile($root, qw(builds),$proj,qw(b_pdflatex)),
-        out_dir_pdf => catfile($pdfout,$proj),
         bib_file    => catfile($root,qq{$proj.refs.bib}),
+        out_dir_pdf => catfile($pdfout,$root_id),
     };
 
     $h = { %$h,
@@ -166,8 +180,10 @@ sub run {
         return;
     }
 
-    my @pdf_files = 
-        catfile($self->{out_dir_pdf_b},"$proj.pdf"),
+    my @pdf_files;
+    push @pdf_files, 
+		catfile($self->{out_dir_pdf_b},"$proj.pdf"),
+        catfile($self->{out_dir_pdf},"$proj.pdf"),
         ;
 
     foreach my $dest (@pdf_files) {

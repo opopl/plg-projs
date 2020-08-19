@@ -791,7 +791,8 @@ endif
 function! projs#action#async_build (...) 
   let ref = get(a:000,0,{})
 
-  let root = projs#root()
+  let root    = projs#root()
+  let root_id = projs#rootid()
 
   let proj = projs#proj#name()
   let proj = get(ref,'proj',proj)
@@ -809,7 +810,7 @@ function! projs#action#async_build (...)
 
   let start = localtime()
   call chdir(root)
-  let cmd = join([ 'bb_pdflatex.bat', proj], ' ' )
+  let cmd = join([ 'bb_pdflatex.bat', proj, root_id ], ' ' )
   
   let env = {
     \ 'proj'  : proj,

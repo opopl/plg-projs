@@ -805,13 +805,13 @@ function! projs#filejoinlines (...)
     let flines = readfile(f)
     let lines  = []
 
-    let pats={
-        \ 'ii'    : '^\s*\\ii{\(\w\+\)}.*$',
-        \ 'iifig' : '^\s*\\iifig{\(\w\+\)}.*$',
+    let pats = {
+        \ 'ii'    : '^\s*\\ii{\(.\+\)}.*$',
+        \ 'iifig' : '^\s*\\iifig{\(.\+\)}.*$',
         \ 'input' : '^\s*\\input{\(.*\)}.*$',
         \   }
 
-    let delim=repeat('%',50)
+    let delim = repeat('%',50)
 
     for line in flines
         if line =~ pats.ii
