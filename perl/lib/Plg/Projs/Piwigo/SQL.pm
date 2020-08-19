@@ -8,6 +8,7 @@ use FindBin qw($Bin $Script);
 use Getopt::Long qw(GetOptions);
 
 use Data::Dumper qw(Dumper);
+use File::Spec::Functions qw(catfile);
 
 use Base::DB qw(
     dbh_insert_hash
@@ -41,6 +42,7 @@ sub init {
         pwd    => 'root',
         dbfile => 'piwigo',
         driver => 'mysql',
+        piwigo => $ENV{PIWIGO},
     };
         
     my @k = keys %$h;
@@ -181,22 +183,7 @@ sub ct_files {
         dbh => $self->{dbh},
     });
 
-    my $res = dbh_selectall_arrayref({
-        dbh => $self->{dbh},
-        q   => qq{
-            SELECT
-                tag, path
-            FROM 
-                collected
-        },
-        p   => [],
-    });
 
-    foreach my $row (@$res) {
-        # body...
-    }
-
-    print Dumper($res) . "\n";
 
     return $self;
 }
@@ -206,7 +193,7 @@ sub cmd_ct_files {
 
     $self
         ->ct_collected
-        ->ct_files
+        #->ct_files
         ;
 
     return $self;
@@ -218,16 +205,48 @@ sub cmd_img_by_tags {
     $tags_s ||= $self->{opt}->{tags};
     $tags_s ||= '';
 
+    my @tags_a = split("," => $tags_s);
+
+    my @cond;
+   
+    if (@tags_a) {
+        push @cond,
+             qq{ WHERE tag IN ( },
+             join( "," => map { "'" . $_ . "'" } @tags_a ),
+             qq{)},
+             #qq{ HAVING COUNT(*) = } . scalar @tags_a
+             ;
+    } 
+
     my $q = qq{
         SELECT 
-            path 
+            path, tag
         FROM 
-            files
-        WHERE
-            tags = ?
-    };
+            collected
+    } 
+        . join(" ",@cond)
+        . qq{ HAVING COUNT(*) = } . scalar @tags_a 
+        ;
 
-    
+    my $res = dbh_selectall_arrayref({
+        dbh => $self->{dbh},
+        q   => $q,
+        p   => [],
+    });
+    my $first = shift @{$res->[0]->{rows} || []};
+
+    my $path = shift @$first;
+
+    if ($^O eq 'MSWin32') {
+        $path =~ s/\//\\/g;
+    }
+
+    my $full_path = catfile($self->{piwigo},$path);
+
+    if (-e $full_path) {
+        print 'OK' . "\n";
+    }
+
     $self;
 }
 
