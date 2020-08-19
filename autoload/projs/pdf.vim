@@ -1,81 +1,88 @@
 
 "Usage:
-"		call projs#pdf#view ()
-"		call projs#pdf#view (proj)
+"   call projs#pdf#view ()
+"   call projs#pdf#view (proj)
 "
 "Used by:
-"		PrjPdfView
+"   PrjPdfView
 "
-"		PrjAct pdf_view
-"		projs#action#pdf_view
+"   PrjAct pdf_view
+"   projs#action#pdf_view
 
 function! projs#pdf#view (...)
 
-	let proj    = get(a:000,0,projs#proj#name())
+  let proj    = get(a:000,0,projs#proj#name())
 
-	let pdffile = projs#pdf#path(proj)
+  let pdffile = projs#pdf#path(proj)
 
-	if !filereadable(pdffile)
-		let msg = 'PDF file NOT READABLE!'
-		call base#warn({ 'rdw' : 1, 'text' : msg, 'prefix' : 'projs#pdf#view'})
-		return
-	endif
+  if !filereadable(pdffile)
+    let msg = 'PDF file NOT READABLE!'
+    call base#warn({ 'rdw' : 1, 'text' : msg, 'prefix' : 'projs#pdf#view'})
+    return
+  endif
 
-	let size = base#file#size(pdffile)
+  let size = base#file#size(pdffile)
 
-	if !size
-		let msg = 'PDF file ZERO SIZE!'
-		call base#warn({ 'text' : msg , 'prefix' : 'projs#pdf#view', 'rdw' : 1 })
-		return
-	endif
+  if !size
+    let msg = 'PDF file ZERO SIZE!'
+    call base#warn({ 'text' : msg , 'prefix' : 'projs#pdf#view', 'rdw' : 1 })
+    return
+  endif
 
   let viewer  = base#exefile#path('evince')
   let viewer  = base#exefile#path('okular')
 
   if filereadable(pdffile)
-		if has('win32')
+    if has('win32')
      let ec= 'silent! !start '.viewer.' '.pdffile
-		else	
+    else  
      let ec= 'silent! !'.viewer.' '.pdffile . ' &'
-		endif
+    endif
 
     exe ec
     redraw!
   endif
 endfunction
 
+if 0
+  Call tree
+    Called by
+      projs#pdf#view
+      projs#pdf#delete
+endif
+
 function! projs#pdf#path (...)
-	let proj    = get(a:000,0,projs#proj#name())
+  let proj    = get(a:000,0,projs#proj#name())
 
-	let pdffin  = projs#varget('pdffin','')
-	let pdffile = base#file#catfile([ pdffin, projs#rootid(), proj . '.pdf' ])
+  let pdffin  = projs#varget('pdffin','')
+  let pdffile = base#file#catfile([ pdffin, projs#rootid(), proj . '.pdf' ])
 
-	return pdffile
+  return pdffile
 endfunction
 
 function! projs#pdf#delete (...)
-	let proj    = get(a:000,0,projs#proj#name())
+  let proj    = get(a:000,0,projs#proj#name())
 
-	let pdffile = projs#pdf#path(proj)
+  let pdffile = projs#pdf#path(proj)
 
-	if !filereadable(pdffile)
-		redraw!
-		echohl Question
-		echo 'No PDF file! Nothing to delete.'
-		echohl None
-		return
-	endif
+  if !filereadable(pdffile)
+    redraw!
+    echohl Question
+    echo 'No PDF file! Nothing to delete.'
+    echohl None
+    return
+  endif
 
- 	let yn = input('delete PDF file? (1/0): ', 1)
-	if !yn | return | endif
+  let yn = input('delete PDF file? (1/0): ', 1)
+  if !yn | return | endif
 
-	call delete(pdffile)
-	if !filereadable(pdffile)
-		redraw!
-		echohl MoreMsg
-		echo 'PDF file has been deleted.'
-		echohl None
-	endif
+  call delete(pdffile)
+  if !filereadable(pdffile)
+    redraw!
+    echohl MoreMsg
+    echo 'PDF file has been deleted.'
+    echohl None
+  endif
 
 endfunction
 
