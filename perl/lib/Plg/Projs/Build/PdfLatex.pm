@@ -5,7 +5,7 @@ use strict;
 use warnings;
 
 use File::Spec::Functions qw(catfile);
-use File::Path qw( mkpath );
+use File::Path qw( mkpath rmtree );
 use File::Basename qw(basename dirname);
 use File::Copy qw( copy );
 use FindBin qw($Bin $Script);
@@ -125,15 +125,15 @@ sub init {
     my @build_dir_a = ( "builds", $proj, "b_pdflatex" );
 
     my $h = {
-        proj           => $proj,
-        pdfout         => $pdfout,
-        tex_exe        => 'pdflatex',
-        build_dir_unix => join("/",@build_dir_a),
-        build_dir      => catfile($root, @build_dir_a),
-        bib_file       => catfile($root, qq{$proj.refs.bib}),
-        out_dir_pdf    => catfile($pdfout, $root_id),
-        dbfile         => catfile($root,'projs.sqlite'),
-
+        proj            => $proj,
+        pdfout          => $pdfout,
+        tex_exe         => 'pdflatex',
+        build_dir_unix  => join("/",@build_dir_a),
+        build_dir       => catfile($root, @build_dir_a),
+        bib_file        => catfile($root, qq{$proj.refs.bib}),
+        out_dir_pdf     => catfile($pdfout, $root_id),
+        out_dir_pdf_pwg => catfile($pdfout, $root_id, qw(pwg) ),
+        dbfile          => catfile($root,'projs.sqlite'),
     };
 
     push @$tex_opts_a, 
@@ -393,11 +393,37 @@ sub _join_lines {
 sub cmd_build_pwg {
     my ($self) = @_;
 
+    mkpath $self->{src_dir} if -d $self->{src_dir};
     $self->cmd_insert_pwg;
+
+    my $pdf_file = catfile($self->{src_dir},$self->{proj} . '.pdf');
+    rmtree $pdf_file if -e $pdf_file;
+
+    mkpath $self->{out_dir_pdf_pwg};
 
     my $cmd = sprintf("latexmk -pdf %s",$self->{proj});
     chdir $self->{src_dir};
     system($cmd);
+
+    my @dest;
+    push @dest, 
+        $self->{out_dir_pdf_pwg},
+        $self->{out_dir_pdf}
+        ;
+
+    if (-e $pdf_file) {
+        foreach(@dest) {
+            mkpath $_ unless -d;
+
+            my $d = catfile($_, basename($pdf_file));
+
+            print "Copied PDF File to:" . "\n";
+            print "     " . $d . "\n";
+
+            copy($pdf_file, $d);
+        }
+    }
+    chdir $self->{root};
 
     return $self;
 }
@@ -597,6 +623,7 @@ sub run {
         out_dir 
         out_dir_pdf 
         out_dir_pdf_b 
+        out_dir_pdf_pwg
     );
 
     foreach my $dirid (@dirids) {

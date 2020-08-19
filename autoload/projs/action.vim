@@ -799,7 +799,10 @@ function! projs#action#async_build_pwg (...)
 
   let start = localtime()
   call chdir(root)
-  let cmd = join([ 'bb_pdflatex.bat', proj, root_id,'-c','insert_pwg' ], ' ' )
+  let cmd = join([ 
+			\	'bb_pdflatex.bat', 
+			\	proj, root_id,
+			\	'-c','build_pwg' ], ' ' )
   
   let env = {
     \ 'proj'  : proj,
@@ -812,7 +815,8 @@ function! projs#action#async_build_pwg (...)
     call projs#action#async_build_Fc(self,a:temp_file)
   endfunction
 
-  echo printf('async_build_pwg: %s, mode: %s', proj, mode)
+  let msg = printf('async_build_pwg: %s, mode: %s', proj, mode)
+	call base#rdw(msg,'WildMenu')
 
   call asc#run({ 
     \ 'cmd' : cmd, 

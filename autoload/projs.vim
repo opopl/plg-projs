@@ -867,8 +867,8 @@ function! projs#maps ()
   let maps = {
         \ 'nnoremap' :
           \ {
-          \  '<F1>'  : 'PrjAct async_build'  ,
-          \  ';ab'   : 'PrjAct async_build'  ,
+          \  '<F1>'  : 'PrjAct async_build_bare'  ,
+          \  ';ab'   : 'PrjAct async_build_bare'  ,
           \  '<F2>'  : 'PrjPdfView'          ,
           \  '<F3>'  : 'copen'               ,
           \  '<F4>'  : 'cclose'              ,
