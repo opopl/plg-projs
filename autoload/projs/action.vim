@@ -693,9 +693,6 @@ function! projs#action#async_build_pwg_Fc (self,temp_file)
 
   let log = get(build_files,'log','')
 
-  if filereadable(pdf_file)
-  endif
-
   if filereadable(log)
     let log_bn = fnamemodify(log,':p:t')
     call tex#efm#latex()
@@ -715,6 +712,11 @@ function! projs#action#async_build_pwg_Fc (self,temp_file)
       BaseAct cclose
     endif
     echohl None
+  endif
+
+  if filereadable(a:temp_file)
+    let out = readfile(a:temp_file)
+    call base#buf#open_split({ 'lines' : out })
   endif
 endfunction
 

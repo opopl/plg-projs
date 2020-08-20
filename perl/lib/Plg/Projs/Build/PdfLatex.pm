@@ -271,12 +271,15 @@ sub _ii_exclude {
 sub _ii_base {
     my ($self) = @_;
 
+    my @base_preamble;
+    push @base_preamble,
+		map { sprintf('preamble.%s',$_) } 
+		qw(index packages acrobat_menu filecontents );
+
     my @base;
     push @base,
         qw(body preamble index bib),
-        qw(preamble.index),
-        qw(preamble.packages),
-        qw(preamble.acrobat_menu),
+		@base_preamble,
         qw(titlepage),
         qw(listfigs listtabs),
         qw(tabcont),
@@ -396,17 +399,38 @@ sub cmd_build_pwg {
     mkpath $self->{src_dir} if -d $self->{src_dir};
     $self->cmd_insert_pwg;
 
-    my $pdf_file = catfile($self->{src_dir},$self->{proj} . '.pdf');
-    rmtree $pdf_file if -e $pdf_file;
+    my @pdf_files;
 
     mkpath $self->{out_dir_pdf_pwg};
+    push @pdf_files,
+        catfile($self->{src_dir},$self->{proj} . '.pdf'),
+        #catfile($self->{out_dir_pdf},$self->{proj} . '.pdf'),
+        catfile($self->{out_dir_pdf_pwg},$self->{proj} . '.pdf'),
+        ;
+    foreach my $f (@pdf_files) {
+        rmtree $f if -e $f;
+    }
 
+    my $pdf_file = catfile($self->{src_dir},$self->{proj} . '.pdf'),
+
+    my $rc = 'latexmkrc';
     my $opts = {
-        latexmk => '-pdf -silent'
+        latexmk => qq{ -pdf -silent -norc -r $rc }
     };
 
     my $cmd = sprintf("latexmk %s %s",$opts->{latexmk}, $self->{proj});
     chdir $self->{src_dir};
+
+    my @rc_lines;
+    push @rc_lines,
+        q{$makeindex = 'texindy -L russian -C utf8'; },
+        q{  },
+        q{$pdf_mode = 1; },
+        ;
+
+    write_file($rc,join("\n",@rc_lines) . "\n");
+
+    system(sprintf('pdflatex %s %s','-interaction=nonstopmode',$self->{proj}));
     system($cmd);
 
     my @dest;
