@@ -423,7 +423,8 @@ sub cmd_build_pwg {
 
     my @rc_lines;
     push @rc_lines,
-        q{$makeindex = 'texindy -L russian -C utf8'; },
+		q{$makeindex = 'texindy -L russian -C utf8 -M %B.xdy %O -o %D %S'; #$},
+        #q{$makeindex = 'texindy -L russian -C utf8'; },
         q{  },
         q{$pdf_mode = 1; },
         ;
@@ -473,12 +474,11 @@ sub cmd_insert_pwg {
     my @nlines;
     my $width = 0.5;
 
-    my ($is_img, $is_fig, $is_cmt);
+    my ($is_img, $is_fig, $is_cmt, %opts);
 
     my @tags;
-    push @tags, 
-        [ qw(projs), $self->{root_id}, $self->{proj} ]
-        ;
+        
+	my $tags_projs = [ qw(projs), $self->{root_id}, $self->{proj} ];
 
     foreach(@jlines) {
         chomp;
@@ -497,6 +497,12 @@ sub cmd_insert_pwg {
             push @nlines, $_;
             next;
         }
+
+        m/^\s*opts\s+(.*)$/ && do { 
+			my $opts = $1;
+			%opts = map { $_ => 1 } split("," => $opts);
+            next;
+		};
 
         m/^\s*fig_begin/ && do { 
             $is_fig = 1; 
@@ -524,6 +530,9 @@ sub cmd_insert_pwg {
             $is_img = 0; 
 
             my @tags_all;
+			unless ($opts{use_any}) {
+    			push @tags, @$tags_projs;
+			}
             foreach my $tline (@tags) {
                 my $tt = join("," => @$tline);
 
