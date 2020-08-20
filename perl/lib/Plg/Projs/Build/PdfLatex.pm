@@ -474,10 +474,9 @@ sub cmd_insert_pwg {
     my @nlines;
     my $width = 0.5;
 
-    my ($is_img, $is_fig, $is_cmt, %opts);
+    my ($is_img, $is_fig, $is_cmt);
 
-    my @tags;
-        
+    my (@tags, %opts);
 	my $tags_projs = [ qw(projs), $self->{root_id}, $self->{proj} ];
 
     foreach(@jlines) {
@@ -531,7 +530,7 @@ sub cmd_insert_pwg {
 
             my @tags_all;
 			unless ($opts{use_any}) {
-    			push @tags, @$tags_projs;
+    			push @tags, $tags_projs;
 			}
             foreach my $tline (@tags) {
                 my $tt = join("," => @$tline);
@@ -555,6 +554,10 @@ sub cmd_insert_pwg {
             if ($is_fig) {
                 push @nlines, sprintf('\\caption{%s}',$icapt);
             }
+
+			@tags = ();
+			@tags_all = ();
+			%opts = ();
             
             next;
         };
