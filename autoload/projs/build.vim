@@ -12,6 +12,8 @@ endfunction
 
 function! projs#build#action (...)
 
+  let proj = projs#proj#name()
+
   let acts = base#qwsort('View Run Cleanup List')
   if a:0
     let act=a:1
@@ -29,9 +31,18 @@ function! projs#build#action (...)
   if act == 'Cleanup'
     call projs#build#cleanup()
 
-	elseif act == 'List'
+  elseif act == 'List'
 
-	elseif act == 'Run'
+  elseif act == 'Run'
+
+"""PrjBuild_pwg_view_log
+  elseif act == 'pwg_view_log'
+    let qw = printf('src %s.log',proj)
+    let file = projs#builddir(qw)
+    call base#fileopen({ 
+      \  'files'    : [file] ,
+      \  'load_buf' : 1,
+      \  })
 
 """PrjBuild_View
   elseif act == 'View'
@@ -54,21 +65,21 @@ function! projs#build#action (...)
       \ })
 
     call base#fileopen({ 
-			\	'files'    : [ file ],
-			\	'load_buf' : 1,
-			\	})
+      \ 'files'    : [ file ],
+      \ 'load_buf' : 1,
+      \ })
 
   endif
 endfunction
 
 if 0
-	Tags
-		PrjBuild_Cleanup
-	Called by
-		projs#build#action
-		PrjBuild Cleanup
-	See also
-		projs#build#files
+  Tags
+    PrjBuild_Cleanup
+  Called by
+    projs#build#action
+    PrjBuild Cleanup
+  See also
+    projs#build#files
 endif
 
 function! projs#build#cleanup (...)
@@ -647,36 +658,36 @@ endfunction
 
 """help_projs_build_files
 if 0
-	Usage
- 		let files =  projs#build#files(ref) 
+  Usage
+    let files =  projs#build#files(ref) 
 
-	Examples
- 		echo projs#build#files({ 
-		   \ "exts"          : base#qw("pdf"),
-		   \ "add_pdf_built" : 1,
-		   \ "add_other"     : 1,
-		   \ })
+  Examples
+    echo projs#build#files({ 
+       \ "exts"          : base#qw("pdf"),
+       \ "add_pdf_built" : 1,
+       \ "add_other"     : 1,
+       \ })
 
- 		echo projs#build#files({ 
-		   \ "exts"          : base#qw("pdf aux log"),
-		   \ "add_pdf_built" : 1,
-		   \ "add_other"     : 1,
-		   \ "relpath"       : 1,
-		   \ })
+    echo projs#build#files({ 
+       \ "exts"          : base#qw("pdf aux log"),
+       \ "add_pdf_built" : 1,
+       \ "add_other"     : 1,
+       \ "relpath"       : 1,
+       \ })
 
-		let files = projs#build#files() | echo files
+    let files = projs#build#files() | echo files
 
-	Input Options
-		exts          : DICT
-		add_pdf_built : 1/0
-		add_other     : 1/0
-		relpath       : 1/0 - full path (0) relative path (1)
+  Input Options
+    exts          : DICT
+    add_pdf_built : 1/0
+    add_other     : 1/0
+    relpath       : 1/0 - full path (0) relative path (1)
 endif
 
 function! projs#build#files (...)
-	let ref = get(a:000,0,{})
+  let ref = get(a:000,0,{})
 
-	""" to be returned: array of build files
+  """ to be returned: array of build files
   let bfiles = []
 
   let exts_other = get(ref,'exts',[])
@@ -691,7 +702,7 @@ function! projs#build#files (...)
   let do = {}
 
   for d in keys(defs)
-		let default = get(defs,d,'')
+    let default = get(defs,d,'')
     let do[d]   = get(ref,d,default)
   endfor
 

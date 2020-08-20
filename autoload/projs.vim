@@ -867,7 +867,7 @@ function! projs#maps ()
   let maps = {
         \ 'nnoremap' :
           \ {
-          \  '<F1>'  : 'PrjAct async_build_bare'  ,
+          \  '<F1>'  : 'PrjAct async_build_pwg'  ,
           \  ';ab'   : 'PrjAct async_build_bare'  ,
           \  '<F2>'  : 'PrjPdfView'          ,
           \  '<F3>'  : 'copen'               ,
@@ -904,9 +904,22 @@ function! projs#maps ()
 endfunction
 
 function! projs#builddir (...)
+    let qw       = get(a:000,0,'')
+    let qw_a     = split(qw,' ')
+
+    let sub_path = ''
+    
+    if len(qw)
+      let sub_path = join(qw_a, base#file#sep() )
+    endif
+
     let proj     = projs#proj#name()
     let broot    = projs#varget('rootbuilddir','')
     let builddir = base#file#catfile([ broot, proj ])
+
+    if len(sub_path)
+      let builddir = base#file#catfile([ builddir, sub_path ])
+    endif
 
     return builddir
 endfunction

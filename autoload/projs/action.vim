@@ -622,14 +622,16 @@ function! projs#action#append_thisproj (...)
 
 endfunction
 
+
+
 if 0
-  call tree
+  Call tree
     called by
-      projs#action#async_build
+      projs#action#async_build_bare
 endif
 
 
-function! projs#action#async_build_Fc (self,temp_file) 
+function! projs#action#async_build_bare_Fc (self,temp_file) 
   let self      = a:self
   let temp_file = a:temp_file
 
@@ -658,6 +660,58 @@ function! projs#action#async_build_Fc (self,temp_file)
     else
       let msg = printf('BUILD OK: %s %s, mode: %s',proj,s_dur,mode)
       call base#rdw(msg)
+      BaseAct cclose
+    endif
+    echohl None
+  endif
+endfunction
+
+if 0
+  call tree
+    called by
+      projs#action#async_build_pwg
+endif
+
+function! projs#action#async_build_pwg_Fc (self,temp_file) 
+  let self      = a:self
+  let temp_file = a:temp_file
+
+  let code    = self.return_code
+  let root    = self.root
+  let proj    = self.proj
+  let start   = self.start
+  let mode    = self.mode
+
+  let build_files = self.build_files
+  let src_dir     = self.src_dir
+
+  let end      = localtime()
+  let duration = end - start
+  let s_dur    = ' ' . string(duration) . ' (secs)'
+  
+  let pdf_file = projs#pdf#path(proj,'pwg')
+
+  let log = get(build_files,'log','')
+
+  if filereadable(pdf_file)
+  endif
+
+  if filereadable(log)
+    let log_bn = fnamemodify(log,':p:t')
+    call tex#efm#latex()
+    exe 'cd ' . src_dir
+    exe 'cgetfile ' . log_bn
+    
+    let err = getqflist()
+    
+    redraw!
+    if len(err)
+      let msg = printf('(PWG) LATEX ERR: %s %s',proj,s_dur)
+      call base#rdwe(msg)
+      BaseAct copen
+    else
+      let msg = printf('(PWG) LaTeX OK: %s %s',proj,s_dur)
+      call base#rdw(msg,'StatusLine')
       BaseAct cclose
     endif
     echohl None
@@ -773,18 +827,8 @@ con.close()
 eof
 endfunction
 
-if 0
-  Usage
-    projs#action#async_build()
-    projs#action#async_build({ 'sec_bat' : '_build_htlatex_' })
-    projs#action#async_build({ 'sec_bat' : '_build_pdflatex_' })
-  Call tree
-    calls
-      projs#proj#name
-      projs#root
-      projs#sec#file
-      projs#sec#new
-endif
+
+"""prjact_async_build_pwg
 
 function! projs#action#async_build_pwg (...) 
   let ref = get(a:000,0,{})
@@ -800,23 +844,40 @@ function! projs#action#async_build_pwg (...)
   let start = localtime()
   call chdir(root)
   let cmd = join([ 
-			\	'bb_pdflatex.bat', 
-			\	proj, root_id,
-			\	'-c','build_pwg' ], ' ' )
+      \ 'bb_pdflatex.bat', 
+      \ proj, root_id,
+      \ '-c','build_pwg' ], ' ' )
+
+  let src_dir = projs#builddir('src')
+
+  let build_files = {}
+  for ext in base#qw('log aux')
+    let ff = base#find({ 
+        \  "dirs"    : [src_dir],
+        \  "exts"    : [ext],
+        \  "relpath" : 0,
+        \  })
+    call extend(build_files,{ 
+      \ ext : get(ff,0,'')
+      \ })
+
+  endfor
   
   let env = {
-    \ 'proj'  : proj,
-    \ 'root'  : root,
-    \ 'start' : start,
-    \ 'mode'  : mode,
+    \ 'proj'        : proj,
+    \ 'root'        : root,
+    \ 'start'       : start,
+    \ 'mode'        : mode,
+    \ 'build_files' : build_files,
+    \ 'src_dir'     : src_dir,
     \ }
 
   function env.get(temp_file) dict
-    call projs#action#async_build_Fc(self,a:temp_file)
+    call projs#action#async_build_pwg_Fc(self,a:temp_file)
   endfunction
 
   let msg = printf('async_build_pwg: %s, mode: %s', proj, mode)
-	call base#rdw(msg,'WildMenu')
+  call base#rdw(msg,'WildMenu')
 
   call asc#run({ 
     \ 'cmd' : cmd, 
@@ -825,7 +886,18 @@ function! projs#action#async_build_pwg (...)
   return 1
 endf
 
-"""prjact_async_build
+if 0
+  Usage
+    projs#action#async_build_bare()
+  Call tree
+    calls
+      projs#proj#name
+      projs#root
+      projs#sec#file
+      projs#sec#new
+endif
+
+"""prjact_async_build_bare
 
 function! projs#action#async_build_bare (...) 
   let ref = get(a:000,0,{})
@@ -850,7 +922,7 @@ function! projs#action#async_build_bare (...)
     \ }
 
   function env.get(temp_file) dict
-    call projs#action#async_build_Fc(self,a:temp_file)
+    call projs#action#async_build_bare_Fc(self,a:temp_file)
   endfunction
 
   echo printf('async_build_bare: %s, mode: %s', proj, mode)
@@ -904,8 +976,8 @@ endfunction
 
 function! projs#action#joinlines ()
     let jlines = projs#filejoinlines({ 
-			\	'write_jfile' : 1 
-			\	})
+      \ 'write_jfile' : 1 
+      \ })
     VSEC _join_
 endfunction
 

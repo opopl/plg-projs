@@ -401,7 +401,11 @@ sub cmd_build_pwg {
 
     mkpath $self->{out_dir_pdf_pwg};
 
-    my $cmd = sprintf("latexmk -pdf %s",$self->{proj});
+    my $opts = {
+        latexmk => '-pdf -silent'
+    };
+
+    my $cmd = sprintf("latexmk %s %s",$opts->{latexmk}, $self->{proj});
     chdir $self->{src_dir};
     system($cmd);
 

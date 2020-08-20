@@ -45,6 +45,9 @@ function! projs#pdf#view (...)
 endfunction
 
 if 0
+  Usage
+    let pdf = projs#pdf#path('aa')
+    let pdf = projs#pdf#path('aa','pwg')
   Call tree
     Called by
       projs#pdf#view
@@ -54,8 +57,15 @@ endif
 function! projs#pdf#path (...)
   let proj    = get(a:000,0,projs#proj#name())
 
+  let qw = get(a:000,1,'')
+
   let pdffin  = projs#varget('pdffin','')
-  let pdffile = base#file#catfile([ pdffin, projs#rootid(), proj . '.pdf' ])
+
+  let a = [ pdffin, projs#rootid() ]
+  call extend(a,split(qw,' '))
+  call extend(a,[ printf('%s.pdf',proj) ])
+
+  let pdffile = base#file#catfile(a)
 
   return pdffile
 endfunction
