@@ -384,7 +384,7 @@ sub _cmd_pdflatex {
     my ($self, $ref) = @_;
 
     my $opts = [
-        #'-interaction=nonstopmode'
+        '-interaction=nonstopmode'
     ];
 
     my $proj    = $self->{proj};
@@ -474,6 +474,22 @@ sub _bu_cmds_pdflatex {
     return @cmds;
 }
 
+sub _files_pdf_pwg {
+    my ($self) = @_;
+
+    my $proj    = $self->{proj};
+    my $src_dir = $self->{src_dir};
+
+    my @pdf_files;
+    push @pdf_files,
+        catfile($src_dir,$proj . '.pdf'),
+        catfile($self->{out_dir_pdf_pwg},$proj . '.pdf'),
+        ;
+
+    return @pdf_files;
+
+}
+
 sub cmd_build_pwg {
     my ($self) = @_;
 
@@ -481,15 +497,12 @@ sub cmd_build_pwg {
     my $src_dir = $self->{src_dir};
 
     mkpath $self->{src_dir} if -d $self->{src_dir};
+    mkpath $self->{out_dir_pdf_pwg};
+
     $self->cmd_insert_pwg;
 
-    my @pdf_files;
+    my @pdf_files = $self->_files_pdf_pwg;
 
-    mkpath $self->{out_dir_pdf_pwg};
-    push @pdf_files,
-        catfile($src_dir,$proj . '.pdf'),
-        catfile($self->{out_dir_pdf_pwg},$proj . '.pdf'),
-        ;
     foreach my $f (@pdf_files) {
         rmtree $f if -e $f;
     }
