@@ -462,8 +462,8 @@ sub cmd_insert_pwg {
 
     $self
         ->cmd_join
-        ->copy_sty
-        ->copy_bib
+        ->copy_to_src
+        ->create_bat_in_src
         ;
 
     my $jfile  = $self->_file_joined;
@@ -598,7 +598,57 @@ sub cmd_join {
     return $self;
 }
 
-sub copy_bib {
+sub create_bat_in_src {
+	my ($self) = @_;
+
+	my $dir  = $self->{src_dir};
+	my $proj = $self->{proj};
+
+	my %f = (
+		'_clean.bat' => sub { 
+			[
+				'latexmk -C'
+			];
+		},
+		'_latexmk_pdf.bat' => sub { 
+			[
+				sprintf('latexmk -pdf %s',$proj)
+			];
+		},
+		'_view.bat' => sub { 
+			[
+				sprintf('%s.pdf',$proj)
+			];
+		},
+		'_pdflatex.bat' => sub { 
+			[
+				sprintf('pdflatex %s',$proj)
+			];
+		},
+	);
+	while(my($f,$l)=each %f){
+		my $bat = catfile($dir,$f);
+		my $lines = $l->();
+		write_file($bat,join("\n",@$lines) . "\n");
+	}
+
+    return $self;
+}
+
+sub copy_to_src {
+	my ($self) = @_;
+
+    mkpath $self->{src_dir};
+
+	$self
+		->copy_bib_to_src
+		->copy_sty_to_src
+		;
+
+    return $self;
+}
+
+sub copy_bib_to_src {
     my ($self) = @_;
 
     my $root = $self->{root};
@@ -607,7 +657,6 @@ sub copy_bib {
     push @bib, 
         $self->_file_sec('_bib_');
 
-    mkpath $self->{src_dir};
 
     foreach(@bib) {
         my $bib_src     = $_;
@@ -619,7 +668,7 @@ sub copy_bib {
     return $self;
 }
 
-sub copy_sty {
+sub copy_sty_to_src {
     my ($self) = @_;
 
     my $root = $self->{root};
