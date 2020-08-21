@@ -550,7 +550,9 @@ sub cmd_insert_pwg {
     my @jlines = read_file $jfile;
 
     my @nlines;
-    my $width = 0.5;
+    my ($width, $width_local, $width_default);
+   
+    $width = $width_default = 0.5;
 
     my ($is_img, $is_fig, $is_cmt, $is_tex);
 
@@ -580,6 +582,22 @@ sub cmd_insert_pwg {
             my $opts = $1;
             %opts = map { $_ => 1 } split("," => $opts);
             next;
+        };
+
+###cnv_width_fig
+        m/^\s*width_fig\s+(.*)/ && do { 
+            next unless $is_fig;
+
+            $fig{width} = $1; 
+
+            next;
+        };
+
+###cnv_width
+        m/^\s*width\s+(.*)/ && do { 
+            next unless $is_img;
+
+            $width_local = $1; next;
         };
 
 ###cnv_tags_fig
@@ -632,6 +650,8 @@ sub cmd_insert_pwg {
         m/^\s*img_end/ && do { 
             $is_img = 0; 
 
+            $width = $width_local || $fig{width} || $width_default;
+
             my @tags_all;
             unless ($opts{use_any}) {
                 push @tags, $tags_projs;
@@ -683,15 +703,11 @@ sub cmd_insert_pwg {
             @tags = ();
             @tags_all = ();
             %opts = ();
+            $width_local = undef;
             
             next;
         };
 
-        m/^\s*width\s+(.*)/ && do { 
-            next unless $is_img;
-
-            $width = $1; next;
-        };
 
         m/^\s*tags\s+(.*)/ && do { 
             next unless $is_img;
