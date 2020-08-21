@@ -241,6 +241,7 @@ sub cmd_img_by_tags {
 	        q   => qq{ SELECT tag FROM collected WHERE path = ? },
 	        p   => [$path],
 	    });
+		my $tgs = join(" ",sort { length($a) <=> length($b)} @tags_r);
 		my %tags_r = map { $_ => 1 } @tags_r;
 
 		my $in=1;
@@ -260,6 +261,7 @@ sub cmd_img_by_tags {
     	if (-e $full_path) {
 			push @img, {  
 				path       => $full_path,
+				tgs        => $tgs,
 	            #comment    => decode('utf8',$comment),
 	            comment    => $comment,
 			};
@@ -268,6 +270,7 @@ sub cmd_img_by_tags {
 	}
 
 	$self->{img} = [@img];
+	print Dumper([@img]) . "\n";
 
     $self;
 }
