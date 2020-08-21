@@ -344,6 +344,8 @@ function! projs#sec#file_base_a (...)
     elseif sec == '_bib_'
         let sfile_a = [ proj.'.refs.bib']
 
+    elseif sec == '_tex_jnd_'
+        let sfile_a = [ 'builds', proj, 'src', proj . '.tex' ]
 
     elseif sec == '_join_'
         let sfile_a = [ 'joins', proj . '.tex' ]
@@ -824,6 +826,11 @@ function! projs#sec#open_load_buf (sec,...)
   let sec = a:sec
   call projs#sec#open(sec,{ 'load_buf' : 1 })
 endfunction
+
+if 0
+	called by
+		VSEC
+endif
 
 function! projs#sec#open (...)
  let proj = projs#proj#name()

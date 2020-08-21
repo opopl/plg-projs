@@ -16,7 +16,7 @@ function! projs#build#action (...)
 
   let acts = base#qwsort('View Run Cleanup List')
   if a:0
-    let act=a:1
+    let act = a:1
   else
     let act = base#getfromchoosedialog({ 
       \ 'list'        : acts,
@@ -85,6 +85,8 @@ endif
 function! projs#build#cleanup (...)
   let bfiles = projs#build#files()
 
+	let proj = projs#proj#name()
+
   if !len(bfiles)
     echo 'No build files to remove!'
     return
@@ -95,6 +97,11 @@ function! projs#build#cleanup (...)
     for bfile in bfiles
       if filereadable(bfile)
           call delete(bfile)
+					let msg = [
+						\	'removing file: ' . fnamemodify(bfile,':p:t')
+						\	]
+					let prf = { 'plugin' : 'projs', 'func' : 'projs#build#cleanup' }
+					call base#log(msg, prf)
 
       elseif isdirectory(bfile)
           if has('win32')
@@ -106,6 +113,7 @@ function! projs#build#cleanup (...)
           endif
       endif
     endfor
+		call base#rdw('Build Cleanup OK: ' . proj)
   endif
 
 endfunction

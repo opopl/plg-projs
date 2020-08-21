@@ -460,8 +460,6 @@ sub cmd_build_pwg {
 sub cmd_insert_pwg {
     my ($self) = @_;
 
-    my $pwg = Plg::Projs::Piwigo::SQL->new;
-
     $self
         ->cmd_join
         ->copy_sty
@@ -540,20 +538,27 @@ sub cmd_insert_pwg {
                     q{%tags: } . $tt;
             }
 
+    		my $pwg = Plg::Projs::Piwigo::SQL->new;
             local @ARGV = qw( -c img_by_tags );
             push @ARGV, 
                 qw( -t ), join("," => @tags_all);
+
             $pwg->run;
-            my $ipath = $pwg->{img}->{path};
-            my $icapt = $pwg->{img}->{comment} || '';
-            $icapt =~ s/\r\n/\n/g;
+			my @img = @{$pwg->{img} || []};
+			if (@img == 1) {
+				my $i = shift @img;
+	            my $ipath = $i->{path};
+	            my $icapt = $i->{comment} || '';
+	            $icapt =~ s/\r\n/\n/g;
 
-            push @nlines,
-                sprintf('\\includegraphics[width=%s\\textwidth]{%s}', $width, $ipath);
+	            push @nlines,
+	                sprintf('\\includegraphics[width=%s\\textwidth]{%s}', $width, $ipath);
 
-            if ($is_fig) {
-                push @nlines, sprintf('\\caption{%s}',$icapt);
-            }
+	            if ($is_fig) {
+	                push @nlines, sprintf('\\caption{%s}',$icapt);
+	            }
+			}else{
+			}
 
 			@tags = ();
 			@tags_all = ();

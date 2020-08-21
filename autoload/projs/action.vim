@@ -829,6 +829,49 @@ con.close()
 eof
 endfunction
 
+function! projs#action#pwg_insert_img (...) 
+  let ref = get(a:000,0,{})
+
+  let root    = projs#root()
+  let root_id = projs#rootid()
+
+  let proj = projs#proj#name()
+  let proj = get(ref,'proj',proj)
+
+  call chdir(root)
+  let cmd = join([ 
+      \ 'bb_pdflatex.bat', 
+      \ proj, root_id,
+      \ '-c','insert_pwg' ], ' ' )
+
+	let jnd = projs#sec#file('_tex_jnd_')
+	if filereadable(jnd)
+		call delete(jnd)
+	endif
+
+  let env = {
+    \ 'proj'        : proj,
+    \ 'root'        : root,
+    \ 'jnd'         : jnd,
+    \ }
+
+  function env.get(temp_file) dict
+		let jnd = get(self,'jnd','')
+		VSEC _tex_jnd_
+		if filereadable(a:temp_file)
+			let out = readfile(a:temp_file)
+			call base#buf#open_split({ 'lines' : out })
+		endif
+    "call projs#action#pwg_insert_pwg_Fc(self,a:temp_file)
+  endfunction
+
+  call asc#run({ 
+    \ 'cmd' : cmd, 
+    \ 'Fn'  : asc#tab_restore(env) 
+    \ })
+  return 1
+endf
+
 
 """prjact_async_build_pwg
 

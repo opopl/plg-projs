@@ -869,7 +869,7 @@ function! projs#maps ()
           \ {
           \  '<F1>'  : 'PrjAct async_build_pwg'  ,
           \  ';ab'   : 'PrjAct async_build_bare'  ,
-          \  '<F2>'  : 'PrjPdfView'          ,
+          \  '<F2>'  : 'PrjBuild Cleanup'    ,
           \  '<F3>'  : 'copen'               ,
           \  '<F4>'  : 'cclose'              ,
           \  '<F5>'  : 'PrjDB thisproj_data' ,

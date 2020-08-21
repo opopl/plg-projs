@@ -200,63 +200,74 @@ sub cmd_ct_collected {
 sub cmd_img_by_tags {
     my ($self, $tags_s) = @_;
 
+    my $dbh = $self->{dbh};
+
     $self->ct_collected;
 
     $tags_s ||= $self->{opt}->{tags};
     $tags_s ||= '';
 
-    my @tags_a = split("," => $tags_s);
+    my @tags_in = split("," => $tags_s);
+	my %tags_in = map { $_ => 1 } @tags_in;
 
-    my @cond;
+    my (@cond, $cond);
+	my ($rows, $cols);
    
-    if (@tags_a) {
+    if (@tags_in) {
         push @cond,
              qq{ WHERE tag IN ( },
-             join( "," => map { "'" . $_ . "'" } @tags_a ),
+             join( "," => map { "'" . $_ . "'" } @tags_in ),
              qq{)},
              ;
+
+        $cond = join(" ",@cond);
     } 
 
-    my $q = qq{
-        SELECT 
-            path, comment, tag
-        FROM 
-            collected
-    } 
-        . join(" ",@cond)
-        . qq{ HAVING COUNT(*) = } . scalar @tags_a 
-        ;
-
-    #my $res = dbh_selectall_arrayref({
-        #dbh => $self->{dbh},
-        #q   => $q,
-        #p   => [],
-    #});
-
-    my ($rows, $cols) = dbh_select({
-        dbh => $self->{dbh},
-        q   => $q,
+    ($rows,$cols) = dbh_select({
+        dbh => $dbh,
+        q   => qq{ SELECT DISTINCT path, comment FROM collected $cond },
         p   => [],
     });
 
-    my $first = shift @$rows;
-    
-    my $path = $first->{path};
-    my $comment = $first->{comment};
+	my @img;
+	my %done;
 
-    my $full_path = catfile($self->{piwigo},$path);
+	foreach my $row (@$rows) {
+		my $path    = $row->{path};
+	    my $comment = $row->{comment};
 
-    if ($^O eq 'MSWin32') {
-        $full_path =~ s/\\/\//g;
-    }
+	    my @tags_r = dbh_select_as_list({
+	        dbh => $dbh,
+	        q   => qq{ SELECT tag FROM collected WHERE path = ? },
+	        p   => [$path],
+	    });
+		my %tags_r = map { $_ => 1 } @tags_r;
 
-    if (-e $full_path) {
-        $self->{img} = {
-            path       => $full_path,
-            #comment    => decode('utf8',$comment),
-            comment    => $comment,
-        };
-    }
+		my $in=1;
+		for(@tags_in){
+			unless($tags_r{$_}) {
+				$in=0; last;
+			}
+		}
+		next unless $in;
+
+	    my $full_path = catfile($self->{piwigo},$path);
+		next if $done{$full_path};
+	
+	    if ($^O eq 'MSWin32') {
+	        $full_path =~ s/\\/\//g;
+	    }
+    	if (-e $full_path) {
+			push @img, {  
+				path       => $full_path,
+	            #comment    => decode('utf8',$comment),
+	            comment    => $comment,
+			};
+			$done{$full_path}=1;
+		}
+	}
+
+	$self->{img} = [@img];
 
     $self;
 }
