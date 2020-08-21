@@ -857,7 +857,7 @@ function! projs#action#pwg_insert_img (...)
 
   function env.get(temp_file) dict
 		let jnd = get(self,'jnd','')
-		VSEC _tex_jnd_
+		"VSEC _tex_jnd_
 		if filereadable(a:temp_file)
 			let out = readfile(a:temp_file)
 			call base#buf#open_split({ 'lines' : out })

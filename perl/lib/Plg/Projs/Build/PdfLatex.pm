@@ -8,28 +8,23 @@ use File::Spec::Functions qw(catfile);
 use File::Path qw( mkpath rmtree );
 use File::Basename qw(basename dirname);
 use File::Copy qw( copy );
+use File::Slurp::Unicode;
+
 use FindBin qw($Bin $Script);
+
 use Plg::Projs::Piwigo::SQL;
+
+use base qw(
+	Plg::Projs::Build::PdfLatex::IndFile
+);
 
 use utf8; 
 use Encode;
 #use open qw(:utf8 :std);
 binmode STDOUT, ":utf8";
 
-#use File::Slurp qw(
-#qw(
-#  append_file
-  #edit_file
-  #edit_file_lines
-  #read_file
-  #write_file
-  #prepend_file
-#);
-
-#
 use File::Dat::Utils qw(readarr);
 
-use File::Slurp::Unicode;
 use Data::Dumper qw(Dumper);
 use Getopt::Long qw(GetOptions);
 use Base::DB qw(
@@ -158,47 +153,7 @@ sub init {
     return $self;
 }
 
-sub process_ind_file {
-    my ($self, $ind_file, $level) = @_;
 
-    unless (-e $ind_file){
-        return $self;
-    }
-
-   my %ind_items;
-
-   my @out;
-   my $theindex=0;
-   open(F,"<:encoding(utf-8)", "$ind_file") || die $!;
-
-   my $i=0;
-   while(<F>){
-       chomp;
-       m/^\\begin\{theindex\}/ && do { $theindex=1; };
-       m/^\\end\{theindex\}/ && do { $theindex=0; };
-       next unless $theindex;
-
-       m/^\s*\\item\s+(\w+)/ && do { $ind_items{$1} = []; };
-
-       m{^\s*\\lettergroup\{(.+)\}$} && do {
-           s{
-               ^\s*\\lettergroup\{(.+)\}$
-           }{
-            \\hypertarget{ind-$i}{}\n\\bookmark[level=$level,dest=ind-$i]{$1}\n 
-            \\lettergroup{$1}
-           }gmx;
-
-           $i++;
-       };
-
-       push @out, $_;
-
-   }
-   close(F);
-   write_file($ind_file,join("\n",@out) . "\n");
-
-   return $self;
-}
 
 sub _file_joined {
     my ($self) = @_;
@@ -393,7 +348,78 @@ sub _join_lines {
     return @lines;
 }
 
+sub _bu_cmds_pdflatex {
+    my ($self) = @_;
+
+	my $proj    = $self->{proj};
+
+	my $opts = [
+		'-interaction=nonstopmode'
+	];
+
+	my @cmds;
+	push @cmds,
+		sprintf('pdflatex %s %s',join(" ",@$opts),$proj),
+    	qq{ texindy -L russian -C utf8 $proj.idx },
+		;
+	return @cmds;
+}
+
 sub cmd_build_pwg {
+    my ($self) = @_;
+
+	my $proj    = $self->{proj};
+	my $src_dir = $self->{src_dir};
+
+	mkpath $self->{src_dir} if -d $self->{src_dir};
+    $self->cmd_insert_pwg;
+
+    my @pdf_files;
+
+    mkpath $self->{out_dir_pdf_pwg};
+    push @pdf_files,
+        catfile($src_dir,$proj . '.pdf'),
+        catfile($self->{out_dir_pdf_pwg},$proj . '.pdf'),
+        ;
+    foreach my $f (@pdf_files) {
+        rmtree $f if -e $f;
+    }
+
+    my $pdf_file = catfile($src_dir,$proj . '.pdf'),
+
+    chdir $src_dir;
+
+	my @cmds = $self->_bu_cmds_pdflatex;
+
+	foreach my $cmd (@cmds) {
+    	system($cmd);
+	}
+
+    my @dest;
+    push @dest, 
+        $self->{out_dir_pdf_pwg},
+        $self->{out_dir_pdf}
+        ;
+
+    if (-e $pdf_file) {
+        foreach(@dest) {
+            mkpath $_ unless -d;
+
+            my $d = catfile($_, basename($pdf_file));
+
+            print "Copied PDF File to:" . "\n";
+            print "     " . $d . "\n";
+
+            copy($pdf_file, $d);
+        }
+    }
+    chdir $self->{root};
+
+    return $self;
+
+}
+
+sub cmd_build_pwg_latexmk {
     my ($self) = @_;
 
     mkpath $self->{src_dir} if -d $self->{src_dir};
@@ -607,6 +633,8 @@ sub create_bat_in_src {
 	my %f = (
 		'_clean.bat' => sub { 
 			[
+				'rm *.xdy',
+				'rm *.idx',
 				'latexmk -C'
 			];
 		},
@@ -621,12 +649,13 @@ sub create_bat_in_src {
 			];
 		},
 		'_pdflatex.bat' => sub { 
-			[
-				sprintf('pdflatex %s',$proj)
-			];
+			my @cmds;
+			push @cmds, 
+				$self->_bu_cmds_pdflatex
+				;
 		},
 	);
-	while(my($f,$l)=each %f){
+	while( my($f,$l) = each %f ){
 		my $bat = catfile($dir,$f);
 		my $lines = $l->();
 		write_file($bat,join("\n",@$lines) . "\n");
@@ -771,7 +800,7 @@ sub run {
     system(qq{ texindy -L russian -C utf8 $proj.idx });
 
     my $ind_file = catfile("$proj.ind");
-    #$self->process_ind_file($ind_file, 1);;
+	#$self->ind_ins_bmk($ind_file,1);
 
     #return ;
     chdir $self->{root};
