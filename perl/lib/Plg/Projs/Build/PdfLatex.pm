@@ -365,11 +365,11 @@ sub _bu_cmds_pdflatex {
 		$tex,
 		$bib_tex,
     	qq{ texindy -C utf8 -L russian $proj.idx },
-    	qq{ texindy -M indexA.xdy indexA.idx },
-    	qq{ texindy -M indexB.xdy indexB.idx },
+    	qq{ texindy -M indexENG.xdy indexENG.idx },
+    	qq{ texindy -C utf8 -L russian indexRUS.xdy indexRUS.idx },
     	qq{ call ind_ins_bmk $proj.ind 1 },
-    	qq{ call ind_ins_bmk indexA.ind 1 },
-    	qq{ call ind_ins_bmk indexB.ind 1 },
+    	qq{ call ind_ins_bmk indexENG.ind 1 },
+    	qq{ call ind_ins_bmk indexRUS.ind 1 },
 		$tex,
 		$tex,
 		;
@@ -428,70 +428,6 @@ sub cmd_build_pwg {
 
     return $self;
 
-}
-
-sub cmd_build_pwg_latexmk {
-    my ($self) = @_;
-
-    mkpath $self->{src_dir} if -d $self->{src_dir};
-    $self->cmd_insert_pwg;
-
-    my @pdf_files;
-
-    mkpath $self->{out_dir_pdf_pwg};
-    push @pdf_files,
-        catfile($self->{src_dir},$self->{proj} . '.pdf'),
-        #catfile($self->{out_dir_pdf},$self->{proj} . '.pdf'),
-        catfile($self->{out_dir_pdf_pwg},$self->{proj} . '.pdf'),
-        ;
-    foreach my $f (@pdf_files) {
-        rmtree $f if -e $f;
-    }
-
-    my $pdf_file = catfile($self->{src_dir},$self->{proj} . '.pdf'),
-
-    my $rc = 'latexmkrc';
-    my $opts = {
-        latexmk => qq{ -pdf -silent -norc -r $rc }
-    };
-
-    my $cmd = sprintf("latexmk %s %s",$opts->{latexmk}, $self->{proj});
-    chdir $self->{src_dir};
-
-    my @rc_lines;
-    push @rc_lines,
-		q{$makeindex = 'texindy -L russian -C utf8 -M %B.xdy %O -o %D %S'; #$},
-        #q{$makeindex = 'texindy -L russian -C utf8'; },
-        q{  },
-        q{$pdf_mode = 1; },
-        ;
-
-    write_file($rc,join("\n",@rc_lines) . "\n");
-
-    system(sprintf('pdflatex %s %s','-interaction=nonstopmode',$self->{proj}));
-    system($cmd);
-
-    my @dest;
-    push @dest, 
-        $self->{out_dir_pdf_pwg},
-        $self->{out_dir_pdf}
-        ;
-
-    if (-e $pdf_file) {
-        foreach(@dest) {
-            mkpath $_ unless -d;
-
-            my $d = catfile($_, basename($pdf_file));
-
-            print "Copied PDF File to:" . "\n";
-            print "     " . $d . "\n";
-
-            copy($pdf_file, $d);
-        }
-    }
-    chdir $self->{root};
-
-    return $self;
 }
 
 sub cmd_insert_pwg {
