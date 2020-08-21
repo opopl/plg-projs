@@ -430,6 +430,8 @@ sub _cmds_texindy {
             my $lang = $langs->{$lng};
 
             $M_xdy = ( -e $xdy ) ? qq{ -M $xdy } : '';
+            $M_xdy ||= ( -e "index.$lng.xdy" ) ? qq{ -M index.$lng.xdy } : '';
+
             my $enc = ( $lng eq 'rus' ) ? '-C utf8' : '';
 
             $cmd_idx = sprintf(qq{texindy $enc -L $lang $M_xdy $idx });
@@ -495,12 +497,7 @@ sub cmd_build_pwg {
     my $pdf_file = catfile($src_dir,$proj . '.pdf'),
 
     chdir $src_dir;
-
-    my @cmds = $self->_bu_cmds_pdflatex;
-
-    foreach my $cmd (@cmds) {
-        system($cmd);
-    }
+    system("_pdflatex.bat");
 
     my @dest;
     push @dest, 
