@@ -23,8 +23,13 @@ sub ind_ins_bmk {
    open(F,"<:encoding(utf-8)", "$ind_file") || die $!;
 
    my $i=0;
+   my $done;
    while(<F>){
        chomp;
+	   m/%done_ind_ins_bmk/ && do { 
+		   last;
+	   };
+
        m/^\\begin\{theindex\}/ && do { $theindex=1; };
        m/^\\end\{theindex\}/ && do { $theindex=0; };
        next unless $theindex;
@@ -46,6 +51,7 @@ sub ind_ins_bmk {
 
    }
    close(F);
+   unshift @out, '%done_ind_ins_bmk';
    write_file($ind_file,join("\n",@out) . "\n");
 
    return $self;

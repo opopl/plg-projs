@@ -358,9 +358,20 @@ sub _bu_cmds_pdflatex {
 	];
 
 	my @cmds;
+	my $tex = sprintf('pdflatex %s %s',join(" ",@$opts),$proj);
+	my $bib_tex = sprintf('bibtex %s',$proj);
+
 	push @cmds,
-		sprintf('pdflatex %s %s',join(" ",@$opts),$proj),
-    	qq{ texindy -L russian -C utf8 $proj.idx },
+		$tex,
+		$bib_tex,
+    	qq{ texindy -C utf8 -L russian $proj.idx },
+    	qq{ texindy -M indexA.xdy indexA.idx },
+    	qq{ texindy -M indexB.xdy indexB.idx },
+    	qq{ call ind_ins_bmk $proj.ind 1 },
+    	qq{ call ind_ins_bmk indexA.ind 1 },
+    	qq{ call ind_ins_bmk indexB.ind 1 },
+		$tex,
+		$tex,
 		;
 	return @cmds;
 }
@@ -653,6 +664,7 @@ sub create_bat_in_src {
 			push @cmds, 
 				$self->_bu_cmds_pdflatex
 				;
+			return [@cmds];
 		},
 	);
 	while( my($f,$l) = each %f ){
