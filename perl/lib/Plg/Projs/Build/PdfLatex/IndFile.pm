@@ -9,8 +9,8 @@ use File::Slurp::Unicode;
 sub ind_ins_bmk {
     my ($self, $ind_file, $level) = @_;
 
-	$ind_file ||= $self->{ind_file};
-	$level = $self->{ind_level} unless defined $level;
+    $ind_file ||= $self->{ind_file};
+    $level = $self->{ind_level} unless defined $level;
 
     unless (-e $ind_file){
         return $self;
@@ -26,26 +26,32 @@ sub ind_ins_bmk {
    my $done;
    while(<F>){
        chomp;
-	   m/%done_ind_ins_bmk/ && do { 
-		   last;
-	   };
-
-       m/^\\begin\{theindex\}/ && do { $theindex=1; };
-       m/^\\end\{theindex\}/ && do { $theindex=0; };
-       next unless $theindex;
-
-       m/^\s*\\item\s+(\w+)/ && do { $ind_items{$1} = []; };
-
-       m{^\s*\\lettergroup\{(.+)\}$} && do {
-           s{
-               ^\s*\\lettergroup\{(.+)\}$
-           }{
-            \\hypertarget{ind-$i}{}\n\\bookmark[level=$level,dest=ind-$i]{$1}\n 
-            \\lettergroup{$1}
-           }gmx;
-
-           $i++;
+       m/%done_ind_ins_bmk/ && do { 
+            $done = 1;
        };
+
+       unless ($done) {
+
+           m/^\\begin\{theindex\}/ && do { $theindex=1; };
+           m/^\\end\{theindex\}/ && do { $theindex=0; };
+
+           if($theindex){
+    
+               m/^\s*\\item\s+(\w+)/ && do { $ind_items{$1} = []; };
+        
+               m{^\s*\\lettergroup\{(.+)\}$} && do {
+                   s{
+                       ^\s*\\lettergroup\{(.+)\}$
+                   }{
+                    \\hypertarget{ind-$i}{}\n\\bookmark[level=$level,dest=ind-$i]{$1}\n 
+                    \\lettergroup{$1}
+                   }gmx;
+        
+                   $i++;
+               };
+           }
+
+       }
 
        push @out, $_;
 

@@ -354,22 +354,30 @@ sub _bu_cmds_pdflatex {
 	my $proj    = $self->{proj};
 
 	my $opts = [
-		'-interaction=nonstopmode'
+		#'-interaction=nonstopmode'
 	];
 
 	my @cmds;
 	my $tex = sprintf('pdflatex %s %s',join(" ",@$opts),$proj);
 	my $bib_tex = sprintf('bibtex %s',$proj);
 
-	push @cmds,
-		$tex,
-		$bib_tex,
+	my @texindy;
+	push @texindy,
     	qq{ texindy -C utf8 -L russian $proj.idx },
-    	qq{ texindy -M indexENG.xdy indexENG.idx },
-    	qq{ texindy -C utf8 -L russian indexRUS.xdy indexRUS.idx },
+        qq{ texindy -C utf8 -L russian -M indexRUS.xdy indexRUS.idx },
+        qq{ texindy -M indexENG.xdy indexENG.idx },
+		;
+
+	my @ind_ins_bmk;
+	push @ind_ins_bmk,
     	qq{ call ind_ins_bmk $proj.ind 1 },
-    	qq{ call ind_ins_bmk indexENG.ind 1 },
-    	qq{ call ind_ins_bmk indexRUS.ind 1 },
+		qq{ call ind_ins_bmk indexRUS.ind 1 },
+        qq{ call ind_ins_bmk indexENG.ind 1 },
+		;
+
+	push @cmds,
+		$tex, $bib_tex,
+		@texindy, @ind_ins_bmk,
 		$tex,
 		$tex,
 		;
@@ -581,6 +589,7 @@ sub create_bat_in_src {
 		'_clean.bat' => sub { 
 			[
 				'rm *.xdy',
+				'rm *.ind',
 				'rm *.idx',
 				'latexmk -C'
 			];
@@ -592,7 +601,7 @@ sub create_bat_in_src {
 		},
 		'_view.bat' => sub { 
 			[
-				sprintf('%s.pdf',$proj)
+				sprintf('call %s.pdf',$proj)
 			];
 		},
 		'_pdflatex.bat' => sub { 
