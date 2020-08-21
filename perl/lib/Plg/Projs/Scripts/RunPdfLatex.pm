@@ -31,10 +31,18 @@ sub init {
         exit 1;
     }
 
-    my $blx = Plg::Projs::Build::PdfLatex->new;
+    my $proj = shift @ARGV;
+    my $root = getcwd();
+
+    my $blx = Plg::Projs::Build::PdfLatex->new( 
+        skip_get_opt => 1,
+        proj         => $proj,
+        root         => $root,
+    );
 
     my $h = {
-        proj => shift @ARGV,
+        proj => $proj,
+        root => $root,
         blx  => $blx,
     };
         
@@ -51,7 +59,6 @@ sub run {
     my $blx = $self->{blx};
 
     my $r = { 
-        proj => $self->{proj},
         dir  => getcwd(),
     };
     my @cmds = $blx->_bu_cmds_pdflatex($r);

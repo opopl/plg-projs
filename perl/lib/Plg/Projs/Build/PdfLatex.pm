@@ -60,6 +60,8 @@ sub new
 sub get_opt {
     my ($self) = @_;
 
+    return $self if $self->{skip_get_opt};
+
     my (%opt, @optstr, $cmdline);
     
     Getopt::Long::Configure(qw(bundling no_getopt_compat no_auto_abbrev no_ignore_case_always));
@@ -112,9 +114,10 @@ sub init {
 
     my $tex_opts_a = [];
 
-    my $root    = $self->{root};
-    my $root_id = $self->{root_id};
     my $proj    = $self->{proj};
+
+    my $root    = $self->{root} || '';
+    my $root_id = $self->{root_id} || '';
 
     my $pdfout = $ENV{PDFOUT};
 
@@ -367,24 +370,29 @@ sub _find_ {
     return @files;
 }
 
-sub _bu_cmds_pdflatex {
+sub _cmd_pdflatex {
     my ($self, $ref) = @_;
-
-    my $proj    = $self->{proj};
-    $ref ||= {};
-    my $dir = $ref->{dir} || '';
 
     my $opts = [
         #'-interaction=nonstopmode'
     ];
 
-    my @cmds;
-    my $tex     = sprintf('pdflatex %s %s',join(" ",@$opts),$proj);
-    my $bib_tex = sprintf('bibtex %s',$proj);
+    my $proj    = $self->{proj};
 
-    my @texindy;
+    my $cmd     = sprintf('pdflatex %s %s',join(" ",@$opts),$proj);
+
+    return $cmd;
+}
+
+sub _cmds_texindy {
+    my ($self, $ref) = @_;
+
+    $ref ||= {};
+    my $dir = $ref->{dir} || '';
+
     my @files_idx = $self->_find_([$dir],[qw(idx)]);
 
+    my @cmds;
     foreach my $idx (@files_idx) {
         local $_ = $idx;
 
@@ -401,9 +409,27 @@ sub _bu_cmds_pdflatex {
 
         #$cmd = qq{ texindy -C utf8 -L russian $_ };
 
-        push @texindy, $cmd;
+        push @cmds, $cmd;
     }
-    
+
+
+    return @cmds;
+}
+
+sub _bu_cmds_pdflatex {
+    my ($self, $ref) = @_;
+
+    my $proj    = $self->{proj};
+
+    $ref ||= {};
+    my $dir = $ref->{dir} || '';
+
+    my @cmds;
+    my $tex     = $self->_cmd_pdflatex;
+    my $bib_tex = sprintf('bibtex %s',$proj);
+
+    my @texindy;
+        
     my @ind_ins_bmk;
     push @ind_ins_bmk,
         qq{ call ind_ins_bmk $proj.ind 1 },
@@ -619,7 +645,9 @@ sub create_bat_in_src {
     my ($self) = @_;
 
     my $dir  = $self->{src_dir};
-    my $proj = $self->{proj};
+
+    my $proj    = $self->{proj};
+    my $root_id = $self->{root_id};
 
     my %f = (
         '_clean.bat' => sub { 
