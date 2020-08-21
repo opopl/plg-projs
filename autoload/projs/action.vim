@@ -155,7 +155,7 @@ endfunction
 
 function! projs#action#cd_builds ()
   let proj   = projs#proj#name()
-  let bdir   = projs#path([ 'builds' , proj ])
+  let bdir   = projs#path([ 'builds', proj, 'src' ])
 
   if !isdirectory(bdir)
      call base#mkdir(bdir)
@@ -693,31 +693,35 @@ function! projs#action#async_build_pwg_Fc (self,temp_file)
 
   let log = get(build_files,'log','')
 
-  if filereadable(log)
-    let log_bn = fnamemodify(log,':p:t')
+  if filereadable(temp_file)
+    "let log_bn = fnamemodify(log,':p:t')
+    "call tex#efm#latex()
+    "exe 'cd ' . src_dir
+    "exe 'cgetfile ' . log_bn
+    
+    let err = []
+
     call tex#efm#latex()
-    exe 'cd ' . src_dir
-    exe 'cgetfile ' . log_bn
-    
-    let err = getqflist()
-    
-    redraw!
-    if len(err)
-      let msg = printf('(PWG) LATEX ERR: %s %s',proj,s_dur)
-      call base#rdwe(msg)
-      BaseAct copen
-    else
-      let msg = printf('(PWG) LaTeX OK: %s %s',proj,s_dur)
-      call base#rdw(msg,'StatusLine')
-      BaseAct cclose
-    endif
-    echohl None
+    exe 'cgetfile ' . temp_file
+		call extend(err,getqflist())
+
+		redraw!
+		if len(err)
+			let msg = printf('(PWG) LATEX ERR: %s %s',proj,s_dur)
+			call base#rdwe(msg)
+			BaseAct copen
+		else
+			let msg = printf('(PWG) LaTeX OK: %s %s',proj,s_dur)
+			call base#rdw(msg,'StatusLine')
+			BaseAct cclose
+		endif
+		echohl None
   endif
 
-  if filereadable(a:temp_file)
-    let out = readfile(a:temp_file)
-    call base#buf#open_split({ 'lines' : out })
-  endif
+	"if filereadable(a:temp_file)
+		"let out = readfile(a:temp_file)
+		"call base#buf#open_split({ 'lines' : out })
+	"endif
 endfunction
 
 function! projs#action#excel_import (...) 

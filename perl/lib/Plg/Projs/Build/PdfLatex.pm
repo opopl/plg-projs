@@ -384,7 +384,8 @@ sub _cmd_pdflatex {
     my ($self, $ref) = @_;
 
     my $opts = [
-        '-interaction=nonstopmode'
+        '-interaction=nonstopmode',
+        '-file-line-error',
     ];
 
     my $proj    = $self->{proj};
@@ -551,9 +552,9 @@ sub cmd_insert_pwg {
     my @nlines;
     my $width = 0.5;
 
-    my ($is_img, $is_fig, $is_cmt);
+    my ($is_img, $is_fig, $is_cmt, $is_tex);
 
-    my (@tags, %opts);
+    my (@tags, %fig, %opts);
     my $tags_projs = [ qw(projs), $self->{root_id}, $self->{proj} ];
 
     foreach(@jlines) {
@@ -569,17 +570,30 @@ sub cmd_insert_pwg {
             next;
         };
 
-        unless($is_cmt){
+        unless($is_cmt || $is_tex){
             push @nlines, $_;
             next;
         }
 
+###cnv_opts
         m/^\s*opts\s+(.*)$/ && do { 
             my $opts = $1;
             %opts = map { $_ => 1 } split("," => $opts);
             next;
         };
 
+###cnv_tags_fig
+        m/^\s*tags_fig\s+(.*)/ && do { 
+            next unless $is_fig;
+
+            my @tf = @{$fig{tags} || []};
+            push @tf, split "," => $1;
+            $fig{tags} = [@tf]; 
+
+            next;
+        };
+
+###cnv_fig_begin
         m/^\s*fig_begin/ && do { 
             $is_fig = 1; 
 
@@ -589,19 +603,32 @@ sub cmd_insert_pwg {
             next;
         };
 
+###cnv_fig_end
         m/^\s*fig_end/ && do { 
             $is_fig = 0; 
 
             push @nlines,
                 q{ \\end{figure} };
+
+            %fig = ();
             
             next;
         };
+###cnv_tex_begin
+        m/^\s*tex_begin\s*$/ && do { $is_tex = 1; next; };
+        m/^\s*tex_end\s*$/ && do { $is_tex = 0; next; };
 
+###cnv_tex
+        m/^\s*tex\s+(.*)$/ && do {  
+            push @nlines, $1; next; 
+        };
+
+###cnv_img_begin
         m/^\s*img_begin/ && do { 
             $is_img = 1; next;
         };
 
+###cnv_img_end
         m/^\s*img_end/ && do { 
             $is_img = 0; 
 
@@ -609,13 +636,22 @@ sub cmd_insert_pwg {
             unless ($opts{use_any}) {
                 push @tags, $tags_projs;
             }
-            foreach my $tline (@tags) {
-                my $tt = join("," => @$tline);
 
-                push @tags_all, $tt;
+            push @tags, $fig{tags} || [];
+
+            my @tags_arr;
+            foreach my $tline (@tags) {
+                my $tt_comma = join("," => @$tline);
+
+                push @tags_arr, @$tline;
+
+                push @tags_all, $tt_comma;
                 push @nlines, 
-                    q{%tags: } . $tt;
+                    q{%tags: } . $tt_comma;
             }
+            @tags_arr = sort { length($a) <=> length($b) } @tags_arr;
+            my $tags_space = join(" ",@tags_arr);
+            push @nlines, q{%tags_space: } . $tags_space;
 
             my $pwg = Plg::Projs::Piwigo::SQL->new;
             local @ARGV = qw( -c img_by_tags );
@@ -634,7 +670,9 @@ sub cmd_insert_pwg {
                     sprintf('\\includegraphics[width=%s\\textwidth]{%s}', $width, $ipath);
 
                 if ($is_fig) {
-                    push @nlines, sprintf('\\caption{%s}',$icapt);
+                    if ($icapt) {
+                        push @nlines, sprintf('\\caption{%s}',$icapt);
+                    }
                 }
             }else{
             }
@@ -707,7 +745,8 @@ sub create_bat_in_src {
         '_pdflatex.bat' => sub { 
             my @cmds;
             push @cmds, 
-                sprintf('run_pdflatex %s',$proj)
+                sprintf('call _clean.bat'),
+                sprintf('run_pdflatex %s',$proj),
                 ;
             return [@cmds];
         },

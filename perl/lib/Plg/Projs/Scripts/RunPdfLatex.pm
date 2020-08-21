@@ -73,14 +73,14 @@ sub run {
 
     my $i = 1;
     while (@cmds) {
-        #last if $i > 1;
-
         my $cmd = shift @cmds;
         local $_ = $cmd;
 
         system("$_");
         /^\s*pdflatex\s+/ && ($i == 1) && do { 
             my @texindy = $blx->_cmds_texindy({ dir => $root });
+			#print Dumper(\@texindy) . "\n";
+			#return;
             unshift @cmds, @texindy;
         };
 

@@ -1,10 +1,21 @@
 
 package Plg::Projs::Build::PdfLatex::IndFile;
 
+=head1 NAME
+
+Plg::Projs::Build::PdfLatex::IndFile
+
+=head1 SEE ALSO
+
+Plg::Projs::Build::PdfLatex
+
+=cut
+
 use strict;
 use warnings;
 
 use File::Slurp::Unicode;
+use File::Basename qw(basename dirname);
 
 sub ind_ins_bmk {
     my ($self, $ind_file, $level) = @_;
@@ -24,6 +35,7 @@ sub ind_ins_bmk {
 
    my $i=0;
    my $done;
+
    while(<F>){
        chomp;
        m/%done_ind_ins_bmk/ && do { 
@@ -31,9 +43,12 @@ sub ind_ins_bmk {
        };
 
        unless ($done) {
+		   my $bname = basename($ind_file);
 
            m/^\\begin\{theindex\}/ && do { $theindex=1; };
            m/^\\end\{theindex\}/ && do { $theindex=0; };
+
+		   my $dest = qq{ind-$bname-$i};
 
            if($theindex){
     
@@ -43,7 +58,8 @@ sub ind_ins_bmk {
                    s{
                        ^\s*\\lettergroup\{(.+)\}$
                    }{
-                    \\hypertarget{ind-$i}{}\n\\bookmark[level=$level,dest=ind-$i]{$1}\n 
+                    \\hypertarget{$dest}{}\n
+					\\bookmark[level=$level,dest=$dest]{$1}\n 
                     \\lettergroup{$1}
                    }gmx;
         
