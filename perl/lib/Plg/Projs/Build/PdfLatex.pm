@@ -554,7 +554,7 @@ sub cmd_insert_pwg {
    
     $width = $width_default = 0.5;
 
-    my ($is_img, $is_fig, $is_cmt, $is_tex);
+    my ($is_img, $is_fig, $is_cmt, $is_tex, $is_perl);
 
     my (@tags, %fig, %opts);
     my $tags_projs = [ qw(projs), $self->{root_id}, $self->{proj} ];
@@ -592,6 +592,9 @@ sub cmd_insert_pwg {
 
             next;
         };
+###cnv_perl
+        m/^\s*perl_begin\s+$/ && do { $is_perl = 1; next; };
+        m/^\s*perl_end\s+$/ && do { $is_perl = 0; next; };
 
 ###cnv_width
         m/^\s*width\s+(.*)/ && do { 
