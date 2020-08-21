@@ -270,7 +270,7 @@ sub cmd_img_by_tags {
 	}
 
 	$self->{img} = [@img];
-	print Dumper([@img]) . "\n";
+	#print Dumper([@img]) . "\n";
 
     $self;
 }

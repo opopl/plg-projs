@@ -658,8 +658,11 @@ sub cmd_insert_pwg {
             push @ARGV, 
                 qw( -t ), join("," => @tags_all);
 
+            #print Dumper(\@tags_all) . "\n";
+
             $pwg->run;
             my @img = @{$pwg->{img} || []};
+            #print Dumper(\@img) . "\n";
             if (@img == 1) {
                 my $i = shift @img;
                 my $ipath = $i->{path};
