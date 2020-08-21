@@ -8,6 +8,7 @@ use Plg::Projs::Build::PdfLatex;
 
 use FindBin qw($Bin $Script);
 use Cwd;
+use Data::Dumper qw(Dumper);
 
 sub new
 {
@@ -58,10 +59,40 @@ sub run {
 
     my $blx = $self->{blx};
 
+    my $root = $self->{root};
+    my $proj = $self->{proj};
+
     my $r = { 
-        dir  => getcwd(),
+        dir  => $root,
     };
-    my @cmds = $blx->_bu_cmds_pdflatex($r);
+    my @cmds; 
+    push @cmds, 
+        $blx->_cmd_pdflatex,
+        $blx->_cmd_bibtex,
+        ;
+
+    my $i = 1;
+    while (@cmds) {
+        #last if $i > 1;
+
+        my $cmd = shift @cmds;
+        local $_ = $cmd;
+
+        system("$_");
+        /^\s*pdflatex\s+/ && ($i == 1) && do { 
+            my @texindy = $blx->_cmds_texindy({ dir => $root });
+            unshift @cmds, @texindy;
+        };
+
+        /^\s*bibtex\s+/  && do { 
+            push @cmds, 
+                $blx->_cmd_pdflatex,
+                $blx->_cmd_pdflatex;
+        };
+
+        $i++;
+
+    }
 
     return $self;
 };

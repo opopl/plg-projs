@@ -370,6 +370,16 @@ sub _find_ {
     return @files;
 }
 
+sub _cmd_bibtex {
+    my ($self, $ref) = @_;
+
+    my $proj    = $self->{proj};
+
+    my $cmd = sprintf('bibtex %s',$proj);
+
+    return $cmd;
+}
+
 sub _cmd_pdflatex {
     my ($self, $ref) = @_;
 
@@ -387,29 +397,47 @@ sub _cmd_pdflatex {
 sub _cmds_texindy {
     my ($self, $ref) = @_;
 
+    my $proj = $self->{proj};
+
     $ref ||= {};
     my $dir = $ref->{dir} || '';
 
     my @files_idx = $self->_find_([$dir],[qw(idx)]);
 
     my @cmds;
+    my $langs = {
+        eng => 'english',
+        rus => 'russian',
+    };
+
     foreach my $idx (@files_idx) {
         local $_ = $idx;
 
-        my $cmd;
+        my ($f) = (m/^(\w+)\./);
+        my $xdy = qq{$f.xdy};
 
-        m/^(.*)\.eng\.idx$/ && do {
-            my $xdy = qq{$1.eng.xdy};
-            $cmd = sprintf(qq{ texindy -L english %s $idx }, -e $xdy ? qq{ -M $xdy } : '');
+        my $M_xdy = ( -e $xdy ) ? qq{ -M $xdy } : '';
+        my ($cmd_idx, $cmd_ind);
+        
+        $cmd_idx = sprintf(qq{texindy $M_xdy $idx });
+        $cmd_ind = qq{call ind_ins_bmk $proj.ind 1 },
+
+        m/^(.*)\.(\w+)\.idx$/ && do {
+            my $core = $1;
+            my $lng = $2;
+
+            $xdy = qq{$core.$lng.xdy};
+            my $lang = $langs->{$lng};
+
+            $M_xdy = ( -e $xdy ) ? qq{ -M $xdy } : '';
+            my $enc = ( $lng eq 'rus' ) ? '-C utf8' : '';
+
+            $cmd_idx = sprintf(qq{texindy $enc -L $lang $M_xdy $idx });
+            $cmd_ind = qq{call ind_ins_bmk $core.$lng.ind 1 };
         };
 
-        #m/\.rus\.idx$/ && do {
-            #$cmd = qq{ texindy -C utf8 -L russian $_ };
-        #};
-
-        #$cmd = qq{ texindy -C utf8 -L russian $_ };
-
-        push @cmds, $cmd;
+        push @cmds, 
+            $cmd_idx, $cmd_ind;
     }
 
 
@@ -439,9 +467,7 @@ sub _bu_cmds_pdflatex {
 
     push @cmds,
         $tex, $bib_tex,
-        @texindy, @ind_ins_bmk,
-        $tex,
-        $tex,
+        $tex, $tex,
         ;
     return @cmds;
 }
