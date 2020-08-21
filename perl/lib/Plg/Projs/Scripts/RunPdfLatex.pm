@@ -7,6 +7,7 @@ use warnings;
 use Plg::Projs::Build::PdfLatex;
 
 use FindBin qw($Bin $Script);
+use Cwd;
 
 sub new
 {
@@ -44,7 +45,19 @@ sub init {
     return $self;
 }
 
+sub run { 
+    my ($self) = @_;
+
+    my $blx = $self->{blx};
+
+    my $r = { 
+        proj => $self->{proj},
+        dir  => getcwd(),
+    };
+    my @cmds = $blx->_bu_cmds_pdflatex($r);
+
+    return $self;
+};
+
 1;
  
-
-

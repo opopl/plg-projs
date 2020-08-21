@@ -11,11 +11,12 @@ use File::Copy qw( copy );
 use File::Slurp::Unicode;
 
 use FindBin qw($Bin $Script);
+use File::Find qw(find);
 
 use Plg::Projs::Piwigo::SQL;
 
 use base qw(
-	Plg::Projs::Build::PdfLatex::IndFile
+    Plg::Projs::Build::PdfLatex::IndFile
 );
 
 use utf8; 
@@ -228,13 +229,13 @@ sub _ii_base {
 
     my @base_preamble;
     push @base_preamble,
-		map { sprintf('preamble.%s',$_) } 
-		qw(index packages acrobat_menu filecontents );
+        map { sprintf('preamble.%s',$_) } 
+        qw(index packages acrobat_menu filecontents );
 
     my @base;
     push @base,
         qw(body preamble index bib),
-		@base_preamble,
+        @base_preamble,
         qw(titlepage),
         qw(listfigs listtabs),
         qw(tabcont),
@@ -348,49 +349,84 @@ sub _join_lines {
     return @lines;
 }
 
+sub _find_ {
+    my ($self, $dirs, $exts) = @_;
+
+    my @files;
+    find({ 
+            wanted => sub { 
+                foreach my $ext (@$exts) {
+                    if (/\.$ext$/) {
+                        push @files,$_;
+                    }
+                }
+            } 
+    },@$dirs
+    );
+
+    return @files;
+}
+
 sub _bu_cmds_pdflatex {
-    my ($self) = @_;
+    my ($self, $ref) = @_;
 
-	my $proj    = $self->{proj};
+    my $proj    = $self->{proj};
+    $ref ||= {};
+    my $dir = $ref->{dir} || '';
 
-	my $opts = [
-		#'-interaction=nonstopmode'
-	];
+    my $opts = [
+        #'-interaction=nonstopmode'
+    ];
 
-	my @cmds;
-	my $tex = sprintf('pdflatex %s %s',join(" ",@$opts),$proj);
-	my $bib_tex = sprintf('bibtex %s',$proj);
+    my @cmds;
+    my $tex     = sprintf('pdflatex %s %s',join(" ",@$opts),$proj);
+    my $bib_tex = sprintf('bibtex %s',$proj);
 
-	my @texindy;
-	push @texindy,
-    	qq{ texindy -C utf8 -L russian $proj.idx },
-        qq{ texindy -C utf8 -L russian -M indexRUS.xdy indexRUS.idx },
-        qq{ texindy -M indexENG.xdy indexENG.idx },
-		;
+    my @texindy;
+    my @files_idx = $self->_find_([$dir],[qw(idx)]);
 
-	my @ind_ins_bmk;
-	push @ind_ins_bmk,
-    	qq{ call ind_ins_bmk $proj.ind 1 },
-		qq{ call ind_ins_bmk indexRUS.ind 1 },
-        qq{ call ind_ins_bmk indexENG.ind 1 },
-		;
+    foreach my $idx (@files_idx) {
+        local $_ = $idx;
 
-	push @cmds,
-		$tex, $bib_tex,
-		@texindy, @ind_ins_bmk,
-		$tex,
-		$tex,
-		;
-	return @cmds;
+        my $cmd;
+
+        m/^(.*)\.eng\.idx$/ && do {
+            my $xdy = qq{$1.eng.xdy};
+            $cmd = sprintf(qq{ texindy -L english %s $idx }, -e $xdy ? qq{ -M $xdy } : '');
+        };
+
+        #m/\.rus\.idx$/ && do {
+            #$cmd = qq{ texindy -C utf8 -L russian $_ };
+        #};
+
+        #$cmd = qq{ texindy -C utf8 -L russian $_ };
+
+        push @texindy, $cmd;
+    }
+    
+    my @ind_ins_bmk;
+    push @ind_ins_bmk,
+        qq{ call ind_ins_bmk $proj.ind 1 },
+        qq{ call ind_ins_bmk index.rus.ind 1 },
+        qq{ call ind_ins_bmk index.rus.ind 1 },
+        ;
+
+    push @cmds,
+        $tex, $bib_tex,
+        @texindy, @ind_ins_bmk,
+        $tex,
+        $tex,
+        ;
+    return @cmds;
 }
 
 sub cmd_build_pwg {
     my ($self) = @_;
 
-	my $proj    = $self->{proj};
-	my $src_dir = $self->{src_dir};
+    my $proj    = $self->{proj};
+    my $src_dir = $self->{src_dir};
 
-	mkpath $self->{src_dir} if -d $self->{src_dir};
+    mkpath $self->{src_dir} if -d $self->{src_dir};
     $self->cmd_insert_pwg;
 
     my @pdf_files;
@@ -408,11 +444,11 @@ sub cmd_build_pwg {
 
     chdir $src_dir;
 
-	my @cmds = $self->_bu_cmds_pdflatex;
+    my @cmds = $self->_bu_cmds_pdflatex;
 
-	foreach my $cmd (@cmds) {
-    	system($cmd);
-	}
+    foreach my $cmd (@cmds) {
+        system($cmd);
+    }
 
     my @dest;
     push @dest, 
@@ -456,7 +492,7 @@ sub cmd_insert_pwg {
     my ($is_img, $is_fig, $is_cmt);
 
     my (@tags, %opts);
-	my $tags_projs = [ qw(projs), $self->{root_id}, $self->{proj} ];
+    my $tags_projs = [ qw(projs), $self->{root_id}, $self->{proj} ];
 
     foreach(@jlines) {
         chomp;
@@ -477,10 +513,10 @@ sub cmd_insert_pwg {
         }
 
         m/^\s*opts\s+(.*)$/ && do { 
-			my $opts = $1;
-			%opts = map { $_ => 1 } split("," => $opts);
+            my $opts = $1;
+            %opts = map { $_ => 1 } split("," => $opts);
             next;
-		};
+        };
 
         m/^\s*fig_begin/ && do { 
             $is_fig = 1; 
@@ -508,9 +544,9 @@ sub cmd_insert_pwg {
             $is_img = 0; 
 
             my @tags_all;
-			unless ($opts{use_any}) {
-    			push @tags, $tags_projs;
-			}
+            unless ($opts{use_any}) {
+                push @tags, $tags_projs;
+            }
             foreach my $tline (@tags) {
                 my $tt = join("," => @$tline);
 
@@ -519,31 +555,31 @@ sub cmd_insert_pwg {
                     q{%tags: } . $tt;
             }
 
-    		my $pwg = Plg::Projs::Piwigo::SQL->new;
+            my $pwg = Plg::Projs::Piwigo::SQL->new;
             local @ARGV = qw( -c img_by_tags );
             push @ARGV, 
                 qw( -t ), join("," => @tags_all);
 
             $pwg->run;
-			my @img = @{$pwg->{img} || []};
-			if (@img == 1) {
-				my $i = shift @img;
-	            my $ipath = $i->{path};
-	            my $icapt = $i->{comment} || '';
-	            $icapt =~ s/\r\n/\n/g;
+            my @img = @{$pwg->{img} || []};
+            if (@img == 1) {
+                my $i = shift @img;
+                my $ipath = $i->{path};
+                my $icapt = $i->{comment} || '';
+                $icapt =~ s/\r\n/\n/g;
 
-	            push @nlines,
-	                sprintf('\\includegraphics[width=%s\\textwidth]{%s}', $width, $ipath);
+                push @nlines,
+                    sprintf('\\includegraphics[width=%s\\textwidth]{%s}', $width, $ipath);
 
-	            if ($is_fig) {
-	                push @nlines, sprintf('\\caption{%s}',$icapt);
-	            }
-			}else{
-			}
+                if ($is_fig) {
+                    push @nlines, sprintf('\\caption{%s}',$icapt);
+                }
+            }else{
+            }
 
-			@tags = ();
-			@tags_all = ();
-			%opts = ();
+            @tags = ();
+            @tags_all = ();
+            %opts = ();
             
             next;
         };
@@ -580,56 +616,56 @@ sub cmd_join {
 }
 
 sub create_bat_in_src {
-	my ($self) = @_;
+    my ($self) = @_;
 
-	my $dir  = $self->{src_dir};
-	my $proj = $self->{proj};
+    my $dir  = $self->{src_dir};
+    my $proj = $self->{proj};
 
-	my %f = (
-		'_clean.bat' => sub { 
-			[
-				'rm *.xdy',
-				'rm *.ind',
-				'rm *.idx',
-				'latexmk -C'
-			];
-		},
-		'_latexmk_pdf.bat' => sub { 
-			[
-				sprintf('latexmk -pdf %s',$proj)
-			];
-		},
-		'_view.bat' => sub { 
-			[
-				sprintf('call %s.pdf',$proj)
-			];
-		},
-		'_pdflatex.bat' => sub { 
-			my @cmds;
-			push @cmds, 
-				$self->_bu_cmds_pdflatex
-				;
-			return [@cmds];
-		},
-	);
-	while( my($f,$l) = each %f ){
-		my $bat = catfile($dir,$f);
-		my $lines = $l->();
-		write_file($bat,join("\n",@$lines) . "\n");
-	}
+    my %f = (
+        '_clean.bat' => sub { 
+            [
+                'rm *.xdy',
+                'rm *.ind',
+                'rm *.idx',
+                'latexmk -C'
+            ];
+        },
+        '_latexmk_pdf.bat' => sub { 
+            [
+                sprintf('latexmk -pdf %s',$proj)
+            ];
+        },
+        '_view.bat' => sub { 
+            [
+                sprintf('call %s.pdf',$proj)
+            ];
+        },
+        '_pdflatex.bat' => sub { 
+            my @cmds;
+            push @cmds, 
+                sprintf('run_pdflatex %s',$proj)
+                ;
+            return [@cmds];
+        },
+    );
+    while( my($f,$l) = each %f ){
+        my $bat = catfile($dir,$f);
+        my $lines = $l->();
+        write_file($bat,join("\n",@$lines) . "\n");
+    }
 
     return $self;
 }
 
 sub copy_to_src {
-	my ($self) = @_;
+    my ($self) = @_;
 
     mkpath $self->{src_dir};
 
-	$self
-		->copy_bib_to_src
-		->copy_sty_to_src
-		;
+    $self
+        ->copy_bib_to_src
+        ->copy_sty_to_src
+        ;
 
     return $self;
 }
@@ -757,7 +793,7 @@ sub run {
     system(qq{ texindy -L russian -C utf8 $proj.idx });
 
     my $ind_file = catfile("$proj.ind");
-	#$self->ind_ins_bmk($ind_file,1);
+    #$self->ind_ins_bmk($ind_file,1);
 
     #return ;
     chdir $self->{root};
