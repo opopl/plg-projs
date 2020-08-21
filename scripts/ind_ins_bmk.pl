@@ -6,11 +6,6 @@ use utf8;
 
 use Data::Dumper qw(Dumper);
 
-package ind;
+use base qw( Plg::Projs::Scripts::IndInsBmk );
 
-
-
-package main;
-use base qw(ind);
-
-__PACKAGE__->new->ind_insert_bookmarks;
+__PACKAGE__->new->run;
