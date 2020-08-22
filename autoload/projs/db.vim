@@ -90,8 +90,8 @@ endfunction
 
 if 0
   Options
-    prompt 1/0 - default 1
-    all    1/0 - default 0
+    prompt 1 or 0  default 1
+"   'all'  1 or 0  default 0
     proj_select 
   Usage
    call projs#db#fill_from_files({
@@ -116,7 +116,7 @@ function! projs#db#fill_from_files (...)
   let all = get(ref, 'all' , 0)
 
   if prompt
-    let all = input('all (1/0)? :', 1)
+    let all = input('all? (1/0):', 1)
     if !all
       let proj = input('selected proj:', proj, 'custom,projs#complete' )
     endif
