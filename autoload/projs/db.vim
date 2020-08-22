@@ -89,11 +89,19 @@ function! projs#db#fill_tags (...)
 endfunction
 
 if 0
+  Options
+    prompt 1/0 - default 1
+    all    1/0 - default 0
+    proj_select 
   Usage
-   projs#db_cmd#fill_from_files({
+   call projs#db#fill_from_files({
+      \ 'prompt'      : prompt,
+      \ 'all'         : 1,
+      \ })
+
+   call projs#db#fill_from_files({
       \ 'prompt'      : prompt,
       \ 'proj_select' : proj,
-      \ 'all'         : 1,
       \ })
 
 endif
@@ -351,6 +359,12 @@ function! projs#db#url (...)
   return url
 
 endfunction
+
+if 0
+  call tree
+    called by
+      projs#proj#secnames
+endif
 
 function! projs#db#secnames (...)
   call projs#db#init_py ()

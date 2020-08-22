@@ -4,6 +4,12 @@ function! projs#db_cmd#create_tables ()
   call projs#db#create_tables ()
 endf
 
+if 0
+  call tree
+    calls
+      projs#db#fill_from_files
+endif
+
 function! projs#db_cmd#fill_from_files (...)
   call projs#db#fill_from_files ()
 endf
@@ -340,9 +346,9 @@ for r in rows_projs:
     for rss in rows:
       for k in rss.keys():
         if k not in ['proj','sec']:
-	        e_k = SubElement(e_sec,k)
-	        val = str(rss[k])
-	        e_k.text = val
+          e_k = SubElement(e_sec,k)
+          val = str(rss[k])
+          e_k.text = val
 
 conn.close()
 xml = prettify(e_root)
@@ -362,55 +368,55 @@ endfunction
 function! projs#db_cmd#pids_update (...)
   let dbfile = projs#db#file()
 
-	let q = 'SELECT DISTINCT proj FROM projs'
-	let p = []
-	
-	let projs = pymy#sqlite#query_as_list({
-		\	'dbfile' : dbfile,
-		\	'p'      : [],
-		\	'q'      : q,
-		\	})
+  let q = 'SELECT DISTINCT proj FROM projs'
+  let p = []
+  
+  let projs = pymy#sqlite#query_as_list({
+    \ 'dbfile' : dbfile,
+    \ 'p'      : [],
+    \ 'q'      : q,
+    \ })
 
-	let pid = 1 
-	for proj in projs	
-			let t = "projs"
-			let h = {
-				\	"pid" : pid,
-				\	}
+  let pid = 1 
+  for proj in projs 
+      let t = "projs"
+      let h = {
+        \ "pid" : pid,
+        \ }
 
-			let w = {
-				\	"proj" : proj,
-				\	}
-			
-			let ref = {
-				\ "dbfile" : dbfile,
-				\ "u" : "UPDATE",
-				\ "t" : t, 
-				\ "h" : h, 
-				\ "w" : w, 
-				\ }
-				
-			call pymy#sqlite#update_hash(ref)
-			let pid += 1
-	endfor
+      let w = {
+        \ "proj" : proj,
+        \ }
+      
+      let ref = {
+        \ "dbfile" : dbfile,
+        \ "u" : "UPDATE",
+        \ "t" : t, 
+        \ "h" : h, 
+        \ "w" : w, 
+        \ }
+        
+      call pymy#sqlite#update_hash(ref)
+      let pid += 1
+  endfor
 
 endfunction
 
 function! projs#db_cmd#thisproj_pid_to_null (...)
-	let files = projs#db#files()
+  let files = projs#db#files()
 
-	let proj = projs#proj#name()
-	let dbfile = projs#db#file()
+  let proj = projs#proj#name()
+  let dbfile = projs#db#file()
 
-	for file in files
-		let q = 'UPDATE projs SET pid = NULL WHERE proj = ? AND file = ? '
-		let p = [ proj , file ]
-		let [ rows_h, cols ] = pymy#sqlite#query({
-			\	'dbfile' : dbfile,
-			\	'p'      : p,
-			\	'q'      : q,
-			\	})
-	endfor
+  for file in files
+    let q = 'UPDATE projs SET pid = NULL WHERE proj = ? AND file = ? '
+    let p = [ proj , file ]
+    let [ rows_h, cols ] = pymy#sqlite#query({
+      \ 'dbfile' : dbfile,
+      \ 'p'      : p,
+      \ 'q'      : q,
+      \ })
+  endfor
 
 endfunction
 

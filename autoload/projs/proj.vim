@@ -117,13 +117,17 @@ function! projs#proj#type (...)
   return t
 endfunction
 
-"let files = projs#proj#files ({ "proj" : proj })
-"let files = projs#proj#files ({ "exts" : ["tex"]})
-"
-"let files = projs#proj#files ()
+if 0
+  let files = projs#proj#files ({ "proj" : proj })
+  let files = projs#proj#files ({ "exts" : ["tex"]})
+  
+  let files = projs#proj#files ()
+  
+  echo projs#proj#files ({ 'rw_f_listfiles' : 1})
+  echo projs#proj#files ()
 
-"echo projs#proj#files ({ 'rw_f_listfiles' : 1})
-"echo projs#proj#files ()
+  call projs#proj#files ({ 'rw_f_listfiles' : 1})
+endif
 
 function! projs#proj#files (...)
   let ref = {}
