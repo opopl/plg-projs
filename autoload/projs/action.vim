@@ -710,6 +710,7 @@ function! projs#action#async_build_pwg_Fc (self,temp_file)
 			let msg = printf('(PWG) LATEX ERR: %s %s',proj,s_dur)
 			call base#rdwe(msg)
 			BaseAct copen
+			exe 'cd ' . src_dir
 		else
 			let msg = printf('(PWG) LaTeX OK: %s %s',proj,s_dur)
 			call base#rdw(msg,'StatusLine')
@@ -833,6 +834,7 @@ con.close()
 eof
 endfunction
 
+"""pwg_insert_img
 function! projs#action#pwg_insert_img (...) 
   let ref = get(a:000,0,{})
 
@@ -867,6 +869,7 @@ function! projs#action#pwg_insert_img (...)
 			call base#buf#open_split({ 'lines' : out })
 		endif
     "call projs#action#pwg_insert_pwg_Fc(self,a:temp_file)
+		call base#rdw('OK: pwg_insert_img')
   endfunction
 
   call asc#run({ 

@@ -162,7 +162,7 @@ sub init {
 sub _file_joined {
     my ($self) = @_;
 
-    my $jfile = catfile($self->{src_dir},$self->{proj} . '.tex');
+    my $jfile = catfile($self->{src_dir},'jnd.tex');
 
     return $jfile;
 }
@@ -483,7 +483,7 @@ sub _files_pdf_pwg {
 
     my @pdf_files;
     push @pdf_files,
-        catfile($src_dir,$proj . '.pdf'),
+        catfile($src_dir,$proj . 'jnd.pdf'),
         catfile($self->{out_dir_pdf_pwg},$proj . '.pdf'),
         ;
 
@@ -508,7 +508,7 @@ sub cmd_build_pwg {
         rmtree $f if -e $f;
     }
 
-    my $pdf_file = catfile($src_dir,$proj . '.pdf'),
+    my $pdf_file = catfile($src_dir,'jnd.pdf');
 
     chdir $src_dir;
     system("_pdflatex.bat");
@@ -523,7 +523,7 @@ sub cmd_build_pwg {
         foreach(@dest) {
             mkpath $_ unless -d;
 
-            my $d = catfile($_, basename($pdf_file));
+            my $d = catfile($_, $proj . '.pdf');
 
             print "Copied PDF File to:" . "\n";
             print "     " . $d . "\n";
@@ -559,6 +559,13 @@ sub cmd_insert_pwg {
     my (@tags, %fig, %opts);
     my $tags_projs = [ qw(projs), $self->{root_id}, $self->{proj} ];
 
+    my (@perl_code, @perl_use);
+
+	push @perl_use,
+		q{ use Plg::Projs::Piwigo::SQL; },
+		q{ use Plg::Projs::Build::PdfLatex; },
+	;
+
     foreach(@jlines) {
         chomp;
 
@@ -592,9 +599,28 @@ sub cmd_insert_pwg {
 
             next;
         };
-###cnv_perl
+###cnv_perl_begin
         m/^\s*perl_begin\s+$/ && do { $is_perl = 1; next; };
-        m/^\s*perl_end\s+$/ && do { $is_perl = 0; next; };
+
+		if ($is_perl) {
+			push @perl_code, $_;
+		}
+
+###cnv_perl_end
+        m/^\s*perl_end\s+$/ && do { 
+			$is_perl = 0;
+
+			unshift @perl_code, @perl_use;
+
+			my $code = join("\n",@perl_code);
+			eval $code;
+			if ($@) {
+				warn $@ . "\n";
+			}
+
+			@perl_code = ();
+		   	next; 
+		};
 
 ###cnv_width
         m/^\s*width\s+(.*)/ && do { 
@@ -756,19 +782,19 @@ sub create_bat_in_src {
         },
         '_latexmk_pdf.bat' => sub { 
             [
-                sprintf('latexmk -pdf %s',$proj)
+                sprintf('latexmk -pdf jnd')
             ];
         },
         '_view.bat' => sub { 
             [
-                sprintf('call %s.pdf',$proj)
+                sprintf('call jnd.pdf')
             ];
         },
         '_pdflatex.bat' => sub { 
             my @cmds;
             push @cmds, 
                 sprintf('call _clean.bat'),
-                sprintf('run_pdflatex %s',$proj),
+                sprintf('run_pdflatex jnd'),
                 ;
             return [@cmds];
         },

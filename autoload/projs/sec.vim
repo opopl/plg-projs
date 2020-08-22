@@ -345,7 +345,7 @@ function! projs#sec#file_base_a (...)
         let sfile_a = [ proj.'.refs.bib']
 
     elseif sec == '_tex_jnd_'
-        let sfile_a = [ 'builds', proj, 'src', proj . '.tex' ]
+        let sfile_a = [ 'builds', proj, 'src', 'jnd.tex' ]
 
     elseif sec == '_join_'
         let sfile_a = [ 'joins', proj . '.tex' ]
@@ -839,7 +839,9 @@ function! projs#sec#open (...)
 
  let sec      = get(a:000,0,'')
  let opts     = get(a:000,1,{})
- let load_buf = get(opts,'load_buf',0)
+
+ let load_buf  = get(opts,'load_buf',0)
+ let load_maps = get(opts,'load_maps',1)
 
  if !strlen(sec)
     let sec = projs#select#sec()
@@ -909,6 +911,8 @@ function! projs#sec#open (...)
       call projs#sec#new(sec)
     endif
 
+		let ext = fnamemodify(vfile,':e')
+
     let s:obj = { 
       \ 'sec'  : sec ,
       \ 'proj' : proj ,
@@ -924,6 +928,10 @@ function! projs#sec#open (...)
       \ 'load_buf' : load_buf,
       \ 'Fc'       : Fc,
       \ }) 
+
+		if load_maps
+			call projs#maps({ 'exts' : [ext] })
+		endif
 
     let buf_nums = get(res,'buf_nums',[])
     let bufnr    = get(buf_nums,0,'')
