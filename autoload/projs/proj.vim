@@ -13,17 +13,17 @@ function! projs#proj#name (...)
 endfunction
 
 function! projs#proj#dir_tex4ht (...)
-	let qw = get(a:000,0,'')
+  let qw = get(a:000,0,'')
 
   let proj = projs#proj#name()
   let root = projs#root()
 
-	let args = [ root, 'data', proj, 'tex4ht' ]
-	call extend(args,split(qw,' '))
+  let args = [ root, 'data', proj, 'tex4ht' ]
+  call extend(args,split(qw,' '))
 
-	let dir = join(args, '/')
-	let dir = base#file#win2unix(dir)
-	return dir
+  let dir = join(args, '/')
+  let dir = base#file#win2unix(dir)
+  return dir
 endfunction
 
 function! projs#proj#dir_pics (...)
@@ -136,7 +136,7 @@ function! projs#proj#files (...)
 
   if !strlen(proj) | return files | endif
 
-  let exts = base#qw('tex vim dat')
+  let exts = base#qw('tex vim dat pl')
   let exts = get(ref,'exts',exts)
 
   let prompt = get(ref,'prompt',0)
@@ -160,7 +160,7 @@ function! projs#proj#files (...)
               continue
             endif
 
-            let ext_f=matchstr(line,'\.\zs\w\+\ze$')
+            let ext_f = matchstr(line,'\.\zs\w\+\ze$')
             if base#inlist(ext_f,exts)
                 call add(files,line)
             endif

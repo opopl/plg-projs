@@ -258,6 +258,12 @@ function! projs#sec#parent ()
   return parent
 endfunction
 
+if 0
+	call tree
+		calls
+			projs#sec#file_base_a
+endif
+
 function! projs#sec#file (...)
   let proj = projs#proj#name()
 
@@ -307,6 +313,10 @@ function! projs#sec#file_base_a (...)
 
     elseif sec == '_vim_'
         let sfile_a = [ proj.'.vim']
+
+    elseif sec =~ '^_perl_'
+				let sec = substitute(sec,'^_perl_\(.*\)','\1','g')
+        let sfile_a = [ printf('%s.%s.pl',proj,sec)]
 
     elseif sec == '_sql_'
         let sfile_a = [ proj.'.sql']
@@ -821,6 +831,24 @@ function! projs#sec#new(sec,...)
     return 1
 endfunction
 """end_projs_sec_new
+
+function! projs#sec#perl_open (sec,...)
+  let sec = a:sec
+
+	let root = projs#root()
+	let proj = projs#proj#name()
+
+	let file = base#file#catfile([ root, printf('%s.%s.pl',proj,sec) ])
+	call base#fileopen({ 
+		\	'files'    : [file],
+		\	'load_buf' : 1,
+		\	})
+endfunction
+
+if 0
+	calls
+		projs#sec#open
+endif
 
 function! projs#sec#open_load_buf (sec,...)
   let sec = a:sec

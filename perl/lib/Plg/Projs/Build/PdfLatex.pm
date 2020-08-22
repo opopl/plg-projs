@@ -25,6 +25,9 @@ use Encode;
 binmode STDOUT, ":utf8";
 
 use File::Dat::Utils qw(readarr);
+use Capture::Tiny qw(
+	capture_merged
+);
 
 use Data::Dumper qw(Dumper);
 use Getopt::Long qw(GetOptions);
@@ -546,6 +549,9 @@ sub cmd_insert_pwg {
         ->create_bat_in_src
         ;
 
+	my $root = $self->{root};
+	my $proj = $self->{proj};
+
     my $jfile  = $self->_file_joined;
     my @jlines = read_file $jfile;
 
@@ -600,27 +606,47 @@ sub cmd_insert_pwg {
             next;
         };
 ###cnv_perl_begin
-        m/^\s*perl_begin\s+$/ && do { $is_perl = 1; next; };
+        m/^\s*perl_begin\s*$/ && do { $is_perl = 1; next; };
 
-		if ($is_perl) {
-			push @perl_code, $_;
-		}
+###cnv_perl_file
+        m/^\s*perl_file\s+(\w+)\s*$/ && do { 
+			my $fname = $1;
+			my $perl_file = catfile($root,join("." => ($proj,$fname,'pl') ) );
+
+			my @out = `perl $perl_file`;
+            push @nlines, 
+				'%perlfile_start ' . $fname ,
+				map { s/^/%/g; $_ } @out;
+				'%perlfile_end',
+		};
 
 ###cnv_perl_end
-        m/^\s*perl_end\s+$/ && do { 
+        m/^\s*perl_end\s*$/ && do { 
 			$is_perl = 0;
 
 			unshift @perl_code, @perl_use;
 
 			my $code = join("\n",@perl_code);
-			eval $code;
-			if ($@) {
-				warn $@ . "\n";
-			}
+			
+			my ($merged,$res) = capture_merged { eval qq{$code}; };
+
+			my @tex;
+			push @tex,
+				'%perleval_start',
+				'%res ' . $res,
+				( split("\n" => $merged) ),
+				'%perleval_end',
+				;  
+
+            push @nlines, map { s/^/%/g; $_ } @tex;
 
 			@perl_code = ();
 		   	next; 
 		};
+
+		if ($is_perl) {
+			push @perl_code, $_;
+		}
 
 ###cnv_width
         m/^\s*width\s+(.*)/ && do { 
