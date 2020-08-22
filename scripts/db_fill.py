@@ -15,6 +15,7 @@ parser.add_argument("--rootid", help="rootid",default="")
 parser.add_argument("--dbfile", help="dbfile",default="")
 parser.add_argument("-a", "--all", help="fill all projects",default=1)
 parser.add_argument("-l","--list", help="list of projects",default="")
+parser.add_argument("-c","--create", help="create tables anew",default="")
 
 args = parser.parse_args()
 
@@ -41,16 +42,23 @@ if args.dbfile:
   dbfile = args.dbfile
 
 proj = ''
+if args.proj:
+  proj = args.proj
+  db.fill_from_files( dbfile, root, rootid, proj, logfun )
 
-def logfun(e):
-  print(e)
+#create tables anew
+if args.create:
+  db.drop_tables(dbfile)
+  db.create_tables(dbfile)
 
+# fill the selected list of projects
 if args.list:
   list = args.list
   projs = list.split(",")
   for proj in projs:
     db.fill_from_files( dbfile, root, rootid, proj, logfun )
-else:
-  db.drop_tables(dbfile)
-  db.create_tables(dbfile)
-  db.fill_from_files( dbfile, root, rootid, proj, logfun )
+
+
+#xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+def logfun(e):
+  print(e)
