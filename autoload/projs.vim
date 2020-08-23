@@ -891,7 +891,6 @@ function! projs#maps (...)
             \  '<F7>'  : 'call projs#git#save()' ,
             \  '<F8>'  : 'PrjListSecs'         ,
             \  '<F10>' : 'TgUpdate projs_this' ,
-            \  ';v'    : 'PrjPdfView'          ,
             \  ';tp'   : 'TgUpdate projs_this' ,
             \  ';wp'   : 'tag preamble'        ,
             \  ';wm'   : 'tag f_main'          ,
@@ -908,6 +907,11 @@ function! projs#maps (...)
               \  '<F2>'   : 'PrjVisual ii_to_new_secs'  ,
             \ }
           \ }
+
+    call extend(maps.nnoremap,{
+            \  ';v'    : 'call projs#pdf#view("","evince")',
+            \  ';k'    : 'call projs#pdf#view("","okular")',
+            \ })
   endif
 
   for [ map, mp ] in items(maps)

@@ -1,17 +1,27 @@
 
-"Usage:
-"   call projs#pdf#view ()
-"   call projs#pdf#view (proj)
-"
-"Used by:
-"   PrjPdfView
-"
-"   PrjAct pdf_view
-"   projs#action#pdf_view
+if 0
+  Usage:
+     call projs#pdf#view ()
+
+     call projs#pdf#view ('','evince')
+     call projs#pdf#view ('','okular')
+
+     call projs#pdf#view (proj)
+  
+  Used by:
+     PrjPdfView
+  
+     PrjAct pdf_view
+     projs#action#pdf_view
+endif
 
 function! projs#pdf#view (...)
 
-  let proj    = get(a:000,0,projs#proj#name())
+  let proj_a = get(a:000,0,'')
+  let proj = len(proj_a) ? proj_a : projs#proj#name()
+
+  let viewer_id = get(a:000,1,'evince')
+  let viewer  = base#exefile#path(viewer_id)
 
   let pdffile = projs#pdf#path(proj)
 
@@ -29,8 +39,6 @@ function! projs#pdf#view (...)
     return
   endif
 
-  let viewer  = base#exefile#path('evince')
-  let viewer  = base#exefile#path('okular')
 
   if filereadable(pdffile)
     if has('win32')

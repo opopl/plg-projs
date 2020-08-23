@@ -494,6 +494,14 @@ sub _files_pdf_pwg {
 
 }
 
+=head3 cmd_build_pwg
+
+=head4 Calls 
+
+cmd_insert_pwg
+
+=cut
+
 sub cmd_build_pwg {
     my ($self) = @_;
 
@@ -556,7 +564,9 @@ sub cmd_insert_pwg {
     my @jlines = read_file $jfile;
 
     my @nlines;
+###_cnv_vars
     my ($width, $width_local, $width_default);
+	my (@opts_ig);
    
     $width = $width_default = 0.5;
 
@@ -572,6 +582,7 @@ sub cmd_insert_pwg {
         q{ use Plg::Projs::Build::PdfLatex; },
     ;
 
+###_cnv_loop
     foreach(@jlines) {
         chomp;
 
@@ -615,9 +626,10 @@ sub cmd_insert_pwg {
 
             my @out = `perl $perl_file`;
             push @nlines, 
-                '%perlfile_start ' . $fname ,
-                map { s/^/%/g; $_ } @out;
-                '%perlfile_end',
+                '%perlout_start ' . $fname ,
+                @out,
+                '%perlout_end',
+				;
         };
 
 ###cnv_perl_end
@@ -647,6 +659,13 @@ sub cmd_insert_pwg {
         if ($is_perl) {
             push @perl_code, $_;
         }
+
+###cnv_opts_ig
+        m/^\s*opts_ig\s+(.*)$/ && do { 
+            next unless $is_img;
+
+            push @opts_ig, $1; next;
+		};
 
 ###cnv_width
         m/^\s*width\s+(.*)/ && do { 
@@ -744,8 +763,14 @@ sub cmd_insert_pwg {
                 my $icapt = $i->{comment} || '';
                 $icapt =~ s/\r\n/\n/g;
 
+				my $width_s = ( $width =~ /^[\d\.]+$/ ) ? "$width\\textwidth" : $width;
+				unless (@opts_ig){
+					push @opts_ig, sprintf(q{width=%s},$width_s);
+				}
+				my $opts_ig_s = join(",",@opts_ig);
+
                 push @nlines,
-                    sprintf('\\includegraphics[width=%s\\textwidth]{%s}', $width, $ipath);
+                    sprintf('\\includegraphics[%s]{%s}', $opts_ig_s, $ipath);
 
                 if ($is_fig) {
                     if ($icapt) {
@@ -815,6 +840,14 @@ sub create_bat_in_src {
             [
                 sprintf('call jnd.pdf')
             ];
+        },
+        '_tex.bat' => sub { 
+            my @cmds;
+            push @cmds, 
+                sprintf('call _clean.bat'),
+                sprintf('pdflatex jnd'),
+                ;
+            return [@cmds];
         },
         '_pdflatex.bat' => sub { 
             my @cmds;
