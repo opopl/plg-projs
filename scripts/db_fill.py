@@ -3,6 +3,7 @@ import sys,os
 import getopt,argparse
 
 import argparse
+import re
 
 usage='''
 This script will fill the "projs" sqlite database
@@ -14,9 +15,9 @@ parser.add_argument("-r", "--root",help="root",default="")
 parser.add_argument("--rootid", help="rootid",default="")
 parser.add_argument("--dbfile", help="dbfile",default="")
 parser.add_argument("-l","--list", help="list of projects",default="")
-parser.add_argument("-c","--create", help="create tables anew",default="")
 
-parser.add_argument("-a", "--all", help="fill all projects",action="store_true")
+parser.add_argument("-c", "--create", help="create tables anew",action="store_true")
+parser.add_argument("-a", "--all",    help="fill all projects",action="store_true")
 
 args = parser.parse_args()
 
@@ -50,13 +51,24 @@ if args.proj:
   proj = args.proj
   db.fill_from_files( dbfile, root, rootid, proj, logfun )
 
-if args.all:
-  db.fill_from_files( dbfile, root, rootid, '', logfun )
 
 #create tables anew
 if args.create:
   db.drop_tables(dbfile)
-  db.create_tables(dbfile)
+  sql_dir = os.path.join(dirname,'..','data','sql')
+  f = []
+  for (dirpath, dirnames, filenames) in os.walk(sql_dir):
+    f.extend(filenames)
+    break
+  pt = re.compile('^create_table_(\w+)\.sql')
+  for file in f:
+    m = pt.match(file)
+    if m:
+        sql_file = os.path.join(sql_dir,file)
+        db.create_tables(dbfile, sql_file)
+
+if args.all:
+  db.fill_from_files( dbfile, root, rootid, '', logfun )
 
 # fill the selected list of projects
 if args.list:

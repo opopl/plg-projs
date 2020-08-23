@@ -31,6 +31,9 @@ def create_tables(db_file, sql_file):
   conn.close()
 
 def drop_tables(db_file):
+  print('''Dropping tables in db: 
+            %s
+        ''' % db_file)
   conn = sqlite3.connect(db_file)
   c = conn.cursor()
   
@@ -74,11 +77,16 @@ def fill_from_files(db_file,root,rootid,proj,logfun):
 
   if len(proj):
     pt = re.compile('^(%s)\.(?:(.*)\.|)(\w+)$' % proj)
+    print('''("%s" project) Filling tables in db: 
+              %s
+          ''' % proj, db_file)
   else:
     pt = re.compile('^(\w+)\.(?:(.*)\.|)(\w+)$')
+    print('''(all projects) Filling tables in db: 
+              %s
+          ''' % db_file)
 
   pt_bib = re.compile('^(\w+)\.refs\.bib$')
-
 
   f = []
   for (dirpath, dirnames, filenames) in os.walk(root):
@@ -107,7 +115,7 @@ def fill_from_files(db_file,root,rootid,proj,logfun):
 
         if ext == 'pl':
           if not sec: 
-            sec = '_perl_main_' 
+            continue
           else:
             sec = '_perl.%s' % sec 
 
@@ -119,15 +127,19 @@ def fill_from_files(db_file,root,rootid,proj,logfun):
             m_bib = pt_bib.match(file)
             if m_bib:
                 sec = '_bib_' 
-
         if not sec:
             continue
 
         data   = get_data(fpath)
         tags   = data.get('tags','')
         author = data.get('author','')
-        v_projs = [proj,sec,file,root,rootid,tags,author]
-        q='''INSERT OR IGNORE INTO projs (proj,sec,file,root,rootid,tags,author) VALUES (?,?,?,?,?,?,?)'''
+
+        v_projs = [ proj_m, sec, file, root, rootid, tags, author ]
+        q='''
+            INSERT OR IGNORE INTO projs 
+                (proj,sec,file,root,rootid,tags,author) 
+            VALUES (?,?,?,?,?,?,?)
+            '''
         try:
           c.execute(q,v_projs)
         except sqlite3.IntegrityError, e:

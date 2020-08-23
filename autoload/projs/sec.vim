@@ -259,9 +259,9 @@ function! projs#sec#parent ()
 endfunction
 
 if 0
-	call tree
-		calls
-			projs#sec#file_base_a
+  call tree
+    calls
+      projs#sec#file_base_a
 endif
 
 function! projs#sec#file (...)
@@ -314,8 +314,8 @@ function! projs#sec#file_base_a (...)
     elseif sec == '_vim_'
         let sfile_a = [ proj.'.vim']
 
-    elseif sec =~ '^_perl_'
-				let sec = substitute(sec,'^_perl_\(.*\)','\1','g')
+    elseif sec =~ '^_perl\.'
+        let sec = substitute(sec,'^_perl\.\(.*\)$','\1','g')
         let sfile_a = [ printf('%s.%s.pl',proj,sec)]
 
     elseif sec == '_sql_'
@@ -788,15 +788,15 @@ function! projs#sec#new(sec,...)
           let bw = base#word('insert_plus')
           let rootid = projs#rootid()
 
-					"let src_f .= '\small\LaTeX~section: \verb|%s| project: \verb|%s| rootid: \verb|%s|'
+          "let src_f .= '\small\LaTeX~section: \verb|%s| project: \verb|%s| rootid: \verb|%s|'
 
-					let s_a = [' ']
-					call add(s_a,'{')
-					call add(s_a,'\ifDEBUG')
-					call add(s_a,'\small')
-					call add(s_a,'\LaTeX~section: \verb|%s| project: \verb|%s| rootid: \verb|%s| ')
-					call add(s_a,'\fi')
-					call add(s_a,'}')
+          let s_a = [' ']
+          call add(s_a,'{')
+          call add(s_a,'\ifDEBUG')
+          call add(s_a,'\small')
+          call add(s_a,'\LaTeX~section: \verb|%s| project: \verb|%s| rootid: \verb|%s| ')
+          call add(s_a,'\fi')
+          call add(s_a,'}')
 
           let src_f = join(s_a, "")
 
@@ -835,19 +835,19 @@ endfunction
 function! projs#sec#perl_open (sec,...)
   let sec = a:sec
 
-	let root = projs#root()
-	let proj = projs#proj#name()
+  let root = projs#root()
+  let proj = projs#proj#name()
 
-	let file = base#file#catfile([ root, printf('%s.%s.pl',proj,sec) ])
-	call base#fileopen({ 
-		\	'files'    : [file],
-		\	'load_buf' : 1,
-		\	})
+  let file = base#file#catfile([ root, printf('%s.%s.pl',proj,sec) ])
+  call base#fileopen({ 
+    \ 'files'    : [file],
+    \ 'load_buf' : 1,
+    \ })
 endfunction
 
 if 0
-	calls
-		projs#sec#open
+  calls
+    projs#sec#open
 endif
 
 function! projs#sec#open_load_buf (sec,...)
@@ -856,8 +856,8 @@ function! projs#sec#open_load_buf (sec,...)
 endfunction
 
 if 0
-	called by
-		VSEC
+  called by
+    VSEC
 endif
 
 function! projs#sec#open (...)
@@ -939,7 +939,7 @@ function! projs#sec#open (...)
       call projs#sec#new(sec)
     endif
 
-		let ext = fnamemodify(vfile,':e')
+    let ext = fnamemodify(vfile,':e')
 
     let s:obj = { 
       \ 'sec'  : sec ,
@@ -957,9 +957,9 @@ function! projs#sec#open (...)
       \ 'Fc'       : Fc,
       \ }) 
 
-		if load_maps
-			call projs#maps({ 'exts' : [ext] })
-		endif
+    if load_maps
+      call projs#maps({ 'exts' : [ext] })
+    endif
 
     let buf_nums = get(res,'buf_nums',[])
     let bufnr    = get(buf_nums,0,'')
