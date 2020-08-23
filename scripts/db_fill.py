@@ -13,11 +13,15 @@ parser.add_argument("-p", "--proj", help="select_project",default="")
 parser.add_argument("-r", "--root",help="root",default="")
 parser.add_argument("--rootid", help="rootid",default="")
 parser.add_argument("--dbfile", help="dbfile",default="")
-parser.add_argument("-a", "--all", help="fill all projects",default=1)
 parser.add_argument("-l","--list", help="list of projects",default="")
 parser.add_argument("-c","--create", help="create tables anew",default="")
 
+parser.add_argument("-a", "--all", help="fill all projects",action="store_true")
+
 args = parser.parse_args()
+
+def logfun(e):
+  print(e)
 
 if len(sys.argv) == 1:
   parser.print_help()
@@ -33,7 +37,7 @@ root = os.path.abspath("")
 if args.root:
   root = args.root
 
-rootid=""
+rootid = os.path.split(root)[-1]
 if args.rootid:
   rootid = args.rootid
 
@@ -45,6 +49,9 @@ proj = ''
 if args.proj:
   proj = args.proj
   db.fill_from_files( dbfile, root, rootid, proj, logfun )
+
+if args.all:
+  db.fill_from_files( dbfile, root, rootid, '', logfun )
 
 #create tables anew
 if args.create:
@@ -60,5 +67,3 @@ if args.list:
 
 
 #xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-def logfun(e):
-  print(e)

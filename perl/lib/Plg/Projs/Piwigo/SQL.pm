@@ -260,7 +260,8 @@ sub cmd_img_by_tags {
 	    }
     	if (-e $full_path) {
 			push @img, {  
-				path       => $full_path,
+				full_path      => $full_path,
+				rel_path       => $path,
 				tgs        => $tgs,
 	            #comment    => decode('utf8',$comment),
 	            comment    => $comment,

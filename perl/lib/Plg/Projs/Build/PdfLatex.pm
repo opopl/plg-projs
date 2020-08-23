@@ -759,7 +759,7 @@ sub cmd_insert_pwg {
             #print Dumper(\@img) . "\n";
             if (@img == 1) {
                 my $i = shift @img;
-                my $ipath = $i->{path};
+                my $ipath = $i->{full_path};
                 my $icapt = $i->{comment} || '';
                 $icapt =~ s/\r\n/\n/g;
 
@@ -770,7 +770,10 @@ sub cmd_insert_pwg {
 				my $opts_ig_s = join(",",@opts_ig);
 
                 push @nlines,
-                    sprintf('\\includegraphics[%s]{%s}', $opts_ig_s, $ipath);
+					sprintf('\def\pic{%s}',$ipath),
+                    sprintf('\\includegraphics[%s]{\pic}', $opts_ig_s),
+					;
+
 
                 if ($is_fig) {
                     if ($icapt) {

@@ -7,7 +7,9 @@ import sqlparse,sys
 #import pprint
 #pp = pprint.PrettyPrinter(indent=4)
 
-p = { 'texfile' : re.compile('^(\w+)\.(?:(.*)\.|)tex'), 
+p = { 
+    'tex_file'   : re.compile('^(\w+)\.(?:(.*)\.|)tex'), 
+    'proj_file'  : re.compile('^(\w+)\.(?:(.*)\.|)(tex|pl|vim)'), 
     'tags'      : re.compile('^\s*%%tags (.*)$'),
     'author'    : re.compile('^\s*%%author (.*)$')
    }
@@ -66,9 +68,17 @@ def cleanup(db_file, root, proj):
   conn.commit()
   conn.close()
 
-def fill_from_files(db_file,root,rootid,proj_select,logfun):
+def fill_from_files(db_file,root,rootid,proj,logfun):
   conn = sqlite3.connect(db_file)
   c = conn.cursor()
+
+  if len(proj):
+    pt = re.compile('^(%s)\.(?:(.*)\.|)(\w+)$' % proj)
+  else:
+    pt = re.compile('^(\w+)\.(?:(.*)\.|)(\w+)$')
+
+  pt_bib = re.compile('^(\w+)\.refs\.bib$')
+
 
   f = []
   for (dirpath, dirnames, filenames) in os.walk(root):
@@ -76,17 +86,43 @@ def fill_from_files(db_file,root,rootid,proj_select,logfun):
     break
   
   x = 0
+  i = 0
   h_projs = []
   for file in f:
+    i+=1
+    #if i > 100:
+        #break
     fpath = os.path.join(root,file)
-    m = p['texfile'].match(file)
+    m = pt.match(file)
     if m:
+      proj_m = m.group(1)
+      ext    = m.group(3)
       x+=1
-      proj = m.group(1)
-      if ( not proj_select ) or ( proj == proj_select ):
-        sec = m.group(2)
-        if not sec: 
-          sec = '_main_' 
+      if ( not proj ) or ( proj_m == proj ):
+        sec    = m.group(2)
+
+        if ext == 'tex':
+          if not sec: 
+            sec = '_main_' 
+
+        if ext == 'pl':
+          if not sec: 
+            sec = '_perl_main_' 
+          else:
+            sec = '_perl.%s' % sec 
+
+        if ext == 'vim':
+          if not sec: 
+            sec = '_vim_' 
+
+        if ext == 'bib':
+            m_bib = pt_bib.match(file)
+            if m_bib:
+                sec = '_bib_' 
+
+        if not sec:
+            continue
+
         data   = get_data(fpath)
         tags   = data.get('tags','')
         author = data.get('author','')
