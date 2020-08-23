@@ -42,12 +42,15 @@ sub init {
     my ($self) = @_;
 
     my $h = {
-        user   => 'apopl',
-        pwd    => 'root',
-        dbfile => 'piwigo',
-        driver => 'mysql',
-        piwigo => $ENV{PIWIGO},
+        user     => 'apopl',
+        pwd      => 'root',
+        dbfile   => 'piwigo',
+        driver   => 'mysql',
+        img_root => $ENV{PIWIGO},
     };
+
+    $h->{img_root_unix} = $h->{img_root};
+    $h->{img_root_unix} =~ s/\\/\//g;
         
     my @k = keys %$h;
 
@@ -252,7 +255,7 @@ sub cmd_img_by_tags {
         }
         next unless $in;
 
-        my $full_path = catfile($self->{piwigo},$path);
+        my $full_path = catfile($self->{img_root},$path);
         next if $done{$full_path};
     
         if ($^O eq 'MSWin32') {

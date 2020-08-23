@@ -126,6 +126,8 @@ sub init {
 
     my @build_dir_a = ( "builds", $proj, "b_pdflatex" );
 
+    my $pwg = Plg::Projs::Piwigo::SQL->new;
+
     my $h = {
         proj            => $proj,
         pdfout          => $pdfout,
@@ -136,6 +138,7 @@ sub init {
         out_dir_pdf     => catfile($pdfout, $root_id),
         out_dir_pdf_pwg => catfile($pdfout, $root_id, qw(pwg) ),
         dbfile          => catfile($root,'projs.sqlite'),
+        pwg             => $pwg,
     };
 
     push @$tex_opts_a, 
@@ -147,6 +150,8 @@ sub init {
     my $tex_opts = join(" ", @$tex_opts_a);
 
     $h = { %$h,
+        img_root_unix => $pwg->{img_root_unix},
+        img_root      => $pwg->{img_root},
         src_dir       => catfile($h->{build_dir},qw( .. src)),
         tex_opts      => $tex_opts,
         tex_opts_a    => $tex_opts_a,
@@ -566,7 +571,7 @@ sub cmd_insert_pwg {
     my @nlines;
 ###_cnv_vars
     my ($width, $width_local, $width_default);
-	my (@opts_ig);
+    my (@opts_ig);
    
     $width = $width_default = 0.5;
 
@@ -620,16 +625,17 @@ sub cmd_insert_pwg {
         m/^\s*perl_begin\s*$/ && do { $is_perl = 1; next; };
 
 ###cnv_perl_file
-        m/^\s*perl_file\s+(\w+)\s*$/ && do { 
+        m/^\s*perl_file\s+(\S+)\s*$/ && do { 
             my $fname = $1;
             my $perl_file = catfile($root,join("." => ($proj,$fname,'pl') ) );
 
             my @out = `perl $perl_file`;
             push @nlines, 
-                '%perlout_start ' . $fname ,
+                '%perlout_start ' . $fname,
                 @out,
                 '%perlout_end',
-				;
+                ;
+            next;
         };
 
 ###cnv_perl_end
@@ -665,7 +671,7 @@ sub cmd_insert_pwg {
             next unless $is_img;
 
             push @opts_ig, $1; next;
-		};
+        };
 
 ###cnv_width
         m/^\s*width\s+(.*)/ && do { 
@@ -747,6 +753,7 @@ sub cmd_insert_pwg {
             my $tags_space = join(" ",@tags_arr);
             push @nlines, q{%tags_space: } . $tags_space;
 
+###pwg_run
             my $pwg = Plg::Projs::Piwigo::SQL->new;
             local @ARGV = qw( -c img_by_tags );
             push @ARGV, 
@@ -759,20 +766,20 @@ sub cmd_insert_pwg {
             #print Dumper(\@img) . "\n";
             if (@img == 1) {
                 my $i = shift @img;
-                my $ipath = $i->{full_path};
+                my $ipath = $i->{rel_path};
                 my $icapt = $i->{comment} || '';
                 $icapt =~ s/\r\n/\n/g;
 
-				my $width_s = ( $width =~ /^[\d\.]+$/ ) ? "$width\\textwidth" : $width;
-				unless (@opts_ig){
-					push @opts_ig, sprintf(q{width=%s},$width_s);
-				}
-				my $opts_ig_s = join(",",@opts_ig);
+                my $width_s = ( $width =~ /^[\d\.]+$/ ) ? "$width\\textwidth" : $width;
+                unless (@opts_ig){
+                    push @opts_ig, sprintf(q{width=%s},$width_s);
+                }
+                my $opts_ig_s = join(",",@opts_ig);
 
                 push @nlines,
-					sprintf('\def\pic{%s}',$ipath),
+                    sprintf('\def\pic{%s/%s}', '\imgroot', $ipath),
                     sprintf('\\includegraphics[%s]{\pic}', $opts_ig_s),
-					;
+                    ;
 
 
                 if ($is_fig) {
@@ -804,6 +811,13 @@ sub cmd_insert_pwg {
         };
 
     }
+
+    unshift @nlines,
+        ' ',
+        sprintf(q{\def\imgroot{%s}}, $self->{img_root_unix} ),
+        ' '
+        ;
+
     write_file($jfile,join("\n",@nlines) . "\n");
 
     return $self;
