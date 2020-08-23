@@ -142,9 +142,17 @@ sub _img_include_graphics {
 
     my $w = $ref->{width};
 
+    my $align = $ref->{align} || '';
+
     my @tex;
 
     my $rel_path = $self->_img_rel_path({ tags => $ref->{tags} });
+
+    foreach($align) {
+        /^center$/ && do { 
+            push @tex, q{\centering};
+        };
+    }
 
     push @tex,
         $self->_tex_include_graphics({ 
