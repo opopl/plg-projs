@@ -790,6 +790,7 @@ sub cmd_insert_pwg {
             }else{
             }
 
+            @opts_ig = ();
             @tags = ();
             @tags_all = ();
             %opts = ();

@@ -87,6 +87,7 @@ def fill_from_files(db_file,root,rootid,proj,logfun):
           ''' % db_file)
 
   pt_bib = re.compile('^(\w+)\.refs\.bib$')
+  pt_dat_i = re.compile('^(.*)\.i$')
 
   f = []
   for (dirpath, dirnames, filenames) in os.walk(root):
@@ -119,6 +120,15 @@ def fill_from_files(db_file,root,rootid,proj,logfun):
           else:
             sec = '_perl.%s' % sec 
 
+        if ext == 'dat':
+            m = pt_dat_i.match(sec)
+            if m:
+                sec_m = re.sub(pt_dat_i,r'\1',sec)
+                if sec_m == 'ii_include':
+                    sec = '_ii_include_'
+                if sec_m == 'ii_exclude':
+                    sec = '_ii_exclude_'
+
         if ext == 'vim':
           if not sec: 
             sec = '_vim_' 
@@ -127,6 +137,7 @@ def fill_from_files(db_file,root,rootid,proj,logfun):
             m_bib = pt_bib.match(file)
             if m_bib:
                 sec = '_bib_' 
+
         if not sec:
             continue
 

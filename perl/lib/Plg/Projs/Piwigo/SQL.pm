@@ -111,6 +111,78 @@ sub dhelp {
     return $self;   
 }
 
+
+sub _tex_pic_opts {
+    my ($self, $ref) = @_;
+
+    my $width = $ref->{width};
+
+    sprintf(q{width=%s\textwidth},$width); 
+};
+
+sub _tex_include_graphics {
+    my ($self, $ref) = @_;
+
+    my $w        = $ref->{width};
+    my $rel_path = $ref->{rel_path};
+
+    my $pic_opts = $self->_tex_pic_opts({ width => $w });
+
+    my @tex;
+    push @tex,
+        sprintf(q{\def\picpath{\imgroot/%s}},$rel_path),
+        sprintf(q{\includegraphics[%s]{\picpath}}, $pic_opts ),
+        ;
+
+    return @tex;
+}
+
+sub _img_include_graphics {
+    my ($self, $ref) = @_;
+
+    my $w = $ref->{width};
+
+    my @tex;
+
+    my $rel_path = $self->_img_rel_path({ tags => $ref->{tags} });
+
+    push @tex,
+        $self->_tex_include_graphics({ 
+                width    => $w,
+                rel_path => $rel_path })
+        ;
+
+    return @tex;   
+}
+
+sub _img_rel_path {
+    my ($self, $ref) = @_;
+
+    my @img = $self->_img_by_tags({ tags => $ref->{tags} });
+    my $first = shift @img;
+
+    my $rel_path = $first->{rel_path};
+
+    return $rel_path;
+}
+
+
+sub _img_by_tags {
+    my ($self, $ref) = @_;
+    
+    my @tags = @{ $ref->{tags} || [] };
+
+    local @ARGV = qw( -c img_by_tags );
+    push @ARGV, 
+        qw( -t ), join("," => @tags);
+
+    $self->run;
+
+    my @img = @{$self->{img} || []};
+
+    return @img;
+}
+
 sub run {
     my ($self, $ref) = @_;
 
