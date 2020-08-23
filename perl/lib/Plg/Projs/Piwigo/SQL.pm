@@ -208,10 +208,10 @@ sub cmd_img_by_tags {
     $tags_s ||= '';
 
     my @tags_in = split("," => $tags_s);
-	my %tags_in = map { $_ => 1 } @tags_in;
+    my %tags_in = map { $_ => 1 } @tags_in;
 
     my (@cond, $cond);
-	my ($rows, $cols);
+    my ($rows, $cols);
    
     if (@tags_in) {
         push @cond,
@@ -229,49 +229,49 @@ sub cmd_img_by_tags {
         p   => [],
     });
 
-	my @img;
-	my %done;
+    my @img;
+    my %done;
 
-	foreach my $row (@$rows) {
-		my $path    = $row->{path};
-	    my $comment = $row->{comment};
+    foreach my $row (@$rows) {
+        my $path    = $row->{path};
+        my $comment = $row->{comment};
 
-	    my @tags_r = dbh_select_as_list({
-	        dbh => $dbh,
-	        q   => qq{ SELECT tag FROM collected WHERE path = ? },
-	        p   => [$path],
-	    });
-		my $tgs = join(" ",sort { length($a) <=> length($b)} @tags_r);
-		my %tags_r = map { $_ => 1 } @tags_r;
+        my @tags_r = dbh_select_as_list({
+            dbh => $dbh,
+            q   => qq{ SELECT tag FROM collected WHERE path = ? },
+            p   => [$path],
+        });
+        my $tgs = join(" ",sort { length($a) <=> length($b)} @tags_r);
+        my %tags_r = map { $_ => 1 } @tags_r;
 
-		my $in=1;
-		for(@tags_in){
-			unless($tags_r{$_}) {
-				$in=0; last;
-			}
-		}
-		next unless $in;
+        my $in=1;
+        for(@tags_in){
+            unless($tags_r{$_}) {
+                $in=0; last;
+            }
+        }
+        next unless $in;
 
-	    my $full_path = catfile($self->{piwigo},$path);
-		next if $done{$full_path};
-	
-	    if ($^O eq 'MSWin32') {
-	        $full_path =~ s/\\/\//g;
-	    }
-    	if (-e $full_path) {
-			push @img, {  
-				full_path      => $full_path,
-				rel_path       => $path,
-				tgs        => $tgs,
-	            #comment    => decode('utf8',$comment),
-	            comment    => $comment,
-			};
-			$done{$full_path}=1;
-		}
-	}
+        my $full_path = catfile($self->{piwigo},$path);
+        next if $done{$full_path};
+    
+        if ($^O eq 'MSWin32') {
+            $full_path =~ s/\\/\//g;
+        }
+        if (-e $full_path) {
+            push @img, {  
+                full_path => $full_path,
+                rel_path  => $path,
+                tgs       => $tgs,
+                #comment  => decode('utf8',$comment),
+                comment   => $comment,
+            };
+            $done{$full_path}=1;
+        }
+    }
 
-	$self->{img} = [@img];
-	#print Dumper([@img]) . "\n";
+    $self->{img} = [@img];
+    #print Dumper([@img]) . "\n";
 
     $self;
 }
