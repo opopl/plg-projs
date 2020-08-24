@@ -558,11 +558,18 @@ if 0
   call tree
      calls
        projs#maps
+     called by
+       projs#buf#onload_tex_tex
+         projs_ftplugin_tex
 endif
 
 function! projs#onload (...)
   let ref = {}
   if a:0 | let ref = a:1 | endif
+
+  let msg = [ printf('basename: %s', b:basename ) ]
+  let prf = { 'plugin' : 'projs', 'func' : 'projs#onload' }
+  call base#log(msg, prf)
 
   "-------- needed for keymapping
   setlocal iminsert=0
@@ -570,10 +577,16 @@ function! projs#onload (...)
   "-------- needed for tags
   setlocal isk=@,48-57,_,128-167,224-235,.,:
 
+  setlocal ts=2
+
+  TgSet projs_this
+
   let done = base#eval("b:projs_onload_done")
   if done | return | endif
 
   let b:projs_onload_done = 1
+
+  call projs#maps()
     
   let prf = { 'prf' : 'projs#onload' }
   call base#log([
@@ -583,15 +596,9 @@ function! projs#onload (...)
   let proj = projs#proj#name()
   let proj = get(ref,'proj',proj)
 
-  setlocal ts=2
-
-  TgSet projs_this
-
   StatusLine projs
 
   call projs#exe_latex('pdflatex')
-
-  call projs#maps()
 
   let vf = projs#sec#file('_vim_')
   call base#vimfile#source({ 'files' : [vf] })
@@ -875,6 +882,10 @@ function! projs#maps (...)
     return 
   endif
 
+  let msg = [ printf('basename: %s', b:basename ) ]
+  let prf = { 'plugin' : 'projs', 'func' : 'projs#maps' }
+  call base#log(msg, prf)
+
   let maps = {}
   if ext == 'tex'
     let maps = {
@@ -883,6 +894,7 @@ function! projs#maps (...)
             \  ';;'    : 'PrjAct pwg_insert_img'  ,
             \  '<F1>'  : 'PrjAct async_build_pwg'  ,
             \  ';ab'   : 'PrjAct async_build_bare'  ,
+            \  ';bb'   : 'PrjAct async_build_perl'  ,
             \  '<F2>'  : 'PrjBuild Cleanup'    ,
             \  '<F3>'  : 'copen'               ,
             \  '<F4>'  : 'cclose'              ,
@@ -912,6 +924,9 @@ function! projs#maps (...)
             \  ';v'    : 'call projs#pdf#view("","evince")',
             \  ';k'    : 'call projs#pdf#view("","okular")',
             \ })
+
+    call base#varset('projs_maps',maps)
+  
   endif
 
   for [ map, mp ] in items(maps)

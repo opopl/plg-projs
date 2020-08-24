@@ -40,6 +40,7 @@ status
 ###mkdir
 mkdir_pics
 async_build_bare
+async_build_perl
 async_build_pwg
 pwg_insert_img
 #async_build_htlatex

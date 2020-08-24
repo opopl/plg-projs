@@ -703,26 +703,26 @@ function! projs#action#async_build_pwg_Fc (self,temp_file)
 
     call tex#efm#latex()
     exe 'cgetfile ' . temp_file
-		call extend(err,getqflist())
+    call extend(err,getqflist())
 
-		redraw!
-		if len(err)
-			let msg = printf('(PWG) LATEX ERR: %s %s',proj,s_dur)
-			call base#rdwe(msg)
-			BaseAct copen
-			exe 'cd ' . src_dir
-		else
-			let msg = printf('(PWG) LaTeX OK: %s %s',proj,s_dur)
-			call base#rdw(msg,'StatusLine')
-			BaseAct cclose
-		endif
-		echohl None
+    redraw!
+    if len(err)
+      let msg = printf('(PWG) LATEX ERR: %s %s',proj,s_dur)
+      call base#rdwe(msg)
+      BaseAct copen
+      exe 'cd ' . src_dir
+    else
+      let msg = printf('(PWG) LaTeX OK: %s %s',proj,s_dur)
+      call base#rdw(msg,'StatusLine')
+      BaseAct cclose
+    endif
+    echohl None
   endif
 
-	"if filereadable(a:temp_file)
-		"let out = readfile(a:temp_file)
-		"call base#buf#open_split({ 'lines' : out })
-	"endif
+  "if filereadable(a:temp_file)
+    "let out = readfile(a:temp_file)
+    "call base#buf#open_split({ 'lines' : out })
+  "endif
 endfunction
 
 function! projs#action#excel_import (...) 
@@ -850,10 +850,10 @@ function! projs#action#pwg_insert_img (...)
       \ proj, root_id,
       \ '-c','insert_pwg' ], ' ' )
 
-	let jnd = projs#sec#file('_tex_jnd_')
-	if filereadable(jnd)
-		call delete(jnd)
-	endif
+  let jnd = projs#sec#file('_tex_jnd_')
+  if filereadable(jnd)
+    call delete(jnd)
+  endif
 
   let env = {
     \ 'proj'        : proj,
@@ -862,14 +862,14 @@ function! projs#action#pwg_insert_img (...)
     \ }
 
   function env.get(temp_file) dict
-		let jnd = get(self,'jnd','')
-		"VSEC _tex_jnd_
-		if filereadable(a:temp_file)
-			let out = readfile(a:temp_file)
-			call base#buf#open_split({ 'lines' : out })
-		endif
+    let jnd = get(self,'jnd','')
+    "VSEC _tex_jnd_
+    if filereadable(a:temp_file)
+      let out = readfile(a:temp_file)
+      call base#buf#open_split({ 'lines' : out })
+    endif
     "call projs#action#pwg_insert_pwg_Fc(self,a:temp_file)
-		call base#rdw('OK: pwg_insert_img')
+    call base#rdw('OK: pwg_insert_img')
   endfunction
 
   call asc#run({ 
@@ -936,6 +936,90 @@ function! projs#action#async_build_pwg (...)
     \ 'Fn'  : asc#tab_restore(env) 
     \ })
   return 1
+endf
+
+if 0
+  Usage
+    projs#action#async_build_perl()
+  Call tree
+    calls
+      projs#proj#name
+      projs#root
+      projs#action#async_build_perl_Fc
+endif
+
+function! projs#action#async_build_perl (...) 
+  let ref = get(a:000,0,{})
+
+  let root    = projs#root()
+  let root_id = projs#rootid()
+
+  let proj = projs#proj#name()
+  let proj = get(ref,'proj',proj)
+
+  let bfile = printf('%s.build.pl',proj)
+
+  let start = localtime()
+  call chdir(root)
+  let cmd = join([ 'perl', bfile ], ' ' )
+
+  let env = {
+    \ 'proj'  : proj,
+    \ 'root'  : root,
+    \ 'start' : start,
+    \ }
+
+  function env.get(temp_file) dict
+    call projs#action#async_build_perl_Fc(self,a:temp_file)
+  endfunction
+
+  let msg = printf('async_build_perl: %s', proj, mode)
+  call base#rdw(msg)
+
+  call asc#run({ 
+    \ 'cmd' : cmd, 
+    \ 'Fn'  : asc#tab_restore(env) 
+    \ })
+  return 1
+
+endf
+
+if 0
+  called by
+    projs#action#async_build_perl
+endif
+
+function! projs#action#async_build_perl_Fc (self,temp_file) 
+  let self      = a:self
+  let temp_file = a:temp_file
+
+  let root    = self.root
+  let proj    = self.proj
+  let start   = self.start
+
+  let end      = localtime()
+  let duration = end - start
+  let s_dur    = ' ' . string(duration) . ' (secs)'
+  
+  if filereadable(a:temp_file)
+    call tex#efm#latex()
+    exe 'cd ' . root
+    exe 'cgetfile ' . a:temp_file
+    
+    let err = getqflist()
+    
+    redraw!
+    if len(err)
+      let msg = printf('PERL BUILD FAIL: %s %s',proj,s_dur)
+      call base#rdwe(msg)
+      BaseAct copen
+    else
+      let msg = printf('PERL BUILD OK: %s %s',proj,s_dur)
+      call base#rdw(msg)
+      BaseAct cclose
+    endif
+    echohl None
+  endif
 endf
 
 if 0

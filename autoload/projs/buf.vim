@@ -4,29 +4,29 @@ function! projs#buf#onload_vim ()
 endfunction
 
 function! projs#buf#url (...)
-	let ref = get(a:000,0,{})
+  let ref = get(a:000,0,{})
 
-	let file = get(ref,'file',b:file)
+  let file = get(ref,'file',b:file)
 
-	let lines = readfile(file)
+  let lines = readfile(file)
 
-	let url = ''
-	for line in lines
-		let url = matchstr(line,'^%%url\s\+\zs.*\ze\s*$')
-		if strlen(url)
-			let url = base#trim(url)
-			break
-		endif
-	endfor
+  let url = ''
+  for line in lines
+    let url = matchstr(line,'^%%url\s\+\zs.*\ze\s*$')
+    if strlen(url)
+      let url = base#trim(url)
+      break
+    endif
+  endfor
 
-	let b:url = url
-	return url
+  let b:url = url
+  return url
 
 endfunction
 
 if 0
-	Used in:
-	  ftplugin/tex.vim
+  Used in:
+    ftplugin/tex.vim
 endif
 
 function! projs#buf#onload_tex_tex ()
@@ -90,7 +90,7 @@ function! projs#buf#onload_tex_tex ()
 endfunction
 
 function! projs#buf#sec ()
-	return exists('b:sec') ? b:sec : ''
+  return exists('b:sec') ? b:sec : ''
 
 endfunction
 
@@ -99,8 +99,8 @@ function! projs#buf#onload_tex_sty ()
 endfunction
 
 if 0
-	called by:
-		projs#action#url_fetch
+  called by:
+    projs#action#url_fetch
 endif
 
 function! projs#buf#url_file ()
