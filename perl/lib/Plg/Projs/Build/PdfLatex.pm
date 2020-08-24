@@ -846,6 +846,8 @@ sub create_bat_in_src {
                 'rm *.xdy',
                 'rm *.ind',
                 'rm *.idx',
+                'rm *.mtc*',
+                'rm *.maf*',
                 'latexmk -C'
             ];
         },
