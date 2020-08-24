@@ -1,0 +1,48 @@
+
+package Plg::Projs::Prj;
+
+use strict;
+use warnings;
+
+use FindBin qw($Bin $Script);
+use File::Basename qw(basename dirname);
+
+use Plg::Projs::Piwigo::SQL;
+
+sub new
+{
+	my ($class, %opts) = @_;
+	my $self = bless (\%opts, ref ($class) || $class);
+
+	$self->init if $self->can('init');
+
+	return $self;
+}
+
+sub init {
+	my $self = shift;
+
+	my ($proj)  = ($Script =~ m/^(\w+)\..*$/);
+	my $root_id = basename($Bin);
+	my $root    = $Bin;
+
+	my $pwg = Plg::Projs::Piwigo::SQL->new;
+
+	my $h = {
+		proj     => $proj,
+		root     => $root,
+		root_id  => $root_id,
+		tags_img => [qw(projs), ($proj, $root_id)],
+		pwg      => $pwg,
+	};
+		
+	my @k = keys %$h;
+
+	for(@k){ $self->{$_} = $h->{$_} unless defined $self->{$_}; }
+
+	return $self;
+}
+
+1;
+ 
+
