@@ -11,7 +11,7 @@ python3 << eof
 import vim,re
 
 lines = vim.eval('lines')
-p = re.compile('^\s*\d+\s+(\w+)\s*$')
+p = re.compile('^\s*\d+\s+(\S+)\s*$')
 data = []
 for line in lines:
   m = p.match(line)
@@ -21,6 +21,7 @@ for line in lines:
     data.append(d)
 
 eof
+	q
   let data = py3eval('data')
   for rwh in data
     let sec  = get(rwh,'sec','')
