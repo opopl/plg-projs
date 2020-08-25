@@ -897,7 +897,7 @@ function! projs#action#async_build_pwg (...)
   call chdir(root)
   let cmd = join([ 
       \ 'bb_pdflatex.bat', 
-      \ proj, root_id,
+      \ proj,
       \ '-c','build_pwg' ], ' ' )
 
   let src_dir = projs#builddir('src')
@@ -1048,7 +1048,7 @@ function! projs#action#async_build_bare (...)
 
   let start = localtime()
   call chdir(root)
-  let cmd = join([ 'bb_pdflatex.bat', proj, root_id ], ' ' )
+  let cmd = join([ 'bb_pdflatex.bat', proj ], ' ' )
   
   let env = {
     \ 'proj'  : proj,

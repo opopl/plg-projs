@@ -6,6 +6,7 @@ use warnings;
 
 use FindBin qw($Bin $Script);
 use File::Basename qw(basename dirname);
+use File::Spec::Functions qw(catfile);
 
 use Plg::Projs::Piwigo::SQL;
 
@@ -28,12 +29,15 @@ sub init {
 
 	my $pwg = Plg::Projs::Piwigo::SQL->new;
 
+	my $db_file = catfile($root,'projs.sqlite');
+
 	my $h = {
 		proj     => $proj,
 		root     => $root,
 		root_id  => $root_id,
 		tags_img => [qw(projs), ($proj, $root_id)],
 		pwg      => $pwg,
+		db_file  => $db_file,
 	};
 		
 	my @k = keys %$h;

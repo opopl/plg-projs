@@ -74,13 +74,13 @@ sub get_opt {
     );
 
     $self->{root}    = $Bin;
+    $self->{root_id} = basename($self->{root});
 
     unless( @ARGV ){ 
         $self->dhelp;
         exit 0;
     }else{
         $self->{proj}    = shift @ARGV;
-        $self->{root_id} = shift @ARGV;
 
         $cmdline = join(' ',@ARGV);
         GetOptions(\%opt,@optstr);
@@ -96,13 +96,13 @@ sub dhelp {
     my $s = qq{
 
     USAGE
-        $Script PROJ ROOT_ID OPTIONS
+        $Script PROJ OPTIONS
     OPTIONS
         --cmd -c CMD 
 
     EXAMPLES
-        $Script aa texdocs
-        $Script aa texdocs -c copy_to_builds
+        $Script aa 
+        $Script aa -c copy_to_builds
     };
 
     print $s . "\n";
@@ -993,14 +993,18 @@ sub run {
     my $proj_bib = catfile( $self->{out_dir}, "$proj.bib" );
     copy( $self->{bib_file}, $proj_bib ) 
         if -e $self->{bib_file};
-
+	
     my $cmd_tex = join(" ", @$self{qw( tex_exe tex_opts )}, $proj );
     system($cmd_tex);
 
     chdir $self->{build_dir};
     
     system(qq{ bibtex $proj } ) if -e $proj_bib;
-    system(qq{ texindy -L russian -C utf8 $proj.idx });
+
+	my $idx = "$proj.idx";
+	if (-e $idx) {
+    	system(qq{ texindy -L russian -C utf8 $idx });
+	}
 
     my $ind_file = catfile("$proj.ind");
     #$self->ind_ins_bmk($ind_file,1);

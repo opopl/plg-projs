@@ -26,6 +26,8 @@ sub init {
 
     unless (@ARGV) {
         print qq{
+            LOCATION:
+				$0
             USAGE:
                 $Script PROJ
         } . "\n";
