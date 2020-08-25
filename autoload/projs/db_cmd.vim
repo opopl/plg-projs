@@ -502,29 +502,42 @@ function! projs#db_cmd#_restore (...)
 endfunction
 
 if 0
-	call tree
-		calls
-			projs#db#sec#add_tags
+  call tree
+    calls
+      projs#db#sec#add_tags
 endif
 
 function! projs#db_cmd#sec_add_tags ()
-	call projs#db#sec#add_tags()
+  call projs#db#sec#add_tags()
 endfunction
 
 function! projs#db_cmd#sec_remove ()
-	let sec = input('section: ','','custom,projs#complete#secnames')
-	call projs#db#sec#remove({ 'sec' : sec })
+  let sec = input('section: ','','custom,projs#complete#secnames')
+  call projs#db#sec#remove({ 'sec' : sec })
 endfunction
 
 function! projs#db_cmd#list_secs ()
-	let ext = input('extension: ','tex')
-	let pat = input('pattern: ','')
+  let ext = input('extension: ','tex')
+  let pat = input('pattern: ','')
 
-	let secs = projs#db#secnames({ 
-		\	'ext' : ext,
-		\	'pat' : pat,
-		\	})
+  let secs = projs#db#secnames({ 
+    \ 'ext' : ext,
+    \ 'pat' : pat,
+    \ })
 
-	call base#buf#open_split({ 'lines' : secs })
+  let stl_add = [
+    \ '[ %2* v - view %0* ]'
+    \ ]
+
+  let cmds_after = [
+    \ 'resize99',
+    \ 'vnoremap <silent><buffer> v :call projs#db_cmd#list_secs#visual_open()<CR>',
+    \ ]
+
+  call base#buf#open_split({ 
+    \ 'lines'      : secs,
+    \ 'cmds_after' : cmds_after,
+    \ 'stl_add'    : stl_add,
+    \ })
 endfunction
 
