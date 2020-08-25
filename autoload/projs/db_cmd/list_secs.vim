@@ -14,7 +14,7 @@ python3 << eof
 import vim,re
 
 lines = vim.eval('lines')
-p = re.compile(r'^\s*(\w+)\s*$')
+p = re.compile('^\s*(\w+)\s*$')
 data = []
 for line in lines:
   m = p.match(line)
