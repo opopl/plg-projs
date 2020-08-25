@@ -455,34 +455,6 @@ sub _cmds_texindy {
     return @cmds;
 }
 
-sub _bu_cmds_pdflatex {
-    my ($self, $ref) = @_;
-
-    my $proj    = $self->{proj};
-
-    $ref ||= {};
-    my $dir = $ref->{dir} || '';
-
-    my @cmds;
-    my $tex     = $self->_cmd_pdflatex;
-    my $bib_tex = sprintf('bibtex %s',$proj);
-
-    my @texindy;
-        
-    my @ind_ins_bmk;
-    push @ind_ins_bmk,
-        qq{ call ind_ins_bmk $proj.ind 1 },
-        qq{ call ind_ins_bmk index.rus.ind 1 },
-        qq{ call ind_ins_bmk index.rus.ind 1 },
-        ;
-
-    push @cmds,
-        $tex, $bib_tex,
-        $tex, $tex,
-        ;
-    return @cmds;
-}
-
 sub _files_pdf_pwg {
     my ($self) = @_;
 
@@ -527,7 +499,7 @@ sub cmd_build_pwg {
     my $pdf_file = catfile($src_dir,'jnd.pdf');
 
     chdir $src_dir;
-    system("_pdflatex.bat");
+    system("_run_pdflatex.bat");
 
     my @dest;
     push @dest, 
@@ -861,7 +833,15 @@ sub create_bat_in_src {
                 sprintf('call jnd.pdf')
             ];
         },
-        '_tex.bat' => sub { 
+        '_xelatex.bat' => sub { 
+            my @cmds;
+            push @cmds, 
+                sprintf('call _clean.bat'),
+                sprintf('xelatex jnd'),
+                ;
+            return [@cmds];
+        },
+        '_pdflatex.bat' => sub { 
             my @cmds;
             push @cmds, 
                 sprintf('call _clean.bat'),
@@ -869,7 +849,7 @@ sub create_bat_in_src {
                 ;
             return [@cmds];
         },
-        '_pdflatex.bat' => sub { 
+        '_run_pdflatex.bat' => sub { 
             my @cmds;
             push @cmds, 
                 sprintf('call _clean.bat'),
