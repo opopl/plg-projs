@@ -618,8 +618,10 @@ sub cmd_insert_pwg {
         };
 
         m/^\s*\\fi/ && do { 
-            $is_cmt = 0;
-            next;
+			if ($is_cmt) {
+	            $is_cmt = 0;
+	            next;
+			}
         };
 
         unless($is_cmt || $is_tex){
@@ -885,16 +887,30 @@ sub create_bat_in_src {
         '_xelatex.bat' => sub { 
             my @cmds;
             push @cmds, 
+                ' ',
                 sprintf('call _clean.bat'),
-                sprintf('xelatex jnd'),
+                ' ',
+                sprintf('set opts='),
+                sprintf('set opts=%%opts%% -file-line-error'),
+                ' ',
+                sprintf('xelatex %%opts%% jnd'),
+                sprintf('xelatex %%opts%% jnd'),
+                ' ',
                 ;
             return [@cmds];
         },
         '_pdflatex.bat' => sub { 
             my @cmds;
             push @cmds, 
+                ' ',
                 sprintf('call _clean.bat'),
-                sprintf('pdflatex jnd'),
+                ' ',
+                sprintf('set opts='),
+                sprintf('set opts=%%opts%% -file-line-error'),
+                ' ',
+                sprintf('pdflatex %%opts%% jnd'),
+                sprintf('pdflatex %%opts%% jnd'),
+                ' ',
                 ;
             return [@cmds];
         },
