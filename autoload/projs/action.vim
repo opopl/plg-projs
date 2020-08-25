@@ -957,7 +957,7 @@ function! projs#action#async_build_perl (...)
   let proj = projs#proj#name()
   let proj = get(ref,'proj',proj)
 
-  let bfile = printf('%s.build.pl',proj)
+  let bfile = printf('%s.bld.pl',proj)
 
   let start = localtime()
   call chdir(root)
@@ -1005,6 +1005,10 @@ function! projs#action#async_build_perl_Fc (self,temp_file)
     call tex#efm#latex()
     exe 'cd ' . root
     exe 'cgetfile ' . a:temp_file
+
+		"let out = readfile(temp_file)
+		"call base#buf#open_split({ 'lines' : out })
+		"return 
     
     let err = getqflist()
     

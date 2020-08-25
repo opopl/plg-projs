@@ -10,6 +10,8 @@ use File::Basename qw(basename dirname);
 use File::Copy qw( copy );
 use File::Slurp::Unicode;
 
+use File::stat;
+
 use FindBin qw($Bin $Script);
 use File::Find qw(find);
 
@@ -86,6 +88,10 @@ sub get_opt {
         GetOptions(\%opt,@optstr);
         $self->{opt} = {%opt};
     }
+
+	foreach my $x (qw(cmd)) {
+		$self->{$x} = $self->{opt}->{$x};
+	}
 
     return $self;    
 }
@@ -178,8 +184,8 @@ sub _file_joined {
 sub _file_sec {
     my ($self, $sec, $ref) = @_;
 
-	$ref ||= {};
-	my $proj = $ref->{proj} || $self->{proj};
+    $ref ||= {};
+    my $proj = $ref->{proj} || $self->{proj};
 
     my $s = {
         '_main_' => sub { 
@@ -290,21 +296,21 @@ sub _ii_include {
 sub _join_lines {
     my ($self, $sec, $ref) = @_;
 
-	$ref ||= {};
+    $ref ||= {};
 
     $sec = '_main_' unless defined $sec;
 
     my $proj = $ref->{proj} || $self->{proj};
-	my $file = $ref->{file} || '';
- 	
-	my $ii_include_all = $ref->{ii_include_all} || $self->{ii_include_all};
+    my $file = $ref->{file} || '';
+
+    my @include = $self->_ii_include;
+    my @exclude = $self->_ii_exclude;
+    
+    my $ii_include_all = $ref->{ii_include_all} || $self->{ii_include_all};
 
     my $root = $self->{root};
 
     chdir $root;
-
-    my @include = $self->_ii_include;
-    my @exclude = $self->_ii_exclude;
 
     my $jfile = $self->_file_joined;
     mkpath $self->{src_dir};
@@ -330,32 +336,32 @@ sub _join_lines {
         m/$pats->{input}/ && do {
             my $fname   = $1;
 
-			my @files;
-			push @files,
-				$fname, qq{$fname.tex};
+            my @files;
+            push @files,
+                $fname, qq{$fname.tex};
 
-			while (@files) {
-				my $file = shift @files;
+            while (@files) {
+                my $file = shift @files;
 
-				next unless -e $file;
+                next unless -e $file;
 
-				my ($proj) = ($file =~ m/^(\w+)\./);
+                my ($proj) = ($file =~ m/^(\w+)\./);
 
-            	my @ii_lines = $self->_join_lines('',{ 
-					proj           => $proj,
-					file           => $file,
-					ii_include_all => 1,
-				});
+                my @ii_lines = $self->_join_lines('',{ 
+                    proj           => $proj,
+                    file           => $file,
+                    ii_include_all => 1,
+                });
 
-				push @lines, 
-	                $delim, '%% ' . $_, $delim,
-					@ii_lines
-					;
+                push @lines, 
+                    $delim, '%% ' . $_, $delim,
+                    @ii_lines
+                    ;
 
-			}
+            }
 
             next;
-		};
+        };
 
         m/$pats->{ii}/ && do {
             my $ii_sec   = $1;
@@ -409,7 +415,7 @@ sub _find_ {
             wanted => sub { 
                 foreach my $ext (@$exts) {
                     if (/\.$ext$/) {
-                        push @files,$_;
+                        push @files,$File::Find::name;
                     }
                 }
             } 
@@ -460,7 +466,9 @@ sub _cmds_texindy {
         rus => 'russian',
     };
 
-    foreach my $idx (@files_idx) {
+    foreach my $f (@files_idx) {
+		my $idx = basename($f);
+
         local $_ = $idx;
 
         my ($f) = (m/^(\w+)\./);
@@ -995,7 +1003,7 @@ sub cmd_copy_to_builds {
 sub run_cmd {
     my ($self) = @_;
 
-    if (my $cmd = $self->{opt}->{cmd}) {
+    if (my $cmd = $self->{cmd}) {
         my $sub = 'cmd_'.$cmd;
         if ($self->can($sub)) {
             $self->$sub;
@@ -1034,7 +1042,7 @@ sub run {
     my $proj_bib = catfile( $self->{out_dir}, "$proj.bib" );
     copy( $self->{bib_file}, $proj_bib ) 
         if -e $self->{bib_file};
-	
+    
     my $cmd_tex = join(" ", @$self{qw( tex_exe tex_opts )}, $proj );
     system($cmd_tex);
 
@@ -1042,10 +1050,10 @@ sub run {
     
     system(qq{ bibtex $proj } ) if -e $proj_bib;
 
-	my $idx = "$proj.idx";
-	if (-e $idx) {
-    	system(qq{ texindy -L russian -C utf8 $idx });
-	}
+    my $idx = "$proj.idx";
+    if (-e $idx) {
+        system(qq{ texindy -L russian -C utf8 $idx });
+    }
 
     my $ind_file = catfile("$proj.ind");
     #$self->ind_ins_bmk($ind_file,1);

@@ -47,6 +47,12 @@ sub init {
 	return $self;
 }
 
+sub _files {
+	my ($self, $ref) = @_;
+
+	$ref ||= {};
+}
+
 1;
  
 

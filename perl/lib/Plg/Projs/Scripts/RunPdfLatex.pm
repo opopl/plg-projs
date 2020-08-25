@@ -10,6 +10,9 @@ use FindBin qw($Bin $Script);
 use Cwd;
 use Data::Dumper qw(Dumper);
 
+use File::stat;
+use File::Path qw(rmtree);
+
 sub new
 {
     my ($class, %opts) = @_;
@@ -56,6 +59,28 @@ sub init {
     return $self;
 }
 
+sub rm_zero {
+    my ($self,$exts) = @_;
+
+    my $blx  = $self->{blx};
+
+    my $root = $self->{root};
+
+	my @files = $blx->_find_([$root],$exts);
+
+	foreach my $f (@files) {
+		my $st = stat($f);
+		my $size = $st->size;
+
+		unless ($size) {
+			rmtree($f);
+			next;
+		}
+	}
+
+    return $self;
+}
+
 sub run { 
     my ($self) = @_;
 
@@ -79,17 +104,26 @@ sub run {
         local $_ = $cmd;
 
         system("$_");
+		$self->rm_zero([qw( idx bbl mtc maf )]);
+
         /^\s*pdflatex\s+/ && ($i == 1) && do { 
             my @texindy = $blx->_cmds_texindy({ dir => $root });
-			#print Dumper(\@texindy) . "\n";
-			#return;
             unshift @cmds, @texindy;
         };
 
         /^\s*bibtex\s+/  && do { 
-            push @cmds, 
-                $blx->_cmd_pdflatex,
-                $blx->_cmd_pdflatex;
+
+			$self->rm_zero([qw( bbl )]);
+			
+			my @bbl = $blx->_find_([$root],[qw(bbl)]);
+
+	        push @cmds, 
+	           $blx->_cmd_pdflatex;
+
+			if (@bbl) {
+	            push @cmds, 
+	                $blx->_cmd_pdflatex;
+			}
         };
 
         $i++;
