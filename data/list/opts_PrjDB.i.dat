@@ -18,6 +18,7 @@ save_to_xml
 load_from_xml
 #
 sec_add_tags
-sec_remove
+#
+rm_sec
 #
 list_secs

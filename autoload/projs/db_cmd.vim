@@ -511,9 +511,13 @@ function! projs#db_cmd#sec_add_tags ()
   call projs#db#sec#add_tags()
 endfunction
 
-function! projs#db_cmd#sec_remove ()
+function! projs#db_cmd#rm_sec ()
   let sec = input('section: ','','custom,projs#complete#secnames')
-  call projs#db#sec#remove({ 'sec' : sec })
+
+  call projs#db#sec#remove({ 
+		\	'sec' : sec 
+		\	})
+
 endfunction
 
 function! projs#db_cmd#list_secs ()
