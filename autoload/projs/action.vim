@@ -973,7 +973,7 @@ function! projs#action#async_build_perl (...)
     call projs#action#async_build_perl_Fc(self,a:temp_file)
   endfunction
 
-  let msg = printf('async_build_perl: %s', proj, mode)
+  let msg = printf('async_build_perl: %s', proj)
   call base#rdw(msg)
 
   call asc#run({ 

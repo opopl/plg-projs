@@ -176,19 +176,22 @@ sub _file_joined {
 }
 
 sub _file_sec {
-    my ($self, $sec) = @_;
+    my ($self, $sec, $ref) = @_;
+
+	$ref ||= {};
+	my $proj = $ref->{proj} || $self->{proj};
 
     my $s = {
         '_main_' => sub { 
             catfile(
                 $self->{root},
-                join("." => ( $self->{proj}, 'tex' )) 
+                join("." => ( $proj, 'tex' )) 
             ) 
         },
         '_bib_' => sub { 
             catfile(
                 $self->{root},
-                join("." => ( $self->{proj}, 'refs.bib' )) 
+                join("." => ( $proj, 'refs.bib' )) 
             ) 
         },
     };
@@ -196,7 +199,7 @@ sub _file_sec {
     my $ss = $s->{$sec} || sub { 
             catfile(
                 $self->{root},
-                join("." => ( $self->{proj}, $sec, 'tex' )) 
+                join("." => ( $proj, $sec, 'tex' )) 
             );
     };
     my $f = $ss->();
@@ -285,12 +288,20 @@ sub _ii_include {
 }
 
 sub _join_lines {
-    my ($self, $sec) = @_;
+    my ($self, $sec, $ref) = @_;
 
-    $sec ||= '_main_';
+	$ref ||= {};
 
-    my $proj = $self->{proj};
-    chdir $self->{root};
+    $sec = '_main_' unless defined $sec;
+
+    my $proj = $ref->{proj} || $self->{proj};
+	my $file = $ref->{file} || '';
+ 	
+	my $ii_include_all = $ref->{ii_include_all} || $self->{ii_include_all};
+
+    my $root = $self->{root};
+
+    chdir $root;
 
     my @include = $self->_ii_include;
     my @exclude = $self->_ii_exclude;
@@ -298,7 +309,7 @@ sub _join_lines {
     my $jfile = $self->_file_joined;
     mkpath $self->{src_dir};
 
-    my $f = $self->_file_sec($sec);
+    my $f = $ref->{file} || $self->_file_sec($sec,{ proj => $proj });
 
     if (!-e $f){ return (); }
 
@@ -308,7 +319,7 @@ sub _join_lines {
     my $pats = {
          'ii'    => '^\s*\\\\ii\{(.+)\}.*$',
          'iifig' => '^\s*\\\\iifig\{(.+)\}.*$',
-         'input' => '^\s*\\\\input\{(.*)\}.*$',
+         'input' => '^\s*\\\\input\{(\S+)\}.*$',
     };
 
     my $delim = '%' x 50;  
@@ -316,16 +327,46 @@ sub _join_lines {
     foreach(@flines) {
         chomp;
 
+        m/$pats->{input}/ && do {
+            my $fname   = $1;
+
+			my @files;
+			push @files,
+				$fname, qq{$fname.tex};
+
+			while (@files) {
+				my $file = shift @files;
+
+				next unless -e $file;
+
+				my ($proj) = ($file =~ m/^(\w+)\./);
+
+            	my @ii_lines = $self->_join_lines('',{ 
+					proj           => $proj,
+					file           => $file,
+					ii_include_all => 1,
+				});
+
+				push @lines, 
+	                $delim, '%% ' . $_, $delim,
+					@ii_lines
+					;
+
+			}
+
+            next;
+		};
+
         m/$pats->{ii}/ && do {
             my $ii_sec   = $1;
 
-            my $iall = $self->{ii_include_all};
+            my $iall = $ii_include_all;
             my $inc = $iall || ( !$iall && grep { /^$ii_sec$/ } @include )
                 ? 1 : 0;
 
             next unless $inc;
 
-            my @ii_lines = $self->_join_lines($ii_sec);
+            my @ii_lines = $self->_join_lines($ii_sec,{ proj => $proj });
 
             push @lines, 
                 $delim,
@@ -338,7 +379,7 @@ sub _join_lines {
 
         m/$pats->{iifig}/ && do {
             my $fig_sec   = 'fig.' . $1;
-            my @fig_lines = $self->_join_lines($fig_sec);
+            my @fig_lines = $self->_join_lines($fig_sec,{ proj => $proj });
 
             push @lines, 
                 $delim,
