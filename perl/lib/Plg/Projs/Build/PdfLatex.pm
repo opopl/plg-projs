@@ -308,6 +308,9 @@ sub _join_lines {
     
     my $ii_include_all = $ref->{ii_include_all} || $self->{ii_include_all};
 
+	my $jl = $self->{join_lines} || {};
+	my $include_below = $ref->{include_below} || $jl->{include_below} || [];
+
     my $root = $self->{root};
 
     chdir $root;
@@ -326,12 +329,19 @@ sub _join_lines {
          'ii'    => '^\s*\\\\ii\{(.+)\}.*$',
          'iifig' => '^\s*\\\\iifig\{(.+)\}.*$',
          'input' => '^\s*\\\\input\{(\S+)\}.*$',
+         'sect'  => '^\s*\\\\(part|chapter|section|subsection|subsubsection|paragraph)\{.*\}\s*$',
     };
 
     my $delim = '%' x 50;  
  
+	my $sect;
     foreach(@flines) {
         chomp;
+
+        m/$pats->{sect}/ && do {
+			$sect = $1;
+			next;
+		};
 
         m/$pats->{input}/ && do {
             my $fname   = $1;
@@ -351,6 +361,7 @@ sub _join_lines {
                     proj           => $proj,
                     file           => $file,
                     ii_include_all => 1,
+					include_below  => $include_below,
                 });
 
                 push @lines, 
@@ -372,7 +383,13 @@ sub _join_lines {
 
             next unless $inc;
 
-            my @ii_lines = $self->_join_lines($ii_sec,{ proj => $proj });
+			$iall = grep { /^$sect$/ } @$include_below ? 1 : $iall;
+
+            my @ii_lines = $self->_join_lines($ii_sec,{ 
+				proj           => $proj,
+                ii_include_all => $iall,
+				include_below  => $include_below,
+			});
 
             push @lines, 
                 $delim,
