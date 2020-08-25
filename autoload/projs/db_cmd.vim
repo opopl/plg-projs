@@ -525,6 +525,16 @@ function! projs#db_cmd#list_secs ()
     \ 'pat' : pat,
     \ })
 
+  let lines = [ 'SECTIONS: ' ]
+	let data = [' ']
+	for sec in secs
+		call add(data,[sec])
+	endfor
+  call extend(lines, pymy#data#tabulate({
+    \ 'data'    : data,
+    \ 'headers' : base#qw('section'),
+    \ }))
+
   let stl_add = [
     \ '[ %2* v - view %0* ]'
     \ ]
@@ -535,7 +545,7 @@ function! projs#db_cmd#list_secs ()
     \ ]
 
   call base#buf#open_split({ 
-    \ 'lines'      : secs,
+    \ 'lines'      : lines,
     \ 'cmds_after' : cmds_after,
     \ 'stl_add'    : stl_add,
     \ })
