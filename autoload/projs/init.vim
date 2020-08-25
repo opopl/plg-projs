@@ -16,7 +16,7 @@ function! projs#init#root (...)
     let rootid = projs#varget('rootid','')
     let rootid = get(a:000,0,rootid)
 
-		let root = ''
+    let root = ''
     if len(rootid)
       let dir     = base#path(rootid)
 
@@ -241,8 +241,6 @@ function! projs#init#cmds (...)
   command! -nargs=* -complete=custom,projs#complete          PrjListSecs 
     \ call projs#proj#listsecnames(<f-args>)
   
-  command! -nargs=* -complete=custom,projs#complete#prjgit   PrjGit 
-    \ call projs#proj#git(<f-args>)
   
   "command! -nargs=* -complete=custom,projs#complete
     "\ PrjMake call projs#prjmake(<f-args>)
@@ -255,24 +253,28 @@ function! projs#init#cmds (...)
   
 """PrjAct
 if 0
-	BaseDatView projs_opts_PrjAct
+  BaseDatView projs_opts_PrjAct
 endif
   command! -nargs=* -complete=custom,projs#complete#prjact PrjAct
     \ call projs#action(<f-args>)
   
   "command! -nargs=* -complete=custom,projs#complete#prjtab PrjTab
     "\ call projs#tables(<f-args>)
+  "
+"""PrjGit
+  "command! -nargs=* -complete=custom,projs#complete#prjgit   PrjGit 
+    "\ call projs#proj#git(<f-args>)
   
   command! -nargs=* -complete=custom,projs#complete#prjgui PrjGui
     \ call projs#gui(<f-args>)
   
 """PrjBuf
-  command! -nargs=* -complete=custom,projs#complete#prjbuf PrjBuf
-    \ call projs#buf_cmd(<f-args>)
+  "command! -nargs=* -complete=custom,projs#complete#prjbuf PrjBuf
+    "\ call projs#buf_cmd(<f-args>)
   
 """PrjVisual
 if 0
-	BaseDatView projs_opts_PrjVisual
+  BaseDatView projs_opts_PrjVisual
 endif
   command! -nargs=* -range -complete=custom,projs#complete#prjvisual
     \ PrjVisual call projs#visual(<line1>,<line2>,<f-args>)

@@ -361,7 +361,20 @@ function! projs#db#url (...)
 endfunction
 
 if 0
-  call tree
+  Usage
+    let secs = projs#db#secnames ()
+    call base#buf#open_split({ 'lines' : secs })
+
+    let secs = projs#db#secnames ({ 'ext' : 'pl' })
+    call base#buf#open_split({ 'lines' : secs })
+
+    let secs = projs#db#secnames ()
+    echo secs
+
+  Return
+    LIST - array of secnames
+    
+  Call tree
     called by
       projs#proj#secnames
 endif
@@ -378,14 +391,49 @@ function! projs#db#secnames (...)
     let proj = get(ref,'proj',proj)
   endif
 
-  let q = 'SELECT sec FROM projs WHERE proj = ?'
+  let ext = get(ref,'ext','')
+  let pat = get(ref,'pat','')
+
+  let cond_a = []
+  if len(ext)
+    call add(cond_a,printf('file LIKE "%%.%s"',ext))
+  endif
+
+  let cond = join(cond_a, ' AND ')
+  if len(cond)
+    let cond = printf(' AND %s',cond)
+  endif
+  let q = printf('SELECT sec FROM projs WHERE proj = ? %s',cond)
   let ref = {
       \ 'query'  : q,
       \ 'params' : [proj],
       \ 'proj'   : proj,
       \ }
-  let rows = projs#db#query(ref)
-  return rows
+  let secs = projs#db#query(ref)
+
+  if len(pat)
+    if pat =~ '\w\+'
+      let pat = '.*' . pat . '.*'
+    endif
+python3 << eof
+import vim,re
+nsecs = []
+
+secs = vim.eval('secs')
+pat  = vim.eval('pat')
+
+pt   = re.compile(pat)
+
+for sec in secs:
+  m = pt.match(sec)
+  if m:
+    nsecs.append(sec)
+eof
+
+    let secs = py3eval('nsecs')
+  endif
+
+  return secs
 endfunction
 
 if 0

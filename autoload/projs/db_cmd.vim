@@ -501,49 +501,30 @@ function! projs#db_cmd#_restore (...)
   endif
 endfunction
 
-function! projs#db_cmd#sec_add_tags (...)
-  let msg_a = [
-    \  "Select proj: ",  
-    \  ]
-  let msg  = join(msg_a,"\n")
-  let proj = base#input_we(msg,'',{ 
-    \ 'complete' : 'custom,projs#complete' 
-    \ })
+if 0
+	call tree
+		calls
+			projs#db#sec#add_tags
+endif
 
-  call projs#proj#name(proj)
- 
-  let secs = projs#db#secnames({ 'proj' : proj })
-
-  let data = []
-  for sec in sort(secs)
-    let tags_a = projs#db#tags_get({ 'sec' : sec, 'proj' : proj })
-    let tags = join(tags_a, ',')
-    let r = { 
-      \ 'sec'  : sec,
-      \ 'tags' : tags
-      \ }
-    call add(data, r)
-  endfor
-
-  let lines = pymy#data#tabulate({
-    \ 'data_h'    : data,
-    \ 'headers'   : [ 'sec','tags' ],
-    \ })
-  call insert(lines,[ 'List of Sections' ])
-
-  let cmds_after = [ 
-    \ 'resize99',
-    \ 'vnoremap <silent><buffer> u :call projs#db_cmd#sec_add_tags#update()<CR>',
-    \ 'vnoremap <silent><buffer> v :call projs#db_cmd#sec_add_tags#view()<CR>',
-    \ ]
-
-  let stl_add = [
-      \  '[ %3* u - update %4* v - view %0* ]'  
-      \  ]
-
-  call base#buf#open_split({ 
-    \ 'lines'        : lines,
-    \ 'cmds_after'   : cmds_after,
-    \ 'stl_add'      : stl_add,
-    \ })
+function! projs#db_cmd#sec_add_tags ()
+	call projs#db#sec#add_tags()
 endfunction
+
+function! projs#db_cmd#sec_remove ()
+	let sec = input('section: ','','custom,projs#complete#secnames')
+	call projs#db#sec#remove({ 'sec' : sec })
+endfunction
+
+function! projs#db_cmd#list_secs ()
+	let ext = input('extension: ','tex')
+	let pat = input('pattern: ','')
+
+	let secs = projs#db#secnames({ 
+		\	'ext' : ext,
+		\	'pat' : pat,
+		\	})
+
+	call base#buf#open_split({ 'lines' : secs })
+endfunction
+

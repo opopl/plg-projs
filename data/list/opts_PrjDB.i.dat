@@ -14,6 +14,10 @@ buf_url_view_in_browser
 search
 _backup
 _restore
-sec_add_tags
 save_to_xml
 load_from_xml
+#
+sec_add_tags
+sec_remove
+#
+list_secs
