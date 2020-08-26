@@ -12,6 +12,8 @@ call base#buf#start()
 " if we are dealing with a 'projs' (La)TeX file
 "if ( ( b:dirname == b:root ) && ( b:ext == 'tex' ) )
 
+let b:relpath_projs = base#file#commonroot(b:root,b:dirname)
+
 if ( b:dirname == b:root )
   if b:ext == 'tex'
     call projs#buf#onload_tex_tex()

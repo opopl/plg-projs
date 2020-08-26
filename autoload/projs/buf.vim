@@ -26,10 +26,14 @@ endfunction
 
 if 0
   Used in:
+		projs_ftplugin_tex
     ftplugin/tex.vim
 endif
 
 function! projs#buf#onload_tex_tex ()
+	let msg = [ 'basename: ' . b:basename ]
+	let prf = { 'plugin' : 'projs', 'func' : 'projs#buf#onload_tex_tex' }
+	call base#log(msg, prf)
 
   call projs#onload()
 

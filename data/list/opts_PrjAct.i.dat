@@ -37,6 +37,8 @@ git_save
 git_add_texfiles
 ## 
 status
+###edt
+edt
 ###bld
 bld_compile
 bld_join

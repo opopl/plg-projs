@@ -560,7 +560,7 @@ if 0
        projs#maps
      called by
        projs#buf#onload_tex_tex
-         projs_ftplugin_tex
+       projs_ftplugin_tex
 endif
 
 function! projs#onload (...)
