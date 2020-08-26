@@ -319,7 +319,7 @@ sub _join_lines {
     my $ss        = $self->{sections} || {};
 
     my $ss_insert = $ss->{insert} || {};
-    my $ss_ttt = $ss_insert->{titletoc} || {};
+    my $ss_ttt = $ss_insert->{titletoc} || [];
 
     my $root = $self->{root};
 
@@ -345,6 +345,7 @@ sub _join_lines {
     my $delim = '%' x 50;  
  
     my $sect;
+    my @at_end;
     foreach(@flines) {
         chomp;
 
@@ -353,16 +354,23 @@ sub _join_lines {
 
             push @lines, $_;
 
-            my $scts = $ss_ttt->{scts} || [];
-            my $ttt_lines = $ss_ttt->{lines} || [];
+            foreach my $ttt (@$ss_ttt) {
 
-            my $ins_ttt = 0;
-            if (@$scts) {
-                $ins_ttt = (@$scts && grep { /^$sect$/ } @$scts) ? 1 : 0;
-            }
+                my $scts = $ttt->{scts} || [];
+                my $ttt_lines = $ttt->{lines} || [];
 
-            if ($ins_ttt) {
-                push @lines, @$ttt_lines;
+                my $ttt_lines_stop = $ttt->{lines_stop} || [];
+    
+                my $ins_ttt = 0;
+                if (@$scts) {
+                    $ins_ttt = (@$scts && grep { /^$sect$/ } @$scts) ? 1 : 0;
+                }
+    
+                if ($ins_ttt) {
+                    push @lines, @$ttt_lines;
+                    push @at_end, @$ttt_lines_stop;
+                }
+
             }
 
             next;
@@ -448,6 +456,7 @@ sub _join_lines {
 
         push @lines, $_;
     }
+    push @lines, @at_end;
 
     if ($sec eq '_main_') {
         write_file($jfile,join("\n",@lines) . "\n");
