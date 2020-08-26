@@ -271,6 +271,10 @@ sub _ii_include {
 
     my @base = $self->_ii_base;
 
+	my $s = $self->{sections} || {};
+	my @i = @{ $s->{include} || [] };
+	push @include, @i;
+
     if (-e $f_in) {
         my @i = readarr($f_in);
 
@@ -304,6 +308,7 @@ sub _join_lines {
     my $file = $ref->{file} || '';
 
     my @include = $self->_ii_include;
+
     my @exclude = $self->_ii_exclude;
     
     my $ii_include_all = $ref->{ii_include_all} || $self->{ii_include_all};
@@ -340,6 +345,8 @@ sub _join_lines {
 
         m/$pats->{sect}/ && do {
 			$sect = $1;
+
+        	push @lines, $_;
 			next;
 		};
 
@@ -377,13 +384,20 @@ sub _join_lines {
         m/$pats->{ii}/ && do {
             my $ii_sec   = $1;
 
+			if ($sect) {
+				print qq{ sect: $sect, ii_sec: $ii_sec }. "\n";
+				print Dumper($include_below) . "\n";
+			}
+
             my $iall = $ii_include_all;
+			if ($sect) {
+				$iall = ( grep { /^$sect$/ } @$include_below ) ? 1 : $iall;
+			}
+
             my $inc = $iall || ( !$iall && grep { /^$ii_sec$/ } @include )
                 ? 1 : 0;
 
             next unless $inc;
-
-			$iall = grep { /^$sect$/ } @$include_below ? 1 : $iall;
 
             my @ii_lines = $self->_join_lines($ii_sec,{ 
 				proj           => $proj,

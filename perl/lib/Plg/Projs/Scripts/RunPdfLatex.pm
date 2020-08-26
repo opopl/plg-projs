@@ -30,7 +30,7 @@ sub init {
     unless (@ARGV) {
         print qq{
             LOCATION:
-				$0
+                $0
             USAGE:
                 $Script PROJ
         } . "\n";
@@ -66,17 +66,18 @@ sub rm_zero {
 
     my $root = $self->{root};
 
-	my @files = $blx->_find_([$root],$exts);
+    my @files = $blx->_find_([$root],$exts);
 
-	foreach my $f (@files) {
-		my $st = stat($f);
-		my $size = $st->size;
+    foreach my $f (@files) {
+        my $st = stat($f);
+        my $size = $st->size;
 
-		unless ($size) {
-			rmtree($f);
-			next;
-		}
-	}
+        unless ($size) {
+            print $f . "\n";
+            rmtree($f);
+            next;
+        }
+    }
 
     return $self;
 }
@@ -104,7 +105,7 @@ sub run {
         local $_ = $cmd;
 
         system("$_");
-		$self->rm_zero([qw( idx bbl mtc maf )]);
+        $self->rm_zero([qw( idx bbl mtc maf )]);
 
         /^\s*pdflatex\s+/ && ($i == 1) && do { 
             my @texindy = $blx->_cmds_texindy({ dir => $root });
@@ -113,17 +114,17 @@ sub run {
 
         /^\s*bibtex\s+/  && do { 
 
-			$self->rm_zero([qw( bbl )]);
-			
-			my @bbl = $blx->_find_([$root],[qw(bbl)]);
+            $self->rm_zero([qw( bbl )]);
+            
+            my @bbl = $blx->_find_([$root],[qw(bbl)]);
 
-	        push @cmds, 
-	           $blx->_cmd_pdflatex;
+            push @cmds, 
+               $blx->_cmd_pdflatex;
 
-			if (@bbl) {
-	            push @cmds, 
-	                $blx->_cmd_pdflatex;
-			}
+            if (@bbl) {
+                push @cmds, 
+                    $blx->_cmd_pdflatex;
+            }
         };
 
         $i++;
