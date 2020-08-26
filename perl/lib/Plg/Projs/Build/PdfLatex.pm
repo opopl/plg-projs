@@ -528,7 +528,9 @@ sub _cmds_texindy {
         };
 
         push @cmds, 
-            $cmd_idx, $cmd_ind;
+            $cmd_idx, 
+            $cmd_ind
+            ;
     }
 
 
@@ -919,7 +921,9 @@ sub create_bat_in_src {
             my @cmds;
             push @cmds, 
                     ' ',
-                    q{$makeindex = "mkind %S";},
+                    q{$makeindex = "mkind jnd";},
+                    ' ',
+                    q{$pdf_mode = 1;},
                     ' '
                     ;
 
@@ -1095,7 +1099,18 @@ sub run_cmd {
 sub run {
     my ($self) = @_;
 
+    #print Dumper([@${self}{qw(cmd proj root root_id)}]) . "\n";
+
     $self->run_cmd;
+
+    $self->run_default;
+
+    
+    return $self;
+}
+
+sub run_default {
+    my ($self) = @_;
 
     mkpath $self->{build_dir};
 
@@ -1162,6 +1177,7 @@ sub run {
     }
 
     return $self;
+
 }
 
 1;

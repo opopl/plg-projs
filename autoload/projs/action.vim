@@ -940,15 +940,15 @@ endf
 
 if 0
   Usage
-    projs#action#async_build_perl()
+    projs#action#bld_compile()
   Call tree
     calls
       projs#proj#name
       projs#root
-      projs#action#async_build_perl_Fc
+      projs#action#bld_compile_Fc
 endif
 
-function! projs#action#async_build_perl (...) 
+function! projs#action#bld_compile (...) 
   let ref = get(a:000,0,{})
 
   let root    = projs#root()
@@ -961,7 +961,7 @@ function! projs#action#async_build_perl (...)
 
   let start = localtime()
   call chdir(root)
-  let cmd = join([ 'perl', bfile ], ' ' )
+  let cmd = join([ 'perl', bfile, 'compile' ], ' ' )
 
   let env = {
     \ 'proj'  : proj,
@@ -970,10 +970,10 @@ function! projs#action#async_build_perl (...)
     \ }
 
   function env.get(temp_file) dict
-    call projs#action#async_build_perl_Fc(self,a:temp_file)
+    call projs#action#bld_compile_Fc(self,a:temp_file)
   endfunction
 
-  let msg = printf('async_build_perl: %s', proj)
+  let msg = printf('bld_compile: %s', proj)
   call base#rdw(msg)
 
   call asc#run({ 
@@ -986,10 +986,10 @@ endf
 
 if 0
   called by
-    projs#action#async_build_perl
+    projs#action#bld_compile
 endif
 
-function! projs#action#async_build_perl_Fc (self,temp_file) 
+function! projs#action#bld_compile_Fc (self,temp_file) 
   let self      = a:self
   let temp_file = a:temp_file
 
