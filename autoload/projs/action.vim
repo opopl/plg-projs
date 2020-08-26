@@ -938,6 +938,60 @@ function! projs#action#async_build_pwg (...)
   return 1
 endf
 
+function! projs#action#edt (...) 
+  let ref = get(a:000,0,{})
+
+  let root    = projs#root()
+  let root_id = projs#rootid()
+
+  let proj = projs#proj#name()
+  let proj = get(ref,'proj',proj)
+
+  let efile = printf('%s.edt.pl',proj)
+
+  let start = localtime()
+  call chdir(root)
+  let cmd = join([ 'perl', efile ], ' ' )
+
+  let env = {
+    \ 'proj'  : proj,
+    \ 'root'  : root,
+    \ 'start' : start,
+    \ }
+
+  function env.get(temp_file) dict
+    call projs#action#edt_Fc(self,a:temp_file)
+  endfunction
+
+  let msg = printf('edt: %s', proj)
+  call base#rdw(msg)
+
+  call asc#run({ 
+    \ 'cmd' : cmd, 
+    \ 'Fn'  : asc#tab_restore(env) 
+    \ })
+  return 1
+
+endf
+
+function! projs#action#edt_Fc (self,temp_file) 
+  let self      = a:self
+  let temp_file = a:temp_file
+
+  let root    = self.root
+  let proj    = self.proj
+  let start   = self.start
+
+  let end      = localtime()
+  let duration = end - start
+  let s_dur    = ' ' . string(duration) . ' (secs)'
+  
+  if filereadable(a:temp_file)
+    let out = readfile(temp_file)
+    call base#buf#open_split({ 'lines' : out })
+  endif
+endf
+
 function! projs#action#bld_join (...) 
   let ref = get(a:000,0,{})
 
