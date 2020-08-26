@@ -37,7 +37,7 @@ function! projs#buf#onload_tex_tex ()
 
   call projs#onload()
 
-	if exists("b:proj")
+	if !exists("b:proj")
 		if !len(b:relpath_projs)
 	  	let b:proj = substitute(b:basename,'^\(\w\+\)\..*','\1','g')
 		else
