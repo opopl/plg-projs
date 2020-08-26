@@ -586,6 +586,9 @@ function! projs#onload (...)
 
   let b:projs_onload_done = 1
 
+	call projs#proj#name(b:proj)
+  call projs#varset("secname",b:sec)
+
   call projs#maps()
     
   let prf = { 'prf' : 'projs#onload' }
@@ -593,8 +596,8 @@ function! projs#onload (...)
     \ 'ref => ' . base#dump(ref),
     \ ],prf)
 
-  let proj = projs#proj#name()
-  let proj = get(ref,'proj',proj)
+  "let proj = projs#proj#name()
+  "let proj = get(ref,'proj',proj)
 
   StatusLine projs
 

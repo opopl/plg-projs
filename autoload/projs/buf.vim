@@ -32,6 +32,27 @@ endif
 
 function! projs#buf#onload_idat ()
 
+  if !exists("b:proj")
+    if !len(b:relpath_projs)
+      let b:proj = substitute(b:basename,'^\(\w\+\)\..*','\1','g')
+
+      let sc = matchstr(b:basename,'^\w\+\.\zs.*\ze\.i\.dat')
+
+      if sc == 'ii_include'
+        let b:sec  = '_ii_include_'
+      elseif sc == 'ii_exclude'
+        let b:sec  = '_ii_exclude_'
+      endif
+
+    else
+      let rp = base#file#ossplit(b:relpath_projs)
+      if (get(rp,0,'') == 'builds') && (get(rp,2,'') == 'src')
+        let b:proj = get(rp,1,'')
+      endif
+      
+    endif
+  endif
+
   call projs#onload()
 
 endfunction
@@ -47,8 +68,6 @@ function! projs#buf#onload_tex_tex ()
   let prf = { 'plugin' : 'projs', 'func' : 'projs#buf#onload_tex_tex' }
   call base#log(msg, prf)
 
-  call projs#onload()
-
   if !exists("b:proj")
     if !len(b:relpath_projs)
       let b:proj = substitute(b:basename,'^\(\w\+\)\..*','\1','g')
@@ -61,6 +80,8 @@ function! projs#buf#onload_tex_tex ()
       
     endif
   endif
+
+  call projs#onload()
 
   if base#inlist(b:proj,base#qw('inc jnames defs'))
     return
