@@ -37,7 +37,18 @@ function! projs#buf#onload_tex_tex ()
 
   call projs#onload()
 
-  let b:proj = substitute(b:basename,'^\(\w\+\)\..*','\1','g')
+	if exists("b:proj")
+		if !len(b:relpath_projs)
+	  	let b:proj = substitute(b:basename,'^\(\w\+\)\..*','\1','g')
+		else
+			let rp = base#file#ossplit(b:relpath_projs)
+			if (get(rp,0,'') == 'builds') && (get(rp,2,'') == 'src')
+				let b:proj = get(rp,1,'')
+				let b:sec  = '_tex_jnd_'
+			endif
+			
+		endif
+	endif
 
   if base#inlist(b:proj,base#qw('inc jnames defs'))
     return
@@ -47,11 +58,13 @@ function! projs#buf#onload_tex_tex ()
     return
   endif
 
-  let b:sec = projs#secfromfile({ 
-      \ "file" : b:basename ,
-      \ "type" : "basename" ,
-      \ "proj" : b:proj     ,
-      \ })
+	if !exists('b:sec')
+	  let b:sec = projs#secfromfile({ 
+	      \ "file" : b:basename ,
+	      \ "type" : "basename" ,
+	      \ "proj" : b:proj     ,
+	      \ })
+	endif
 
   call projs#sec#bufnr({ 
      \ 'sec'   : b:sec,
