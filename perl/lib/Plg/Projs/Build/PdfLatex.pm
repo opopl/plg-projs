@@ -89,9 +89,9 @@ sub get_opt {
         $self->{opt} = {%opt};
     }
 
-	foreach my $x (qw(cmd)) {
-		$self->{$x} = $self->{opt}->{$x};
-	}
+    foreach my $x (qw(cmd)) {
+        $self->{$x} = $self->{opt}->{$x};
+    }
 
     return $self;    
 }
@@ -271,9 +271,9 @@ sub _ii_include {
 
     my @base = $self->_ii_base;
 
-	my $s = $self->{sections} || {};
-	my @i = @{ $s->{include} || [] };
-	push @include, @i;
+    my $s = $self->{sections} || {};
+    my @i = @{ $s->{include} || [] };
+    push @include, @i;
 
     if (-e $f_in) {
         my @i = readarr($f_in);
@@ -313,8 +313,8 @@ sub _join_lines {
     
     my $ii_include_all = $ref->{ii_include_all} || $self->{ii_include_all};
 
-	my $jl = $self->{join_lines} || {};
-	my $include_below = $ref->{include_below} || $jl->{include_below} || [];
+    my $jl = $self->{join_lines} || {};
+    my $include_below = $ref->{include_below} || $jl->{include_below} || [];
 
     my $root = $self->{root};
 
@@ -339,16 +339,16 @@ sub _join_lines {
 
     my $delim = '%' x 50;  
  
-	my $sect;
+    my $sect;
     foreach(@flines) {
         chomp;
 
         m/$pats->{sect}/ && do {
-			$sect = $1;
+            $sect = $1;
 
-        	push @lines, $_;
-			next;
-		};
+            push @lines, $_;
+            next;
+        };
 
         m/$pats->{input}/ && do {
             my $fname   = $1;
@@ -368,7 +368,7 @@ sub _join_lines {
                     proj           => $proj,
                     file           => $file,
                     ii_include_all => 1,
-					include_below  => $include_below,
+                    include_below  => $include_below,
                 });
 
                 push @lines, 
@@ -384,15 +384,15 @@ sub _join_lines {
         m/$pats->{ii}/ && do {
             my $ii_sec   = $1;
 
-			if ($sect) {
-				print qq{ sect: $sect, ii_sec: $ii_sec }. "\n";
-				print Dumper($include_below) . "\n";
-			}
+            if ($sect) {
+                print qq{ sect: $sect, ii_sec: $ii_sec }. "\n";
+                print Dumper($include_below) . "\n";
+            }
 
             my $iall = $ii_include_all;
-			if ($sect) {
-				$iall = ( grep { /^$sect$/ } @$include_below ) ? 1 : $iall;
-			}
+            if ($sect) {
+                $iall = ( grep { /^$sect$/ } @$include_below ) ? 1 : $iall;
+            }
 
             my $inc = $iall || ( !$iall && grep { /^$ii_sec$/ } @include )
                 ? 1 : 0;
@@ -400,10 +400,10 @@ sub _join_lines {
             next unless $inc;
 
             my @ii_lines = $self->_join_lines($ii_sec,{ 
-				proj           => $proj,
+                proj           => $proj,
                 ii_include_all => $iall,
-				include_below  => $include_below,
-			});
+                include_below  => $include_below,
+            });
 
             push @lines, 
                 $delim,
@@ -498,7 +498,7 @@ sub _cmds_texindy {
     };
 
     foreach my $f (@files_idx) {
-		my $idx = basename($f);
+        my $idx = basename($f);
 
         local $_ = $idx;
 
@@ -649,10 +649,10 @@ sub cmd_insert_pwg {
         };
 
         m/^\s*\\fi/ && do { 
-			if ($is_cmt) {
-	            $is_cmt = 0;
-	            next;
-			}
+            if ($is_cmt) {
+                $is_cmt = 0;
+                next;
+            }
         };
 
         unless($is_cmt || $is_tex){
@@ -906,9 +906,14 @@ sub create_bat_in_src {
             ];
         },
         '_latexmk_pdf.bat' => sub { 
-            [
-                sprintf('latexmk -pdf jnd')
-            ];
+            my @cmds;
+            push @cmds, 
+                    ' ',
+                    sprintf('latexmk -pdf jnd'),
+                    ' '
+                    ;
+
+            return [@cmds];
         },
         '_view.bat' => sub { 
             [

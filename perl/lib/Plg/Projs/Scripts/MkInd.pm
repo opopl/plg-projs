@@ -58,6 +58,19 @@ sub init {
     return $self;
 }
 
+sub run {
+	my ($self) = @_;
+
+	my $root = $self->{root};
+
+	my $blx = $self->{blx};
+
+    my @texindy = $blx->_cmds_texindy({ dir => $root });
+	print Dumper(\@texindy) . "\n";
+
+    return $self;
+}
+
 1;
  
 
