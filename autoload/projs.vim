@@ -587,7 +587,10 @@ function! projs#onload (...)
   let b:projs_onload_done = 1
 
 	call projs#proj#name(b:proj)
-  call projs#varset("secname",b:sec)
+
+	if exists("b:sec")
+  	call projs#varset("secname",b:sec)
+	endif
 
   call projs#maps()
     

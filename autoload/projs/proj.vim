@@ -40,7 +40,7 @@ function! projs#proj#secname (...)
     let sec = a:1
     call projs#varset('secname',sec)
   else
-    let sec = projs#varget('secname','')
+   	let sec = projs#varget('secname','')
   endif
   return sec
 endfunction
