@@ -6,4 +6,8 @@ use utf8;
 
 use Data::Dumper qw(Dumper);
 
-my $cmd = sprintf("xindy %s",  join(" ",@ARGV));
+use base qw(
+	Plg::Projs::Scripts::MkInd
+);
+
+__PACKAGE__->new->run;
