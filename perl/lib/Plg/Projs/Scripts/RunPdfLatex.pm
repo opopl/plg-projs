@@ -97,6 +97,7 @@ sub run {
     push @cmds, 
         $blx->_cmd_pdflatex,
         $blx->_cmd_bibtex,
+        #$blx->_cmd_pdflatex,
         ;
 
     my $i = 1;
@@ -107,7 +108,8 @@ sub run {
         system("$_");
         $self->rm_zero([qw( idx bbl mtc maf )]);
 
-        /^\s*pdflatex\s+/ && ($i == 1) && do { 
+        /^\s*pdflatex\s+/ && do { 
+            #next unless ($i == 1);
             my @texindy = $blx->_cmds_texindy({ dir => $root });
             unshift @cmds, @texindy;
         };

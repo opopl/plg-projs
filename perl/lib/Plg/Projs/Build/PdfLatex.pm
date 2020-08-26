@@ -316,6 +316,9 @@ sub _join_lines {
     my $jl = $self->{join_lines} || {};
     my $include_below = $ref->{include_below} || $jl->{include_below} || [];
 
+    my $ss = $self->{sections} || {};
+    my $titletoc = $ss->{titletoc} || {};
+
     my $root = $self->{root};
 
     chdir $root;
@@ -347,6 +350,11 @@ sub _join_lines {
             $sect = $1;
 
             push @lines, $_;
+
+            if (my $insert = $titletoc->{insert}) {
+                push @lines, @$insert;
+            }
+
             next;
         };
 
@@ -948,7 +956,7 @@ sub create_bat_in_src {
             my @cmds;
             push @cmds, 
                 ' ',
-                sprintf('call _clean.bat'),
+                #sprintf('call _clean.bat'),
                 ' ',
                 sprintf('set opts='),
                 sprintf('set opts=%%opts%% -file-line-error'),
@@ -963,7 +971,7 @@ sub create_bat_in_src {
             my @cmds;
             push @cmds, 
                 ' ',
-                sprintf('call _clean.bat'),
+                #sprintf('call _clean.bat'),
                 ' ',
                 sprintf('set opts='),
                 sprintf('set opts=%%opts%% -file-line-error'),
@@ -1103,8 +1111,7 @@ sub run {
 
     $self->run_cmd;
 
-    $self->run_default;
-
+    #$self->run_default;
     
     return $self;
 }
