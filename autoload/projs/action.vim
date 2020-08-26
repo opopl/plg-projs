@@ -938,6 +938,43 @@ function! projs#action#async_build_pwg (...)
   return 1
 endf
 
+function! projs#action#bld_join (...) 
+  let ref = get(a:000,0,{})
+
+  let root    = projs#root()
+  let root_id = projs#rootid()
+
+  let proj = projs#proj#name()
+  let proj = get(ref,'proj',proj)
+
+  let bfile = printf('%s.bld.pl',proj)
+
+  let start = localtime()
+  call chdir(root)
+  let cmd = join([ 'perl', bfile, 'join' ], ' ' )
+
+  let env = {
+    \ 'proj'  : proj,
+    \ 'root'  : root,
+    \ 'start' : start,
+    \ }
+
+  function env.get(temp_file) dict
+    call projs#action#bld_join_Fc(self,a:temp_file)
+  endfunction
+
+  let msg = printf('bld_join: %s', proj)
+  call base#rdw(msg)
+
+  call asc#run({ 
+    \ 'cmd' : cmd, 
+    \ 'Fn'  : asc#tab_restore(env) 
+    \ })
+  return 1
+
+endf
+
+
 if 0
   Usage
     projs#action#bld_compile()
@@ -1006,9 +1043,9 @@ function! projs#action#bld_compile_Fc (self,temp_file)
     exe 'cd ' . root
     exe 'cgetfile ' . a:temp_file
 
-		"let out = readfile(temp_file)
-		"call base#buf#open_split({ 'lines' : out })
-		"return 
+    "let out = readfile(temp_file)
+    "call base#buf#open_split({ 'lines' : out })
+    "return 
     
     let err = getqflist()
     
@@ -1023,6 +1060,32 @@ function! projs#action#bld_compile_Fc (self,temp_file)
       BaseAct cclose
     endif
     echohl None
+  endif
+endf
+
+if 0
+  Usage
+    projs#action#bld_join_Fc(self,temp_file)
+  Call tree
+    called by
+      projs#action#bld_join
+endif
+
+function! projs#action#bld_join_Fc (self,temp_file) 
+  let self      = a:self
+  let temp_file = a:temp_file
+
+  let root    = self.root
+  let proj    = self.proj
+  let start   = self.start
+
+  let end      = localtime()
+  let duration = end - start
+  let s_dur    = ' ' . string(duration) . ' (secs)'
+  
+  if filereadable(a:temp_file)
+    let out = readfile(temp_file)
+    call base#buf#open_split({ 'lines' : out })
   endif
 endf
 

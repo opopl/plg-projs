@@ -316,8 +316,10 @@ sub _join_lines {
     my $jl = $self->{join_lines} || {};
     my $include_below = $ref->{include_below} || $jl->{include_below} || [];
 
-    my $ss = $self->{sections} || {};
-    my $titletoc = $ss->{titletoc} || {};
+    my $ss        = $self->{sections} || {};
+
+    my $ss_insert = $ss->{insert} || {};
+    my $ss_ttt = $ss_insert->{titletoc} || {};
 
     my $root = $self->{root};
 
@@ -351,8 +353,16 @@ sub _join_lines {
 
             push @lines, $_;
 
-            if (my $insert = $titletoc->{insert}) {
-                push @lines, @$insert;
+            my $scts = $ss_ttt->{scts} || [];
+            my $ttt_lines = $ss_ttt->{lines} || [];
+
+            my $ins_ttt = 0;
+            if (@$scts) {
+                $ins_ttt = (@$scts && grep { /^$sect$/ } @$scts) ? 1 : 0;
+            }
+
+            if ($ins_ttt) {
+                push @lines, @$ttt_lines;
             }
 
             next;
