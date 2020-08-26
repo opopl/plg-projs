@@ -384,10 +384,10 @@ sub _join_lines {
         m/$pats->{ii}/ && do {
             my $ii_sec   = $1;
 
-            if ($sect) {
-                print qq{ sect: $sect, ii_sec: $ii_sec }. "\n";
-                print Dumper($include_below) . "\n";
-            }
+            #if ($sect) {
+                #print qq{ sect: $sect, ii_sec: $ii_sec }. "\n";
+                #print Dumper($include_below) . "\n";
+            #}
 
             my $iall = $ii_include_all;
             if ($sect) {
@@ -915,6 +915,26 @@ sub create_bat_in_src {
 
             return [@cmds];
         },
+        'latexmkrc' => sub { 
+            my @cmds;
+            push @cmds, 
+                    ' ',
+                    q{$makeindex = "mkind %S";},
+                    ' '
+                    ;
+
+            return [@cmds];
+        },
+        '_mkind.bat' => sub { 
+            my @cmds;
+            push @cmds, 
+                    ' ',
+                    q{mkind jnd},
+                    ' '
+                    ;
+
+            return [@cmds];
+        },
         '_view.bat' => sub { 
             [
                 sprintf('call jnd.pdf')
@@ -1053,9 +1073,12 @@ sub cmd_copy_to_builds {
 }
 
 sub run_cmd {
-    my ($self) = @_;
+    my ($self, $ref) = @_;
 
-    if (my $cmd = $self->{cmd}) {
+    $ref ||= {};
+    my $cmd = $ref->{cmd} || $self->{cmd};
+
+    if ($cmd) {
         my $sub = 'cmd_'.$cmd;
         if ($self->can($sub)) {
             $self->$sub;

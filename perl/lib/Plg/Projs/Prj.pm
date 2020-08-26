@@ -33,6 +33,7 @@ sub init {
     my $root_id = basename($Bin);
     my $root    = $Bin;
 
+    local @ARGV = ();
     my $pwg = Plg::Projs::Piwigo::SQL->new;
 
     my $db_file = catfile($root,'projs.sqlite');

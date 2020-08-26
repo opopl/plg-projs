@@ -66,7 +66,9 @@ sub run {
 	my $blx = $self->{blx};
 
     my @texindy = $blx->_cmds_texindy({ dir => $root });
-	print Dumper(\@texindy) . "\n";
+	foreach my $cmd (@texindy) {
+		system("$cmd");
+	}
 
     return $self;
 }
