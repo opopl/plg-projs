@@ -183,7 +183,7 @@ for k in range(start, end + 1, 1):
     sec = gd['sec']
     sec = re.sub(r'\s','_',sec)
     sec = re.sub(r'[\./]','_',sec)
-    sec = re.sub(r'[\\]','',sec)
+    sec = re.sub(r'[\\`"\']','',sec)
     sec = sec.lower()
     sec = prefix + sec
     secs.append(sec)

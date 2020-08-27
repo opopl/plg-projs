@@ -296,6 +296,11 @@ function! projs#sec#file_base (...)
   return sfile
 endf
 
+if 0
+  called by
+    projs#sec#file
+endif
+
 function! projs#sec#file_base_a (...)
     
     let sec = projs#proj#secname()
@@ -304,6 +309,9 @@ function! projs#sec#file_base_a (...)
     let dot = '.'
 
     let proj = projs#proj#name()
+
+    let root_id = projs#rootid()
+
     let sfile_a = []
 
     let runext = (has('win32')) ? 'bat' : 'sh' 
@@ -318,14 +326,19 @@ function! projs#sec#file_base_a (...)
         let sec = substitute(sec,'^_perl\.\(.*\)$','\1','g')
         let sfile_a = [ printf('%s.%s.pl',proj,sec)]
 
+    elseif sec =~ '_pm.'
+        let sec = substitute(sec,'^_pm\.\(.*\)$','\1','g')
+        let sfile_a = [ 'perl', 'lib', 'projs', root_id, proj, printf('%s.pm',sec)]
+
+    elseif sec == '_pl_'
+        let sfile_a = [ proj.'.pl']
+
     elseif sec == '_sql_'
         let sfile_a = [ proj.'.sql']
 
     elseif sec == '_xml_'
         let sfile_a = [ proj.'.xml' ]
 
-    elseif sec == '_pl_'
-        let sfile_a = [ proj.'.pl']
 
     elseif sec == '_osecs_'
         let sfile_a = [ proj.'.secorder.i.dat']
@@ -675,25 +688,26 @@ endfunction
 
 if 0
   Usage
-	   call projs#sec#new(sec,{...})
+     call projs#sec#new(sec,{...})
 
-		 projs#sec#new(sec)
-		 projs#sec#new(sec,{ "git_add" : 1 })
-		 projs#sec#new(sec,{ "view" : 1 })
-		 projs#sec#new(sec,{ "prompt" : 0 })
-		 projs#sec#new(sec,{ "rewrite" : 1 })
+     projs#sec#new(sec)
+     projs#sec#new(sec,{ "git_add" : 1 })
+     projs#sec#new(sec,{ "view" : 1 })
+     projs#sec#new(sec,{ "prompt" : 0 })
+     projs#sec#new(sec,{ "rewrite" : 1 })
 
- 	end of subroutine: 
-		 end_projs_sec_new
 
   Call tree
-  	Calls
-    	projs#proj#name
-    	projs#buf#sec
-    	projs#sec#parent
-			projs#sec#lines_seccmd
+    Calls
+      projs#proj#name
+      projs#buf#sec
+      projs#sec#parent
+      projs#sec#lines_seccmd
+
 
 endif
+
+"""end_projs_sec_new
 
 function! projs#sec#new(sec,...)
     let sec        = a:sec
@@ -1060,8 +1074,8 @@ function! projs#sec#header (...)
 endf
 
 if 0
-	called by
-		projs#sec#new
+  called by
+    projs#sec#new
 endif
 
 function! projs#sec#lines_seccmd (...)

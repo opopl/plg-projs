@@ -71,7 +71,12 @@ def cleanup(db_file, root, proj):
   conn.commit()
   conn.close()
 
-def fill_from_files(db_file,root,rootid,proj,logfun):
+def insert_into_projs(ref):
+  conn = ref['conn']
+  c = conn.cursor()
+
+
+def fill_from_files(db_file, root, root_id, proj, logfun):
   conn = sqlite3.connect(db_file)
   c = conn.cursor()
 
@@ -86,7 +91,7 @@ def fill_from_files(db_file,root,rootid,proj,logfun):
               %s
           ''' % db_file)
 
-  pt_bib = re.compile('^(\w+)\.refs\.bib$')
+  pt_bib   = re.compile('^(\w+)\.refs\.bib$')
   pt_dat_i = re.compile('^(.*)\.i$')
 
   f = []
@@ -99,8 +104,6 @@ def fill_from_files(db_file,root,rootid,proj,logfun):
   h_projs = []
   for file in f:
     i+=1
-    #if i > 100:
-        #break
     fpath = os.path.join(root,file)
     m = pt.match(file)
     if m:
@@ -109,6 +112,8 @@ def fill_from_files(db_file,root,rootid,proj,logfun):
       x+=1
       if ( not proj ) or ( proj_m == proj ):
         sec    = m.group(2)
+
+
 
         if ext == 'tex':
           if not sec: 
@@ -145,7 +150,19 @@ def fill_from_files(db_file,root,rootid,proj,logfun):
         tags   = data.get('tags','')
         author = data.get('author','')
 
-        v_projs = [ proj_m, sec, file, root, rootid, tags, author ]
+#        insert_into_projs({
+            #'conn'    : conn,
+            #'insert' : { 
+            #'proj'    : proj_m,
+            #'file'    : sec,
+            #'root'    : root,
+            #'root_id' : root_id,
+            #'tags'    : tags,
+            #'author'  : author,
+            # }
+        #})
+
+        v_projs = [ proj_m, sec, file, root, root_id, tags, author ]
         q='''
             INSERT OR IGNORE INTO projs 
                 (proj,sec,file,root,rootid,tags,author) 
@@ -156,5 +173,17 @@ def fill_from_files(db_file,root,rootid,proj,logfun):
         except sqlite3.IntegrityError, e:
           logfun(e)
   conn.commit()
+
+  c.execute('''SELECT DISTINCT proj FROM projs''')
+  rows = c.fetchall()
+  for row in rows:
+    proj = row[0]
+    dir_pm = os.path.join(root,'perl','lib','projs',root_id,proj)
+    if os.path.isdir(dir_pm):
+      for (dirpath, dirnames, filenames) in os.walk(dir_pm):
+        for f in filenames:
+            file_pm = os.path.join(dir_pm,f)
+            print(file_pm)
+        break
   conn.close()
 
