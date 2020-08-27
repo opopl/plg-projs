@@ -33,6 +33,10 @@ function! projs#visual#append_to_sec (start, end, ... )
 
 endf
 
+if 0
+  PrjVisual ii_rename
+endif
+
 function! projs#visual#ii_rename (start, end, ... )
   let start = a:start
   let end   = a:end
@@ -70,7 +74,7 @@ function! projs#visual#ii_to_new_secs (start, end, ... )
 
   let secs = projs#visual#ii#secs(start,end)
 
-	let sec_type = 'subsection'
+  let sec_type = 'subsection'
   let sec_type = input('section type:',sec_type,'custom,projs#complete#sectypes')
 
   for sec in secs
@@ -115,7 +119,14 @@ function! projs#visual#help (...)
   call base#bufact_common#help ({ 'map_types' : base#qw('vnoremap') })
 endfunction
 
-"" split on subsubsection
+"""prjvisual_split_ss2
+
+if 0
+  Purpose
+    split on subsubsection
+endif
+
+
 function! projs#visual#split_ss2 (start, end, ... )
   let start  = a:start
   let end    = a:end
@@ -123,7 +134,8 @@ function! projs#visual#split_ss2 (start, end, ... )
   call base#CD('texdocs')
 
   let msg    = 'section prefix: '
-  let sec    = exists('b:sec') ? b:sec : ''
+  let sec    = projs#buf#sec()
+
   let prefix = input(msg,sec,'custom,projs#complete#secnames' )
 
   let msg_a = [

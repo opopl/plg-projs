@@ -319,7 +319,7 @@ sub _join_lines {
     my $ss        = $self->{sections} || {};
 
     my $ss_insert = $ss->{insert} || {};
-    my $ss_ttt = $ss_insert->{titletoc} || [];
+    my $ss_ttt    = $ss_insert->{titletoc} || [];
 
     my $root = $self->{root};
 
@@ -598,6 +598,7 @@ sub cmd_build_pwg {
     mkpath $self->{out_dir_pdf_pwg};
 
     $self->cmd_insert_pwg;
+	print 'a' . "\n";
 
     my @pdf_files = $self->_files_pdf_pwg;
 
@@ -1130,7 +1131,7 @@ sub run {
 
     $self->run_cmd;
 
-    #$self->run_default;
+    $self->run_default;
     
     return $self;
 }

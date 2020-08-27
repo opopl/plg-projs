@@ -232,6 +232,12 @@ sub ct_collected {
     my ($self) = @_;
 
     my $q = '';
+
+    my $dbh = $self->{dbh};
+	unless ($dbh) {
+		warn "ct_collected: NO DBH!" . "\n";
+		return $self;
+	}
     
     $q .= qq{
         SET CHARACTER SET utf8;
@@ -264,7 +270,7 @@ sub ct_collected {
 
     dbh_do({
         q   => $q,
-        dbh => $self->{dbh},
+        dbh => $dbh,
     });
 
     return $self;
@@ -284,6 +290,11 @@ sub cmd_img_by_tags {
     my ($self, $tags_s) = @_;
 
     my $dbh = $self->{dbh};
+
+	unless ($dbh) {
+		warn "img_by_tags: NO DBH!" . "\n";
+		return $self;
+	}
 
     $self->ct_collected;
 
