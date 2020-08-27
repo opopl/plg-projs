@@ -165,18 +165,22 @@ data      = {}
 sec_lines = []
 sec       = ''
 
-prefix      = vim.eval('prefix')
-split_macro = vim.eval('split_macro')
+prefix = vim.eval('prefix')
+macro  = vim.eval('split_macro')
+
+pt = re.compile(r'^\s*\\%s(?:\[(?P<opt>\w+)\])?{(?P<sec>.*)}\s*$' % macro)
 
 for k in range(start, end + 1, 1):
   i = k - 1
   n = k - start + 1
-  m = re.search(r'^\\' + split_macro + '{(.*)}\s*$', b[i])
+  m = re.search(pt, b[i])
   if m:
+    gd = m.groupdict()
     if len(sec):
       data.update({ sec : sec_lines })
     sec_lines = [ b[i] ]
-    sec = m.group(1)
+    opt = gd['opt']
+    sec = gd['sec']
     sec = re.sub(r'\s','_',sec)
     sec = re.sub(r'[\./]','_',sec)
     sec = re.sub(r'[\\]','',sec)

@@ -11,6 +11,7 @@ use File::Copy qw( copy );
 use File::Slurp::Unicode;
 
 use File::stat;
+use Cwd;
 
 use FindBin qw($Bin $Script);
 use File::Find qw(find);
@@ -75,7 +76,7 @@ sub get_opt {
         "cmd|c=s",
     );
 
-    $self->{root}    = $Bin;
+    $self->{root}    ||= getcwd();
     $self->{root_id} = basename($self->{root});
 
     unless( @ARGV ){ 
@@ -101,6 +102,10 @@ sub dhelp {
 
     my $s = qq{
 
+    ROOT:
+        $self->{root}
+    ROOT_ID:
+        $self->{root_id}
     USAGE
         $Script PROJ OPTIONS
     OPTIONS
@@ -598,7 +603,7 @@ sub cmd_build_pwg {
     mkpath $self->{out_dir_pdf_pwg};
 
     $self->cmd_insert_pwg;
-	print 'a' . "\n";
+    print 'a' . "\n";
 
     my @pdf_files = $self->_files_pdf_pwg;
 

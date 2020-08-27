@@ -42,7 +42,23 @@ eof
 
 endfunction
 
-function! projs#insert#def_iii ()
+
+function! projs#insert#def_ii ()
+	let proj = projs#proj#name()
+	let c = []
+
+	call add(c, ' ')
+	call add(c, '%%file f_main')
+	call add(c, ' ')
+	call add(c, printf('\def\PROJ{%s}',proj))
+	call add(c, '\def\ii#1{\InputIfFileExists{\PROJ.#1.tex}{}{}}' )
+	call add(c, ' ')
+
+	call append('.',c)
+
+endfunction
+
+function! projs#insert#def_jj ()
 
 	let sec = projs#buf#sec()
 	let c = printf('\def\jj#1{\InputIfFileExists{\PROJ.%s.#1.tex}{}{}}',sec)
@@ -50,6 +66,7 @@ function! projs#insert#def_iii ()
 	call append('.',c)
 
 endfunction
+
 
 function! projs#insert#figure ()
 

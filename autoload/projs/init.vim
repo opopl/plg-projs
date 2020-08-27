@@ -165,6 +165,10 @@ function! projs#init#cmds (...)
   
   "command! -nargs=* -complete=custom,projs#complete#projsdirslist
   "
+  
+ "command! -nargs=* -complete=custom,projs#complete#gitcmds    ProjsGit
+    "\ call projs#git(<f-args>)
+ "
 """ProjsInit
   command! -nargs=* -complete=custom,projs#complete#projsdirs ProjsInit
     \ call projs#init(<f-args>)
@@ -173,8 +177,6 @@ function! projs#init#cmds (...)
   command! -nargs=* -complete=custom,projs#complete#varlist    ProjsVarEcho 
     \ call projs#varecho(<f-args>)
   
-  command! -nargs=* -complete=custom,projs#complete#gitcmds    ProjsGit
-    \ call projs#git(<f-args>)
   
   command! -nargs=* -complete=custom,projs#complete#projsload  ProjsLoad
     \ call projs#load(<f-args>)

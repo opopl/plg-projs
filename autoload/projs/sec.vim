@@ -672,17 +672,27 @@ function! projs#sec#verb_new()
   return sec
 endfunction
 
-" projs#sec#new(sec)
-" projs#sec#new(sec,{ "git_add" : 1 })
-" projs#sec#new(sec,{ "view" : 1 })
-" projs#sec#new(sec,{ "prompt" : 0 })
-" projs#sec#new(sec,{ "rewrite" : 1 })
-"
-" end of function: end_projs_sec_new
-"
+
 if 0
   Usage
-    call projs#sec#new(sec,{...})
+	   call projs#sec#new(sec,{...})
+
+		 projs#sec#new(sec)
+		 projs#sec#new(sec,{ "git_add" : 1 })
+		 projs#sec#new(sec,{ "view" : 1 })
+		 projs#sec#new(sec,{ "prompt" : 0 })
+		 projs#sec#new(sec,{ "rewrite" : 1 })
+
+ 	end of subroutine: 
+		 end_projs_sec_new
+
+  Call tree
+  	Calls
+    	projs#proj#name
+    	projs#buf#sec
+    	projs#sec#parent
+			projs#sec#lines_seccmd
+
 endif
 
 function! projs#sec#new(sec,...)
@@ -790,25 +800,25 @@ function! projs#sec#new(sec,...)
 
           "let src_f .= '\small\LaTeX~section: \verb|%s| project: \verb|%s| rootid: \verb|%s|'
 
-          let s_a = [' ']
-          call add(s_a,'{')
-          call add(s_a,'\ifDEBUG')
-          call add(s_a,'\small')
-          call add(s_a,'\LaTeX~section: \verb|%s| project: \verb|%s| rootid: \verb|%s| ')
-          call add(s_a,'\fi')
-          call add(s_a,'}')
+"          let s_a = [' ']
+          "call add(s_a,'{')
+          "call add(s_a,'\ifDEBUG')
+          "call add(s_a,'\small')
+          "call add(s_a,'\LaTeX~section: \verb|%s| project: \verb|%s| rootid: \verb|%s| ')
+          "call add(s_a,'\fi')
+          "call add(s_a,'}')
 
-          let src_f = join(s_a, "")
+          "let src_f = join(s_a, "")
 
-          call extend(lines, [
-            \ printf('\%s{%s}' , sec_type, bw),
-            \ printf('\%s{%s}' , 'url', bw),
-            \ printf('  '),
-            \ printf('\vspace{%s}','0.5cm'),
-            \ printf(src_f, sec, proj, rootid),
-            \ printf('\vspace{%s}','0.5cm'),
-            \ printf('  '),
-            \ ])
+          "call extend(lines, [
+            "\ printf('\%s{%s}' , sec_type, bw),
+            "\ printf('\%s{%s}' , 'url', bw),
+            "\ printf('  '),
+            "\ printf('\vspace{%s}','0.5cm'),
+            "\ printf(src_f, sec, proj, rootid),
+            "\ printf('\vspace{%s}','0.5cm'),
+            "\ printf('  '),
+            "\ ])
         endif
  
     endif
@@ -1048,6 +1058,11 @@ function! projs#sec#header (...)
 
   return header
 endf
+
+if 0
+	called by
+		projs#sec#new
+endif
 
 function! projs#sec#lines_seccmd (...)
   let ref = get(a:000,0,{})
