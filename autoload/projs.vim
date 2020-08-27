@@ -581,6 +581,15 @@ function! projs#onload (...)
 
   TgSet projs_this
 
+	let root_c = projs#root()
+	call projs#rootid(b:rootid)
+
+	if (root_c != b:root)
+		call projs#root(b:root)
+
+		call projs#init(b:rootid)
+	endif
+
   let done = base#eval("b:projs_onload_done")
   if done | return | endif
 
@@ -992,7 +1001,7 @@ function! projs#init (...)
     let rootid = get(a:000,0,rootid)
 
     let l:start = localtime()
-    let msg = [ 'start' ]
+    let msg = [ printf('init: %s',rootid) ]
     let prf = { 'plugin' : 'projs', 'func' : 'projs#init' }
     call base#log(msg,prf)
 
@@ -1080,14 +1089,20 @@ function! projs#root (...)
     return projs#var('root')
 endf    
 
+function! projs#rootid (...)
+	let rootid = get(a:000,0,'')
+	if len(rootid)
+  	call projs#varset('rootid',rootid)
+	endif
+
+  return projs#varget('rootid','')
+endf  
+
 function! projs#url_dir ()
   let url_dir = join([ projs#root(), 'html', 'url' ],'/')
   return url_dir
 endf    
 
-function! projs#rootid ()
-    return projs#varget('rootid','')
-endf  
 
 function! projs#rootbasename ()
     let root = projs#root()

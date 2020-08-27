@@ -31,9 +31,7 @@ def create_tables(db_file, sql_file):
   conn.close()
 
 def drop_tables(db_file):
-  print('''Dropping tables in db: 
-            %s
-        ''' % db_file)
+  print('''Dropping tables in db: %s ''' % db_file)
   conn = sqlite3.connect(db_file)
   c = conn.cursor()
   
@@ -48,10 +46,10 @@ def get_data(filename):
     for line in lines:
       m = p['tags'].match(line)
       if m:
-        data['tags']=m.group(1)
+        data['tags'] = m.group(1)
       m = p['author'].match(line)
       if m:
-        data['author']=m.group(1)
+        data['author'] = m.group(1)
   return data
 
 def cleanup(db_file, root, proj):

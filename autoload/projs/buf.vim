@@ -25,6 +25,48 @@ function! projs#buf#url (...)
 endfunction
 
 if 0
+  call tree
+    called by
+      projs_ftplugin_tex
+      projs_ftplugin_idat
+endif
+
+function! projs#buf#check ()
+
+  let root_current    = projs#root()
+  
+  let dirids = base#varget('projs_projsdirs',[])
+  let dirs = []
+  for dirid in dirids
+    let dir = base#path(dirid)
+		if isdirectory(dir)
+    	call add(dirs,dir)
+		endif
+  endfor
+  
+  if base#inlist( b:dirname, dirs )
+    let b:root   = b:dirname
+    let b:rootid = fnamemodify(b:root,':p:h:t')
+
+		let root_c = projs#root()
+		call projs#rootid(b:rootid)
+
+		if (root_c != b:root)
+			call projs#root(b:root)
+
+			call projs#init(b:rootid)
+		endif
+  
+    let b:is_projs_file = 1
+  endif
+  
+  if exists("b:root")
+    let b:relpath_projs = base#file#reldir( b:dirname, b:root )
+  endif
+
+endfunction
+
+if 0
   Used in:
     projs_ftplugin_idat
     ftplugin/idat.vim
