@@ -150,6 +150,7 @@ sub init {
         out_dir_pdf_pwg => catfile($pdfout, $root_id, qw(pwg) ),
         dbfile          => catfile($root,'projs.sqlite'),
         pwg             => $pwg,
+        cmd             => 'bare',
     };
 
     push @$tex_opts_a, 
@@ -324,7 +325,9 @@ sub _join_lines {
     my $ss        = $self->{sections} || {};
 
     my $ss_insert = $ss->{insert} || {};
-    my $ss_ttt    = $ss_insert->{titletoc} || [];
+    my $line_sub = $ss->{line_sub} || sub { shift };
+
+    my @ins_order = qw( hyperlinks titletoc );
 
     my $root = $self->{root};
 
@@ -348,32 +351,52 @@ sub _join_lines {
     };
 
     my $delim = '%' x 50;  
+
+
+    my $r_sec = {
+        proj      => $proj,
+        sec       => $sec,
+        file      => $file,
+    };
  
     my $sect;
     my @at_end;
     foreach(@flines) {
         chomp;
 
+        $_ = $line_sub->($_, $r_sec);
+
+###pat_sect
         m/$pats->{sect}/ && do {
             $sect = $1;
+            
+            my $r = {
+                sect      => $sect,
+            };
 
             push @lines, $_;
 
-            foreach my $ttt (@$ss_ttt) {
+            foreach my $ord (@ins_order) {
+                my $ss    = $ss_insert->{$ord} || [];
 
-                my $scts = $ttt->{scts} || [];
-                my $ttt_lines = $ttt->{lines} || [];
+                foreach my $sss (@$ss) {
+                    my $scts      = $sss->{scts} || [];
+                    my $sss_lines = $sss->{lines} || [];
+    
+                    my $ins = 0;
+                    if (@$scts) {
+                        $ins = (@$scts && grep { /^$sect$/ } @$scts) ? 1 : 0;
+                    }
+        
+                    if ($ins) {
+                        my @a = (ref $sss_lines eq 'ARRAY') ? @$sss_lines : $sss_lines->($r);
+                        push @lines, @a;
 
-                my $ttt_lines_stop = $ttt->{lines_stop} || [];
+                        if ($ord eq 'titletoc') {
+                            push @at_end, @{ $sss->{lines_stop} || [] };
+                        }
+                    }
     
-                my $ins_ttt = 0;
-                if (@$scts) {
-                    $ins_ttt = (@$scts && grep { /^$sect$/ } @$scts) ? 1 : 0;
-                }
-    
-                if ($ins_ttt) {
-                    push @lines, @$ttt_lines;
-                    push @at_end, @$ttt_lines_stop;
                 }
 
             }
@@ -381,6 +404,7 @@ sub _join_lines {
             next;
         };
 
+###pat_input
         m/$pats->{input}/ && do {
             my $fname   = $1;
 
@@ -412,6 +436,7 @@ sub _join_lines {
             next;
         };
 
+###pat_ii
         m/$pats->{ii}/ && do {
             my $ii_sec   = $1;
 
@@ -445,6 +470,7 @@ sub _join_lines {
             next;
         };
 
+###pat_iifig
         m/$pats->{iifig}/ && do {
             my $fig_sec   = 'fig.' . $1;
             my @fig_lines = $self->_join_lines($fig_sec,{ proj => $proj });
@@ -1132,18 +1158,12 @@ sub run_cmd {
 sub run {
     my ($self) = @_;
 
-    #print Dumper([@${self}{qw(cmd proj root root_id)}]) . "\n";
-
-	#print $self->{cmd} . "\n";
     $self->run_cmd;
-	exit 0;
-
-    $self->run_default;
     
     return $self;
 }
 
-sub run_default {
+sub cmd_bare {
     my ($self) = @_;
 
     mkpath $self->{build_dir};

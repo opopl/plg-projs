@@ -1169,7 +1169,7 @@ function! projs#action#async_build_bare (...)
 
   let start = localtime()
   call chdir(root)
-  let cmd = join([ 'bb_pdflatex.bat', proj ], ' ' )
+  let cmd = join([ 'bb_pdflatex.bat', proj, '-c bare' ], ' ' )
   
   let env = {
     \ 'proj'  : proj,

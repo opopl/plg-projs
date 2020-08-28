@@ -43,12 +43,12 @@ sub ind_ins_bmk {
        };
 
        unless ($done) {
-		   my $bname = basename($ind_file);
+           my $bname = basename($ind_file);
 
            m/^\\begin\{theindex\}/ && do { $theindex=1; };
            m/^\\end\{theindex\}/ && do { $theindex=0; };
 
-		   my $dest = qq{ind-$bname-$i};
+           my $dest = qq{ind-$bname-$i};
 
            if($theindex){
     
@@ -59,7 +59,7 @@ sub ind_ins_bmk {
                        ^\s*\\lettergroup\{(.+)\}$
                    }{
                     \\hypertarget{$dest}{}\n
-					\\bookmark[level=$level,dest=$dest]{$1}\n 
+                    \\bookmark[level=$level,dest=$dest]{$1}\n 
                     \\lettergroup{$1}
                    }gmx;
         
