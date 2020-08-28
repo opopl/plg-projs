@@ -184,14 +184,15 @@ def fill_from_files(db_file, root, root_id, proj, logfun):
       for (dirpath, dirnames, filenames) in os.walk(dir_pm):
         for f in filenames:
             file_pm = os.path.join(dir_pm,f)
-            (head,tail) = os.path.split(file_pm)
-            (root,ext) = os.path.splitext(tail)
-            sec = '_pm.%s' % root 
+            pm_rel = os.path.relpath( file_pm, root )
+            (pm_head,pm_tail) = os.path.split(file_pm)
+            (pm_root,pm_ext) = os.path.splitext(pm_tail)
+            sec = '_pm.%s' % pm_root 
             insert_dict({
                 'conn'     : conn,
                 'table'    : 'projs',
                 'insert' : { 
-                  'file'    : file_pm,
+                  'file'    : pm_rel,
                   'proj'    : proj,
                   'root'    : root,
                   'rootid'  : root_id,
