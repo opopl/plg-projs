@@ -1134,7 +1134,9 @@ sub run {
 
     #print Dumper([@${self}{qw(cmd proj root root_id)}]) . "\n";
 
+	#print $self->{cmd} . "\n";
     $self->run_cmd;
+	exit 0;
 
     $self->run_default;
     
