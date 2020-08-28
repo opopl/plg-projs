@@ -1341,6 +1341,31 @@ function! projs#action#list_projs ()
 
 endfunction
 
+"""prjact_tex_show_command
+function! projs#action#tex_show_command ()
+	let root = projs#root()
+	let proj = projs#proj#name()
+
+	let bat = 'tex_show_command.bat'
+	
+	let env = {}
+	function env.get(temp_file) dict
+		let temp_file = a:temp_file
+		let code = self.return_code
+	
+		if filereadable(a:temp_file)
+			let out = readfile(a:temp_file)
+			call base#buf#open_split({ 'lines' : out })
+		endif
+	endfunction
+	
+	call asc#run({ 
+		\	'cmd' : cmd_bat, 
+		\	'Fn'  : asc#tab_restore(env) 
+		\	})
+
+endfunction
+
 if 0
   see also:
 endif

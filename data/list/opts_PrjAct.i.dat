@@ -64,9 +64,10 @@ url_view_txt
 maps_update
 html_out_view
 _plg_tex_view
-tex4ht_mk_dirs
-tex4ht_css_view
-tex4ht_js_view
+tex_show_command
+#tex4ht_mk_dirs
+#tex4ht_css_view
+#tex4ht_js_view
 info
 view_db_fill_tags_py3
 _xmlfile_view
