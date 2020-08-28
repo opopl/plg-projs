@@ -10,8 +10,8 @@ import sqlparse,sys
 p = { 
     'tex_file'   : re.compile('^(\w+)\.(?:(.*)\.|)tex'), 
     'proj_file'  : re.compile('^(\w+)\.(?:(.*)\.|)(tex|pl|vim)'), 
-    'tags'      : re.compile('^\s*%%tags (.*)$'),
-    'author'    : re.compile('^\s*%%author (.*)$')
+    'tags'       : re.compile('^\s*%%tags (.*)$'),
+    'author'     : re.compile('^\s*%%author (.*)$')
    }
 
 def create_tables(db_file, sql_file):
@@ -69,9 +69,24 @@ def cleanup(db_file, root, proj):
   conn.commit()
   conn.close()
 
-def insert_into_projs(ref):
-  conn = ref['conn']
+def insert_dict(ref):
+  conn     = ref.get('conn')
+  table    = ref.get('table')
+  if not conn:
+    return
   c = conn.cursor()
+  insert   = ref.get('insert',{})
+  fields   = insert.keys()
+  fields_s = ",".join(fields)
+  values   = list( map(lambda k: insert.get(k,''), fields) )
+  quot     = list( map(lambda k: '?', fields) )
+  quot_s   = ",".join(quot)
+  q=''' INSERT OR IGNORE INTO %s (%s) VALUES (%s)''' % (table,fields_s,quot_s)
+
+  try:
+    c.execute(q,values)
+  except sqlite3.IntegrityError, e:
+    print(e)
 
 
 def fill_from_files(db_file, root, root_id, proj, logfun):
@@ -111,8 +126,6 @@ def fill_from_files(db_file, root, root_id, proj, logfun):
       if ( not proj ) or ( proj_m == proj ):
         sec    = m.group(2)
 
-
-
         if ext == 'tex':
           if not sec: 
             sec = '_main_' 
@@ -148,29 +161,19 @@ def fill_from_files(db_file, root, root_id, proj, logfun):
         tags   = data.get('tags','')
         author = data.get('author','')
 
-#        insert_into_projs({
-            #'conn'    : conn,
-            #'insert' : { 
-            #'proj'    : proj_m,
-            #'file'    : sec,
-            #'root'    : root,
-            #'root_id' : root_id,
-            #'tags'    : tags,
-            #'author'  : author,
-            # }
-        #})
-
-        v_projs = [ proj_m, sec, file, root, root_id, tags, author ]
-        q='''
-            INSERT OR IGNORE INTO projs 
-                (proj,sec,file,root,rootid,tags,author) 
-            VALUES (?,?,?,?,?,?,?)
-            '''
-        try:
-          c.execute(q,v_projs)
-        except sqlite3.IntegrityError, e:
-          logfun(e)
-  conn.commit()
+        insert_dict({
+            'conn'     : conn,
+            'table'    : 'projs',
+            'insert' : { 
+              'author'  : author,
+              'file'    : file,
+              'proj'    : proj_m,
+              'root'    : root,
+              'rootid'  : root_id,
+              'sec'     : sec,
+              'tags'    : tags,
+             }
+        })
 
   c.execute('''SELECT DISTINCT proj FROM projs''')
   rows = c.fetchall()
@@ -181,7 +184,22 @@ def fill_from_files(db_file, root, root_id, proj, logfun):
       for (dirpath, dirnames, filenames) in os.walk(dir_pm):
         for f in filenames:
             file_pm = os.path.join(dir_pm,f)
-            print(file_pm)
+            (head,tail) = os.path.split(file_pm)
+            (root,ext) = os.path.splitext(tail)
+            sec = '_pm.%s' % root 
+            insert_dict({
+                'conn'     : conn,
+                'table'    : 'projs',
+                'insert' : { 
+                  'file'    : file_pm,
+                  'proj'    : proj,
+                  'root'    : root,
+                  'rootid'  : root_id,
+                  'sec'     : sec,
+                 }
+            })
         break
+
+  conn.commit()
   conn.close()
 
