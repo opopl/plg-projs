@@ -26,8 +26,63 @@ my @tex_opts=(
 
 $tex_exe = join(" ",$tex_exe, @tex_opts);
 
+my $preamble = q{
+\usepackage{ifpdf}
+\usepackage{ifxetex}
+
+\usepackage{xparse}
+\usepackage{titletoc}
+
+\usepackage{mathtext}
+
+\usepackage[OT1,T2A,T3]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[english,russian]{babel}
+
+\usepackage{iflang}
+
+\usepackage[titles]{tocloft}
+\usepackage{nameref}
+
+\usepackage{color,xcolor,colortbl}
+
+\usepackage[xindy]{imakeidx}
+\usepackage{etoolbox}
+
+\usepackage[ %
+  colorlinks=true,
+  linktoc=all,
+  linkcolor=blue,
+  letterpaper, %
+  unicode, %
+  linktocpage, %
+  bookmarksdepth=subparagraph,%
+  bookmarksnumbered=true,%
+]{hyperref}
+%hyperindex=false,%
+
+\usepackage{bookmark}
+\usepackage[hmargin={1cm,1cm},vmargin={2cm,2cm},centering]{geometry}
+\usepackage[export]{adjustbox}
+
+\usepackage{ifthen}
+\usepackage{longtable}
+\usepackage{graphicx}
+\usepackage{projs}
+\usepackage{multicol}
+\usepackage{pgffor}
+\usepackage{multicol}
+\usepackage{filecontents}
+\usepackage{tikz,pgffor}
+
+\usepackage[useregional]{datetime2}
+
+};
+
 my $tex_code = q{
 \documentclass{%s}
+%s
+
 \begin{document}
 \makeatletter
 \show%s
@@ -35,7 +90,7 @@ my $tex_code = q{
 \end{document}
 };
 
-$tex_code = sprintf($tex_code, $class, $cmd);
+$tex_code = sprintf($tex_code, $class, $preamble, $cmd);
 
 write_file($tex_file,$tex_code . "\n");
 

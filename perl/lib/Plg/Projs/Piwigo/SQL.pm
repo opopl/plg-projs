@@ -129,6 +129,7 @@ sub _tex_include_graphics {
     my $pic_opts = $self->_tex_pic_opts({ width => $w });
 
     my @tex;
+
     push @tex,
         sprintf(q{\def\picpath{\imgroot/%s}},$rel_path),
         sprintf(q{\includegraphics[%s]{\picpath}}, $pic_opts ),
@@ -146,7 +147,14 @@ sub _img_include_graphics {
 
     my @tex;
 
-    my $rel_path = $self->_img_rel_path({ tags => $ref->{tags} });
+    my @tags = @{ $ref->{tags} || [] };
+
+    my $rel_path = $self->_img_rel_path({ tags => \@tags });
+
+    unless ($rel_path) {
+        warn 'rel_path undefined for tags: ' . join(" ",@tags) . "\n";
+        return @tex;
+    }
 
     foreach($align) {
         /^center$/ && do { 
@@ -156,8 +164,8 @@ sub _img_include_graphics {
 
     push @tex,
         $self->_tex_include_graphics({ 
-                width    => $w,
-                rel_path => $rel_path })
+             width    => $w,
+             rel_path => $rel_path })
         ;
 
     return @tex;   
@@ -234,10 +242,10 @@ sub ct_collected {
     my $q = '';
 
     my $dbh = $self->{dbh};
-	unless ($dbh) {
-		warn "ct_collected: NO DBH!" . "\n";
-		return $self;
-	}
+    unless ($dbh) {
+        warn "ct_collected: NO DBH!" . "\n";
+        return $self;
+    }
     
     $q .= qq{
         SET CHARACTER SET utf8;
@@ -291,10 +299,10 @@ sub cmd_img_by_tags {
 
     my $dbh = $self->{dbh};
 
-	unless ($dbh) {
-		warn "img_by_tags: NO DBH!" . "\n";
-		return $self;
-	}
+    unless ($dbh) {
+        warn "img_by_tags: NO DBH!" . "\n";
+        return $self;
+    }
 
     $self->ct_collected;
 

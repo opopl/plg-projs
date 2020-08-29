@@ -14,6 +14,7 @@ use Plg::Projs::Piwigo::SQL;
 use Base::DB qw(
     dbi_connect
     dbh_select_as_list
+    dbh_select
 );
 
 
@@ -38,7 +39,6 @@ sub init {
     my $pwg = eval { Plg::Projs::Piwigo::SQL->new; };
 
     my $db_file = catfile($root,'projs.sqlite');
-    print Dumper($db_file) . "\n";
 
     my $h = {
         proj     => $proj,
@@ -93,12 +93,12 @@ sub _files {
 
     my $r = {
         dbh     => $dbh,
-        q       => q{ SELECT file FROM projs },
+        q       => q{ SELECT file, sec FROM projs },
         p       => [ $proj ],
         cond    => $cond,
     };
 
-    my $list = dbh_select_as_list($r);
+    my ($list,$cols) = dbh_select($r);
 
     wantarray ? @$list : $list;
 

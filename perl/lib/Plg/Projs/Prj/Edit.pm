@@ -10,6 +10,7 @@ use base qw(
 
 use File::Slurp::Unicode;
 use File::Spec::Functions qw(catfile);
+use Data::Dumper qw(Dumper);
 
 use utf8; 
 use Encode;
@@ -20,12 +21,8 @@ sub init {
 
     $self->SUPER::init();
 
-    my $h = {
-        subs => {
-            edit_line    => '',
-            process_file => '',
-        }
-    };
+    my $h = { 
+	};
         
     my @k = keys %$h;
 
@@ -42,20 +39,23 @@ sub edit_tex {
 
     my $files = $self->{files}->{tex} || [];
 
-    my $sub_file = $self->{subs}->{process_file};
-    my $sub_line = $self->{subs}->{edit_line};
+	my $subs = $self->{subs} || {};
 
-    foreach my $f (@$files) {
-        my $file = catfile($root, $f);
+    my $sub_file = $subs->{process_file};
+    my $sub_line = $subs->{edit_line};
 
-        my ($sec) = ($f =~ m/^$proj\.(.*)\.tex$/);
+    foreach my $row (@$files) {
+		my $file   = $row->{file};
+		my $sec    = $row->{sec};
+
+        my $file_path = catfile($root, $file);
 
         my $r_file = { 
-            root  => $root,
-            proj  => $proj,
-            file  => $file,
-            sec   => $sec,
-            f     => $f,
+            root      => $root,
+            proj      => $proj,
+            sec       => $sec,
+            file      => $file,
+            file_path => $file_path,
         };
 
         $r_file = $sub_file->($r_file) if $sub_file;
@@ -68,10 +68,11 @@ sub edit_tex {
         my @lines = read_file($file);
         my @nlines;
 
+		my $r_run = {};
         foreach(@lines) {
             chomp;
 
-            $_ = $sub_line->($_, $r_file ) if $sub_line;
+            $_ = $sub_line->($_, $r_file, $r_run ) if $sub_line;
 
             push @nlines, $_;
         }
