@@ -54,6 +54,20 @@ sub init {
     return $self;
 }
 
+sub fill_files {
+    my ($self) = @_;
+
+    $self->{files} = {};
+    foreach my $ext (qw( tex pl dat )) {
+        my $r = { 
+            'exts' => [ $ext ],
+        };
+        $self->{files}->{$ext} = $self->_files($r);
+    }
+
+    return $self;
+}
+
 sub _files {
     my ($self, $ref) = @_;
 
