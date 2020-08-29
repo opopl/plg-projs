@@ -22,7 +22,7 @@ sub init {
     $self->SUPER::init();
 
     my $h = { 
-	};
+    };
         
     my @k = keys %$h;
 
@@ -39,14 +39,14 @@ sub edit_tex {
 
     my $files = $self->{files}->{tex} || [];
 
-	my $subs = $self->{subs} || {};
+    my $subs = $self->{subs} || {};
 
     my $sub_file = $subs->{process_file};
     my $sub_line = $subs->{edit_line};
 
     foreach my $row (@$files) {
-		my $file   = $row->{file};
-		my $sec    = $row->{sec};
+        my $file   = $row->{file};
+        my $sec    = $row->{sec};
 
         my $file_path = catfile($root, $file);
 
@@ -58,7 +58,7 @@ sub edit_tex {
             file_path => $file_path,
         };
 
-        $r_file = $sub_file->($r_file) if $sub_file;
+        $r_file = $self->_sub('process_file', $r_file);
 
         unless (-e $file) {
             warn sprintf( 'NO FILE: %s', $file ) . "\n";
@@ -68,11 +68,11 @@ sub edit_tex {
         my @lines = read_file($file);
         my @nlines;
 
-		my $r_run = {};
+        my $r_run = {};
         foreach(@lines) {
             chomp;
 
-            $_ = $sub_line->($_, $r_file, $r_run ) if $sub_line;
+            $_ = $self->_sub('edit_line', $_, $r_file, $r_run );
 
             push @nlines, $_;
         }
@@ -83,6 +83,12 @@ sub edit_tex {
     return $self;
 }
 
+sub _sub {
+    my ($self, $sub, @args) = @_;
+
+    my $meth = sprintf(q{_sub_%s},$sub);
+    $self->$meth(@args) if $self->can($meth);
+}
 
 sub run {
     my ($self) = @_;
