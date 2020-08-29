@@ -22,7 +22,8 @@ sub init {
 
     my $h = {
         subs => {
-            edit_line => sub { }
+            edit_line    => '',
+            process_file => '',
         }
     };
         
@@ -40,6 +41,10 @@ sub edit_tex {
     my $proj = $self->{proj};
 
     my $files = $self->{files}->{tex} || [];
+
+    my $sub_file = $self->{subs}->{process_file};
+    my $sub_line = $self->{subs}->{edit_line};
+
     foreach my $f (@$files) {
         my $file = catfile($root, $f);
 
@@ -53,7 +58,7 @@ sub edit_tex {
             f     => $f,
         };
 
-        my $r_file = $self->{subs}->{process_file}->($r_file);
+        $r_file = $sub_file->($r_file) if $sub_file;
 
         unless (-e $file) {
             warn sprintf( 'NO FILE: %s', $file ) . "\n";
@@ -66,10 +71,11 @@ sub edit_tex {
         foreach(@lines) {
             chomp;
 
-            $self->{subs}->{edit_line}->($_, $r_file );
+            $_ = $sub_line->($_, $r_file ) if $sub_line;
 
             push @nlines, $_;
         }
+
         write_file($file,join("\n",@nlines) . "\n");
     }
 

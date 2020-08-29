@@ -7,6 +7,7 @@ use warnings;
 use FindBin qw($Bin $Script);
 use File::Basename qw(basename dirname);
 use File::Spec::Functions qw(catfile);
+use Data::Dumper qw(Dumper);
 
 use Plg::Projs::Piwigo::SQL;
 
@@ -34,9 +35,10 @@ sub init {
     my $root    = $Bin;
 
     local @ARGV = ();
-    my $pwg = Plg::Projs::Piwigo::SQL->new;
+    my $pwg = eval { Plg::Projs::Piwigo::SQL->new; };
 
     my $db_file = catfile($root,'projs.sqlite');
+    print Dumper($db_file) . "\n";
 
     my $h = {
         proj     => $proj,
