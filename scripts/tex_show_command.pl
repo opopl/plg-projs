@@ -47,7 +47,7 @@ $cmd =~ s/\s*$//g;
 my @def;
 my $is_def;
 
-my $i=0;
+my $i = 0;
 foreach(@lines) {
     chomp;
 
@@ -81,13 +81,4 @@ foreach(@lines) {
 for(@def){
     print $_ . "\n";
 }
-
-#my $out;
-#do {
-    #local *STDOUT;
-    #open STDOUT, ">>", \$out;
-#};
-#print "written to original STDOUT\n";
-
-#print "written to the variable\n";
 
