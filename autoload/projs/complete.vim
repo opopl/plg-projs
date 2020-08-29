@@ -151,6 +151,14 @@ function! projs#complete#prjinsert (...)
    return projs#complete#vars([ 'opts_PrjInsert' ])
 endfunction
 
+function! projs#complete#tex_macros (...)
+   return projs#complete#vars([ 'tex_macros' ])
+endfunction
+
+function! projs#complete#tex_documentclasses (...)
+   return base#complete#vars([ 'tex_documentclasses' ])
+endfunction
+
 function! projs#complete#templates_vim (...)
    let comps = keys(projs#varget('templates_vim',{}))
    return join(comps,"\n")

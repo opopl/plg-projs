@@ -1347,11 +1347,16 @@ function! projs#action#tex_show_command ()
 	let proj = projs#proj#name()
 
 	let bat = 'tex_show_command.bat'
+
+	let class   = input('class: ','','custom,projs#complete#tex_documentclasses')
+	let macro   = input('TeX macro: ','','custom,projs#complete#tex_macros')
+
+	let cmd_bat = join([ bat, macro, class ], ' ')
 	
 	let env = {}
 	function env.get(temp_file) dict
 		let temp_file = a:temp_file
-		let code = self.return_code
+		let code      = self.return_code
 	
 		if filereadable(a:temp_file)
 			let out = readfile(a:temp_file)
