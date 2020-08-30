@@ -169,8 +169,8 @@ function! projs#init#cmds (...)
  "command! -nargs=* -complete=custom,projs#complete#gitcmds    ProjsGit
     "\ call projs#git(<f-args>)
  "
-"""ProjsInit
-  command! -nargs=* -complete=custom,projs#complete#projsdirs ProjsInit
+"""PI
+  command! -nargs=* -complete=custom,projs#complete#projsdirs PI
     \ call projs#init(<f-args>)
   
 """ProjsVarEcho

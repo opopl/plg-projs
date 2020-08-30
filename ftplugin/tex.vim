@@ -15,6 +15,10 @@ call projs#buf#check()
 "if ( ( b:dirname == b:root ) && ( b:ext == 'tex' ) )
 "
 
+if !exists('b:root')
+	finish
+endif
+
 if ( b:dirname == b:root ) || (len(b:relpath_projs))
 
   if b:ext == 'tex'
