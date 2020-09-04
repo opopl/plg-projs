@@ -42,6 +42,34 @@ eof
 
 endfunction
 
+function! projs#insert#t_file ()
+	let c = []
+
+	let sec =  projs#buf#sec()
+
+	if !len(sec)
+		return 
+	endif
+
+	let cmts = {
+			\	'tex'  : '%%',
+			\	'vim'  : '"""',
+			\	'pl'   : '###',
+			\	}
+	let cmt = get(cmts,b:ext,'%%')
+
+	if sec == '_main_'
+		let sec = 'f_main'
+	endif
+
+	call add(c, ' ')
+	call add(c, cmt . 'file ' . sec)
+	call add(c, ' ')
+
+	call append('.',c)
+
+endfunction
+
 
 function! projs#insert#def_ii ()
 	let proj = projs#proj#name()
