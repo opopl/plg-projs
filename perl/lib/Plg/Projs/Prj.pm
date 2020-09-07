@@ -17,6 +17,8 @@ use Base::DB qw(
     dbh_select
 );
 
+use Base::Arg qw(hash_update);
+
 
 sub new
 {
@@ -36,22 +38,27 @@ sub init {
     my $root    = $Bin;
 
     local @ARGV = ();
-    my $pwg = eval { Plg::Projs::Piwigo::SQL->new; };
-
-    my $db_file = catfile($root,'projs.sqlite');
+    my $pwg = 
 
     my $h = {
         proj     => $proj,
         root     => $root,
         root_id  => $root_id,
-        tags_img => [qw(projs), ($proj, $root_id)],
-        pwg      => $pwg,
-        db_file  => $db_file,
+		load_pwg => 0,
     };
-        
+
     my @k = keys %$h;
 
-    for(@k){ $self->{$_} = $h->{$_} unless defined $self->{$_}; }
+    hash_update($self, $h, { keep_already_defined => 1 });
+
+	if ($self->{load_pwg}) {
+		$self->{pwg} ||= eval { Plg::Projs::Piwigo::SQL->new; };
+	}
+
+    $self->{db_file} ||= catfile($self->{root},'projs.sqlite');
+	$self->{tags_img} ||= [qw(projs), ( $self->{proj}, $self->{root_id} )];
+
+	$self->init_db;
 
     return $self;
 }
@@ -70,6 +77,40 @@ sub fill_files {
     return $self;
 }
 
+sub _projects {
+    my ($self, $ref) = @_;
+
+    $ref ||= {};
+	my $pat = $ref->{pat} || '';
+
+	my $projects = [];
+
+    my $r = {
+        dbh     => $self->{dbh},
+        q       => q{ SELECT proj FROM projs },
+        p       => [],
+    };
+
+    my ($list,$cols) = dbh_select($r);
+	foreach my $row (@$list) {
+		my $proj = $row->{proj};
+		push @$projects, $proj;
+	}
+
+	wantarray ? @$projects : $projects;
+}
+
+sub init_db {
+	my ($self) = @_;
+
+    my $db_file = $self->{db_file};
+    my $dbh = dbi_connect({
+        dbfile => $db_file
+    });
+
+	return $self;
+}
+
 sub _files {
     my ($self, $ref) = @_;
 
@@ -78,13 +119,9 @@ sub _files {
     my $pat  = $ref->{pat} || '';
     my $exts = $ref->{exts} || [];
 
-    my $db_file = $self->{db_file};
-
     my $proj = $self->{proj};
 
-    my $dbh = dbi_connect({
-        dbfile => $db_file
-    });
+	my $dbh = $self->{dbh};
 
     my $cond = q{ WHERE proj = ? };
     if (@$exts) {

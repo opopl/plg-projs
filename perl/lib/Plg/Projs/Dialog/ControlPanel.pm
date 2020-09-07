@@ -21,9 +21,19 @@ use FindBin qw( $Bin $Script );
 use lib "$Bin/../../base/perl/lib";
 use lib "$Bin/../perl/lib";
 
-use base qw( Plg::Base::Dialog );
+use Plg::Projs::Prj;
 
-use Base::Arg qw(hash_update);
+use Base::Arg qw(
+	hash_update
+);
+
+use base qw( 
+	Plg::Base::Dialog 
+);
+
+use Base::Arg qw(
+	hash_update
+);
 
 #https://www.perlmonks.org/?node_id=1185809
 sub Tk::Separator
@@ -53,11 +63,11 @@ sub tk_proc {
 
     $self
         #->tk_frame_build
-        ->tk_notebook
-        ->tk_sep_hz
-        ->tk_frame_view
-        ->tk_sep_hz
-        ->tk_frame_secs
+        ->tk_add_pages
+#        ->tk_sep_hz
+        #->tk_frame_view
+        #->tk_sep_hz
+        #->tk_frame_secs
         ;
 
     return $self;
@@ -82,16 +92,25 @@ sub nb_add {
 	my $nb = $self->{nb};
 
 	$ref ||= {};
+	my $pages = $ref->{pages} || [];
+	if (@$pages) {
+		foreach my $page (@$pages) {
+			$self->nb_add($page)
+		}
+		return $self;
+	}
 
-	my $page = $ref->{page} || {};
-
-	my $name  = $page->{name} || '';
-	my $label = $page->{label} || '';
+	my $name  = $ref->{name} || '';
+	my $label = $ref->{label} || '';
+	my $blk   = $ref->{blk} || sub { };
 
 	my $p = $nb->add($name, -label => $label); 
+
+	$blk->($p);
+
 	$self->{nb_pages} ||= {};
 
-	$self->{nb_pages}->{$name} = { p => $p, %$page };
+	$self->{nb_pages}->{$name} = { p => $p, %$ref };
 
 	return $self;
 }
@@ -105,30 +124,44 @@ sub _nb_page {
 	return $p;
 }
 
-sub tk_notebook {
+sub tk_add_pages {
     my ($self) = @_;
+
+	my @pages = (
+		{
+			'name'  => 'projs',
+			'label' => 'Projects', 
+			'blk'   =>  sub {
+				my ($wnd) = @_;
+
+				$wnd->Button(-text => 'Click me!')->pack( ); 
+			}
+		},
+		{
+			'name'  => 'bld',
+			'label' => 'Build', 
+			'blk'   =>  sub {
+				my ($wnd) = @_;
+
+				$wnd->Button(-text => 'Click me!')->pack( ); 
+			}
+		}
+	);
 
 	$self
 		->nb_create
-		->nb_add({ 
-			'name'  => 'projects',
-			'label' => 'Projects', 
-		})
+		->nb_add({ pages => \@pages })
 		;
-
-	$self->
-		_nb_page('projects')
-		->Button(-text => 'Click me!')->pack( ); 
 	
     return $self;
 }
 
 sub tk_sep_hz {
-    my ($self) = @_;
+    my ($self, $wnd) = @_;
 
-    my $mw = $self->{mw};
+    $wnd ||=  $self->{mw};
 
-    $mw->Tk::Separator( 
+    $wnd->Tk::Separator( 
         -orient => 'horizontal')
     ->pack( 
         -side => 'top', 
@@ -181,16 +214,16 @@ sub tk_frame_secs {
 }
 
 sub tk_frame_view { 
-    my ($self) = @_;
+    my ($self, $wnd) = @_;
 
-    my $mw = $self->{mw};
+    $wnd ||= $self->{mw};
 
-    $mw->Label( 
+    $wnd->Label( 
         -text => 'View', 
         -height => 2,
     )->pack;
 
-    my $fr_view = $mw->Frame()->pack(-side => 'top', -fill => 'x');
+    my $fr_view = $wnd->Frame()->pack(-side => 'top', -fill => 'x');
 
     $fr_view->Button(
         -text    => 'View HTML',
@@ -285,7 +318,9 @@ sub init {
 
     $self->SUPER::init();
 
-    my $h = { };
+    my $h = { 
+		prj => Plg::Projs::Prj->new,
+	};
     hash_update($self, $h, { keep_already_defined => 1 });
 
     return $self;

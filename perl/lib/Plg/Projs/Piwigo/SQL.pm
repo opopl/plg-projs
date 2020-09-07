@@ -42,6 +42,7 @@ sub init {
     my ($self) = @_;
 
     my $h = {
+		warn     => 1,
         user     => 'apopl',
         pwd      => 'root',
         dbfile   => 'piwigo',
@@ -224,10 +225,11 @@ sub init_db {
     my ($self) = @_;
 
     $self->{dbh} = dbi_connect({
-        user              => $self->{user},
-        pwd               => $self->{pwd},
-        dbfile            => $self->{dbfile},
-        driver            => $self->{driver},
+		warn   => $self->_sub_db_warn,
+        user   => $self->{user},
+        pwd    => $self->{pwd},
+        dbfile => $self->{dbfile},
+        driver => $self->{driver},
         attr => {
             mysql_enable_utf8 => 1,
         }
@@ -243,7 +245,9 @@ sub ct_collected {
 
     my $dbh = $self->{dbh};
     unless ($dbh) {
-        warn "ct_collected: NO DBH!" . "\n";
+		if ($self->{warn}) {
+        	warn "ct_collected: NO DBH!" . "\n" ;
+		}
         return $self;
     }
     
@@ -277,11 +281,19 @@ sub ct_collected {
     };
 
     dbh_do({
-        q   => $q,
-        dbh => $dbh,
+		warn => $self->_sub_db_warn,
+        q    => $q,
+        dbh  => $dbh,
     });
 
     return $self;
+}
+
+sub _sub_db_warn {
+	my ($self) = @_;
+
+	$self->{warn} ? sub { warn $_ for(@_) } : sub{};
+
 }
 
 sub cmd_ct_collected {
@@ -326,9 +338,10 @@ sub cmd_img_by_tags {
     } 
 
     ($rows,$cols) = dbh_select({
-        dbh => $dbh,
-        q   => qq{ SELECT DISTINCT path, comment FROM collected $cond },
-        p   => [],
+		warn => $self->_sub_db_warn,
+        dbh  => $dbh,
+        q    => qq{ SELECT DISTINCT path, comment FROM collected $cond },
+        p    => [],
     });
 
     my @img;
