@@ -38,7 +38,6 @@ sub init {
     my $root    = $Bin;
 
     local @ARGV = ();
-    my $pwg = 
 
     my $h = {
         proj     => $proj,

@@ -55,10 +55,19 @@ sub tk_proc {
 
     $self->{mw} = $mw;
 
-    my $proj       = $self->{data}->{proj} || '';
+	foreach my $x (qw(root rootid proj)) {
+    	$self->{$x}   = $self->{data}->{$x} || '';
+	}
+		
+	$self->{prj} = Plg::Projs::Prj->new( 
+		proj    => $self->{proj},
+		root    => $self->{root},
+		root_id => $self->{rootid},
+	);
+
     my $servername = $self->{data}->{vim}->{servername} || '';
 
-    $mw->title($proj);
+    $mw->title($self->{proj});
     $mw->geometry("400x200+0+0"); 
 
     $self
@@ -127,6 +136,9 @@ sub _nb_page {
 sub tk_add_pages {
     my ($self) = @_;
 
+	my $prj = $self->{prj};
+	print Dumper([@$prj{qw( root root_id proj )}]) . "\n";
+
 	my @pages = (
 		{
 			'name'  => 'projs',
@@ -134,7 +146,10 @@ sub tk_add_pages {
 			'blk'   =>  sub {
 				my ($wnd) = @_;
 
-				$wnd->Button(-text => 'Click me!')->pack( ); 
+				foreach my $proj ($prj->_projects) {
+					$wnd->Button(-text => $proj)->pack( ); 
+				}
+
 			}
 		},
 		{
@@ -319,7 +334,7 @@ sub init {
     $self->SUPER::init();
 
     my $h = { 
-		prj => Plg::Projs::Prj->new,
+
 	};
     hash_update($self, $h, { keep_already_defined => 1 });
 
