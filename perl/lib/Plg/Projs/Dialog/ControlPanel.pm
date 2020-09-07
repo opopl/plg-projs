@@ -1,9 +1,9 @@
 
-package Plg::Projs::Dialog::ProjToolbar;
+package Plg::Projs::Dialog::ControlPanel;
 
 =head1 NAME
 
-Plg::Projs::Dialog::ProjToolbar - 
+Plg::Projs::Dialog::ControlPanel - 
 
 =cut
 
@@ -13,6 +13,7 @@ use warnings;
 use Data::Dumper qw(Dumper);
 
 use Tk;
+use Tk::NoteBook;
 use Tk::widgets;
 
 use FindBin qw( $Bin $Script );
@@ -51,13 +52,74 @@ sub tk_proc {
     $mw->geometry("400x200+0+0"); 
 
     $self
-        ->tk_frame_build
+        #->tk_frame_build
+        ->tk_notebook
         ->tk_sep_hz
         ->tk_frame_view
         ->tk_sep_hz
         ->tk_frame_secs
         ;
 
+    return $self;
+}
+
+sub nb_create {
+	my ($self) = @_;
+
+	my $mw = $self->{mw};
+	my $nb = $mw
+		->NoteBook( )
+		->pack( -expand => 1, -fill => 'both' ); 
+	$self->{nb} = $nb;
+
+    return $self;
+}
+
+sub nb_add {
+	my ($self, $ref) = @_;
+	
+	my $mw = $self->{mw};
+	my $nb = $self->{nb};
+
+	$ref ||= {};
+
+	my $page = $ref->{page} || {};
+
+	my $name  = $page->{name} || '';
+	my $label = $page->{label} || '';
+
+	my $p = $nb->add($name, -label => $label); 
+	$self->{nb_pages} ||= {};
+
+	$self->{nb_pages}->{$name} = { p => $p, %$page };
+
+	return $self;
+}
+
+sub _nb_page {
+	my ($self, $name) = @_;
+
+	my $sp = $self->{nb_pages}->{$name} || {};
+	my $p = $sp->{p};
+
+	return $p;
+}
+
+sub tk_notebook {
+    my ($self) = @_;
+
+	$self
+		->nb_create
+		->nb_add({ 
+			'name'  => 'projects',
+			'label' => 'Projects', 
+		})
+		;
+
+	$self->
+		_nb_page('projects')
+		->Button(-text => 'Click me!')->pack( ); 
+	
     return $self;
 }
 

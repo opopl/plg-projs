@@ -259,6 +259,8 @@ if 0
 endif
   command! -nargs=* -complete=custom,projs#complete#prjact PrjAct
     \ call projs#action(<f-args>)
+  command! -nargs=* -complete=custom,projs#complete#prjact PA
+    \ call projs#action(<f-args>)
   
   "command! -nargs=* -complete=custom,projs#complete#prjtab PrjTab
     "\ call projs#tables(<f-args>)
@@ -267,7 +269,7 @@ endif
   "command! -nargs=* -complete=custom,projs#complete#prjgit   PrjGit 
     "\ call projs#proj#git(<f-args>)
   
-  command! -nargs=* -complete=custom,projs#complete#prjgui PrjGui
+  command! -nargs=* -complete=custom,projs#complete#prjgui PG
     \ call projs#gui(<f-args>)
   
 """PrjBuf

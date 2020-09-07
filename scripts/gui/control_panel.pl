@@ -11,7 +11,7 @@ package main;
 use FindBin qw($Bin);
 use lib "$Bin/../../perl/lib";
 
-use base qw( Plg::Projs::Dialog::ProjToolbar );
+use base qw( Plg::Projs::Dialog::ControlPanel );
 
 __PACKAGE__->new->run;
 

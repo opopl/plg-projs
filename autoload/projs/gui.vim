@@ -3,10 +3,10 @@ if 0
   TgAdd perl_inc_plg_projs
   TgAdd perl_inc_plg_base
   tag Plg::Base::Dialog
-  tag Plg::Projs::Dialog::ProjToolbar
+  tag Plg::Projs::Dialog::ControlPanel
 endif
 
-function! projs#gui#proj_toolbar ()
+function! projs#gui#control_panel ()
   let projs = projs#list()
   let proj  = projs#proj#name()
   
@@ -21,7 +21,7 @@ function! projs#gui#proj_toolbar ()
   let r = {
       \ 'data'   : data,
       \ 'dir'    : base#qw#catpath('plg projs scripts gui'),
-      \ 'script' : 'proj_toolbar',
+      \ 'script' : 'control_panel',
       \ 'args'   : [ '' ],
       \ }
   call base#script#run(r) 
