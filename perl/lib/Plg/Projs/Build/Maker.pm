@@ -30,6 +30,8 @@ use base qw(
     Plg::Projs::Build::Maker::IndFile
 );
 
+use Base::Arg qw(hash_update);
+
 use utf8; 
 use Encode;
 #use open qw(:utf8 :std);
@@ -178,9 +180,7 @@ sub init {
         out_dir_pdf_b => catfile($h->{out_dir_pdf}, qw(b_pdflatex) )
     };
 
-    my @k = keys %$h;
-
-    for(@k){ $self->{$_} = $h->{$_} unless defined $self->{$_}; }
+	hash_update($self, $h, { keep_already_defined => 1 });
 
     return $self;
 }
@@ -647,7 +647,8 @@ sub cmd_build_pwg {
     my $pdf_file = catfile($src_dir,'jnd.pdf');
 
     chdir $src_dir;
-    system("_run_tex.bat");
+	my $cmd = sprintf(q{_run_tex.bat -x %s},$self->{tex_exe});
+    system($cmd);
 
     my @dest;
     push @dest, 
@@ -1044,7 +1045,7 @@ sub create_bat_in_src {
             my @cmds;
             push @cmds, 
                 sprintf('call _clean.bat'),
-                sprintf('run_tex jnd'),
+                sprintf('run_tex jnd %%*'),
                 ;
             return [@cmds];
         },

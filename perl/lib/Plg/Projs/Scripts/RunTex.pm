@@ -13,6 +13,8 @@ use Data::Dumper qw(Dumper);
 use File::stat;
 use File::Path qw(rmtree);
 
+use Getopt::Long qw(GetOptions);
+
 use Base::Arg qw(hash_update);
 
 sub new
@@ -28,6 +30,23 @@ sub new
 
 sub init {
     my $self = shift;
+
+    my $h = {
+        tex_exe => 'pdflatex',
+    };
+    hash_update($self, $h, { keep_already_defined => 1 });
+
+    $self
+        ->get_proj
+        ->get_opt
+        ->init_blx
+        ;
+
+    return $self;
+}
+
+sub get_proj {
+    my ($self) = @_;
 
     unless (@ARGV) {
         print qq{
@@ -51,10 +70,53 @@ sub init {
     my $h = {
         proj => $proj,
         root => $root,
+    };
+    hash_update($self, $h, { keep_already_defined => 1 });
+
+    return $self;
+}
+
+      
+sub get_opt {
+    my ($self) = @_;
+
+    my (%opt, @optstr);
+    
+    Getopt::Long::Configure(qw(bundling no_getopt_compat no_auto_abbrev no_ignore_case_always));
+    
+    @optstr = ( 
+        "tex_exe|x=s",
+    );
+    
+    if(@ARGV){
+        GetOptions(\%opt,@optstr);
+    }
+
+    foreach my $x (qw(tex_exe)) {
+        next unless defined $opt{$x};
+
+        $self->{$x} = $opt{$x}; 
+    }
+
+
+    return $self;   
+}
+
+sub init_blx {
+    my ($self) = @_;
+
+    my $blx = Plg::Projs::Build::Maker->new( 
+        skip_get_opt => 1,
+        proj         => $self->{proj},
+        root         => $self->{root},
+        tex_exe      => $self->{tex_exe},
+    );
+
+    my $h = {
         blx  => $blx,
     };
-	hash_update($self, $h, { keep_already_defined => 1 });
-        
+    hash_update($self, $h, { keep_already_defined => 1 });
+
     return $self;
 }
 
@@ -88,7 +150,7 @@ sub run {
 
     my $root = $self->{root};
     my $proj = $self->{proj};
-	my $tex  = $self->{tex_exe};
+    my $tex  = $self->{tex_exe};
 
     my $r = { 
         dir  => $root,

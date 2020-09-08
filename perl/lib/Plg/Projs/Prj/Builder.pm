@@ -7,7 +7,7 @@ use warnings;
 
 use base qw(
     Plg::Projs::Prj
-	Plg::Projs::Prj::Builder::Insert
+    Plg::Projs::Prj::Builder::Insert
 );
 
 use FindBin qw($Bin $Script);
@@ -17,7 +17,7 @@ use File::Spec::Functions qw(catfile);
 use Getopt::Long qw(GetOptions);
 
 use Base::Arg qw(
-	hash_update
+    hash_update
 );
 
 use Plg::Projs::Build::Maker;
@@ -28,7 +28,7 @@ sub init {
     $self->SUPER::init();
 
     my $h = {
-		tex_exe => 'pdflatex',
+        tex_exe => 'pdflatex',
         maps_act => {
             'compile' => 'build_pwg',
             'join'    => 'insert_pwg',
@@ -36,37 +36,39 @@ sub init {
         act_default => 'compile',
     };
 
-	hash_update($self, $h, { keep_already_defined => 1 });
+    hash_update($self, $h, { keep_already_defined => 1 });
 
     $self
-		->get_act
-		->get_opt
-		->process_config
-		->init_maker
-		;
+        ->get_act
+        ->get_opt
+        ->process_config
+        ->init_maker
+        ;
 
 
     return $self;
 }
 
 sub process_config {
-	my ($self) = @_;
+    my ($self) = @_;
 
-	foreach($self->_config) {
-		/^xelatex$/ && do {
-			$self->{tex_exe} = 'xelatex';
-			next;
-		};
-	}
+    foreach($self->_config) {
+        /^xelatex$/ && do {
+            $self->{tex_exe} = 'xelatex';
+            next;
+        };
+    }
 
-	return $self;
+    return $self;
 
 }
 
 sub _config {
-	my ($self) = @_;
+    my ($self) = @_;
 
-	@{$self->{config} || []};
+    my @c = @{$self->{config} || []};
+    return @c;
+
 }
 
 sub _config_set {
@@ -77,7 +79,7 @@ sub _config_set {
 }
 
 sub get_act {
-	my ($self) = @_;
+    my ($self) = @_;
 
     my @acts = sort keys %{$self->{maps_act} || {}};
     my $acts_s = join(" ",@acts);
@@ -116,7 +118,13 @@ sub get_opt {
 
     GetOptions(\%opt,@optstr);
     
-    $self->{config} = split(',' => ($opt{config} || ''));
+    $self->{config} = [ 
+        map { s/'//g; s/'$//g; $_ }
+        split(',' => ($opt{config} || '')) 
+    ];
+
+    #print Dumper($self->{config}) . "\n";
+    #exit;
 
     return $self;   
 }
@@ -159,8 +167,12 @@ sub _insert_titletoc {
 sub run_maker {
     my ($self) = @_;
 
+    my $m = $self->{maker};
+
     local @ARGV = ();
-    $self->{maker}->run;
+    #print Dumper(@{$m}{qw(tex_exe cmd)}) . "\n";
+    #exit;
+    $m->run;
 
     return $self;
 }
@@ -184,14 +196,13 @@ sub init_maker {
         #'15_07_2020',
         ;
 
-
     my $act = $self->{act};
     my $cmd = $self->{maps_act}->{$act} || '';
 
     local @ARGV = ();
     my $x = Plg::Projs::Build::Maker->new(
         skip_get_opt => 1,
-		tex_exe      => $self->{tex_exe},
+        tex_exe      => $self->{tex_exe},
         proj         => $self->{proj},
         root         => $self->{root},
         root_id      => $self->{root_id},

@@ -1055,11 +1055,11 @@ function! projs#action#bld_compile (...)
   let start = localtime()
   call chdir(root)
 
-	let a = [ 'perl', bfile, 'compile' ]
+  let a = [ 'perl', bfile, 'compile' ]
 
-	if len(config)
-		call extend(a,[ '-c' ,config ])
-	endif
+  if len(config)
+    call extend(a,[ '-c' ,config ])
+  endif
   let cmd = join(a, ' ' )
 
   let env = {
@@ -1085,10 +1085,10 @@ endf
 
 function! projs#action#bld_compile_xelatex () 
 
-	let r = {
-			\	'config' : 'xelatex',
-			\	}
-	call projs#action#bld_compile(r) 
+  let r = {
+      \ 'config' : 'xelatex',
+      \ }
+  call projs#action#bld_compile(r) 
 
 endf
 
@@ -1360,31 +1360,31 @@ endfunction
 
 """prjact_tex_show_command
 function! projs#action#tex_show_command ()
-	let root = projs#root()
-	let proj = projs#proj#name()
+  let root = projs#root()
+  let proj = projs#proj#name()
 
-	let bat = 'tex_show_command.bat'
+  let bat = 'tex_show_command.bat'
 
-	let class   = input('class: ','','custom,projs#complete#tex_documentclasses')
-	let macro   = input('TeX macro: ','','custom,projs#complete#tex_macros')
+  let class   = input('class: ','','custom,projs#complete#tex_documentclasses')
+  let macro   = input('TeX macro: ','','custom,projs#complete#tex_macros')
 
-	let cmd_bat = join([ bat, macro, class ], ' ')
-	
-	let env = {}
-	function env.get(temp_file) dict
-		let temp_file = a:temp_file
-		let code      = self.return_code
-	
-		if filereadable(a:temp_file)
-			let out = readfile(a:temp_file)
-			call base#buf#open_split({ 'lines' : out })
-		endif
-	endfunction
-	
-	call asc#run({ 
-		\	'cmd' : cmd_bat, 
-		\	'Fn'  : asc#tab_restore(env) 
-		\	})
+  let cmd_bat = join([ bat, macro, class ], ' ')
+  
+  let env = {}
+  function env.get(temp_file) dict
+    let temp_file = a:temp_file
+    let code      = self.return_code
+  
+    if filereadable(a:temp_file)
+      let out = readfile(a:temp_file)
+      call base#buf#open_split({ 'lines' : out })
+    endif
+  endfunction
+  
+  call asc#run({ 
+    \ 'cmd' : cmd_bat, 
+    \ 'Fn'  : asc#tab_restore(env) 
+    \ })
 
 endfunction
 

@@ -43,21 +43,21 @@ sub init {
         proj     => $proj,
         root     => $root,
         root_id  => $root_id,
-		load_pwg => 0,
+        load_pwg => 0,
     };
 
     my @k = keys %$h;
 
     hash_update($self, $h, { keep_already_defined => 1 });
 
-	if ($self->{load_pwg}) {
-		$self->{pwg} ||= eval { Plg::Projs::Piwigo::SQL->new; };
-	}
+    if ($self->{load_pwg}) {
+        $self->{pwg} ||= eval { Plg::Projs::Piwigo::SQL->new; };
+    }
 
     $self->{db_file} ||= catfile($self->{root},'projs.sqlite');
-	$self->{tags_img} ||= [qw(projs), ( $self->{proj}, $self->{root_id} )];
+    $self->{tags_img} ||= [qw(projs), ( $self->{proj}, $self->{root_id} )];
 
-	$self->init_db;
+    $self->init_db;
 
     return $self;
 }
@@ -80,9 +80,9 @@ sub _projects {
     my ($self, $ref) = @_;
 
     $ref ||= {};
-	my $pat = $ref->{pat} || '';
+    my $pat = $ref->{pat} || '';
 
-	my $projects = [];
+    my $projects = [];
 
     my $r = {
         dbh     => $self->{dbh},
@@ -91,24 +91,24 @@ sub _projects {
     };
 
     my ($list,$cols) = dbh_select($r);
-	foreach my $row (@$list) {
-		my $proj = $row->{proj};
-		push @$projects, $proj;
-	}
+    foreach my $row (@$list) {
+        my $proj = $row->{proj};
+        push @$projects, $proj;
+    }
 
-	wantarray ? @$projects : $projects;
+    wantarray ? @$projects : $projects;
 }
 
 sub init_db {
-	my ($self) = @_;
+    my ($self) = @_;
 
     my $db_file = $self->{db_file};
     my $dbh = dbi_connect({
         dbfile => $db_file
     });
-	$self->{dbh} = $dbh;
+    $self->{dbh} = $dbh;
 
-	return $self;
+    return $self;
 }
 
 sub _files {
@@ -121,7 +121,7 @@ sub _files {
 
     my $proj = $self->{proj};
 
-	my $dbh = $self->{dbh};
+    my $dbh = $self->{dbh};
 
     my $cond = q{ WHERE proj = ? };
     if (@$exts) {

@@ -5,10 +5,11 @@ use strict;
 use warnings;
 
 use base qw(
-    Plg::Projs::Build::PdfLatex::IndFile
+    Plg::Projs::Build::Maker::IndFile
 );
 
 use FindBin qw($Bin $Script);
+use Base::Arg qw(hash_update);
 
 sub new
 {
@@ -36,10 +37,7 @@ sub init {
         ind_file  => shift @ARGV,
         ind_level => shift @ARGV,
     };
-        
-    my @k = keys %$h;
-
-    for(@k){ $self->{$_} = $h->{$_} unless defined $self->{$_}; }
+    hash_update($self, $h, { keep_already_defined => 1 });
 
     return $self;
 }
