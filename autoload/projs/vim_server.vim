@@ -1,11 +1,17 @@
 
-function! projs#vim_server#async_build ()
-  call projs#action#async_build()
+function! projs#vim_server#async_build_bare ()
+  call projs#action#async_build_bare()
   return ''
 endfunction
 
 function! projs#vim_server#async_build_htlatex ()
   call projs#action#async_build_htlatex()
+  return ''
+endfunction
+
+function! projs#vim_server#view_project (...)
+  let proj = get(a:000,0,'')
+  call projs#viewproj(proj)
   return ''
 endfunction
 

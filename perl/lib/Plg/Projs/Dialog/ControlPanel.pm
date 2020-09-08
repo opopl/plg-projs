@@ -141,6 +141,7 @@ sub tk_add_pages {
 		{
 			'name'  => 'projs',
 			'label' => 'Projects', 
+###blk_projs
 			'blk'   =>  sub {
 				my ($wnd) = @_;
 
@@ -165,10 +166,15 @@ sub tk_add_pages {
 				    );
 					$fr->grid(-column => $ncol, -row => $nrow);
 
+					my $expr = sprintf(q{projs#vim_server#view_project('%s')},$proj);
 					my $btn = $fr->Button(
 						-text => $proj,
 						-width  => 20,
 						-height => 1,
+        				-command => $self->_vim_server_sub({
+							'expr'  => $expr
+            #'expr'  => 'projs#vim_server#async_build_bare()'
+        				})
 					); 
 					push @btns, $btn;
 
