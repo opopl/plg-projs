@@ -86,7 +86,7 @@ sub _projects {
 
     my $r = {
         dbh     => $self->{dbh},
-        q       => q{ SELECT proj FROM projs },
+        q       => q{ SELECT DISTINCT proj FROM projs },
         p       => [],
     };
 
@@ -106,6 +106,7 @@ sub init_db {
     my $dbh = dbi_connect({
         dbfile => $db_file
     });
+	$self->{dbh} = $dbh;
 
 	return $self;
 }

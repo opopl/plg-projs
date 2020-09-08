@@ -68,15 +68,14 @@ sub tk_proc {
     my $servername = $self->{data}->{vim}->{servername} || '';
 
     $mw->title($self->{proj});
-    $mw->geometry("400x200+0+0"); 
+
+	my $geom = $self->{geom};
+	my $g = sprintf(q{%sx%s},@{$geom}{qw(width height)});
+
+    $mw->geometry($g); 
 
     $self
-        #->tk_frame_build
         ->tk_add_pages
-#        ->tk_sep_hz
-        #->tk_frame_view
-        #->tk_sep_hz
-        #->tk_frame_secs
         ;
 
     return $self;
@@ -137,7 +136,6 @@ sub tk_add_pages {
     my ($self) = @_;
 
 	my $prj = $self->{prj};
-	print Dumper([@$prj{qw( root root_id proj )}]) . "\n";
 
 	my @pages = (
 		{
@@ -146,8 +144,41 @@ sub tk_add_pages {
 			'blk'   =>  sub {
 				my ($wnd) = @_;
 
+				my $cols = 5;
+
+				my @btns;
+				my %p = (-side => 'top', -fill => 'x' );
+
+				my $j=0;
+
+				my ($nrow, $ncol);
+
 				foreach my $proj ($prj->_projects) {
-					$wnd->Button(-text => $proj)->pack( ); 
+
+					$ncol = $j % $cols;
+					$nrow = int $j/$cols;
+
+				    my $fr = $wnd->Frame( 
+				        -height      => 2,
+				        -bg          => 'black',
+						-borderwidth => 3,
+				    );
+					$fr->grid(-column => $ncol, -row => $nrow);
+
+					my $btn = $fr->Button(
+						-text => $proj,
+						-width  => 20,
+						-height => 1,
+					); 
+					push @btns, $btn;
+
+					$btn->pack(
+						-side => 'left', 
+						-fill => 'x',
+						-expand => 1,
+					);
+
+					$j++;
 				}
 
 			}
@@ -334,7 +365,10 @@ sub init {
     $self->SUPER::init();
 
     my $h = { 
-
+		geom => {
+			width  => 800,
+			height => 500,
+		}
 	};
     hash_update($self, $h, { keep_already_defined => 1 });
 
