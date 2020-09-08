@@ -7,7 +7,7 @@ use utf8;
 use Data::Dumper qw(Dumper);
 use Cwd;
 
-use base qw( Plg::Projs::Build::PdfLatex );
+use base qw( Plg::Projs::Build::Maker );
 
 __PACKAGE__
     ->new( root => getcwd() )

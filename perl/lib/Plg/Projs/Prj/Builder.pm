@@ -7,6 +7,7 @@ use warnings;
 
 use base qw(
     Plg::Projs::Prj
+	Plg::Projs::Prj::Builder::Insert
 );
 
 use FindBin qw($Bin $Script);
