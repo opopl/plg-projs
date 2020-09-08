@@ -1,10 +1,10 @@
 
-package Plg::Projs::Scripts::RunPdfLatex;
+package Plg::Projs::Scripts::RunTex;
 
 use strict;
 use warnings;
 
-use Plg::Projs::Build::PdfLatex;
+use Plg::Projs::Build::Maker;
 
 use FindBin qw($Bin $Script);
 use Cwd;
@@ -40,7 +40,7 @@ sub init {
     my $proj = shift @ARGV;
     my $root = getcwd();
 
-    my $blx = Plg::Projs::Build::PdfLatex->new( 
+    my $blx = Plg::Projs::Build::Maker->new( 
         skip_get_opt => 1,
         proj         => $proj,
         root         => $root,

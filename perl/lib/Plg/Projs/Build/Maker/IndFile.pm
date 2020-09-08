@@ -1,13 +1,13 @@
 
-package Plg::Projs::Build::PdfLatex::IndFile;
+package Plg::Projs::Build::Maker::IndFile;
 
 =head1 NAME
 
-Plg::Projs::Build::PdfLatex::IndFile
+Plg::Projs::Build::Maker::IndFile
 
 =head1 SEE ALSO
 
-Plg::Projs::Build::PdfLatex
+Plg::Projs::Build::Maker
 
 =cut
 

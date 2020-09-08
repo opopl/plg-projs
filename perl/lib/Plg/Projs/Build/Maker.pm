@@ -1,5 +1,5 @@
 
-package Plg::Projs::Build::PdfLatex;
+package Plg::Projs::Build::Maker;
 
 use strict;
 use warnings;
@@ -19,7 +19,7 @@ use File::Find qw(find);
 use Plg::Projs::Piwigo::SQL;
 
 use base qw(
-    Plg::Projs::Build::PdfLatex::IndFile
+    Plg::Projs::Build::Maker::IndFile
 );
 
 use utf8; 
@@ -696,7 +696,7 @@ sub cmd_insert_pwg {
 
     push @perl_use,
         q{ use Plg::Projs::Piwigo::SQL; },
-        q{ use Plg::Projs::Build::PdfLatex; },
+        q{ use Plg::Projs::Build::Maker; },
     ;
 
 ###_cnv_loop
