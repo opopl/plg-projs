@@ -629,7 +629,6 @@ sub cmd_build_pwg {
     mkpath $self->{out_dir_pdf_pwg};
 
     $self->cmd_insert_pwg;
-    print 'a' . "\n";
 
     my @pdf_files = $self->_files_pdf_pwg;
 
