@@ -1,4 +1,12 @@
 
+if (0) {
+	my $vim =<< 'eof';
+
+TgUpdate perl_inc_plg_projs
+
+eof
+}
+
 package Plg::Projs::Build::Maker;
 
 use strict;
@@ -524,7 +532,7 @@ sub _cmd_bibtex {
     return $cmd;
 }
 
-sub _cmd_pdflatex {
+sub _cmd_tex {
     my ($self, $ref) = @_;
 
     my $opts = [
@@ -534,7 +542,7 @@ sub _cmd_pdflatex {
 
     my $proj    = $self->{proj};
 
-    my $cmd     = sprintf('pdflatex %s %s',join(" ",@$opts),$proj);
+    my $cmd     = sprintf('%s %s %s',$self->{tex_exe},join(" ",@$opts),$proj);
 
     return $cmd;
 }

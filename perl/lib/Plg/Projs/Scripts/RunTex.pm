@@ -13,6 +13,8 @@ use Data::Dumper qw(Dumper);
 use File::stat;
 use File::Path qw(rmtree);
 
+use Base::Arg qw(hash_update);
+
 sub new
 {
     my ($class, %opts) = @_;
@@ -51,11 +53,8 @@ sub init {
         root => $root,
         blx  => $blx,
     };
+	hash_update($self, $h, { keep_already_defined => 1 });
         
-    my @k = keys %$h;
-
-    for(@k){ $self->{$_} = $h->{$_} unless defined $self->{$_}; }
-
     return $self;
 }
 
@@ -89,26 +88,28 @@ sub run {
 
     my $root = $self->{root};
     my $proj = $self->{proj};
+	my $tex  = $self->{tex_exe};
 
     my $r = { 
         dir  => $root,
     };
     my @cmds; 
     push @cmds, 
-        $blx->_cmd_pdflatex,
+        $blx->_cmd_tex,
         $blx->_cmd_bibtex,
-        #$blx->_cmd_pdflatex,
+        #$blx->_cmd_tex,
         ;
 
     my $i = 1;
     while (@cmds) {
         my $cmd = shift @cmds;
+
         local $_ = $cmd;
 
         system("$_");
         $self->rm_zero([qw( idx bbl mtc maf )]);
 
-        /^\s*pdflatex\s+/ && do { 
+        /^\s*$tex\s+/ && do { 
             #next unless ($i == 1);
             my @texindy = $blx->_cmds_texindy({ dir => $root });
             unshift @cmds, @texindy;
@@ -121,11 +122,11 @@ sub run {
             my @bbl = $blx->_find_([$root],[qw(bbl)]);
 
             push @cmds, 
-               $blx->_cmd_pdflatex;
+               $blx->_cmd_tex;
 
             if (@bbl) {
                 push @cmds, 
-                    $blx->_cmd_pdflatex;
+                    $blx->_cmd_tex;
             }
         };
 

@@ -40,11 +40,32 @@ sub init {
     $self
 		->get_act
 		->get_opt
+		->process_config
 		->init_maker
 		;
 
 
     return $self;
+}
+
+sub process_config {
+	my ($self) = @_;
+
+	foreach($self->_config) {
+		/^xelatex$/ && do {
+			$self->{tex_exe} = 'xelatex';
+			next;
+		};
+	}
+
+	return $self;
+
+}
+
+sub _config {
+	my ($self) = @_;
+
+	@{$self->{config} || []};
 }
 
 sub _config_set {
@@ -75,6 +96,7 @@ sub get_act {
         } . "\n";
         exit 1;
     }
+
     my $act = shift @ARGV || 'compile';
     $self->{act} = $act;
 
