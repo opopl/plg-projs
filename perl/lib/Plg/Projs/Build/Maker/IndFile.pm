@@ -30,7 +30,7 @@ sub ind_ins_bmk {
    my %ind_items;
 
    my @out;
-   my $theindex=0;
+   my $theindex = 0;
    open(F,"<:encoding(utf-8)", "$ind_file") || die $!;
 
    my $i=0;

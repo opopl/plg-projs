@@ -639,7 +639,7 @@ sub cmd_build_pwg {
     my $pdf_file = catfile($src_dir,'jnd.pdf');
 
     chdir $src_dir;
-    system("_run_pdflatex.bat");
+    system("_run_tex.bat");
 
     my @dest;
     push @dest, 
@@ -1032,15 +1032,16 @@ sub create_bat_in_src {
                 ;
             return [@cmds];
         },
-        '_run_pdflatex.bat' => sub { 
+        '_run_tex.bat' => sub { 
             my @cmds;
             push @cmds, 
                 sprintf('call _clean.bat'),
-                sprintf('run_pdflatex jnd'),
+                sprintf('run_tex jnd'),
                 ;
             return [@cmds];
         },
     );
+
     while( my($f,$l) = each %f ){
         my $bat = catfile($dir,$f);
         my $lines = $l->();

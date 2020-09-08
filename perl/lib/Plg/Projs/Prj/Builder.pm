@@ -19,7 +19,7 @@ use Base::Arg qw(
 	hash_update
 );
 
-use Plg::Projs::Build::PdfLatex;
+use Plg::Projs::Build::Maker;
 
 sub init {
     my ($self) = @_;
@@ -166,7 +166,7 @@ sub init_maker {
     my $cmd = $self->{maps_act}->{$act} || '';
 
     local @ARGV = ();
-    my $x = Plg::Projs::Build::PdfLatex->new(
+    my $x = Plg::Projs::Build::Maker->new(
         skip_get_opt => 1,
 		tex_exe      => $self->{tex_exe},
         proj         => $self->{proj},
