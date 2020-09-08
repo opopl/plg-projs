@@ -8,6 +8,7 @@ use warnings;
 use base qw(
     Plg::Projs::Prj
 );
+
 use FindBin qw($Bin $Script);
 use Data::Dumper qw(Dumper);
 
@@ -132,76 +133,6 @@ sub _insert_titletoc {
     return [@d];
 }
 
-sub init_maker {
-    my ($self) = @_;
-
-    my @secs_include;
-    #push @secs_include,
-        #'13_07_2020',
-        #'14_07_2020',
-        #'15_07_2020',
-        ;
-
-
-    my $act = $self->{act};
-    my $cmd = $self->{maps_act}->{$act} || '';
-
-    local @ARGV = ();
-    my $x = Plg::Projs::Build::PdfLatex->new(
-        skip_get_opt => 1,
-		tex_exe      => $self->{tex_exe},
-        proj         => $self->{proj},
-        root         => $self->{root},
-        root_id      => $self->{root_id},
-        cmd          => $cmd,
-        join_lines   => {
-            include_below => [qw(section)]
-        },
-        sections => {
-            include => \@secs_include,
-            line_sub => sub {
-                my ($line,$r_sec) = @_;
-
-                my $sec = $r_sec->{sec};
-
-                return $line;
-            },
-            insert => {
-                titletoc => $self->_insert_titletoc,
-                hyperlinks => [
-###ins_hyperlinks
-                    {
-                        scts => [qw( section subsection )],
-                        lines => [
-q{
-\par
-\begin{center}
-    %\colorbox{cyan}{\makebox[5cm][l]{\strut}}
-    \colorbox{cyan}{
-       \makebox[10cm][l]{
-            \large\bfseries
-            \hypersetup{ linkcolor=white }
-
-            \hyperlink{indices}{\indicesname}
-
-            \hypersetup{ linkcolor=yellow }
-            \hyperlink{tabcont}{\contentsname}
-        }
-    }
-\end{center}
-}
-                        ]
-                    }
-                ]
-            },
-        }
-    );
-
-    $self->{maker} = $x;
-
-    return $self;
-}
-
 sub run_maker {
     my ($self) = @_;
 
@@ -265,26 +196,6 @@ sub init_maker {
 
     return $self;
 }
-
-sub run_maker {
-    my ($self) = @_;
-
-    local @ARGV = ();
-    $self->{maker}->run;
-
-    return $self;
-}
-
-
-sub run {
-    my ($self) = @_;
-
-    $self->run_maker;
-
-    return $self;
-}
- 
-
 
 1;
  

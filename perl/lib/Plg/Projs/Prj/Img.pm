@@ -65,7 +65,7 @@ sub _range_tabular_rows {
         push @tex_lines,
             $pwg->_img_include_graphics({ 
                  width => $self->{width_cell}, 
-                 tags  => [ @tags_base, $tg] }),
+                 tags  => [ @tags_base, $tg ] }),
             $eol,
             '%' . 'x' x 50,
             ;
