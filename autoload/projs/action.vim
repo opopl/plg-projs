@@ -1048,11 +1048,19 @@ function! projs#action#bld_compile (...)
   let proj = projs#proj#name()
   let proj = get(ref,'proj',proj)
 
+  let config = get(ref,'config','')
+
   let bfile = printf('%s.bld.pl',proj)
 
   let start = localtime()
   call chdir(root)
-  let cmd = join([ 'perl', bfile, 'compile' ], ' ' )
+
+	let a = [ 'perl', bfile, 'compile' ]
+
+	if len(config)
+		call extend(a,[ '-c' ,config ])
+	endif
+  let cmd = join(a, ' ' )
 
   let env = {
     \ 'proj'  : proj,
@@ -1072,6 +1080,15 @@ function! projs#action#bld_compile (...)
     \ 'Fn'  : asc#tab_restore(env) 
     \ })
   return 1
+
+endf
+
+function! projs#action#bld_compile_xelatex () 
+
+	let r = {
+			\	'config' : 'xelatex',
+			\	}
+	call projs#action#bld_compile(r) 
 
 endf
 

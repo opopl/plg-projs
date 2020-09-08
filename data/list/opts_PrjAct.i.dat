@@ -41,6 +41,7 @@ status
 edt
 ###bld
 bld_compile
+bld_compile_xelatex
 bld_join
 ###mkdir
 mkdir_pics
