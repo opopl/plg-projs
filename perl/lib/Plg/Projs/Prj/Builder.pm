@@ -114,6 +114,7 @@ sub get_opt {
     my %opt;
     my @optstr = ( 
         "config|c=s",
+        "target|t=s",
     );
 
     GetOptions(\%opt,@optstr);
@@ -123,45 +124,7 @@ sub get_opt {
         split(',' => ($opt{config} || '')) 
     ];
 
-    #print Dumper($self->{config}) . "\n";
-    #exit;
-
     return $self;   
-}
-
-
-sub _insert_titletoc {
-    my $self = shift;
-
-    my @d;
-    push @d,
-            {
-###ttt_section
-             scts    => [qw( section )],
-             lines => [
-                 ' ',
-                 '\startcontents[subsections]',
-    '\printcontents[subsections]{l}{2}{\addtocontents{ptc}{\setcounter{tocdepth}{3}}}',
-
-             ],
-             lines_stop => [
-                 '\stopcontents[subsections]',
-            ]
-        },
-        {
-             scts    => [qw( chapter )],
-             lines => [
-                 ' ',
-                 '\startcontents[sections]',
-    '\printcontents[sections]{l}{1}{\addtocontents{ptc}{\setcounter{tocdepth}{1}}}',
-                 ' ',
-             ],
-             lines_stop => [
-                 '\stopcontents[sections]',
-            ]
-        },
-        ;
-    return [@d];
 }
 
 sub run_maker {
@@ -170,8 +133,6 @@ sub run_maker {
     my $m = $self->{maker};
 
     local @ARGV = ();
-    #print Dumper(@{$m}{qw(tex_exe cmd)}) . "\n";
-    #exit;
     $m->run;
 
     return $self;

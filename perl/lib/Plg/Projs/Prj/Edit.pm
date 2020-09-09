@@ -12,6 +12,8 @@ use File::Slurp::Unicode;
 use File::Spec::Functions qw(catfile);
 use Data::Dumper qw(Dumper);
 
+use Base::Arg qw( hash_update );
+
 use utf8; 
 use Encode;
 binmode STDOUT, ":utf8";
@@ -24,9 +26,7 @@ sub init {
     my $h = { 
     };
         
-    my @k = keys %$h;
-
-    for(@k){ $self->{$_} = $h->{$_} unless defined $self->{$_}; }
+    hash_update($self, $h, { keep_already_defined => 1 });
 
     return $self;
 }
@@ -82,6 +82,21 @@ sub edit_tex {
 
     return $self;
 }
+
+sub _sub_edit_line_replace {
+    my ($self) = @_;
+
+    local $_ = shift;
+
+    s/(\s+)–(\s+)/$1---$2/g;
+    s/(\d+)–(\d+)/$1-$2/g;
+
+    s/(\s+)—(\s+)/$1---$2/g;
+    s/(\d+)—(\d+)/$1-$2/g;
+
+    return $_;
+}
+
 
 sub _sub {
     my ($self, $sub, @args) = @_;
