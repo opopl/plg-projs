@@ -1055,6 +1055,10 @@ function! projs#action#bld_compile (...)
   let start = localtime()
   call chdir(root)
 
+  if !filereadable(bfile)
+    call projs#sec#new('_perl.bld')
+  endif
+
   let a = [ 'perl', bfile, 'compile' ]
 
   if len(config)
