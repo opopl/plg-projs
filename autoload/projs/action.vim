@@ -891,12 +891,12 @@ function! projs#action#async_build_pwg (...)
   let proj = projs#proj#name()
   let proj = get(ref,'proj',proj)
 
-  let mode = '_bb_pdflatex_'
+  let mode = '_bb_tex_'
 
   let start = localtime()
   call chdir(root)
   let cmd = join([ 
-      \ 'bb_pdflatex.bat', 
+      \ 'bb_tex.bat', 
       \ proj,
       \ '-c','build_pwg' ], ' ' )
 
@@ -1182,11 +1182,11 @@ function! projs#action#async_build_bare (...)
   let proj = projs#proj#name()
   let proj = get(ref,'proj',proj)
 
-  let mode = '_bb_pdflatex_'
+  let mode = '_bb_tex_'
 
   let start = localtime()
   call chdir(root)
-  let cmd = join([ 'bb_pdflatex.bat', proj, '-c bare' ], ' ' )
+  let cmd = join([ 'bb_tex.bat', proj, '-c bare' ], ' ' )
   
   let env = {
     \ 'proj'  : proj,

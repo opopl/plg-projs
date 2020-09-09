@@ -971,6 +971,7 @@ sub create_bat_in_src {
                 'rm *.idx',
                 'rm *.mtc*',
                 'rm *.maf*',
+                'rm *.ptc*',
                 'latexmk -C'
             ];
         },
