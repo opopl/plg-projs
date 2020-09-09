@@ -84,7 +84,7 @@ sub edit_tex {
 }
 
 sub _sub_edit_line_replace {
-    my ($self) = @_;
+    my $self = shift;
 
     local $_ = shift;
 
