@@ -567,6 +567,10 @@ function! projs#onload (...)
   let ref = {}
   if a:0 | let ref = a:1 | endif
 
+	if !base#buf#is_file()
+		return 
+	endif
+
   let msg = [ printf('basename: %s', b:basename ) ]
   let prf = { 'plugin' : 'projs', 'func' : 'projs#onload' }
   call base#log(msg, prf)
@@ -889,6 +893,10 @@ function! projs#maps (...)
 
   let exts = get(ref,'exts',[])
   let ext  = get(ref,'ext','tex')
+
+	if !base#buf#is_file()
+		return 
+	endif
 
   if len(exts)
     for ext in exts

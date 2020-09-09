@@ -4,16 +4,47 @@
 \usepackage{mathtext}
 \usepackage{extsizes}
 
-\usepackage[OT1,T2A,T3]{fontenc}
-\usepackage[utf8]{inputenc}
-\usepackage[english,russian]{babel}
+\ifxetex
+    \usepackage{xltxtra}
+    \usepackage{polyglossia}
+    
+    %\setmainlanguage{churchslavonic}
+    %\usepackage{churchslavonic}
+    
+    \setmainlanguage{russian}
+    
+    \setotherlanguage{english}
+    %\setotherlanguage{churchslavonic}
+    
+    \setkeys{russian}{babelshorthands=true}
+    
+    \setmainfont{Times New Roman}
+    \setromanfont{Times New Roman} 
+    
+    \setsansfont{Arial} 
+    \setmonofont{Courier New} 
+    
+    \newfontfamily{\cyrillicfont}{Times New Roman} 
+    \newfontfamily{\cyrillicfontrm}{Times New Roman}
+    \newfontfamily{\cyrillicfonttt}{Courier New}
+    \newfontfamily{\cyrillicfontsf}{Arial}
+    
+    \addto\captionsrussian{%
+      \renewcommand{\figurename}{Рис.}%
+      \renewcommand{\tablename}{Табл.}%
+    }
+\else
+    \usepackage[OT1,T2A,T3]{fontenc}
+    \usepackage[utf8]{inputenc}
+    \usepackage[english,russian]{babel}
+\fi
 
 \usepackage[ %
-	letterpaper, %
-	unicode, %
-	linktocpage, %
-	bookmarksdepth=subparagraph,%
-	bookmarksnumbered=true,%
+    letterpaper, %
+    unicode, %
+    linktocpage, %
+    bookmarksdepth=subparagraph,%
+    bookmarksnumbered=true,%
 ]{hyperref}
 
 \usepackage{bookmark}
@@ -26,9 +57,14 @@
 \usepackage{multicol}
 \usepackage{pgffor}
 
+\usepackage{etoolbox}
+\usepackage{color,xcolor,colortbl}
+
 \usepackage{makeidx}
 
 \makeindex
 
 \newif\ifDEBUG
 \DEBUGfalse
+
+\def\indicesname{Указатели}
