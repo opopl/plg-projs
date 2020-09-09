@@ -715,6 +715,8 @@ function! projs#sec#new(sec,...)
     let proj       = projs#proj#name()
     let parent_sec = projs#sec#parent()
 
+    let rootid = projs#rootid()
+
     let ref = { 
         \   "git_add"    : 0,
         \   "view"       : 0,
@@ -783,6 +785,45 @@ function! projs#sec#new(sec,...)
 
     if sec =~ '^fig_'
       call extend(lines,projs#newseclines#fig_num(sec))
+
+"""newsec__perl_
+    elseif sec =~ '_perl\.'
+      let sec_name = substitute(copy(sec),'^_perl\.\(.*\)','\1','g')
+
+      let pl_file = base#qw#catpath('plg','projs data perl %s.pl')
+      let pl_file = printf(pl_file,sec_name)
+
+      call extend(lines,readfile(pl_file))
+
+      let nlines=[]
+      for line in lines
+        let line = substitute(line,'_proj_',proj,'g')
+        let line = substitute(line,'_rootid_',rootid,'g')
+        call add(nlines,line)
+      endfor
+      let lines = nlines
+
+"""newsec__pm_
+    elseif sec =~ '_pm\.'
+      let sec_name = substitute(copy(sec),'^_pm.\(.*\)','\1','g')
+
+      let pm_file = base#qw#catpath('plg','projs data pm %s.pm')
+      let pm_file = printf(pm_file,sec_name)
+
+      call extend(lines,readfile(pm_file))
+
+      let nlines=[]
+      for line in lines
+        let line = substitute(line,'_proj_',proj,'g')
+        let line = substitute(line,'_rootid_',rootid,'g')
+        call add(nlines,line)
+      endfor
+      let lines = nlines
+
+      let sec_file = projs#sec#file(sec)
+      let sec_dir  = fnamemodify(sec_file,':p:r')
+
+      call base#mkdir(sec_dir)
 
 """newsec__vim_
     elseif sec == '_vim_'

@@ -144,6 +144,8 @@ function! projs#newseclines#regular#index (...)
   return lines
 endfunction
 
+
+
 function! projs#newseclines#regular#bib (...)
   let ref = get(a:000,0,{})
 
