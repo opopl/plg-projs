@@ -1055,9 +1055,13 @@ function! projs#action#bld_compile (...)
   let start = localtime()
   call chdir(root)
 
-  if !filereadable(bfile)
-    call projs#sec#new('_perl.bld')
-  endif
+  let scs = base#qw('_perl.bld _pm.bld')
+  for s in scs
+    let f = projs#sec#file(s)
+	  if !filereadable(f)
+	    call projs#sec#new(s)
+	  endif
+  endfor
 
   let a = [ 'perl', bfile, 'compile' ]
 
