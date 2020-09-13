@@ -88,6 +88,8 @@ sub _range_tabular_line {
     my @tex_lines;
 
     my $n_cols = scalar @$range;
+    return () unless $n_cols;
+
     push @tex_lines,sprintf(q{\begin{tabular}{%s}},'c' x $n_cols);
 
     my $pwg       = $self->{pwg};
