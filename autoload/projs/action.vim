@@ -974,6 +974,12 @@ function! projs#action#edt (...)
 
 endf
 
+if 0
+	call tree
+		called by
+			projs#action#edt
+endif
+
 function! projs#action#edt_Fc (self,temp_file) 
   let self      = a:self
   let temp_file = a:temp_file
@@ -986,10 +992,14 @@ function! projs#action#edt_Fc (self,temp_file)
   let duration = end - start
   let s_dur    = ' ' . string(duration) . ' (secs)'
   
+	let out = []
   if filereadable(a:temp_file)
-    let out = readfile(temp_file)
-    call base#buf#open_split({ 'lines' : out })
+		call extend(out, readfile(temp_file))
   endif
+
+  call base#buf#open_split({ 'lines' : out })
+
+	call base#rdw('DONE: EDT')
 endf
 
 function! projs#action#bld_join (...) 
@@ -1166,6 +1176,8 @@ function! projs#action#bld_join_Fc (self,temp_file)
     let out = readfile(temp_file)
     call base#buf#open_split({ 'lines' : out })
   endif
+
+	call base#rdw(printf('OK: bld_join (project: %s)', proj))
 endf
 
 if 0

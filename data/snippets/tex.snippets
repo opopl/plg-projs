@@ -13,6 +13,18 @@ snippet img
 		tags <++>
 		width 0.5
 	img_end
+snippet cmtfig
+	\ifcmt
+	fig_begin 
+		tex \centering
+		img_begin 
+			tags <++>
+			tags <++>
+			tags <++>
+			width 0.5
+		img_end
+	fig_end
+	\fi
 snippet cmt
 	\newif\ifcmt\cmtfalse
 snippet ifcmt

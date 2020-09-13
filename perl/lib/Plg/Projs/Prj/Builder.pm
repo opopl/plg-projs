@@ -147,32 +147,24 @@ sub run {
     return $self;
 }
 
-sub init_maker {
+sub _secs_include {
     my ($self) = @_;
 
-    my @secs_include;
-    #push @secs_include,
-        #'13_07_2020',
-        #'14_07_2020',
-        #'15_07_2020',
-        ;
+	my @secs;
+
+	return [@secs];
+}
+
+sub init_maker {
+    my ($self) = @_;
 
     my $act = $self->{act};
     my $cmd = $self->{maps_act}->{$act} || '';
 
     local @ARGV = ();
-    my $x = Plg::Projs::Build::Maker->new(
-        skip_get_opt => 1,
-        tex_exe      => $self->{tex_exe},
-        proj         => $self->{proj},
-        root         => $self->{root},
-        root_id      => $self->{root_id},
-        cmd          => $cmd,
-        join_lines   => {
-            include_below => [qw(section)]
-        },
-        sections => {
-            include => \@secs_include,
+
+	my $scc = {
+            include => $self->_secs_include,
             line_sub => sub {
                 my ($line,$r_sec) = @_;
 
@@ -184,7 +176,19 @@ sub init_maker {
                 titletoc   => $self->_insert_titletoc,
                 hyperlinks => $self->_insert_hyperlinks,
             },
-        }
+        };
+
+    my $x = Plg::Projs::Build::Maker->new(
+        skip_get_opt => 1,
+        tex_exe      => $self->{tex_exe},
+        proj         => $self->{proj},
+        root         => $self->{root},
+        root_id      => $self->{root_id},
+        cmd          => $cmd,
+        join_lines   => {
+            include_below => [qw(section)]
+        },
+        sections => $scc
     );
 
     $self->{maker} = $x;
