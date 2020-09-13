@@ -1180,6 +1180,15 @@ function! projs#action#bld_join_Fc (self,temp_file)
   call base#rdw(printf('OK: bld_join (project: %s)', proj))
 endf
 
+function! projs#action#fig_view (...) 
+	let r = {
+			\	'ext'    : 'pl',
+    	\ 'pat'    : 'fig',
+			\	'prompt' : 0,
+			\	}
+	call projs#db_cmd#list_secs(r)
+endf
+
 function! projs#action#fig_create (...) 
   let bsec = projs#buf#sec()
 

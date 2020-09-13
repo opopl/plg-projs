@@ -520,9 +520,22 @@ function! projs#db_cmd#rm_sec ()
 
 endfunction
 
-function! projs#db_cmd#list_secs ()
-  let ext = input('extension: ','tex')
-  let pat = input('pattern: ','')
+function! projs#db_cmd#list_secs_fig ()
+
+
+endfunction
+
+function! projs#db_cmd#list_secs (...)
+	let ref = get(a:000,0,{})
+
+	let ext    = get(ref,'ext','tex')
+	let pat    = get(ref,'pat','')
+	let prompt = get(ref,'prompt',1)
+
+	if prompt
+	  let ext = input('extension: ',ext)
+	  let pat = input('pattern: ',pat)
+	endif
 
   let secs = projs#db#secnames({ 
     \ 'ext' : ext,

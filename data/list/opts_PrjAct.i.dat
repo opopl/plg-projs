@@ -45,6 +45,7 @@ bld_compile_xelatex
 bld_join
 ###fig
 fig_create
+fig_view
 ###mkdir
 mkdir_pics
 async_build_bare
