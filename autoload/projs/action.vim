@@ -975,9 +975,9 @@ function! projs#action#edt (...)
 endf
 
 if 0
-	call tree
-		called by
-			projs#action#edt
+  call tree
+    called by
+      projs#action#edt
 endif
 
 function! projs#action#edt_Fc (self,temp_file) 
@@ -992,14 +992,14 @@ function! projs#action#edt_Fc (self,temp_file)
   let duration = end - start
   let s_dur    = ' ' . string(duration) . ' (secs)'
   
-	let out = []
+  let out = []
   if filereadable(a:temp_file)
-		call extend(out, readfile(temp_file))
+    call extend(out, readfile(temp_file))
   endif
 
   call base#buf#open_split({ 'lines' : out })
 
-	call base#rdw('DONE: EDT')
+  call base#rdw('DONE: EDT')
 endf
 
 function! projs#action#bld_join (...) 
@@ -1068,9 +1068,9 @@ function! projs#action#bld_compile (...)
   let scs = base#qw('_perl.bld _pm.bld')
   for s in scs
     let f = projs#sec#file(s)
-	  if !filereadable(f)
-	    call projs#sec#new(s)
-	  endif
+    if !filereadable(f)
+      call projs#sec#new(s)
+    endif
   endfor
 
   let a = [ 'perl', bfile, 'compile' ]
@@ -1177,7 +1177,7 @@ function! projs#action#bld_join_Fc (self,temp_file)
     call base#buf#open_split({ 'lines' : out })
   endif
 
-	call base#rdw(printf('OK: bld_join (project: %s)', proj))
+  call base#rdw(printf('OK: bld_join (project: %s)', proj))
 endf
 
 if 0

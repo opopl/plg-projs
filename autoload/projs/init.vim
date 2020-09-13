@@ -254,6 +254,7 @@ function! projs#init#cmds (...)
     \ call projs#build#action(<f-args>)
   
 """PrjAct
+"""PA
 if 0
   BaseDatView projs_opts_PrjAct
 endif
@@ -261,7 +262,7 @@ endif
     \ call projs#action(<f-args>)
   command! -nargs=* -complete=custom,projs#complete#prjact PA
     \ call projs#action(<f-args>)
-  
+
   "command! -nargs=* -complete=custom,projs#complete#prjtab PrjTab
     "\ call projs#tables(<f-args>)
   "
