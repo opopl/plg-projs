@@ -11,7 +11,7 @@ use Tk::MatchEntry;
  
 my $mw = MainWindow->new(-title => "MatchEntry Test");
  
-my @choices = [ qw/one one.green one.blue one.yellow two.blue two.green
+my @choices = [ qw/zero one one.green one.blue one.yellow two.blue two.green
                    two.cyan three.red three.white three.yellow/ ];
  
 $mw->Button->pack(-side => 'left');
