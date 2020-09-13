@@ -311,6 +311,21 @@ sub _ii_include {
     return @include;
 }
 
+sub _debug_sec {
+	my ($self, $root_id, $proj, $sec) = @_;
+
+			my $s =<< 'EOF'; 
+\vspace{0.5cm}
+{\ifDEBUG\small\LaTeX~section: \verb|_sec_| project: \verb|_proj_| rootid: \verb|_rootid_|\fi}
+\vspace{0.5cm}
+EOF
+	$s =~ s/_sec_/$sec/g;
+	$s =~ s/_proj_/$proj/g;
+	$s =~ s/_rootid_/$root_id/g;
+
+	return $s;
+}
+
 sub _join_lines {
     my ($self, $sec, $ref) = @_;
 
@@ -320,6 +335,8 @@ sub _join_lines {
 
     my $proj = $ref->{proj} || $self->{proj};
     my $file = $ref->{file} || '';
+
+    my $root_id = $self->{root_id} || '';
 
     my @include = $self->_ii_include;
 
@@ -382,7 +399,10 @@ sub _join_lines {
                 sect      => $sect,
             };
 
-            push @lines, $_;
+            push @lines, 
+				$_,
+            	$self->_debug_sec($root_id, $proj, $sec)
+				;
 
             foreach my $ord (@ins_order) {
                 my $ss    = $ss_insert->{$ord} || [];

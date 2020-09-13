@@ -787,21 +787,35 @@ function! projs#sec#new(sec,...)
       call extend(lines,projs#newseclines#fig_num(sec))
 
 """newsec__perl_
+    elseif sec =~ '_perl\.fig\.'
+      let pl_file = base#qw#catpath('plg','projs data perl fig.pl')
+	    call extend(lines,readfile(pl_file))
+
+      let nlines=[]
+      for line in lines
+        let line = substitute(line,'_sec_',sec,'g')
+        call add(nlines,line)
+      endfor
+     	let lines = nlines
+
     elseif sec =~ '_perl\.'
       let sec_name = substitute(copy(sec),'^_perl\.\(.*\)','\1','g')
 
       let pl_file = base#qw#catpath('plg','projs data perl %s.pl')
       let pl_file = printf(pl_file,sec_name)
 
-      call extend(lines,readfile(pl_file))
+			if filereadable(pl_file)
+	      call extend(lines,readfile(pl_file))
+	
+	      let nlines=[]
+	      for line in lines
+	        let line = substitute(line,'_proj_',proj,'g')
+	        let line = substitute(line,'_rootid_',rootid,'g')
+	        call add(nlines,line)
+	      endfor
 
-      let nlines=[]
-      for line in lines
-        let line = substitute(line,'_proj_',proj,'g')
-        let line = substitute(line,'_rootid_',rootid,'g')
-        call add(nlines,line)
-      endfor
-      let lines = nlines
+      	let lines = nlines
+			endif
 
 """newsec__pm_
     elseif sec =~ '_pm\.'
