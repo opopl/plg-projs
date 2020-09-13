@@ -786,7 +786,7 @@ function! projs#sec#new(sec,...)
     if sec =~ '^fig_'
       call extend(lines,projs#newseclines#fig_num(sec))
 
-    elseif sec =~ 'fig\.'
+    elseif sec =~ '^fig\.'
       let fig = substitute(copy(sec),'^fig\.\(.*\)','\1','g')
 
       let tex_file = base#qw#catpath('plg','projs data tex fig.tex')
