@@ -140,9 +140,15 @@ sub wnd_fill_projects_entry {
 	my ($self, $wnd) = @_;
 
 	my $prj = $self->{prj};
+	my $mw  = $self->{mw};
 
 	my @projects = $prj->_projects;
-	print Dumper(\@projects) . "\n";
+
+    my $fr = $wnd->Frame( 
+	    -height      => 2,
+	    -bg          => 'black',
+		-borderwidth => 3,
+    );
 
 	my $me = $wnd->MatchEntry(
 	       -choices        => \@projects,
@@ -153,7 +159,7 @@ sub wnd_fill_projects_entry {
 		   -onecmd         => sub { print "callback: -onecmd  \n"; }, 
 		   -tabcmd         => sub { print "callback: -tabcmd  \n"; }, 
 		   -zerocmd        => sub { print "callback: -zerocmd \n"; },
-	   )->pack(-side => 'left', -padx => 50);
+    )->pack(-side => 'left', -padx => 50);
 
 	return $self;
 }
@@ -222,7 +228,7 @@ sub tk_add_pages {
 
 				$self
 					->wnd_fill_projects_entry($wnd)
-					->wnd_fill_projects_buttons($wnd)
+					#->wnd_fill_projects_buttons($wnd)
 					;
 			}
 		},
