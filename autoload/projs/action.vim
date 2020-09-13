@@ -1192,8 +1192,18 @@ endf
 function! projs#action#fig_create (...) 
   let bsec = projs#buf#sec()
 
-  let fsec = printf('_perl.fig.%s',bsec)
+  let fsec  = printf('_perl.fig.%s',bsec)
+  let iisec = printf('fig.%s',bsec)
+
   call projs#sec#new(fsec)
+  call projs#sec#new(iisec)
+
+	call projs#sec#open_load_buf(iisec)
+	call projs#sec#open_load_buf(fsec)
+
+	call append(line('.'),'\def\sectitle{<++>}')
+	call append(line('.'),printf('\ii{fig.%s}',bsec))
+
 endf
 
 """prjact_async_build_bare

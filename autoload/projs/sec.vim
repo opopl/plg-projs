@@ -786,14 +786,30 @@ function! projs#sec#new(sec,...)
     if sec =~ '^fig_'
       call extend(lines,projs#newseclines#fig_num(sec))
 
+    elseif sec =~ 'fig\.'
+      let fig = substitute(copy(sec),'^fig\.\(.*\)','\1','g')
+
+      let tex_file = base#qw#catpath('plg','projs data tex fig.tex')
+	    call extend(lines,readfile(tex_file))
+
+      let nlines=[]
+      for line in lines
+        let line = substitute(line,'_sec_',sec,'g')
+        call add(nlines,line)
+      endfor
+     	let lines = nlines
+
+
 """newsec__perl_
     elseif sec =~ '_perl\.fig\.'
+      let fig_name = substitute(copy(sec),'^_perl\.fig\.\(.*\)','\1','g')
+
       let pl_file = base#qw#catpath('plg','projs data perl fig.pl')
 	    call extend(lines,readfile(pl_file))
 
       let nlines=[]
       for line in lines
-        let line = substitute(line,'_sec_',sec,'g')
+        let line = substitute(line,'_sec_',fig_name,'g')
         call add(nlines,line)
       endfor
      	let lines = nlines
