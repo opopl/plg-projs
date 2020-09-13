@@ -1180,6 +1180,14 @@ function! projs#action#bld_join_Fc (self,temp_file)
   call base#rdw(printf('OK: bld_join (project: %s)', proj))
 endf
 
+function! projs#action#fig_create (...) 
+  let bsec = projs#buf#sec()
+
+  let fsec = printf('_perl.fig.%s',bsec)
+  call projs#sec#new(fsec)
+endf
+
+"""prjact_async_build_bare
 if 0
   Usage
     projs#action#async_build_bare()
@@ -1191,7 +1199,6 @@ if 0
       projs#sec#new
 endif
 
-"""prjact_async_build_bare
 
 function! projs#action#async_build_bare (...) 
   let ref = get(a:000,0,{})

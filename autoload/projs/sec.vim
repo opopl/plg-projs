@@ -921,8 +921,14 @@ function! projs#sec#open_load_buf (sec,...)
 endfunction
 
 if 0
-  called by
-    VSEC
+  usage
+    call projs#sec#open(sec)
+
+    let opts = { 'load_buf' : 1, 'load_maps' : 1 }
+    call projs#sec#open(sec,opts)
+  call tree
+    called by
+      VSEC
 endif
 
 function! projs#sec#open (...)
