@@ -433,7 +433,14 @@ eof
     let secs = py3eval('nsecs')
   endif
 
-  return secs
+	let fsecs = []
+	for sec in secs
+		if !projs#sec#exists(sec) | continue | endif
+
+		call add(fsecs,sec)
+	endfor
+
+  return fsecs
 endfunction
 
 if 0
