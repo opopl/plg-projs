@@ -85,7 +85,7 @@ def insert_dict(ref):
 
   try:
     c.execute(q,values)
-  except sqlite3.IntegrityError, e:
+  except sqlite3.IntegrityError as e:
     print(e)
 
 
