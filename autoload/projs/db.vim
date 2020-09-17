@@ -20,10 +20,10 @@ function! projs#db#create_tables ()
 
   let tables   = base#qw('projs tags')
 
-  call pymy#py#add_lib( pylib . '/plg/projs' )
+  call pymy#py3#add_lib( pylib . '/plg/projs' )
   for table in tables
     let sql_file = base#qw#catpath('plg projs data sql create_table_' . table . '.sql')
-python << eof
+python3 << eof
 
 import vim
 import sqlite3,sqlparse
@@ -166,28 +166,6 @@ function! projs#db#fill_from_files (...)
     \  'Fn'  : asc#tab_restore(env) 
     \  })
 
-"python << eof
-
-"import vim,sys,sqlite3,re,os,pprint
-
-"pylib = vim.eval('projs#pylib()')
-"sys.path.append( pylib + '/plg/projs' )
-"import db 
-
-"db_file     = vim.eval('projs#db#file()')
-"root        = vim.eval('projs#root()')
-"rootid      = vim.eval('projs#rootid()')
-"proj_select = vim.eval('proj_select')
-
-"def logfun(e):
-  "vim.command('let e="' + e + '"')
-  "vim.command('call base#log(e)')
-
-"db.fill_from_files(db_file, root, rootid, proj_select, logfun)
-"#db.cleanup(db_file, root, proj_select)
-
-"eof
-
 endfunction
 
 "Usage
@@ -205,7 +183,7 @@ function! projs#db#query (...)
   let rows = []
 
 """prjdb_query
-python << eof
+python3 << eof
 
 import sqlite3
 import vim
@@ -271,7 +249,7 @@ function! projs#db#drop_tables ()
 
   call projs#db#init_py ()
 
-python << eof
+python3 << eof
 
 import vim,sys
 import sqlite3
@@ -284,7 +262,7 @@ eof
 endfunction
 
 function! projs#db#init_py ()
-python << eof
+python3 << eof
 
 import vim, sys, sqlite3
 

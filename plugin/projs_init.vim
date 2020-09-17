@@ -1,6 +1,5 @@
 
-let rootid = 'texdocs'
-let rootid = 'p_saintrussia'
+let rootid = base#envvar('projs_rootid','texdocs')
 
 call projs#initvars()
 
