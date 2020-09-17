@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+export shd="`dirname $(readlink -f $0)`"
+
+python3 $shd/db_fill.py $*
