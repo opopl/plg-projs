@@ -42,8 +42,21 @@ def drop_tables(db_file):
 
 def get_data(filename):
   data = {}
-  with open(filename) as lines:
-    for line in lines:
+
+  lines = []
+  try:
+    lines = open(filename,'rb')
+  except PermissionError as e:
+    print(e, filename)
+    return data
+
+  for ln in lines:
+    line = ''
+    try:
+      line = ln.decode('utf-8')
+    except UnicodeDecodeError as e:
+      print(e,filename)
+    if line:
       m = p['tags'].match(line)
       if m:
         data['tags'] = m.group(1)
