@@ -1181,12 +1181,12 @@ function! projs#action#bld_join_Fc (self,temp_file)
 endf
 
 function! projs#action#fig_view (...) 
-	let r = {
-			\	'ext'    : 'pl',
-    	\ 'pat'    : 'fig',
-			\	'prompt' : 0,
-			\	}
-	call projs#db_cmd#list_secs(r)
+  let r = {
+      \ 'ext'    : 'pl',
+      \ 'pat'    : 'fig',
+      \ 'prompt' : 0,
+      \ }
+  call projs#db_cmd#list_secs(r)
 endf
 
 function! projs#action#fig_create (...) 
@@ -1195,14 +1195,14 @@ function! projs#action#fig_create (...)
   let fsec  = printf('_perl.fig.%s',bsec)
   let iisec = printf('fig.%s',bsec)
 
-	call append(line('.'),'\def\sectitle{<++>}')
-	call append(line('.'),printf('\ii{fig.%s}',bsec))
+  call append(line('.'),'\def\sectitle{<++>}')
+  call append(line('.'),printf('\ii{fig.%s}',bsec))
 
   call projs#sec#new(fsec)
   call projs#sec#new(iisec)
 
-	call projs#sec#open_load_buf(iisec)
-	call projs#sec#open_load_buf(fsec)
+  call projs#sec#open_load_buf(iisec)
+  call projs#sec#open_load_buf(fsec)
 
 endf
 
@@ -1232,7 +1232,14 @@ function! projs#action#async_build_bare (...)
 
   let start = localtime()
   call chdir(root)
-  let cmd = join([ 'bb_tex.bat', proj, '-c bare' ], ' ' )
+
+  let cmd = ''
+
+  if has('win32')
+    let cmd = join([ 'bb_tex.bat', proj, '-c bare' ], ' ' )
+  elseif has('mac') || has('unix')
+    let cmd = join([ 'bb_tex', proj, '-c bare' ], ' ' )
+  endif
   
   let env = {
     \ 'proj'  : proj,
