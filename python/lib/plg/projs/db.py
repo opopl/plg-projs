@@ -96,6 +96,8 @@ def insert_dict(ref):
   quot_s   = ",".join(quot)
   q=''' INSERT OR IGNORE INTO %s (%s) VALUES (%s)''' % (table,fields_s,quot_s)
 
+  #c.execute(q,values)
+
   try:
     c.execute(q,values)
   except sqlite3.IntegrityError as e:
@@ -174,10 +176,7 @@ def fill_from_files(db_file, root, root_id, proj, logfun):
         tags   = data.get('tags','')
         author = data.get('author','')
 
-        insert_dict({
-            'conn'     : conn,
-            'table'    : 'projs',
-            'insert' : { 
+        ins = { 
               'author'  : author,
               'file'    : file,
               'proj'    : proj_m,
@@ -186,6 +185,11 @@ def fill_from_files(db_file, root, root_id, proj, logfun):
               'sec'     : sec,
               'tags'    : tags,
              }
+
+        insert_dict({
+            'conn'     : conn,
+            'table'    : 'projs',
+            'insert'   : ins,
         })
 
   c.execute('''SELECT DISTINCT proj FROM projs''')

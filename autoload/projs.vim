@@ -567,9 +567,9 @@ function! projs#onload (...)
   let ref = {}
   if a:0 | let ref = a:1 | endif
 
-	if !base#buf#is_file()
-		return 
-	endif
+  if !base#buf#is_file()
+    return 
+  endif
 
   let msg = [ printf('basename: %s', b:basename ) ]
   let prf = { 'plugin' : 'projs', 'func' : 'projs#onload' }
@@ -585,25 +585,25 @@ function! projs#onload (...)
 
   TgSet projs_this
 
-	let root_c = projs#root()
-	call projs#rootid(b:rootid)
+  let root_c = projs#root()
+  call projs#rootid(b:rootid)
 
-	if (root_c != b:root)
-		call projs#root(b:root)
+  if (root_c != b:root)
+    call projs#root(b:root)
 
-		call projs#init(b:rootid)
-	endif
+    call projs#init(b:rootid)
+  endif
 
   let done = base#eval("b:projs_onload_done")
   if done | return | endif
 
   let b:projs_onload_done = 1
 
-	call projs#proj#name(b:proj)
+  call projs#proj#name(b:proj)
 
-	if exists("b:sec")
-  	call projs#varset("secname",b:sec)
-	endif
+  if exists("b:sec")
+    call projs#varset("secname",b:sec)
+  endif
 
   call projs#maps()
     
@@ -894,9 +894,9 @@ function! projs#maps (...)
   let exts = get(ref,'exts',[])
   let ext  = get(ref,'ext','tex')
 
-	if !base#buf#is_file()
-		return 
-	endif
+  if !base#buf#is_file()
+    return 
+  endif
 
   if len(exts)
     for ext in exts
@@ -1099,10 +1099,10 @@ function! projs#root (...)
 endf    
 
 function! projs#rootid (...)
-	let rootid = get(a:000,0,'')
-	if len(rootid)
-  	call projs#varset('rootid',rootid)
-	endif
+  let rootid = get(a:000,0,'')
+  if len(rootid)
+    call projs#varset('rootid',rootid)
+  endif
 
   return projs#varget('rootid','')
 endf  
@@ -1242,7 +1242,7 @@ function! projs#list (...)
 
     let list = []
     while !len(list)
-      let gt = remove(gts,-1)
+      let gt = remove(gts,0)
 
       if gt == 'fromvar'
         let list = projs#varget('list',[])
