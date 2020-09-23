@@ -53,7 +53,7 @@ sub get_proj {
             LOCATION:
                 $0
             USAGE:
-                $Script PROJ
+                perl $Script PROJ
         } . "\n";
         exit 1;
     }

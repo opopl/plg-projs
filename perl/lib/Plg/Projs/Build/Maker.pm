@@ -1,6 +1,6 @@
 
 if (0) {
-	my $vim =<< 'eof';
+    my $vim =<< 'eof';
 
 TgUpdate perl_inc_plg_projs
 
@@ -28,6 +28,7 @@ use Plg::Projs::Piwigo::SQL;
 
 use base qw(
     Plg::Projs::Build::Maker::IndFile
+    Plg::Projs::Build::Maker::Bat
 );
 
 use Base::Arg qw(hash_update);
@@ -180,7 +181,7 @@ sub init {
         out_dir_pdf_b => catfile($h->{out_dir_pdf}, qw(b_pdflatex) )
     };
 
-	hash_update($self, $h, { keep_already_defined => 1 });
+    hash_update($self, $h, { keep_already_defined => 1 });
 
     return $self;
 }
@@ -312,18 +313,18 @@ sub _ii_include {
 }
 
 sub _debug_sec {
-	my ($self, $root_id, $proj, $sec) = @_;
+    my ($self, $root_id, $proj, $sec) = @_;
 
-			my $s =<< 'EOF'; 
+            my $s =<< 'EOF'; 
 \vspace{0.5cm}
 {\ifDEBUG\small\LaTeX~section: \verb|_sec_| project: \verb|_proj_| rootid: \verb|_rootid_|\fi}
 \vspace{0.5cm}
 EOF
-	$s =~ s/_sec_/$sec/g;
-	$s =~ s/_proj_/$proj/g;
-	$s =~ s/_rootid_/$root_id/g;
+    $s =~ s/_sec_/$sec/g;
+    $s =~ s/_proj_/$proj/g;
+    $s =~ s/_rootid_/$root_id/g;
 
-	return $s;
+    return $s;
 }
 
 sub _join_lines {
@@ -400,9 +401,9 @@ sub _join_lines {
             };
 
             push @lines, 
-				$_,
-            	$self->_debug_sec($root_id, $proj, $sec)
-				;
+                $_,
+                $self->_debug_sec($root_id, $proj, $sec)
+                ;
 
             foreach my $ord (@ins_order) {
                 my $ss    = $ss_insert->{$ord} || [];
@@ -667,7 +668,8 @@ sub cmd_build_pwg {
     my $pdf_file = catfile($src_dir,'jnd.pdf');
 
     chdir $src_dir;
-	my $cmd = sprintf(q{_run_tex.bat -x %s},$self->{tex_exe});
+    my $ext = $^O eq 'MSWin32' ? 'bat' : 'sh';
+    my $cmd = sprintf(q{_run_tex.%s -x %s},$ext, $self->{tex_exe});
     system($cmd);
 
     my @dest;
@@ -984,27 +986,6 @@ sub create_bat_in_src {
     my $root_id = $self->{root_id};
 
     my %f = (
-        '_clean.bat' => sub { 
-            [
-                'rm *.xdy',
-                'rm *.ind',
-                'rm *.idx',
-                'rm *.mtc*',
-                'rm *.maf*',
-                'rm *.ptc*',
-                'latexmk -C'
-            ];
-        },
-        '_latexmk_pdf.bat' => sub { 
-            my @cmds;
-            push @cmds, 
-                    ' ',
-                    sprintf('latexmk -pdf jnd'),
-                    ' '
-                    ;
-
-            return [@cmds];
-        },
         'latexmkrc' => sub { 
             my @cmds;
             push @cmds, 
@@ -1017,7 +998,31 @@ sub create_bat_in_src {
 
             return [@cmds];
         },
-        '_mkind.bat' => sub { 
+    );
+
+    my %f_bat = (
+        '_clean' => sub { 
+            [
+                'rm *.xdy',
+                'rm *.ind',
+                'rm *.idx',
+                'rm *.mtc*',
+                'rm *.maf*',
+                'rm *.ptc*',
+                'latexmk -C'
+            ];
+        },
+        '_latexmk_pdf' => sub { 
+            my @cmds;
+            push @cmds, 
+                    ' ',
+                    sprintf('latexmk -pdf jnd'),
+                    ' '
+                    ;
+
+            return [@cmds];
+        },
+        '_mkind' => sub { 
             my @cmds;
             push @cmds, 
                     ' ',
@@ -1027,12 +1032,12 @@ sub create_bat_in_src {
 
             return [@cmds];
         },
-        '_view.bat' => sub { 
+        '_view' => sub { 
             [
                 sprintf('call jnd.pdf')
             ];
         },
-        '_xelatex.bat' => sub { 
+        '_xelatex' => sub { 
             my @cmds;
             push @cmds, 
                 ' ',
@@ -1047,7 +1052,7 @@ sub create_bat_in_src {
                 ;
             return [@cmds];
         },
-        '_pdflatex.bat' => sub { 
+        '_pdflatex' => sub { 
             my @cmds;
             push @cmds, 
                 ' ',
@@ -1062,20 +1067,23 @@ sub create_bat_in_src {
                 ;
             return [@cmds];
         },
-        '_run_tex.bat' => sub { 
+        '_run_tex' => sub { 
             my @cmds;
             push @cmds, 
-                sprintf('call _clean.bat'),
-                sprintf('run_tex jnd %%*'),
+                sprintf('call %s',$self->_bat_file('_clean')),
+                sprintf('%s jnd %%*',$self->_bat_file('run_tex')),
                 ;
             return [@cmds];
         },
     );
 
-    while( my($f,$l) = each %f ){
-        my $bat = catfile($dir,$f);
+    while( my($f,$l) = each %f_bat ){
+        my $fl = $self->_bat_file($f);
+
+        my $bat_path = catfile($dir,$fl);
         my $lines = $l->();
-        write_file($bat,join("\n",@$lines) . "\n");
+
+        write_file($bat_path,join("\n",@$lines) . "\n");
     }
 
     return $self;
