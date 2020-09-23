@@ -153,6 +153,17 @@ function! projs#action#mkdir_pics ()
   endif
 endfunction
 
+function! projs#action#term_build_dir ()
+  let proj   = projs#proj#name()
+  let bdir   = projs#path([ 'builds', proj, 'src' ])
+
+  call base#cd(bdir)
+	if has('terminal')
+		terminal
+	endif
+
+endfunction
+
 function! projs#action#cd_builds ()
   let proj   = projs#proj#name()
   let bdir   = projs#path([ 'builds', proj, 'src' ])
