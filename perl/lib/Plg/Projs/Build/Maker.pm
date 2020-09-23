@@ -122,8 +122,8 @@ sub dhelp {
         --cmd -c CMD 
 
     EXAMPLES
-        $Script aa 
-        $Script aa -c copy_to_builds
+        perl $Script aa 
+        perl $Script aa -c copy_to_builds
     };
 
     print $s . "\n";
