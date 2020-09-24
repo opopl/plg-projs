@@ -1000,6 +1000,7 @@ sub create_bat_in_src {
         },
     );
 
+###f_bat
     my %f_bat = (
         '_clean' => sub { 
             [
@@ -1033,44 +1034,28 @@ sub create_bat_in_src {
             return [@cmds];
         },
         '_view' => sub { 
-            [
-                sprintf('call jnd.pdf')
-            ];
+			my $pdf = 'jnd.pdf';
+			my $cmd = ( $^O eq 'MSWin32' ) ? 'call' : 'evince';
+            my $s = sprintf('%s %s',$cmd,$pdf);
+			return [ $s ];
         },
-        '_xelatex' => sub { 
-            my @cmds;
-            push @cmds, 
-                ' ',
-                #sprintf('call _clean.bat'),
-                ' ',
-                sprintf('set opts='),
-                sprintf('set opts=%%opts%% -file-line-error'),
-                ' ',
-                sprintf('xelatex %%opts%% jnd'),
-                sprintf('xelatex %%opts%% jnd'),
-                ' ',
-                ;
-            return [@cmds];
-        },
-        '_pdflatex' => sub { 
-            my @cmds;
-            push @cmds, 
-                ' ',
-                #sprintf('call _clean.bat'),
-                ' ',
-                sprintf('set opts='),
-                sprintf('set opts=%%opts%% -file-line-error'),
-                ' ',
-                sprintf('pdflatex %%opts%% jnd'),
-                sprintf('pdflatex %%opts%% jnd'),
-                ' ',
-                ;
-            return [@cmds];
-        },
+##_bat_xelatex
+		'_xelatex' => $self->_bat_sub_tex({ 
+			times => 2,
+			exe   => 'xelatex' 
+		}),
+##_bat_pdflatex
+        '_pdflatex' => $self->_bat_sub_tex({ 
+			times => 2,
+			exe   => 'pdflatex' 
+		}),
         '_run_tex' => sub { 
+			my $call = ( $^O eq 'MSWin32' ) ? 'call' : '';
+			my $dir = ( $^O eq 'MSWin32' ) ? q{} : q{./};
+
             my @cmds;
             push @cmds, 
-                sprintf('call %s',$self->_bat_file('_clean')),
+                sprintf('%s %s%s',$call, $dir, $self->_bat_file('_clean')),
                 sprintf('%s jnd %%*',$self->_bat_file('run_tex')),
                 ;
             return [@cmds];
