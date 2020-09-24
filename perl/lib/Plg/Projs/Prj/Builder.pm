@@ -30,9 +30,7 @@ sub init {
 
     $self->SUPER::init();
 
-    my @h; 
-    push @h, 
-    {
+    my $h = {
         tex_exe => 'pdflatex',
         maps_act => {
             'compile' => 'build_pwg',
@@ -40,11 +38,13 @@ sub init {
         },
         act_default => 'compile',
         insert => {
-            hypertoc   => 1,
+            titletoc   => 1,
             hyperlinks => 1,
         },
-    },
-    {
+    };
+    hash_inject($self, $h);
+
+    $h = {
         opts_maker => {
             # _ii_include
             # _ii_exclude
@@ -64,23 +64,21 @@ sub init {
             sections => { 
                 include => $self->_secs_include,
                 line_sub => sub {
-		            my ($line,$r_sec) = @_;
-		
-		            my $sec = $r_sec->{sec};
-		
-		            return $line;
+                    my ($line,$r_sec) = @_;
+        
+                    my $sec = $r_sec->{sec};
+        
+                    return $line;
                 },
-	            insert => {
-	                titletoc   => $self->_insert_titletoc,
-	                hyperlinks => $self->_insert_hyperlinks,
-	            },
+                insert => {
+                    titletoc   => $self->_insert_titletoc,
+                    hyperlinks => $self->_insert_hyperlinks,
+                },
             }
         },
     };
 
-    for(@h){
-        hash_inject($self, $_);
-    }
+    hash_inject($self, $h);
 
     $self
         ->get_act
@@ -88,6 +86,7 @@ sub init {
         ->process_config
         ->init_maker
         ;
+
 
 
     return $self;
@@ -185,6 +184,7 @@ sub run_maker {
 
 sub run {
     my ($self) = @_;
+
 
     $self->run_maker;
 
