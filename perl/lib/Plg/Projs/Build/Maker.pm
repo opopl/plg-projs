@@ -596,7 +596,10 @@ sub _cmds_texindy {
         my ($cmd_idx, $cmd_ind);
         
         $cmd_idx = sprintf(qq{texindy $M_xdy $idx });
-        $cmd_ind = qq{call ind_ins_bmk $proj.ind 1 },
+		my $cmd_ind = ( $^O eq 'MSWin32' ) ? 
+	   		qq{call ind_ins_bmk.bat $proj.ind 1 } : 
+	   		qq{ind_ins_bmk.sh $proj.ind 1 }  
+			;
 
         m/^(.*)\.(\w+)\.idx$/ && do {
             my $core = $1;
@@ -611,7 +614,10 @@ sub _cmds_texindy {
             my $enc = ( $lng eq 'rus' ) ? '-C utf8' : '';
 
             $cmd_idx = sprintf(qq{texindy $enc -L $lang $M_xdy $idx });
-            $cmd_ind = qq{call ind_ins_bmk $core.$lng.ind 1 };
+			$cmd_ind = ( $^O eq 'MSWin32' ) ? 
+		   		qq{call ind_ins_bmk.bat $core.$lng.ind 1 } : 
+		   		qq{ind_ins_bmk.sh $core.$lng.ind 1 }  
+			;
         };
 
         push @cmds, 
