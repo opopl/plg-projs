@@ -596,7 +596,7 @@ sub _cmds_texindy {
         my ($cmd_idx, $cmd_ind);
         
         $cmd_idx = sprintf(qq{texindy $M_xdy $idx });
-		my $cmd_ind = ( $^O eq 'MSWin32' ) ? 
+		$cmd_ind = ( $^O eq 'MSWin32' ) ? 
 	   		qq{call ind_ins_bmk.bat $proj.ind 1 } : 
 	   		qq{ind_ins_bmk.sh $proj.ind 1 }  
 			;

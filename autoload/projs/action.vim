@@ -158,9 +158,9 @@ function! projs#action#term_build_dir ()
   let bdir   = projs#path([ 'builds', proj, 'src' ])
 
   call base#cd(bdir)
-	if has('terminal')
-		terminal
-	endif
+  if has('terminal')
+    terminal
+  endif
 
 endfunction
 
@@ -1060,6 +1060,7 @@ if 0
       projs#action#bld_compile_Fc
 endif
 
+"""PA_bld_compile
 function! projs#action#bld_compile (...) 
   let ref = get(a:000,0,{})
 
@@ -1101,7 +1102,7 @@ function! projs#action#bld_compile (...)
     call projs#action#bld_compile_Fc(self,a:temp_file)
   endfunction
 
-  let msg = printf('bld_compile: %s', proj)
+  let msg = printf('bld_compile: %s; config: %s', proj, config)
   call base#rdw(msg)
 
   call asc#run({ 
@@ -1139,6 +1140,8 @@ function! projs#action#bld_compile_Fc (self,temp_file)
   let s_dur    = ' ' . string(duration) . ' (secs)'
   
   if filereadable(a:temp_file)
+    let lines = readfile(a:temp_file)
+
     call tex#efm#latex()
     exe 'cd ' . root
     exe 'cgetfile ' . a:temp_file
