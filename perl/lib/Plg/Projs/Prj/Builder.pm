@@ -76,7 +76,9 @@ sub init {
         },
     };
 
-    hash_inject($self, $_) for(@h);
+    for(@h){
+        hash_inject($self, $_);
+    }
 
     $self
         ->get_act
