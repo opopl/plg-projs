@@ -34,6 +34,10 @@ sub init {
             'join'    => 'insert_pwg',
         },
         act_default => 'compile',
+        insert => {
+            hypertoc   => 0,
+            hyperlinks => 0,
+        },
     };
 
     hash_update($self, $h, { keep_already_defined => 1 });

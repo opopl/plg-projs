@@ -46,8 +46,6 @@ sub init {
         load_pwg => 0,
     };
 
-    my @k = keys %$h;
-
     hash_update($self, $h, { keep_already_defined => 1 });
 
     if ($self->{load_pwg}) {

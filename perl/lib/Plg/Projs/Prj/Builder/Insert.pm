@@ -5,13 +5,16 @@ use strict;
 use warnings;
 
 sub _insert_hyperlinks {
-	my ($self) = @_;
+    my ($self) = @_;
+
+    my $insert = $self->{insert} || {};
+    return [] unless $insert->{hyperlinks};
 
     my @d;
     push @d,
         {
-			scts => [qw( section subsection )],
-			lines => [
+            scts => [qw( section subsection )],
+            lines => [
 q{
 \par
 \begin{center}
@@ -32,11 +35,14 @@ q{
                         ]
         };
 
-	return [@d];
+    return [@d];
 }
 
 sub _insert_titletoc {
-    my $self = shift;
+    my ($self) = @_;
+
+    my $insert = $self->{insert} || {};
+    return [] unless $insert->{titletoc};
 
     my @d;
     push @d,
@@ -46,7 +52,7 @@ sub _insert_titletoc {
              lines => [
                  ' ',
                  '\startcontents[subsections]',
-    '\printcontents[subsections]{l}{2}{\addtocontents{ptc}{\setcounter{tocdepth}{3}}}',
+                 '\printcontents[subsections]{l}{2}{\addtocontents{ptc}{\setcounter{tocdepth}{3}}}',
 
              ],
              lines_stop => [
@@ -58,7 +64,7 @@ sub _insert_titletoc {
              lines => [
                  ' ',
                  '\startcontents[sections]',
-    '\printcontents[sections]{l}{1}{\addtocontents{ptc}{\setcounter{tocdepth}{1}}}',
+                 '\printcontents[sections]{l}{1}{\addtocontents{ptc}{\setcounter{tocdepth}{1}}}',
                  ' ',
              ],
              lines_stop => [
