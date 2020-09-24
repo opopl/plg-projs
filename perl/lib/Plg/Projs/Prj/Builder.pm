@@ -28,7 +28,9 @@ sub init {
 
     $self->SUPER::init();
 
-    my $h = {
+    my @h; 
+    push @h, 
+    {
         tex_exe => 'pdflatex',
         maps_act => {
             'compile' => 'build_pwg',
@@ -39,23 +41,42 @@ sub init {
             hypertoc   => 1,
             hyperlinks => 1,
         },
-		# _ii_include
-		# _ii_exclude
-		load_dat => {
-			ii_include => 0,
-			ii_exclude => 1,
-		},
-		# generate files
-		generate => {
-		},
+    },
+    {
+        opts_maker => {
+            # _ii_include
+            # _ii_exclude
+            load_dat => {
+                ii_include => 0,
+                ii_exclude => 1,
+            },
+            # generate files
+            generate => {
+            },
+    
+            # append to files
+            append => {
+                defs => sub {},
+            },
 
-		# append to files
-		append => {
-			defs => sub {},
-		},
+            sections => { 
+                include => $self->_secs_include,
+                line_sub => sub {
+		            my ($line,$r_sec) = @_;
+		
+		            my $sec = $r_sec->{sec};
+		
+		            return $line;
+                },
+	            insert => {
+	                titletoc   => $self->_insert_titletoc,
+	                hyperlinks => $self->_insert_hyperlinks,
+	            },
+            }
+        },
     };
 
-    hash_inject($self, $h);
+    hash_inject($self, $_) for(@h);
 
     $self
         ->get_act
@@ -182,23 +203,6 @@ sub init_maker {
 
     local @ARGV = ();
 
-    # to be used in _join_lines
-    # see also pat_sect
-    my $scc = {
-            include => $self->_secs_include,
-            line_sub => sub {
-                my ($line,$r_sec) = @_;
-
-                my $sec = $r_sec->{sec};
-
-                return $line;
-            },
-            insert => {
-                titletoc   => $self->_insert_titletoc,
-                hyperlinks => $self->_insert_hyperlinks,
-            },
-        };
-
     my $x = Plg::Projs::Build::Maker->new(
         skip_get_opt => 1,
         tex_exe      => $self->{tex_exe},
@@ -209,8 +213,7 @@ sub init_maker {
         join_lines   => {
             include_below => [qw(section)]
         },
-		load_dat => $self->{load_dat},
-        sections => $scc,
+        %{ $self->{opts_maker} || {} },
     );
 
     $self->{maker} = $x;
