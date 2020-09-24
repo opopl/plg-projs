@@ -48,8 +48,12 @@ sub init {
 sub get_proj {
     my ($self) = @_;
 
+    my $pack = __PACKAGE__;
+
     unless (@ARGV) {
         print qq{
+            PACKAGE:
+                $pack
             LOCATION:
                 $0
             USAGE:

@@ -1034,24 +1034,24 @@ sub create_bat_in_src {
             return [@cmds];
         },
         '_view' => sub { 
-			my $pdf = 'jnd.pdf';
-			my $cmd = ( $^O eq 'MSWin32' ) ? 'call' : 'evince';
+            my $pdf = 'jnd.pdf';
+            my $cmd = ( $^O eq 'MSWin32' ) ? 'call' : 'evince';
             my $s = sprintf('%s %s',$cmd,$pdf);
-			return [ $s ];
+            return [ $s ];
         },
 ##_bat_xelatex
-		'_xelatex' => $self->_bat_sub_tex({ 
-			times => 2,
-			exe   => 'xelatex' 
-		}),
+        '_xelatex' => $self->_bat_sub_tex({ 
+            times => 2,
+            exe   => 'xelatex' 
+        }),
 ##_bat_pdflatex
         '_pdflatex' => $self->_bat_sub_tex({ 
-			times => 2,
-			exe   => 'pdflatex' 
-		}),
+            times => 2,
+            exe   => 'pdflatex' 
+        }),
         '_run_tex' => sub { 
-			my $call = ( $^O eq 'MSWin32' ) ? 'call' : '';
-			my $dir = ( $^O eq 'MSWin32' ) ? q{} : q{./};
+            my $call = ( $^O eq 'MSWin32' ) ? 'call' : '';
+            my $dir = ( $^O eq 'MSWin32' ) ? q{} : q{./};
 
             my @cmds;
             push @cmds, 
@@ -1069,7 +1069,7 @@ sub create_bat_in_src {
         my $lines = $l->();
 
         write_file($bat_path,join("\n",@$lines) . "\n");
-		chmod 0755, $bat_path;
+        chmod 0755, $bat_path;
 
     }
 
