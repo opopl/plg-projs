@@ -1034,9 +1034,11 @@ sub create_bat_in_src {
             return [@cmds];
         },
         '_view' => sub { 
-            my $pdf = 'jnd.pdf';
-            my $cmd = ( $^O eq 'MSWin32' ) ? 'call' : 'evince';
-            my $s = sprintf('%s %s',$cmd,$pdf);
+            my $pdf   = 'jnd.pdf';
+            my $cmd   = ( $^O eq 'MSWin32' ) ? 'call' : 'evince';
+            my $after = ( $^O eq 'MSWin32' ) ? '' : ' &';
+
+            my $s = sprintf('%s %s%s',$cmd,$pdf,$after);
             return [ $s ];
         },
 ##_bat_xelatex
@@ -1044,19 +1046,25 @@ sub create_bat_in_src {
             times => 2,
             exe   => 'xelatex' 
         }),
-##_bat_pdflatex
         '_pdflatex' => $self->_bat_sub_tex({ 
             times => 2,
             exe   => 'pdflatex' 
         }),
+##_bat__run_tex
         '_run_tex' => sub { 
-            my $call = ( $^O eq 'MSWin32' ) ? 'call' : '';
+            my $call = ( $^O eq 'MSWin32' ) ? 'call ' : '';
             my $dir = ( $^O eq 'MSWin32' ) ? q{} : q{./};
+            my $args = ( $^O eq 'MSWin32' ) ? q{%*} : q{$*};
 
             my @cmds;
+            if ($^O eq 'MSWin32'){
+                push @cmds, ' ','@echo off',' ';
+            }else{
+                push @cmds, '#!/bin/sh',' ';
+            }
             push @cmds, 
-                sprintf('%s %s%s',$call, $dir, $self->_bat_file('_clean')),
-                sprintf('%s jnd %%*',$self->_bat_file('run_tex')),
+                sprintf('%s%s%s',$call, $dir, $self->_bat_file('_clean')),
+                sprintf('%s jnd %s', $self->_bat_file('run_tex'), $args),
                 ;
             return [@cmds];
         },
