@@ -1084,6 +1084,8 @@ sub create_bat_in_src {
         my $lines = $l->();
 
         write_file($bat_path,join("\n",@$lines) . "\n");
+		chmod 0755, $bat_path;
+
     }
 
     return $self;
