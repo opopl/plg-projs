@@ -150,9 +150,9 @@ sub run {
 sub _secs_include {
     my ($self) = @_;
 
-	my @secs;
+    my @secs;
 
-	return [@secs];
+    return [@secs];
 }
 
 sub init_maker {
@@ -163,7 +163,9 @@ sub init_maker {
 
     local @ARGV = ();
 
-	my $scc = {
+    # to be used in _join_lines
+    # see also pat_sect
+    my $scc = {
             include => $self->_secs_include,
             line_sub => sub {
                 my ($line,$r_sec) = @_;

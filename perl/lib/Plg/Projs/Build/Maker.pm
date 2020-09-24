@@ -351,8 +351,9 @@ sub _join_lines {
     my $ss        = $self->{sections} || {};
 
     my $ss_insert = $ss->{insert} || {};
-    my $line_sub = $ss->{line_sub} || sub { shift };
+    my $line_sub  = $ss->{line_sub} || sub { shift };
 
+	# see Plg::Projs::Prj::Builder::Insert
     my @ins_order = qw( hyperlinks titletoc );
 
     my $root = $self->{root};
