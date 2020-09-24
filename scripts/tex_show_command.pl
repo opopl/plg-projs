@@ -12,7 +12,8 @@ use Data::Dumper qw(Dumper);
 my $cmd   = shift @ARGV;
 my $class = shift @ARGV || 'book';
 
-my $tmp_dir  = $ENV{TMP};
+my $tmp_dir  = $ENV{TMP} || catfile( $ENV{HOME}, qw(tmp) );
+mkpath $tmp_dir unless -d $tmp_dir;
 
 my $tex_file = catfile($tmp_dir,q{show_cmd.tex});
 
