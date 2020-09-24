@@ -25,10 +25,16 @@ sub new
 sub init {
     my $self = shift;
 
+    my $pack = __PACKAGE__;
+
     unless (@ARGV) {
         print qq{
+            PACKAGE:
+                $pack
+            LOCATION:
+                $0
             USAGE:
-                $Script INDFILE LEVEL
+                perl $Script INDFILE LEVEL
         } . "\n";
         exit 1;
     }

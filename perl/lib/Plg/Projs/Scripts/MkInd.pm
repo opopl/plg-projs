@@ -4,7 +4,7 @@ package Plg::Projs::Scripts::MkInd;
 use strict;
 use warnings;
 
-use Plg::Projs::Build::PdfLatex;
+use Plg::Projs::Build::Maker;
 
 use FindBin qw($Bin $Script);
 use Cwd;
@@ -13,25 +13,30 @@ use Data::Dumper qw(Dumper);
 use File::stat;
 use File::Path qw(rmtree);
 
+use Base::Arg qw( hash_update );
+
 sub new
 {
-	my ($class, %opts) = @_;
-	my $self = bless (\%opts, ref ($class) || $class);
+    my ($class, %opts) = @_;
+    my $self = bless (\%opts, ref ($class) || $class);
 
-	$self->init if $self->can('init');
+    $self->init if $self->can('init');
 
-	return $self;
+    return $self;
 }
 
 sub init {
     my $self = shift;
 
+    my $pack = __PACKAGE__;
     unless (@ARGV) {
         print qq{
+            PACKAGE:
+                $pack
             LOCATION:
                 $0
             USAGE:
-                $Script PROJ
+                perl $Script PROJ
         } . "\n";
         exit 1;
     }
@@ -39,7 +44,7 @@ sub init {
     my $proj = shift @ARGV;
     my $root = getcwd();
 
-    my $blx = Plg::Projs::Build::PdfLatex->new( 
+    my $blx = Plg::Projs::Build::Maker->new( 
         skip_get_opt => 1,
         proj         => $proj,
         root         => $root,
@@ -50,25 +55,24 @@ sub init {
         root => $root,
         blx  => $blx,
     };
-        
-    my @k = keys %$h;
 
-    for(@k){ $self->{$_} = $h->{$_} unless defined $self->{$_}; }
+    hash_update($self, $h, { keep_already_defined => 1 });
+        
 
     return $self;
 }
 
 sub run {
-	my ($self) = @_;
+    my ($self) = @_;
 
-	my $root = $self->{root};
+    my $root = $self->{root};
 
-	my $blx = $self->{blx};
+    my $blx = $self->{blx};
 
     my @texindy = $blx->_cmds_texindy({ dir => $root });
-	foreach my $cmd (@texindy) {
-		system("$cmd");
-	}
+    foreach my $cmd (@texindy) {
+        system("$cmd");
+    }
 
     return $self;
 }
