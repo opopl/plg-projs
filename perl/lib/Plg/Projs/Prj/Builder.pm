@@ -18,6 +18,7 @@ use Getopt::Long qw(GetOptions);
 
 use Base::Arg qw(
     hash_update
+    hash_inject
 );
 
 use Plg::Projs::Build::Maker;
@@ -40,7 +41,7 @@ sub init {
         },
     };
 
-    hash_update($self, $h, { keep_already_defined => 1 });
+    hash_inject($self, $h);
 
     $self
         ->get_act
