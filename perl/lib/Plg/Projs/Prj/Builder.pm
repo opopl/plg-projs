@@ -6,6 +6,8 @@ use strict;
 use warnings;
 
 use base qw(
+    Base::Obj
+
     Plg::Projs::Prj
     Plg::Projs::Prj::Builder::Insert
 );

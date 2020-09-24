@@ -7,8 +7,7 @@ use warnings;
 sub _insert_hyperlinks {
     my ($self) = @_;
 
-    my $insert = $self->{insert} || {};
-    return [] unless $self->_val_(qw(insert hyperlinks));
+    return [] unless $self->_val_(qw( insert hyperlinks ));
 
     my @d;
     push @d,
@@ -41,7 +40,7 @@ q{
 sub _insert_titletoc {
     my ($self) = @_;
 
-    return [] unless $self->_val_(qw(insert titletoc));
+    return [] unless $self->_val_(qw( insert titletoc ));
 
     my @d;
     push @d,
