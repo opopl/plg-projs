@@ -95,7 +95,7 @@ sub get_act {
             DEFAULT ACT:
                 $self->{act_default}
             EXAMPLES:
-                $Script compile -c 'xelatex'
+                perl $Script compile -c 'xelatex'
         } . "\n";
         exit 1;
     }
