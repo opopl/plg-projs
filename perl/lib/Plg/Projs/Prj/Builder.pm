@@ -47,7 +47,7 @@ sub init {
             # _ii_include
             # _ii_exclude
             load_dat => {
-                ii_include => 0,
+                ii_include => 1,
                 ii_exclude => 1,
             },
             # generate files

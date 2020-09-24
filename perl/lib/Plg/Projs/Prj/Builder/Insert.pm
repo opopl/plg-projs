@@ -8,7 +8,7 @@ sub _insert_hyperlinks {
     my ($self) = @_;
 
     my $insert = $self->{insert} || {};
-    return [] unless $insert->{hyperlinks};
+    return [] unless $self->_val_(qw(insert hyperlinks));
 
     my @d;
     push @d,
@@ -41,8 +41,7 @@ q{
 sub _insert_titletoc {
     my ($self) = @_;
 
-    my $insert = $self->{insert} || {};
-    return [] unless $insert->{titletoc};
+    return [] unless $self->_val_(qw(insert titletoc));
 
     my @d;
     push @d,
