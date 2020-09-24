@@ -39,6 +39,20 @@ sub init {
             hypertoc   => 1,
             hyperlinks => 1,
         },
+		# _ii_include
+		# _ii_exclude
+		load_dat => {
+			ii_include => 1,
+			ii_exclude => 1,
+		},
+		# generate files
+		generate => {
+		},
+
+		# append to files
+		append => {
+			defs => sub {},
+		},
     };
 
     hash_inject($self, $h);
@@ -195,7 +209,8 @@ sub init_maker {
         join_lines   => {
             include_below => [qw(section)]
         },
-        sections => $scc
+		load_dat => $self->{load_dat},
+        sections => $scc,
     );
 
     $self->{maker} = $x;

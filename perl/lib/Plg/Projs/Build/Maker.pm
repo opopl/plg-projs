@@ -27,11 +27,17 @@ use File::Find qw(find);
 use Plg::Projs::Piwigo::SQL;
 
 use base qw(
+	Base::Obj
+
     Plg::Projs::Build::Maker::IndFile
     Plg::Projs::Build::Maker::Bat
+    Plg::Projs::Build::Maker::Join
 );
 
-use Base::Arg qw(hash_update);
+use Base::Arg qw(
+	hash_update
+	hash_inject
+);
 
 use utf8; 
 use Encode;
@@ -181,20 +187,14 @@ sub init {
         out_dir_pdf_b => catfile($h->{out_dir_pdf}, qw(b_pdflatex) )
     };
 
-    hash_update($self, $h, { keep_already_defined => 1 });
+	hash_inject($self, $h);
 
     return $self;
 }
 
 
 
-sub _file_joined {
-    my ($self) = @_;
 
-    my $jfile = catfile($self->{src_dir},'jnd.tex');
-
-    return $jfile;
-}
 
 sub _file_sec {
     my ($self, $sec, $ref) = @_;
@@ -228,90 +228,6 @@ sub _file_sec {
     return $f;
 }
 
-sub _file_ii_exclude {
-    my ($self) = @_;
-            
-    catfile(
-      $self->{root},
-      join("." => ( $self->{proj}, 'ii_exclude.i.dat' )) 
-    );
-
-}
-
-sub _file_ii_include {
-    my ($self) = @_;
-            
-    catfile(
-      $self->{root},
-      join("." => ( $self->{proj}, 'ii_include.i.dat' )) 
-    );
-
-}
-
-sub _ii_exclude {
-    my ($self) = @_;
-
-    my (@exclude);
-    my $f_in = $self->_file_ii_exclude;
-
-    my @base = $self->_ii_base;
-
-    return @exclude;
-}
-
-sub _ii_base {
-    my ($self) = @_;
-
-    my @base_preamble;
-    push @base_preamble,
-        map { sprintf('preamble.%s',$_) } 
-        qw(index packages acrobat_menu filecontents );
-
-    my @base;
-    push @base,
-        qw(body preamble index bib),
-        @base_preamble,
-        qw(titlepage),
-        qw(listfigs listtabs),
-        qw(tabcont),
-        ;
-    return @base;
-}
-
-sub _ii_include {
-    my ($self) = @_;
-
-    my (@include);
-    my $f_in = $self->_file_ii_include;
-
-    my @base = $self->_ii_base;
-
-    my $s = $self->{sections} || {};
-    my @i = @{ $s->{include} || [] };
-    push @include, @i;
-
-    if (-e $f_in) {
-        my @i = readarr($f_in);
-
-        for(@i){
-            /^_all_$/ && do {
-                $self->{ii_include_all} = 1;
-                next;
-            };
-
-            /^_base_$/ && do {
-                push @include, @base;
-                next;
-            };
-
-            push @include, $_;
-        }
-    }else{
-        $self->{ii_include_all} = 1;
-    }
-    return @include;
-}
-
 sub _debug_sec {
     my ($self, $root_id, $proj, $sec) = @_;
 
@@ -327,204 +243,6 @@ EOF
     return $s;
 }
 
-sub _join_lines {
-    my ($self, $sec, $ref) = @_;
-
-    $ref ||= {};
-
-    $sec = '_main_' unless defined $sec;
-
-    my $proj = $ref->{proj} || $self->{proj};
-    my $file = $ref->{file} || '';
-
-    my $root_id = $self->{root_id} || '';
-
-    my @include = $self->_ii_include;
-
-    my @exclude = $self->_ii_exclude;
-    
-    my $ii_include_all = $ref->{ii_include_all} || $self->{ii_include_all};
-
-    my $jl = $self->{join_lines} || {};
-    my $include_below = $ref->{include_below} || $jl->{include_below} || [];
-
-    my $ss        = $self->{sections} || {};
-
-    my $ss_insert = $ss->{insert} || {};
-    my $line_sub  = $ss->{line_sub} || sub { shift };
-
-	# see Plg::Projs::Prj::Builder::Insert
-    my @ins_order = qw( hyperlinks titletoc );
-
-    my $root = $self->{root};
-
-    chdir $root;
-
-    my $jfile = $self->_file_joined;
-    mkpath $self->{src_dir};
-
-    my $f = $ref->{file} || $self->_file_sec($sec,{ proj => $proj });
-
-    if (!-e $f){ return (); }
-
-    my @lines;
-    my @flines = read_file $f;
-
-    my $pats = {
-         'ii'    => '^\s*\\\\ii\{(.+)\}.*$',
-         'iifig' => '^\s*\\\\iifig\{(.+)\}.*$',
-         'input' => '^\s*\\\\input\{(\S+)\}.*$',
-         'sect'  => '^\s*\\\\(part|chapter|section|subsection|subsubsection|paragraph)\{.*\}\s*$',
-    };
-
-    my $delim = '%' x 50;  
-
-
-    my $r_sec = {
-        proj      => $proj,
-        sec       => $sec,
-        file      => $file,
-    };
- 
-    my $sect;
-    my @at_end;
-    foreach(@flines) {
-        chomp;
-
-        $_ = $line_sub->($_, $r_sec);
-
-###pat_sect
-        m/$pats->{sect}/ && do {
-            $sect = $1;
-            
-            my $r = {
-                sect      => $sect,
-            };
-
-            push @lines, 
-                $_,
-                $self->_debug_sec($root_id, $proj, $sec)
-                ;
-
-            foreach my $ord (@ins_order) {
-                my $ss    = $ss_insert->{$ord} || [];
-
-                foreach my $sss (@$ss) {
-                    my $scts      = $sss->{scts} || [];
-                    my $sss_lines = $sss->{lines} || [];
-    
-                    my $ins = 0;
-                    if (@$scts) {
-                        $ins = (@$scts && grep { /^$sect$/ } @$scts) ? 1 : 0;
-                    }
-        
-                    if ($ins) {
-                        my @a = (ref $sss_lines eq 'ARRAY') ? @$sss_lines : $sss_lines->($r);
-                        push @lines, @a;
-
-                        if ($ord eq 'titletoc') {
-                            push @at_end, @{ $sss->{lines_stop} || [] };
-                        }
-                    }
-    
-                }
-
-            }
-
-            next;
-        };
-
-###pat_input
-        m/$pats->{input}/ && do {
-            my $fname   = $1;
-
-            my @files;
-            push @files,
-                $fname, qq{$fname.tex};
-
-            while (@files) {
-                my $file = shift @files;
-
-                next unless -e $file;
-
-                my ($proj) = ($file =~ m/^(\w+)\./);
-
-                my @ii_lines = $self->_join_lines('',{ 
-                    proj           => $proj,
-                    file           => $file,
-                    ii_include_all => 1,
-                    include_below  => $include_below,
-                });
-
-                push @lines, 
-                    $delim, '%% ' . $_, $delim,
-                    @ii_lines
-                    ;
-
-            }
-
-            next;
-        };
-
-###pat_ii
-        m/$pats->{ii}/ && do {
-            my $ii_sec   = $1;
-
-            #if ($sect) {
-                #print qq{ sect: $sect, ii_sec: $ii_sec }. "\n";
-                #print Dumper($include_below) . "\n";
-            #}
-
-            my $iall = $ii_include_all;
-            if ($sect) {
-                $iall = ( grep { /^$sect$/ } @$include_below ) ? 1 : $iall;
-            }
-
-            my $inc = $iall || ( !$iall && grep { /^$ii_sec$/ } @include )
-                ? 1 : 0;
-
-            next unless $inc;
-
-            my @ii_lines = $self->_join_lines($ii_sec,{ 
-                proj           => $proj,
-                ii_include_all => $iall,
-                include_below  => $include_below,
-            });
-
-            push @lines, 
-                $delim,
-                '%% ' . $_,
-                $delim,
-                @ii_lines
-            ;
-            next;
-        };
-
-###pat_iifig
-        m/$pats->{iifig}/ && do {
-            my $fig_sec   = 'fig.' . $1;
-            my @fig_lines = $self->_join_lines($fig_sec,{ proj => $proj });
-
-            push @lines, 
-                $delim,
-                '%% ' . $_,
-                $delim,
-                @fig_lines
-            ;
-
-            next;
-        };
-
-        push @lines, $_;
-    }
-    push @lines, @at_end;
-
-    if ($sec eq '_main_') {
-        write_file($jfile,join("\n",@lines) . "\n");
-    }
-
-    return @lines;
-}
 
 sub _find_ {
     my ($self, $dirs, $exts) = @_;

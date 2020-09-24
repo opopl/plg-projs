@@ -15,7 +15,9 @@ use File::Path qw(rmtree);
 
 use Getopt::Long qw(GetOptions);
 
-use Base::Arg qw(hash_update);
+use Base::Arg qw(
+	hash_inject
+);
 
 sub new
 {
@@ -34,7 +36,7 @@ sub init {
     my $h = {
         tex_exe => 'pdflatex',
     };
-    hash_update($self, $h, { keep_already_defined => 1 });
+	hash_inject($self, $h);
 
     $self
         ->get_proj
@@ -75,7 +77,7 @@ sub get_proj {
         proj => $proj,
         root => $root,
     };
-    hash_update($self, $h, { keep_already_defined => 1 });
+	hash_inject($self, $h);
 
     return $self;
 }
@@ -119,7 +121,7 @@ sub init_blx {
     my $h = {
         blx  => $blx,
     };
-    hash_update($self, $h, { keep_already_defined => 1 });
+	hash_inject($self, $h);
 
     return $self;
 }
