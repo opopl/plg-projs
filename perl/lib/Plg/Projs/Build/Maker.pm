@@ -27,7 +27,7 @@ use File::Find qw(find);
 use Plg::Projs::Piwigo::SQL;
 
 use base qw(
-	Base::Obj
+    Base::Obj
 
     Plg::Projs::Build::Maker::IndFile
     Plg::Projs::Build::Maker::Bat
@@ -36,8 +36,8 @@ use base qw(
 );
 
 use Base::Arg qw(
-	hash_update
-	hash_inject
+    hash_update
+    hash_inject
 );
 
 use utf8; 
@@ -188,7 +188,7 @@ sub init {
         out_dir_pdf_b => catfile($h->{out_dir_pdf}, qw(b_pdflatex) )
     };
 
-	hash_inject($self, $h);
+    hash_inject($self, $h);
 
     return $self;
 }
@@ -266,10 +266,10 @@ sub _cmds_texindy {
         my ($cmd_idx, $cmd_ind);
         
         $cmd_idx = sprintf(qq{texindy $M_xdy $idx });
-		$cmd_ind = ( $^O eq 'MSWin32' ) ? 
-	   		qq{call ind_ins_bmk.bat $proj.ind 1 } : 
-	   		qq{ind_ins_bmk.sh $proj.ind 1 }  
-			;
+        $cmd_ind = ( $^O eq 'MSWin32' ) ? 
+            qq{call ind_ins_bmk.bat $proj.ind 1 } : 
+            qq{ind_ins_bmk.sh $proj.ind 1 }  
+            ;
 
         m/^(.*)\.(\w+)\.idx$/ && do {
             my $core = $1;
@@ -284,10 +284,10 @@ sub _cmds_texindy {
             my $enc = ( $lng eq 'rus' ) ? '-C utf8' : '';
 
             $cmd_idx = sprintf(qq{texindy $enc -L $lang $M_xdy $idx });
-			$cmd_ind = ( $^O eq 'MSWin32' ) ? 
-		   		qq{call ind_ins_bmk.bat $core.$lng.ind 1 } : 
-		   		qq{ind_ins_bmk.sh $core.$lng.ind 1 }  
-			;
+            $cmd_ind = ( $^O eq 'MSWin32' ) ? 
+                qq{call ind_ins_bmk.bat $core.$lng.ind 1 } : 
+                qq{ind_ins_bmk.sh $core.$lng.ind 1 }  
+            ;
         };
 
         push @cmds, 
