@@ -35,8 +35,8 @@ sub init {
         },
         act_default => 'compile',
         insert => {
-            hypertoc   => 0,
-            hyperlinks => 0,
+            hypertoc   => 1,
+            hyperlinks => 1,
         },
     };
 
