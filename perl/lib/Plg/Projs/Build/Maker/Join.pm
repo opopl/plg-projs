@@ -55,8 +55,6 @@ sub _join_lines {
     my $ss_insert = $ss->{insert} || {};
     my $line_sub  = $ss->{line_sub} || sub { shift };
 
-    # see Plg::Projs::Prj::Builder::Insert
-    my @ins_order = $self->_val_list_('sections ins_order');
 
     my $root = $self->{root};
 
@@ -96,42 +94,16 @@ sub _join_lines {
 
 ###pat_sect
         m/$pats->{sect}/ && do {
-            $sect = $1;
+            $self->_line_process_sect({ 
+               sect    => $1,
+               root_id => $root_id,
+               proj    => $proj,
+               sec     => $sec,
+
+               lines   => \@lines,
+               at_end  => \@at_end,
+            });
             
-            my $r = {
-                sect      => $sect,
-            };
-
-            push @lines, 
-                $_,
-                $self->_debug_sec($root_id, $proj, $sec)
-                ;
-
-            foreach my $ord (@ins_order) {
-                my $ss    = $ss_insert->{$ord} || [];
-
-                foreach my $sss (@$ss) {
-                    my $scts      = $sss->{scts} || [];
-                    my $sss_lines = $sss->{lines} || [];
-    
-                    my $ins = 0;
-                    if (@$scts) {
-                        $ins = (@$scts && grep { /^$sect$/ } @$scts) ? 1 : 0;
-                    }
-        
-                    if ($ins) {
-                        my @a = (ref $sss_lines eq 'ARRAY') ? @$sss_lines : $sss_lines->($r);
-                        push @lines, @a;
-
-                        if ($ord eq 'titletoc') {
-                            push @at_end, @{ $sss->{lines_stop} || [] };
-                        }
-                    }
-    
-                }
-
-            }
-
             next;
         };
 

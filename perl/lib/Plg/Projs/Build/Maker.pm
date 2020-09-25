@@ -32,6 +32,7 @@ use base qw(
     Plg::Projs::Build::Maker::IndFile
     Plg::Projs::Build::Maker::Bat
     Plg::Projs::Build::Maker::Join
+    Plg::Projs::Build::Maker::Line
     Plg::Projs::Build::Maker::Sec
 );
 
