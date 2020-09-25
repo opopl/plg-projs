@@ -148,14 +148,22 @@ sub get_act {
     my @acts = sort keys %{$self->{maps_act} || {}};
     my $acts_s = join(" ",@acts);
 
+    my @targets = sort keys %{$self->{maps_target} || {}};
+    my $targets_s = join(" ",@targets);
+
     unless (@ARGV) {
         print qq{
             LOCATION:
                 $0
             USAGE:
+                $Script ACT 
+                $Script ACT -t TARGET
                 $Script ACT -c CONFIG
+                $Script ACT -c CONFIG -t TARGET
             ACTS:
                 $acts_s
+            TARGETS:
+                $targets_s
             DEFAULT ACT:
                 $self->{act_default}
             EXAMPLES:
