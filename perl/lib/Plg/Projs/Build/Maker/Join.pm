@@ -23,9 +23,9 @@ sub _file_joined {
 
 =head4 Usage
 
-	# $sec  = '_main_'
-	# $proj = $m->{proj}
-	my @lines = $m->_join_lines();
+    # $sec  = '_main_'
+    # $proj = $m->{proj}
+    my @lines = $m->_join_lines();
 
 =cut
 
@@ -55,8 +55,8 @@ sub _join_lines {
     my $ss_insert = $ss->{insert} || {};
     my $line_sub  = $ss->{line_sub} || sub { shift };
 
-	# see Plg::Projs::Prj::Builder::Insert
-    my @ins_order = qw( hyperlinks titletoc );
+    # see Plg::Projs::Prj::Builder::Insert
+    my @ins_order = $self->_val_list_('sections ins_order');
 
     my $root = $self->{root};
 
@@ -80,7 +80,6 @@ sub _join_lines {
     };
 
     my $delim = '%' x 50;  
-
 
     my $r_sec = {
         proj      => $proj,
@@ -228,7 +227,7 @@ sub _join_lines {
 
 =head4 Usage
 
-	my @include = $maker->_ii_include();
+    my @include = $maker->_ii_include();
 
 =cut
 
@@ -243,10 +242,10 @@ sub _ii_include {
     my @i = @{ $self->_val_(qw( sections include )) || [] };
     push @include, @i;
 
-	my $load_dat = $self->_val_(qw( load_dat ii_include ));
-	unless ($load_dat) {
-		return @include;
-	}
+    my $load_dat = $self->_val_(qw( load_dat ii_include ));
+    unless ($load_dat) {
+        return @include;
+    }
 
     if (-e $f_in) {
         my @i = readarr($f_in);

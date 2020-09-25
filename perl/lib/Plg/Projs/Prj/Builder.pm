@@ -25,7 +25,7 @@ use Base::Arg qw(
 
 use Plg::Projs::Build::Maker;
 
-sub inject_base {
+sub inj_base {
     my ($self) = @_;
 
     my $h = {
@@ -40,31 +40,30 @@ sub inject_base {
             hyperlinks => 1,
         },
     };
+
     hash_inject($self, $h);
 
-	return $self;
+    return $self;
 }
 
-sub inject_opts_maker {
+sub inj_opts_maker {
     my ($self) = @_;
 
-    my $h = {
-        opts_maker => {
+    my $o = {
+            skip_get_opt => 1,
+            tex_exe      => $self->{tex_exe},
+            proj         => $self->{proj},
+            root         => $self->{root},
+            root_id      => $self->{root_id},
+            join_lines   => {
+                include_below => [qw(section)]
+            },
             # _ii_include
             # _ii_exclude
             load_dat => {
                 ii_include => 1,
                 ii_exclude => 1,
             },
-            # generate files
-            generate => {
-            },
-    
-            # append to files
-            append => {
-                defs => sub {},
-            },
-
             sections => { 
                 include => $self->_secs_include,
                 line_sub => sub {
@@ -74,17 +73,26 @@ sub inject_opts_maker {
         
                     return $line;
                 },
+                ins_order => [qw( hyperlinks titletoc )],
                 insert => {
                     titletoc   => $self->_insert_titletoc,
                     hyperlinks => $self->_insert_hyperlinks,
                 },
+                generate => {
+                },
+                append => {
+                    each => sub { },
+                    only => {
+                        defs => sub {},
+                    },
+                },
             }
-        },
     };
+    my $h = { opts_maker => $o };
 
     hash_inject($self, $h);
 
-	return $self;
+    return $self;
 }
 
 sub init {
@@ -92,9 +100,9 @@ sub init {
 
     $self->SUPER::init();
 
-	$self
-		->inject_base
-		->inject_opts_maker
+    $self
+        ->inj_base
+        ->inj_opts_maker
         ->get_act
         ->get_opt
         ->process_config
@@ -221,15 +229,7 @@ sub init_maker {
     local @ARGV = ();
 
     my $x = Plg::Projs::Build::Maker->new(
-        skip_get_opt => 1,
-        tex_exe      => $self->{tex_exe},
-        proj         => $self->{proj},
-        root         => $self->{root},
-        root_id      => $self->{root_id},
         cmd          => $cmd,
-        join_lines   => {
-            include_below => [qw(section)]
-        },
         %{ $self->{opts_maker} || {} },
     );
 
