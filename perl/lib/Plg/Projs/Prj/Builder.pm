@@ -10,6 +10,7 @@ use base qw(
 
     Plg::Projs::Prj
     Plg::Projs::Prj::Builder::Insert
+    Plg::Projs::Prj::Builder::Defs
 );
 
 use FindBin qw($Bin $Script);
@@ -79,7 +80,9 @@ sub inj_opts_maker {
             append => {
                 each => sub { },
                 only => {
-                    defs => sub {},
+                    defs => sub {
+                        [ $self->_def_sechyperlinks ];
+                    },
                 },
             },
         }

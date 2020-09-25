@@ -13,25 +13,7 @@ sub _insert_hyperlinks {
     push @d,
         {
             scts => [qw( section subsection )],
-            lines => [
-q{
-\par
-\begin{center}
-    %\colorbox{cyan}{\makebox[5cm][l]{\strut}}
-    \colorbox{cyan}{
-       \makebox[10cm][l]{
-            \large\bfseries
-            \hypersetup{ linkcolor=white }
-
-            \hyperlink{indices}{\indicesname}
-
-            \hypersetup{ linkcolor=yellow }
-            \hyperlink{tabcont}{\contentsname}
-        }
-    }
-\end{center}
-}
-                        ]
+            lines => [ q{ \sechyperlinks } ],
         };
 
     return [@d];
