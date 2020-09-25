@@ -50,43 +50,39 @@ sub inj_opts_maker {
     my ($self) = @_;
 
     my $o = {
-            skip_get_opt => 1,
-            tex_exe      => $self->{tex_exe},
-            proj         => $self->{proj},
-            root         => $self->{root},
-            root_id      => $self->{root_id},
-            join_lines   => {
-                include_below => [qw(section)]
+        skip_get_opt => 1,
+        join_lines   => {
+            include_below => [qw(section)]
+        },
+        # _ii_include
+        # _ii_exclude
+        load_dat => {
+            ii_include => 1,
+            ii_exclude => 1,
+        },
+        sections => { 
+            include => $self->_secs_include,
+            line_sub => sub {
+                my ($line,$r_sec) = @_;
+    
+                my $sec = $r_sec->{sec};
+    
+                return $line;
             },
-            # _ii_include
-            # _ii_exclude
-            load_dat => {
-                ii_include => 1,
-                ii_exclude => 1,
+            ins_order => [qw( hyperlinks titletoc )],
+            insert => {
+                titletoc   => $self->_insert_titletoc,
+                hyperlinks => $self->_insert_hyperlinks,
             },
-            sections => { 
-                include => $self->_secs_include,
-                line_sub => sub {
-                    my ($line,$r_sec) = @_;
-        
-                    my $sec = $r_sec->{sec};
-        
-                    return $line;
+            generate => {
+            },
+            append => {
+                each => sub { },
+                only => {
+                    defs => sub {},
                 },
-                ins_order => [qw( hyperlinks titletoc )],
-                insert => {
-                    titletoc   => $self->_insert_titletoc,
-                    hyperlinks => $self->_insert_hyperlinks,
-                },
-                generate => {
-                },
-                append => {
-                    each => sub { },
-                    only => {
-                        defs => sub {},
-                    },
-                },
-            }
+            },
+        }
     };
     my $h = { opts_maker => $o };
 
@@ -115,6 +111,7 @@ sub init {
 
 sub process_config {
     my ($self) = @_;
+
 
     foreach($self->_config) {
         /^xelatex$/ && do {
@@ -229,6 +226,10 @@ sub init_maker {
     local @ARGV = ();
 
     my $x = Plg::Projs::Build::Maker->new(
+        tex_exe      => $self->{tex_exe},
+        proj         => $self->{proj},
+        root         => $self->{root},
+        root_id      => $self->{root_id},
         cmd          => $cmd,
         %{ $self->{opts_maker} || {} },
     );
