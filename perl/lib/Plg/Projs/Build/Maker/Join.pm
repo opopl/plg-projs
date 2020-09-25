@@ -67,7 +67,6 @@ sub _join_lines {
 
     if (!-e $f){ return (); }
 
-    my @lines;
     my @flines = read_file $f;
 
     my $pats = {
@@ -84,9 +83,11 @@ sub _join_lines {
         sec       => $sec,
         file      => $file,
     };
+
+    my (@lines, @at_end);
  
     my $sect;
-    my @at_end;
+
     foreach(@flines) {
         chomp;
 
@@ -94,8 +95,10 @@ sub _join_lines {
 
 ###pat_sect
         m/$pats->{sect}/ && do {
+            $sect = $1;
+
             $self->_line_process_sect({ 
-               sect    => $1,
+               sect    => $sect,
                root_id => $root_id,
                proj    => $proj,
                sec     => $sec,
