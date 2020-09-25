@@ -57,7 +57,7 @@ sub _join_lines {
     my $ss        = $self->{sections} || {};
 
     my $ss_insert = $ss->{insert} || {};
-    my $line_sub  = $ss->{line_sub} || sub { shift };
+    my $line_sub  = $self->_val_('sections line_sub') || sub { shift };
 
     my $root = $self->{root};
 

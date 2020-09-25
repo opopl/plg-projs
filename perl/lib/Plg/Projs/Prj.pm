@@ -48,6 +48,7 @@ sub init {
         root_id  => $root_id,
         load_pwg => 0,
     };
+
 	hash_inject($self, $h);
 
     if ($self->{load_pwg}) {
