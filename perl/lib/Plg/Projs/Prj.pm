@@ -17,7 +17,10 @@ use Base::DB qw(
     dbh_select
 );
 
-use Base::Arg qw(hash_update);
+use Base::Arg qw(
+	hash_update
+	hash_inject
+);
 
 
 sub new
@@ -45,8 +48,7 @@ sub init {
         root_id  => $root_id,
         load_pwg => 0,
     };
-
-    hash_update($self, $h, { keep_already_defined => 1 });
+	hash_inject($self, $h);
 
     if ($self->{load_pwg}) {
         $self->{pwg} ||= eval { Plg::Projs::Piwigo::SQL->new; };

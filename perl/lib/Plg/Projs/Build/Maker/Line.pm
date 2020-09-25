@@ -73,6 +73,61 @@ sub _line_process_pat_sect {
 
 }
 
+sub _line_process_pat_ii {
+    my ($self,$ref) = @_;
+
+    $ref ||= {};
+
+    my $ii_sec = $ref->{ii_sec} || '';
+    my $sect   = $ref->{sect} || '';
+
+    my $proj   = $ref->{proj} || '';
+
+    my $delim  = $ref->{delim} || '';
+
+    my $lines         = $ref->{lines} || [];
+    my $include_below = $ref->{include_below} || [];
+    my $line          = $ref->{line} || '';
+
+    my $ii_include_all = $ref->{ii_include_all};
+
+    my @include = $self->_ii_include;
+
+    my $iall = $ii_include_all;
+    if ($sect) {
+       $iall = ( grep { /^$sect$/ } @$include_below ) ? 1 : $iall;
+    }
+
+    my $inc = $iall || ( !$iall && grep { /^$ii_sec$/ } @include )
+        ? 1 : 0;
+
+    next unless $inc;
+
+    my @ii_lines = $self->_join_lines($ii_sec,{ 
+        proj           => $proj,
+        ii_include_all => $iall,
+        include_below  => $include_below,
+    });
+
+    push @$lines, 
+        $delim,
+        '%% ' . $line,
+        $delim,
+        @ii_lines
+    ;
+
+    my $append = $self->_val_('sections append only',$ii_sec);
+    if ($append) {
+        my $a_lines = $append->() || [];
+        push @$lines, 
+            '%% append',
+            @$a_lines;
+    }
+
+
+    return $self;
+}
+
 
 sub _line_process_pat_input {
     my ($self,$ref) = @_;
