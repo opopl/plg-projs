@@ -43,6 +43,7 @@ sub init {
         ind_file  => shift @ARGV,
         ind_level => shift @ARGV,
     };
+
 	hash_inject($self, $h);
 
     return $self;

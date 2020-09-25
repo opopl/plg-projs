@@ -136,8 +136,10 @@ sub _join_lines {
 
             $self->_line_process_pat_ii({ 
                 delim          => $delim,
+
                 sect           => $sect,
                 ii_sec         => $ii_sec,
+
                 ii_include_all => $ii_include_all,
                 include_below  => $include_below,
 
