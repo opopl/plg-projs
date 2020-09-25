@@ -101,7 +101,7 @@ sub _line_process_pat_ii {
     my $inc = $iall || ( !$iall && grep { /^$ii_sec$/ } @include )
         ? 1 : 0;
 
-    next unless $inc;
+    return $self unless $inc;
 
     my @ii_lines = $self->_join_lines($ii_sec,{ 
         proj           => $proj,
