@@ -1049,8 +1049,8 @@ function! projs#action#bld_join (...)
 
 endf
 
-"""PA_bld_out
-function! projs#action#bld_out (...) 
+"""PA_out_bld
+function! projs#action#out_bld (...) 
   let out = base#varget('projs_bld_compile_output',[])
   call base#buf#open_split({ 
     \  'lines' : out,

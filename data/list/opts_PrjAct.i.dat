@@ -43,7 +43,7 @@ edt
 bld_compile
 bld_compile_xelatex
 bld_join
-bld_out
+out_bld
 ###fig
 fig_create
 fig_view
