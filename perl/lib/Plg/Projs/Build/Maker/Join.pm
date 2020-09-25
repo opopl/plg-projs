@@ -192,19 +192,21 @@ sub _ii_include {
     my (@include);
     my $f_in = $self->_file_ii_include;
 
-
     my @i = @{ $self->_val_(qw( sections include )) || [] };
     push @include, @i;
 
     my $load_dat = $self->_val_(qw( load_dat ii_include ));
-    unless ($load_dat) {
-        return @include;
-    }
 
-    if (-e $f_in) {
-        push @include, readarr($f_in);
-    }else{
-        $self->{ii_include_all} = 1;
+    while(1){
+        last unless $load_dat;
+    
+        if (-e $f_in) {
+            push @include, readarr($f_in);
+        }else{
+            $self->{ii_include_all} = 1;
+        }
+    
+        last;
     }
 
     $self->_ii_include_filter(\@include);
