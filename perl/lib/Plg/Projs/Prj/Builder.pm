@@ -44,7 +44,6 @@ sub inj_base {
         },
         act_default => 'compile',
         target_default => 'usual',
-        targets => [qw( usual )],
         insert => {
             titletoc   => 1,
             hyperlinks => 1,
@@ -157,8 +156,8 @@ sub print_help {
     my @acts = sort keys %{$self->{maps_act} || {}};
     my $acts_s = join(" ",@acts);
 
-    my $targets = $self->{targets} || [];
-    my $targets_s = join(" ",@$targets);
+    my $trg_list = $self->{trg_list} || [];
+    my $trg_list_s = join(" ",@$trg_list);
 
     print qq{
         LOCATION:
@@ -171,7 +170,7 @@ sub print_help {
         ACTS:
             $acts_s
         TARGETS:
-            $targets_s
+            $trg_list_s
         DEFAULT ACT:
             $self->{act_default}
         DEFAULT TARGET:
