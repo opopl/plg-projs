@@ -25,10 +25,8 @@ use Base::Arg qw(
 
 use Plg::Projs::Build::Maker;
 
-sub init {
+sub inject_base {
     my ($self) = @_;
-
-    $self->SUPER::init();
 
     my $h = {
         tex_exe => 'pdflatex',
@@ -44,7 +42,13 @@ sub init {
     };
     hash_inject($self, $h);
 
-    $h = {
+	return $self;
+}
+
+sub inject_opts_maker {
+    my ($self) = @_;
+
+    my $h = {
         opts_maker => {
             # _ii_include
             # _ii_exclude
@@ -80,13 +84,22 @@ sub init {
 
     hash_inject($self, $h);
 
-    $self
+	return $self;
+}
+
+sub init {
+    my ($self) = @_;
+
+    $self->SUPER::init();
+
+	$self
+		->inject_base
+		->inject_opts_maker
         ->get_act
         ->get_opt
         ->process_config
         ->init_maker
         ;
-
 
 
     return $self;
