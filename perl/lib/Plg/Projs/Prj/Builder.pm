@@ -71,6 +71,9 @@ sub inj_opts_maker {
         },
         sections => { 
             include => $self->_secs_include,
+			include_with_children => [qw(
+                preamble
+            )],
             line_sub => sub {
                 my ($line,$r_sec) = @_;
     

@@ -149,14 +149,6 @@ sub _join_lines {
                 proj => $proj,
             });
 
-            my $append = $self->_val_('sections append only',$ii_sec);
-            if ($append) {
-                my $a_lines = $append->() || [];
-                push @lines, 
-                    '%% append',
-                    @$a_lines;
-            }
-
             next;
         };
 

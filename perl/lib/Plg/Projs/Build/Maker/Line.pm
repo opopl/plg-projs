@@ -89,6 +89,8 @@ sub _line_process_pat_ii {
     my $include_below = $ref->{include_below} || [];
     my $line          = $ref->{line} || '';
 
+    my $include_with_children = $self->_val_('sections include_with_children') || [];
+
     my $ii_include_all = $ref->{ii_include_all};
 
     my @include = $self->_ii_include;
@@ -97,6 +99,8 @@ sub _line_process_pat_ii {
     if ($sect) {
        $iall = ( grep { /^$sect$/ } @$include_below ) ? 1 : $iall;
     }
+
+    $iall = ( grep { /^$ii_sec$/ } @$include_with_children ) ? 1 : $iall;
 
     my $inc = $iall || ( !$iall && grep { /^$ii_sec$/ } @include )
         ? 1 : 0;
@@ -123,7 +127,6 @@ sub _line_process_pat_ii {
             '%% append',
             @$a_lines;
     }
-
 
     return $self;
 }
