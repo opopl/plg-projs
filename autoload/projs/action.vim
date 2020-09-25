@@ -1101,11 +1101,13 @@ function! projs#action#bld_compile (...)
   endif
   let cmd = join(a, ' ' )
 
+  let jnd_pdf = base#qw#catpath( projs#rootid(),printf('builds %s src jnd.pdf',proj))
   let env = {
-    \ 'proj'  : proj,
-    \ 'root'  : root,
-    \ 'start' : start,
-    \ 'cmd'   : cmd,
+    \ 'proj'    : proj,
+    \ 'root'    : root,
+    \ 'start'   : start,
+    \ 'cmd'     : cmd,
+    \ 'jnd_pdf' : jnd_pdf,
     \ }
 
   function env.get(temp_file) dict
@@ -1145,10 +1147,25 @@ function! projs#action#bld_compile_Fc (self,temp_file)
   let proj    = self.proj
   let start   = self.start
 
+  let jnd_pdf = self.jnd_pdf
+
+  let code    = self.return_code
+
   let end      = localtime()
   let duration = end - start
   let s_dur    = ' ' . string(duration) . ' (secs)'
+
+  let ok = ( code == 0 ) ? 1 : 0
+
+  let jnd_size = base#file#size(jnd_pdf)
+  if !jnd_size
+     redraw!
+     let msg = printf('[ZERO FILE SIZE] PERL BUILD FAIL: %s %s',proj,s_dur)
+     call base#rdwe(msg,'NonText')
+     return
+  endif
   
+  let err = []
   if filereadable(a:temp_file)
     let lines = readfile(a:temp_file)
     call base#varset('projs_bld_compile_output',lines)
@@ -1158,19 +1175,22 @@ function! projs#action#bld_compile_Fc (self,temp_file)
     exe 'cgetfile ' . a:temp_file
 
     let err = getqflist()
-    
-    redraw!
-    if len(err)
+	  if len(err)
+	    let ok = 0
+	  endif
+  endif
+
+  redraw!
+  if ok
       let msg = printf('PERL BUILD FAIL: %s %s',proj,s_dur)
       call base#rdwe(msg)
       BaseAct copen
-    else
+  else
       let msg = printf('PERL BUILD OK: %s %s',proj,s_dur)
       call base#rdw(msg)
       BaseAct cclose
-    endif
-    echohl None
   endif
+  echohl None
 endf
 
 if 0

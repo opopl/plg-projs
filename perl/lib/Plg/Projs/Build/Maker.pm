@@ -12,6 +12,8 @@ package Plg::Projs::Build::Maker;
 use strict;
 use warnings;
 
+use File::stat;
+
 use File::Spec::Functions qw(catfile);
 use File::Path qw( mkpath rmtree );
 use File::Basename qw(basename dirname);
@@ -356,16 +358,27 @@ sub cmd_build_pwg {
         ;
 
     if (-e $pdf_file) {
-        foreach(@dest) {
-            mkpath $_ unless -d;
+		while (1) {
+			my $st = stat($pdf_file);
 
-            my $d = catfile($_, $proj . '.pdf');
+			unless ($st->size) {
+	            die "Zero File Size: $pdf_file" . "\n";
+				last;
+			}
+	
+	        foreach(@dest) {
+	            mkpath $_ unless -d;
+	
+	            my $d = catfile($_, $proj . '.pdf');
+	
+	            print "Copied PDF File to:" . "\n";
+	            print "     " . $d . "\n";
+	
+	            copy($pdf_file, $d);
+	        }
 
-            print "Copied PDF File to:" . "\n";
-            print "     " . $d . "\n";
-
-            copy($pdf_file, $d);
-        }
+			last;
+		}
     }
     chdir $self->{root};
 

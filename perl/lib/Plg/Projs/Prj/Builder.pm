@@ -253,6 +253,8 @@ sub init_maker {
     my $cmd = $self->{maps_act}->{$act} || '';
 
     local @ARGV = ();
+    #print Dumper($self->{opts_maker}) . "\n";
+    #exit;
 
     if (ref $cmd eq 'CODE') {
         $cmd->();
