@@ -192,7 +192,6 @@ sub _ii_include {
     my (@include);
     my $f_in = $self->_file_ii_include;
 
-    my @base = $self->_ii_base;
 
     my @i = @{ $self->_val_(qw( sections include )) || [] };
     push @include, @i;
@@ -203,25 +202,36 @@ sub _ii_include {
     }
 
     if (-e $f_in) {
-        my @i = readarr($f_in);
-
-        for(@i){
-            /^_all_$/ && do {
-                $self->{ii_include_all} = 1;
-                next;
-            };
-
-            /^_base_$/ && do {
-                push @include, @base;
-                next;
-            };
-
-            push @include, $_;
-        }
+        push @include, readarr($f_in);
     }else{
         $self->{ii_include_all} = 1;
     }
+
+    $self->_ii_include_filter(\@include);
+
     return @include;
+}
+
+sub _ii_include_filter {
+    my ($self, $include) = @_;
+
+    my %i = map { $_ => 1 } @$include;
+
+    my @base = $self->_ii_base;
+
+    if ($i{_all_}) {
+        $self->{ii_include_all} = 1;
+        delete $i{_all_};
+
+    }elsif ($i{_base_}) {
+        $i{$_} = 1 for(@base);
+        delete $i{_base_};
+    }
+
+    @$include = sort keys %i;
+
+    return $self;
+
 }
 
 sub _ii_exclude {

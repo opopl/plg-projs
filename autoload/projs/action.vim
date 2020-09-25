@@ -1181,7 +1181,7 @@ function! projs#action#bld_compile_Fc (self,temp_file)
   endif
 
   redraw!
-  if ok
+  if ! ok
       let msg = printf('PERL BUILD FAIL: %s %s',proj,s_dur)
       call base#rdwe(msg)
       BaseAct copen
