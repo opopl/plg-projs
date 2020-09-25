@@ -1049,6 +1049,15 @@ function! projs#action#bld_join (...)
 
 endf
 
+"""PA_bld_out
+function! projs#action#bld_out (...) 
+  let out = base#varget('projs_bld_compile_output',[])
+  call base#buf#open_split({ 
+    \  'lines' : out,
+    \  })
+
+endf
+
 
 if 0
   Usage
@@ -1096,6 +1105,7 @@ function! projs#action#bld_compile (...)
     \ 'proj'  : proj,
     \ 'root'  : root,
     \ 'start' : start,
+    \ 'cmd'   : cmd,
     \ }
 
   function env.get(temp_file) dict
@@ -1141,15 +1151,12 @@ function! projs#action#bld_compile_Fc (self,temp_file)
   
   if filereadable(a:temp_file)
     let lines = readfile(a:temp_file)
+    call base#varset('projs_bld_compile_output',lines)
 
     call tex#efm#latex()
     exe 'cd ' . root
     exe 'cgetfile ' . a:temp_file
 
-    "let out = readfile(temp_file)
-    "call base#buf#open_split({ 'lines' : out })
-    "return 
-    
     let err = getqflist()
     
     redraw!
