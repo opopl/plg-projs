@@ -11,6 +11,7 @@ use base qw(
     Plg::Projs::Prj
     Plg::Projs::Prj::Builder::Insert
     Plg::Projs::Prj::Builder::Defs
+    Plg::Projs::Prj::Builder::Trg
 );
 
 use FindBin qw($Bin $Script);
@@ -30,12 +31,20 @@ sub inj_base {
     my ($self) = @_;
 
     my $h = {
+        trg_list => [qw( usual )],
         tex_exe => 'pdflatex',
         maps_act => {
-            'compile' => 'build_pwg',
-            'join'    => 'insert_pwg',
+            'compile'  => 'build_pwg',
+            'join'     => 'insert_pwg',
+            'show_trg' => sub { 
+                foreach my $trg ($self->trg_list) {
+                    print $trg . "\n";
+                }
+            },
         },
         act_default => 'compile',
+        target_default => 'usual',
+        targets => [qw( usual )],
         insert => {
             titletoc   => 1,
             hyperlinks => 1,
@@ -142,35 +151,43 @@ sub _config_set {
 
 }
 
-sub get_act {
+sub print_help {
     my ($self) = @_;
 
     my @acts = sort keys %{$self->{maps_act} || {}};
     my $acts_s = join(" ",@acts);
 
-    my @targets = sort keys %{$self->{maps_target} || {}};
-    my $targets_s = join(" ",@targets);
+    my $targets = $self->{targets} || [];
+    my $targets_s = join(" ",@$targets);
 
-    unless (@ARGV) {
-        print qq{
-            LOCATION:
-                $0
-            USAGE:
-                $Script ACT 
-                $Script ACT -t TARGET
-                $Script ACT -c CONFIG
-                $Script ACT -c CONFIG -t TARGET
-            ACTS:
-                $acts_s
-            TARGETS:
-                $targets_s
-            DEFAULT ACT:
-                $self->{act_default}
-            EXAMPLES:
-                perl $Script compile -c 'xelatex'
-        } . "\n";
-        exit 1;
-    }
+    print qq{
+        LOCATION:
+            $0
+        USAGE:
+            $Script ACT 
+            $Script ACT -t TARGET
+            $Script ACT -c CONFIG
+            $Script ACT -c CONFIG -t TARGET
+        ACTS:
+            $acts_s
+        TARGETS:
+            $targets_s
+        DEFAULT ACT:
+            $self->{act_default}
+        DEFAULT TARGET:
+            $self->{target_default}
+        EXAMPLES:
+            perl $Script compile -c 'xelatex'
+    } . "\n";
+    exit 1;
+
+    return $self;
+}
+
+sub get_act {
+    my ($self) = @_;
+
+    $self->print_help unless @ARGV;
 
     my $act = shift @ARGV || 'compile';
     $self->{act} = $act;
@@ -214,7 +231,6 @@ sub run_maker {
 sub run {
     my ($self) = @_;
 
-
     $self->run_maker;
 
     return $self;
@@ -235,6 +251,11 @@ sub init_maker {
     my $cmd = $self->{maps_act}->{$act} || '';
 
     local @ARGV = ();
+
+    if (ref $cmd eq 'CODE') {
+        $cmd->();
+        exit 0;
+    }
 
     my $x = Plg::Projs::Build::Maker->new(
         tex_exe      => $self->{tex_exe},
