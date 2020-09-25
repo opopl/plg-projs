@@ -134,28 +134,18 @@ sub _join_lines {
         m/$pats->{ii}/ && do {
             my $ii_sec   = $1;
 
-            my $iall = $ii_include_all;
-            if ($sect) {
-                $iall = ( grep { /^$sect$/ } @$include_below ) ? 1 : $iall;
-            }
-
-            my $inc = $iall || ( !$iall && grep { /^$ii_sec$/ } @include )
-                ? 1 : 0;
-
-            next unless $inc;
-
-            my @ii_lines = $self->_join_lines($ii_sec,{ 
-                proj           => $proj,
-                ii_include_all => $iall,
+            $self->_line_process_pat_ii({ 
+                delim          => $delim,
+                sect           => $sect,
+                ii_sec         => $ii_sec,
+                ii_include_all => $ii_include_all,
                 include_below  => $include_below,
-            });
 
-            push @lines, 
-                $delim,
-                '%% ' . $_,
-                $delim,
-                @ii_lines
-            ;
+                lines => \@lines,
+                line  => $_,
+
+                proj => $proj,
+            });
 
             next;
         };
