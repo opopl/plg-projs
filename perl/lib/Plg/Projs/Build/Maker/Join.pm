@@ -5,6 +5,10 @@ package Plg::Projs::Build::Maker::Join;
 use strict;
 use warnings;
 
+use utf8;
+
+use Data::Dumper qw(Dumper);
+
 use File::Spec::Functions qw(catfile);
 use File::Slurp::Unicode;
 use File::Path qw(mkpath);
@@ -55,7 +59,6 @@ sub _join_lines {
     my $ss_insert = $ss->{insert} || {};
     my $line_sub  = $ss->{line_sub} || sub { shift };
 
-
     my $root = $self->{root};
 
     chdir $root;
@@ -97,12 +100,13 @@ sub _join_lines {
         m/$pats->{sect}/ && do {
             $sect = $1;
 
-            $self->_line_process_sect({ 
+            $self->_line_process_pat_sect({ 
                sect    => $sect,
                root_id => $root_id,
                proj    => $proj,
                sec     => $sec,
 
+               line    => $_,
                lines   => \@lines,
                at_end  => \@at_end,
             });
@@ -114,31 +118,15 @@ sub _join_lines {
         m/$pats->{input}/ && do {
             my $fname   = $1;
 
-            my @files;
-            push @files,
-                $fname, qq{$fname.tex};
+            $self->_line_process_pat_input({ 
+                fname         => $fname,
+                delim         => $delim,
+                include_below => $include_below,
 
-            while (@files) {
-                my $file = shift @files;
-
-                next unless -e $file;
-
-                my ($proj) = ($file =~ m/^(\w+)\./);
-
-                my @ii_lines = $self->_join_lines('',{ 
-                    proj           => $proj,
-                    file           => $file,
-                    ii_include_all => 1,
-                    include_below  => $include_below,
-                });
-
-                push @lines, 
-                    $delim, '%% ' . $_, $delim,
-                    @ii_lines
-                    ;
-
-            }
-
+                lines         => \@lines,
+                line          => $_,
+            });
+    
             next;
         };
 
