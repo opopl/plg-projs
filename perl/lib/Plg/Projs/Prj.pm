@@ -18,7 +18,6 @@ use Base::DB qw(
 );
 
 use Base::Arg qw(
-    hash_update
     hash_inject
 );
 

@@ -137,9 +137,6 @@ sub _nb_page {
     return $p;
 }
 
-
-
-
 sub tk_add_pages {
     my ($self) = @_;
 
