@@ -4,6 +4,8 @@ package Plg::Projs::Tk::ControlPanel::Wnd;
 use strict;
 use warnings;
 
+###btns
+#
 sub wnd_fill_projects_buttons {
     my ($self, $wnd) = @_;
 
@@ -57,6 +59,7 @@ sub wnd_fill_projects_buttons {
     return $self;
 }
 
+###entry
 sub wnd_fill_projects_entry {
     my ($self, $wnd) = @_;
 
@@ -65,22 +68,31 @@ sub wnd_fill_projects_entry {
 
     my @projects = $prj->_projects;
 
-    my $fr = $wnd->Frame( 
-        -height      => 2,
-        -bg          => 'black',
-        -borderwidth => 3,
-    );
+#    my $fr = $wnd->Frame( 
+        #-height      => 2,
+        #-bg          => 'black',
+        #-borderwidth => 3,
+    #)->pack();
+    #
+    my $btn = $wnd->Button( 
+       -text => '',
+       -width  => 20,
+       -height => 1,
+    )->pack();
 
     my $me = $wnd->MatchEntry(
            -choices        => \@projects,
            -fixedwidth     => 1, 
            -ignorecase     => 1,
-           -maxheight      => 5,
+           -maxheight      => 1,
            -entercmd       => sub { print "callback: -entercmd\n"; }, 
            -onecmd         => sub { print "callback: -onecmd  \n"; }, 
            -tabcmd         => sub { print "callback: -tabcmd  \n"; }, 
            -zerocmd        => sub { print "callback: -zerocmd \n"; },
-    )->pack(-side => 'left', -padx => 50);
+    )->pack(
+        -side => 'left', 
+        -padx => 0
+    );
 
     return $self;
 }

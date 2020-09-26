@@ -90,8 +90,8 @@ sub nb_create {
     my $nb = $mw
         ->NoteBook( )
         ->pack( 
-            -expand => 1,
-            -fill   => 'both'
+            #-expand => 1,
+            #-fill   => 'x'
         ); 
     $self->{nb} = $nb;
 
