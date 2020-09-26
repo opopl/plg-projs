@@ -10,8 +10,8 @@ function! projs#gui#control_panel ()
   let projs  = projs#list()
   let proj   = projs#proj#name()
 
-	let root   = projs#root()
-	let rootid = projs#rootid()
+  let root   = projs#root()
+  let rootid = projs#rootid()
   
   let data = { 
     \ 'projs'  : projs,

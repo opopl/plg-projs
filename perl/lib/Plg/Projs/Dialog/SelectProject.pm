@@ -20,8 +20,12 @@ use FindBin qw( $Bin $Script );
 use lib "$Bin/../../base/perl/lib";
 use lib "$Bin/../perl/lib";
 
-use base qw( Plg::Base::Dialog );
-use Base::Arg qw( hash_update );
+use base qw( 
+    Base::Obj
+    Plg::Base::Dialog 
+);
+
+use Base::Arg qw( hash_inject );
 
 =head2 tk_proc
 
@@ -32,13 +36,13 @@ Will be called by C<tk_run()> method defined in L<Plg::Base::Dialog>
 sub tk_proc { 
     my ($self, $mw) = @_;
 
-    my @projs = @{$self->{data}->{projs} || []};
+    my $projs = $self->_val_(qw(data projs)) || [];
 
     my $lb = $mw->Scrolled("Listbox", 
         -scrollbars => "e", 
         -selectmode => "single")->pack( ); 
 
-    $lb->insert('end', @projs);
+    $lb->insert('end', @$projs);
 
     return $self;
 }
@@ -49,7 +53,7 @@ sub init {
     $self->SUPER::init();
 
     my $h = { };
-    hash_update($self, $h, { keep_already_defined => 1 });
+    hash_inject($self, $h);
 
     return $self;
 }
