@@ -10,8 +10,8 @@ use Base::Arg qw(hash_inject);
 sub inj_targets {
     my ($self) = @_;
 
-    foreach my $trg ($self->trg_list) {
-        my $sub = '_trg_inj_' . $trg;
+    foreach my $trg ($self->_trg_list) {
+        my $sub = 'trg_inj_' . $trg;
         if ($self->can($sub)) {
             $self->$sub;
         }
@@ -19,7 +19,7 @@ sub inj_targets {
     return $self;
 }
 
-sub trg_list {
+sub _trg_list {
     my ($self) = @_;
 
     @{ $self->{trg_list} || [] };
@@ -34,6 +34,12 @@ sub trg_inject {
 
 }
 
+sub trg_load_xml {
+	my ($self) = @_;
+
+	return $self;
+}
+
 sub _trg_opts_maker {
     my ($self, $target, @args) = @_;
 
@@ -45,10 +51,11 @@ sub _trg_opts_maker {
 
 }
 
-sub _trg_inj_usual {
+sub trg_inj_usual {
     my ($self) = @_;
 
-    my $o = {
+    my $om = {
+		tex_exe => 'xelatex',
         skip_get_opt => 1,
         join_lines   => {
             include_below => [qw(section)]
@@ -96,10 +103,10 @@ sub _trg_inj_usual {
             hyperlinks => 1,
             titletoc   => 1,
         },
-        opts_maker => $o,
+        opts_maker => $om,
     };
 
-    $self->trg_inject('usual' => $h);
+    $self->trg_inject( 'usual' => $h );
 
     return $self;
 }

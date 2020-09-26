@@ -56,56 +56,6 @@ sub inj_base {
     return $self;
 }
 
-sub inj_opts_maker {
-    my ($self) = @_;
-
-    my $o = {
-        skip_get_opt => 1,
-        join_lines   => {
-            include_below => [qw(section)]
-        },
-        # _ii_include
-        # _ii_exclude
-        load_dat => {
-            ii_include => 1,
-            ii_exclude => 1,
-        },
-        sections => { 
-            include => $self->_secs_include,
-            include_with_children => [qw(
-                preamble
-            )],
-            line_sub => sub {
-                my ($line,$r_sec) = @_;
-    
-                my $sec = $r_sec->{sec};
-    
-                return $line;
-            },
-            ins_order => [qw( hyperlinks titletoc )],
-            insert => {
-                titletoc   => $self->_insert_titletoc,
-                hyperlinks => $self->_insert_hyperlinks,
-            },
-            generate => {
-            },
-            append => {
-                each => sub { },
-                only => {
-                    defs => sub {
-                        [ $self->_def_sechyperlinks ];
-                    },
-                },
-            },
-        }
-    };
-    my $h = { opts_maker => $o };
-
-    hash_inject($self, $h);
-
-    return $self;
-}
-
 sub init {
     my ($self) = @_;
 
@@ -114,15 +64,23 @@ sub init {
     $self
         ->inj_base
         ->inj_targets
-        ->inj_opts_maker
         ->get_act
         ->get_opt
+        ->set_target
+        ->trg_load_xml
         ->process_config
         ->init_maker
         ;
 
 
     return $self;
+}
+
+sub set_target {
+	my ($self) = @_;
+
+    $self->{target} = $self->_opt_argv_('target',$self->{target_default});
+	return $self;
 }
 
 sub process_config {
@@ -218,7 +176,6 @@ sub get_opt {
         split(',' => ($opt{config} || '')) 
     ];
 
-    $self->{target} = $self->_opt_argv_('target',$self->{target_default});
 
     return $self;   
 }
@@ -267,8 +224,8 @@ sub init_maker {
     }
 
     my $om = $self->_trg_opts_maker();
-    print Dumper($om) . "\n";
-    exit 1;
+    #print Dumper($om) . "\n";
+    #exit 1;
 
     my $x = Plg::Projs::Build::Maker->new(
         tex_exe      => $self->{tex_exe},
