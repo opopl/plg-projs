@@ -268,7 +268,7 @@ sub init_maker {
 
     my $om = $self->_trg_opts_maker();
     print Dumper($om) . "\n";
-    exit;
+    exit 1;
 
     my $x = Plg::Projs::Build::Maker->new(
         tex_exe      => $self->{tex_exe},

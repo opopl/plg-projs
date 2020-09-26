@@ -1145,6 +1145,8 @@ function! projs#action#bld_compile_Fc (self,temp_file)
 
   let root    = self.root
   let proj    = self.proj
+  let cmd     = self.cmd
+
   let start   = self.start
 
   let jnd_pdf = self.jnd_pdf
@@ -1168,6 +1170,7 @@ function! projs#action#bld_compile_Fc (self,temp_file)
   let err = []
   if filereadable(a:temp_file)
     let lines = readfile(a:temp_file)
+
     call base#varset('projs_bld_compile_output',lines)
 
     call tex#efm#latex()
@@ -1184,7 +1187,19 @@ function! projs#action#bld_compile_Fc (self,temp_file)
   if ! ok
       let msg = printf('PERL BUILD FAIL: %s %s',proj,s_dur)
       call base#rdwe(msg)
-      BaseAct copen
+			if len(err)
+      	BaseAct copen
+			endif
+			call base#buf#open_split({ 
+				\	'lines'   : lines,
+				\	'stl_add' : [ 
+						\	'Command: %1*',
+						\	cmd ,
+						\	'%0*' ,
+						\	],
+				\	})
+
+      "\ 'V[ %1* v - view, %2* a - append %0* ]',
   else
       let msg = printf('PERL BUILD OK: %s %s',proj,s_dur)
       call base#rdw(msg)
@@ -1236,7 +1251,7 @@ function! projs#action#fig_create (...)
   let fsec  = printf('_perl.fig.%s',bsec)
   let iisec = printf('fig.%s',bsec)
 
-  call append(line('.'),'\def\sectitle{<++>}')
+  call append(line('.'),'\def\sectitle{}')
   call append(line('.'),printf('\ii{fig.%s}',bsec))
 
   call projs#sec#new(fsec)
