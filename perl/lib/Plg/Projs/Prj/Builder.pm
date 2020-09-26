@@ -7,6 +7,7 @@ use warnings;
 
 use base qw(
     Base::Obj
+    Base::Opt
 
     Plg::Projs::Prj
     Plg::Projs::Prj::Builder::Insert
@@ -71,7 +72,7 @@ sub inj_opts_maker {
         },
         sections => { 
             include => $self->_secs_include,
-			include_with_children => [qw(
+            include_with_children => [qw(
                 preamble
             )],
             line_sub => sub {
@@ -108,10 +109,11 @@ sub inj_opts_maker {
 sub init {
     my ($self) = @_;
 
-    $self->SUPER::init();
+    $self->Plg::Projs::Prj::init();
 
     $self
         ->inj_base
+        ->inj_targets
         ->inj_opts_maker
         ->get_act
         ->get_opt
@@ -209,11 +211,14 @@ sub get_opt {
     );
 
     GetOptions(\%opt,@optstr);
+    $self->{opt} = \%opt;
     
     $self->{config} = [ 
         map { s/'//g; s/'$//g; $_ }
         split(',' => ($opt{config} || '')) 
     ];
+
+    $self->{target} = $self->_opt_argv_('target',$self->{target_default});
 
     return $self;   
 }
@@ -261,13 +266,17 @@ sub init_maker {
         exit 0;
     }
 
+    my $om = $self->_trg_opts_maker();
+    print Dumper($om) . "\n";
+    exit;
+
     my $x = Plg::Projs::Build::Maker->new(
         tex_exe      => $self->{tex_exe},
         proj         => $self->{proj},
         root         => $self->{root},
         root_id      => $self->{root_id},
         cmd          => $cmd,
-        %{ $self->{opts_maker} || {} },
+        %$om,
     );
 
     $self->{maker} = $x;
