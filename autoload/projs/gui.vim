@@ -27,7 +27,7 @@ function! projs#gui#control_panel ()
       \ 'data'   : data,
       \ 'dir'    : base#qw#catpath('plg projs scripts gui'),
       \ 'script' : 'control_panel',
-      \ 'args'   : [ '' ],
+      \ 'args'   : [ '-r' ],
       \ }
   call base#script#run(r) 
   

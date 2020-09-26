@@ -1,9 +1,9 @@
 
-package Plg::Projs::Dialog::ControlPanel;
+package Plg::Projs::Tk::ControlPanel;
 
 =head1 NAME
 
-Plg::Projs::Dialog::ControlPanel - 
+Plg::Projs::Tk::Dialog::ControlPanel - 
 
 =cut
 
@@ -25,15 +25,15 @@ use lib "$Bin/../perl/lib";
 use Plg::Projs::Prj;
 
 use Base::Arg qw(
-	hash_update
+    hash_update
 );
 
 use base qw( 
-	Plg::Base::Dialog 
+    Plg::Base::Tk::Dialog 
 );
 
 use Base::Arg qw(
-	hash_update
+    hash_update
 );
 
 #https://www.perlmonks.org/?node_id=1185809
@@ -56,22 +56,22 @@ sub tk_proc {
 
     $self->{mw} = $mw;
 
-	foreach my $x (qw(root rootid proj)) {
-    	$self->{$x}   = $self->{data}->{$x} || '';
-	}
-		
-	$self->{prj} = Plg::Projs::Prj->new( 
-		proj    => $self->{proj},
-		root    => $self->{root},
-		root_id => $self->{rootid},
-	);
+    foreach my $x (qw(root rootid proj)) {
+        $self->{$x}   = $self->{data}->{$x} || '';
+    }
+        
+    $self->{prj} = Plg::Projs::Prj->new( 
+        proj    => $self->{proj},
+        root    => $self->{root},
+        root_id => $self->{rootid},
+    );
 
     my $servername = $self->{data}->{vim}->{servername} || '';
 
     $mw->title($self->{proj});
 
-	my $geom = $self->{geom};
-	my $g = sprintf(q{%sx%s},@{$geom}{qw(width height)});
+    my $geom = $self->{geom};
+    my $g = sprintf(q{%sx%s},@{$geom}{qw(width height)});
 
     $mw->geometry($g); 
 
@@ -83,171 +83,171 @@ sub tk_proc {
 }
 
 sub nb_create {
-	my ($self) = @_;
+    my ($self) = @_;
 
-	my $mw = $self->{mw};
-	my $nb = $mw
-		->NoteBook( )
-		->pack( 
-			-expand => 1,
-			-fill   => 'both'
-		); 
-	$self->{nb} = $nb;
+    my $mw = $self->{mw};
+    my $nb = $mw
+        ->NoteBook( )
+        ->pack( 
+            -expand => 1,
+            -fill   => 'both'
+        ); 
+    $self->{nb} = $nb;
 
     return $self;
 }
 
 sub nb_add {
-	my ($self, $ref) = @_;
-	
-	my $mw = $self->{mw};
-	my $nb = $self->{nb};
+    my ($self, $ref) = @_;
+    
+    my $mw = $self->{mw};
+    my $nb = $self->{nb};
 
-	$ref ||= {};
-	my $pages = $ref->{pages} || [];
-	if (@$pages) {
-		foreach my $page (@$pages) {
-			$self->nb_add($page)
-		}
-		return $self;
-	}
+    $ref ||= {};
+    my $pages = $ref->{pages} || [];
+    if (@$pages) {
+        foreach my $page (@$pages) {
+            $self->nb_add($page)
+        }
+        return $self;
+    }
 
-	my $name  = $ref->{name} || '';
-	my $label = $ref->{label} || '';
-	my $blk   = $ref->{blk} || sub { };
+    my $name  = $ref->{name} || '';
+    my $label = $ref->{label} || '';
+    my $blk   = $ref->{blk} || sub { };
 
-	my $p = $nb->add($name, -label => $label); 
+    my $p = $nb->add($name, -label => $label); 
 
-	$blk->($p);
+    $blk->($p);
 
-	$self->{nb_pages} ||= {};
+    $self->{nb_pages} ||= {};
 
-	$self->{nb_pages}->{$name} = { p => $p, %$ref };
+    $self->{nb_pages}->{$name} = { p => $p, %$ref };
 
-	return $self;
+    return $self;
 }
 
 sub _nb_page {
-	my ($self, $name) = @_;
+    my ($self, $name) = @_;
 
-	my $sp = $self->{nb_pages}->{$name} || {};
-	my $p = $sp->{p};
+    my $sp = $self->{nb_pages}->{$name} || {};
+    my $p = $sp->{p};
 
-	return $p;
+    return $p;
 }
 
 sub wnd_fill_projects_entry {
-	my ($self, $wnd) = @_;
+    my ($self, $wnd) = @_;
 
-	my $prj = $self->{prj};
-	my $mw  = $self->{mw};
+    my $prj = $self->{prj};
+    my $mw  = $self->{mw};
 
-	my @projects = $prj->_projects;
+    my @projects = $prj->_projects;
 
     my $fr = $wnd->Frame( 
-	    -height      => 2,
-	    -bg          => 'black',
-		-borderwidth => 3,
+        -height      => 2,
+        -bg          => 'black',
+        -borderwidth => 3,
     );
 
-	my $me = $wnd->MatchEntry(
-	       -choices        => \@projects,
-	       -fixedwidth     => 1, 
-	       -ignorecase     => 1,
-	       -maxheight      => 5,
-		   -entercmd       => sub { print "callback: -entercmd\n"; }, 
-		   -onecmd         => sub { print "callback: -onecmd  \n"; }, 
-		   -tabcmd         => sub { print "callback: -tabcmd  \n"; }, 
-		   -zerocmd        => sub { print "callback: -zerocmd \n"; },
+    my $me = $wnd->MatchEntry(
+           -choices        => \@projects,
+           -fixedwidth     => 1, 
+           -ignorecase     => 1,
+           -maxheight      => 5,
+           -entercmd       => sub { print "callback: -entercmd\n"; }, 
+           -onecmd         => sub { print "callback: -onecmd  \n"; }, 
+           -tabcmd         => sub { print "callback: -tabcmd  \n"; }, 
+           -zerocmd        => sub { print "callback: -zerocmd \n"; },
     )->pack(-side => 'left', -padx => 50);
 
-	return $self;
+    return $self;
 }
 
 sub wnd_fill_projects_buttons {
-	my ($self, $wnd) = @_;
+    my ($self, $wnd) = @_;
 
-	my $prj = $self->{prj};
+    my $prj = $self->{prj};
 
-	my @btns;
-	my %p = (-side => 'top', -fill => 'x' );
+    my @btns;
+    my %p = (-side => 'top', -fill => 'x' );
 
-	my $cols = 5;
-	my $j = 0;
+    my $cols = 5;
+    my $j = 0;
 
-	my ($nrow, $ncol);
+    my ($nrow, $ncol);
 
-	foreach my $proj ($prj->_projects) {
+    foreach my $proj ($prj->_projects) {
 
-		$ncol = $j % $cols;
-		$nrow = int $j/$cols;
+        $ncol = $j % $cols;
+        $nrow = int $j/$cols;
 
-	    my $fr = $wnd->Frame( 
-	        -height      => 2,
-	        -bg          => 'black',
-			-borderwidth => 3,
-	    );
-		$fr->grid(-column => $ncol, -row => $nrow);
+        my $fr = $wnd->Frame( 
+            -height      => 2,
+            -bg          => 'black',
+            -borderwidth => 3,
+        );
+        $fr->grid(-column => $ncol, -row => $nrow);
 
-		my $expr = sprintf(q{projs#vim_server#view_project('%s')},$proj);
-		my $btn = $fr->Button(
-			-text => $proj,
-			-width  => 20,
-			-height => 1,
-			-command => $self->_vim_server_sub({
-				'expr'  => $expr
+        my $expr = sprintf(q{projs#vim_server#view_project('%s')},$proj);
+        my $btn = $fr->Button(
+            -text => $proj,
+            -width  => 20,
+            -height => 1,
+            -command => $self->_vim_server_sub({
+                'expr'  => $expr
 #'expr'  => 'projs#vim_server#async_build_bare()'
-			})
-		); 
-		push @btns, $btn;
+            })
+        ); 
+        push @btns, $btn;
 
-		$btn->pack(
-			-side => 'left', 
-			-fill => 'x',
-			-expand => 1,
-		);
+        $btn->pack(
+            -side => 'left', 
+            -fill => 'x',
+            -expand => 1,
+        );
 
-		$j++;
-	}
+        $j++;
+    }
 
-	return $self;
+    return $self;
 }
 
 sub tk_add_pages {
     my ($self) = @_;
 
-	my $prj = $self->{prj};
+    my $prj = $self->{prj};
 
-	my @pages = (
-		{
-			'name'  => 'projs',
-			'label' => 'Projects', 
+    my @pages = (
+        {
+            'name'  => 'projs',
+            'label' => 'Projects', 
 ###blk_projs
-			'blk'   =>  sub {
-				my ($wnd) = @_;
+            'blk'   =>  sub {
+                my ($wnd) = @_;
 
-				$self
-					->wnd_fill_projects_entry($wnd)
-					#->wnd_fill_projects_buttons($wnd)
-					;
-			}
-		},
-		{
-			'name'  => 'bld',
-			'label' => 'Build', 
-			'blk'   =>  sub {
-				my ($wnd) = @_;
+                $self
+                    ->wnd_fill_projects_entry($wnd)
+                    #->wnd_fill_projects_buttons($wnd)
+                    ;
+            }
+        },
+        {
+            'name'  => 'bld',
+            'label' => 'Build', 
+            'blk'   =>  sub {
+                my ($wnd) = @_;
 
-				$wnd->Button(-text => 'Click me!')->pack( ); 
-			}
-		}
-	);
+                $wnd->Button(-text => 'Click me!')->pack( ); 
+            }
+        }
+    );
 
-	$self
-		->nb_create
-		->nb_add({ pages => \@pages })
-		;
-	
+    $self
+        ->nb_create
+        ->nb_add({ pages => \@pages })
+        ;
+    
     return $self;
 }
 
@@ -347,7 +347,10 @@ sub tk_frame_build {
         -height => 2,
     )->pack;
 
-    my $fr_build = $mw->Frame()->pack(-side => 'top', -fill => 'x');
+    my $fr_build = $mw->Frame()->pack(
+        -side => 'top', 
+        -fill => 'x'
+    );
 
     $fr_build->Button(
         -text    => 'Build PDF',
@@ -414,11 +417,11 @@ sub init {
     $self->SUPER::init();
 
     my $h = { 
-		geom => {
-			width  => 800,
-			height => 500,
-		}
-	};
+        geom => {
+            width  => 800,
+            height => 500,
+        }
+    };
     hash_update($self, $h, { keep_already_defined => 1 });
 
     return $self;
