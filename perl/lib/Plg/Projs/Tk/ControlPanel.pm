@@ -48,7 +48,7 @@ sub Tk::Separator
 
 =head2 tk_proc
 
-Will be called by C<tk_run()> method defined in L<Plg::Base::Dialog>
+Will be called by C<tk_run()> method defined in L<Plg::Base::Tk::Dialog>
 
 =cut
 
