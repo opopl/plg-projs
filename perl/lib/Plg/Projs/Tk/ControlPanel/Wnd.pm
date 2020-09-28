@@ -42,7 +42,6 @@ sub wnd_fill_projects_buttons {
             -height => 1,
             -command => $self->_vim_server_sub({
                 'expr'  => $expr
-#'expr'  => 'projs#vim_server#async_build_bare()'
             })
         ); 
         push @btns, $btn;
@@ -74,7 +73,9 @@ sub wnd_fill_projects_entry {
         #-borderwidth => 3,
     #)->pack();
     #
-    my $btn = $wnd->Button( 
+	my $btn;
+
+    $btn = $wnd->Button( 
        -text => '',
        -width  => 20,
        -height => 1,
@@ -93,6 +94,12 @@ sub wnd_fill_projects_entry {
         -side => 'left', 
         -padx => 0
     );
+
+    $btn = $wnd->Button( 
+       -text => '',
+       -width  => 20,
+       -height => 1,
+    )->pack();
 
     return $self;
 }

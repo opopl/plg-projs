@@ -29,6 +29,7 @@ use Base::Arg qw(
 );
 
 use base qw( 
+    Base::Obj
     Plg::Base::Tk::Dialog 
     Plg::Projs::Tk::ControlPanel::Wnd
 );
@@ -61,15 +62,17 @@ sub tk_proc {
         $self->{$x}   = $self->{data}->{$x} || '';
     }
         
+    my $proj = $self->{proj};
+
     $self->{prj} = Plg::Projs::Prj->new( 
-        proj    => $self->{proj},
+        proj    => $proj,
         root    => $self->{root},
         root_id => $self->{rootid},
     );
 
-    my $servername = $self->{data}->{vim}->{servername} || '';
+    my $servername = $self->_val_('data vim servername') || '';
 
-    $mw->title($self->{proj});
+    $mw->title($proj);
 
     my $geom = $self->{geom};
     my $g = sprintf(q{%sx%s},@{$geom}{qw(width height)});
@@ -162,7 +165,17 @@ sub tk_add_pages {
             'blk'   =>  sub {
                 my ($wnd) = @_;
 
-                $wnd->Button(-text => 'Click me!')->pack( ); 
+                $wnd->Button(
+                    -text => 'bld_compile'
+                )->pack( ); 
+
+                $wnd->Button(
+                    -text => 'bld_compile_xelatex'
+                )->pack( ); 
+
+                $wnd->Button(
+                    -text => 'out_bld'
+                )->pack( ); 
             }
         }
     );
