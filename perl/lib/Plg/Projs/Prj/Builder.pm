@@ -5,6 +5,9 @@ package Plg::Projs::Prj::Builder;
 use strict;
 use warnings;
 
+use XML::Hash::LX;
+use Deep::Hash::Utils qw(reach);
+
 use base qw(
     Base::Obj
     Base::Opt
@@ -77,10 +80,10 @@ sub init {
 }
 
 sub set_target {
-	my ($self) = @_;
+    my ($self) = @_;
 
     $self->{target} = $self->_opt_argv_('target',$self->{target_default});
-	return $self;
+    return $self;
 }
 
 sub process_config {
@@ -224,6 +227,16 @@ sub init_maker {
     }
 
     my $om = $self->_trg_opts_maker();
+
+#    while (my @list = reach($om)) {
+        #my $v = pop @list;
+        #next if ref $v eq 'CODE';
+
+        #print "@list" . "\n";
+    #}
+    #exit 1;
+
+    #my $x = hash2xml($om);
     #print Dumper($om) . "\n";
     #exit 1;
 

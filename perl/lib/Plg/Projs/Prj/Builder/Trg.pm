@@ -6,6 +6,10 @@ use strict;
 use warnings;
 
 use Base::Arg qw(hash_inject);
+use File::Spec::Functions qw(catfile);
+
+use XML::LibXML;
+use XML::LibXML::Cache;
 
 sub inj_targets {
     my ($self) = @_;
@@ -35,9 +39,32 @@ sub trg_inject {
 }
 
 sub trg_load_xml {
-	my ($self) = @_;
+    my ($self, $target) = @_;
 
-	return $self;
+    $target //= $self->{target};
+
+    my $xfile = $self->_trg_xfile($target);
+
+    unless (-e $xfile) {
+        return $self;
+    }
+
+    my $cache = XML::LibXML::Cache->new;
+    my $dom = $cache->parse_file($xfile);
+
+    return $self;
+}
+
+sub _trg_xfile {
+    my ($self, $target) = @_;
+
+    $target //= $self->{target};
+
+    my $proj = $self->{proj};
+    my $root = $self->{root};
+
+    my $xfile = catfile($root,sprintf($proj . '%s.bld.%s.xml',$proj, $target));
+    return $xfile;
 }
 
 sub _trg_opts_maker {
@@ -55,7 +82,7 @@ sub trg_inj_usual {
     my ($self) = @_;
 
     my $om = {
-		tex_exe => 'xelatex',
+        tex_exe => 'pdflatex',
         skip_get_opt => 1,
         join_lines   => {
             include_below => [qw(section)]

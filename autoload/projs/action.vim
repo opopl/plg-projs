@@ -1159,13 +1159,14 @@ function! projs#action#bld_compile_Fc (self,temp_file)
 
   let ok = ( code == 0 ) ? 1 : 0
 
-  let jnd_size = base#file#size(jnd_pdf)
-  if !jnd_size
-     redraw!
-     let msg = printf('[ZERO FILE SIZE] PERL BUILD FAIL: %s %s',proj,s_dur)
-     call base#rdwe(msg,'NonText')
-     return
-  endif
+	let jnd_size = 0
+	try
+  	let jnd_size = base#file#size(jnd_pdf)
+	catch 
+    call base#rdwe('base#file#size error: ' . jnd_pdf,'NonText')
+	endtry
+
+
   
   let err = []
   if filereadable(a:temp_file)
@@ -1182,6 +1183,14 @@ function! projs#action#bld_compile_Fc (self,temp_file)
 	    let ok = 0
 	  endif
   endif
+
+  if !jnd_size
+     redraw!
+     let msg = printf('[ZERO FILE SIZE] PERL BUILD FAIL: %s %s',proj,s_dur)
+     call base#rdwe(msg,'NonText')
+     return
+  endif
+
 
   redraw!
   if ! ok
