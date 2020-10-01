@@ -67,6 +67,7 @@ sub init {
         ->get_opt
         ->set_target
         ->trg_load_xml
+        ->trg_apply
         ->process_config
         ->init_maker
         ;

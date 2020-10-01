@@ -12,7 +12,7 @@ use XML::LibXML;
 use XML::LibXML::Cache;
 
 use base qw(
-	Plg::Projs::Prj::Builder::Trg::usual
+    Plg::Projs::Prj::Builder::Trg::usual
 );
 
 sub inj_targets {
@@ -37,6 +37,18 @@ sub trg_inject {
     my ($self, $trg, $hash ) = @_;
 
     hash_inject($self, { targets => { $trg => $hash }} );
+
+    return $self;
+
+}
+
+sub trg_apply {
+    my ($self, $target) = @_;
+
+    $target //= $self->{target};
+
+    my $ht = $self->_val_('targets', $target);
+    hash_inject($self, $ht);
 
     return $self;
 
