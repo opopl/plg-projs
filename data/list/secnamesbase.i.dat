@@ -1,4 +1,9 @@
 _bib_
+_perl.bld
+_perl.edt
+_pm.bld
+_pm.edt
+_bld.usual
 #_build_htlatex_
 #_build_pdflatex_
 #_build_perltex_
