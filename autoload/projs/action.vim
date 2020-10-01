@@ -1061,12 +1061,12 @@ endf
 function! projs#action#view_bld_log (...) 
   let proj   = projs#proj#name()
   let bdir   = projs#path([ 'builds', proj, 'src' ])
-	
-	let log = base#file#catfile([ bdir, 'jnd.log' ])
-	call base#fileopen({ 
-		\	'files'    : [log],
-		\	'load_buf' : 1,
-		\	})
+  
+  let log = base#file#catfile([ bdir, 'jnd.log' ])
+  call base#fileopen({ 
+    \ 'files'    : [log],
+    \ 'load_buf' : 1,
+    \ })
 endf
 
 
@@ -1170,14 +1170,12 @@ function! projs#action#bld_compile_Fc (self,temp_file)
 
   let ok = ( code == 0 ) ? 1 : 0
 
-	let jnd_size = 0
-	try
-  	let jnd_size = base#file#size(jnd_pdf)
-	catch 
+  let jnd_size = 0
+  try
+    let jnd_size = base#file#size(jnd_pdf)
+  catch 
     call base#rdwe('base#file#size error: ' . jnd_pdf,'NonText')
-	endtry
-
-
+  endtry
   
   let err = []
   if filereadable(a:temp_file)
@@ -1190,9 +1188,9 @@ function! projs#action#bld_compile_Fc (self,temp_file)
     exe 'cgetfile ' . a:temp_file
 
     let err = getqflist()
-	  if len(err)
-	    let ok = 0
-	  endif
+    if len(err)
+      let ok = 0
+    endif
   endif
 
   if !jnd_size
@@ -1207,17 +1205,17 @@ function! projs#action#bld_compile_Fc (self,temp_file)
   if ! ok
       let msg = printf('PERL BUILD FAIL: %s %s',proj,s_dur)
       call base#rdwe(msg)
-			if len(err)
-      	BaseAct copen
-			endif
-			call base#buf#open_split({ 
-				\	'lines'   : lines,
-				\	'stl_add' : [ 
-						\	'Command: %1*',
-						\	cmd ,
-						\	'%0*' ,
-						\	],
-				\	})
+      if len(err)
+        BaseAct copen
+      endif
+      call base#buf#open_split({ 
+        \ 'lines'   : lines,
+        \ 'stl_add' : [ 
+            \ 'Command: %1*',
+            \ cmd ,
+            \ '%0*' ,
+            \ ],
+        \ })
 
       "\ 'V[ %1* v - view, %2* a - append %0* ]',
   else

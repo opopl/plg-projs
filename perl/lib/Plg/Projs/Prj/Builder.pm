@@ -6,6 +6,7 @@ use strict;
 use warnings;
 
 use XML::Hash::LX;
+use XML::Simple qw( XMLout XMLin );
 use Deep::Hash::Utils qw(reach);
 
 use base qw(
@@ -226,6 +227,9 @@ sub init_maker {
     }
 
     my $om = $self->_trg_opts_maker();
+    my $y = XMLout({ opts_maker => $om }, RootName => 'bld' );
+    print $y . "\n";
+    exit;
 
     my $x = Plg::Projs::Build::Maker->new(
         tex_exe      => $self->{tex_exe},

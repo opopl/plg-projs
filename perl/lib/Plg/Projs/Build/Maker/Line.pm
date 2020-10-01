@@ -26,7 +26,7 @@ sub _line_process_pat_sect {
 
     my $line = $ref->{line} || '';
 
-	# inside \ii{...}
+    # inside \ii{...}
     my $sec = $ref->{sec} || '';
 
     my $lines  = $ref->{lines} || [];
@@ -122,10 +122,16 @@ sub _line_process_pat_ii {
 
     my $append = $self->_val_('sections append only',$ii_sec);
     if ($append) {
-        my $a_lines = $append->() || [];
-        push @$lines, 
-            '%% append',
-            @$a_lines;
+        my $a_lines = [];
+        if (ref $append eq 'CODE') {
+            $a_lines = $append->();
+        } elsif (ref $append eq 'ARRAY') {
+            $a_lines = $append;
+        } elsif (! ref $append) {
+            $a_lines = [ $append ];
+        }
+
+        push @$lines, '%% append', @$a_lines;
     }
 
     return $self;
