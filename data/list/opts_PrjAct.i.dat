@@ -44,6 +44,7 @@ bld_compile
 bld_compile_xelatex
 bld_join
 out_bld
+view_bld_log
 ###fig
 fig_create
 fig_view
@@ -74,7 +75,7 @@ tex_show_command
 #tex4ht_css_view
 #tex4ht_js_view
 info
-view_db_fill_tags_py3
+#view_db_fill_tags_py3
 _xmlfile_view
 _xml_update_col
 verb_new

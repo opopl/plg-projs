@@ -35,9 +35,9 @@ sub trg_inject {
 }
 
 sub trg_load_xml {
-	my ($self) = @_;
+    my ($self) = @_;
 
-	return $self;
+    return $self;
 }
 
 sub _trg_opts_maker {
@@ -45,7 +45,7 @@ sub _trg_opts_maker {
 
     $target //= $self->{target};
 
-    my $om = $self->_val_('targets',$target,'opts_maker',@args);
+    my $om = $self->_val_('targets', $target, 'opts_maker', @args);
 
     return $om;
 
@@ -55,7 +55,7 @@ sub trg_inj_usual {
     my ($self) = @_;
 
     my $om = {
-		tex_exe => 'xelatex',
+        tex_exe => 'pdflatex',
         skip_get_opt => 1,
         join_lines   => {
             include_below => [qw(section)]

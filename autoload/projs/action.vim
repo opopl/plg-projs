@@ -1058,6 +1058,17 @@ function! projs#action#out_bld (...)
 
 endf
 
+function! projs#action#view_bld_log (...) 
+  let proj   = projs#proj#name()
+  let bdir   = projs#path([ 'builds', proj, 'src' ])
+	
+	let log = base#file#catfile([ bdir, 'jnd.log' ])
+	call base#fileopen({ 
+		\	'files'    : [log],
+		\	'load_buf' : 1,
+		\	})
+endf
+
 
 if 0
   Usage

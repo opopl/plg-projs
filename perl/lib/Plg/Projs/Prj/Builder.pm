@@ -72,20 +72,19 @@ sub init {
         ->init_maker
         ;
 
-
     return $self;
+
 }
 
 sub set_target {
-	my ($self) = @_;
+    my ($self) = @_;
 
     $self->{target} = $self->_opt_argv_('target',$self->{target_default});
-	return $self;
+    return $self;
 }
 
 sub process_config {
     my ($self) = @_;
-
 
     foreach($self->_config) {
         /^xelatex$/ && do {
@@ -224,8 +223,8 @@ sub init_maker {
     }
 
     my $om = $self->_trg_opts_maker();
-    #print Dumper($om) . "\n";
-    #exit 1;
+	#print Dumper($om) . "\n";
+	#exit 1;
 
     my $x = Plg::Projs::Build::Maker->new(
         tex_exe      => $self->{tex_exe},
