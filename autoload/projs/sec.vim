@@ -322,6 +322,10 @@ function! projs#sec#file_base_a (...)
     elseif sec == '_vim_'
         let sfile_a = [ proj.'.vim']
 
+    elseif sec =~ '^_bld\.'
+        let target = substitute(copy(sec),'^_bld\.\(.*\)$','\1','g')
+        let sfile_a = [ printf('%s.bld.%s.xml',proj,target) ]
+
     elseif sec =~ '^_perl\.'
         let sec = substitute(sec,'^_perl\.\(.*\)$','\1','g')
         let sfile_a = [ printf('%s.%s.pl',proj,sec)]
