@@ -37,7 +37,6 @@ sub inj_base {
 
     my $h = {
         trg_list => [qw( usual )],
-        tex_exe => 'pdflatex',
         maps_act => {
             'compile'  => 'build_pwg',
             'join'     => 'insert_pwg',
@@ -47,12 +46,8 @@ sub inj_base {
                 }
             },
         },
-        act_default => 'compile',
+        act_default    => 'compile',
         target_default => 'usual',
-        insert => {
-            titletoc   => 1,
-            hyperlinks => 1,
-        },
     };
 
     hash_inject($self, $h);
@@ -227,17 +222,17 @@ sub init_maker {
     }
 
     my $om = $self->_trg_opts_maker();
-    my $y = XMLout({ opts_maker => $om }, RootName => 'bld' );
-    print $y . "\n";
-    exit;
+    #my $y = XMLout({ opts_maker => $om }, RootName => 'bld' );
+    #print $y . "\n";
+    #exit;
 
     my $x = Plg::Projs::Build::Maker->new(
-        tex_exe      => $self->{tex_exe},
         proj         => $self->{proj},
         root         => $self->{root},
         root_id      => $self->{root_id},
         cmd          => $cmd,
         %$om,
+        tex_exe      => $self->{tex_exe},
     );
 
     $self->{maker} = $x;
