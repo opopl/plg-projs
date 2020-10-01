@@ -226,20 +226,6 @@ sub init_maker {
     }
 
     my $om = $self->_trg_opts_maker();
-	#print Dumper($om) . "\n";
-	#exit 1;
-
-#    while (my @list = reach($om)) {
-        #my $v = pop @list;
-        #next if ref $v eq 'CODE';
-
-        #print "@list" . "\n";
-    #}
-    #exit 1;
-
-    #my $x = hash2xml($om);
-    #print Dumper($om) . "\n";
-    #exit 1;
 
     my $x = Plg::Projs::Build::Maker->new(
         tex_exe      => $self->{tex_exe},
