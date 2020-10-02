@@ -1079,7 +1079,12 @@ function! projs#sec#open (...)
 
   call base#stl#set('projs')
   "KEYMAP russian-jcukenwin
-  KEYMAP ukrainian-jcuken
+	"
+	if b:ext == 'tex'
+  	KEYMAP ukrainian-jcuken
+	elseif b:ext == 'xml'
+		setlocal keymap=
+	endif
 
   return 
 endf

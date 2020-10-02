@@ -10,6 +10,7 @@ use File::Spec::Functions qw(catfile);
 
 use XML::LibXML;
 use XML::LibXML::Cache;
+use XML::Simple qw(XMLin XMLout);
 
 use base qw(
     Plg::Projs::Prj::Builder::Trg::usual
@@ -67,6 +68,12 @@ sub trg_load_xml {
 
     my $cache = XML::LibXML::Cache->new;
     my $dom = $cache->parse_file($xfile);
+
+    $dom->findnodes('//bld')->map(
+        sub { 
+            my ($bld) = @_;
+        }
+    );
 
     return $self;
 }

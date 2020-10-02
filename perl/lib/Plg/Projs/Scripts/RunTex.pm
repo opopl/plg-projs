@@ -16,7 +16,7 @@ use File::Path qw(rmtree);
 use Getopt::Long qw(GetOptions);
 
 use Base::Arg qw(
-	hash_inject
+    hash_inject
 );
 
 sub new
@@ -36,7 +36,7 @@ sub init {
     my $h = {
         tex_exe => 'pdflatex',
     };
-	hash_inject($self, $h);
+    hash_inject($self, $h);
 
     $self
         ->get_proj
@@ -68,7 +68,9 @@ sub get_proj {
     my $root = getcwd();
 
     my $blx = Plg::Projs::Build::Maker->new( 
-        skip_get_opt => 1,
+        skip => { 
+            get_opt => 1 
+        },
         proj         => $proj,
         root         => $root,
     );
@@ -77,7 +79,7 @@ sub get_proj {
         proj => $proj,
         root => $root,
     };
-	hash_inject($self, $h);
+    hash_inject($self, $h);
 
     return $self;
 }
@@ -112,7 +114,9 @@ sub init_blx {
     my ($self) = @_;
 
     my $blx = Plg::Projs::Build::Maker->new( 
-        skip_get_opt => 1,
+        skip => { 
+            get_opt => 1 
+        },
         proj         => $self->{proj},
         root         => $self->{root},
         tex_exe      => $self->{tex_exe},
@@ -121,7 +125,7 @@ sub init_blx {
     my $h = {
         blx  => $blx,
     };
-	hash_inject($self, $h);
+    hash_inject($self, $h);
 
     return $self;
 }

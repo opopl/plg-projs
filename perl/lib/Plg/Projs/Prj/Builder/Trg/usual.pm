@@ -8,8 +8,9 @@ sub trg_inj_usual {
     my ($self) = @_;
 
     my $om = {
-        tex_exe      => 'pdflatex',
-        skip_get_opt => 1,
+        skip => {
+            get_opt => 1,
+        },
         join_lines   => {
             include_below => [qw(section)]
         },
@@ -20,7 +21,6 @@ sub trg_inj_usual {
             ii_exclude => 1,
         },
         sections => { 
-            include => $self->_secs_include,
             include_with_children => [qw(
                 preamble
             )],
@@ -49,10 +49,10 @@ sub trg_inj_usual {
 
     my $h = {
         tex_exe => 'pdflatex',
-	    insert => {
-	       hyperlinks => 1,
-	       titletoc   => 1,
-	    },
+        insert => {
+           hyperlinks => 1,
+           titletoc   => 1,
+        },
         opts_maker => $om,
     };
 

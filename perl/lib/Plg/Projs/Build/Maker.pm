@@ -87,7 +87,7 @@ sub new
 sub get_opt {
     my ($self) = @_;
 
-    return $self if $self->{skip_get_opt};
+    return $self if $self->_val_('skip get_opt');
 
     my (%opt, @optstr, $cmdline);
     
@@ -358,27 +358,27 @@ sub cmd_build_pwg {
         ;
 
     if (-e $pdf_file) {
-		while (1) {
-			my $st = stat($pdf_file);
+        while (1) {
+            my $st = stat($pdf_file);
 
-			unless ($st->size) {
-	            die "Zero File Size: $pdf_file" . "\n";
-				last;
-			}
-	
-	        foreach(@dest) {
-	            mkpath $_ unless -d;
-	
-	            my $d = catfile($_, $proj . '.pdf');
-	
-	            print "Copied PDF File to:" . "\n";
-	            print "     " . $d . "\n";
-	
-	            copy($pdf_file, $d);
-	        }
+            unless ($st->size) {
+                die "Zero File Size: $pdf_file" . "\n";
+                last;
+            }
+    
+            foreach(@dest) {
+                mkpath $_ unless -d;
+    
+                my $d = catfile($_, $proj . '.pdf');
+    
+                print "Copied PDF File to:" . "\n";
+                print "     " . $d . "\n";
+    
+                copy($pdf_file, $d);
+            }
 
-			last;
-		}
+            last;
+        }
     }
     chdir $self->{root};
 

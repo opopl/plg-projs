@@ -199,14 +199,6 @@ sub run {
     return $self;
 }
 
-sub _secs_include {
-    my ($self) = @_;
-
-    my @secs;
-
-    return [@secs];
-}
-
 sub init_maker {
     my ($self) = @_;
 
