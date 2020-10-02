@@ -5,7 +5,16 @@ package Plg::Projs::Prj::Builder::Trg;
 use strict;
 use warnings;
 
-use Base::Arg qw(hash_inject);
+use Data::Dumper qw(Dumper);
+
+use Base::Arg qw(
+    hash_inject
+);
+
+use Base::String qw(
+    str_split
+);
+
 use File::Spec::Functions qw(catfile);
 
 use XML::LibXML;
@@ -69,11 +78,42 @@ sub trg_load_xml {
     my $cache = XML::LibXML::Cache->new;
     my $dom = $cache->parse_file($xfile);
 
+    my $trg = {};
     $dom->findnodes('//bld')->map(
         sub { 
-            my ($bld) = @_;
+            my ($n_bld) = @_;
+            my $target = $n_bld->{target};
+
+            my $ht = $self->_val_('targets',$target) || {};
+
+            my $h = {};
+            my $om = {};
+            $n_bld->findnodes('./opts_maker')->map(
+                sub { 
+                    my ($n_om) = @_;
+
+                    $n_om->findnodes('./load_dat')->map(
+                        sub {
+                            my ($n) = @_;
+                            my $ld = {};
+                            for (map { $_->getName } $n->attributes) {
+                                $ld->{$_} = $n->{$_};
+                            }
+                            if (keys %$ld) {
+                                $om->{load_dat} //= {};
+                                hash_inject($om->{load_dat}, $ld);
+                            }
+                        }
+                    )
+                }
+            );
+
+            hash_inject($ht, $h);
+            $self->{'targets'}->{$target} = $ht;
         }
     );
+    #print Dumper($self->_val_('targets')) . "\n";
+    exit 1;
 
     return $self;
 }
@@ -86,7 +126,7 @@ sub _trg_xfile {
     my $proj = $self->{proj};
     my $root = $self->{root};
 
-    my $xfile = catfile($root,sprintf($proj . '%s.bld.%s.xml',$proj, $target));
+    my $xfile = catfile($root,sprintf('%s.bld.%s.xml',$proj, $target));
     return $xfile;
 }
 
