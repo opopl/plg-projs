@@ -9,6 +9,7 @@ use Data::Dumper qw(Dumper);
 
 use Base::Arg qw(
     hash_inject
+    hash_apply
 );
 
 use Base::String qw(
@@ -101,19 +102,19 @@ sub trg_load_xml {
                             }
                             if (keys %$ld) {
                                 $om->{load_dat} //= {};
-                                hash_inject($om->{load_dat}, $ld);
+                                hash_apply($om->{load_dat}, $ld);
                             }
                         }
                     )
                 }
             );
 
-            hash_inject($ht, $h);
+            hash_apply($ht, $h);
             $self->{'targets'}->{$target} = $ht;
         }
     );
     #print Dumper($self->_val_('targets')) . "\n";
-    exit 1;
+    #exit 1;
 
     return $self;
 }
