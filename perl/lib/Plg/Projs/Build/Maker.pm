@@ -333,6 +333,8 @@ sub cmd_build_pwg {
     my $proj    = $self->{proj};
     my $src_dir = $self->{src_dir};
 
+	my $proj_pdf_name = $self->{pdf_name} || $proj;
+
     mkpath $self->{src_dir} if -d $self->{src_dir};
     mkpath $self->{out_dir_pdf_pwg};
 
@@ -369,7 +371,7 @@ sub cmd_build_pwg {
             foreach(@dest) {
                 mkpath $_ unless -d;
     
-                my $d = catfile($_, $proj . '.pdf');
+                my $d = catfile($_, $proj_pdf_name . '.pdf');
     
                 print "Copied PDF File to:" . "\n";
                 print "     " . $d . "\n";

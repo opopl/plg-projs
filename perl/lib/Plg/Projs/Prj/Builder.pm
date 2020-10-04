@@ -214,6 +214,11 @@ sub init_maker {
     my $act = $self->{act};
     my $cmd = $self->{maps_act}->{$act} || '';
 
+	my $target = $self->{target};
+	my $proj   = $self->{proj};
+
+	my $pdf_name = join(".", $proj, $target);
+
     local @ARGV = ();
     #print Dumper($self->{opts_maker}) . "\n";
     #exit;
@@ -229,6 +234,7 @@ sub init_maker {
     #exit;
 
     my $x = Plg::Projs::Build::Maker->new(
+		pdf_name     => $pdf_name,
         proj         => $self->{proj},
         root         => $self->{root},
         root_id      => $self->{root_id},

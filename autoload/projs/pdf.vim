@@ -23,15 +23,45 @@ function! projs#pdf#view (...)
   let viewer_id = get(a:000,1,'evince')
   let viewer  = base#exefile#path(viewer_id)
 
-  let pdffile = projs#pdf#path(proj)
+  let pdf_files = projs#pdf#path(proj)
 
-  if !filereadable(pdffile)
-    let msg = 'PDF file NOT READABLE!'
-    call base#warn({ 'rdw' : 1, 'text' : msg, 'prefix' : 'projs#pdf#view'})
+  if !len(pdf_files)
+    let msg = 'PDF files NOT READABLE!'
+    call base#warn({ 
+			\	'rdw'    : 1,
+			\	'text'   : msg,
+			\	'prefix' : 'projs#pdf#view' })
     return
   endif
 
-  let size = base#file#size(pdffile)
+	let targets = []
+	let pat = printf('^%s\.\(.*\).pdf$',proj)
+
+	let d = {}
+	for file in pdf_files
+		let t = substitute(copy(file),pat,'\1','g')
+		if len(t)
+			call add(targets,t)
+			call extend(d,{ t : file })
+		endif
+	endfor
+
+	let target = '' 
+	if len(targets) == 1
+		let target = get(targets,0,'')
+	endif
+
+	while !len(target)
+		call base#varset('this',targets)
+		let target = input('target:','','custom,base#complete#this')
+	endw
+
+	let pdf_file = ''
+	if len(pdf_files) == 1
+		let pdf_file = get(pdf_files,0,'')
+	endif
+
+  let size = base#file#size(pdf_file)
 
   if !size
     let msg = 'PDF file ZERO SIZE!'
@@ -39,8 +69,7 @@ function! projs#pdf#view (...)
     return
   endif
 
-
-  if filereadable(pdffile)
+  if filereadable(pdf_file)
     if has('win32')
      let ec= 'silent! !start '.viewer.' '.pdffile
     else  
@@ -71,11 +100,17 @@ function! projs#pdf#path (...)
 
   let a = [ pdffin, projs#rootid() ]
   call extend(a,split(qw,' '))
-  call extend(a,[ printf('%s.pdf',proj) ])
+  let pdf_dir = base#file#catfile(a)
 
-  let pdffile = base#file#catfile(a)
+	let pdf_files = base#find({ 
+		\	"dirs"    : [pdf_dir],
+		\	"exts"    : ['pdf'],
+		\	"relpath" : 1,
+		\	"subdirs" : 0,
+		\	"pat"     : printf('^%s\.(.*)\.pdf',proj),
+		\	})
 
-  return pdffile
+  return pdf_files
 endfunction
 
 function! projs#pdf#delete (...)
