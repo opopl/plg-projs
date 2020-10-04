@@ -40,6 +40,8 @@ sub _join_lines {
 
     $sec = '_main_' unless defined $sec;
 
+    my $jfile = $self->_file_joined;
+
     my $file = $ref->{file} || '';
 
     my $root_id = $self->{root_id} || '';
@@ -51,7 +53,7 @@ sub _join_lines {
     
     my $ii_include_all = $ref->{ii_include_all} || $self->{ii_include_all};
 
-	my $include_below = $self->_val_list_ref_('join_lines include_below');
+    my $include_below = $self->_val_list_ref_('join_lines include_below');
 
     my $ss        = $self->{sections} || {};
 
@@ -62,7 +64,6 @@ sub _join_lines {
 
     chdir $root;
 
-    my $jfile = $self->_file_joined;
     mkpath $self->{src_dir};
 
     my $f = $ref->{file} || $self->_file_sec($sec,{ proj => $proj });
@@ -176,6 +177,7 @@ sub _join_lines {
 
     return @lines;
 }
+# end _join_lines
 
 =head3 _ii_include
 
@@ -191,7 +193,7 @@ sub _ii_include {
     my (@include);
     my $f_in = $self->_file_ii_include;
 
-    my @i = @{ $self->_val_(qw( sections include )) || [] };
+    my @i = $self->_val_list_(qw( sections include ));
     push @include, @i;
 
     my $load_dat = $self->_val_(qw( load_dat ii_include ));

@@ -33,7 +33,7 @@ sub _line_process_pat_sect {
     my $at_end = $ref->{at_end} || [];
 
     # see Plg::Projs::Prj::Builder::Insert
-    my @ins_order = $self->_val_list_('sections ins_order');
+    my $ins_order = $self->_val_list_ref_('sections ins_order');
 
     my $r = {
         sect      => $sect,
@@ -44,10 +44,10 @@ sub _line_process_pat_sect {
         $self->_debug_sec($root_id, $proj, $sec)
         ;
 
-    foreach my $ord (@ins_order) {
-        my @ss    = $self->_val_list_('sections insert',$ord);
+    foreach my $ord (@$ins_order) {
+        my $ss    = $self->_val_list_ref_('sections insert',$ord);
 
-        foreach my $sss (@ss) {
+        foreach my $sss (@$ss) {
             my $scts      = $sss->{scts} || [];
             my $sss_lines = $sss->{lines} || [];
    
@@ -94,8 +94,6 @@ sub _line_process_pat_ii {
     my $ii_include_all = $ref->{ii_include_all};
 
     my @include = $self->_ii_include;
-
-	print Dumper($include_below) . "\n";
 
     my $iall = $ii_include_all;
     if ($sect) {
