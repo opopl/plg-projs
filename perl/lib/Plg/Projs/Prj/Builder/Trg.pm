@@ -7,6 +7,8 @@ use warnings;
 
 use Data::Dumper qw(Dumper);
 
+use XML::Hash::LX qw(xml2hash);
+
 use Base::Arg qw(
     hash_inject
     hash_apply
@@ -85,49 +87,19 @@ sub trg_load_xml {
 
     $self->{dom_xml_trg} = $dom;
 
-    my $trg = {};
+	my $pl = xml2hash($dom, attr => '');
+	my $h = $pl->{bld};
 
-    exit;
-    $dom->findnodes('//bld')->map(
-        sub { 
-            my ($n_bld) = @_;
-            my $target = $n_bld->{target};
+    my $ht = $self->_val_('targets',$target) || {};
+    print Dumper($ht) . "\n";
+	exit 1;
 
-            my $ht = $self->_val_('targets',$target) || {};
+    hash_apply($ht, $h);
 
-            my $h = {};
-            my $om = {};
-            my $om_keys = $self->_val_('om_keys') || [];
+    $self->{'targets'}->{$target} = $ht;
 
-            $n_bld->findnodes('./opts_maker')->map(
-                sub { 
-                    my ($n_om) = @_;
-
-                    foreach my $k (@$om_keys) {
-                        $n_om->findnodes(qq|./$k|)->map(
-                            sub {
-                                my ($n) = @_;
-                                my $zz = {};
-                                for (map { $_->getName } $n->attributes) {
-                                    $zz->{$_} = $n->{$_};
-                                }
-                                if (keys %$zz) {
-                                    $om->{$k} //= {};
-                                    hash_apply($om->{$k}, $zz);
-                                }
-                            }
-                        )
-
-                    }
-                }
-            );
-
-            hash_apply($ht, $h);
-            $self->{'targets'}->{$target} = $ht;
-        }
-    );
-    #print Dumper($self->_val_('targets')) . "\n";
-    #exit 1;
+    print Dumper($self->_val_('targets',$target)) . "\n";
+	exit 1;
 
     return $self;
 }
