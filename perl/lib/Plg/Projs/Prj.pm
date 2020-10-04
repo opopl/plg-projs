@@ -4,10 +4,15 @@ package Plg::Projs::Prj;
 use strict;
 use warnings;
 
+use Deep::Hash::Utils qw( deepvalue );
+
 use FindBin qw($Bin $Script);
 use File::Basename qw(basename dirname);
 use File::Spec::Functions qw(catfile);
 use Data::Dumper qw(Dumper);
+
+use Base::XML::Dict qw(xml2dict);
+use XML::LibXML::Cache;
 
 use Plg::Projs::Piwigo::SQL;
 
@@ -60,6 +65,38 @@ sub init {
     $self->init_db;
 
     return $self;
+}
+
+sub prj_load_xml {
+    my ($self) = @_;
+	
+	my $proj = $self->{proj};
+
+	my $xfile = $self->_prj_xfile;
+    unless (-e $xfile) {
+        return $self;
+    }
+
+    my $cache = XML::LibXML::Cache->new;
+    my $dom = $cache->parse_file($xfile);
+
+    $self->{dom_xml_trg} = $dom;
+
+    my $pl = xml2dict($dom, attr => '');
+	$self->{cnf} = $pl->{$proj} || {};
+	$self->{trg_list} = $self->_val_list_ref_('cnf targets');
+
+    return $self;
+}
+
+sub _prj_xfile {
+    my ($self) = @_;
+
+    my $proj = $self->{proj};
+    my $root = $self->{root};
+
+    my $xfile = catfile($root,sprintf('%s.xml',$proj));
+    return $xfile;
 }
 
 sub fill_files {

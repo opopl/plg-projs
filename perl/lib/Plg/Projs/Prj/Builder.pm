@@ -74,6 +74,7 @@ sub init {
         ->inj_targets
         ->get_act
         ->get_opt
+        ->prj_load_xml
         ->set_target
         ->trg_load_xml
         ->trg_apply
@@ -148,6 +149,7 @@ sub print_help {
             $self->{target_default}
         EXAMPLES:
             perl $Script compile -c 'xelatex'
+            perl $Script show_trg 
     } . "\n";
     exit 1;
 

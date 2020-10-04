@@ -7,7 +7,6 @@ use warnings;
 
 use Data::Dumper qw(Dumper);
 
-use XML::Hash::LX qw(xml2hash);
 use Base::XML::Dict qw(xml2dict);
 
 use Base::Arg qw(
