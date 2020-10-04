@@ -16,6 +16,10 @@ use Base::String qw(
     str_split
 );
 
+use Base::XML qw(
+    node_to_pl
+);
+
 use File::Spec::Functions qw(catfile);
 
 use XML::LibXML;
@@ -79,7 +83,11 @@ sub trg_load_xml {
     my $cache = XML::LibXML::Cache->new;
     my $dom = $cache->parse_file($xfile);
 
+    $self->{dom_xml_trg} = $dom;
+
     my $trg = {};
+
+    exit;
     $dom->findnodes('//bld')->map(
         sub { 
             my ($n_bld) = @_;
@@ -89,23 +97,28 @@ sub trg_load_xml {
 
             my $h = {};
             my $om = {};
+            my $om_keys = $self->_val_('om_keys') || [];
+
             $n_bld->findnodes('./opts_maker')->map(
                 sub { 
                     my ($n_om) = @_;
 
-                    $n_om->findnodes('./load_dat')->map(
-                        sub {
-                            my ($n) = @_;
-                            my $ld = {};
-                            for (map { $_->getName } $n->attributes) {
-                                $ld->{$_} = $n->{$_};
+                    foreach my $k (@$om_keys) {
+                        $n_om->findnodes(qq|./$k|)->map(
+                            sub {
+                                my ($n) = @_;
+                                my $zz = {};
+                                for (map { $_->getName } $n->attributes) {
+                                    $zz->{$_} = $n->{$_};
+                                }
+                                if (keys %$zz) {
+                                    $om->{$k} //= {};
+                                    hash_apply($om->{$k}, $zz);
+                                }
                             }
-                            if (keys %$ld) {
-                                $om->{load_dat} //= {};
-                                hash_apply($om->{load_dat}, $ld);
-                            }
-                        }
-                    )
+                        )
+
+                    }
                 }
             );
 
