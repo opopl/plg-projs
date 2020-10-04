@@ -8,6 +8,7 @@ use warnings;
 use Data::Dumper qw(Dumper);
 
 use XML::Hash::LX qw(xml2hash);
+use Base::XML::Dict qw(xml2dict);
 
 use Base::Arg qw(
     hash_inject
@@ -87,19 +88,20 @@ sub trg_load_xml {
 
     $self->{dom_xml_trg} = $dom;
 
-	my $pl = xml2hash($dom, attr => '');
-	my $h = $pl->{bld};
+    my $pl = xml2dict($dom, attr => '');
+    print Dumper($pl) . "\n";
+    exit 1;
+
+    my $h = $pl->{bld};
 
     my $ht = $self->_val_('targets',$target) || {};
-    print Dumper($ht) . "\n";
-	exit 1;
 
     hash_apply($ht, $h);
 
     $self->{'targets'}->{$target} = $ht;
 
     print Dumper($self->_val_('targets',$target)) . "\n";
-	exit 1;
+    exit 1;
 
     return $self;
 }
