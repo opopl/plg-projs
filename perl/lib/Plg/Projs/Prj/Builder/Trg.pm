@@ -89,8 +89,6 @@ sub trg_load_xml {
     $self->{dom_xml_trg} = $dom;
 
     my $pl = xml2dict($dom, attr => '');
-    print Dumper($pl) . "\n";
-    exit 1;
 
     my $h = $pl->{bld};
 
@@ -100,8 +98,8 @@ sub trg_load_xml {
 
     $self->{'targets'}->{$target} = $ht;
 
-    print Dumper($self->_val_('targets',$target)) . "\n";
-    exit 1;
+    #print Dumper($self->_val_('targets',$target)) . "\n";
+    #exit 1;
 
     return $self;
 }

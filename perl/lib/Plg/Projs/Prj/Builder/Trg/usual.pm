@@ -33,8 +33,8 @@ sub trg_inj_usual {
             },
             ins_order => [qw( hyperlinks titletoc )],
             insert => {
-                titletoc   => $self->_insert_titletoc,
-                hyperlinks => $self->_insert_hyperlinks,
+                titletoc   => sub { $self->_insert_titletoc },
+                hyperlinks => sub { $self->_insert_hyperlinks },
             },
             generate => {
             },

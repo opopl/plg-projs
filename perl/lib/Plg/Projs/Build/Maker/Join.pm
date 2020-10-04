@@ -51,8 +51,7 @@ sub _join_lines {
     
     my $ii_include_all = $ref->{ii_include_all} || $self->{ii_include_all};
 
-    my $jl = $self->{join_lines} || {};
-    my $include_below = $ref->{include_below} || $jl->{include_below} || [];
+	my $include_below = $self->_val_list_ref_('join_lines include_below');
 
     my $ss        = $self->{sections} || {};
 

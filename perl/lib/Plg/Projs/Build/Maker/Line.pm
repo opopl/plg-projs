@@ -45,9 +45,9 @@ sub _line_process_pat_sect {
         ;
 
     foreach my $ord (@ins_order) {
-        my $ss    = $self->_val_('sections insert',$ord) || [];
+        my @ss    = $self->_val_list_('sections insert',$ord);
 
-        foreach my $sss (@$ss) {
+        foreach my $sss (@ss) {
             my $scts      = $sss->{scts} || [];
             my $sss_lines = $sss->{lines} || [];
    
@@ -89,11 +89,13 @@ sub _line_process_pat_ii {
     my $include_below = $ref->{include_below} || [];
     my $line          = $ref->{line} || '';
 
-    my $include_with_children = $self->_val_('sections include_with_children') || [];
+    my $include_with_children = $self->_val_list_ref_('sections include_with_children');
 
     my $ii_include_all = $ref->{ii_include_all};
 
     my @include = $self->_ii_include;
+
+	print Dumper($include_below) . "\n";
 
     my $iall = $ii_include_all;
     if ($sect) {
