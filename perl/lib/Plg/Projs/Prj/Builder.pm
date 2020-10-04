@@ -10,10 +10,11 @@ use XML::Simple qw( XMLout XMLin );
 use Deep::Hash::Utils qw(reach);
 
 use base qw(
+    Plg::Projs::Prj
+
     Base::Obj
     Base::Opt
 
-    Plg::Projs::Prj
     Plg::Projs::Prj::Builder::Insert
     Plg::Projs::Prj::Builder::Defs
     Plg::Projs::Prj::Builder::Trg

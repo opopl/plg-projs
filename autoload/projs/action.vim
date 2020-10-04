@@ -1131,6 +1131,8 @@ function! projs#action#bld_compile (...)
   let env = {
     \ 'proj'    : proj,
     \ 'root'    : root,
+    \ 'config'  : config,
+    \ 'target'  : target,
     \ 'start'   : start,
     \ 'cmd'     : cmd,
     \ 'jnd_pdf' : jnd_pdf,
@@ -1140,7 +1142,7 @@ function! projs#action#bld_compile (...)
     call projs#action#bld_compile_Fc(self,a:temp_file)
   endfunction
 
-  let msg = printf('bld_compile: %s; config: %s', proj, config)
+  let msg = printf('bld_compile: %s; target: %s; config: %s', proj, target, config)
   call base#rdw(msg)
 
   call asc#run({ 
@@ -1174,6 +1176,9 @@ function! projs#action#bld_compile_Fc (self,temp_file)
   let cmd     = self.cmd
 
   let start   = self.start
+
+  let config   = self.config
+  let target   = self.target
 
   let jnd_pdf = self.jnd_pdf
 
@@ -1234,7 +1239,8 @@ function! projs#action#bld_compile_Fc (self,temp_file)
 
       "\ 'V[ %1* v - view, %2* a - append %0* ]',
   else
-      let msg = printf('PERL BUILD OK: %s %s',proj,s_dur)
+      let m = 'PERL BUILD OK: %s %s; target: %s; config: %s'
+      let msg = printf(m,proj,s_dur,target,config)
       call base#rdw(msg)
       BaseAct cclose
   endif
