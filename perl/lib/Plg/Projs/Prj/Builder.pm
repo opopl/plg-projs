@@ -148,7 +148,8 @@ sub print_help {
         DEFAULT TARGET:
             $self->{target_default}
         EXAMPLES:
-            perl $Script compile -c 'xelatex'
+            perl $Script compile -c xelatex
+            perl $Script compile -c xelatex -t usual
             perl $Script show_trg 
     } . "\n";
     exit 1;
