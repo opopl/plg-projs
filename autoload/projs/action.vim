@@ -1223,7 +1223,8 @@ function! projs#action#bld_compile_Fc (self,temp_file)
 
   redraw!
   if ! ok
-      let msg = printf('PERL BUILD FAIL: %s %s',proj,s_dur)
+      let m = 'PERL BUILD FAIL: %s %s; target: %s; config: %s'
+      let msg = printf(m,proj,s_dur,target,config)
       call base#rdwe(msg)
       if len(err)
         BaseAct copen
