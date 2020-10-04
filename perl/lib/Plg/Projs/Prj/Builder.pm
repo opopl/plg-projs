@@ -37,15 +37,15 @@ sub inj_base {
 
     my $h = {
         trg_list => [qw( usual )],
-		om_keys => [qw(
-			append
-			generate
-			join_lines
-			load_dat 
-			sections
-			skip
-			tex_exe
-		)],
+        om_keys => [qw(
+            append
+            generate
+            join_lines
+            load_dat 
+            sections
+            skip
+            tex_exe
+        )],
         maps_act => {
             'compile'  => 'build_pwg',
             'join'     => 'insert_pwg',
@@ -71,10 +71,10 @@ sub init {
 
     $self
         ->inj_base
+        ->prj_load_xml
         ->inj_targets
         ->get_act
         ->get_opt
-        ->prj_load_xml
         ->set_target
         ->trg_load_xml
         ->trg_apply
@@ -217,10 +217,10 @@ sub init_maker {
     my $act = $self->{act};
     my $cmd = $self->{maps_act}->{$act} || '';
 
-	my $target = $self->{target};
-	my $proj   = $self->{proj};
+    my $target = $self->{target};
+    my $proj   = $self->{proj};
 
-	my $pdf_name = join(".", $proj, $target);
+    my $pdf_name = join(".", $proj, $target);
 
     local @ARGV = ();
     #print Dumper($self->{opts_maker}) . "\n";
@@ -237,7 +237,7 @@ sub init_maker {
     #exit;
 
     my $x = Plg::Projs::Build::Maker->new(
-		pdf_name     => $pdf_name,
+        pdf_name     => $pdf_name,
         proj         => $self->{proj},
         root         => $self->{root},
         root_id      => $self->{root_id},
