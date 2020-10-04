@@ -37,12 +37,13 @@ function! projs#pdf#view (...)
 	let targets = []
 	let pat = printf('^%s\.\(.*\).pdf$',proj)
 
-	let d = {}
+	let d_files = {}
 	for file in pdf_files
-		let t = substitute(copy(file),pat,'\1','g')
+		let file_b = fnamemodify(file,':t')
+		let t = substitute(file_b,pat,'\1','g')
 		if len(t)
 			call add(targets,t)
-			call extend(d,{ t : file })
+			call extend(d_files,{ t : file })
 		endif
 	endfor
 
@@ -56,24 +57,20 @@ function! projs#pdf#view (...)
 		let target = input('target:','','custom,base#complete#this')
 	endw
 
-	let pdf_file = ''
-	if len(pdf_files) == 1
-		let pdf_file = get(pdf_files,0,'')
-	endif
+	let pdf_file = get(d_files,target,'')
 
   let size = base#file#size(pdf_file)
-
   if !size
-    let msg = 'PDF file ZERO SIZE!'
+    let msg = 'PDF file ZERO SIZE: ' . pdf_file
     call base#warn({ 'text' : msg , 'prefix' : 'projs#pdf#view', 'rdw' : 1 })
     return
   endif
 
   if filereadable(pdf_file)
     if has('win32')
-     let ec= 'silent! !start '.viewer.' '.pdffile
+     let ec= 'silent! !start '.viewer.' '.pdf_file
     else  
-     let ec= 'silent! !'.viewer.' '.pdffile . ' &'
+     let ec= 'silent! !'.viewer.' '.pdf_file . ' &'
     endif
 
     exe ec
@@ -105,7 +102,7 @@ function! projs#pdf#path (...)
 	let pdf_files = base#find({ 
 		\	"dirs"    : [pdf_dir],
 		\	"exts"    : ['pdf'],
-		\	"relpath" : 1,
+		\	"relpath" : 0,
 		\	"subdirs" : 0,
 		\	"pat"     : printf('^%s\.(.*)\.pdf',proj),
 		\	})
