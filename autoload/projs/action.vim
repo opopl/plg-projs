@@ -1094,6 +1094,21 @@ function! projs#action#bld_compile (...)
 
   let bfile = printf('%s.bld.pl',proj)
 
+  let ok = base#sys({ 
+    \ "cmds" : [ printf('perl %s show_trg',bfile) ],
+    \ "split_output" : 0,
+    \ })
+  let targets    = base#varget('sysout',[])
+  let target = ''
+  if len(targets) == 1
+    let target = remove(targets,0)
+  else
+    call base#varset('this',targets)
+    while !len(target)
+      let target = input(printf('[%s] target: ',proj),'','custom,base#complete#this')
+    endw
+  endif
+
   let start = localtime()
   call chdir(root)
 
@@ -1105,7 +1120,7 @@ function! projs#action#bld_compile (...)
     endif
   endfor
 
-  let a = [ 'perl', bfile, 'compile' ]
+  let a = [ 'perl', bfile, 'compile', '-t', target ]
 
   if len(config)
     call extend(a,[ '-c' ,config ])
