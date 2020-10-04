@@ -50,7 +50,7 @@ sub inj_base {
             'compile'  => 'build_pwg',
             'join'     => 'insert_pwg',
             'show_trg' => sub { 
-                foreach my $trg ($self->trg_list) {
+                foreach my $trg ($self->_trg_list) {
                     print $trg . "\n";
                 }
             },
