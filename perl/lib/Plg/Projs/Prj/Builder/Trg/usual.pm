@@ -8,6 +8,8 @@ use warnings;
 sub trg_inj_usual {
     my ($self) = @_;
 
+    my $bld = $self;
+
     my $om = {
         skip => {
             get_opt => 1,
@@ -34,18 +36,18 @@ sub trg_inj_usual {
             },
             ins_order => [qw( hyperlinks titletoc )],
             insert => {
-                titletoc   => sub { $self->_insert_titletoc },
-                hyperlinks => sub { $self->_insert_hyperlinks },
+                titletoc   => sub { $bld->_insert_titletoc },
+                hyperlinks => sub { $bld->_insert_hyperlinks },
             },
             generate => {
-                'preamble' => sub { },
+                'preamble.packages' => sub { $bld->_gen_preamble_packages },
                 'preamble.packages.xelatex'  => sub {},
                 'preamble.packages.pdflatex' => sub {},
             },
             append => {
                 each => sub { },
                 only => {
-                    defs => sub { [ $self->_def_sechyperlinks ] },
+                    defs => sub { [ $bld->_def_sechyperlinks ] },
                 },
             },
         }
