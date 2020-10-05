@@ -44,7 +44,7 @@ sub init {
         ind_level => shift @ARGV,
     };
 
-	hash_inject($self, $h);
+    hash_inject($self, $h);
 
     return $self;
 }
