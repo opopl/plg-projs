@@ -61,10 +61,13 @@ sub trg_inj_usual {
                hyperlinks => 1,
                titletoc   => 1,
             },
-            preamble => {
-                packages  => [qw()],
-                pack_opts => {},
-            },
+            sec => [
+                {
+	                name      => 'preamble',
+	                packages  => [qw()],
+	                pack_opts => {},
+                }
+            ],
             generate => {
                 on => [qw(
                    preamble.packages

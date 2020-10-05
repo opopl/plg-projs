@@ -107,8 +107,6 @@ sub _line_process_pat_ii {
 
     return $self unless $inc;
 
-
-
     my @ii_lines = $self->_join_lines($ii_sec,{ 
         proj           => $proj,
         ii_include_all => $iall,
