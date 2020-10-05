@@ -38,6 +38,9 @@ sub trg_inj_usual {
                 hyperlinks => sub { $self->_insert_hyperlinks },
             },
             generate => {
+                'preamble' => sub { },
+                'preamble.packages.xelatex'  => sub {},
+                'preamble.packages.pdflatex' => sub {},
             },
             append => {
                 each => sub { },
@@ -53,6 +56,12 @@ sub trg_inj_usual {
         insert => {
            hyperlinks => 1,
            titletoc   => 1,
+        },
+        generate => {
+            on => [qw(
+               preamble.packages.xelatex
+               preamble.packages.pdflatex
+            )]
         },
         opts_maker => $om,
     };

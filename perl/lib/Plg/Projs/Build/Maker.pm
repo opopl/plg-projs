@@ -37,6 +37,7 @@ use base qw(
     Plg::Projs::Build::Maker::Join
     Plg::Projs::Build::Maker::Line
     Plg::Projs::Build::Maker::Sec
+    Plg::Projs::Build::Maker::Pats
 );
 
 use Base::Arg qw(

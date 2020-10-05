@@ -72,12 +72,7 @@ sub _join_lines {
 
     my @flines = read_file $f;
 
-    my $pats = {
-         'ii'    => '^\s*\\\\ii\{(.+)\}.*$',
-         'iifig' => '^\s*\\\\iifig\{(.+)\}.*$',
-         'input' => '^\s*\\\\input\{(\S+)\}.*$',
-         'sect'  => '^\s*\\\\(part|chapter|section|subsection|subsubsection|paragraph)\{.*\}\s*$',
-    };
+	my $pats = $self->_pats;
 
     my $delim = '%' x 50;  
 
