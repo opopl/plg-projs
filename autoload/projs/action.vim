@@ -1108,6 +1108,7 @@ function! projs#action#bld_compile (...)
   let cmd = join(a, ' ' )
 
   let jnd_pdf = projs#bld#jnd_pdf() 
+  let jnd_tex = projs#bld#jnd_tex() 
 
   let env = {
     \ 'proj'    : proj,
@@ -1117,6 +1118,7 @@ function! projs#action#bld_compile (...)
     \ 'start'   : start,
     \ 'cmd'     : cmd,
     \ 'jnd_pdf' : jnd_pdf,
+    \ 'jnd_tex' : jnd_tex,
     \ }
 
   function env.get(temp_file) dict
@@ -1162,6 +1164,7 @@ function! projs#action#bld_compile_Fc (self,temp_file)
   let target   = self.target
 
   let jnd_pdf = self.jnd_pdf
+  let jnd_tex = self.jnd_tex
 
   let code    = self.return_code
 
@@ -1175,7 +1178,7 @@ function! projs#action#bld_compile_Fc (self,temp_file)
   try
     let jnd_size = base#file#size(jnd_pdf)
   catch 
-    call base#rdwe('base#file#size error: ' . jnd_pdf,'NonText')
+    "call base#rdwe('base#file#size error: ' . jnd_pdf,'NonText')
   endtry
   
   let err = []
@@ -1189,6 +1192,14 @@ function! projs#action#bld_compile_Fc (self,temp_file)
     exe 'cgetfile ' . a:temp_file
 
     let err = getqflist()
+		let jfile = fnamemodify(jnd_tex,':t')
+		let jdir  = fnamemodify(jnd_tex,':h')
+		for e in err
+			unlet e.bufnr
+			call extend(e,{ 'filename' : jfile })
+		endfor
+		exe 'cd ' . jdir
+		call setqflist(err)
     if len(err)
       let ok = 0
     endif

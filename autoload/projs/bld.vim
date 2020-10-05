@@ -42,9 +42,15 @@ function! projs#bld#target ()
 endfunction
 
 function! projs#bld#jnd_pdf ()
-
 	let proj  = projs#proj#name()
 
   let jnd_pdf = base#qw#catpath( projs#rootid(),printf('builds %s src jnd.pdf',proj))
 	return jnd_pdf
+endfunction
+
+function! projs#bld#jnd_tex ()
+	let proj  = projs#proj#name()
+
+  let jnd_tex = base#qw#catpath( projs#rootid(),printf('builds %s src jnd.tex',proj))
+	return jnd_tex
 endfunction
