@@ -53,15 +53,22 @@ sub trg_inj_usual {
 
     my $h = {
         tex_exe => 'pdflatex',
-        insert => {
-           hyperlinks => 1,
-           titletoc   => 1,
-        },
-        generate => {
-            on => [qw(
-               preamble.packages.xelatex
-               preamble.packages.pdflatex
-            )]
+        sii => {
+            insert => {
+               hyperlinks => 1,
+               titletoc   => 1,
+            },
+            preamble => {
+                packages  => [qw()],
+                pack_opts => {},
+            },
+            generate => {
+                on => [qw(
+                   preamble.packages
+                   preamble.packages.xelatex
+                   preamble.packages.pdflatex
+                )]
+            },
         },
         opts_maker => $om,
     };
