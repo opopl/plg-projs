@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bld>
+  <tex_exe>pdflatex</tex_exe>
+  <insert titletoc="1" hyperlinks="1" />
+  <opts_maker>
+    <skip get_opt="1" />
+    <load_dat ii_include="1" ii_exclude="1" />
+    <join_lines>
+      <include_below>
+        section
+      </include_below>
+    </join_lines>
+    <sections>
+      <include>
+      </include>
+      <include_with_children>
+        preamble
+      </include_with_children>
+      <ins_order>
+         hyperlinks
+         titletoc
+      </ins_order>
+      <generate>
+      </generate>
+      <append>
+        <each>
+        </each>
+        <only>
+          <defs>
+          </defs>
+        </only>
+      </append>
+    </sections>
+  </opts_maker>
+</bld>
