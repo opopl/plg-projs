@@ -1,6 +1,8 @@
 
 package Plg::Projs::Prj::Builder::Defs;
 
+use utf8;
+
 use strict;
 use warnings;
 
@@ -8,6 +10,7 @@ sub _def_sechyperlinks {
 	my ($self) = @_;
 
 	my $def = q{
+\def\indicesname{Указатели}
 \def\sechyperlinks{
 	\par
 	\begin{center}

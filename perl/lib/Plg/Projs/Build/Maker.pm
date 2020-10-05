@@ -9,6 +9,7 @@ eof
 
 package Plg::Projs::Build::Maker;
 
+use utf8;
 use strict;
 use warnings;
 

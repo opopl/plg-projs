@@ -1,6 +1,7 @@
 
 package Plg::Projs::Prj::Builder::Trg::usual;
 
+use utf8;
 use strict;
 use warnings;
 

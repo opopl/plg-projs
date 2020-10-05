@@ -2,6 +2,7 @@
 
 package Plg::Projs::Prj::Builder;
 
+use utf8;
 use strict;
 use warnings;
 
