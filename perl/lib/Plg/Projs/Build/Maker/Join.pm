@@ -40,6 +40,8 @@ sub _join_lines {
 
     $sec = '_main_' unless defined $sec;
 
+    my (@lines, @at_end);
+
     my $jfile = $self->_file_joined;
 
     my $file = $ref->{file} || '';
@@ -66,11 +68,11 @@ sub _join_lines {
 
     mkpath $self->{src_dir};
 
-    my $f = $ref->{file} || $self->_file_sec($sec,{ proj => $proj });
+    my $f_sec = $ref->{file} || $self->_file_sec($sec,{ proj => $proj });
 
-    if (!-e $f){ return (); }
+    if (!-e $f_sec){ return (); }
 
-    my @flines = read_file $f;
+    my @flines = read_file $f_sec;
 
 	my $pats = $self->_pats;
 
@@ -82,7 +84,6 @@ sub _join_lines {
         file      => $file,
     };
 
-    my (@lines, @at_end);
  
     my $sect;
 

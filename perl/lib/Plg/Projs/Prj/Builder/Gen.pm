@@ -8,6 +8,18 @@ use warnings;
 
 binmode STDOUT,':encoding(utf8)';
 
+sub _gen_preamble {
+    my ($bld) = @_;
+
+	my $on = $bld->_val_list_ref_('sii generate on');
+	my $sec = 'preamble';
+
+	return () unless grep { /^$sec$/ } @$on;
+    my @lines;
+
+    return @lines;
+}
+
 sub _gen_preamble_packages {
     my ($bld) = @_;
 
@@ -18,9 +30,9 @@ sub _gen_preamble_packages {
 
 	my $packs = $bld->_val_list_ref_('sii generate on');
 
-    my $lines = [];
+    my @lines;
 
-    return $lines;
+    return @lines;
 }
 
 1;
