@@ -736,13 +736,13 @@ function! projs#sec#new(sec,...)
         call extend(ref, refadd)
     endif
 
-    let parent_sec = get(ref,'parent_sec',parent_sec)
-    let sec_type   = get(ref,'sec_type','')
-
     let rw = get(ref, 'rewrite', 0)
     if projs#sec#exists(sec) && !rw
         return
     endif
+
+    let parent_sec = get(ref,'parent_sec',parent_sec)
+    let sec_type   = get(ref,'sec_type','')
 
     let o = base#varget('projs_opts_PrjSecNew',{})
 

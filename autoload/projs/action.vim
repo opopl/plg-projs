@@ -1092,33 +1092,13 @@ function! projs#action#bld_compile (...)
 
   let config = get(ref,'config','')
 
-  let bfile = printf('%s.bld.pl',proj)
+  call projs#bld#make_secs()
+  let target = projs#bld#target()
 
-  let ok = base#sys({ 
-    \ "cmds" : [ printf('perl %s show_trg',bfile) ],
-    \ "split_output" : 0,
-    \ })
-  let targets    = base#varget('sysout',[])
-  let target = ''
-  if len(targets) == 1
-    let target = remove(targets,0)
-  else
-    call base#varset('this',targets)
-    while !len(target)
-      let target = input(printf('[%s] target: ',proj),'','custom,base#complete#this')
-    endw
-  endif
+  let bfile = projs#sec#file('_perl.bld')
 
   let start = localtime()
   call chdir(root)
-
-  let scs = base#qw('_perl.bld _pm.bld')
-  for s in scs
-    let f = projs#sec#file(s)
-    if !filereadable(f)
-      call projs#sec#new(s)
-    endif
-  endfor
 
   let a = [ 'perl', bfile, 'compile', '-t', target ]
 
@@ -1127,7 +1107,8 @@ function! projs#action#bld_compile (...)
   endif
   let cmd = join(a, ' ' )
 
-  let jnd_pdf = base#qw#catpath( projs#rootid(),printf('builds %s src jnd.pdf',proj))
+  let jnd_pdf = projs#bld#jnd_pdf() 
+
   let env = {
     \ 'proj'    : proj,
     \ 'root'    : root,
