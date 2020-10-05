@@ -794,29 +794,49 @@ function! projs#sec#new(sec,...)
       let fig = substitute(copy(sec),'^fig\.\(.*\)','\1','g')
 
       let tex_file = base#qw#catpath('plg','projs data tex fig.tex')
-	    call extend(lines,readfile(tex_file))
+      call extend(lines,readfile(tex_file))
 
       let nlines=[]
       for line in lines
         let line = substitute(line,'_sec_',sec,'g')
         call add(nlines,line)
       endfor
-     	let lines = nlines
+      let lines = nlines
 
+"""newsec__xml_
+    elseif sec =~ '_xml_'
+      let xml_file = base#qw#catpath('plg','projs templates xml proj.xml')
+      call extend(lines,readfile(xml_file))
+
+"""newsec__bld
+    elseif sec =~ '_bld\.'
+      let target = substitute(copy(sec),'^_bld\.\(.*\)$','\1','g')
+
+      let xml_file = base#qw#catpath('plg',printf('projs templates xml proj.%s.xml',target))
+      if filereadable(xml_file)
+        call extend(lines,readfile(xml_file))
+  
+        let nlines = []
+        for line in lines
+          let line = substitute(line,'_proj_',proj,'g')
+          call add(nlines,line)
+        endfor
+        let lines = nlines
+      endif
 
 """newsec__perl_
     elseif sec =~ '_perl\.fig\.'
       let fig_name = substitute(copy(sec),'^_perl\.fig\.\(.*\)','\1','g')
 
       let pl_file = base#qw#catpath('plg','projs data perl fig.pl')
-	    call extend(lines,readfile(pl_file))
+      call extend(lines,readfile(pl_file))
 
       let nlines=[]
       for line in lines
         let line = substitute(line,'_sec_',fig_name,'g')
         call add(nlines,line)
       endfor
-     	let lines = nlines
+      let lines = nlines
 
     elseif sec =~ '_perl\.'
       let sec_name = substitute(copy(sec),'^_perl\.\(.*\)','\1','g')
@@ -824,18 +844,18 @@ function! projs#sec#new(sec,...)
       let pl_file = base#qw#catpath('plg','projs data perl %s.pl')
       let pl_file = printf(pl_file,sec_name)
 
-			if filereadable(pl_file)
-	      call extend(lines,readfile(pl_file))
-	
-	      let nlines=[]
-	      for line in lines
-	        let line = substitute(line,'_proj_',proj,'g')
-	        let line = substitute(line,'_rootid_',rootid,'g')
-	        call add(nlines,line)
-	      endfor
+      if filereadable(pl_file)
+        call extend(lines,readfile(pl_file))
+  
+        let nlines=[]
+        for line in lines
+          let line = substitute(line,'_proj_',proj,'g')
+          let line = substitute(line,'_rootid_',rootid,'g')
+          call add(nlines,line)
+        endfor
 
-      	let lines = nlines
-			endif
+        let lines = nlines
+      endif
 
 """newsec__pm_
     elseif sec =~ '_pm\.'
@@ -1079,12 +1099,12 @@ function! projs#sec#open (...)
 
   call base#stl#set('projs')
   "KEYMAP russian-jcukenwin
-	"
-	if b:ext == 'tex'
-  	KEYMAP ukrainian-jcuken
-	elseif b:ext == 'xml'
-		setlocal keymap=
-	endif
+  "
+  if b:ext == 'tex'
+    KEYMAP ukrainian-jcuken
+  elseif b:ext == 'xml'
+    setlocal keymap=
+  endif
 
   return 
 endf
