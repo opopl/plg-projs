@@ -42,6 +42,8 @@ sub _join_lines {
 
     my (@lines, @at_end);
 
+    my (@f_lines);
+
     my $jfile = $self->_file_joined;
 
     my $file = $ref->{file} || '';
@@ -68,13 +70,26 @@ sub _join_lines {
 
     mkpath $self->{src_dir};
 
-    my $f_sec = $ref->{file} || $self->_file_sec($sec,{ proj => $proj });
+    while(1){
+        my $gen = $self->_val_('sections generate ' . $sec);
+        if ($gen) {
+            if (ref $gen eq 'CODE') {
+                my @gen = $gen->();
+                if (@gen) {
+                    @f_lines = @gen;
+                    last;
+                }
+            }
+        }
+            
+        my $f_sec = $ref->{file} || $self->_file_sec($sec,{ proj => $proj });
+        if (!-e $f_sec){ return (); }
+        @f_lines = read_file $f_sec;
 
-    if (!-e $f_sec){ return (); }
+        last;
+    }
 
-    my @flines = read_file $f_sec;
-
-	my $pats = $self->_pats;
+    my $pats = $self->_pats;
 
     my $delim = '%' x 50;  
 
@@ -84,10 +99,9 @@ sub _join_lines {
         file      => $file,
     };
 
- 
     my $sect;
 
-    foreach(@flines) {
+    foreach(@f_lines) {
         chomp;
 
         $_ = $line_sub->($_, $r_sec);

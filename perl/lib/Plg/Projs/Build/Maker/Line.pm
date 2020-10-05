@@ -107,12 +107,7 @@ sub _line_process_pat_ii {
 
     return $self unless $inc;
 
-	my $gen = $self->_val_('sections generate ' . $ii_sec);
-	if ($gen) {
-		if (ref $gen eq 'CODE') {
-			push @$lines,$gen->();
-		}
-	}
+
 
     my @ii_lines = $self->_join_lines($ii_sec,{ 
         proj           => $proj,
