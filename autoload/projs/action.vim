@@ -1093,6 +1093,7 @@ function! projs#action#bld_compile (...)
   let config = get(ref,'config','')
 
   call projs#bld#make_secs()
+	return
   let target = projs#bld#target()
 
   let bfile = projs#sec#file('_perl.bld')

@@ -3,6 +3,7 @@ function! projs#bld#make_secs ()
 
   let scs = base#varget('projs_bld_compile_secs',[])
   for s in scs
+		echo s
     let f = projs#sec#file(s)
     if !filereadable(f)
       call projs#sec#new(s)

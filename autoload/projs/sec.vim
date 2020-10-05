@@ -806,7 +806,16 @@ function! projs#sec#new(sec,...)
 """newsec__xml_
     elseif sec =~ '_xml_'
       let xml_file = base#qw#catpath('plg','projs templates xml proj.xml')
-      call extend(lines,readfile(xml_file))
+      if filereadable(xml_file)
+        call extend(lines,readfile(xml_file))
+  
+        let nlines = []
+        for line in lines
+          let line = substitute(line,'_proj_',proj,'g')
+          call add(nlines,line)
+        endfor
+        let lines = nlines
+      endif
 
 """newsec__bld
     elseif sec =~ '_bld\.'
@@ -935,7 +944,13 @@ function! projs#sec#new(sec,...)
     call extend(lines,get(ref,'add_lines_after',[]))
 
     call writefile(lines,sec_file)
+
     call projs#sec#add(sec)
+
+		let rx = (sec =~ '^_perl\.') 
+		if rx
+			call system(printf("chmod +rx %s",shellescape(sec_file)))
+		endif
 
     if get(ref,'git_add')
       let dir = fnamemodify(sec_file,':p:h')
