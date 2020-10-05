@@ -1,6 +1,7 @@
 
 package Plg::Projs::Prj;
 
+use utf8;
 use strict;
 use warnings;
 
