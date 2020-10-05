@@ -831,7 +831,6 @@ function! projs#sec#new(sec,...)
           call add(nlines,line)
         endfor
         let lines = nlines
-        echo lines
       endif
 
 """newsec__perl_
