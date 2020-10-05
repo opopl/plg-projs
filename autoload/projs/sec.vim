@@ -821,16 +821,17 @@ function! projs#sec#new(sec,...)
     elseif sec =~ '_bld\.'
       let target = substitute(copy(sec),'^_bld\.\(.*\)$','\1','g')
 
-      let xml_file = base#qw#catpath('plg',printf('projs templates xml proj.%s.xml',target))
+      let xml_file = base#qw#catpath('plg',printf('projs templates xml proj.bld.%s.xml',target))
       if filereadable(xml_file)
         call extend(lines,readfile(xml_file))
-  
+
         let nlines = []
         for line in lines
           let line = substitute(line,'_proj_',proj,'g')
           call add(nlines,line)
         endfor
         let lines = nlines
+        echo lines
       endif
 
 """newsec__perl_
