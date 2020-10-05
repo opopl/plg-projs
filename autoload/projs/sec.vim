@@ -947,14 +947,16 @@ function! projs#sec#new(sec,...)
 
     call projs#sec#add(sec)
 
-		let rx = (sec =~ '^_perl\.') 
-		if rx
-			call system(printf("chmod +rx %s",shellescape(sec_file)))
-		endif
+    let rx = (sec =~ '^_perl\.') 
+    if rx
+      call system(printf("chmod +rx %s",shellescape(sec_file)))
+    endif
 
     if get(ref,'git_add')
       let dir = fnamemodify(sec_file,':p:h')
       let bname = fnamemodify(sec_file,':p:t')
+
+      exe 'cd ' . dir
       call base#sys("git add " . bname)
     endif
 

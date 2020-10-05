@@ -2,11 +2,14 @@
 function! projs#bld#make_secs ()
 
   let scs = base#varget('projs_bld_compile_secs',[])
+	let o = {
+			\	'git_add' : 1,
+			\	}
+
   for s in scs
-		echo s
     let f = projs#sec#file(s)
     if !filereadable(f)
-      call projs#sec#new(s)
+			call projs#sec#new(s,o)
     endif
   endfor
 	
