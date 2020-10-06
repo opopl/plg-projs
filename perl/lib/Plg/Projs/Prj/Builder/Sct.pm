@@ -6,6 +6,8 @@ use utf8;
 use strict;
 use warnings;
 
+use String::Util qw(trim);
+
 use Base::Data qw(
 	d_str_split_sn
 	d_path
