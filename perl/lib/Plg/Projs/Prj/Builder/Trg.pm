@@ -86,7 +86,7 @@ sub trg_load_xml {
     my $cache = XML::LibXML::Cache->new;
     my $dom = $cache->parse_file($xfile);
 
-    $self->{dom_xml_trg} = $dom;
+    $self->{dom_trg}->{$target} = $dom;
 
     my $pl = xml2dict($dom, attr => '', array => [qw( scts )] );
     #my $secs = deepvalue($pl,qw(bld sii secs));
