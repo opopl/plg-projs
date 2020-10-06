@@ -89,9 +89,9 @@ sub trg_load_xml {
     $self->{dom_xml_trg} = $dom;
 
     my $pl = xml2dict($dom, attr => '', array => [qw( secs )] );
-    my $secs = deepvalue($pl,qw(bld sii secs));
-    print Dumper($secs) . "\n";
-    exit 1;
+    #my $secs = deepvalue($pl,qw(bld sii secs));
+    #print Dumper($secs) . "\n";
+    #exit 1;
 
     my $h = $pl->{bld};
 
