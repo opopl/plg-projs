@@ -10,6 +10,7 @@ use Data::Dumper qw(Dumper);
 
 use Base::List qw(uniq);
 use Base::XML::Dict qw(dict2xml);
+use Base::XML qw(xml_pretty);
 
 use XML::LibXML;
 use XML::LibXML::PrettyPrint;
@@ -106,14 +107,8 @@ my $h = {
 
 my $doc = dict2xml($h,doc => 1);
 
-my $pp = XML::LibXML::PrettyPrint->new(
-    indent_string => " ",
-    element => {
-        block => [qw( pack_list )]
-    }
-);
-$pp->pretty_print($doc); 
-print $doc->toString;
+my @ids = qw(pack_list);
+push @ids,@pack_list;
 
-#print Dumper($h) . "\n";
-
+my $xml = xml_pretty($doc,ids => [@ids]);
+print $xml . "\n";
