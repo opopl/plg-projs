@@ -248,6 +248,7 @@ sub init_maker {
         cmd          => $cmd,
         %$om,
         tex_exe      => $self->{tex_exe},
+		bld          => $self,
     );
 
     $self->{maker} = $x;

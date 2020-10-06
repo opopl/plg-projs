@@ -39,12 +39,7 @@ sub trg_inj_usual {
                 titletoc   => sub { $bld->_insert_titletoc },
                 hyperlinks => sub { $bld->_insert_hyperlinks },
             },
-            generate => {
-                'preamble' => sub { $bld->_gen_preamble },
-                'preamble.packages' => sub { $bld->_gen_preamble_packages },
-                'preamble.packages.xelatex'  => sub {},
-                'preamble.packages.pdflatex' => sub {},
-            },
+            generate => {},
             append => {
                 each => sub { },
                 only => {
