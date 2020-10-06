@@ -36,6 +36,8 @@ sub _file_joined {
 sub _join_lines {
     my ($self, $sec, $ref) = @_;
 
+    my $bld = $self->{bld};
+
     $ref ||= {};
 
     $sec = '_main_' unless defined $sec;
@@ -72,6 +74,8 @@ sub _join_lines {
 
     while(1){
         my $gen = $self->_val_('sections generate ' . $sec);
+		$gen //= sub { $bld->_gen_sec($sec); };
+
         if ($gen) {
             if (ref $gen eq 'CODE') {
                 my @gen = $gen->();

@@ -18,7 +18,7 @@ sub _gen_sec {
     my ($bld, $sec) = @_;
 
     my $on = $bld->_val_list_ref_('sii generate on');
-    return [] unless grep { /^$sec$/ } @$on;
+    return () unless grep { /^$sec$/ } @$on;
 	my @lines = $bld->_sct_lines($sec);
     return @lines;
 }
