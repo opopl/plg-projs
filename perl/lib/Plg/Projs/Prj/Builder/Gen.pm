@@ -17,8 +17,8 @@ sub _gen_preamble {
     return () unless grep { /^$sec$/ } @$on;
     my @lines;
 
-    my $secs = $bld->_val_('sii secs') || [];
-    my $p = map { $_->{name} eq 'preamble' ? $_ : () } @$secs;
+
+    my $data = $bld->_sct_data($sec);
     #my $secs = deepvalue($pl,qw(bld sii secs));
 
     return @lines;

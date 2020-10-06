@@ -20,6 +20,7 @@ use base qw(
     Plg::Projs::Prj::Builder::Defs
     Plg::Projs::Prj::Builder::Trg
     Plg::Projs::Prj::Builder::Gen
+    Plg::Projs::Prj::Builder::Sct
 );
 
 use FindBin qw($Bin $Script);

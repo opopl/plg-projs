@@ -61,7 +61,7 @@ sub trg_inj_usual {
                hyperlinks => 1,
                titletoc   => 1,
             },
-            secs => [
+            sct => [
                 {
                     name      => 'preamble',
                     packages  => [qw()],
