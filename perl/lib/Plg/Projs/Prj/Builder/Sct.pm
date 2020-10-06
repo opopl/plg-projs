@@ -12,7 +12,7 @@ sub _sct_data {
 
     my %data;
     foreach my $x (@data) {
-        while(my($k,$v)=each %$x){
+        while(my($k,$v) = each %$x){
             $data{$k} = $v;
         }
     }
