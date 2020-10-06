@@ -8,6 +8,8 @@ use Data::Dumper qw(Dumper);
 
 use Base::XML::Dict qw(xml2dict);
 
+use Deep::Hash::Utils qw(deepvalue);
+
 use Base::Arg qw(
     hash_inject
     hash_apply
@@ -86,7 +88,10 @@ sub trg_load_xml {
 
     $self->{dom_xml_trg} = $dom;
 
-    my $pl = xml2dict($dom, attr => '');
+    my $pl = xml2dict($dom, attr => '', array => [qw( secs )] );
+    my $secs = deepvalue($pl,qw(bld sii secs));
+    print Dumper($secs) . "\n";
+    exit 1;
 
     my $h = $pl->{bld};
 
