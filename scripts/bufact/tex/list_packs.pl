@@ -9,6 +9,10 @@ use File::Slurp::Unicode;
 use Data::Dumper qw(Dumper);
 
 use Base::List qw(uniq);
+use Base::XML::Dict qw(dict2xml);
+
+use XML::LibXML;
+use XML::LibXML::PrettyPrint;
 
 my $file = shift @ARGV;
 
@@ -33,7 +37,8 @@ sub pack_add {
     foreach my $pack (@p) {
         $pack_opts{$pack} ||= [];
 
-        push @{$pack_opts{$pack}}, $o; 
+        push @{$pack_opts{$pack}}, 
+            ref $o eq 'ARRAY' ? @$o : $o; 
     }
 }
 
@@ -86,10 +91,29 @@ while (@lines) {
 
 @pack_list = uniq(\@pack_list);
 
+my $p_opts = {};
+my $p_list = join("\n" => @pack_list);
+while(my($k,$v) = each %pack_opts){
+    $p_opts->{$k} = join("\n",@$v);
+}
+
 my $h = {
-    pack_list => \@pack_list,
-    pack_opts => \%pack_opts,
+    packs => {
+        pack_list => $p_list,
+        pack_opts => $p_opts,
+    }
 };
 
-print Dumper($h) . "\n";
+my $doc = dict2xml($h,doc => 1);
+
+my $pp = XML::LibXML::PrettyPrint->new(
+    indent_string => " ",
+    element => {
+        block => [qw( pack_list )]
+    }
+);
+$pp->pretty_print($doc); 
+print $doc->toString;
+
+#print Dumper($h) . "\n";
 
