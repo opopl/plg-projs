@@ -94,7 +94,13 @@ sub _sct_lines {
 ###@txt
         /^\@txt$/ && do {
             my @txt = d_str_split($data,'txt');
-            push @lines, @txt;
+            while(@txt){
+                local $_ = shift @txt;
+
+                s/\@var\{(\w+)\}/$bld->_bld_var($1)/ge; 
+
+                push @lines, $_;
+            }
             next;
         };
 
@@ -103,6 +109,13 @@ sub _sct_lines {
     }
     return @lines;
 
+}
+
+sub _bld_var {
+    my ($bld, $var) = @_;
+
+    my $val = $bld->_val_('vars ' . $var) || '';
+    return $val;
 }
 
 sub _sct_data {

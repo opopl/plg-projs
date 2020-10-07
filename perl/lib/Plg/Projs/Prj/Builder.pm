@@ -239,8 +239,8 @@ sub init_maker {
     #my $y = XMLout({ opts_maker => $om }, RootName => 'bld' );
     #print $y . "\n";
     #exit;
-	print Dumper($self->{tex_exe}) . "\n";
-	exit 1;
+	#print Dumper($self->{tex_exe}) . "\n";
+	#exit 1;
 
     my $x = Plg::Projs::Build::Maker->new(
         pdf_name     => $pdf_name,
