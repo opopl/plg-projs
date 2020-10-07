@@ -37,7 +37,7 @@ use Base::Arg qw(
 use Plg::Projs::Build::Maker;
 
 sub inj_base {
-    my ($self) = @_;
+    my ($bld) = @_;
 
     my $h = {
         trg_list => [qw( usual )],
@@ -54,7 +54,7 @@ sub inj_base {
             'compile'  => 'build_pwg',
             'join'     => 'insert_pwg',
             'show_trg' => sub { 
-                foreach my $trg ($self->_trg_list) {
+                foreach my $trg ($bld->_trg_list) {
                     print $trg . "\n";
                 }
             },
@@ -63,17 +63,17 @@ sub inj_base {
         target_default => 'usual',
     };
 
-    hash_inject($self, $h);
+    hash_inject($bld, $h);
 
-    return $self;
+    return $bld;
 }
 
 sub init {
-    my ($self) = @_;
+    my ($bld) = @_;
 
-    $self->Plg::Projs::Prj::init();
+    $bld->Plg::Projs::Prj::init();
 
-    $self
+    $bld
         ->inj_base
         ->prj_load_xml
         ->inj_targets
@@ -86,53 +86,53 @@ sub init {
         ->init_maker
         ;
 
-    return $self;
+    return $bld;
 
 }
 
 sub set_target {
-    my ($self) = @_;
+    my ($bld) = @_;
 
-    $self->{target} = $self->_opt_argv_('target',$self->{target_default});
-    return $self;
+    $bld->{target} = $bld->_opt_argv_('target',$bld->{target_default});
+    return $bld;
 }
 
 sub process_config {
-    my ($self) = @_;
+    my ($bld) = @_;
 
-    foreach($self->_config) {
+    foreach($bld->_config) {
         /^xelatex$/ && do {
-            $self->{tex_exe} = 'xelatex';
+            $bld->{tex_exe} = 'xelatex';
             next;
         };
     }
 
-    return $self;
+    return $bld;
 
 }
 
 sub _config {
-    my ($self) = @_;
+    my ($bld) = @_;
 
-    my @c = @{$self->{config} || []};
+    my @c = @{$bld->{config} || []};
     return @c;
 
 }
 
 sub _config_set {
-    my ($self, $cfg) = @_;
+    my ($bld, $cfg) = @_;
 
-    grep { /^$cfg$/ } @{$self->{config} || []}; 
+    grep { /^$cfg$/ } @{$bld->{config} || []}; 
 
 }
 
 sub print_help {
-    my ($self) = @_;
+    my ($bld) = @_;
 
-    my @acts = sort keys %{$self->{maps_act} || {}};
+    my @acts = sort keys %{$bld->{maps_act} || {}};
     my $acts_s = join(" ",@acts);
 
-    my $trg_list = $self->{trg_list} || [];
+    my $trg_list = $bld->{trg_list} || [];
     my $trg_list_s = join(" ",@$trg_list);
 
     print qq{
@@ -148,9 +148,9 @@ sub print_help {
         TARGETS:
             $trg_list_s
         DEFAULT ACT:
-            $self->{act_default}
+            $bld->{act_default}
         DEFAULT TARGET:
-            $self->{target_default}
+            $bld->{target_default}
         EXAMPLES:
             perl $Script compile -c xelatex
             perl $Script compile -c xelatex -t usual
@@ -158,22 +158,22 @@ sub print_help {
     } . "\n";
     exit 1;
 
-    return $self;
+    return $bld;
 }
 
 sub get_act {
-    my ($self) = @_;
+    my ($bld) = @_;
 
-    $self->print_help unless @ARGV;
+    $bld->print_help unless @ARGV;
 
     my $act = shift @ARGV || 'compile';
-    $self->{act} = $act;
+    $bld->{act} = $act;
 
-    return $self;
+    return $bld;
 }
       
 sub get_opt {
-    my ($self) = @_;
+    my ($bld) = @_;
     
     Getopt::Long::Configure(qw(bundling no_getopt_compat no_auto_abbrev no_ignore_case_always));
     
@@ -184,50 +184,50 @@ sub get_opt {
     );
 
     GetOptions(\%opt,@optstr);
-    $self->{opt} = \%opt;
+    $bld->{opt} = \%opt;
     
-    $self->{config} = [ 
+    $bld->{config} = [ 
         map { s/'//g; s/'$//g; $_ }
         split(',' => ($opt{config} || '')) 
     ];
 
 
-    return $self;   
+    return $bld;   
 }
 
 sub run_maker {
-    my ($self) = @_;
+    my ($bld) = @_;
 
-    my $m = $self->{maker};
+    my $m = $bld->{maker};
 
     local @ARGV = ();
     $m->run;
 
-    return $self;
+    return $bld;
 }
 
 
 sub run {
-    my ($self) = @_;
+    my ($bld) = @_;
 
-    $self->run_maker;
+    $bld->run_maker;
 
-    return $self;
+    return $bld;
 }
 
 sub init_maker {
-    my ($self) = @_;
+    my ($bld) = @_;
 
-    my $act = $self->{act};
-    my $cmd = $self->{maps_act}->{$act} || '';
+    my $act = $bld->{act};
+    my $cmd = $bld->{maps_act}->{$act} || '';
 
-    my $target = $self->{target};
-    my $proj   = $self->{proj};
+    my $target = $bld->{target};
+    my $proj   = $bld->{proj};
 
     my $pdf_name = join(".", $proj, $target);
 
     local @ARGV = ();
-    #print Dumper($self->{opts_maker}) . "\n";
+    #print Dumper($bld->{opts_maker}) . "\n";
     #exit;
 
     if (ref $cmd eq 'CODE') {
@@ -235,27 +235,27 @@ sub init_maker {
         exit 0;
     }
 
-    my $om = $self->_trg_opts_maker();
+    my $om = $bld->_trg_opts_maker();
     #my $y = XMLout({ opts_maker => $om }, RootName => 'bld' );
     #print $y . "\n";
     #exit;
-	#print Dumper($self->{tex_exe}) . "\n";
+	#print Dumper($bld->{tex_exe}) . "\n";
 	#exit 1;
 
-    my $x = Plg::Projs::Build::Maker->new(
+    my $mkr = Plg::Projs::Build::Maker->new(
         pdf_name     => $pdf_name,
-        proj         => $self->{proj},
-        root         => $self->{root},
-        root_id      => $self->{root_id},
+        proj         => $bld->{proj},
+        root         => $bld->{root},
+        root_id      => $bld->{root_id},
         cmd          => $cmd,
         %$om,
-        tex_exe      => $self->{tex_exe},
-		bld          => $self,
+        tex_exe      => $bld->{tex_exe},
+		bld          => $bld,
     );
 
-    $self->{maker} = $x;
+    $bld->{maker} = $mkr;
 
-    return $self;
+    return $bld;
 }
 
 1;
