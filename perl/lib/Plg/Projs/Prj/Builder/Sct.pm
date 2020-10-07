@@ -72,10 +72,6 @@ sub _sct_lines {
 
             next;
         };
-    #\cleardoublepage
-    #\phantomsection
-    #\addcontentsline{toc}{chapter}{\indexname}
-  #\printindex
 ###@printindex
         /^\@printindex$/ && do {
             my $mi = $bld->_val_('preamble index ind');
@@ -167,7 +163,26 @@ sub _bld_ind_makeindex {
 sub _bld_ind_printindex {
     my ($bld) = @_;
 
-    my $ind_pr = sub { };
+    my $ind_pr = sub { 
+        my ($x) = @_;
+
+        my $name  = $x->{name};
+        my $title = $x->{title};
+
+        my $t = q{
+\cleardoublepage
+\phantomsection
+\addcontentsline{toc}{chapter}{%s}
+\printindex%s
+
+        };
+
+        my $s_title = $title ? $title : '\indexname';
+        my $s_name  = $name ? qq{[$name]} : '';
+
+        $t = sprintf($t, $s_title, $s_name );
+        return $t;
+    };
 
     my @lines = $bld->_bld_ind_lines($ind_pr);
     return @lines;
