@@ -34,64 +34,57 @@ use base qw(
 );
 
 sub inj_targets {
-    my ($self) = @_;
+    my ($bld) = @_;
 
-    foreach my $trg ($self->_trg_list) {
+    foreach my $trg ($bld->_trg_list) {
         my $sub = 'trg_inj_' . $trg;
-        if ($self->can($sub)) {
-            $self->$sub;
+        if ($bld->can($sub)) {
+            $bld->$sub;
         }
     }
-    return $self;
+    return $bld;
 }
 
 sub _trg_list {
-    my ($self) = @_;
+    my ($bld) = @_;
 
-    @{ $self->{trg_list} || [] };
+    @{ $bld->{trg_list} || [] };
 }
 
 sub trg_inject {
-    my ($self, $trg, $hash ) = @_;
+    my ($bld, $trg, $hash ) = @_;
 
-    hash_inject($self, { targets => { $trg => $hash }} );
+    hash_inject($bld, { targets => { $trg => $hash }} );
 
-    return $self;
+    return $bld;
 
 }
 
 sub trg_apply {
-    my ($self, $target) = @_;
+    my ($bld, $target) = @_;
 
-    $target //= $self->{target};
+    $target //= $bld->{target};
 
-    my $ht = $self->_val_('targets', $target);
-    hash_apply($self, $ht);
+    my $ht = $bld->_val_('targets', $target);
+    hash_apply($bld, $ht);
 
-    return $self;
-
-}
-
-sub _trg_data {
-    my ($self, $target) = @_;
-
-    $target //= $self->{target};
+    return $bld;
 }
 
 sub _trg_dom {
-    my ($self, $target) = @_;
+    my ($bld, $target) = @_;
 
-    $target //= $self->{target};
-    my $dom = $self->_val_('dom_trg ' . $target);
+    $target //= $bld->{target};
+    my $dom = $bld->_val_('dom_trg ' . $target);
 
     unless ($dom) {
-        my $xfile = $self->_trg_xfile($target);
+        my $xfile = $bld->_trg_xfile($target);
         return unless (-e $xfile);
 
         my $cache = XML::LibXML::Cache->new;
         $dom = $cache->parse_file($xfile);
 
-        $self->{dom_trg}->{$target} = $dom;
+        $bld->{dom_trg}->{$target} = $dom;
     }
 
     return $dom;
@@ -99,61 +92,68 @@ sub _trg_dom {
 }
 
 sub _trg_dom_find {
-    my ($self, $target) = @_;
+    my ($bld, $target) = @_;
 
-    $target //= $self->{target};
-    my $dom = $self->_trg_dom($target);
+    $target //= $bld->{target};
+    my $dom = $bld->_trg_dom($target);
 
     my $data;
     return $data;
 
 }
 
-sub trg_load_xml {
-    my ($self, $target) = @_;
+sub _trg_data {
+    my ($bld, $target) = @_;
 
-    $target //= $self->{target};
-
-    my $dom = $self->_trg_dom($target);
-    return $self unless $dom;
+    $target //= $bld->{target};
+    my $dom = $bld->_trg_dom($target);
+    return unless $dom;
 
     my $pl = xml2dict($dom, attr => '', array => [qw( scts )] );
-    #my $secs = deepvalue($pl,qw(bld sii secs));
-    #print Dumper($secs) . "\n";
+
+    my $h_bld = $pl->{bld};
+
+    return $h_bld;
+}
+
+sub trg_load_xml {
+    my ($bld, $target) = @_;
+
+    $target //= $bld->{target};
+
+    my $h_bld = $bld->_trg_data($target);
+    return $bld unless $h_bld;
+
+    my $ht = $bld->_val_('targets',$target) || {};
+
+    hash_apply($ht, $h_bld);
+
+    $bld->{'targets'}->{$target} = $ht;
+
+    #print Dumper($bld->_val_('targets',$target)) . "\n";
     #exit 1;
 
-    my $h = $pl->{bld};
-
-    my $ht = $self->_val_('targets',$target) || {};
-
-    hash_apply($ht, $h);
-
-    $self->{'targets'}->{$target} = $ht;
-
-    #print Dumper($self->_val_('targets',$target)) . "\n";
-    #exit 1;
-
-    return $self;
+    return $bld;
 }
 
 sub _trg_xfile {
-    my ($self, $target) = @_;
+    my ($bld, $target) = @_;
 
-    $target //= $self->{target};
+    $target //= $bld->{target};
 
-    my $proj = $self->{proj};
-    my $root = $self->{root};
+    my $proj = $bld->{proj};
+    my $root = $bld->{root};
 
     my $xfile = catfile($root,sprintf('%s.bld.%s.xml',$proj, $target));
     return $xfile;
 }
 
 sub _trg_opts_maker {
-    my ($self, $target, @args) = @_;
+    my ($bld, $target, @args) = @_;
 
-    $target //= $self->{target};
+    $target //= $bld->{target};
 
-    my $om = $self->_val_('targets', $target, 'opts_maker', @args);
+    my $om = $bld->_val_('targets', $target, 'opts_maker', @args);
 
     return $om;
 

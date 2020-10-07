@@ -239,8 +239,8 @@ sub init_maker {
     #my $y = XMLout({ opts_maker => $om }, RootName => 'bld' );
     #print $y . "\n";
     #exit;
-	#print Dumper($bld->{tex_exe}) . "\n";
-	#exit 1;
+    #print Dumper($bld->{tex_exe}) . "\n";
+    #exit 1;
 
     my $mkr = Plg::Projs::Build::Maker->new(
         pdf_name     => $pdf_name,
@@ -250,7 +250,7 @@ sub init_maker {
         cmd          => $cmd,
         %$om,
         tex_exe      => $bld->{tex_exe},
-		bld          => $bld,
+        bld          => $bld,
     );
 
     $bld->{maker} = $mkr;
