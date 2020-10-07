@@ -56,6 +56,15 @@ sub _sct_lines {
             }
             next;
         };
+###@input
+        /^\@input$/ && do {
+            my @input = d_str_split_sn($data,'input');
+            foreach my $sec (@input) {
+                local $_ = sprintf('\input{%s}',$sec);
+                push @lines,$_;
+            }
+            next;
+        };
 ###@perl
         /^\@perl$/ && do {
             my $pl = d_path($data,'perl');
@@ -98,6 +107,7 @@ sub _sct_lines {
                 local $_ = shift @txt;
 
                 s/\@var\{(\w+)\}/$bld->_bld_var($1)/ge; 
+                s/\@env\{(\w+)\}/$bld->_bld_env($1)/ge; 
 
                 push @lines, $_;
             }
@@ -115,6 +125,13 @@ sub _bld_var {
     my ($bld, $var) = @_;
 
     my $val = $bld->_val_('vars ' . $var) || '';
+    return $val;
+}
+
+sub _bld_env {
+    my ($bld, $var) = @_;
+
+    my $val = $ENV{$var} || '';
     return $val;
 }
 
