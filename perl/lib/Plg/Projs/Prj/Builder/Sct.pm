@@ -7,6 +7,7 @@ use strict;
 use warnings;
 
 use String::Util qw(trim);
+use Data::Dumper qw(Dumper);
 
 use Base::Data qw(
     d_str_split_sn
@@ -63,6 +64,31 @@ sub _sct_lines {
                 local $_ = sprintf('\input{%s}',$sec);
                 push @lines,$_;
             }
+            next;
+        };
+###@makeindex
+        /^\@makeindex$/ && do {
+            my $mi = d_path($data,'makeindex');
+            my $mis = sub { my ($x) = @_;
+                my @opts;
+                while(my($k,$v)=each %{$x}){
+                    next unless $v;
+                    push @opts, join("=", $k, $v);
+                }
+                my $o = @opts ? sprintf('[%s]', join("," => @opts)) : '';
+                local $_ = sprintf('\makeindex%s',$o);
+                push @lines,$_;
+            };
+
+            if (ref $mi eq "ARRAY"){
+                foreach my $x (@$mi) {
+                    $mis->($x);
+                }
+            }elsif(ref $mi eq "HASH"){
+                $mis->($mi);
+            }
+            #foreach my $sec (@input) {
+            #}
             next;
         };
 ###@perl
