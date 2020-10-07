@@ -68,27 +68,19 @@ sub _sct_lines {
         };
 ###@makeindex
         /^\@makeindex$/ && do {
-            my $mi = d_path($data,'makeindex');
-            my $mis = sub { my ($x) = @_;
-                my @opts;
-                while(my($k,$v)=each %{$x}){
-                    next unless $v;
-                    push @opts, join("=", $k, $v);
-                }
-                my $o = @opts ? sprintf('[%s]', join("," => @opts)) : '';
-                local $_ = sprintf('\makeindex%s',$o);
-                push @lines,$_;
-            };
+            push @lines, $bld->_bld_makeindex;
 
-            if (ref $mi eq "ARRAY"){
-                foreach my $x (@$mi) {
-                    $mis->($x);
-                }
-            }elsif(ref $mi eq "HASH"){
-                $mis->($mi);
-            }
-            #foreach my $sec (@input) {
-            #}
+            next;
+        };
+    #\cleardoublepage
+    #\phantomsection
+    #\addcontentsline{toc}{chapter}{\indexname}
+  #\printindex
+###@printindex
+        /^\@printindex$/ && do {
+            my $mi = $bld->_val_('preamble index ind');
+            next unless $mi;
+
             next;
         };
 ###@perl
@@ -145,6 +137,58 @@ sub _sct_lines {
     }
     return @lines;
 
+}
+
+sub _bld_ind {
+    my ($bld) = @_;
+    my $ind = $bld->_val_('preamble index ind');
+    return $ind;
+}
+
+sub _bld_ind_makeindex {
+    my ($bld) = @_;
+
+    my $ind_mk = sub { 
+        my ($x) = @_;
+        my @opts;
+        while(my($k,$v)=each %{$x}){
+            next unless $v;
+            push @opts, join("=", $k, $v);
+        }
+        my $o = @opts ? sprintf('[%s]', join("," => @opts)) : '';
+        local $_ = sprintf('\makeindex%s',$o);
+        return $_;
+    };
+
+    my @lines = $bld->_bld_ind_lines($ind_mk);
+    return @lines;
+}
+
+sub _bld_ind_printindex {
+    my ($bld) = @_;
+
+    my $ind_pr = sub { };
+
+    my @lines = $bld->_bld_ind_lines($ind_pr);
+    return @lines;
+}
+
+sub _bld_ind_lines {
+    my ($bld,$sub) = @_;
+
+    my $ind = $bld->_bld_ind;
+    return () unless $ind;
+
+    my @lines;
+
+    if (ref $ind eq "ARRAY"){
+        foreach my $x (@$ind) {
+            push @lines, $sub->($x);
+        }
+    }elsif(ref $ind eq "HASH"){
+        push @lines, $sub->($ind);
+    }
+    return @lines;
 }
 
 sub _bld_var {
