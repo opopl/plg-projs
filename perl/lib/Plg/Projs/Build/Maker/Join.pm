@@ -286,14 +286,15 @@ sub _ii_base {
     my @base_preamble;
     push @base_preamble,
         map { sprintf('preamble.%s',$_) } 
-        qw(index packages acrobat_menu filecontents );
+        qw( index packages acrobat_menu filecontents );
 
     my @base;
     push @base,
         qw(body preamble index bib),
         @base_preamble,
         qw(titlepage),
-        qw(listfigs listtabs),
+        qw(defs),
+        qw( listfigs listtabs ),
         qw(tabcont),
         ;
     return @base;

@@ -82,19 +82,19 @@ sub _trg_dom {
     my ($self, $target) = @_;
 
     $target //= $self->{target};
-	my $dom = $self->_val_('dom_trg ' . $target);
+    my $dom = $self->_val_('dom_trg ' . $target);
 
-	unless ($dom) {
-	    my $xfile = $self->_trg_xfile($target);
-	    return unless (-e $xfile);
+    unless ($dom) {
+        my $xfile = $self->_trg_xfile($target);
+        return unless (-e $xfile);
 
-	    my $cache = XML::LibXML::Cache->new;
-	    $dom = $cache->parse_file($xfile);
+        my $cache = XML::LibXML::Cache->new;
+        $dom = $cache->parse_file($xfile);
 
-    	$self->{dom_trg}->{$target} = $dom;
-	}
+        $self->{dom_trg}->{$target} = $dom;
+    }
 
-	return $dom;
+    return $dom;
 
 }
 
@@ -102,10 +102,10 @@ sub _trg_dom_find {
     my ($self, $target) = @_;
 
     $target //= $self->{target};
-	my $dom = $self->_trg_dom($target);
+    my $dom = $self->_trg_dom($target);
 
-	my $data;
-	return $data;
+    my $data;
+    return $data;
 
 }
 
@@ -114,7 +114,7 @@ sub trg_load_xml {
 
     $target //= $self->{target};
 
-	my $dom = $self->_trg_dom($target);
+    my $dom = $self->_trg_dom($target);
     return $self unless $dom;
 
     my $pl = xml2dict($dom, attr => '', array => [qw( scts )] );
