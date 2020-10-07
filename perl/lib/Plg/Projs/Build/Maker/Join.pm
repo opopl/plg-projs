@@ -74,14 +74,14 @@ sub _join_lines {
 
     while(1){
         my $gen = $self->_val_('sections generate ' . $sec);
-		$gen //= sub { $bld->_gen_sec($sec); };
+        $gen //= sub { $bld->_gen_sec($sec); };
 
         if ($gen) {
             if (ref $gen eq 'CODE') {
                 my @gen = $gen->();
                 if (@gen) {
                     @f_lines = @gen;
-					print Dumper(\@f_lines) . "\n";
+                    #print Dumper(\@f_lines) . "\n";
                     last;
                 }
             }

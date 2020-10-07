@@ -16,9 +16,9 @@ my $prs = XML::LibXML->new;
 open my $fh, '<:encoding(utf8)', $file;
 binmode $fh;
 my $inp = {
-	IO          	=> $fh,
-	recover         => 1,
-	suppress_errors => 1,
+    IO              => $fh,
+    recover         => 1,
+    suppress_errors => 1,
 };
 my $dom = $prs->load_xml(%$inp);
 close $fh;
