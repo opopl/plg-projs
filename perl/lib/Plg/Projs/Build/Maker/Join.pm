@@ -16,9 +16,9 @@ use File::Path qw(mkpath);
 use File::Dat::Utils qw(readarr);
 
 sub _file_joined {
-    my ($self) = @_;
+    my ($mkr) = @_;
 
-    my $jfile = catfile($self->{src_dir},'jnd.tex');
+    my $jfile = catfile($mkr->{src_dir},'jnd.tex');
 
     return $jfile;
 }
@@ -34,9 +34,9 @@ sub _file_joined {
 =cut
 
 sub _join_lines {
-    my ($self, $sec, $ref) = @_;
+    my ($mkr, $sec, $ref) = @_;
 
-    my $bld = $self->{bld};
+    my $bld = $mkr->{bld};
 
     $ref ||= {};
 
@@ -46,34 +46,34 @@ sub _join_lines {
 
     my (@f_lines);
 
-    my $jfile = $self->_file_joined;
+    my $jfile = $mkr->_file_joined;
 
     my $file = $ref->{file} || '';
 
-    my $root_id = $self->{root_id} || '';
-    my $proj    = $ref->{proj} || $self->{proj};
+    my $root_id = $mkr->{root_id} || '';
+    my $proj    = $ref->{proj} || $mkr->{proj};
 
-    my @include = $self->_ii_include;
+    my @include = $mkr->_ii_include;
 
-    my @exclude = $self->_ii_exclude;
+    my @exclude = $mkr->_ii_exclude;
     
-    my $ii_include_all = $ref->{ii_include_all} || $self->{ii_include_all};
+    my $ii_include_all = $mkr->_opt_($ref,'ii_include_all');
 
-    my $include_below = $self->_val_list_ref_('join_lines include_below');
+    my $include_below = $mkr->_val_list_ref_('join_lines include_below');
 
-    my $ss        = $self->{sections} || {};
+    my $ss        = $mkr->{sections} || {};
 
     my $ss_insert = $ss->{insert} || {};
-    my $line_sub  = $self->_val_('sections line_sub') || sub { shift };
+    my $line_sub  = $mkr->_val_('sections line_sub') || sub { shift };
 
-    my $root = $self->{root};
+    my $root = $mkr->{root};
 
     chdir $root;
 
-    mkpath $self->{src_dir};
+    mkpath $mkr->{src_dir};
 
     while(1){
-        my $gen = $self->_val_('sections generate ' . $sec);
+        my $gen = $mkr->_val_('sections generate ' . $sec);
         $gen //= sub { $bld->_gen_sec($sec); };
 
         if ($gen) {
@@ -87,14 +87,14 @@ sub _join_lines {
             }
         }
             
-        my $f_sec = $ref->{file} || $self->_file_sec($sec,{ proj => $proj });
+        my $f_sec = $ref->{file} || $mkr->_file_sec($sec,{ proj => $proj });
         if (!-e $f_sec){ return (); }
         @f_lines = read_file $f_sec;
 
         last;
     }
 
-    my $pats = $self->_pats;
+    my $pats = $mkr->_pats;
 
     my $delim = '%' x 50;  
 
@@ -115,7 +115,7 @@ sub _join_lines {
         m/$pats->{sect}/ && do {
             $sect = $1;
 
-            $self->_line_process_pat_sect({ 
+            $mkr->_line_process_pat_sect({ 
                sect    => $sect,
                root_id => $root_id,
                proj    => $proj,
@@ -133,7 +133,7 @@ sub _join_lines {
         m/$pats->{input}/ && do {
             my $fname   = $1;
 
-            $self->_line_process_pat_input({ 
+            $mkr->_line_process_pat_input({ 
                 fname         => $fname,
                 delim         => $delim,
                 include_below => $include_below,
@@ -149,7 +149,7 @@ sub _join_lines {
         m/$pats->{ii}/ && do {
             my $ii_sec   = $1;
 
-            $self->_line_process_pat_ii({ 
+            $mkr->_line_process_pat_ii({ 
                 delim          => $delim,
 
                 sect           => $sect,
@@ -170,7 +170,7 @@ sub _join_lines {
 ###pat_iifig
         m/$pats->{iifig}/ && do {
             my $fig_sec   = 'fig.' . $1;
-            my @fig_lines = $self->_join_lines($fig_sec,{ proj => $proj });
+            my @fig_lines = $mkr->_join_lines($fig_sec,{ proj => $proj });
 
             push @lines, 
                 $delim,
@@ -203,15 +203,15 @@ sub _join_lines {
 =cut
 
 sub _ii_include {
-    my ($self) = @_;
+    my ($mkr) = @_;
 
     my (@include);
-    my $f_in = $self->_file_ii_include;
+    my $f_in = $mkr->_file_ii_include;
 
-    my @i = $self->_val_list_(qw( sections include ));
+    my @i = $mkr->_val_list_(qw( sections include ));
     push @include, @i;
 
-    my $load_dat = $self->_val_(qw( load_dat ii_include ));
+    my $load_dat = $mkr->_val_(qw( load_dat ii_include ));
 
     while(1){
         last unless $load_dat;
@@ -219,26 +219,44 @@ sub _ii_include {
         if (-e $f_in) {
             push @include, readarr($f_in);
         }else{
-            $self->{ii_include_all} = 1;
+            $mkr->{ii_include_all} = 1;
         }
     
         last;
     }
 
-    $self->_ii_include_filter(\@include);
+    $mkr->_ii_include_filter(\@include);
 
     return @include;
 }
 
+=head3 _ii_include_filter
+
+=head4 Usage
+
+	$mkr->_ii_include_filter(\@include);
+
+=head4 Filtering Keywords
+
+	_all_ _base_
+
+=head4 Call tree 
+
+Used in:
+
+	_ii_include
+
+=cut
+
 sub _ii_include_filter {
-    my ($self, $include) = @_;
+    my ($mkr, $include) = @_;
 
     my %i = map { $_ => 1 } @$include;
 
-    my @base = $self->_ii_base;
+    my @base = $mkr->_ii_base;
 
     if ($i{_all_}) {
-        $self->{ii_include_all} = 1;
+        $mkr->{ii_include_all} = 1;
         delete $i{_all_};
 
     }elsif ($i{_base_}) {
@@ -248,23 +266,22 @@ sub _ii_include_filter {
 
     @$include = sort keys %i;
 
-    return $self;
-
+    return $mkr;
 }
 
 sub _ii_exclude {
-    my ($self) = @_;
+    my ($mkr) = @_;
 
     my (@exclude);
-    my $f_in = $self->_file_ii_exclude;
+    my $f_in = $mkr->_file_ii_exclude;
 
-    my @base = $self->_ii_base;
+    my @base = $mkr->_ii_base;
 
     return @exclude;
 }
 
 sub _ii_base {
-    my ($self) = @_;
+    my ($mkr) = @_;
 
     my @base_preamble;
     push @base_preamble,
@@ -283,21 +300,21 @@ sub _ii_base {
 }
 
 sub _file_ii_exclude {
-    my ($self) = @_;
+    my ($mkr) = @_;
             
     catfile(
-      $self->{root},
-      join("." => ( $self->{proj}, 'ii_exclude.i.dat' )) 
+      $mkr->{root},
+      join("." => ( $mkr->{proj}, 'ii_exclude.i.dat' )) 
     );
 
 }
 
 sub _file_ii_include {
-    my ($self) = @_;
+    my ($mkr) = @_;
             
     catfile(
-      $self->{root},
-      join("." => ( $self->{proj}, 'ii_include.i.dat' )) 
+      $mkr->{root},
+      join("." => ( $mkr->{proj}, 'ii_include.i.dat' )) 
     );
 
 }

@@ -31,6 +31,7 @@ use Plg::Projs::Piwigo::SQL;
 
 use base qw(
     Base::Obj
+    Base::Opt
 
     Plg::Projs::Build::Maker::IndFile
     Plg::Projs::Build::Maker::Bat
@@ -78,18 +79,18 @@ use Base::DB qw(
 sub new
 {
     my ($class, %opts) = @_;
-    my $self = bless (\%opts, ref ($class) || $class);
+    my $mkr = bless (\%opts, ref ($class) || $class);
 
-    $self->init if $self->can('init');
+    $mkr->init if $mkr->can('init');
 
-    return $self;
+    return $mkr;
 }
 
       
 sub get_opt {
-    my ($self) = @_;
+    my ($mkr) = @_;
 
-    return $self if $self->_val_('skip get_opt');
+    return $mkr if $mkr->_val_('skip get_opt');
 
     my (%opt, @optstr, $cmdline);
     
@@ -99,36 +100,36 @@ sub get_opt {
         "cmd|c=s",
     );
 
-    $self->{root}    ||= getcwd();
-    $self->{root_id} = basename($self->{root});
+    $mkr->{root}    ||= getcwd();
+    $mkr->{root_id} = basename($mkr->{root});
 
     unless( @ARGV ){ 
-        $self->dhelp;
+        $mkr->dhelp;
         exit 0;
     }else{
-        $self->{proj}    = shift @ARGV;
+        $mkr->{proj}    = shift @ARGV;
 
         $cmdline = join(' ',@ARGV);
         GetOptions(\%opt,@optstr);
-        $self->{opt} = {%opt};
+        $mkr->{opt} = {%opt};
     }
 
     foreach my $x (qw(cmd)) {
-        $self->{$x} = $self->{opt}->{$x};
+        $mkr->{$x} = $mkr->{opt}->{$x};
     }
 
-    return $self;    
+    return $mkr;    
 }
 
 sub dhelp {
-    my ($self) = @_;
+    my ($mkr) = @_;
 
     my $s = qq{
 
     ROOT:
-        $self->{root}
+        $mkr->{root}
     ROOT_ID:
-        $self->{root_id}
+        $mkr->{root_id}
     USAGE
         $Script PROJ OPTIONS
     OPTIONS
@@ -141,20 +142,20 @@ sub dhelp {
 
     print $s . "\n";
 
-    return $self;    
+    return $mkr;    
 }
 
 sub init {
-    my ($self) = @_;
+    my ($mkr) = @_;
 
-    $self->get_opt;
+    $mkr->get_opt;
 
     my $tex_opts_a = [];
 
-    my $proj    = $self->{proj};
+    my $proj    = $mkr->{proj};
 
-    my $root    = $self->{root} || '';
-    my $root_id = $self->{root_id} || '';
+    my $root    = $mkr->{root} || '';
+    my $root_id = $mkr->{root_id} || '';
 
     my $pdfout = $ENV{PDFOUT};
 
@@ -193,15 +194,15 @@ sub init {
         out_dir_pdf_b => catfile($h->{out_dir_pdf}, qw(b_pdflatex) )
     };
 
-    hash_inject($self, $h);
+    hash_inject($mkr, $h);
 
-    return $self;
+    return $mkr;
 }
 
 
 
 sub _find_ {
-    my ($self, $dirs, $exts) = @_;
+    my ($mkr, $dirs, $exts) = @_;
 
     my @files;
     find({ 
@@ -219,9 +220,9 @@ sub _find_ {
 }
 
 sub _cmd_bibtex {
-    my ($self, $ref) = @_;
+    my ($mkr, $ref) = @_;
 
-    my $proj    = $self->{proj};
+    my $proj    = $mkr->{proj};
 
     my $cmd = sprintf('bibtex %s',$proj);
 
@@ -229,29 +230,29 @@ sub _cmd_bibtex {
 }
 
 sub _cmd_tex {
-    my ($self, $ref) = @_;
+    my ($mkr, $ref) = @_;
 
     my $opts = [
         '-interaction=nonstopmode',
         '-file-line-error',
     ];
 
-    my $proj    = $self->{proj};
+    my $proj    = $mkr->{proj};
 
-    my $cmd     = sprintf('%s %s %s',$self->{tex_exe},join(" ",@$opts),$proj);
+    my $cmd     = sprintf('%s %s %s',$mkr->{tex_exe},join(" ",@$opts),$proj);
 
     return $cmd;
 }
 
 sub _cmds_texindy {
-    my ($self, $ref) = @_;
+    my ($mkr, $ref) = @_;
 
-    my $proj = $self->{proj};
+    my $proj = $mkr->{proj};
 
     $ref ||= {};
     my $dir = $ref->{dir} || '';
 
-    my @files_idx = $self->_find_([$dir],[qw(idx)]);
+    my @files_idx = $mkr->_find_([$dir],[qw(idx)]);
 
     my @cmds;
     my $langs = {
@@ -306,15 +307,15 @@ sub _cmds_texindy {
 }
 
 sub _files_pdf_pwg {
-    my ($self) = @_;
+    my ($mkr) = @_;
 
-    my $proj    = $self->{proj};
-    my $src_dir = $self->{src_dir};
+    my $proj    = $mkr->{proj};
+    my $src_dir = $mkr->{src_dir};
 
     my @pdf_files;
     push @pdf_files,
         catfile($src_dir,$proj . 'jnd.pdf'),
-        catfile($self->{out_dir_pdf_pwg},$proj . '.pdf'),
+        catfile($mkr->{out_dir_pdf_pwg},$proj . '.pdf'),
         ;
 
     return @pdf_files;
@@ -330,19 +331,19 @@ cmd_insert_pwg
 =cut
 
 sub cmd_build_pwg {
-    my ($self) = @_;
+    my ($mkr) = @_;
 
-    my $proj    = $self->{proj};
-    my $src_dir = $self->{src_dir};
+    my $proj    = $mkr->{proj};
+    my $src_dir = $mkr->{src_dir};
 
-    my $proj_pdf_name = $self->{pdf_name} || $proj;
+    my $proj_pdf_name = $mkr->{pdf_name} || $proj;
 
-    mkpath $self->{src_dir} if -d $self->{src_dir};
-    mkpath $self->{out_dir_pdf_pwg};
+    mkpath $mkr->{src_dir} if -d $mkr->{src_dir};
+    mkpath $mkr->{out_dir_pdf_pwg};
 
-    $self->cmd_insert_pwg;
+    $mkr->cmd_insert_pwg;
 
-    my @pdf_files = $self->_files_pdf_pwg;
+    my @pdf_files = $mkr->_files_pdf_pwg;
 
     foreach my $f (@pdf_files) {
         rmtree $f if -e $f;
@@ -352,13 +353,13 @@ sub cmd_build_pwg {
 
     chdir $src_dir;
     my $ext = $^O eq 'MSWin32' ? 'bat' : 'sh';
-    my $cmd = sprintf(q{_run_tex.%s -x %s},$ext, $self->{tex_exe});
+    my $cmd = sprintf(q{_run_tex.%s -x %s},$ext, $mkr->{tex_exe});
     system($cmd);
 
     my @dest;
     push @dest, 
-        $self->{out_dir_pdf_pwg},
-        $self->{out_dir_pdf}
+        $mkr->{out_dir_pdf_pwg},
+        $mkr->{out_dir_pdf}
         ;
 
     if (-e $pdf_file) {
@@ -384,25 +385,25 @@ sub cmd_build_pwg {
             last;
         }
     }
-    chdir $self->{root};
+    chdir $mkr->{root};
 
-    return $self;
+    return $mkr;
 
 }
 
 sub cmd_insert_pwg {
-    my ($self) = @_;
+    my ($mkr) = @_;
 
-    $self
+    $mkr
         ->cmd_join
         ->copy_to_src
         ->create_bat_in_src
         ;
 
-    my $root = $self->{root};
-    my $proj = $self->{proj};
+    my $root = $mkr->{root};
+    my $proj = $mkr->{proj};
 
-    my $jfile  = $self->_file_joined;
+    my $jfile  = $mkr->_file_joined;
     my @jlines = read_file $jfile;
 
     my @nlines;
@@ -415,7 +416,7 @@ sub cmd_insert_pwg {
     my ($is_img, $is_fig, $is_cmt, $is_tex, $is_perl);
 
     my (@tags, %fig, %opts);
-    my $tags_projs = [ qw(projs), $self->{root_id}, $self->{proj} ];
+    my $tags_projs = [ qw(projs), $mkr->{root_id}, $mkr->{proj} ];
 
     my (@perl_code, @perl_use);
 
@@ -654,30 +655,30 @@ sub cmd_insert_pwg {
 
     unshift @nlines,
         ' ',
-        sprintf(q{\def\imgroot{%s}}, $self->{img_root_unix} ),
+        sprintf(q{\def\imgroot{%s}}, $mkr->{img_root_unix} ),
         ' '
         ;
 
     write_file($jfile,join("\n",@nlines) . "\n");
 
-    return $self;
+    return $mkr;
 }
 
 sub cmd_join {
-    my ($self) = @_;
+    my ($mkr) = @_;
 
-    $self->_join_lines;
+    $mkr->_join_lines;
 
-    return $self;
+    return $mkr;
 }
 
 sub create_bat_in_src {
-    my ($self) = @_;
+    my ($mkr) = @_;
 
-    my $dir  = $self->{src_dir};
+    my $dir  = $mkr->{src_dir};
 
-    my $proj    = $self->{proj};
-    my $root_id = $self->{root_id};
+    my $proj    = $mkr->{proj};
+    my $root_id = $mkr->{root_id};
 
     my %f = (
         'latexmkrc' => sub { 
@@ -736,11 +737,11 @@ sub create_bat_in_src {
             return [ $s ];
         },
 ##_bat_xelatex
-        '_xelatex' => $self->_bat_sub_tex({ 
+        '_xelatex' => $mkr->_bat_sub_tex({ 
             times => 2,
             exe   => 'xelatex' 
         }),
-        '_pdflatex' => $self->_bat_sub_tex({ 
+        '_pdflatex' => $mkr->_bat_sub_tex({ 
             times => 2,
             exe   => 'pdflatex' 
         }),
@@ -757,15 +758,15 @@ sub create_bat_in_src {
                 push @cmds, '#!/bin/sh',' ';
             }
             push @cmds, 
-                sprintf('%s%s%s',$call, $dir, $self->_bat_file('_clean')),
-                sprintf('%s jnd %s', $self->_bat_file('run_tex'), $args),
+                sprintf('%s%s%s',$call, $dir, $mkr->_bat_file('_clean')),
+                sprintf('%s jnd %s', $mkr->_bat_file('run_tex'), $args),
                 ;
             return [@cmds];
         },
     );
 
     while( my($f,$l) = each %f_bat ){
-        my $fl = $self->_bat_file($f);
+        my $fl = $mkr->_bat_file($f);
 
         my $bat_path = catfile($dir,$fl);
         my $lines = $l->();
@@ -775,73 +776,73 @@ sub create_bat_in_src {
 
     }
 
-    return $self;
+    return $mkr;
 }
 
 sub copy_to_src {
-    my ($self) = @_;
+    my ($mkr) = @_;
 
-    mkpath $self->{src_dir};
+    mkpath $mkr->{src_dir};
 
-    $self
+    $mkr
         ->copy_bib_to_src
         ->copy_sty_to_src
         ;
 
-    return $self;
+    return $mkr;
 }
 
 sub copy_bib_to_src {
-    my ($self) = @_;
+    my ($mkr) = @_;
 
-    my $root = $self->{root};
+    my $root = $mkr->{root};
 
     my @bib; 
     push @bib, 
-        $self->_file_sec('_bib_');
+        $mkr->_file_sec('_bib_');
 
 
     foreach(@bib) {
         my $bib_src     = $_;
-        my $bib_dest    = catfile($self->{src_dir},basename($_));
+        my $bib_dest    = catfile($mkr->{src_dir},basename($_));
 
         copy($bib_src, $bib_dest);
     }
 
-    return $self;
+    return $mkr;
 }
 
 sub copy_sty_to_src {
-    my ($self) = @_;
+    my ($mkr) = @_;
 
-    my $root = $self->{root};
+    my $root = $mkr->{root};
 
     my @sty; 
     push @sty, 
         qw(projs.sty);
 
-    mkpath $self->{src_dir};
+    mkpath $mkr->{src_dir};
 
     foreach(@sty) {
         my $sty_src     = catfile($root,$_);
-        my $sty_dest    = catfile($self->{src_dir},$_);
+        my $sty_dest    = catfile($mkr->{src_dir},$_);
 
         copy($sty_src, $sty_dest);
     }
 
-    return $self;
+    return $mkr;
 }
 
 sub cmd_copy_to_builds {
-    my ($self) = @_;
+    my ($mkr) = @_;
 
-    my $proj = $self->{proj};
-    my $root = $self->{root};
+    my $proj = $mkr->{proj};
+    my $root = $mkr->{root};
 
-    my $dbfile = $self->{dbfile};
+    my $dbfile = $mkr->{dbfile};
 
     my $dbh = dbi_connect({
-        dbfile => $self->{dbfile},
+        dbfile => $mkr->{dbfile},
     });
 
     my $ref = {
@@ -851,27 +852,27 @@ sub cmd_copy_to_builds {
         p       => [$proj],
         cond    => qq{ WHERE proj = ? },
     };
-    $self->{files} = dbh_select_as_list($ref);
-    mkpath $self->{src_dir};
+    $mkr->{files} = dbh_select_as_list($ref);
+    mkpath $mkr->{src_dir};
 
-    foreach my $file (@{ $self->{files} || [] }) {
+    foreach my $file (@{ $mkr->{files} || [] }) {
         my $path = catfile($root,$file);
-        copy($path, $self->{src_dir} );
+        copy($path, $mkr->{src_dir} );
     }
 
-    return $self;
+    return $mkr;
 }
 
 sub run_cmd {
-    my ($self, $ref) = @_;
+    my ($mkr, $ref) = @_;
 
     $ref ||= {};
-    my $cmd = $ref->{cmd} || $self->{cmd};
+    my $cmd = $ref->{cmd} || $mkr->{cmd};
 
     if ($cmd) {
         my $sub = 'cmd_'.$cmd;
-        if ($self->can($sub)) {
-            $self->$sub;
+        if ($mkr->can($sub)) {
+            $mkr->$sub;
         }else{
             warn "No command defined: " . $cmd . "\n";
             exit 1;
@@ -879,24 +880,24 @@ sub run_cmd {
         exit 0;
     }
 
-    return $self;
+    return $mkr;
 }
 
 sub run {
-    my ($self) = @_;
+    my ($mkr) = @_;
 
-    $self->run_cmd;
+    $mkr->run_cmd;
     
-    return $self;
+    return $mkr;
 }
 
 sub cmd_bare {
-    my ($self) = @_;
+    my ($mkr) = @_;
 
-    mkpath $self->{build_dir};
+    mkpath $mkr->{build_dir};
 
-    my $proj = $self->{proj};
-    my $root = $self->{root};
+    my $proj = $mkr->{proj};
+    my $root = $mkr->{root};
 
     my @dirids = qw( 
         out_dir 
@@ -906,18 +907,18 @@ sub cmd_bare {
     );
 
     foreach my $dirid (@dirids) {
-        my $dir = $self->{$dirid};
+        my $dir = $mkr->{$dirid};
         mkpath $dir;
     }
 
-    my $proj_bib = catfile( $self->{out_dir}, "$proj.bib" );
-    copy( $self->{bib_file}, $proj_bib ) 
-        if -e $self->{bib_file};
+    my $proj_bib = catfile( $mkr->{out_dir}, "$proj.bib" );
+    copy( $mkr->{bib_file}, $proj_bib ) 
+        if -e $mkr->{bib_file};
     
-    my $cmd_tex = join(" ", @$self{qw( tex_exe tex_opts )}, $proj );
+    my $cmd_tex = join(" ", @$mkr{qw( tex_exe tex_opts )}, $proj );
     system($cmd_tex);
 
-    chdir $self->{build_dir};
+    chdir $mkr->{build_dir};
     
     system(qq{ bibtex $proj } ) if -e $proj_bib;
 
@@ -927,15 +928,15 @@ sub cmd_bare {
     }
 
     my $ind_file = catfile("$proj.ind");
-    #$self->ind_ins_bmk($ind_file,1);
+    #$mkr->ind_ins_bmk($ind_file,1);
 
     #return ;
-    chdir $self->{root};
+    chdir $mkr->{root};
 
     system($cmd_tex);
     system($cmd_tex);
 
-    my $built_pdf = catfile($self->{build_dir}, "$proj.pdf");
+    my $built_pdf = catfile($mkr->{build_dir}, "$proj.pdf");
 
     if (! -e $built_pdf) {
         warn 'NO PDF FILE!' . "\n";
@@ -944,8 +945,8 @@ sub cmd_bare {
 
     my @pdf_files;
     push @pdf_files, 
-        catfile($self->{out_dir_pdf_b},"$proj.pdf"),
-        catfile($self->{out_dir_pdf},"$proj.pdf"),
+        catfile($mkr->{out_dir_pdf_b},"$proj.pdf"),
+        catfile($mkr->{out_dir_pdf},"$proj.pdf"),
         ;
 
     foreach my $dest (@pdf_files) {
@@ -957,7 +958,7 @@ sub cmd_bare {
         }
     }
 
-    return $self;
+    return $mkr;
 
 }
 
