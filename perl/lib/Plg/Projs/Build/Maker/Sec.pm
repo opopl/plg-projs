@@ -7,21 +7,21 @@ use warnings;
 use File::Spec::Functions qw(catfile);
 
 sub _file_sec {
-    my ($self, $sec, $ref) = @_;
+    my ($mkr, $sec, $ref) = @_;
 
     $ref ||= {};
-    my $proj = $ref->{proj} || $self->{proj};
+    my $proj = $ref->{proj} || $mkr->{proj};
 
     my $s = {
         '_main_' => sub { 
             catfile(
-                $self->{root},
+                $mkr->{root},
                 join("." => ( $proj, 'tex' )) 
             ) 
         },
         '_bib_' => sub { 
             catfile(
-                $self->{root},
+                $mkr->{root},
                 join("." => ( $proj, 'refs.bib' )) 
             ) 
         },
@@ -29,7 +29,7 @@ sub _file_sec {
 
     my $ss = $s->{$sec} || sub { 
             catfile(
-                $self->{root},
+                $mkr->{root},
                 join("." => ( $proj, $sec, 'tex' )) 
             );
     };
@@ -39,7 +39,7 @@ sub _file_sec {
 }
 
 sub _debug_sec {
-    my ($self, $root_id, $proj, $sec) = @_;
+    my ($mkr, $root_id, $proj, $sec) = @_;
 
             my $s =<< 'EOF'; 
 \vspace{0.5cm}

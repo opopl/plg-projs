@@ -14,12 +14,12 @@ use Data::Dumper qw(Dumper);
 =cut 
 
 sub _line_process_pat_sect {
-    my ($self,$ref) = @_;
+    my ($mkr,$ref) = @_;
 
     $ref ||= {};
 
-    my $root_id = $ref->{root_id} || $self->{root_id};
-    my $proj    = $ref->{proj} || $self->{proj};
+    my $root_id = $ref->{root_id} || $mkr->{root_id};
+    my $proj    = $ref->{proj} || $mkr->{proj};
 
     # section name inside \section{...}
     my $sect = $ref->{sect} || '';
@@ -33,7 +33,7 @@ sub _line_process_pat_sect {
     my $at_end = $ref->{at_end} || [];
 
     # see Plg::Projs::Prj::Builder::Insert
-    my $ins_order = $self->_val_list_ref_('sections ins_order');
+    my $ins_order = $mkr->_val_list_ref_('sections ins_order');
 
     my $r = {
         sect      => $sect,
@@ -41,11 +41,11 @@ sub _line_process_pat_sect {
 
     push @$lines, 
         $line,
-        $self->_debug_sec($root_id, $proj, $sec)
+        $mkr->_debug_sec($root_id, $proj, $sec)
         ;
 
     foreach my $ord (@$ins_order) {
-        my $ss    = $self->_val_list_ref_('sections insert',$ord);
+        my $ss    = $mkr->_val_list_ref_('sections insert',$ord);
 
         foreach my $sss (@$ss) {
             my $scts      = $sss->{scts} || [];
@@ -69,12 +69,12 @@ sub _line_process_pat_sect {
 
     }
 
-    return $self;
+    return $mkr;
 
 }
 
 sub _line_process_pat_ii {
-    my ($self,$ref) = @_;
+    my ($mkr,$ref) = @_;
 
     $ref ||= {};
 
@@ -89,11 +89,11 @@ sub _line_process_pat_ii {
     my $include_below = $ref->{include_below} || [];
     my $line          = $ref->{line} || '';
 
-    my $include_with_children = $self->_val_list_ref_('sections include_with_children');
+    my $include_with_children = $mkr->_val_list_ref_('sections include_with_children');
 
     my $ii_include_all = $ref->{ii_include_all};
 
-    my @include = $self->_ii_include;
+    my @include = $mkr->_ii_include;
 
     my $iall = $ii_include_all;
     if ($sect) {
@@ -105,9 +105,9 @@ sub _line_process_pat_ii {
     my $inc = $iall || ( !$iall && grep { /^$ii_sec$/ } @include )
         ? 1 : 0;
 
-    return $self unless $inc;
+    return $mkr unless $inc;
 
-    my @ii_lines = $self->_join_lines($ii_sec,{ 
+    my @ii_lines = $mkr->_join_lines($ii_sec,{ 
         proj           => $proj,
         ii_include_all => $iall,
         include_below  => $include_below,
@@ -120,7 +120,7 @@ sub _line_process_pat_ii {
         @ii_lines
     ;
 
-    my $append = $self->_val_('sections append only',$ii_sec);
+    my $append = $mkr->_val_('sections append only',$ii_sec);
     if ($append) {
         my $a_lines = [];
         if (ref $append eq 'CODE') {
@@ -134,12 +134,12 @@ sub _line_process_pat_ii {
         push @$lines, '%% append', @$a_lines;
     }
 
-    return $self;
+    return $mkr;
 }
 
 
 sub _line_process_pat_input {
-    my ($self,$ref) = @_;
+    my ($mkr,$ref) = @_;
 
     $ref ||= {};
 
@@ -162,7 +162,7 @@ sub _line_process_pat_input {
 
         my ($proj) = ($file =~ m/^(\w+)\./);
 
-        my @ii_lines = $self->_join_lines('',{ 
+        my @ii_lines = $mkr->_join_lines('',{ 
             proj           => $proj,
             file           => $file,
             ii_include_all => 1,
@@ -176,7 +176,7 @@ sub _line_process_pat_input {
 
     }
 
-    return $self;
+    return $mkr;
 }
 
 1;
