@@ -234,17 +234,17 @@ sub _ii_include {
 
 =head4 Usage
 
-	$mkr->_ii_include_filter(\@include);
+    $mkr->_ii_include_filter(\@include);
 
 =head4 Filtering Keywords
 
-	_all_ _base_
+    _all_ _base_
 
 =head4 Call tree 
 
 Used in:
 
-	_ii_include
+    _ii_include
 
 =cut
 
