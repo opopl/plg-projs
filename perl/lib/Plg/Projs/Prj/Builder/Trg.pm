@@ -72,13 +72,15 @@ sub trg_apply {
 }
 
 sub _trg_dom {
-    my ($bld, $target) = @_;
+    my ($bld, $ref) = @_;
 
-    $target //= $bld->{target};
+    $ref ||={};
+    my $target = $bld->_opt_($ref,'target');
+
     my $dom = $bld->_val_('dom_trg ' . $target);
 
     unless ($dom) {
-        my $xfile = $bld->_trg_xfile($target);
+        my $xfile = $ref->{xfile} || $bld->_trg_xfile($target);
         return unless (-e $xfile);
 
         my $cache = XML::LibXML::Cache->new;
@@ -103,10 +105,11 @@ sub _trg_dom_find {
 }
 
 sub _trg_data {
-    my ($bld, $target) = @_;
+    my ($bld, $ref) = @_;
 
-    $target //= $bld->{target};
-    my $dom = $bld->_trg_dom($target);
+    $ref ||= {};
+
+    my $dom = $bld->_trg_dom($ref);
     return unless $dom;
 
     my $pl = xml2dict($dom, attr => '', array => [qw( scts )] );
@@ -117,11 +120,12 @@ sub _trg_data {
 }
 
 sub trg_load_xml {
-    my ($bld, $target) = @_;
+    my ($bld, $ref) = @_;
 
-    $target //= $bld->{target};
+    $ref ||= {};
+    my $target = $bld->_opt_($ref,'target');
 
-    my $h_bld = $bld->_trg_data($target);
+    my $h_bld = $bld->_trg_data($ref);
     return $bld unless $h_bld;
 
     my $ht = $bld->_val_('targets',$target) || {};
@@ -129,9 +133,6 @@ sub trg_load_xml {
     hash_apply($ht, $h_bld);
 
     $bld->{'targets'}->{$target} = $ht;
-
-    #print Dumper($bld->_val_('targets',$target)) . "\n";
-    #exit 1;
 
     return $bld;
 }
