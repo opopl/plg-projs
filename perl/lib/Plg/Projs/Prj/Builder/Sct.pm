@@ -10,6 +10,7 @@ use String::Util qw(trim);
 
 use Base::Data qw(
 	d_str_split_sn
+	d_str_split
 	d_path
 );
 
@@ -23,7 +24,17 @@ sub _sct_lines {
 
 	my @contents = d_str_split_sn($data,'contents');
 	foreach (@contents) {
-		/^pkg$/ && do {
+###@ii
+		/^\@ii$/ && do {
+			my @ii = d_str_split_sn($data,'ii');
+			foreach my $ii_sec (@ii) {
+				local $_ = sprintf('\ii{%s}',$ii_sec);
+				push @lines,$_;
+			}
+			next;
+		};
+###@pkg
+		/^\@pkg$/ && do {
 			my @pack_list = d_str_split_sn($data,'pkg pack_list');
 			foreach my $pack (@pack_list) {
 				my $s_o = $pack_opts->{$pack} || '';
@@ -37,16 +48,15 @@ sub _sct_lines {
 			}
 			next;
 		};
-
-		/^ii$/ && do {
-			my @ii = d_str_split_sn($data,'ii');
-			foreach my $ii_sec (@ii) {
-				local $_ = sprintf('\ii{%s}',$ii_sec);
-				push @lines,$_;
-			}
+###@txt
+		/^\@txt$/ && do {
+			my @txt = d_str_split($data,'txt');
+			push @lines, @txt;
 			next;
 		};
-		
+
+		push @lines,$_;
+
 	}
 	return @lines;
 

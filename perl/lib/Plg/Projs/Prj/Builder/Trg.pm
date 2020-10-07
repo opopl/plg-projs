@@ -72,21 +72,50 @@ sub trg_apply {
 
 }
 
+sub _trg_data {
+    my ($self, $target) = @_;
+
+    $target //= $self->{target};
+}
+
+sub _trg_dom {
+    my ($self, $target) = @_;
+
+    $target //= $self->{target};
+	my $dom = $self->_val_('dom_trg ' . $target);
+
+	unless ($dom) {
+	    my $xfile = $self->_trg_xfile($target);
+	    return unless (-e $xfile);
+
+	    my $cache = XML::LibXML::Cache->new;
+	    $dom = $cache->parse_file($xfile);
+
+    	$self->{dom_trg}->{$target} = $dom;
+	}
+
+	return $dom;
+
+}
+
+sub _trg_dom_find {
+    my ($self, $target) = @_;
+
+    $target //= $self->{target};
+	my $dom = $self->_trg_dom($target);
+
+	my $data;
+	return $data;
+
+}
+
 sub trg_load_xml {
     my ($self, $target) = @_;
 
     $target //= $self->{target};
 
-    my $xfile = $self->_trg_xfile($target);
-
-    unless (-e $xfile) {
-        return $self;
-    }
-
-    my $cache = XML::LibXML::Cache->new;
-    my $dom = $cache->parse_file($xfile);
-
-    $self->{dom_trg}->{$target} = $dom;
+	my $dom = $self->_trg_dom($target);
+    return $self unless $dom;
 
     my $pl = xml2dict($dom, attr => '', array => [qw( scts )] );
     #my $secs = deepvalue($pl,qw(bld sii secs));
