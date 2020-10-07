@@ -56,6 +56,26 @@ sub _sct_lines {
             }
             next;
         };
+###@perl
+        /^\@perl$/ && do {
+            my $pl = d_path($data,'perl');
+            my @w;
+            local $SIG{__WARN__} = sub { push @w,@_; };
+            my $res = eval $pl;
+            if ($@){
+                warn $@ . "\n";
+            }
+            push @lines,$res;
+            next;
+        };
+        /^\@perlfile\{(.*)\}$/ && do {
+            my $pl = $1;
+            if (-e $pl) {
+                my $res = do $pl;
+                push @lines,$res;
+            }
+            next;
+        };
 ###@pkg
         /^\@pkg$/ && do {
             my @pack_list = d_str_split_sn($data,'pkg pack_list');

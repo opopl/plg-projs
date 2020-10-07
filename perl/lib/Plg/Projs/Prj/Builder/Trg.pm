@@ -66,7 +66,7 @@ sub trg_apply {
     $target //= $self->{target};
 
     my $ht = $self->_val_('targets', $target);
-    hash_inject($self, $ht);
+    hash_apply($self, $ht);
 
     return $self;
 
