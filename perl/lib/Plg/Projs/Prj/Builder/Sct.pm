@@ -9,6 +9,10 @@ use warnings;
 use String::Util qw(trim);
 use Data::Dumper qw(Dumper);
 
+use Base::String qw(
+    str_split_sn
+);
+
 use Base::Data qw(
     d_str_split_sn
     d_str_split
@@ -68,14 +72,13 @@ sub _sct_lines {
         };
 ###@makeindex
         /^\@makeindex$/ && do {
-            push @lines, $bld->_bld_makeindex;
+            push @lines, $bld->_bld_ind_makeindex;
 
             next;
         };
 ###@printindex
         /^\@printindex$/ && do {
-            my $mi = $bld->_val_('preamble index ind');
-            next unless $mi;
+            push @lines, $bld->_bld_ind_printindex;
 
             next;
         };
@@ -115,15 +118,38 @@ sub _sct_lines {
             next;
         };
 ###@txt
-        /^\@txt$/ && do {
-            my @txt = d_str_split($data,'txt');
+        /^\@txt(?:|\.(.*))$/ && do {
+            my $p = $1 // '';
+            $p =~ s/\./ /g;
+
+            my @txt = d_str_split($data,'txt ' . $p );
+
+            my $defs = $bld->_val_('defs');
+            my %defs = map { $_ => 1 } str_split_sn($defs);
+
+            my $add=1;
+            my $if=0;
             while(@txt){
                 local $_ = shift @txt;
 
                 s/\@var\{(\w+)\}/$bld->_bld_var($1)/ge; 
                 s/\@env\{(\w+)\}/$bld->_bld_env($1)/ge; 
 
-                push @lines, $_;
+                /\@ifdef\{([^{}]+)\}/ && do {
+                    my $df = $1;
+
+                    $add = 0 unless $defs{$df};
+                    $if++;
+                    next;
+                };
+
+                /\@fi/ && do {
+                    $add = 1;
+                    $if--;
+                    next;
+                };
+
+                push @lines, $_ if $add;
             }
             next;
         };
