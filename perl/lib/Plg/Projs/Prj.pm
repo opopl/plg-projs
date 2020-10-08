@@ -99,7 +99,7 @@ sub prj_load_xml {
             return unless /$pat/;
             push @t,$1;
         } 
-    },$self->{root}
+    },$root
     );
     my $inc_all = 0;
     $inc_all = grep { /^_all_$/ } @$include ? 1 : 0;
@@ -110,7 +110,7 @@ sub prj_load_xml {
     unless ($inc_all) {
         @t = grep { $include{$_} && !$exclude{$_} } @t;
     }
-    $self->{trg_list} = [@t] if $inc_all;
+    $self->{trg_list} = [@t];
 
     return $self;
 }
