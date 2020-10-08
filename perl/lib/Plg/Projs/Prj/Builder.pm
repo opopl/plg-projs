@@ -16,12 +16,13 @@ use base qw(
     Base::Obj
     Base::Opt
 
-    Plg::Projs::Prj::Builder::Insert
+    Plg::Projs::Prj::Builder::Act
     Plg::Projs::Prj::Builder::Defs
-    Plg::Projs::Prj::Builder::Trg
-    Plg::Projs::Prj::Builder::Gen
-    Plg::Projs::Prj::Builder::Sct
     Plg::Projs::Prj::Builder::Dmp
+    Plg::Projs::Prj::Builder::Gen
+    Plg::Projs::Prj::Builder::Insert
+    Plg::Projs::Prj::Builder::Sct
+    Plg::Projs::Prj::Builder::Trg
 );
 
 use FindBin qw($Bin $Script);
@@ -54,11 +55,8 @@ sub inj_base {
         maps_act => {
             'compile'  => 'build_pwg',
             'join'     => 'insert_pwg',
-            'show_trg' => sub { 
-                foreach my $trg ($bld->_trg_list) {
-                    print $trg . "\n";
-                }
-            },
+            'show_trg' => sub { $bld->act_show_trg; },
+            'dump_bld' => sub { $bld->act_dump_bld; },
         },
         act_default    => 'compile',
         target_default => 'usual',
@@ -86,7 +84,6 @@ sub init {
         ->trg_apply('core')
         ->trg_apply
         #->dump_trg('core')
-        ->dump_bld
         ->process_config
         ->init_maker
         ;
@@ -145,10 +142,11 @@ sub print_help {
         LOCATION:
             $0
         USAGE:
-            $Script ACT 
-            $Script ACT -t TARGET
-            $Script ACT -c CONFIG
-            $Script ACT -c CONFIG -t TARGET
+             perl $Script ACT 
+             perl $Script ACT -t TARGET
+             perl $Script ACT -c CONFIG
+             perl $Script ACT -c CONFIG -t TARGET
+             perl $Script ACT -c CONFIG -t TARGET -d DATA
         ACTS:
             $acts_s
         TARGETS:
@@ -161,6 +159,7 @@ sub print_help {
             perl $Script compile -c xelatex
             perl $Script compile -c xelatex -t usual
             perl $Script show_trg 
+            perl $Script dump_bld -d 'opts_maker sections' 
     } . "\n";
     exit 1;
 
@@ -187,6 +186,7 @@ sub get_opt {
     my @optstr = ( 
         "config|c=s",
         "target|t=s",
+        "data|d=s",
     );
 
     GetOptions(\%opt,@optstr);
@@ -225,7 +225,7 @@ sub init_maker {
     my ($bld) = @_;
 
     my $act = $bld->{act};
-    my $cmd = $bld->{maps_act}->{$act} || '';
+    my $act_cmd = $bld->{maps_act}->{$act} || '';
 
     my $target = $bld->{target};
     my $proj   = $bld->{proj};
@@ -236,8 +236,8 @@ sub init_maker {
     #print Dumper($bld->{opts_maker}) . "\n";
     #exit;
 
-    if (ref $cmd eq 'CODE') {
-        $cmd->();
+    if (ref $act_cmd eq 'CODE') {
+        $act_cmd->();
         exit 0;
     }
 
@@ -253,7 +253,7 @@ sub init_maker {
         proj         => $bld->{proj},
         root         => $bld->{root},
         root_id      => $bld->{root_id},
-        cmd          => $cmd,
+        cmd          => $act_cmd,
         %$om,
         tex_exe      => $bld->{tex_exe},
         bld          => $bld,

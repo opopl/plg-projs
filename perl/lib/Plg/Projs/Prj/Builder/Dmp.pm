@@ -20,9 +20,11 @@ sub dump_trg {
 }
 
 sub dump_bld {
-    my ($bld) = @_;
+    my ($bld, $path) = @_;
 
-    print Dumper({ map { $_ => $bld->{$_} } keys %$bld }) . "\n";
+	my $h = $bld->_val_($path);
+	my $data = { map { $_ => $h->{$_} } keys %$h };
+    print Dumper($data) . "\n";
     return $bld;
 }
 

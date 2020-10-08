@@ -1,5 +1,12 @@
 
 
+function! projs#bld#run (...)
+  let ref  = get(a:000,0,{})
+
+  let act  = get(ref,'act','')
+  let opts = get(ref,'opts',[])
+endf
+
 function! projs#bld#do (...)
   let act = get(a:000,0,'')
 
