@@ -95,7 +95,7 @@ function! projs#pdf#path (...)
 
   let pdffin  = projs#varget('pdffin','')
 
-  let a = [ pdffin, projs#rootid() ]
+  let a = [ pdffin, projs#rootid(), proj ]
   call extend(a,split(qw,' '))
   let pdf_dir = base#file#catfile(a)
 

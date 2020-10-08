@@ -170,8 +170,8 @@ sub init {
         build_dir_unix  => join("/",@build_dir_a),
         build_dir       => catfile($root, @build_dir_a),
         bib_file        => catfile($root, qq{$proj.refs.bib}),
-        out_dir_pdf     => catfile($pdfout, $root_id),
-        out_dir_pdf_pwg => catfile($pdfout, $root_id, qw(pwg) ),
+        out_dir_pdf     => catfile($pdfout, $root_id, $proj),
+        out_dir_pdf_pwg => catfile($pdfout, $root_id, $proj, qw(pwg) ),
         dbfile          => catfile($root,'projs.sqlite'),
         pwg             => $pwg,
         cmd             => 'bare',
@@ -358,7 +358,7 @@ sub cmd_build_pwg {
 
     my @dest;
     push @dest, 
-        $mkr->{out_dir_pdf_pwg},
+        #$mkr->{out_dir_pdf_pwg},
         $mkr->{out_dir_pdf}
         ;
 
@@ -961,5 +961,6 @@ sub cmd_bare {
     return $mkr;
 
 }
+# end of cmd_bare
 
 1;
