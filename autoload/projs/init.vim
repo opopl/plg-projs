@@ -263,8 +263,9 @@ endif
   command! -nargs=* -complete=custom,projs#complete#prjact PA
     \ call projs#action(<f-args>)
 
+"""BLD
   command! -nargs=* -complete=custom,projs#complete#bld BLD
-    \ call projs#bld#act(<f-args>)
+    \ call projs#bld#do(<f-args>)
 
   "command! -nargs=* -complete=custom,projs#complete#prjtab PrjTab
     "\ call projs#tables(<f-args>)

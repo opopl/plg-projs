@@ -1,6 +1,6 @@
 
 
-function! projs#bld#act ()
+function! projs#bld#do (...)
   let act = get(a:000,0,'')
 
   let acts = base#varget('projs_opts_BLD',[])
@@ -40,33 +40,33 @@ function! projs#bld#act ()
     return
   endif
 
-  let sub = 'projs#action#'.act
+  let sub = printf('projs#bld#do#%s', act)
 
-  exe 'call '.sub.'()'
+  exe printf('call %s()',sub)
 
 endfunction
 
 function! projs#bld#make_secs ()
 
   let scs = base#varget('projs_bld_compile_secs',[])
-	let o = {
-			\	'git_add' : 1,
-			\	}
+  let o = {
+      \ 'git_add' : 1,
+      \ }
 
   for s in scs
     let f = projs#sec#file(s)
     if !filereadable(f)
-			call projs#sec#new(s,o)
+      call projs#sec#new(s,o)
     endif
   endfor
-	
+  
 endfunction
 
 function! projs#bld#target ()
 
-	call projs#rootcd()
+  call projs#rootcd()
 
-	let proj  = projs#proj#name()
+  let proj  = projs#proj#name()
   let bfile = projs#sec#file('_perl.bld')
 
   let ok = base#sys({ 
@@ -84,20 +84,20 @@ function! projs#bld#target ()
     endw
   endif
 
-	return target
+  return target
 
 endfunction
 
 function! projs#bld#jnd_pdf ()
-	let proj  = projs#proj#name()
+  let proj  = projs#proj#name()
 
   let jnd_pdf = base#qw#catpath( projs#rootid(),printf('builds %s src jnd.pdf',proj))
-	return jnd_pdf
+  return jnd_pdf
 endfunction
 
 function! projs#bld#jnd_tex ()
-	let proj  = projs#proj#name()
+  let proj  = projs#proj#name()
 
   let jnd_tex = base#qw#catpath( projs#rootid(),printf('builds %s src jnd.tex',proj))
-	return jnd_tex
+  return jnd_tex
 endfunction

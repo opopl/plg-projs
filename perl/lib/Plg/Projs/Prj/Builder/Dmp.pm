@@ -22,7 +22,7 @@ sub dump_trg {
 sub dump_bld {
     my ($bld) = @_;
 
-    print Dumper($bld) . "\n";
+    print Dumper({ map { $_ => $bld->{$_} } keys %$bld }) . "\n";
     return $bld;
 }
 
