@@ -82,10 +82,14 @@ sub init {
         ->set_target
         ->trg_load_xml({ 'target' => 'core' })
         ->trg_load_xml
+        ->trg_apply('core')
         ->trg_apply
+        #->trg_dump('core')
+        ->trg_dump
         ->process_config
         ->init_maker
         ;
+    exit;
 
     return $bld;
 
