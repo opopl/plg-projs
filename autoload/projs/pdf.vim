@@ -23,7 +23,7 @@ function! projs#pdf#view (...)
   let viewer_id = get(a:000,1,'evince')
   let viewer  = base#exefile#path(viewer_id)
 
-  let pdf_files = projs#pdf#path(proj)
+  let pdf_files = projs#pdf#path({ 'proj' : proj })
 
   if !len(pdf_files)
     let msg = 'PDF files NOT READABLE!'
@@ -80,8 +80,10 @@ endfunction
 
 if 0
   Usage
-    let pdf = projs#pdf#path('aa')
-    let pdf = projs#pdf#path('aa','pwg')
+    let pdf = projs#pdf#path()
+
+    let pdf = projs#pdf#path({ 'type' : 'bld'})
+    let pdf = projs#pdf#path({ 'type' : 'bare'})
   Call tree
     Called by
       projs#pdf#view
@@ -89,22 +91,30 @@ if 0
 endif
 
 function! projs#pdf#path (...)
-  let proj    = get(a:000,0,projs#proj#name())
+  let ref = get(a:000,0,{})
 
-  let qw = get(a:000,1,'')
+  let type = get(ref,'type','bld')
+
+  let proj = projs#proj#name()
+  let proj = get(ref,'proj',proj)
 
   let pdffin  = projs#varget('pdffin','')
 
   let a = [ pdffin, projs#rootid(), proj ]
-  call extend(a,split(qw,' '))
   let pdf_dir = base#file#catfile(a)
+
+  let pats = {
+      \  'bld'   : printf('^%s\.(.*)\.pdf',proj),
+      \  'bare'  : printf('^%s\.pdf',proj),
+      \  }
+  let pat = get(pats,type,'')
 
   let pdf_files = base#find({ 
     \ "dirs"    : [pdf_dir],
     \ "exts"    : ['pdf'],
     \ "relpath" : 0,
     \ "subdirs" : 0,
-    \ "pat"     : printf('^%s\.(.*)\.pdf',proj),
+    \ "pat"     : pat,
     \ })
 
   return pdf_files
