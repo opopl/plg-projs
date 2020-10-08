@@ -28,36 +28,36 @@ function! projs#pdf#view (...)
   if !len(pdf_files)
     let msg = 'PDF files NOT READABLE!'
     call base#warn({ 
-			\	'rdw'    : 1,
-			\	'text'   : msg,
-			\	'prefix' : 'projs#pdf#view' })
+      \ 'rdw'    : 1,
+      \ 'text'   : msg,
+      \ 'prefix' : 'projs#pdf#view' })
     return
   endif
 
-	let targets = []
-	let pat = printf('^%s\.\(.*\).pdf$',proj)
+  let targets = []
+  let pat = printf('^%s\.\(.*\).pdf$',proj)
 
-	let d_files = {}
-	for file in pdf_files
-		let file_b = fnamemodify(file,':t')
-		let t = substitute(file_b,pat,'\1','g')
-		if len(t)
-			call add(targets,t)
-			call extend(d_files,{ t : file })
-		endif
-	endfor
+  let d_files = {}
+  for file in pdf_files
+    let file_b = fnamemodify(file,':t')
+    let t = substitute(file_b,pat,'\1','g')
+    if len(t)
+      call add(targets,t)
+      call extend(d_files,{ t : file })
+    endif
+  endfor
 
-	let target = '' 
-	if len(targets) == 1
-		let target = get(targets,0,'')
-	endif
+  let target = '' 
+  if len(targets) == 1
+    let target = get(targets,0,'')
+  endif
 
-	while !len(target)
-		call base#varset('this',targets)
-		let target = input('target:','','custom,base#complete#this')
-	endw
+  while !len(target)
+    call base#varset('this',targets)
+    let target = input('target:','','custom,base#complete#this')
+  endw
 
-	let pdf_file = get(d_files,target,'')
+  let pdf_file = get(d_files,target,'')
 
   let size = base#file#size(pdf_file)
   if !size
@@ -99,13 +99,13 @@ function! projs#pdf#path (...)
   call extend(a,split(qw,' '))
   let pdf_dir = base#file#catfile(a)
 
-	let pdf_files = base#find({ 
-		\	"dirs"    : [pdf_dir],
-		\	"exts"    : ['pdf'],
-		\	"relpath" : 0,
-		\	"subdirs" : 0,
-		\	"pat"     : printf('^%s\.(.*)\.pdf',proj),
-		\	})
+  let pdf_files = base#find({ 
+    \ "dirs"    : [pdf_dir],
+    \ "exts"    : ['pdf'],
+    \ "relpath" : 0,
+    \ "subdirs" : 0,
+    \ "pat"     : printf('^%s\.(.*)\.pdf',proj),
+    \ })
 
   return pdf_files
 endfunction
