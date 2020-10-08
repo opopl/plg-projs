@@ -14,7 +14,7 @@ sub act_dump_bld {
     my $data = $bld->_opt_argv_('data','');
 
     $bld->dump_bld($data);
-    exit 1;
+    exit 0;
 }
 
 sub act_show_trg {
@@ -23,7 +23,7 @@ sub act_show_trg {
     foreach my $trg ($bld->_trg_list) {
         print $trg . "\n";
     }
-    exit 1;
+    exit 0;
 }
 
 1;

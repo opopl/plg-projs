@@ -83,11 +83,9 @@ sub init {
         ->trg_load_xml
         ->trg_apply('core')
         ->trg_apply
-        #->dump_trg('core')
         ->process_config
         ->init_maker
         ;
-    exit;
 
     return $bld;
 

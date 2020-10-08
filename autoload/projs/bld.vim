@@ -123,6 +123,7 @@ function! projs#bld#target ()
   let proj  = projs#proj#name()
   let bfile = projs#sec#file('_perl.bld')
 
+  call projs#rootcd()
   let ok = base#sys({ 
     \ "cmds"         : [ printf('perl %s show_trg',bfile) ],
     \ "split_output" : 0,
