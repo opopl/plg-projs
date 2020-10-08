@@ -21,6 +21,7 @@ use base qw(
     Plg::Projs::Prj::Builder::Trg
     Plg::Projs::Prj::Builder::Gen
     Plg::Projs::Prj::Builder::Sct
+    Plg::Projs::Prj::Builder::Dmp
 );
 
 use FindBin qw($Bin $Script);
@@ -84,8 +85,8 @@ sub init {
         ->trg_load_xml
         ->trg_apply('core')
         ->trg_apply
-        #->trg_dump('core')
-        ->trg_dump
+        #->dump_trg('core')
+        ->dump_bld
         ->process_config
         ->init_maker
         ;

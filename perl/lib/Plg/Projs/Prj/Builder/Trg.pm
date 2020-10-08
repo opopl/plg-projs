@@ -128,15 +128,6 @@ sub xml_load_core {
     return $bld;
 }
 
-sub trg_dump {
-    my ($bld, $target) = @_;
-    $target //= $bld->{target};
-
-    my $ht = $bld->_val_('targets',$target) || {};
-    print Dumper($ht) . "\n";
-    return $bld;
-}
-
 sub trg_load_xml {
     my ($bld, $ref) = @_;
 

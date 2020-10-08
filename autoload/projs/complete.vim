@@ -91,6 +91,10 @@ function! projs#complete#prjact (...)
    return projs#complete#vars([ 'opts_PrjAct' ])
 endfunction
 
+function! projs#complete#bld (...)
+   return projs#complete#vars([ 'opts_BLD' ])
+endfunction
+
 function! projs#complete#prjtab (...)
    return projs#complete#vars([ 'opts_PrjTab' ])
 endfunction
