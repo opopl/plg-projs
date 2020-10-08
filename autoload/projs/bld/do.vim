@@ -1,36 +1,32 @@
 
 function! projs#bld#do#show_trg ()
-  let proj = projs#proj#name()
-  let root    = projs#root()
+  call projs#bld#run({
+      \ 'act' : 'show_trg'
+      \ })
 
-  call projs#bld#make_secs()
+endfunction
 
-  let bfile = projs#sec#file('_perl.bld')
+function! projs#bld#do#dump_bld ()
+  let proj   = projs#proj#name()
+  let rootid = projs#rootid()
 
-  call chdir(root)
+  let msg_a = [
+    \  "proj:   " . proj,  
+    \  "rootid: " . rootid,  
+    \  ' ',
+    \  '[dump_bld] path: ',
+    \  ]
+  let msg = join(msg_a,"\n")
+  let path = base#input_we(msg,'',{ })
 
-  let a = [ 'perl', bfile, 'show_trg' ]
+  let opts = []
+  if len(path)
+    call extend(opts,[ '-d', shellescape(path) ])
+  endif
 
-  let cmd = join(a, ' ' )
+  call projs#bld#run({
+      \ 'act'  : 'dump_bld',
+      \ 'opts' : opts,
+      \ })
 
-  let env = {
-    \ 'proj'    : proj,
-    \ 'root'    : root,
-    \ 'cmd'     : cmd,
-    \ }
-  
-  function env.get(temp_file) dict
-    let temp_file = a:temp_file
-    let code      = self.return_code
-  
-    if filereadable(a:temp_file)
-      let out = readfile(a:temp_file)
-      call base#buf#open_split({ 'lines' : out })
-    endif
-  endfunction
-  
-  call asc#run({ 
-    \  'cmd' : cmd, 
-    \  'Fn'  : asc#tab_restore(env) 
-    \  })
 endfunction

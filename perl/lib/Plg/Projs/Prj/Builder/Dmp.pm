@@ -23,7 +23,7 @@ sub dump_bld {
     my ($bld, $path) = @_;
 
 	my $h = $bld->_val_($path);
-	my $data = { map { $_ => $h->{$_} } keys %$h };
+	my $data = ref $h eq 'HASH' ? { map { $_ => $h->{$_} } keys %$h } : $h;
     print Dumper($data) . "\n";
     return $bld;
 }

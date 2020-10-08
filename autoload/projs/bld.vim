@@ -5,6 +5,53 @@ function! projs#bld#run (...)
 
   let act  = get(ref,'act','')
   let opts = get(ref,'opts',[])
+
+  let proj = projs#proj#name()
+  let root = projs#root()
+
+  call projs#bld#make_secs()
+  let bfile = projs#sec#file('_perl.bld')
+
+  call chdir(root)
+
+  let a = [ 'perl', bfile, act ]
+  call extend(a,opts)
+
+  let cmd = join(a, ' ' )
+
+  let env = {
+    \ 'proj'    : proj,
+    \ 'root'    : root,
+    \ 'cmd'     : cmd,
+    \ 'act'     : act,
+    \ }
+  
+  function env.get(temp_file) dict
+    let temp_file = a:temp_file
+    let code      = self.return_code
+
+    let act       = self.act
+  
+    if filereadable(a:temp_file)
+      let out = readfile(a:temp_file)
+      let stl_add = [
+          \ '[ %3* act = '.act.' %0* ]',
+          \ ]
+      let cmds_after = [] 
+      
+      call base#buf#open_split({ 
+        \  'lines'      : out,
+        \  'stl_add'    : stl_add,
+        \  'cmds_after' : cmds_after,
+        \  })
+    endif
+  endfunction
+  
+  call asc#run({ 
+    \  'cmd' : cmd, 
+    \  'Fn'  : asc#tab_restore(env) 
+    \  })
+
 endf
 
 function! projs#bld#do (...)
