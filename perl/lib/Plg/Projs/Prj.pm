@@ -12,6 +12,8 @@ use File::Basename qw(basename dirname);
 use File::Spec::Functions qw(catfile);
 use Data::Dumper qw(Dumper);
 
+use File::Find qw(find);
+
 use Base::XML::Dict qw(xml2dict);
 use XML::LibXML::Cache;
 
@@ -72,6 +74,7 @@ sub prj_load_xml {
     my ($self) = @_;
     
     my $proj = $self->{proj};
+    my $root = $self->{root};
 
     my $xfile = $self->_prj_xfile;
     unless (-e $xfile) {
@@ -85,7 +88,29 @@ sub prj_load_xml {
 
     my $pl = xml2dict($dom, attr => '');
     $self->{cnf} = $pl->{$proj} || {};
-    $self->{trg_list} = $self->_val_list_ref_('cnf targets');
+
+    my $include = $self->_val_list_ref_('cnf targets include');
+    my $exclude = $self->_val_list_ref_('cnf targets exclude');
+
+    my @t;
+    my $pat = qr/^$proj\.bld\.(.*)\.xml$/;
+    find({ 
+        wanted => sub { 
+            return unless /$pat/;
+            push @t,$1;
+        } 
+    },$self->{root}
+    );
+    my $inc_all = 0;
+    $inc_all = grep { /^_all_$/ } @$include ? 1 : 0;
+    $inc_all = 0 if @$exclude;
+
+    my %include = map { $_ => 1 } @$include;
+    my %exclude = map { $_ => 1 } @$exclude;
+    unless ($inc_all) {
+        @t = grep { $include{$_} && !$exclude{$_} } @t;
+    }
+    $self->{trg_list} = [@t] if $inc_all;
 
     return $self;
 }

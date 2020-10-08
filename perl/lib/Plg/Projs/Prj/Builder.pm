@@ -129,10 +129,10 @@ sub _config_set {
 sub print_help {
     my ($bld) = @_;
 
-    my @acts = sort keys %{$bld->{maps_act} || {}};
+    my @acts   = sort keys %{$bld->{maps_act} || {}};
     my $acts_s = join(" ",@acts);
 
-    my $trg_list = $bld->{trg_list} || [];
+    my $trg_list   = $bld->{trg_list} || [];
     my $trg_list_s = join(" ",@$trg_list);
 
     print qq{
