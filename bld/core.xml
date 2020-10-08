@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<bld>
+  <tex_exe>pdflatex</tex_exe>
+  <vars>
+    <pagestyle>fancy</pagestyle>
+  </vars>
+  <defs>
+    do_ind_titletoc
+  </defs>
+  <preamble>
+    <langs main="russian">
+      english
+      russian
+    </langs>
+    <index>
+        <ind name="" />
+
+    </index>
+  </preamble>
+  <sii>
+    <insert titletoc="1" hyperlinks="1" />
+    <scts>
+      <sct name="preamble">
+        <contents>
+          @doc @ii @setcounter @perl
+        </contents>
+        <doc class="extreport" opts="a4paper,11pt" />
+        <ii>
+          preamble.packages
+          preamble.patches
+          preamble.acrobat_menu
+          preamble.index
+          <!--preamble.titlesec-->
+          preamble.filecontents
+        </ii>
+        <setcounter secnumdepth="0"/>
+        <perl>
+          '\relax';
+        </perl>
+      </sct>
+      <sct name="preamble.index">
+        <contents>
+          @makeindex
+        </contents>
+      </sct>
+      <sct name="index">
+        <contents>
+          @txt.hdr
+          @txt.ptc.start @printindex @txt.ptc.stop
+        </contents>
+        <txt>
+          <hdr>
+              \clearpage
+              \phantomsection
+              \begin{center}
+                {\Huge\bfseries \indicesname}\par
+                \hyperlink{tabcont}{\contentsname}
+              \end{center}
+              \addcontentsline{toc}{part}{Указатели}
+              \hypertarget{indices}{}
+          </hdr>
+          <ptc>
+            <start>
+              @ifdef{do_ind_titletoc}
+                \startcontents[indices]
+                \printcontents[indices]{l}{1}{\addtocontents{ptc}{\setcounter{tocdepth}{1}}}
+              @fi
+            </start>
+            <stop>
+              @ifdef{do_ind_titletoc}
+                \stopcontents[indices]
+              @fi
+            </stop>
+          </ptc>
+        </txt>
+      </sct>
+      <sct name="preamble.patches">
+        <contents>
+          @input
+        </contents>
+        <input>
+          src.preamble.patches.hyperref
+          src.preamble.patches.sections
+          src.preamble.patches.toc
+        </input>
+      </sct>
+      <sct name="preamble.filecontents">
+        <contents>
+          @input
+        </contents>
+        <input>
+            src.preamble.filecontents.xdy
+            src.preamble.filecontents.index_eng_xdy
+            src.preamble.filecontents.index_rus_xdy
+        </input>
+      </sct>
+      <sct name="preamble.acrobat_menu">
+        <contents>
+          @pkg @txt
+        </contents>
+        <txt>
+          \pagestyle{@var{pagestyle}} 
+
+          %\cfoot{\NavigationBar} 
+          \chead{\NavigationBar} 
+
+          <!--\IfLanguageName{english}{} -->
+            \def\NavigationBar{% 
+                \Acrobatmenu{PrevPage}{Previous}~ 
+                \Acrobatmenu{NextPage}{Next}~ 
+                \Acrobatmenu{FirstPage}{First}~ 
+                \Acrobatmenu{LastPage}{Last}~ 
+                \Acrobatmenu{GoBack}{Back}~ 
+                \Acrobatmenu{Quit}{Quit}% 
+            }
+        </txt>
+        <pkg>
+          <pack_list>
+            fancyhdr
+          </pack_list>
+        </pkg>
+      </sct>
+      <sct name="preamble.packages.xelatex">
+        <contents>
+          \ifxetex @pkg @txt \fi
+        </contents>
+        <txt>
+          \setotherlanguage{english}
+          \setmainlanguage{russian}
+          %\setotherlanguage{churchslavonic}
+          
+          \setkeys{russian}{babelshorthands=true}
+          
+          \setmainfont{Times New Roman}
+          \setromanfont{Times New Roman} 
+          
+          \setsansfont{Arial} 
+          \setmonofont{Courier New} 
+          
+          \newfontfamily{\cyrillicfont}{Times New Roman} 
+          \newfontfamily{\cyrillicfontrm}{Times New Roman}
+          \newfontfamily{\cyrillicfonttt}{Courier New}
+          \newfontfamily{\cyrillicfontsf}{Arial}
+          
+          \addto\captionsrussian{%
+            \renewcommand{\figurename}{Рис.}%
+            \renewcommand{\tablename}{Табл.}%
+          }
+        </txt>
+        <pkg>
+          <pack_list>
+             xltxtra
+             polyglossia
+          </pack_list>
+        </pkg>
+      </sct>
+      <sct name="preamble.packages.pdflatex">
+        <contents>
+          \ifpdf @pkg \fi
+        </contents>
+        <pkg>
+          <pack_list>
+             fontenc
+             inputenc
+             babel
+          </pack_list>
+          <pack_opts>
+            <fontenc>
+             OT1,T2A,T3
+            </fontenc>
+            <babel>
+              english
+              russian
+            </babel>
+            <inputenc>
+              utf8
+            </inputenc>
+          </pack_opts>
+        </pkg>
+      </sct>
+      <sct name="preamble.packages">
+        <contents>
+          @pkg @ii
+        </contents>
+        <ii>
+          preamble.packages.pdflatex
+          preamble.packages.xelatex
+        </ii>
+        <pkg>
+          <pack_list>
+             ifxetex ifpdf iflang ifthen
+
+             geometry
+
+             xparse
+             titletoc tocloft
+
+             color xcolor colortbl
+
+             graphicx tikz pgffor
+
+             imakeidx
+             hyperref bookmark
+
+             etoolbox
+             adjustbox
+             longtable
+             projs
+             multicol
+             filecontents
+             datetime2
+             mathtext
+             nameref
+          </pack_list>
+          <pack_opts>
+            <datetime2>
+             useregional
+            </datetime2>
+            <tocloft>
+             titles
+            </tocloft>
+            <imakeidx>
+             xindy
+            </imakeidx>
+            <hyperref>
+             colorlinks=true
+             linktoc=all
+             linkcolor=blue
+             letterpaper
+             unicode
+             linktocpage
+             bookmarksdepth=subparagraph
+             bookmarksnumbered=true
+            </hyperref>
+            <geometry>
+                hmargin={1cm,1cm}
+                vmargin={2cm,2cm}
+                centering
+            </geometry>
+            <adjustbox>
+             export
+            </adjustbox>
+          </pack_opts>
+        </pkg>
+      </sct>
+    </scts>
+    <generate>
+      <on>
+        index
+
+        preamble
+        preamble.packages
+        preamble.packages.xelatex
+        preamble.packages.pdflatex
+
+        preamble.patches
+        preamble.index
+
+        preamble.acrobat_menu
+        preamble.filecontents
+      </on>
+    </generate>
+  </sii>
+  <opts_maker>
+    <skip get_opt="1" />
+    <load_dat ii_include="0" ii_exclude="1" />
+    <join_lines>
+      <include_below>
+        section
+      </include_below>
+    </join_lines>
+    <sections>
+      <include>
+        _base_
+       </include>
+      <include_with_children>
+        preamble
+      </include_with_children>
+      <ins_order>
+         hyperlinks
+         titletoc
+      </ins_order>
+      <generate>
+      </generate>
+      <append>
+        <each>
+        </each>
+        <only>
+          <defs>
+          </defs>
+        </only>
+      </append>
+    </sections>
+  </opts_maker>
+</bld>

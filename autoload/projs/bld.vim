@@ -94,6 +94,8 @@ function! projs#bld#do (...)
     return
   endif
 
+  call projs#bld#make_secs()
+
   let sub = printf('projs#bld#do#%s', act)
 
   exe printf('call %s()',sub)
@@ -104,7 +106,7 @@ function! projs#bld#make_secs ()
 
   let scs = base#varget('projs_bld_compile_secs',[])
   let o = {
-      \ 'git_add' : 1,
+      \ 'git_add' : 0,
       \ }
 
   for s in scs
