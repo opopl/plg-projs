@@ -7,7 +7,9 @@ use strict;
 use warnings;
 
 sub _def_sechyperlinks {
-    my ($self) = @_;
+    my ($bld) = @_;
+
+    return [] unless $bld->_val_(qw( sii insert hyperlinks ));
 
     my $def = q{
 \def\indicesname{Указатели}
