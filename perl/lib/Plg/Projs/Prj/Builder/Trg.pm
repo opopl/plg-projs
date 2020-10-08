@@ -119,6 +119,15 @@ sub _trg_data {
     return $h_bld;
 }
 
+sub xml_load_core {
+    my ($bld, $ref) = @_;
+
+    $ref ||= {};
+    my $target = $bld->_opt_($ref,'target');
+
+    return $bld;
+}
+
 sub trg_load_xml {
     my ($bld, $ref) = @_;
 
@@ -142,10 +151,18 @@ sub _trg_xfile {
 
     $target //= $bld->{target};
 
-    my $proj = $bld->{proj};
-    my $root = $bld->{root};
+    my ($proj, $root) = @$bld{qw(proj root)};
+    my $xfile;
 
-    my $xfile = catfile($root,sprintf('%s.bld.%s.xml',$proj, $target));
+    for($target){
+        /^core$/ && do {
+            $xfile = catfile($root,qw( xml bld core.xml ));
+            next;
+        };
+
+        $xfile = catfile($root,sprintf('%s.bld.%s.xml',$proj, $target));
+        last;
+    }
     return $xfile;
 }
 

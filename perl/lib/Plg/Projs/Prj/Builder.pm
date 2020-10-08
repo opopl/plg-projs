@@ -80,6 +80,7 @@ sub init {
         ->get_act
         ->get_opt
         ->set_target
+        ->trg_load_xml({ 'target' => 'core' })
         ->trg_load_xml
         ->trg_apply
         ->process_config
