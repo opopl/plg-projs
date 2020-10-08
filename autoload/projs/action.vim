@@ -1192,14 +1192,14 @@ function! projs#action#bld_compile_Fc (self,temp_file)
     exe 'cgetfile ' . a:temp_file
 
     let err = getqflist()
-		let jfile = fnamemodify(jnd_tex,':t')
-		let jdir  = fnamemodify(jnd_tex,':h')
-		for e in err
-			unlet e.bufnr
-			call extend(e,{ 'filename' : jfile })
-		endfor
-		exe 'cd ' . jdir
-		call setqflist(err)
+    let jfile = fnamemodify(jnd_tex,':t')
+    let jdir  = fnamemodify(jnd_tex,':h')
+    for e in err
+      unlet e.bufnr
+      call extend(e,{ 'filename' : jfile })
+    endfor
+    exe 'cd ' . jdir
+    call setqflist(err)
     if len(err)
       let ok = 0
     endif
@@ -1323,11 +1323,8 @@ function! projs#action#async_build_bare (...)
 
   let cmd = ''
 
-  if has('win32')
-    let cmd = join([ 'bb_tex.bat', proj, '-c bare' ], ' ' )
-  elseif has('mac') || has('unix')
-    let cmd = join([ 'bb_tex', proj, '-c bare' ], ' ' )
-  endif
+  let bat = has('win32') ? 'bb_tex.bat' : 'bb_tex.sh'
+  let cmd = join([ bat, proj, '-c bare' ], ' ' )
   
   let env = {
     \ 'proj'  : proj,

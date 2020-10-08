@@ -13,8 +13,7 @@
       russian
     </langs>
     <index>
-        <ind name="" />
-
+      <ind name="" title="" />
     </index>
   </preamble>
   <sii>

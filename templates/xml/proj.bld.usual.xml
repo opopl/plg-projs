@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bld>
   <tex_exe>pdflatex</tex_exe>
-  <insert titletoc="1" hyperlinks="1" />
+  <sii>
+    <insert titletoc="1" hyperlinks="1" />
+  </sii>
   <opts_maker>
     <skip get_opt="1" />
     <load_dat ii_include="1" ii_exclude="1" />

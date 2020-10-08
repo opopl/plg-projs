@@ -156,7 +156,7 @@ sub _trg_xfile {
 
     for($target){
         /^core$/ && do {
-            $xfile = catfile($root,qw( xml bld core.xml ));
+            $xfile = catfile($ENV{PLG},qw( bld core.xml ));
             next;
         };
 
