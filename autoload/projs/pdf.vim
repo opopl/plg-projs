@@ -1,10 +1,65 @@
 
+
+function! projs#pdf#invoke (...)
+  let act = get(a:000,0,'')
+
+  let acts = base#varget('projs_opts_PrjPdf',[])
+  let acts = sort(acts)
+
+  let proj = projs#proj#name()
+
+  let s:obj = { 'proj' : proj }
+  function! s:obj.init (...) dict
+      let proj = self.proj
+      let hl = 'WildMenu'
+      call matchadd(hl,'\s\+'.proj.'\s\+')
+      call matchadd(hl,proj)
+  endfunction
+    
+  let Fc = s:obj.init
+
+  if ! strlen(act)
+    let desc = base#varget('projs_desc_PrjPdf',{})
+    let info = []
+    for act in acts
+      call add(info,[ act, get(desc,act,'') ])
+    endfor
+    let lines = [ 
+      \ 'Current project:' , "\t" . proj,
+      \ 'Possible PrjPdf actions: ' 
+      \ ]
+
+    call extend(lines, pymy#data#tabulate({
+      \ 'data'    : info,
+      \ 'headers' : [ 'act', 'description' ],
+      \ }))
+
+    call base#buf#open_split({ 
+      \ 'lines'    : lines ,
+      \ 'cmds_pre' : ['resize 99'] ,
+      \ 'Fc'       : Fc,
+      \ })
+    return
+  endif
+
+  let sub = printf('projs#pdf#invoke#%s', act)
+  exe printf('call %s()',sub)
+
+endf
+
 if 0
   Usage:
      call projs#pdf#view ()
+     call projs#pdf#view ('',VIEWER)
+     call projs#pdf#view ('','',TYPE)
+
+     call projs#pdf#view (PROJ, VIEWER, TYPE)
 
      call projs#pdf#view ('','evince')
      call projs#pdf#view ('','okular')
+
+     call projs#pdf#view ('','okular','bare')
+     call projs#pdf#view ('','okular','bld')
 
      call projs#pdf#view (proj)
   
@@ -24,7 +79,10 @@ function! projs#pdf#view (...)
   let viewer_id = get(a:000,1,'evince')
   let viewer    = base#exefile#path(viewer_id)
 
-  let pdf_files = projs#pdf#path({ 'proj' : proj })
+  let type      = get(a:000,2,'bld')
+
+  let pdf_files = projs#pdf#path({ 
+    \ 'proj' : proj })
 
   if !len(pdf_files)
     let msg = 'PDF files NOT READABLE!'

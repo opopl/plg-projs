@@ -59,13 +59,25 @@ function! projs#bld#do (...)
 
   let acts = base#varget('projs_opts_BLD',[])
   let acts = sort(acts)
+
+  let proj = projs#proj#name()
+
+  let s:obj = { 'proj' : proj }
+  function! s:obj.init (...) dict
+      let proj = self.proj
+      let hl = 'WildMenu'
+      call matchadd(hl,'\s\+'.proj.'\s\+')
+      call matchadd(hl,proj)
+  endfunction
+    
+  let Fc = s:obj.init
+
   if ! strlen(act)
     let desc = base#varget('projs_desc_BLD',{})
     let info = []
     for act in acts
       call add(info,[ act, get(desc,act,'') ])
     endfor
-    let proj = projs#proj#name()
     let lines = [ 
       \ 'Current project:' , "\t" . proj,
       \ 'Possible BLD actions: ' 
@@ -75,16 +87,6 @@ function! projs#bld#do (...)
       \ 'data'    : info,
       \ 'headers' : [ 'act', 'description' ],
       \ }))
-
-    let s:obj = { 'proj' : proj }
-    function! s:obj.init (...) dict
-      let proj = self.proj
-      let hl = 'WildMenu'
-      call matchadd(hl,'\s\+'.proj.'\s\+')
-      call matchadd(hl,proj)
-    endfunction
-    
-    let Fc = s:obj.init
 
     call base#buf#open_split({ 
       \ 'lines'    : lines ,

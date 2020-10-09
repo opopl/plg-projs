@@ -27,6 +27,10 @@ function! projs#complete#prjmake (...)
   return projs#complete#vars([ 'prjmake_opts' ])
 endfunction
 
+function! projs#complete#prjpdf (...)
+  return projs#complete#vars([ 'opts_PrjPdf' ])
+endfunction
+
 function! projs#complete#projsload (...)
  let s  = ''
  let s .= ' tex'
