@@ -111,14 +111,6 @@ sub _line_process_pat_ii {
 
     return $mkr unless $inc;
 
-	my @prepend = $mkr->_line_plus($ii_sec,'prepend');
-	push @$lines, @prepend;
-
-	if (@prepend) {
-		print Dumper(\@prepend) . "\n";
-		exit 1;
-	}
-
     my @ii_lines = $mkr->_join_lines($ii_sec,{ 
         proj           => $proj,
         ii_include_all => $iall,
@@ -132,8 +124,6 @@ sub _line_process_pat_ii {
         @ii_lines
     ;
 
-	my @append = $mkr->_line_plus($ii_sec,'append');
-	push @$lines, @append;
 
     return $mkr;
 }
@@ -141,7 +131,7 @@ sub _line_process_pat_ii {
 sub _line_plus {
 	my ($mkr, $ii_sec, $plus) = @_;
 		
-    my $sub = $mkr->_val_(printf('sections %s only',$plus),$ii_sec);
+    my $sub = $mkr->_val_(sprintf('sections %s only',$plus),$ii_sec);
 	return () unless $sub;
 	my @lines;
 
