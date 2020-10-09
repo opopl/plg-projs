@@ -8,6 +8,13 @@ function! projs#pdf#invoke (...)
 
   let proj = projs#proj#name()
 
+  let fmt_sub = 'projs#pdf#invoke#%s'
+  let front = [
+      \ 'Current project:' , "\t" . proj,
+      \ 'Possible PrjPdf actions: ' 
+      \ ]
+  let desc = base#varget('projs_desc_PrjPdf',{})
+
   let s:obj = { 'proj' : proj }
   function! s:obj.init (...) dict
       let proj = self.proj
@@ -18,32 +25,14 @@ function! projs#pdf#invoke (...)
     
   let Fc = s:obj.init
 
-  if ! strlen(act)
-    let desc = base#varget('projs_desc_PrjPdf',{})
-    let info = []
-    for act in acts
-      call add(info,[ act, get(desc,act,'') ])
-    endfor
-    let lines = [ 
-      \ 'Current project:' , "\t" . proj,
-      \ 'Possible PrjPdf actions: ' 
-      \ ]
-
-    call extend(lines, pymy#data#tabulate({
-      \ 'data'    : info,
-      \ 'headers' : [ 'act', 'description' ],
-      \ }))
-
-    call base#buf#open_split({ 
-      \ 'lines'    : lines ,
-      \ 'cmds_pre' : ['resize 99'] ,
-      \ 'Fc'       : Fc,
-      \ })
-    return
-  endif
-
-  let sub = printf('projs#pdf#invoke#%s', act)
-  exe printf('call %s()',sub)
+  call base#util#split_acts({
+    \ 'act'     : act,
+    \ 'acts'    : acts,
+    \ 'desc'    : desc,
+    \ 'front'   : front,
+    \ 'fmt_sub' : fmt_sub,
+    \ 'Fc'      : Fc,
+    \ })
 
 endf
 

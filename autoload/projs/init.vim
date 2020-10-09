@@ -189,7 +189,7 @@ function! projs#init#cmds (...)
   command! -nargs=* -complete=custom,projs#complete            PrjNew
     \ call projs#new(<f-args>) 
   
-"""PrjPdfView
+"""PrjPdf
   command! -nargs=* -complete=custom,projs#complete#prjpdf     PrjPdf
     \ call projs#pdf#invoke(<f-args>) 
   
