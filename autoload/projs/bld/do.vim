@@ -12,6 +12,12 @@ function! projs#bld#do#pdf_view ()
 
 endfunction
 
+function! projs#bld#do#jnd_view ()
+  let sec = printf('_tex_jnd_')
+  call projs#sec#open_load_buf(sec)
+
+endfunction
+
 function! projs#bld#do#view_trg ()
   let trg = projs#bld#trg#choose()
 
