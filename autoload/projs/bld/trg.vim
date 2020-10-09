@@ -8,15 +8,15 @@ function! projs#bld#trg#list ()
     \ "split_output" : 0,
     \ })
   let targets    = base#varget('sysout',[])
-	return targets
-	
+  return targets
+  
 endfunction
 
 function! projs#bld#trg#choose ()
 
   let targets    = projs#bld#trg#list()
 
-	let target = ''
+  let target = ''
   if len(targets) == 1
     let target = remove(targets,0)
   else
@@ -26,6 +26,6 @@ function! projs#bld#trg#choose ()
     endw
   endif
 
-	return target
+  return target
 
 endfunction

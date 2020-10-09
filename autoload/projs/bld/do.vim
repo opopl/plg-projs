@@ -13,6 +13,12 @@ function! projs#bld#do#pdf_view ()
 endfunction
 
 function! projs#bld#do#view_trg ()
+  let trg = projs#bld#trg#choose()
+
+  let sec = printf('_bld.%s', trg)
+  call projs#sec#open_load_buf(sec)
+
+endfunction
 
 function! projs#bld#do#dump_bld ()
   let proj   = projs#proj#name()
