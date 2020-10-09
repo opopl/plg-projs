@@ -4,7 +4,6 @@ function! projs#pdf#invoke (...)
   let act = get(a:000,0,'')
 
   let acts = base#varget('projs_opts_PrjPdf',[])
-  let acts = sort(acts)
 
   let proj = projs#proj#name()
 

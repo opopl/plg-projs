@@ -55,12 +55,20 @@ function! projs#bld#run (...)
 endf
 
 function! projs#bld#do (...)
-  let act = get(a:000,0,'')
+  let act  = get(a:000,0,'')
 
   let acts = base#varget('projs_opts_BLD',[])
-  let acts = sort(acts)
 
   let proj = projs#proj#name()
+
+  call projs#bld#make_secs()
+
+  let fmt_sub = 'projs#bld#do#%s'
+  let front = [
+      \ 'Current project:' , "\t" . proj,
+      \ 'Possible BLD actions: ' 
+      \ ]
+  let desc = base#varget('projs_desc_BLD',{})
 
   let s:obj = { 'proj' : proj }
   function! s:obj.init (...) dict
@@ -72,35 +80,14 @@ function! projs#bld#do (...)
     
   let Fc = s:obj.init
 
-  if ! strlen(act)
-    let desc = base#varget('projs_desc_BLD',{})
-    let info = []
-    for act in acts
-      call add(info,[ act, get(desc,act,'') ])
-    endfor
-    let lines = [ 
-      \ 'Current project:' , "\t" . proj,
-      \ 'Possible BLD actions: ' 
-      \ ]
-
-    call extend(lines, pymy#data#tabulate({
-      \ 'data'    : info,
-      \ 'headers' : [ 'act', 'description' ],
-      \ }))
-
-    call base#buf#open_split({ 
-      \ 'lines'    : lines ,
-      \ 'cmds_pre' : ['resize 99'] ,
-      \ 'Fc'       : Fc,
-      \ })
-    return
-  endif
-
-  call projs#bld#make_secs()
-
-  let sub = printf('projs#bld#do#%s', act)
-
-  exe printf('call %s()',sub)
+  call base#util#split_acts({
+    \ 'act'     : act,
+    \ 'acts'    : acts,
+    \ 'desc'    : desc,
+    \ 'front'   : front,
+    \ 'fmt_sub' : fmt_sub,
+    \ 'Fc'      : Fc,
+    \ })
 
 endfunction
 
