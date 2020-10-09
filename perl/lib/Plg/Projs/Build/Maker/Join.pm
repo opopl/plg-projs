@@ -290,10 +290,10 @@ sub _ii_base {
 
     my @base;
     push @base,
-        qw(body preamble index bib),
+        qw( body preamble index bib ),
         @base_preamble,
-        qw(titlepage),
-        qw(defs),
+        qw( titlepage ),
+        qw( defs ),
         qw( listfigs listtabs ),
         qw(tabcont),
         ;

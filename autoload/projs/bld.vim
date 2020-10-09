@@ -31,11 +31,12 @@ function! projs#bld#run (...)
     let code      = self.return_code
 
     let act       = self.act
+    let proj      = self.proj
   
     if filereadable(a:temp_file)
       let out = readfile(a:temp_file)
       let stl_add = [
-          \ '[ %3* act = '.act.' %0* ]',
+          \ '[ %3* act = '.act.' %1* proj = '.proj.' %0* ]',
           \ ]
       let cmds_after = [] 
       
