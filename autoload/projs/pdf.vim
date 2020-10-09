@@ -9,6 +9,9 @@ function! projs#pdf#invoke (...)
 
   let fmt_sub = 'projs#pdf#invoke#%s'
   let front = [
+      \ 'See also:' ,
+      \ '   projs#pdf#invoke' ,
+      \ '   projs#pdf#invoke#bld_view' ,
       \ 'Current project:' , "\t" . proj,
       \ 'Possible PrjPdf actions: ' 
       \ ]

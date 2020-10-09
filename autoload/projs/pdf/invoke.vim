@@ -1,8 +1,8 @@
 
 
 if 0
-	called by
-		projs#pdf#invoke
+  called by
+    projs#pdf#invoke
 endif
 
 function! projs#pdf#invoke#bld_view (...)
