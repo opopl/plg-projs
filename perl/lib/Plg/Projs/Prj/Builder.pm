@@ -248,7 +248,7 @@ sub init_maker {
 
     local @ARGV = ();
 
-    my $om = $bld->_trg_opts_maker();
+    my $om = $bld->_val_('opts_maker');
     #my $y = XMLout({ opts_maker => $om }, RootName => 'bld' );
     #print $y . "\n";
     #exit;

@@ -106,12 +106,8 @@ sub _join_lines {
 
     my $sect;
 
-	my @prepend = $mkr->_line_plus($sec,'prepend');
-	push @lines, @prepend;
-	if (@prepend) {
-		print Dumper(\@prepend) . "\n";
-		exit 1;
-	}
+    my @prepend = $mkr->_line_plus($sec,'prepend');
+    push @lines, @prepend;
 
     foreach(@f_lines) {
         chomp;
@@ -193,8 +189,8 @@ sub _join_lines {
     }
     push @lines, @at_end;
 
-	my @append = $mkr->_line_plus($sec,'append');
-	push @lines, @append;
+    my @append = $mkr->_line_plus($sec,'append');
+    push @lines, @append;
 
     if ($sec eq '_main_') {
         write_file($jfile,join("\n",@lines) . "\n");

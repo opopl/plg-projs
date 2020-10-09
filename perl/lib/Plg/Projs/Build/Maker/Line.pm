@@ -129,9 +129,9 @@ sub _line_process_pat_ii {
 }
 
 sub _line_plus {
-	my ($mkr, $ii_sec, $plus) = @_;
+	my ($mkr, $sec, $plus) = @_;
 		
-    my $sub = $mkr->_val_(sprintf('sections %s only',$plus),$ii_sec);
+    my $sub = $mkr->_val_(sprintf('sections %s only',$plus),$sec);
 	return () unless $sub;
 	my @lines;
 
@@ -143,8 +143,10 @@ sub _line_plus {
     } elsif (! ref $sub) {
         @$a_lines = str_split_sn($sub);
     }
-
-    push @lines, '%% ' . $plus, @$a_lines;
+	
+	if (@$a_lines) {
+    	push @lines, '%% ' . $plus, @$a_lines ;
+	}
 
 	return @lines;
 }
