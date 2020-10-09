@@ -3,6 +3,8 @@ package Plg::Projs::Prj::Builder::Gen;
 
 use utf8;
 
+binmode STDOUT,':encoding(utf8)';
+
 use strict;
 use warnings;
 

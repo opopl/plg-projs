@@ -295,7 +295,7 @@ sub _ii_base {
         qw( titlepage ),
         qw( defs ),
         qw( listfigs listtabs ),
-        qw(tabcont),
+        qw( tabcont ),
         ;
     return @base;
 }

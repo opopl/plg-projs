@@ -5,6 +5,10 @@ use strict;
 use warnings;
 use Data::Dumper qw(Dumper);
 
+use Base::String qw(
+	str_split_sn
+);
+
 =head3 _line_process_pat_sect
 
     Used in 
@@ -107,6 +111,14 @@ sub _line_process_pat_ii {
 
     return $mkr unless $inc;
 
+	my @prepend = $mkr->_line_plus($ii_sec,'prepend');
+	push @$lines, @prepend;
+
+	if (@prepend) {
+		print Dumper(\@prepend) . "\n";
+		exit 1;
+	}
+
     my @ii_lines = $mkr->_join_lines($ii_sec,{ 
         proj           => $proj,
         ii_include_all => $iall,
@@ -120,21 +132,31 @@ sub _line_process_pat_ii {
         @ii_lines
     ;
 
-    my $append = $mkr->_val_('sections append only',$ii_sec);
-    if ($append) {
-        my $a_lines = [];
-        if (ref $append eq 'CODE') {
-            $a_lines = $append->();
-        } elsif (ref $append eq 'ARRAY') {
-            $a_lines = $append;
-        } elsif (! ref $append) {
-            $a_lines = [ $append ];
-        }
-
-        push @$lines, '%% append', @$a_lines;
-    }
+	my @append = $mkr->_line_plus($ii_sec,'append');
+	push @$lines, @append;
 
     return $mkr;
+}
+
+sub _line_plus {
+	my ($mkr, $ii_sec, $plus) = @_;
+		
+    my $sub = $mkr->_val_(printf('sections %s only',$plus),$ii_sec);
+	return () unless $sub;
+	my @lines;
+
+    my $a_lines = [];
+    if (ref $sub eq 'CODE') {
+        $a_lines = $sub->();
+    } elsif (ref $sub eq 'ARRAY') {
+        $a_lines = $sub;
+    } elsif (! ref $sub) {
+        @$a_lines = str_split_sn($sub);
+    }
+
+    push @lines, '%% ' . $plus, @$a_lines;
+
+	return @lines;
 }
 
 

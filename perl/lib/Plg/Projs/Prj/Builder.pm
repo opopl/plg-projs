@@ -23,6 +23,7 @@ use base qw(
     Plg::Projs::Prj::Builder::Insert
     Plg::Projs::Prj::Builder::Sct
     Plg::Projs::Prj::Builder::Trg
+    Plg::Projs::Prj::Builder::Txt
 );
 
 use FindBin qw($Bin $Script);
@@ -82,13 +83,30 @@ sub init {
         ->trg_load_xml({ 'target' => 'core' })
         ->trg_load_xml
         ->trg_apply('core')
+        ->dump_bld('targets core opts_maker sections include')
         ->trg_apply
         ->process_config
-        ->init_maker
+        #->act_exe
+        #->init_maker
         ;
+        exit;
 
     return $bld;
 
+}
+
+sub act_exe {
+    my ($bld) = @_;
+
+    my $act     = $bld->{act};
+    my $act_cmd = $bld->{maps_act}->{$act} || '';
+
+
+    if (ref $act_cmd eq 'CODE') {
+        $act_cmd->();
+        exit 0;
+    }
+    return $bld;
 }
 
 sub set_target {
@@ -222,7 +240,7 @@ sub run {
 sub init_maker {
     my ($bld) = @_;
 
-    my $act = $bld->{act};
+    my $act     = $bld->{act};
     my $act_cmd = $bld->{maps_act}->{$act} || '';
 
     my $target = $bld->{target};
@@ -231,13 +249,6 @@ sub init_maker {
     my $pdf_name = join(".", $proj, $target);
 
     local @ARGV = ();
-    #print Dumper($bld->{opts_maker}) . "\n";
-    #exit;
-
-    if (ref $act_cmd eq 'CODE') {
-        $act_cmd->();
-        exit 0;
-    }
 
     my $om = $bld->_trg_opts_maker();
     #my $y = XMLout({ opts_maker => $om }, RootName => 'bld' );

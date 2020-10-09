@@ -68,6 +68,11 @@ sub trg_apply {
     my $ht = $bld->_val_('targets', $target);
     hash_apply($bld, $ht);
 
+    #if ($target eq 'core') {
+        #print Dumper($bld->_val_(' opts_maker sections include')) . "\n";
+        #exit;
+    #}
+
     return $bld;
 }
 
@@ -143,6 +148,7 @@ sub trg_load_xml {
 
     $bld->{'targets'}->{$target} = $ht;
 
+
     return $bld;
 }
 
@@ -156,7 +162,7 @@ sub _trg_xfile {
 
     for($target){
         /^core$/ && do {
-            $xfile = catfile($ENV{PLG},qw( bld core.xml ));
+            $xfile = catfile($ENV{PLG},qw( projs bld core.xml ));
             next;
         };
 

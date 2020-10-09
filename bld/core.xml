@@ -281,6 +281,15 @@
       </ins_order>
       <generate>
       </generate>
+      <prepend>
+			 <only>
+          <_main_>
+						\newif\ifDEBUG\DEBUGfalse
+						
+						\newif\ifcmt\cmtfalse
+          </_main_>
+        </only>
+			</prepend>
       <append>
         <each>
         </each>
