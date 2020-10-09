@@ -17,15 +17,7 @@ function! projs#pdf#invoke (...)
       \ ]
   let desc = base#varget('projs_desc_PrjPdf',{})
 
-  let s:obj = { 'proj' : proj }
-  function! s:obj.init (...) dict
-      let proj = self.proj
-      let hl = 'WildMenu'
-      call matchadd(hl,'\s\+'.proj.'\s\+')
-      call matchadd(hl,proj)
-  endfunction
-    
-  let Fc = s:obj.init
+  let Fc = projs#fc#match_proj({ 'proj' : proj })
 
   call base#util#split_acts({
     \ 'act'     : act,
@@ -44,36 +36,34 @@ if 0
      call projs#pdf#view ('',VIEWER)
      call projs#pdf#view ('','',TYPE)
 
-     call projs#pdf#view (PROJ, VIEWER, TYPE)
-
-     call projs#pdf#view ('','evince')
-     call projs#pdf#view ('','okular')
-
-     call projs#pdf#view ('','okular','bare')
-     call projs#pdf#view ('','okular','bld')
-
-     call projs#pdf#view (proj)
+     call projs#pdf#view ({ 
+        \ 'proj'   : PROJ,
+        \ 'viewer' : VIEWER,
+        \ 'type'   : TYPE 
+        \ })
   
   Used by:
-     PrjPdfView
+     PrjPdf
   
      PrjAct pdf_view
      projs#action#pdf_view
 endif
 
 function! projs#pdf#view (...)
+  let ref = get(a:000,0,{})
 
-  let proj_a = get(a:000,0,'')
+  let proj = projs#proj#name()
+  let proj = get(ref,'proj',proj)
 
-  let proj   = len(proj_a) ? proj_a : projs#proj#name()
-
-  let viewer_id = get(a:000,1,'evince')
+  let viewer_id = get(ref,'viewer','evince')
   let viewer    = base#exefile#path(viewer_id)
 
-  let type      = get(a:000,2,'bld')
+  let type  = get(ref,'type','bld')
 
   let pdf_files = projs#pdf#path({ 
-    \ 'proj' : proj })
+    \ 'proj' : proj ,
+    \ 'type' : type ,
+    \ })
 
   if !len(pdf_files)
     let msg = 'PDF files NOT READABLE!'
@@ -85,29 +75,40 @@ function! projs#pdf#view (...)
   endif
 
   let targets = []
-  let pat = printf('^%s\.\(.*\).pdf$',proj)
+  let pats = {
+    \ 'bld'  : printf('^%s\.\(.*\).pdf$',proj),
+    \ 'bare' : printf('^%s.pdf$',proj),
+    \ } 
 
-  let d_files = {}
-  for file in pdf_files
-    let file_b = fnamemodify(file,':t')
-    let t = substitute(file_b,pat,'\1','g')
-    if len(t)
-      call add(targets,t)
-      call extend(d_files,{ t : file })
-    endif
-  endfor
+  let pat = get(pats,type,'')
 
-  let target = '' 
-  if len(targets) == 1
-    let target = get(targets,0,'')
+  let pdf_file = ''
+  if type == 'bld'
+	  let d_files = {}
+	  for file in pdf_files
+	    let file_b = fnamemodify(file,':t')
+	    let t      = substitute(file_b,pat,'\1','g')
+
+	    if len(t)
+	      call add(targets,t)
+	      call extend(d_files,{ t : file })
+	    endif
+	  endfor
+	
+	  let target = '' 
+	  if len(targets) == 1
+	    let target = get(targets,0,'')
+	  endif
+	
+	  while !len(target)
+	    call base#varset('this',targets)
+	    let target = input('target:','','custom,base#complete#this')
+	  endw
+	
+	  let pdf_file = get(d_files,target,'')
+  elseif type == 'bare'
+    let pdf_file = get(pdf_files,0,'')
   endif
-
-  while !len(target)
-    call base#varset('this',targets)
-    let target = input('target:','','custom,base#complete#this')
-  endw
-
-  let pdf_file = get(d_files,target,'')
 
   let size = base#file#size(pdf_file)
   if !size

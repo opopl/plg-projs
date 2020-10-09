@@ -8,7 +8,7 @@ endfunction
 
 function! projs#bld#do#pdf_view ()
 
-  call projs#pdf#view()
+  call projs#pdf#view({ 'type' : 'bld' })
 
 endfunction
 

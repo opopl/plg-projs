@@ -70,16 +70,8 @@ function! projs#bld#do (...)
       \ ]
   let desc = base#varget('projs_desc_BLD',{})
 
-  let s:obj = { 'proj' : proj }
-  function! s:obj.init (...) dict
-      let proj = self.proj
-      let hl = 'WildMenu'
-      call matchadd(hl,'\s\+'.proj.'\s\+')
-      call matchadd(hl,proj)
-  endfunction
-    
-  let Fc = s:obj.init
-
+  let Fc = projs#fc#match_proj({ 'proj' : proj })
+  
   call base#util#split_acts({
     \ 'act'     : act,
     \ 'acts'    : acts,
