@@ -12,6 +12,8 @@ function! projs#bld#do#pdf_view ()
 
 endfunction
 
+function! projs#bld#do#view_trg ()
+
 function! projs#bld#do#dump_bld ()
   let proj   = projs#proj#name()
   let rootid = projs#rootid()
