@@ -18,10 +18,11 @@ endif
 function! projs#pdf#view (...)
 
   let proj_a = get(a:000,0,'')
-  let proj = len(proj_a) ? proj_a : projs#proj#name()
+
+  let proj   = len(proj_a) ? proj_a : projs#proj#name()
 
   let viewer_id = get(a:000,1,'evince')
-  let viewer  = base#exefile#path(viewer_id)
+  let viewer    = base#exefile#path(viewer_id)
 
   let pdf_files = projs#pdf#path({ 'proj' : proj })
 
@@ -75,6 +76,7 @@ function! projs#pdf#view (...)
 
     exe ec
     redraw!
+    call base#rdw_printf([ 'Opened PDF file: %s',pdf_file ],'WildMenu')
   endif
 endfunction
 

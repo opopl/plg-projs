@@ -6,6 +6,12 @@ function! projs#bld#do#show_trg ()
 
 endfunction
 
+function! projs#bld#do#pdf_view ()
+
+  call projs#pdf#view()
+
+endfunction
+
 function! projs#bld#do#dump_bld ()
   let proj   = projs#proj#name()
   let rootid = projs#rootid()
@@ -17,7 +23,7 @@ function! projs#bld#do#dump_bld ()
     \  '[dump_bld] path: ',
     \  ]
   let msg = join(msg_a,"\n")
-  let path = base#input_we(msg,'',{ })
+  let path = base#input(msg,'',{ })
 
   let opts = []
   if len(path)
