@@ -75,17 +75,18 @@ sub init {
 
     $bld
         ->inj_base
-        ->prj_load_xml
-        ->inj_targets
-        ->get_act
-        ->get_opt
-        ->set_target
-        ->trg_load_xml({ 'target' => 'core' })
-        ->trg_load_xml
-        ->trg_apply('core')
-        ->dump_bld('targets core opts_maker sections include')
-        ->trg_apply
-        ->process_config
+        #->prj_load_xml
+        #->inj_targets
+        #->get_act
+        #->get_opt
+#        ->set_target
+        #->trg_load_xml({ 'target' => 'core' })
+        #->trg_load_xml
+        #->trg_apply('core')
+        ##->dump_bld('targets core opts_maker sections include')
+        #->trg_apply
+        ##->dump_bld('targets core opts_maker sections include')
+        #->process_config
         #->act_exe
         #->init_maker
         ;
