@@ -947,8 +947,8 @@ function! projs#maps (...)
           \ }
 
     call extend(maps.nnoremap,{
-            \  ';v'    : 'call projs#pdf#view("","evince")',
-            \  ';k'    : 'call projs#pdf#view("","okular")',
+            \  ';v'    : 'call projs#pdf#view({ "viewer" : "evince" })',
+            \  ';k'    : 'call projs#pdf#view({ "okular" : "okular" })',
             \ })
 
     call base#varset('projs_maps',maps)
