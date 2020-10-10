@@ -29,6 +29,11 @@ sub _sct_lines {
 
     my @contents = d_str_split_sn($data,'contents');
     foreach (@contents) {
+###@zero
+        /^\@zero$/ && do {
+            push @lines,'';
+            next;
+        };
 ###@doc
         /^\@doc$/ && do {
             my $doc   = d_path($data,'doc');
