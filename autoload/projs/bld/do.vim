@@ -37,7 +37,17 @@ function! projs#bld#do#dump_bld ()
     \  '[dump_bld] path: ',
     \  ]
   let msg = join(msg_a,"\n")
-  let path = base#input(msg,'',{ })
+
+  let plist = 'projs_bld_dump_paths'
+
+  let paths = base#varget(plist,[])
+  call base#varset('this',paths)
+
+  let path = base#input(msg,'',{ 'complete' : 'custom,base#complete#this' })
+
+  call add(paths,path)
+  let paths = base#uniq(paths)
+  call base#varset(plist,paths)
 
   let opts = []
   if len(path)
