@@ -14,7 +14,8 @@ endfunction
 
 function! projs#bld#trg#choose ()
 
-  let targets    = projs#bld#trg#list()
+  let targets = projs#bld#trg#list()
+  let proj    = projs#proj#name()
 
   let target = ''
   if len(targets) == 1
