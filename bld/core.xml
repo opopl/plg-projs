@@ -251,10 +251,9 @@
         preamble.packages
         preamble.packages.xelatex
         preamble.packages.pdflatex
-
         preamble.patches
-        preamble.index
 
+        preamble.index
         preamble.acrobat_menu
         preamble.filecontents
       </on>

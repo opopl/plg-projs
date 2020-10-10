@@ -56,19 +56,21 @@ sub trg_inj_usual {
                hyperlinks => 1,
                titletoc   => 1,
             },
-            sct => [
+            scts => [
                 {
-                    name      => 'preamble',
-                    packages  => [qw()],
-                    pack_opts => {},
-                }
+                    name => 'preamble',
+                    pkg  => { 
+                        pack_opts => { },
+                        pack_list => '',
+                    }
+                },
             ],
             generate => {
-                on => [qw(
+                on => qq{
                    preamble.packages
                    preamble.packages.xelatex
                    preamble.packages.pdflatex
-                )]
+                }
             },
         },
         opts_maker => $om,

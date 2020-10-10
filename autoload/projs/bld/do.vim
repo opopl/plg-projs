@@ -26,7 +26,11 @@ function! projs#bld#do#view_trg ()
 
 endfunction
 
-function! projs#bld#do#dump_bld ()
+function! projs#bld#do#dump_sec ()
+
+endfunction
+
+function! projs#bld#do#dump ()
   let proj   = projs#proj#name()
   let rootid = projs#rootid()
 
