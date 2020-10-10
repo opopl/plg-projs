@@ -11,22 +11,7 @@ sub trg_inj_usual {
     my $bld = $self;
 
     my $om = {
-        skip => {
-            get_opt => 1,
-        },
-        join_lines   => {
-            include_below => [qw(section)]
-        },
-        # _ii_include
-        # _ii_exclude
-        load_dat => {
-            ii_include => 1,
-            ii_exclude => 1,
-        },
         sections => { 
-            include_with_children => [qw(
-                preamble
-            )],
             line_sub => sub {
                 my ($line,$r_sec) = @_;
     
@@ -34,12 +19,10 @@ sub trg_inj_usual {
     
                 return $line;
             },
-            ins_order => [qw( hyperlinks titletoc )],
             insert => {
                 titletoc   => sub { $bld->_insert_titletoc },
                 hyperlinks => sub { $bld->_insert_hyperlinks },
             },
-            generate => {},
             append => {
                 each => sub { },
                 only => {
@@ -51,28 +34,7 @@ sub trg_inj_usual {
 
     my $h = {
         tex_exe => 'pdflatex',
-        sii => {
-            insert => {
-               hyperlinks => 1,
-               titletoc   => 1,
-            },
-            scts => [
-                {
-                    name => 'preamble',
-                    pkg  => { 
-                        pack_opts => { },
-                        pack_list => '',
-                    }
-                },
-            ],
-            generate => {
-                on => qq{
-                   preamble.packages
-                   preamble.packages.xelatex
-                   preamble.packages.pdflatex
-                }
-            },
-        },
+        sii => {},
         opts_maker => $om,
     };
 
