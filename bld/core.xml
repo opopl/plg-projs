@@ -282,14 +282,14 @@
       <generate>
       </generate>
       <prepend>
-			 <only>
+       <only>
           <_main_>
-						\newif\ifDEBUG\DEBUGfalse
-						
-						\newif\ifcmt\cmtfalse
+            \newif\ifDEBUG\DEBUGfalse
+            
+            \newif\ifcmt\cmtfalse
           </_main_>
         </only>
-			</prepend>
+      </prepend>
       <append>
         <each>
         </each>
