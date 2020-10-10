@@ -117,21 +117,20 @@ sub _trg_data {
     my $dom = $bld->_trg_dom($ref);
     return unless $dom;
 
-    my $pl = xml2dict($dom, attr => '', array => [qw( scts )] );
+    my $pl = xml2dict($dom, 
+        attr    => '',
+        array   => [ qw( scts ) ],
+        txt_sub => sub {
+            my ($txt_ref) = @_; 
+            $bld->_txt_expand({ txt_ref => $txt_ref });
+        } 
+    );
 
     my $h_bld = $pl->{bld};
 
     return $h_bld;
 }
 
-sub xml_load_core {
-    my ($bld, $ref) = @_;
-
-    $ref ||= {};
-    my $target = $bld->_opt_($ref,'target');
-
-    return $bld;
-}
 
 sub trg_load_xml {
     my ($bld, $ref) = @_;
@@ -147,7 +146,6 @@ sub trg_load_xml {
     hash_apply($ht, $h_bld);
 
     $bld->{'targets'}->{$target} = $ht;
-
 
     return $bld;
 }

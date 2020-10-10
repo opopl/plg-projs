@@ -11,10 +11,23 @@ use Base::String qw(
     str_split_sn
 );
 
+=head3 _txt_expand
+
+    # Update SCALAR
+    $bld->_txt_expand({ txt => \$txt });
+
+    # Update ARRAY
+    $bld->_txt_expand({ txt_lines => \@txt_lines });
+
+=cut
+
 sub _txt_expand {
     my ($bld, $ref) = @_;
 
-    my $txt = $ref->{txt} || [];
+    my $txt_lines = $ref->{txt_lines} || [];
+    my $txt_ref   = $ref->{txt_ref};
+
+    @$txt_lines = split("\n",$$txt_ref) if $txt_ref;
     
     my $defs = $bld->_val_('defs');
     my %defs = map { $_ => 1 } str_split_sn($defs);
@@ -23,8 +36,8 @@ sub _txt_expand {
     my $if  = 0;
 
     my @expand;
-    while(@$txt){
-        local $_ = shift @$txt;
+    while(@$txt_lines){
+        local $_ = shift @$txt_lines;
 
         s/\@var\{(\w+)\}/$bld->_bld_var($1)/ge; 
         s/\@env\{(\w+)\}/$bld->_bld_env($1)/ge; 
@@ -45,7 +58,9 @@ sub _txt_expand {
 
         push @expand, $_ if $add;
     }
-    $txt = \@expand;
+    $txt_lines = \@expand;
+
+    $$txt_ref = join("\n",@$txt_lines) if $txt_ref;
 
     return $bld;
 }
