@@ -31,36 +31,24 @@ function! projs#bld#do#dump_sec ()
 endfunction
 
 function! projs#bld#do#dump ()
-  let proj   = projs#proj#name()
-  let rootid = projs#rootid()
 
-  let msg_a = [
-    \  "proj:   " . proj,  
-    \  "rootid: " . rootid,  
-    \  ' ',
-    \  '[dump_bld] path: ',
-    \  ]
-  let msg = join(msg_a,"\n")
-
-  let plist = 'projs_bld_dump_paths'
-
-  let paths = base#varget(plist,[])
-  call base#varset('this',paths)
-
-  let path = base#input(msg,'',{ 'complete' : 'custom,base#complete#this' })
-
-  call add(paths,path)
-  let paths = base#uniq(paths)
-  call base#varset(plist,paths)
+  let path = projs#bld#input_path()
 
   call projs#bld#run#dump_path({
     \ 'path' : path
     \ })
 
-
 endfunction
 
 function! projs#bld#do#core_dump ()
+
+  let path = base#input(msg,'',{ 'complete' : 'custom,base#complete#this' })
+
+  let path = printf('targets core ',path)
+  call projs#bld#run#dump_path({
+    \ 'path' : path
+    \ })
+
 
 endfunction
 

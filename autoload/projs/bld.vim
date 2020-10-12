@@ -8,19 +8,42 @@ function! projs#bld#run_Fc (self, temp_file)
     let act       = self.act
     let proj      = self.proj
   
-    if filereadable(a:temp_file)
-      let out = readfile(a:temp_file)
-      let stl_add = [
-          \ '[ %3* act = '.act.' %1* proj = '.proj.' %0* ]',
-          \ ]
-      let cmds_after = [] 
-      
-      call base#buf#open_split({ 
-        \  'lines'      : out,
-        \  'stl_add'    : stl_add,
-        \  'cmds_after' : cmds_after,
-        \  })
+    if !filereadable(a:temp_file)
+      return
     endif
+
+    let out = readfile(a:temp_file)
+    let stl_add = [
+        \ '[ %3* act = '.act.' %1* proj = '.proj.' %0* ]',
+        \ ]
+    let cmds_after = [] 
+    
+    call base#buf#open_split({ 
+      \  'lines'      : out,
+      \  'stl_add'    : stl_add,
+      \  'cmds_after' : cmds_after,
+      \  })
+
+endfunction
+
+function! projs#bld#input_path (...)
+  let proj   = projs#proj#name()
+  let rootid = projs#rootid()
+
+  let msg_a = [
+    \  "proj:   " . proj,  
+    \  "rootid: " . rootid,  
+    \  ' ',
+    \  '[dump_bld] path: ',
+    \  ]
+  let msg = join(msg_a,"\n")
+
+  let plist = 'projs_bld_dump_paths'
+
+  let path = base#input_hist(msg,'','projs_bld_dump_paths')
+
+  return path
+
 endf
 
 function! projs#bld#run (...)

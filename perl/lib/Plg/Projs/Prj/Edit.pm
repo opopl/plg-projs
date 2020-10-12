@@ -1,6 +1,13 @@
 
 package Plg::Projs::Prj::Edit;
 
+use utf8; 
+
+use Encode;
+binmode STDOUT, ":utf8";
+use open ':std', ':encoding(utf8)';
+
+
 use strict;
 use warnings;
 
@@ -14,9 +21,6 @@ use Data::Dumper qw(Dumper);
 
 use Base::Arg qw( hash_update );
 
-use utf8; 
-use Encode;
-binmode STDOUT, ":utf8";
 
 sub init {
     my ($self) = @_;
@@ -94,8 +98,16 @@ sub _sub_edit_line_replace {
     s/(\d+)—(\d+)/$1-$2/g;
     s/(\d+)–(\d+)/$1-$2/g;
 
+    s/^—(\s+)/---$1/g;
     s/(\s+)—(\s+)/$1---$2/g;
     s/(\d+)—(\d+)/$1-$2/g;
+
+    s/^─(\s+)/---$1/g;
+    s/(\s+)─\s*$/$1---/g;
+    s/(\s+)─(\s+)/$1---$2/g;
+    s/(\d+)─(\d+)/$1-$2/g;
+
+    s/^\s*\\(chapter|section|subsection|subsubsection|paragraph)\{"(.*)"\}/\\$1\{\\enquote{$2}\}/g;
 
     return $_;
 }
