@@ -7,6 +7,8 @@ function! projs#bld#run_Fc (self, temp_file)
 
     let act       = self.act
     let proj      = self.proj
+
+    let stl       = get(self,'stl',[])
   
     if !filereadable(a:temp_file)
       return
@@ -16,6 +18,7 @@ function! projs#bld#run_Fc (self, temp_file)
     let stl_add = [
         \ '[ %3* act = '.act.' %1* proj = '.proj.' %0* ]',
         \ ]
+    call extend(stl_add,stl)
     let cmds_after = [] 
     
     call base#buf#open_split({ 
@@ -54,6 +57,8 @@ function! projs#bld#run (...)
   let act  = get(ref,'act','')
   let opts = get(ref,'opts',[])
 
+  let stl  = get(ref,'stl',[])
+
   let proj = projs#proj#name()
   let root = projs#root()
 
@@ -72,6 +77,7 @@ function! projs#bld#run (...)
     \ 'root'    : root,
     \ 'cmd'     : cmd,
     \ 'act'     : act,
+    \ 'stl'     : stl,
     \ }
   
   function env.get(temp_file) dict
