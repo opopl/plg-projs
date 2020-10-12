@@ -35,16 +35,18 @@ function! projs#bld#do#dump ()
   let path = projs#bld#input_path()
 
   call projs#bld#run#dump_path({
-    \ 'path' : path
+    \ 'path' : path,
     \ })
 
 endfunction
 
 function! projs#bld#do#core_dump ()
 
-  let path = base#input(msg,'',{ 'complete' : 'custom,base#complete#this' })
+  let path = projs#bld#input_path({
+    \ 'hist_name' : 'projs_bld_dump_core'
+    \ })
 
-  let path = printf('targets core ',path)
+  let path = printf('targets core %s',path)
   call projs#bld#run#dump_path({
     \ 'path' : path
     \ })

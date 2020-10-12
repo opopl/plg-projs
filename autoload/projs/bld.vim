@@ -27,6 +27,10 @@ function! projs#bld#run_Fc (self, temp_file)
 endfunction
 
 function! projs#bld#input_path (...)
+  let ref = get(a:000,0,{})
+
+  let hist_name = get(ref,'hist','projs_bld_dump_paths')
+
   let proj   = projs#proj#name()
   let rootid = projs#rootid()
 
@@ -38,9 +42,7 @@ function! projs#bld#input_path (...)
     \  ]
   let msg = join(msg_a,"\n")
 
-  let plist = 'projs_bld_dump_paths'
-
-  let path = base#input_hist(msg,'','projs_bld_dump_paths')
+  let path = base#input_hist(msg,'',hist_name)
 
   return path
 
