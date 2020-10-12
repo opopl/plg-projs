@@ -4,3 +4,5 @@ view_trg
 jnd_view
 dump
 dump_sec
+trg_dump
+core_dump

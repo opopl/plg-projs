@@ -53,14 +53,24 @@ function! projs#bld#do#dump ()
   let paths = base#uniq(paths)
   call base#varset(plist,paths)
 
-  let opts = []
-  if len(path)
-    call extend(opts,[ '-d', shellescape(path) ])
-  endif
+  call projs#bld#run#dump_path({
+    \ 'path' : path
+    \ })
 
-  call projs#bld#run({
-      \ 'act'  : 'dump_bld',
-      \ 'opts' : opts,
-      \ })
+
+endfunction
+
+function! projs#bld#do#core_dump ()
+
+endfunction
+
+function! projs#bld#do#trg_dump ()
+  let proj   = projs#proj#name()
+  let rootid = projs#rootid()
+
+  let trg_list = projs#bld#trg#list()
+
+  let trg = projs#bld#trg#choose()
+
 
 endfunction

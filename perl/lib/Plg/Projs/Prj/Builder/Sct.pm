@@ -22,7 +22,7 @@ use Base::Data qw(
 sub _sct_lines {
     my ($bld, $sec) = @_;
 
-    my $data = $bld->_sct_data($sec);
+    my $data      = $bld->_sct_data($sec);
     my $pack_opts = d_path($data,'pkg pack_opts',{});
 
     my @lines;

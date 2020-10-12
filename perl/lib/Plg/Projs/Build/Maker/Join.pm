@@ -81,7 +81,6 @@ sub _join_lines {
                 my @gen = $gen->();
                 if (@gen) {
                     @f_lines = @gen;
-                    #print Dumper(\@f_lines) . "\n";
                     last;
                 }
             }

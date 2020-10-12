@@ -1,4 +1,27 @@
 
+function! projs#bld#run_Fc (self, temp_file)
+    let temp_file = a:temp_file
+    let self      = a:self
+
+    let code      = self.return_code
+
+    let act       = self.act
+    let proj      = self.proj
+  
+    if filereadable(a:temp_file)
+      let out = readfile(a:temp_file)
+      let stl_add = [
+          \ '[ %3* act = '.act.' %1* proj = '.proj.' %0* ]',
+          \ ]
+      let cmds_after = [] 
+      
+      call base#buf#open_split({ 
+        \  'lines'      : out,
+        \  'stl_add'    : stl_add,
+        \  'cmds_after' : cmds_after,
+        \  })
+    endif
+endf
 
 function! projs#bld#run (...)
   let ref  = get(a:000,0,{})
@@ -27,25 +50,7 @@ function! projs#bld#run (...)
     \ }
   
   function env.get(temp_file) dict
-    let temp_file = a:temp_file
-    let code      = self.return_code
-
-    let act       = self.act
-    let proj      = self.proj
-  
-    if filereadable(a:temp_file)
-      let out = readfile(a:temp_file)
-      let stl_add = [
-          \ '[ %3* act = '.act.' %1* proj = '.proj.' %0* ]',
-          \ ]
-      let cmds_after = [] 
-      
-      call base#buf#open_split({ 
-        \  'lines'      : out,
-        \  'stl_add'    : stl_add,
-        \  'cmds_after' : cmds_after,
-        \  })
-    endif
+    call projs#bld#run_Fc(self,a:temp_file)
   endfunction
   
   call asc#run({ 
