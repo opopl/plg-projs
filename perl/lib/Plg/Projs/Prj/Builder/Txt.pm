@@ -6,6 +6,7 @@ binmode STDOUT,':encoding(utf8)';
 
 use strict;
 use warnings;
+use Data::Dumper qw(Dumper);
 
 use Base::String qw(
     str_split_sn
@@ -14,7 +15,7 @@ use Base::String qw(
 =head3 _txt_expand
 
     # Update SCALAR
-    $bld->_txt_expand({ txt => \$txt });
+    $bld->_txt_expand({ txt_ref => \$txt_ref });
 
     # Update ARRAY
     $bld->_txt_expand({ txt_lines => \@txt_lines });
@@ -34,6 +35,10 @@ sub _txt_expand {
 
     my $add = 1;
     my $if  = 0;
+
+    #my $val = $bld->_val_('vars pagestyle') || '';
+	#print Dumper($val) . "\n";
+	#exit 1;
 
     my @expand;
     while(@$txt_lines){
@@ -58,7 +63,7 @@ sub _txt_expand {
 
         push @expand, $_ if $add;
     }
-    $txt_lines = \@expand;
+    @$txt_lines = @expand;
 
     $$txt_ref = join("\n",@$txt_lines) if $txt_ref;
 
