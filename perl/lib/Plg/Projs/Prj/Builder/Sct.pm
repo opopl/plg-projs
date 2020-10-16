@@ -128,8 +128,8 @@ sub _sct_lines {
             $p =~ s/\./ /g;
 
             my @txt = d_str_split($data,'txt ' . $p );
-			$bld->_txt_expand({ txt_lines => \@txt });
-        	push @lines,@txt;
+            $bld->_txt_expand({ txt_lines => \@txt });
+            push @lines,@txt;
 
             next;
         };
