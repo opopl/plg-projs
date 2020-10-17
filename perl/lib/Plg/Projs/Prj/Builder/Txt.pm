@@ -37,8 +37,8 @@ sub _txt_expand {
     my $if  = 0;
 
     #my $val = $bld->_val_('vars pagestyle') || '';
-	#print Dumper($val) . "\n";
-	#exit 1;
+    #print Dumper($val) . "\n";
+    #exit 1;
 
     my @expand;
     while(@$txt_lines){

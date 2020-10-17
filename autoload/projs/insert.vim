@@ -42,6 +42,17 @@ eof
 
 endfunction
 
+function! projs#insert#uri ()
+	let uri = input('uri: ','')
+
+	let lines = []
+	call add(lines,'%%url ' . uri)
+	call add(lines,printf('\url{%s}',uri))
+
+  call append(line('.'),lines)
+
+endfunction
+
 function! projs#insert#cmt_fig ()
   let proj   = projs#proj#name()
   let rootid = projs#rootid()

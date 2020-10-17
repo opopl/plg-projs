@@ -8,11 +8,22 @@ snippet fig
 	fig_begin
 		<++>
 	fig_end
+snippet pic
+	\ifcmt
+	pic <++>
+	\fi
 snippet img
+	\ifcmt
 	img_begin 
 		tags <++>
-		width 0.5
+		url <++>
+		caption <++>
+		label <++>
+		width 0.7
 	img_end
+	\fi
+snippet au
+	%%author <++>
 snippet indnr
 	\index[names.rus]{<++>}
 snippet indar
