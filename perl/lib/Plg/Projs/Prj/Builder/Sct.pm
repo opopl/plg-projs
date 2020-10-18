@@ -19,6 +19,20 @@ use Base::Data qw(
     d_path
 );
 
+=head3 _sct_lines
+
+=head4 Usage
+
+    my @lines = $bld->_sct_lines($sec);
+
+=head4 Call tree
+
+    _gen_sec
+        _join_lines
+
+=cut
+
+
 sub _sct_lines {
     my ($bld, $sec) = @_;
 

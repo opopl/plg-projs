@@ -99,12 +99,17 @@ sub _trg_dom {
 }
 
 sub _trg_dom_find {
-    my ($bld, $target) = @_;
+    my ($bld, $ref) = @_;
 
-    $target //= $bld->{target};
-    my $dom = $bld->_trg_dom($target);
+    $ref ||= {};
 
-    my $data;
+    my ($dom, $target, $xpath, $data);
+
+    $target = $ref->{target} // $bld->{target};
+    $xpath  = $ref->{xpath};
+
+    $dom = $bld->_trg_dom($target);
+
     return $data;
 
 }
@@ -160,11 +165,11 @@ sub _trg_xfile {
 
     for($target){
         /^core$/ && do {
-            $xfile = catfile($ENV{PLG},qw( projs bld core.xml ));
+            $xfile = catfile($ENV{PLG},qw( projs bld core.tml ));
             next;
         };
 
-        $xfile = catfile($root,sprintf('%s.bld.%s.xml',$proj, $target));
+        $xfile = catfile($root,sprintf('%s.bld.%s.tml',$proj, $target));
         last;
     }
     return $xfile;
