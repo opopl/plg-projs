@@ -89,11 +89,12 @@ sub prj_load_xml {
     my $pl = xml2dict($dom, attr => '');
     $self->{cnf} = $pl->{$proj} || {};
 
+
     my $include = $self->_val_list_ref_('cnf targets include');
     my $exclude = $self->_val_list_ref_('cnf targets exclude');
 
     my @t;
-    my $pat = qr/^$proj\.bld\.(.*)\.xml$/;
+    my $pat = qr/^$proj\.bld\.(.*)\.tml$/;
     find({ 
         wanted => sub { 
             return unless /$pat/;

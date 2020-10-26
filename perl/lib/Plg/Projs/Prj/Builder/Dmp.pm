@@ -22,9 +22,9 @@ sub dump_trg {
 sub dump_bld {
     my ($bld, $path) = @_;
 
-	my $h = $bld->_val_($path);
-	my $data = ref $h eq 'HASH' ? { map { $_ => $h->{$_} } keys %$h } : $h;
-	print $path . "\n";
+    my $h = $bld->_val_($path);
+    my $data = ref $h eq 'HASH' ? { map { $_ => $h->{$_} } keys %$h } : $h;
+    print $path . "\n";
     print Dumper($data) . "\n";
     return $bld;
 }

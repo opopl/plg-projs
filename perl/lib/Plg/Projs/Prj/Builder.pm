@@ -174,6 +174,7 @@ sub print_help {
             perl $Script compile -c xelatex -t usual
             perl $Script show_trg 
             perl $Script dump_bld -d 'opts_maker sections' 
+            perl $Script join
     } . "\n";
     exit 1;
 
