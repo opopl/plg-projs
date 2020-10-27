@@ -57,7 +57,7 @@ sub _join_lines {
 
     my @exclude = $mkr->_ii_exclude;
     
-    my $ii_include_all = $mkr->_opt_($ref,'ii_include_all');
+    my $ii_include_all = $mkr->_opt_($ref,'ii_include_all',0);
 
     my $include_below = $mkr->_val_list_ref_('join_lines include_below');
 

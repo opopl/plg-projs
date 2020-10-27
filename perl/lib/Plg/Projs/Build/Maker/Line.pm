@@ -85,6 +85,7 @@ sub _line_process_pat_ii {
     my $ii_sec = $ref->{ii_sec} || '';
     my $sect   = $ref->{sect} || '';
 
+
     my $proj   = $ref->{proj} || '';
 
     my $delim  = $ref->{delim} || '';
@@ -108,6 +109,15 @@ sub _line_process_pat_ii {
 
     my $inc = $iall || ( !$iall && grep { /^$ii_sec$/ } @include )
         ? 1 : 0;
+
+	if ($ii_sec eq 'articles') {
+		print Dumper({ 
+				ii_sec         => $ii_sec,
+				inc            => $inc,
+				ii_include_all => $ii_include_all,
+				iall           => $iall,
+				include        => \@include }) . "\n";
+	}
 
     return $mkr unless $inc;
 
