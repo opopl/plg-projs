@@ -127,7 +127,7 @@ sub _trg_data {
         array   => [ qw( scts ) ],
         txt_sub => sub {
             my ($txt_ref) = @_; 
-            $bld->_txt_expand({ txt_ref => $txt_ref });
+            #$bld->_txt_expand({ txt_ref => $txt_ref });
         } 
     );
 

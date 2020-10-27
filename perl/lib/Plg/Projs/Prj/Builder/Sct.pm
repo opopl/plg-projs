@@ -39,6 +39,8 @@ sub _sct_lines {
     my $data      = $bld->_sct_data($sec);
     my $pack_opts = d_path($data,'pkg pack_opts',{});
 
+    #print $bld->_bld_var('pagestyle') . "\n";
+
     my @lines;
 
     my @contents = d_str_split_sn($data,'contents');
@@ -229,7 +231,7 @@ sub _bld_ind_lines {
 sub _bld_var {
     my ($bld, $var) = @_;
 
-    my $val = $bld->_val_('vars ' . $var) || '';
+    my $val = $bld->_val_('vars ' . $var) // '';
     return $val;
 }
 

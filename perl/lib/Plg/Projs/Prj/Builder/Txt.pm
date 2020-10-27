@@ -36,13 +36,21 @@ sub _txt_expand {
     my $add = 1;
     my $if  = 0;
 
-    #my $val = $bld->_val_('vars pagestyle') || '';
-    #print Dumper($val) . "\n";
-    #exit 1;
-
     my @expand;
     while(@$txt_lines){
         local $_ = shift @$txt_lines;
+
+        #my @a = split("",$_);
+        #my $s='';
+        #my $r = qr/\@var\{(\w+)\}/;
+        #while(@a){
+            #$s .= shift @a;
+            #my ($var) = ($s =~ /$r/);
+            #next unless defined $var;
+            #my $val = $bld->_bld_var($var);
+            #$s =~ s/$r/$val/g; 
+        #}
+        #$_ = $s;
 
         s/\@var\{(\w+)\}/$bld->_bld_var($1)/ge; 
         s/\@env\{(\w+)\}/$bld->_bld_env($1)/ge; 

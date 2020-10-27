@@ -93,12 +93,18 @@ sub init {
 
 }
 
+sub quit {
+    my ($bld) = @_;
+    exit 1;
+    return $bld;
+
+}
+
 sub act_exe {
     my ($bld) = @_;
 
     my $act     = $bld->{act};
     my $act_cmd = $bld->{maps_act}->{$act} || '';
-
 
     if (ref $act_cmd eq 'CODE') {
         $act_cmd->();
@@ -268,6 +274,7 @@ sub init_maker {
     );
 
     $bld->{maker} = $mkr;
+
 
     return $bld;
 }
