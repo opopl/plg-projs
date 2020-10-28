@@ -4,9 +4,9 @@
   <vars>
     <pagestyle>fancy</pagestyle>
   </vars>
-  <defs>
+  <decs>
     do_ind_titletoc
-  </defs>
+  </decs>
   <preamble>
     <langs main="russian">
       english
@@ -60,13 +60,13 @@
           </hdr>
           <ptc>
             <start>
-              @ifdef{do_ind_titletoc}
+              @ifdec{do_ind_titletoc}
                 \startcontents[indices]
                 \printcontents[indices]{l}{1}{\addtocontents{ptc}{\setcounter{tocdepth}{1}}}
               @fi
             </start>
             <stop>
-              @ifdef{do_ind_titletoc}
+              @ifdec{do_ind_titletoc}
                 \stopcontents[indices]
               @fi
             </stop>

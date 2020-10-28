@@ -371,9 +371,14 @@ function! projs#action#url_insert ()
 
   let url = projs#db#url()
 
+  if !strlen(url) || url == 'v:none'
+    let url = base#input_we('url: ','')
+  endif
+
   call projs#sec#insert_url({ 
         \ 'url' : url, 
-        \ 'sec' : projs#buf#sec() })
+        \ 'sec' : projs#buf#sec() 
+        \ })
 
 endfunction
 
@@ -1220,15 +1225,18 @@ function! projs#action#bld_compile_Fc (self,temp_file)
       call base#rdwe(msg)
       if len(err)
         BaseAct copen
+      else
+        call base#buf#open_split({ 
+          \ 'lines'   : lines,
+          \ 'cmds_after' : [],
+          \ 'stl_add' : [ 
+              \ 'Command: %1*',
+              \ cmd ,
+              \ '%0*' ,
+              \ ],
+          \ })
       endif
-      call base#buf#open_split({ 
-        \ 'lines'   : lines,
-        \ 'stl_add' : [ 
-            \ 'Command: %1*',
-            \ cmd ,
-            \ '%0*' ,
-            \ ],
-        \ })
+      
 
       "\ 'V[ %1* v - view, %2* a - append %0* ]',
   else

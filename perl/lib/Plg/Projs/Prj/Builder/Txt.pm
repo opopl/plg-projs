@@ -30,8 +30,8 @@ sub _txt_expand {
 
     @$txt_lines = split("\n",$$txt_ref) if $txt_ref;
     
-    my $defs = $bld->_val_('defs');
-    my %defs = map { $_ => 1 } str_split_sn($defs);
+    my $decs = $bld->_val_('decs');
+    my %decs = map { $_ => 1 } str_split_sn($decs);
 
     my $add = 1;
     my $if  = 0;
@@ -55,10 +55,10 @@ sub _txt_expand {
         s/\@var\{(\w+)\}/$bld->_bld_var($1)/ge; 
         s/\@env\{(\w+)\}/$bld->_bld_env($1)/ge; 
 
-        /\@ifdef\{([^{}]+)\}/ && do {
+        /\@ifdec\{([^{}]+)\}/ && do {
             my $df = $1;
 
-            $add = 0 unless $defs{$df};
+            $add = 0 unless $decs{$df};
             $if++;
             next;
         };
