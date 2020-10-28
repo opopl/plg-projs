@@ -627,21 +627,10 @@ finally:
   f.close()
 
 b = vim.current.buffer
+b[:] = []
 b[:] = lines_w
 
-#f = open(file,'w+')
-#try:
-#  for line in lines_w:
-#    f.write(line)
-#    f.write("\n")
-#finally:
-#  f.close()
-  
 eof
-  let lines = py3eval('lines_w')
-  "call writefile(lines,file)
-  "e!
-  "call append('.',lines)
 
 
 endfunction
