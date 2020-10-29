@@ -43,13 +43,11 @@ eof
 endfunction
 
 function! projs#insert#uri ()
-	let uri = input('uri: ','')
+	let url = input('url: ','')
 
-	let lines = []
-	call add(lines,'%%url ' . uri)
-	call add(lines,printf('\url{%s}',uri))
-
-  call append(line('.'),lines)
+	call projs#sec#insert_url({
+		\	'url' : url,
+		\	})
 
 endfunction
 

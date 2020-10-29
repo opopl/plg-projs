@@ -576,7 +576,9 @@ endfunction
 function! projs#sec#insert_url (...)
   let ref = get(a:000,0,{})
 
-  let sec = get(ref,'sec','')
+	let sec = projs#buf#sec()
+  let sec = get(ref,'sec',sec)
+
   let url = get(ref,'url','')
 
   let file = projs#sec#file(sec)
@@ -592,13 +594,15 @@ url_cmt_done = 0
 url_tex_done = 0
 
 url_cmt = '%%url ' + url 
-url_tex = [ 
-  r'{ \small'          ,
-  r'\vspace{0.5cm}'    ,
-  r'\url{' + url + '}' ,
-  r'\vspace{0.5cm}'    ,
-  r'}'                 ,
-]
+
+url_tex = [ r'\Purl{%s}' % url ]
+#url_tex = [ 
+#  r'{ \small'          ,
+#  r'\vspace{0.5cm}'    ,
+#  r'\url{' + url + '}' ,
+#  r'\vspace{0.5cm}'    ,
+#  r'}'                 ,
+#]
 
 lines_w = []
 f = open(file,'r')
@@ -610,7 +614,8 @@ try:
       after_head = 0
       if re.match(r'^%%url\s+', line):
         url_cmt_done = 1
-      if re.match(r'^\\url\{.*\}\s*$', line):
+        line = url_cmt
+      if re.match(r'^\s*\\url\{.*\}\s*$', line):
         url_tex_done = 1
       if re.match(r'^%%beginhead', line):
         is_head = 1
@@ -697,10 +702,11 @@ if 0
 
   Call tree
     Calls
-      projs#proj#name
       projs#buf#sec
-      projs#sec#parent
+      projs#proj#name
+      projs#sec#header
       projs#sec#lines_seccmd
+      projs#sec#parent
 
 
 endif
@@ -1163,6 +1169,11 @@ function! projs#sec#header (...)
   let ext        = get(ref,'ext','')
   let keymap     = get(ref,'keymap','')
   let parent_sec = get(ref,'parent_sec','')
+
+  let url    = get(ref,'url','')
+  let author = get(ref,'author','')
+  let title  = get(ref,'title','')
+  let tags   = get(ref,'tags','')
   
   let header = []
 
@@ -1175,6 +1186,10 @@ function! projs#sec#header (...)
     call extend(header,[ ' ' ])
     call extend(header,[ '%%file ' . sec])
     call extend(header,[ '%%parent ' . parent_sec ])
+    call extend(header,[ ' ' ])
+    call extend(header,[ '%%url ' . url])
+    call extend(header,[ '%%author ' . author])
+    call extend(header,[ '%%tags ' . tags])
     call extend(header,[ ' ' ])
     call extend(header,[ '%%endhead '])
 
