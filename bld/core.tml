@@ -26,10 +26,7 @@
         <doc class="extreport" opts="a4paper,11pt" />
         <ii>
           preamble.packages
-          preamble.patches
-          <!--preamble.acrobat_menu-->
           preamble.index
-          <!--preamble.titlesec-->
           preamble.filecontents
         </ii>
         <setcounter secnumdepth="0"/>
@@ -73,16 +70,6 @@
           </ptc>
         </txt>
       </sct>
-      <sct name="preamble.patches">
-        <contents>
-          @input
-        </contents>
-        <input>
-          src.preamble.patches.hyperref
-          src.preamble.patches.sections
-          src.preamble.patches.toc
-        </input>
-      </sct>
       <sct name="preamble.filecontents">
         <contents>
           @input
@@ -93,118 +80,31 @@
             src.preamble.filecontents.index_rus_xdy
         </input>
       </sct>
-      <sct name="preamble.acrobat_menu">
-        <contents>
-          @pkg @txt
-        </contents>
-        <txt>
-          \pagestyle{@var{pagestyle}} 
-
-          %\cfoot{\NavigationBar} 
-          \chead{\NavigationBar} 
-
-          <!--\IfLanguageName{english}{} -->
-            \def\NavigationBar{% 
-                \Acrobatmenu{PrevPage}{Previous}~ 
-                \Acrobatmenu{NextPage}{Next}~ 
-                \Acrobatmenu{FirstPage}{First}~ 
-                \Acrobatmenu{LastPage}{Last}~ 
-                \Acrobatmenu{GoBack}{Back}~ 
-                \Acrobatmenu{Quit}{Quit}% 
-            }
-        </txt>
-        <pkg>
-          <pack_list>
-            fancyhdr
-          </pack_list>
-        </pkg>
-      </sct>
-      <sct name="preamble.packages.xelatex">
-        <contents>
-          \ifxetex @pkg @txt \fi
-        </contents>
-        <txt>
-          \setotherlanguage{english}
-          \setmainlanguage{russian}
-          %\setotherlanguage{churchslavonic}
-          
-          \setkeys{russian}{babelshorthands=true}
-          
-          \setmainfont{Times New Roman}
-          \setromanfont{Times New Roman} 
-          
-          \setsansfont{Arial} 
-          \setmonofont{Courier New} 
-          
-          \newfontfamily{\cyrillicfont}{Times New Roman} 
-          \newfontfamily{\cyrillicfontrm}{Times New Roman}
-          \newfontfamily{\cyrillicfonttt}{Courier New}
-          \newfontfamily{\cyrillicfontsf}{Arial}
-          
-          \addto\captionsrussian{%
-            \renewcommand{\figurename}{Рис.}%
-            \renewcommand{\tablename}{Табл.}%
-          }
-        </txt>
-        <pkg>
-          <pack_list>
-             xltxtra
-             polyglossia
-          </pack_list>
-        </pkg>
-      </sct>
-      <sct name="preamble.packages.pdflatex">
-        <contents>
-          \ifpdf @pkg \fi
-        </contents>
-        <pkg>
-          <pack_list>
-             fontenc
-             inputenc
-             babel
-          </pack_list>
-          <pack_opts>
-            <fontenc>
-             OT1,T2A,T3
-            </fontenc>
-            <babel>
-              english
-              russian
-            </babel>
-            <inputenc>
-              utf8
-            </inputenc>
-          </pack_opts>
-        </pkg>
-      </sct>
       <sct name="preamble.packages">
         <contents>
           @pkg @ii
         </contents>
         <ii>
-          preamble.packages.pdflatex
-          preamble.packages.xelatex
         </ii>
         <pkg>
           <pack_list>
-						 p.core
+             titletoc
+             xparse 
+             p.core
+             p.rus
+             p.secs
+             p.toc
+             imakeidx
+             p.hyperref
 
              geometry
-
-             xparse
-             titletoc tocloft
 
              color xcolor colortbl
 
              graphicx tikz pgffor
 
-             imakeidx
-             hyperref bookmark
-
-             etoolbox
              adjustbox
              longtable
-             projs
              multicol
              filecontents
              datetime2
@@ -249,12 +149,8 @@
 
         preamble
         preamble.packages
-        preamble.packages.xelatex
-        preamble.packages.pdflatex
-        preamble.patches
 
         preamble.index
-        preamble.acrobat_menu
         preamble.filecontents
       </on>
     </generate>
