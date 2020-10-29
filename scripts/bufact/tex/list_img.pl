@@ -25,21 +25,6 @@ my %pack_opts;
 my $is_pack;
 my @ot;
 
-sub opts_split {
-    my ($o) = @_;
-
-    return @$o if ref $o eq 'ARRAY';
-
-    my @opts = map { 
-        s/\s*$//g; 
-        s/^\s*//g; 
-        s/[%]*$//g; 
-        length ? $_ : () 
-    } split "," => $o;
-
-    return @opts;
-}
-
 while (@lines) {
     local $_ = shift @lines;
     chomp;

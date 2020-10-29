@@ -42,7 +42,7 @@ sub init {
     my ($self) = @_;
 
     my $h = {
-		warn     => 1,
+        warn     => 1,
         user     => 'apopl',
         pwd      => 'root',
         dbfile   => 'piwigo',
@@ -225,7 +225,7 @@ sub init_db {
     my ($self) = @_;
 
     $self->{dbh} = dbi_connect({
-		warn   => $self->_sub_db_warn,
+        warn   => $self->_sub_db_warn,
         user   => $self->{user},
         pwd    => $self->{pwd},
         dbfile => $self->{dbfile},
@@ -245,9 +245,9 @@ sub ct_collected {
 
     my $dbh = $self->{dbh};
     unless ($dbh) {
-		if ($self->{warn}) {
-        	warn "ct_collected: NO DBH!" . "\n" ;
-		}
+        if ($self->{warn}) {
+            warn "ct_collected: NO DBH!" . "\n" ;
+        }
         return $self;
     }
     
@@ -281,7 +281,7 @@ sub ct_collected {
     };
 
     dbh_do({
-		warn => $self->_sub_db_warn,
+        warn => $self->_sub_db_warn,
         q    => $q,
         dbh  => $dbh,
     });
@@ -290,9 +290,9 @@ sub ct_collected {
 }
 
 sub _sub_db_warn {
-	my ($self) = @_;
+    my ($self) = @_;
 
-	$self->{warn} ? sub { warn $_ for(@_) } : sub{};
+    $self->{warn} ? sub { warn $_ for(@_) } : sub{};
 
 }
 
@@ -338,7 +338,7 @@ sub cmd_img_by_tags {
     } 
 
     ($rows,$cols) = dbh_select({
-		warn => $self->_sub_db_warn,
+        warn => $self->_sub_db_warn,
         dbh  => $dbh,
         q    => qq{ SELECT DISTINCT path, comment FROM collected $cond },
         p    => [],
