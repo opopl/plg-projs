@@ -27,7 +27,7 @@
         <ii>
           preamble.packages
           preamble.patches
-          preamble.acrobat_menu
+          <!--preamble.acrobat_menu-->
           preamble.index
           <!--preamble.titlesec-->
           preamble.filecontents
@@ -187,7 +187,7 @@
         </ii>
         <pkg>
           <pack_list>
-             ifxetex ifpdf iflang ifthen
+						 p.core
 
              geometry
 
