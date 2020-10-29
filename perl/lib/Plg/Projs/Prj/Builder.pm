@@ -181,6 +181,8 @@ sub print_help {
             perl $Script show_trg 
             perl $Script dump_bld -d 'opts_maker sections' 
             perl $Script join
+        DEBUG:
+            perl -d $Script join
     } . "\n";
     exit 1;
 

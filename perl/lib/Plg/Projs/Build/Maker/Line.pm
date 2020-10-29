@@ -6,7 +6,7 @@ use warnings;
 use Data::Dumper qw(Dumper);
 
 use Base::String qw(
-	str_split_sn
+    str_split_sn
 );
 
 =head3 _line_process_pat_sect
@@ -130,11 +130,11 @@ sub _line_process_pat_ii {
 }
 
 sub _line_plus {
-	my ($mkr, $sec, $plus) = @_;
-		
+    my ($mkr, $sec, $plus) = @_;
+        
     my $sub = $mkr->_val_(sprintf('sections %s only',$plus),$sec);
-	return () unless $sub;
-	my @lines;
+    return () unless $sub;
+    my @lines;
 
     my $a_lines = [];
     if (ref $sub eq 'CODE') {
@@ -144,12 +144,12 @@ sub _line_plus {
     } elsif (! ref $sub) {
         @$a_lines = str_split_sn($sub);
     }
-	
-	if (@$a_lines) {
-    	push @lines, '%% ' . $plus, @$a_lines ;
-	}
+    
+    if (@$a_lines) {
+        push @lines, '%% ' . $plus, @$a_lines ;
+    }
 
-	return @lines;
+    return @lines;
 }
 
 
