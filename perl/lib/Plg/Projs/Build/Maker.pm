@@ -124,8 +124,16 @@ sub get_opt {
 sub dhelp {
     my ($mkr) = @_;
 
+    my $pack = __PACKAGE__;
     my $s = qq{
 
+    PACKAGE:
+        $pack
+    USED BY:
+        projs#action#async_build_bare 
+        PA async_build_bare ;;ab
+    SCRIPT:
+        $0
     ROOT:
         $mkr->{root}
     ROOT_ID:
