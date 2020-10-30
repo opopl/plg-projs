@@ -143,6 +143,8 @@ sub load_file {
     my ($is_img, $is_cmt);
 
     my (%d);
+    my @keys = qw(url caption);
+
     while (@lines) {
         local $_ = shift @lines;
         chomp;
@@ -159,12 +161,12 @@ sub load_file {
         m/^\s*img_end\b/g && do { $is_img=0 if $is_img; next; };
 
         if ($is_img) {
-            m/^\s*url\s+(.*)$/g && do { 
-                $d{url} = $1; next; 
-            };
-            m/^\s*caption\s+(.*)$/g && do { 
-                $d{caption} = $1; next; 
-            };
+            for my $k (@keys){
+                m/^\s*$k\s+(.*)$/g && do { 
+                    $d{$k} = $1; 
+                };
+            }
+            next;
         }
 
         m/^\s*pic\s+(.*)$/g && do { 
