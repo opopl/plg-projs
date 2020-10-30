@@ -1,81 +1,159 @@
 #!/usr/bin/env perl 
+#
+package L;
 
 use strict;
 use warnings;
 use utf8;
 
+use File::Spec::Functions qw(catfile);
+use File::Path qw(make_path remove_tree mkpath rmtree);
+
+use Base::DB qw( 
+    dbi_connect 
+    dbh_do
+);
+use Base::Arg qw( hash_inject );
+
 use Data::Dumper qw(Dumper);
 use File::Slurp::Unicode;
-use Data::Dumper qw(Dumper);
 
-use Base::List qw(uniq);
-use Base::XML::Dict qw(dict2xml);
-use Base::XML qw(xml_pretty);
+sub new
+{
+    my ($class, %opts) = @_;
+    my $self = bless (\%opts, ref ($class) || $class);
 
-use XML::LibXML;
-use XML::LibXML::PrettyPrint;
+    $self->init if $self->can('init');
 
-my $file = shift @ARGV;
+    return $self;
+}
 
-my @lines = read_file $file;
+sub init_db {
+    my ($self) = @_;
 
-my @pack_list;
-my %pack_opts;
+    my $img_root = $ENV{IMG_ROOT} // catfile($ENV{HOME},qw(img_root));
+    mkpath $img_root unless -d $img_root;
+    
+    my $dbfile = catfile($img_root,qw(img.db));
+    
+    my $ref = {
+        dbfile => $dbfile,
+        attr   => {},
+    };
+    
+    my $dbh = dbi_connect($ref);
 
-my $is_pack;
-my @ot;
-
-while (@lines) {
-    local $_ = shift @lines;
-    chomp;
-
-    next if /^\s*%/;
-
-    m/^\\usepackage(?:|\[(?<opts>.*)\])\{(?<packs>.*)\}/ && do {
-        pack_add(@+{qw(packs opts)});
-
-        next;
+    my $h = {
+        dbh      => $dbh,
+        dbfile   => $dbfile,
+        img_root => $img_root,
     };
 
-    # start of package
-    m/^\\usepackage\[(?<opts>[^]]*)$/ && do {
-        push @ot, opts_split($+{opts});
-        $is_pack = 1;
-        next;
+    hash_inject($self, $h);
+
+    my $ok = dbh_do({
+        dbh    => $dbh,
+        q      => $self->{q}->{create},
+        p      => [],
+    });
+    
+    $self;
+}
+
+sub init_q {
+    my ($self) = @_;
+
+    my %q = ( 
+        create => qq{
+            CREATE TABLE IF NOT EXISTS imgs (
+                url text,
+                num integer,
+                tags text,
+                proj text,
+                sec text,
+                caption text
+            );
+        },
+        drop => qq{
+            DROP TABLE IF EXISTS imgs;
+        }
+    );
+
+    my $h = {
+        q  => \%q,
+    };
+        
+    hash_inject($self, $h);
+
+    return $self;
+}
+
+
+sub init {
+    my ($self) = @_;
+
+    $self
+        ->init_q
+        ->init_db
+        ;
+    
+    my $file = shift @ARGV;
+    my $h = {
+        file  => $file,
     };
 
-    if ($is_pack) {
+    hash_inject($self, $h);
+    return $self;
+}
 
-        # end of package
-        m/^\s*\]\{(?<packs>.*)\}$/ && do {
-            $is_pack = 0;
-            pack_add(@+{qw(packs)},\@ot);
-            next;
+sub load_file {
+    my ($self) = @_;
+
+    my @lines = read_file $self->{file};
+
+    my $is_img;
+    while (@lines) {
+        local $_ = shift @lines;
+        chomp;
+    
+        next if /^\s*%/;
+    
+        print $_ . "\n";
+    
+        m/^\s*img_begin/ && do { 
+            $is_img = 1; next;
         };
-
-        push @ot, opts_split($_);
+    
+        m/^\s*img_end/ && do { 
+            $is_img = 0; 
+        };
     }
+
+    return $self;
 }
 
-@pack_list = uniq(\@pack_list);
+sub run {
+    my ($self) = @_;
 
-my $p_opts = {};
-my $p_list = join("\n" => @pack_list);
-while(my($k,$v) = each %pack_opts){
-    $p_opts->{$k} = join("\n",@$v);
+    $self
+        ->load_file
+        ;
+    return $self;
 }
 
-my $h = {
-    packs => {
-        pack_list => $p_list,
-        pack_opts => $p_opts,
-    }
-};
 
-my $doc = dict2xml($h,doc => 1);
+package main;
 
-my @ids = qw(pack_list);
-push @ids,@pack_list;
+L->new->run;
 
-my $xml = xml_pretty($doc,ids => [@ids]);
-print $xml . "\n";
+
+
+
+=head2 SEE ALSO
+
+    see also:
+        Plg::Projs::Build::Maker
+            cmd_insert_pwg
+                cnv_img_begin
+=cut
+
