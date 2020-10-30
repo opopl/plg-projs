@@ -7,7 +7,7 @@ use warnings;
 use utf8;
 
 use File::Spec::Functions qw(catfile);
-use File::Path qw(make_path remove_tree mkpath rmtree);
+use File::Path qw(mkpath);
 
 use Base::DB qw( 
     dbi_connect 
@@ -46,12 +46,13 @@ sub init_db {
     my $dbh = dbi_connect($ref);
 
     my $h = {
-        dbh      => $dbh,
         dbfile   => $dbfile,
         img_root => $img_root,
     };
 
     hash_inject($self, $h);
+
+    $self->{dbh} = $dbh;
 
     $self
         ->db_drop
@@ -76,9 +77,10 @@ sub db_drop {
 sub db_create {
     my ($self) = @_;
 
+    my $q = $self->{q}->{create};
     dbh_do({
         dbh    => $self->{dbh},
-        q      => $self->{q}->{create},
+        q      => $q,
     });
 
     $self;
@@ -90,7 +92,7 @@ sub init_q {
     my %q = ( 
         create => qq{
             CREATE TABLE IF NOT EXISTS imgs (
-                url TEXT UNIQUE,
+                url TEXT,
                 num INTEGER,
                 tags TEXT,
                 rootid TEXT,
@@ -135,6 +137,7 @@ sub load_file {
     my ($self) = @_;
 
     my @lines = read_file $self->{file};
+    print Dumper(\@lines) . "\n";
 
     my ($is_img, $is_cmt);
     while (@lines) {
