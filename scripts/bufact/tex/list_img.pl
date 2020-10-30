@@ -13,7 +13,9 @@ use Base::DB qw(
     dbi_connect 
     dbh_do
 );
-use Base::Arg qw( hash_inject );
+use Base::Arg qw( 
+    hash_inject 
+);
 
 use Data::Dumper qw(Dumper);
 use File::Slurp::Unicode;
@@ -51,12 +53,34 @@ sub init_db {
 
     hash_inject($self, $h);
 
-    my $ok = dbh_do({
-        dbh    => $dbh,
-        q      => $self->{q}->{create},
-        p      => [],
+    $self
+        ->db_drop
+        ->db_create
+        ;
+
+    
+    $self;
+}
+
+sub db_drop {
+    my ($self) = @_;
+
+    dbh_do({
+        dbh    => $self->{dbh},
+        q      => $self->{q}->{drop},
     });
     
+    $self;
+}
+
+sub db_create {
+    my ($self) = @_;
+
+    dbh_do({
+        dbh    => $self->{dbh},
+        q      => $self->{q}->{create},
+    });
+
     $self;
 }
 
@@ -66,12 +90,13 @@ sub init_q {
     my %q = ( 
         create => qq{
             CREATE TABLE IF NOT EXISTS imgs (
-                url text,
-                num integer,
-                tags text,
-                proj text,
-                sec text,
-                caption text
+                url TEXT UNIQUE,
+                num INTEGER,
+                tags TEXT,
+                rootid TEXT,
+                proj TEXT,
+                sec TEXT,
+                caption TEXT
             );
         },
         drop => qq{
@@ -117,18 +142,19 @@ sub load_file {
         chomp;
     
         next if /^\s*%/;
-        next unless $is_cmt;
-    
-        print $_ . "\n";
 
         m/^\s*\\ifcmt\b/g && do { $is_cmt=1; next; };
         m/^\s*\\fi\b/g && do { $is_cmt=0 if $is_cmt; next; };
+
+        print $_ . "\n";
+        next unless $is_cmt;
     
         m/^\s*img_begin/ && do { $is_img = 1; next; };
     
         m/^\s*img_end/ && do { 
             $is_img = 0; 
         };
+
     }
 
     return $self;

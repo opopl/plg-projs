@@ -15,10 +15,8 @@ snippet pic
 snippet img
 	\ifcmt
 	img_begin 
-		tags <++>
 		url <++>
 		caption <++>
-		label <++>
 		width 0.7
 	img_end
 	\fi
@@ -546,3 +544,435 @@ snippet par
 snippet mlc
 	% align: l,c,r 
 	\multicolumn{<+cols+>}{<+align+>}{<+text+>} \\
+snippet ali
+	\begin{align${1:ed}}
+		${2}
+	\end{align$1}
+snippet listfigs
+	% vim: keymap=russian-jcukenwin
+	%%file listfigs
+	 
+	%%% LOF %%% 
+	\phantomsection
+	 
+	%\hypertarget{lof}{}
+	%\bookmark[dest=toc,rellevel=1,keeplevel=1]{\listfigurename}
+	 
+	\addcontentsline{toc}{chapter}{\listfigurename}
+	 
+	\listoffigures
+	\newpage
+	%%% ENDLOF %%% 
+snippet listtabs
+	% vim: keymap=russian-jcukenwin
+	%%file listtabs
+	 
+	%%% LOF %%% 
+	\phantomsection
+	 
+	%\hypertarget{lof}{}
+	%\bookmark[dest=toc,rellevel=1,keeplevel=1]{\listtablename}
+	 
+	\addcontentsline{toc}{chapter}{\listtablename}
+	 
+	\listoftables
+	\newpage
+snippet выр
+	---
+snippet df
+	\def\ii#1{\InputIfFileExists{\PROJ.#1.tex}{}{}}
+	\def\iif#1{\input{\PROJ/#1.tex}}
+	\def\idef#1{\InputIfFileExists{_def.#1.tex}{}{}}
+snippet luatex85
+	\RequirePackage{luatex85}
+snippet hh
+	\\ \hline
+snippet cap
+	\caption{<++>}
+snippet rnt
+	\renewcommand{\thetable}{<++>}
+snippet rnc
+	\renewcommand{\thechapter}{<++>}
+snippet rnf
+	\renewcommand{\thefigure}{<++>}
+snippet for
+	foreach \x in {<++>,<++>,<++>}
+		{ <++> }
+snippet h
+	\hline
+snippet em
+	\em
+snippet seczero
+	\setcounter{secnumdepth}{0}		
+snippet вір
+	---
+snippet зап
+	запрещено
+snippet dc
+	\documentclass[a4paper,11pt]{report}
+snippet аб
+	Анатолий Борисович
+snippet лаг
+	лагерь
+snippet ig
+	\includegraphics[width=\textwidth]{<+file+>}
+snippet отв
+	ответственность
+snippet bdoc
+	\begin{document}
+snippet begin
+	\begin{${1:env}}
+		${2}
+	\end{$1}
+snippet bf
+	\textbf{<++>}
+snippet cr
+	\begin{multicols}{2}
+		\obeycr
+		\restorecr
+	\end{multicols}
+snippet ind
+	\index{<++>}
+snippet bibtex
+	\ \bibtex\ 
+snippet bigexp
+	\exp\left\{\right\}
+snippet pdc
+	\ParDerC{<++>}{<++>}{<++>}
+snippet pd
+	\ParDer{<++>}{<++>}
+snippet nn
+	\nonumber
+snippet bmeq
+	\bmkeq{${1}}{${2}}
+snippet cas
+	\begin{cases}
+		${1:equation}, &\text{ if }${2:case}\\
+		${3}
+	\end{cases}
+snippet cha
+	\chapter{${1:chapter name}} % (fold)
+	\label{cha:${2:$1}}
+	${3}
+	% chapter $2 (end)
+snippet cline
+	\centerline{${1}}
+snippet clp
+	\clearpage
+snippet def
+	\def$1$2{$3}
+snippet desc
+	\begin{description}
+		\item[${1}] ${2}
+	\end{description}
+snippet edoc
+	\end{document}
+snippet eeq
+	%%equation ${1}
+snippet enum
+	\begin{enumerate}
+		\item ${1}
+	\end{enumerate}
+snippet eq
+	\begin{equation}
+		<++>
+		\labeleq{<++>}
+	\end{equation}
+	%%equation <++>
+snippet eqde
+	%%eqdesc ${1}
+snippet figp
+	\figp{${1}cm}{${2}}%
+	[${3}]%	
+	{%
+	}%
+snippet figure
+	${1:Figure}~\ref{${2:fig:}}${3}
+snippet fr
+	\frac{<++>}{<++>}
+snippet frpar
+	\frac{\partial <++>}{\partial <++>}
+snippet ftn
+	\footnote{${1}}
+snippet gat
+	\begin{gather${1:ed}}
+		${2}
+	\end{gather$1}
+snippet hbox
+	\hbox{${1}}
+snippet hl
+	\hyperlink{${1}}{${2}}
+snippet hlde
+	\hldest{${1:type}}{${2:options}}{${3:label}}
+snippet hr
+	\href{${1}}{${2}}
+snippet ht
+	\hypertarget{${1}}{}
+snippet idef
+	\idef{${1}}
+snippet ieq
+	\ienv{eq}{<++>}
+snippet if
+	\if<++>%
+	\else%
+	\fi
+snippet ifeq
+	\ifthenelse{\equal{#1}{<++>}}{<++>}{<++>}
+snippet ifte
+	\ifthenelse{\equal{#1}{<++>}}{<++>}{<++>}
+snippet ifhcode
+	\ifx\HCode\undefined\else%
+		${1}
+	\fi%
+snippet ifig
+	\ienv{fig}{<++>}
+snippet ifpaps
+	\ifpapsingle%
+		${1}
+	\else%
+		${2}
+	\fi%
+snippet ifreport
+	\ifDOCSTYLEreport%
+		${1}
+	\fi%
+snippet ifrevtex
+	\ifDOCSTYLErevtex%
+		${1}
+	\fi%
+snippet ifundef
+	\expandafter\ifx\csname ${1}\endcsname\relax
+		\def${1}{}
+	fi
+snippet ifxhcode
+	\ifx\HCode\undefined%
+		${1}
+	\else%
+		${2}
+	\fi%
+snippet ii
+	\ii{${1}}
+snippet iii
+	\iii{${1}}
+snippet in
+	\input{${1}}
+snippet ife
+	\InputIfFileExists{${1}}
+snippet inp
+	\input{${1}}
+snippet isec
+	\isec{<++>}{<++>}
+snippet it
+	\item 
+snippet itd
+	\item[${1:description}] ${2:item}
+snippet item
+	\begin{itemize}
+		\item ${1}
+	\end{itemize}
+snippet lab
+	\label{${1}}
+snippet latex
+	\ \LaTeX\ 
+snippet latex2e
+	\ \LaTeX\ 2\varepsilon 
+snippet listing
+	${1:Listing}~\ref{${2:list}}${3}
+snippet llrr
+snippet lof
+	\listoffigures
+snippet lot
+	\listoftables
+snippet lr
+	\left( ${1} \right)
+snippet lsec
+	\labelsec{${1}}
+snippet lst
+	\begin{lstlisting}
+		${1}
+	\end{lstlisting}
+snippet ltab
+	\begin{longtable}{|p{7cm}|p{7cm}|}
+	\hline \\
+		${1}
+	\\ \hline
+	\end{longtable}
+snippet mat
+	\begin{${1:p/b/v/V/B/small}matrix}
+		${2}
+	\end{$1matrix}
+snippet mcol
+	\multicolumn{3}{c}{${1:title}}
+snippet mdo
+	\multido{\i=<++>+<++>}{<++>}{\ii{ad_\i}}
+snippet nc
+	\nc{${1}}{${2}}
+snippet newif
+	\newif\if<++>\<++>false
+snippet ra
+	\rightarrow
+snippet la
+	\leftarrow
+snippet nge
+	\newglossaryentry{<++>}{
+		name=<++>,
+		description={<++>},
+		plural={<++>},
+		sort={<++>}}
+snippet nstop
+	\nonstopmode
+snippet ol
+	\overline{${1}}
+snippet page
+	${1:page}~\pageref{${2}}${3}
+snippet par
+	\paragraph{${1:paragraph name}} % (fold)
+	\label{par:${2:$1}}
+	${3}
+	% paragraph $2 (end)
+snippet part
+	\part{${1:part name}} % (fold)
+	\label{prt:${2:$1}}
+	${3}
+	% part $2 (end)
+snippet pbib
+	\pbib{${1}}{${2}} 
+snippet pi
+	\pindx{${1}}
+snippet prod
+	\prod_{i=1}^{<++>}
+snippet pyg
+	\begin{pyglist}
+		${1}
+	\end{pyglist}
+snippet qq
+	\qquad
+snippet revonecol
+	\ifDOCSTYLErevtex%
+		\onecolumngrid
+	\fi%
+snippet revtwocol
+	\ifDOCSTYLErevtex%
+		\twocolumngrid
+	\fi%
+snippet rm
+	\textrm{<++>}
+snippet sec
+	\section{${1:section name}} % (fold)
+	\label{sec:${2:$1}}
+	${3}
+	% section $2 (end)
+snippet section
+	${1:Section}~\ref{${2:sec:}}${3}
+snippet sf
+	\secfunc{${1}}
+snippet snippet \
+	\\[
+		${1}
+	\\]
+snippet spl
+	\begin{split}
+		${1}
+	\end{split}
+snippet sub
+	\subsection{${1:subsection name}} % (fold)
+	\label{sub:${2:$1}}
+	${3}
+	% subsection $2 (end)
+snippet subp
+	\subparagraph{${1:subparagraph name}} % (fold)
+	\label{subp:${2:$1}}
+	${3}
+	% subparagraph $2 (end)
+snippet subs
+	\subsubsection{${1:subsubsection name}} % (fold)
+	\label{ssub:${2:$1}}
+	${3}
+	% subsubsection $2 (end)
+snippet sum
+	\sum_{<++>}^{<++>}
+snippet sumi
+	\sum_{i=1}^{n}
+snippet sumtraj
+	\sum_{k=1}^{\Ntraj}
+snippet tab
+	\begin{${1:tabular}}{${2:c}}
+	${3}
+	\end{$1}
+snippet table
+	${1:Table}~\ref{${2:tab:}}${3}
+snippet tex
+	\ \TeX\ 
+snippet tikz
+	\begin{tikzpicture}
+		${1}
+	\end{tikzpicture}
+snippet toc
+	\tableofcontents
+snippet vb
+	\begin{verbatim}
+		${1}
+	\end{verbatim}
+snippet phf
+	\par\hbox{\hfill}
+snippet ma
+	\makeatletter
+		${1}
+	\makeatother
+snippet tooc
+	\clearpage
+	\phantomsection
+	%\hypertarget{toc}{}
+	\tableofcontents
+	\def\pagenumtoc{\thepage}
+	%
+	\addcontentsline{toc}{\ProjRootSec}{\contentsname}%
+snippet tps
+	\thispagestyle{${1}}
+snippet up
+	\usepackage{${1}}
+snippet url
+	\url{${1}}
+snippet vbox
+	\vbox{${1}}
+snippet ver
+	\begin{verbatim}
+		${1}
+	\end{verbatim}
+snippet vr
+	\verb|${1}|
+snippet wsec
+	\wsec{${1}}
+snippet dsh
+	---
+snippet planaodsao
+	plan\_ao\_dsao.bat
+snippet llg
+	LCS\_license\_generate
+snippet br
+	\[<++>\]
+snippet ita
+	\item (<++>)(<++>)
+snippet dl
+	\dl --- <++>
+snippet fore
+	\foreach \n in {<++>,...,<++>}{<++>}
+snippet fii
+	\foreach \n in {
+		<++>,
+		<++>,
+	}{\ii{\n}}
+snippet pp
+	<++>
+snippet fmp
+	\begin{center}
+		\begin{fminipage}{0.7\textwidth}
+			<++>
+		\end{fminipage}
+	\end{center}
+snippet obeycr
+	\obeycr
+		<++>
+	\restorecr
+snippet vs
+	\vspace{<++>}
