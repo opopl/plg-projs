@@ -136,10 +136,13 @@ sub init {
 sub load_file {
     my ($self) = @_;
 
+    my $dbh = $self->{dbh};
+
     my @lines = read_file $self->{file};
-    print Dumper(\@lines) . "\n";
 
     my ($is_img, $is_cmt);
+
+    my (%d);
     while (@lines) {
         local $_ = shift @lines;
         chomp;
@@ -147,15 +150,26 @@ sub load_file {
         next if /^\s*%/;
 
         m/^\s*\\ifcmt\b/g && do { $is_cmt=1; next; };
-        m/^\s*\\fi\b/g && do { $is_cmt=0 if $is_cmt; next; };
+        m/^\s*\\fi\b/g && do { 
+            $is_cmt=0 if $is_cmt; %d = (); next; 
+        };
 
-        print $_ . "\n";
         next unless $is_cmt;
-    
-        m/^\s*img_begin/ && do { $is_img = 1; next; };
-    
-        m/^\s*img_end/ && do { 
-            $is_img = 0; 
+        m/^\s*img_begin\b/g && do { $is_img=1; next; };
+        m/^\s*img_end\b/g && do { $is_img=0 if $is_img; next; };
+
+        if ($is_img) {
+            m/^\s*url\s+(.*)$/g && do { 
+                $d{url} = $1; next; 
+            };
+            m/^\s*caption\s+(.*)$/g && do { 
+                $d{caption} = $1; next; 
+            };
+        }
+
+        m/^\s*pic\s+(.*)$/g && do { 
+            $d{url} = $1;
+            next; 
         };
 
     }
