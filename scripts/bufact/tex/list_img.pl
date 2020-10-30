@@ -111,18 +111,20 @@ sub load_file {
 
     my @lines = read_file $self->{file};
 
-    my $is_img;
+    my ($is_img, $is_cmt);
     while (@lines) {
         local $_ = shift @lines;
         chomp;
     
         next if /^\s*%/;
+        next unless $is_cmt;
     
         print $_ . "\n";
+
+        m/^\s*\\ifcmt\b/g && do { $is_cmt=1; next; };
+        m/^\s*\\fi\b/g && do { $is_cmt=0 if $is_cmt; next; };
     
-        m/^\s*img_begin/ && do { 
-            $is_img = 1; next;
-        };
+        m/^\s*img_begin/ && do { $is_img = 1; next; };
     
         m/^\s*img_end/ && do { 
             $is_img = 0; 
