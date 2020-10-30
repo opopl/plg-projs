@@ -521,7 +521,7 @@ sub cmd_insert_pwg {
             push @opts_ig, $1; next;
         };
 
-###cnv_width
+###cnv_img_width
         m/^\s*width\s+(.*)/ && do { 
             next unless $is_img;
 
