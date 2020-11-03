@@ -10,6 +10,7 @@ use File::Spec::Functions qw(catfile);
 use File::Path qw(mkpath);
 
 use FindBin qw($Bin $Script);
+use File::Basename qw(basename dirname);
 
 use LWP::Simple qw(getstore);
 use LWP::UserAgent;
@@ -123,7 +124,7 @@ sub init_q {
                 tags TEXT,
                 rootid TEXT,
                 proj TEXT,
-                file TEXT,
+                sec TEXT,
                 caption TEXT
             );
         },
@@ -182,11 +183,12 @@ sub print_help {
 sub load_file {
     my ($self) = @_;
 
-    my $dbh = $self->{dbh};
     my $file = $self->{file};
+    my $lwp  = $self->{lwp};
+
+    my ($proj, $sec) = ( basename($file)  =~ m/^(\w+)\.(.*)\.tex$/g );
 
     my @lines = read_file $file;
-    print $file . "\n";
 
     my ($is_img, $is_cmt);
 
@@ -201,14 +203,9 @@ sub load_file {
 
         m/^\s*\\ifcmt\b/g && do { $is_cmt=1; next; };
         m/^\s*\\fi\b/g && do { 
-            $is_cmt=0 if $is_cmt; 
+            $is_cmt = 0 if $is_cmt; 
 
-            my $url;
-            if ($d{url}) {
-                $url = $d{url};
-                %d = ();
-            }
-            next unless $url;
+            next unless $d{url};
 
             my $ref = {
                 q => q{SELECT MAX(inum) FROM imgs},
@@ -218,12 +215,17 @@ sub load_file {
             
             dbh_insert_hash({
                 t => 'imgs',
-                i => q{INSERT OR REPLACE},
+                i => q{ INSERT OR REPLACE },
                 h => {
-                    inum => $inum,
-                    url  => $url,
+                    inum    => $inum,
+                    url     => $d{url},
+                    caption => $d{caption} || '',
+                    proj    => $proj,
+                    sec     => $sec,
                 },
             });
+
+            %d=();
         };
 
         m/^\s*img_begin\b/g && do { $is_img=1; next; };
