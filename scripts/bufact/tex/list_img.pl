@@ -183,18 +183,20 @@ sub load_file {
     my ($self) = @_;
 
     my $dbh = $self->{dbh};
+    my $file = $self->{file};
 
-    my @lines = read_file $self->{file};
+    my @lines = read_file $file;
+    print $file . "\n";
 
     my ($is_img, $is_cmt);
 
     my (%d);
     my @keys = qw(url caption);
 
-    while (@lines) {
+    LINES: while (@lines) {
         local $_ = shift @lines;
         chomp;
-    
+
         next if /^\s*%/;
 
         m/^\s*\\ifcmt\b/g && do { $is_cmt=1; next; };
@@ -234,18 +236,16 @@ sub load_file {
                         $d{$k} = $1; 
                     };
                 }
-                next;
+                last;
             }
     
             m/^\s*pic\s+(.*)$/g && do { 
                 $d{url} = $1;
-                next; 
+                last; 
             };
 
             last;
         }
-
-        print Dumper(\%d) . "\n";
 
     }
 
