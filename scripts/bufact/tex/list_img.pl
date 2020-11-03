@@ -9,10 +9,21 @@ use utf8;
 use File::Spec::Functions qw(catfile);
 use File::Path qw(mkpath);
 
+use FindBin qw($Bin $Script);
+
+use LWP::Simple qw(getstore);
+use LWP::UserAgent;
+#use Digest::MD5  qw( md5_hex );
+#use Digest::MD5::File qw( file_md5_hex );
+#use File::Fetch;
+
 use Base::DB qw( 
     dbi_connect 
     dbh_do
+    dbh_select_fetchone
+    dbh_insert_hash
 );
+
 use Base::Arg qw( 
     hash_inject 
 );
@@ -26,6 +37,23 @@ sub new
     my $self = bless (\%opts, ref ($class) || $class);
 
     $self->init if $self->can('init');
+
+    return $self;
+}
+
+sub init_lwp {
+    my ($self) = @_;
+
+    my $lwp = LWP::UserAgent->new(
+        agent      => ' Mozilla/5.0 (Windows NT 6.1; WOW64; rv:24.0) Gecko/20100101 Firefox/24.0', 
+        cookie_jar => {}
+    );
+
+    my $h = {
+        lwp   => $lwp
+    };
+
+    hash_inject($self, $h);
 
     return $self;
 }
@@ -51,8 +79,8 @@ sub init_db {
     };
 
     hash_inject($self, $h);
-
     $self->{dbh} = $dbh;
+    $Base::DB::DBH = $dbh;
 
     $self
         ->db_drop
@@ -67,7 +95,6 @@ sub db_drop {
     my ($self) = @_;
 
     dbh_do({
-        dbh    => $self->{dbh},
         q      => $self->{q}->{drop},
     });
     
@@ -79,7 +106,6 @@ sub db_create {
 
     my $q = $self->{q}->{create};
     dbh_do({
-        dbh    => $self->{dbh},
         q      => $q,
     });
 
@@ -93,11 +119,11 @@ sub init_q {
         create => qq{
             CREATE TABLE IF NOT EXISTS imgs (
                 url TEXT,
-                num INTEGER,
+                inum INTEGER,
                 tags TEXT,
                 rootid TEXT,
                 proj TEXT,
-                sec TEXT,
+                file TEXT,
                 caption TEXT
             );
         },
@@ -122,7 +148,13 @@ sub init {
     $self
         ->init_q
         ->init_db
+        ->init_lwp
         ;
+
+    unless (@ARGV) {
+        $self->print_help;
+        exit 0;
+    }
     
     my $file = shift @ARGV;
     my $h = {
@@ -130,6 +162,20 @@ sub init {
     };
 
     hash_inject($self, $h);
+    return $self;
+}
+
+sub print_help {
+    my ($self) = @_;
+
+    print qq{
+        LOCATION:
+            $0
+        USAGE:
+             perl $Script FILE 
+    } . "\n";
+    exit 0;
+
     return $self;
 }
 
@@ -153,26 +199,53 @@ sub load_file {
 
         m/^\s*\\ifcmt\b/g && do { $is_cmt=1; next; };
         m/^\s*\\fi\b/g && do { 
-            $is_cmt=0 if $is_cmt; %d = (); next; 
+            $is_cmt=0 if $is_cmt; 
+
+            my $url;
+            if ($d{url}) {
+                $url = $d{url};
+                %d = ();
+            }
+            next unless $url;
+
+            my $ref = {
+                q => q{SELECT MAX(inum) FROM imgs},
+            };
+            my $max = dbh_select_fetchone($ref);
+            my $inum = ($max) ? ($max + 1) : 1;
+            
+            dbh_insert_hash({
+                t => 'imgs',
+                i => q{INSERT OR REPLACE},
+                h => {
+                    inum => $inum,
+                    url  => $url,
+                },
+            });
         };
 
-        next unless $is_cmt;
         m/^\s*img_begin\b/g && do { $is_img=1; next; };
         m/^\s*img_end\b/g && do { $is_img=0 if $is_img; next; };
 
-        if ($is_img) {
-            for my $k (@keys){
-                m/^\s*$k\s+(.*)$/g && do { 
-                    $d{$k} = $1; 
-                };
+        while(1){
+            if ($is_img) {
+                for my $k (@keys){
+                    m/^\s*$k\s+(.*)$/g && do { 
+                        $d{$k} = $1; 
+                    };
+                }
+                next;
             }
-            next;
+    
+            m/^\s*pic\s+(.*)$/g && do { 
+                $d{url} = $1;
+                next; 
+            };
+
+            last;
         }
 
-        m/^\s*pic\s+(.*)$/g && do { 
-            $d{url} = $1;
-            next; 
-        };
+        print Dumper(\%d) . "\n";
 
     }
 
