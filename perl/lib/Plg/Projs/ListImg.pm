@@ -181,7 +181,7 @@ sub print_help {
         LOCATION:
             $0
         USAGE:
-             perl $Script FILE 
+            perl $Script TEXFILE 
     } . "\n";
     exit 0;
 
@@ -206,7 +206,7 @@ sub load_file {
     my (%d);
     my @keys = qw(url caption);
 
-	chdir $img_root;
+    chdir $img_root;
 
     LINES: while (@lines) {
         local $_ = shift @lines;
@@ -221,7 +221,7 @@ sub load_file {
             next unless $d{url};
 
             my $ref = {
-                q => q{SELECT MAX(inum) FROM imgs},
+                q => q{ SELECT MAX(inum) FROM imgs },
             };
             my $max  = dbh_select_fetchone($ref);
             my $inum = ($max) ? ($max + 1) : 1;
@@ -232,36 +232,43 @@ sub load_file {
             my $img = sprintf(q{%s.%s},$inum,$ext);
             my $img_file = catfile($img_root,$img);
 
-            
             my ($url,$caption) = @d{qw(url caption)};
             %d = ();
 
-			my $curl = which 'curl';
-			if ($curl) {
-				my $cmd = "$curl -o $img $url";
-				system("$cmd");
-			}else{
-	            my $res = $lwp->mirror($url,$img_file);
-	            unless ($res->is_success) {
-	                print "LWP Error: $url " . "\n";
-	                print $res->status_line . "\n";
-	                next;
-	            }
-			}
-            
-            dbh_insert_hash({
-                t => 'imgs',
-                i => q{ INSERT OR REPLACE },
-                h => {
-                    inum    => $inum,
-                    url     => $url,
-                    caption => $caption || '',
-                    proj    => $proj,
-                    rootid  => $rootid,
-                    sec     => $sec,
-                    img     => $img,
-                },
+            my $img_db = dbh_select_fetchone({
+                q => q{ SELECT img FROM imgs WHERE url = ? },
+                p => [$url],
             });
+
+            unless ($img_db && -e $img_db) {
+                my $curl = which 'curl';
+                if ($curl) {
+                    my $cmd = "$curl -o $img $url";
+                    system("$cmd");
+                }else{
+                    my $res = $lwp->mirror($url,$img_file);
+                    unless ($res->is_success) {
+                        print "LWP Error: $url " . "\n";
+                        print $res->status_line . "\n";
+                        next;
+                    }
+                }
+                
+                dbh_insert_hash({
+                    t => 'imgs',
+                    i => q{ INSERT OR REPLACE },
+                    h => {
+                        inum    => $inum,
+                        url     => $url,
+                        caption => $caption || '',
+                        proj    => $proj,
+                        rootid  => $rootid,
+                        sec     => $sec,
+                        img     => $img,
+                    },
+                });
+
+            }
         };
 
         m/^\s*img_begin\b/g && do { $is_img=1; next; };
