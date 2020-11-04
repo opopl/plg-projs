@@ -63,6 +63,37 @@ sub init_lwp {
     return $self;
 }
 
+sub init_prj {
+    my ($self) = @_;
+
+    my ( $sec, $proj, $root, $rootid );
+
+    if (my $file = $self->{file}) {
+        my ($proj, $sec) = ( basename($file)  =~ m/^(\w+)\.(.*)\.tex$/g );
+        my $rootid = basename(dirname($file));
+
+        my $h = {
+            proj   => $proj,
+            sec    => $sec,
+            rootid => $rootid,
+        };
+        hash_inject($self, $h);
+    }
+
+    my $prj = Plg::Projs::Prj->new(
+        root   => $root,
+        rootid => $rootid,
+        proj   => $proj,
+    );
+
+    my $h = {
+        prj => $prj
+    };
+
+    hash_inject($self, $h);
+    return $self;
+}
+
 sub init_db {
     my ($self) = @_;
 
@@ -152,22 +183,13 @@ sub init {
     my ($self) = @_;
 
     $self
+        ->get_opt
+        ->init_prj
         ->init_q
         ->init_db
         ->init_lwp
         ;
 
-    unless (@ARGV) {
-        $self->print_help;
-        exit 0;
-    }
-
-    my $file = shift @ARGV;
-    my $h = {
-        file  => $file,
-    };
-
-    hash_inject($self, $h);
     return $self;
 }
 
@@ -190,6 +212,13 @@ sub get_opt {
     }else{
         GetOptions(\%opt,@optstr);
     }
+
+    my $h = {
+        file  => $opt{file},
+        proj  => $opt{proj},
+    };
+
+    hash_inject($self, $h);
 
     return $self;    
 }
@@ -221,10 +250,9 @@ sub load_file {
     $ref ||= {};
 
     my $file = $self->_opt_($ref,'file');
-    my $lwp  = $self->{lwp};
+    my $sec  = $self->_opt_($ref,'sec');
 
-    my ($proj, $sec) = ( basename($file)  =~ m/^(\w+)\.(.*)\.tex$/g );
-    my $rootid = basename(dirname($file));
+    my $lwp  = $self->{lwp};
 
     my $img_root = $self->{img_root};
 
@@ -290,8 +318,8 @@ sub load_file {
                         inum    => $inum,
                         url     => $url,
                         caption => $caption || '',
-                        proj    => $proj,
-                        rootid  => $rootid,
+                        proj    => $self->{proj},
+                        rootid  => $self->{rootid},
                         sec     => $sec,
                         img     => $img,
                     },
