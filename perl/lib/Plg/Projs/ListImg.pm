@@ -11,6 +11,8 @@ use File::Path qw(mkpath);
 use FindBin qw($Bin $Script);
 use File::Basename qw(basename dirname);
 
+use URI::Split qw(uri_split);
+
 use LWP::Simple qw(getstore);
 use LWP::UserAgent;
 #use Digest::MD5  qw( md5_hex );
@@ -124,6 +126,7 @@ sub init_q {
                 rootid TEXT,
                 proj TEXT,
                 sec TEXT,
+                img TEXT,
                 caption TEXT
             );
         },
@@ -168,7 +171,12 @@ sub init {
 sub print_help {
     my ($self) = @_;
 
+    my $pack = __PACKAGE__;
     print qq{
+        SEE ALSO:
+            base#bufact#tex#list_img
+        PACKAGE:
+            $pack
         LOCATION:
             $0
         USAGE:
@@ -186,6 +194,7 @@ sub load_file {
     my $lwp  = $self->{lwp};
 
     my ($proj, $sec) = ( basename($file)  =~ m/^(\w+)\.(.*)\.tex$/g );
+    my $rootid = basename(dirname($file));
 
     my @lines = read_file $file;
 
@@ -209,8 +218,13 @@ sub load_file {
             my $ref = {
                 q => q{SELECT MAX(inum) FROM imgs},
             };
-            my $max = dbh_select_fetchone($ref);
+            my $max  = dbh_select_fetchone($ref);
             my $inum = ($max) ? ($max + 1) : 1;
+
+            my ($scheme, $auth, $path, $query, $frag) = uri_split($d{url});
+            my $bname = basename($path);
+            my ($ext) = ($bname =~ m/\.(\w+)$/);
+            my $img = sprintf(q{%s.%s},$inum,$ext);
             
             dbh_insert_hash({
                 t => 'imgs',
@@ -220,7 +234,9 @@ sub load_file {
                     url     => $d{url},
                     caption => $d{caption} || '',
                     proj    => $proj,
+                    rootid  => $rootid,
                     sec     => $sec,
+                    img     => $img,
                 },
             });
 
