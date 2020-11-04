@@ -62,7 +62,6 @@ sub init {
         $self->{pwg} ||= eval { Plg::Projs::Piwigo::SQL->new; };
     }
 
-    $self->{db_file} ||= catfile($self->{root},'projs.sqlite');
     $self->{tags_img} ||= [qw(projs), ( $self->{proj}, $self->{root_id} )];
 
     $self->init_db;
@@ -166,7 +165,9 @@ sub _projects {
 sub init_db {
     my ($self) = @_;
 
+    $self->{db_file} ||= catfile($self->{root},'projs.sqlite');
     my $db_file = $self->{db_file};
+
     my $dbh = dbi_connect({
         dbfile => $db_file
     });

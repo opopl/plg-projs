@@ -16,9 +16,11 @@ use URI::Split qw(uri_split);
 
 use LWP::Simple qw(getstore);
 use LWP::UserAgent;
-#use Digest::MD5  qw( md5_hex );
-#use Digest::MD5::File qw( file_md5_hex );
-#use File::Fetch;
+use Getopt::Long qw(GetOptions);
+
+use base qw(
+    Base::Opt
+);
 
 use Base::DB qw( 
     dbi_connect 
@@ -159,7 +161,7 @@ sub init {
         $self->print_help;
         exit 0;
     }
-    
+
     my $file = shift @ARGV;
     my $h = {
         file  => $file,
@@ -167,6 +169,29 @@ sub init {
 
     hash_inject($self, $h);
     return $self;
+}
+
+      
+sub get_opt {
+    my ($self) = @_;
+    
+    Getopt::Long::Configure(qw(bundling no_getopt_compat no_auto_abbrev no_ignore_case_always));
+    
+    my (@optstr, %opt);
+
+    @optstr = ( 
+        "file|f=s",
+        "proj|p=s",
+    );
+    
+    unless( @ARGV ){ 
+        $self->print_help;
+        exit 0;
+    }else{
+        GetOptions(\%opt,@optstr);
+    }
+
+    return $self;    
 }
 
 sub print_help {
@@ -181,7 +206,10 @@ sub print_help {
         LOCATION:
             $0
         USAGE:
-            perl $Script TEXFILE 
+            perl $Script -f TEXFILE 
+            perl $Script -p PROJ
+            perl $Script --file TEXFILE 
+            perl $Script --proj PROJ 
     } . "\n";
     exit 0;
 
@@ -189,9 +217,10 @@ sub print_help {
 }
 
 sub load_file {
-    my ($self) = @_;
+    my ($self, $ref) = @_;
+    $ref ||= {};
 
-    my $file = $self->{file};
+    my $file = $self->_opt_($ref,'file');
     my $lwp  = $self->{lwp};
 
     my ($proj, $sec) = ( basename($file)  =~ m/^(\w+)\.(.*)\.tex$/g );
@@ -301,6 +330,7 @@ sub run {
     my ($self) = @_;
 
     $self
+        ->get_opt
         ->load_file
         ;
     return $self;
