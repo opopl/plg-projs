@@ -10,6 +10,7 @@ use File::Path qw(mkpath);
 
 use FindBin qw($Bin $Script);
 use File::Basename qw(basename dirname);
+use File::Which qw(which);  
 
 use URI::Split qw(uri_split);
 
@@ -196,12 +197,16 @@ sub load_file {
     my ($proj, $sec) = ( basename($file)  =~ m/^(\w+)\.(.*)\.tex$/g );
     my $rootid = basename(dirname($file));
 
+    my $img_root = $self->{img_root};
+
     my @lines = read_file $file;
 
     my ($is_img, $is_cmt);
 
     my (%d);
     my @keys = qw(url caption);
+
+	chdir $img_root;
 
     LINES: while (@lines) {
         local $_ = shift @lines;
@@ -225,22 +230,38 @@ sub load_file {
             my $bname = basename($path);
             my ($ext) = ($bname =~ m/\.(\w+)$/);
             my $img = sprintf(q{%s.%s},$inum,$ext);
+            my $img_file = catfile($img_root,$img);
+
+            
+            my ($url,$caption) = @d{qw(url caption)};
+            %d = ();
+
+			my $curl = which 'curl';
+			if ($curl) {
+				my $cmd = "$curl -o $img $url";
+				system("$cmd");
+			}else{
+	            my $res = $lwp->mirror($url,$img_file);
+	            unless ($res->is_success) {
+	                print "LWP Error: $url " . "\n";
+	                print $res->status_line . "\n";
+	                next;
+	            }
+			}
             
             dbh_insert_hash({
                 t => 'imgs',
                 i => q{ INSERT OR REPLACE },
                 h => {
                     inum    => $inum,
-                    url     => $d{url},
-                    caption => $d{caption} || '',
+                    url     => $url,
+                    caption => $caption || '',
                     proj    => $proj,
                     rootid  => $rootid,
                     sec     => $sec,
                     img     => $img,
                 },
             });
-
-            %d=();
         };
 
         m/^\s*img_begin\b/g && do { $is_img=1; next; };
