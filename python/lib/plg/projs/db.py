@@ -144,6 +144,10 @@ def fill_from_files(db_file, root, root_id, proj, logfun):
           if not sec: 
             sec = '_main_' 
 
+        if ext == 'xml':
+          if not sec: 
+            sec = '_xml_' 
+
         if ext == 'pl':
           if not sec: 
             continue
@@ -172,6 +176,7 @@ def fill_from_files(db_file, root, root_id, proj, logfun):
             continue
 
         data   = get_data(fpath)
+
         tags   = data.get('tags','')
         author = data.get('author','')
         url    = data.get('url','')
