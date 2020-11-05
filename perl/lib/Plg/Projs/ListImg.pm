@@ -22,6 +22,7 @@ use Getopt::Long qw(GetOptions);
 
 use base qw(
     Base::Opt
+    Base::Logging
 );
 
 use Base::DB qw( 
@@ -128,10 +129,12 @@ sub init_db {
     $self->{dbh} = $dbh;
     $Base::DB::DBH = $dbh;
 
-    $self
-        ->db_drop
-        ->db_create
-        ;
+    if ($self->{db_reset}) {
+        $self
+            ->db_drop
+            ->db_create
+            ;
+    }
 
     
     $self;
@@ -216,6 +219,8 @@ sub get_opt {
         "proj|p=s",
         "root|r=s",
         "cmd|c=s",
+        "db_reset",
+        "debug|d",
     );
     
     unless( @ARGV ){ 
@@ -223,6 +228,7 @@ sub get_opt {
         exit 0;
     }else{
         GetOptions(\%opt,@optstr);
+        $self->{opt} = \%opt;
     }
 
     foreach my $k (keys %opt) {
@@ -250,6 +256,8 @@ sub print_help {
                 perl $Script --file TEXFILE 
             PROCESS WHOLE PROJECT:
                 perl $Script -p PROJ -r ROOT 
+            DEBUGGING:
+                perl $Script -p PROJ -r ROOT -d
     } . "\n";
     exit 0;
 
@@ -260,10 +268,9 @@ sub load_file {
     my ($self, $ref) = @_;
     $ref ||= {};
 
-    my ($file, $sec, $root);
+    my ($file, $file_bn, $sec, $root);
 
     $root = $self->{root};
-    print $root . "\n";
 
     # objects
     my ($lwp, $prj);
@@ -285,12 +292,14 @@ sub load_file {
         }
         return $self;
     }
+    $file_bn = basename($file);
 
     $lwp  = $self->{lwp};
 
-
     my $img_root = $self->{img_root};
 
+    $self->debug(qq{Reading:\n\t$file_bn});
+###@lines
     my @lines = read_file $file;
 
     # flags
@@ -307,7 +316,7 @@ sub load_file {
 
         next if /^\s*%/;
 
-        m/^\s*\\ifcmt\b/g && do { $is_cmt=1; next; };
+        m/^\s*\\ifcmt\b/g && do { $is_cmt = 1; next; };
         m/^\s*\\fi\b/g && do { 
             $is_cmt = 0 if $is_cmt; 
 
@@ -322,7 +331,9 @@ sub load_file {
             my ($scheme, $auth, $path, $query, $frag) = uri_split($d{url});
             my $bname = basename($path);
             my ($ext) = ($bname =~ m/\.(\w+)$/);
-            my $img = sprintf(q{%s.%s},$inum,$ext);
+            $ext ||= 'jpg';
+
+            my $img      = sprintf(q{%s.%s},$inum,$ext);
             my $img_file = catfile($img_root,$img);
 
             my ($url,$caption) = @d{qw(url caption)};
@@ -330,15 +341,15 @@ sub load_file {
 
             my $img_db = dbh_select_fetchone({
                 q => q{ SELECT img FROM imgs WHERE url = ? },
-                p => [$url],
+                p => [ $url ],
             });
 
             unless ($img_db && -e $img_db) {
                 my $curl = which 'curl';
                 if ($curl) {
                     my $cmd = "$curl -o $img $url";
-                    system("$cmd");
-                }else{
+                    my $x = qx{$cmd 2>&1};
+                } else {
                     my $res = $lwp->mirror($url,$img_file);
                     unless ($res->is_success) {
                         print "LWP Error: $url " . "\n";
