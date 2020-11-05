@@ -13,6 +13,7 @@ p = {
     'tags'       : re.compile('^\s*%%tags (.*)$'),
     'author'     : re.compile('^\s*%%author (.*)$'),
     'url'        : re.compile('^\s*%%url (.*)$'),
+    'title'      : re.compile('^\s*%%title (.*)$'),
    }
 
 def create_tables(db_file, sql_file):
@@ -58,7 +59,7 @@ def get_data(filename):
     except UnicodeDecodeError as e:
       print(e,filename)
     if line:
-      for k in ['tags','author','url']:
+      for k in ['tags','author','url','title']:
         m = p[k].match(line)
         if m:
            data[k] = m.group(1)
@@ -93,7 +94,7 @@ def insert_dict(ref):
   values   = list( map(lambda k: insert.get(k,''), fields) )
   quot     = list( map(lambda k: '?', fields) )
   quot_s   = ",".join(quot)
-  q=''' INSERT OR IGNORE INTO %s (%s) VALUES (%s)''' % (table,fields_s,quot_s)
+  q=''' INSERT OR REPLACE INTO %s (%s) VALUES (%s)''' % (table,fields_s,quot_s)
 
   #c.execute(q,values)
 
@@ -182,14 +183,15 @@ def fill_from_files(db_file, root, root_id, proj, logfun):
         url    = data.get('url','')
 
         ins = { 
-              'author'  : author,
-              'file'    : file,
-              'proj'    : proj_m,
-              'root'    : root,
-              'rootid'  : root_id,
-              'sec'     : sec,
-              'tags'    : tags,
-              'url'     : url,
+              'author' : author,
+              'file'   : file,
+              'proj'   : proj_m,
+              'root'   : root,
+              'rootid' : root_id,
+              'sec'    : sec,
+              'tags'   : tags,
+              'url'    : url,
+              'title'  : data.get('title',''),
              }
 
         insert_dict({
