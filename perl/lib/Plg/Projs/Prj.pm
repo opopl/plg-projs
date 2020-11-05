@@ -29,7 +29,6 @@ use Base::Arg qw(
     hash_inject
 );
 
-
 sub new
 {
     my ($class, %opts) = @_;
@@ -41,30 +40,13 @@ sub new
 }
 
 sub init {
-    my $self = shift;
+    my ($self) = @_;
 
-    my ($proj)  = ($Script =~ m/^(\w+)\..*$/);
-    my $root_id = basename($Bin);
-    my $root    = $Bin;
-
-    local @ARGV = ();
-
-    my $h = {
-        proj     => $proj,
-        root     => $root,
-        root_id  => $root_id,
-        load_pwg => 0,
-    };
-
-    hash_inject($self, $h);
-
-    if ($self->{load_pwg}) {
-        $self->{pwg} ||= eval { Plg::Projs::Piwigo::SQL->new; };
-    }
-
-    $self->{tags_img} ||= [qw(projs), ( $self->{proj}, $self->{root_id} )];
-
-    $self->init_db;
+    $self
+        ->init_proj
+        ->init_pwg
+        ->init_db
+        ;
 
     return $self;
 }
@@ -160,6 +142,40 @@ sub _projects {
     }
 
     wantarray ? @$projects : $projects;
+}
+
+sub init_pwg {
+    my ($self) = @_;
+
+    if ($self->{load_pwg}) {
+        local @ARGV = ();
+        $self->{pwg} ||= eval { Plg::Projs::Piwigo::SQL->new; };
+    }
+
+    $self->{tags_img} ||= [qw(projs), ( $self->{proj}, $self->{root_id} )];
+
+    return $self;
+}
+
+sub init_proj {
+    my ($self) = @_;
+
+    return $self if $self->{proj};
+
+    my ($proj)  = ($Script =~ m/^(\w+)\..*$/);
+    my $root_id = basename($Bin);
+    my $root    = $Bin;
+
+    my $h = {
+        proj     => $proj,
+        root     => $root,
+        root_id  => $root_id,
+        load_pwg => 0,
+    };
+
+    hash_inject($self, $h);
+
+    return $self;
 }
 
 sub init_db {

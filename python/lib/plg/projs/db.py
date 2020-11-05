@@ -11,7 +11,8 @@ p = {
     'tex_file'   : re.compile('^(\w+)\.(?:(.*)\.|)tex'), 
     'proj_file'  : re.compile('^(\w+)\.(?:(.*)\.|)(tex|pl|vim)'), 
     'tags'       : re.compile('^\s*%%tags (.*)$'),
-    'author'     : re.compile('^\s*%%author (.*)$')
+    'author'     : re.compile('^\s*%%author (.*)$'),
+    'url'        : re.compile('^\s*%%url (.*)$'),
    }
 
 def create_tables(db_file, sql_file):
@@ -57,12 +58,10 @@ def get_data(filename):
     except UnicodeDecodeError as e:
       print(e,filename)
     if line:
-      m = p['tags'].match(line)
-      if m:
-        data['tags'] = m.group(1)
-      m = p['author'].match(line)
-      if m:
-        data['author'] = m.group(1)
+      for k in ['tags','author','url']:
+        m = p[k].match(line)
+        if m:
+           data[k] = m.group(1)
   return data
 
 def cleanup(db_file, root, proj):
@@ -175,6 +174,7 @@ def fill_from_files(db_file, root, root_id, proj, logfun):
         data   = get_data(fpath)
         tags   = data.get('tags','')
         author = data.get('author','')
+        url    = data.get('url','')
 
         ins = { 
               'author'  : author,
@@ -184,6 +184,7 @@ def fill_from_files(db_file, root, root_id, proj, logfun):
               'rootid'  : root_id,
               'sec'     : sec,
               'tags'    : tags,
+              'url'     : url,
              }
 
         insert_dict({

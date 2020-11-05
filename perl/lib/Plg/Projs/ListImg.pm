@@ -192,8 +192,6 @@ sub init_q {
 sub init {
     my ($self) = @_;
 
-    print Dumper(\@ARGV) . "\n";
-
     $self
         ->get_opt
         ->init_prj
@@ -262,17 +260,40 @@ sub load_file {
     my ($self, $ref) = @_;
     $ref ||= {};
 
-    my $file = $self->_opt_($ref,'file');
-    my $sec  = $self->_opt_($ref,'sec');
+    my ($file, $sec, $root);
 
-    my $prj = $self->{prj};
+    $root = $self->{root};
+    print $root . "\n";
 
-    my $lwp  = $self->{lwp};
+    # objects
+    my ($lwp, $prj);
+
+    $file = $self->_opt_($ref,'file');
+    $sec  = $self->_opt_($ref,'sec');
+
+    $prj = $self->{prj};
+    unless ($file) {
+        foreach($prj->_files){
+
+            my $file = catfile($root,$_->{file});
+            my $sec  = $_->{sec};
+
+            $self->load_file({
+                file => $file,
+                sec  => $sec,
+            });
+        }
+        return $self;
+    }
+
+    $lwp  = $self->{lwp};
+
 
     my $img_root = $self->{img_root};
 
     my @lines = read_file $file;
 
+    # flags
     my ($is_img, $is_cmt);
 
     my (%d);
@@ -375,9 +396,9 @@ sub run {
     $self
         ->load_file
         ;
+
     return $self;
 }
-
 
 1;
 
@@ -388,9 +409,6 @@ sub run {
             cmd_insert_pwg
                 cnv_img_begin
 =cut
-
-
-
 
 1;
  
