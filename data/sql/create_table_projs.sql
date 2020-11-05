@@ -15,7 +15,8 @@ CREATE TABLE IF NOT EXISTS projs (
     author TEXT,
     pic TEXT,
     rootid TEXT,
-    url TEXT
+    url TEXT,
+    title TEXT
 );
 
 -- ALTER TABLE projs ADD COLUMN url TEXT;
