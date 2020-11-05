@@ -344,35 +344,43 @@ sub load_file {
                 p => [ $url ],
             });
 
-            unless ($img_db && -e $img_db) {
-                my $curl = which 'curl';
-                if ($curl) {
-                    my $cmd = "$curl -o $img $url";
-                    my $x = qx{$cmd 2>&1};
-                } else {
-                    my $res = $lwp->mirror($url,$img_file);
-                    unless ($res->is_success) {
-                        print "LWP Error: $url " . "\n";
-                        print $res->status_line . "\n";
-                        next;
-                    }
-                }
-                
-                dbh_insert_hash({
-                    t => 'imgs',
-                    i => q{ INSERT OR REPLACE },
-                    h => {
-                        inum    => $inum,
-                        url     => $url,
-                        caption => $caption || '',
-                        proj    => $self->{proj},
-                        rootid  => $self->{rootid},
-                        sec     => $sec,
-                        img     => $img,
-                    },
-                });
+            $self->debug([
+	            "img_db:", "\t".$img_db,
+	            "url:", "\t".$url,
+            ]);
 
+            if($img_db && -e $img_db) {
+                next;
             }
+
+            my $curl = which 'curl';
+            if ($curl) {
+                my $cmd = "$curl -o $img $url";
+                my $x = qx{$cmd 2>&1};
+                $self->debug(["Command:", $x]);
+            } else {
+                my $res = $lwp->mirror($url,$img_file);
+                unless ($res->is_success) {
+                    print "LWP Error: $url " . "\n";
+                    print $res->status_line . "\n";
+                    next;
+                }
+            }
+            
+            dbh_insert_hash({
+                t => 'imgs',
+                i => q{ INSERT OR REPLACE },
+                h => {
+                    inum    => $inum,
+                    url     => $url,
+                    caption => $caption || '',
+                    proj    => $self->{proj},
+                    rootid  => $self->{rootid},
+                    sec     => $sec,
+                    img     => $img,
+                },
+            });
+
         };
 
         m/^\s*img_begin\b/g && do { $is_img=1; next; };
