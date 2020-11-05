@@ -203,7 +203,7 @@ sub _join_lines {
 
 =head4 Usage
 
-    my @include = $maker->_ii_include();
+    my @include = $mkr->_ii_include();
 
 =cut
 

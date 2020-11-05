@@ -66,31 +66,39 @@ sub init_lwp {
 sub init_prj {
     my ($self) = @_;
 
-    my ( $sec, $proj, $root, $rootid );
+    my ( $sec, $file, $proj, $root, $rootid );
 
-    if (my $file = $self->{file}) {
-        my ($proj, $sec) = ( basename($file)  =~ m/^(\w+)\.(.*)\.tex$/g );
-        my $rootid = basename(dirname($file));
+    if ($file = $self->{file}) {
+        ($proj, $sec) = ( basename($file)  =~ m/^(\w+)\.(.*)\.tex$/g );
+        $root   = dirname($file);
+        $rootid = basename($root);
 
         my $h = {
             proj   => $proj,
             sec    => $sec,
+            root   => $root,
             rootid => $rootid,
         };
         hash_inject($self, $h);
+
+    }elsif($self->{proj} && $self->{root}){
+        $self->{rootid} = basename($self->{root});
     }
 
-    my $prj = Plg::Projs::Prj->new(
-        root   => $root,
-        rootid => $rootid,
-        proj   => $proj,
-    );
+    if ($self->{root} && $self->{rootid} && $self->{proj}) {
+        $self->{prj} = Plg::Projs::Prj->new(
+            root   => $self->{root},
+            rootid => $self->{rootid},
+            proj   => $self->{proj},
+        );
+    }else{
+        die qq{
+            NOT DEFINED TOGETHER: 
+                root && rootid && proj
+        } . "\n";
+        
+    }
 
-    my $h = {
-        prj => $prj
-    };
-
-    hash_inject($self, $h);
     return $self;
 }
 
@@ -204,6 +212,8 @@ sub get_opt {
     @optstr = ( 
         "file|f=s",
         "proj|p=s",
+        "root|r=s",
+        "cmd|c=s",
     );
     
     unless( @ARGV ){ 
@@ -213,12 +223,9 @@ sub get_opt {
         GetOptions(\%opt,@optstr);
     }
 
-    my $h = {
-        file  => $opt{file},
-        proj  => $opt{proj},
-    };
-
-    hash_inject($self, $h);
+    foreach my $k (keys %opt) {
+        $self->{$k} = $opt{$k};
+    }
 
     return $self;    
 }
@@ -235,10 +242,11 @@ sub print_help {
         LOCATION:
             $0
         USAGE:
-            perl $Script -f TEXFILE 
-            perl $Script -p PROJ
-            perl $Script --file TEXFILE 
-            perl $Script --proj PROJ 
+            PROCESS SINGLE TEX-FILE:
+                perl $Script -f TEXFILE 
+                perl $Script --file TEXFILE 
+            PROCESS WHOLE PROJECT:
+                perl $Script -p PROJ -r ROOT 
     } . "\n";
     exit 0;
 
@@ -251,6 +259,8 @@ sub load_file {
 
     my $file = $self->_opt_($ref,'file');
     my $sec  = $self->_opt_($ref,'sec');
+
+    my $prj = $self->{prj};
 
     my $lwp  = $self->{lwp};
 
