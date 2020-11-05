@@ -5,6 +5,8 @@ use strict;
 use warnings;
 use utf8;
 
+use Plg::Projs::Prj;
+
 use File::Spec::Functions qw(catfile);
 use File::Path qw(mkpath);
 
@@ -190,6 +192,8 @@ sub init_q {
 sub init {
     my ($self) = @_;
 
+    print Dumper(\@ARGV) . "\n";
+
     $self
         ->get_opt
         ->init_prj
@@ -236,7 +240,8 @@ sub print_help {
     my $pack = __PACKAGE__;
     print qq{
         SEE ALSO:
-            base#bufact#tex#list_img
+            base#bufact#tex#list_img 
+            BufAct list_img
         PACKAGE:
             $pack
         LOCATION:
@@ -368,7 +373,6 @@ sub run {
     my ($self) = @_;
 
     $self
-        ->get_opt
         ->load_file
         ;
     return $self;
