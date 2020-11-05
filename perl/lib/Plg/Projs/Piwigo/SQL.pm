@@ -47,11 +47,11 @@ sub init {
         pwd      => 'root',
         dbfile   => 'piwigo',
         driver   => 'mysql',
-        img_root => $ENV{PIWIGO},
+        pwg_root => $ENV{PIWIGO},
     };
 
-    $h->{img_root_unix} = $h->{img_root};
-    $h->{img_root_unix} =~ s/\\/\//g;
+    $h->{pwg_root_unix} = $h->{pwg_root};
+    $h->{pwg_root_unix} =~ s/\\/\//g;
         
     my @k = keys %$h;
 
@@ -132,7 +132,7 @@ sub _tex_include_graphics {
     my @tex;
 
     push @tex,
-        sprintf(q{\def\picpath{\imgroot/%s}},$rel_path),
+        sprintf(q{\def\picpath{\pwgroot/%s}},$rel_path),
         sprintf(q{\includegraphics[%s]{\picpath}}, $pic_opts ),
         ;
 
@@ -367,7 +367,7 @@ sub cmd_img_by_tags {
         }
         next unless $in;
 
-        my $full_path = catfile($self->{img_root},$path);
+        my $full_path = catfile($self->{pwg_root},$path);
         next if $done{$full_path};
     
         if ($^O eq 'MSWin32') {

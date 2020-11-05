@@ -194,8 +194,8 @@ sub init {
     my $tex_opts = join(" ", @$tex_opts_a);
 
     $h = { %$h,
-        img_root_unix => $pwg->{img_root_unix},
-        img_root      => $pwg->{img_root},
+        pwg_root_unix => $pwg->{pwg_root_unix},
+        pwg_root      => $pwg->{pwg_root},
         src_dir       => catfile($h->{build_dir},qw( .. src)),
         tex_opts      => $tex_opts,
         tex_opts_a    => $tex_opts_a,
@@ -625,7 +625,7 @@ sub cmd_insert_pwg {
                 my $opts_ig_s = join(",",@opts_ig);
 
                 push @nlines,
-                    sprintf('\def\pic{%s/%s}', '\imgroot', $ipath),
+                    sprintf('\def\pic{%s/%s}', '\pwgroot', $ipath),
                     sprintf('\\includegraphics[%s]{\pic}', $opts_ig_s),
                     ;
 
@@ -663,7 +663,7 @@ sub cmd_insert_pwg {
 
     unshift @nlines,
         ' ',
-        sprintf(q{\def\imgroot{%s}}, $mkr->{img_root_unix} ),
+        sprintf(q{\def\pwgroot{%s}}, $mkr->{pwg_root_unix} ),
         ' '
         ;
 
