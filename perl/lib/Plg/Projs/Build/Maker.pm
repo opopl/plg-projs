@@ -437,11 +437,13 @@ sub cmd_insert_pwg {
     foreach(@jlines) {
         chomp;
 
+###cnv_ifcmt
         m/^\s*\\ifcmt/ && do { 
             $is_cmt = 1;
             next;
         };
 
+###cnv_fi
         m/^\s*\\fi/ && do { 
             if ($is_cmt) {
                 $is_cmt = 0;
