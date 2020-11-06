@@ -648,6 +648,7 @@ sub cmd_insert_pwg {
         };
 
 
+###cnv_tags
         m/^\s*tags\s+(.*)/ && do { 
             next unless $is_img;
 
