@@ -40,7 +40,9 @@ use base qw(
     Plg::Projs::Build::Maker::Line
     Plg::Projs::Build::Maker::Sec
     Plg::Projs::Build::Maker::Pats
+
     Plg::Projs::Build::Maker::Pwg
+    Plg::Projs::Build::Maker::Jnd
 );
 
 use Base::Arg qw(

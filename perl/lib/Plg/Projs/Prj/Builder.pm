@@ -54,10 +54,12 @@ sub inj_base {
             tex_exe
         )],
         maps_act => {
-            'compile'  => 'build_pwg',
-            'join'     => 'insert_pwg',
-            'show_trg' => sub { $bld->act_show_trg; },
-            'dump_bld' => sub { $bld->act_dump_bld; },
+            'compile_pwg' => 'build_pwg',
+            'compile'     => 'jnd_build',
+            'join'        => 'jnd_compose',
+            'show_trg'  => sub { $bld->act_show_trg; },
+            'show_acts' => sub { $bld->act_show_acts; },
+            'dump_bld'  => sub { $bld->act_dump_bld; },
         },
         act_default    => 'compile',
         target_default => 'usual',
@@ -152,7 +154,7 @@ sub _config_set {
 sub print_help {
     my ($bld) = @_;
 
-    my @acts   = sort keys %{$bld->{maps_act} || {}};
+    my @acts   = $bld->_acts;
     my $acts_s = join(" ",@acts);
 
     my $trg_list   = $bld->{trg_list} || [];
@@ -179,6 +181,7 @@ sub print_help {
             perl $Script compile -c xelatex
             perl $Script compile -c xelatex -t usual
             perl $Script show_trg 
+            perl $Script show_acts
             perl $Script dump_bld -d 'opts_maker sections' 
             perl $Script join
         DEBUG:
