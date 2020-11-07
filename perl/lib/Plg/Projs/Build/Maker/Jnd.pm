@@ -7,14 +7,13 @@ use warnings;
 use File::Slurp::Unicode;
 use File::Spec::Functions qw(catfile);
 
-use Plg::Projs::Piwigo::SQL;
-
 use Capture::Tiny qw(
     capture_merged
 );
 use File::stat;
 use File::Path qw( mkpath rmtree );
 use File::Copy qw( copy );
+use Data::Dumper qw(Dumper);
 
 ###jnd_compose
 sub cmd_jnd_compose {
@@ -47,7 +46,6 @@ sub cmd_jnd_compose {
     my (@perl_code, @perl_use);
 
     push @perl_use,
-        q{ use Plg::Projs::Piwigo::SQL; },
         q{ use Plg::Projs::Build::Maker; },
     ;
 
@@ -221,42 +219,9 @@ sub cmd_jnd_compose {
             my $tags_space = join(" ",@tags_arr);
             push @nlines, q{%tags_space: } . $tags_space;
 
-###pwg_run
-            my $pwg = Plg::Projs::Piwigo::SQL->new;
-            local @ARGV = qw( -c img_by_tags );
-            push @ARGV, 
-                qw( -t ), join("," => @tags_all);
-
-            #print Dumper(\@tags_all) . "\n";
-
-            $pwg->run;
-            my @img = @{$pwg->{img} || []};
-            #print Dumper(\@img) . "\n";
-            if (@img == 1) {
-                my $i = shift @img;
-                my $ipath = $i->{rel_path};
-                my $icapt = $i->{comment} || '';
-                $icapt =~ s/\r\n/\n/g;
-
-                my $width_s = ( $width =~ /^[\d\.]+$/ ) ? "$width\\textwidth" : $width;
-                unless (@opts_ig){
-                    push @opts_ig, sprintf(q{width=%s},$width_s);
-                }
-                my $opts_ig_s = join(",",@opts_ig);
-
-                push @nlines,
-                    sprintf('\def\pic{%s/%s}', '\pwgroot', $ipath),
-                    sprintf('\\includegraphics[%s]{\pic}', $opts_ig_s),
-                    ;
-
-
-                if ($is_fig) {
-                    if ($icapt) {
-                        push @nlines, sprintf('\\caption{%s}',$icapt);
-                    }
-                }
-            }else{
-            }
+###todo
+            print Dumper({ tags_all => \@tags_all }) . "\n";
+            #push @nlines, image tex cmds
 
             @opts_ig = ();
             @tags = ();
