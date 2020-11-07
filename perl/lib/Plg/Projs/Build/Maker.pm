@@ -173,8 +173,6 @@ sub init {
 
     my @build_dir_a = ( "builds", $proj, "b_pdflatex" );
 
-    my $pwg = Plg::Projs::Piwigo::SQL->new;
-
     my $h = {
         proj            => $proj,
         pdfout          => $pdfout,
@@ -183,11 +181,11 @@ sub init {
         build_dir       => catfile($root, @build_dir_a),
         bib_file        => catfile($root, qq{$proj.refs.bib}),
         out_dir_pdf     => catfile($pdfout, $root_id, $proj),
-        out_dir_pdf_pwg => catfile($pdfout, $root_id, $proj, qw(pwg) ),
         dbfile          => catfile($root,'projs.sqlite'),
-        pwg             => $pwg,
         cmd             => 'bare',
     };
+
+    #$mkr->init_pwg;
 
     push @$tex_opts_a, 
         '-file-line-error',
@@ -198,8 +196,6 @@ sub init {
     my $tex_opts = join(" ", @$tex_opts_a);
 
     $h = { %$h,
-        pwg_root_unix => $pwg->{pwg_root_unix},
-        pwg_root      => $pwg->{pwg_root},
         src_dir       => catfile($h->{build_dir},qw( .. src)),
         tex_opts      => $tex_opts,
         tex_opts_a    => $tex_opts_a,
@@ -317,24 +313,6 @@ sub _cmds_texindy {
 
     return @cmds;
 }
-
-sub _files_pdf_pwg {
-    my ($mkr) = @_;
-
-    my $proj    = $mkr->{proj};
-    my $src_dir = $mkr->{src_dir};
-
-    my @pdf_files;
-    push @pdf_files,
-        catfile($src_dir,$proj . 'jnd.pdf'),
-        catfile($mkr->{out_dir_pdf_pwg},$proj . '.pdf'),
-        ;
-
-    return @pdf_files;
-
-}
-
-
 
 sub cmd_join {
     my ($mkr) = @_;
@@ -575,7 +553,6 @@ sub cmd_bare {
         out_dir 
         out_dir_pdf 
         out_dir_pdf_b 
-        out_dir_pdf_pwg
     );
 
     foreach my $dirid (@dirids) {

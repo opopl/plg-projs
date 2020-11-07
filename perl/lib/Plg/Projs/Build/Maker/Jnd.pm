@@ -249,7 +249,7 @@ sub cmd_jnd_compose {
 
     unshift @nlines,
         ' ',
-        sprintf(q{\def\pwgroot{%s}}, $mkr->{pwg_root_unix} ),
+        sprintf(q{\def\imgroot{%s}}, $mkr->{img_root_unix} ),
         ' '
         ;
 
@@ -258,11 +258,11 @@ sub cmd_jnd_compose {
     return $mkr;
 }
 
-=head3 cmd_build_pwg
+=head3 cmd_jnd_build
 
 =head4 Calls 
 
-cmd_insert_pwg
+cmd_jnd_compose
 
 =cut
 
@@ -276,15 +276,8 @@ sub cmd_jnd_build {
     my $proj_pdf_name = $mkr->{pdf_name} || $proj;
 
     mkpath $mkr->{src_dir} if -d $mkr->{src_dir};
-    mkpath $mkr->{out_dir_pdf_pwg};
 
     $mkr->cmd_jnd_compose;
-
-    my @pdf_files = $mkr->_files_pdf_pwg;
-
-    foreach my $f (@pdf_files) {
-        rmtree $f if -e $f;
-    }
 
     my $pdf_file = catfile($src_dir,'jnd.pdf');
 
@@ -295,7 +288,6 @@ sub cmd_jnd_build {
 
     my @dest;
     push @dest, 
-        #$mkr->{out_dir_pdf_pwg},
         $mkr->{out_dir_pdf}
         ;
 

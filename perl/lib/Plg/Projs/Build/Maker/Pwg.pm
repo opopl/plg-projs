@@ -16,6 +16,20 @@ use File::stat;
 use File::Path qw( mkpath rmtree );
 use File::Copy qw( copy );
 
+sub init_pwg {
+    my ($mkr) = @_;
+
+    my $pwg = $mkr->{pwg} = Plg::Projs::Piwigo::SQL->new;
+
+	my $h = {
+        pwg_root_unix => $pwg->{pwg_root_unix},
+        pwg_root      => $pwg->{pwg_root},
+	};
+	hash_inject($mkr, $h);
+
+	$mkr;
+}
+
 sub cmd_insert_pwg {
     my ($mkr) = @_;
 
@@ -313,12 +327,6 @@ sub cmd_build_pwg {
 
     $mkr->cmd_insert_pwg;
 
-    my @pdf_files = $mkr->_files_pdf_pwg;
-
-    foreach my $f (@pdf_files) {
-        rmtree $f if -e $f;
-    }
-
     my $pdf_file = catfile($src_dir,'jnd.pdf');
 
     chdir $src_dir;
@@ -327,10 +335,7 @@ sub cmd_build_pwg {
     system($cmd);
 
     my @dest;
-    push @dest, 
-        #$mkr->{out_dir_pdf_pwg},
-        $mkr->{out_dir_pdf}
-        ;
+    push @dest, $mkr->{out_dir_pdf};
 
     if (-e $pdf_file) {
         while (1) {

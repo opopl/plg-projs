@@ -44,7 +44,7 @@ sub init {
 
     $self
         ->init_proj
-        ->init_pwg
+        #->init_pwg
         ->init_db
         ;
 
