@@ -45,6 +45,10 @@ use base qw(
     Plg::Projs::Build::Maker::Jnd
 );
 
+use Base::File qw(
+    win2unix
+);
+
 use Base::Arg qw(
     hash_update
     hash_inject
@@ -183,6 +187,7 @@ sub init {
         out_dir_pdf     => catfile($pdfout, $root_id, $proj),
         dbfile          => catfile($root,'projs.sqlite'),
         cmd             => 'bare',
+        img_root        => $ENV{IMG_ROOT} // catfile($ENV{HOME},qw(img_root)),
     };
 
     #$mkr->init_pwg;
@@ -203,6 +208,8 @@ sub init {
     };
 
     hash_inject($mkr, $h);
+
+    $mkr->{img_root_unix} = win2unix($mkr->{img_root});
 
     return $mkr;
 }
