@@ -14,6 +14,13 @@ use utf8;
 use open qw(:utf8 :std);
 use Encode;
 
+use base qw(
+    Plg::Projs::Tex
+);
+use Base::Arg qw(
+    hash_inject
+);
+
 use Base::DB qw(
     dbh_insert_hash
     dbh_select
@@ -53,9 +60,7 @@ sub init {
     $h->{pwg_root_unix} = $h->{pwg_root};
     $h->{pwg_root_unix} =~ s/\\/\//g;
         
-    my @k = keys %$h;
-
-    for(@k){ $pwg->{$_} = $h->{$_} unless defined $pwg->{$_}; }
+    hash_inject($pwg, $h);
 
     $pwg
         ->init_db
@@ -110,40 +115,6 @@ sub dhelp {
     exit 0;
 
     return $pwg;   
-}
-
-
-sub _tex_pic_opts {
-    my ($pwg, $ref) = @_;
-
-    my $width = $ref->{width};
-
-    sprintf(q{width=%s\textwidth},$width); 
-};
-
-=head3 _tex_include_graphics
-
-    $pwg->_tex_include_graphics({
-    });
-
-=cut
-
-sub _tex_include_graphics {
-    my ($pwg, $ref) = @_;
-
-    my $w        = $ref->{width};
-    my $rel_path = $ref->{rel_path};
-
-    my $pic_opts = $pwg->_tex_pic_opts({ width => $w });
-
-    my @tex;
-
-    push @tex,
-        sprintf(q{\def\picpath{\pwgroot/%s}},$rel_path),
-        sprintf(q{\includegraphics[%s]{\picpath}}, $pic_opts ),
-        ;
-
-    return @tex;
 }
 
 sub _img_include_graphics {
