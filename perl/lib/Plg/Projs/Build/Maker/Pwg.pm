@@ -15,6 +15,9 @@ use Capture::Tiny qw(
 use File::stat;
 use File::Path qw( mkpath rmtree );
 use File::Copy qw( copy );
+use Base::Arg qw(
+	hash_inject
+);
 
 sub init_pwg {
     my ($mkr) = @_;

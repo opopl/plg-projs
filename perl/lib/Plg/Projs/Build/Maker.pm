@@ -29,6 +29,7 @@ use FindBin qw($Bin $Script);
 use File::Find qw(find);
 
 use Plg::Projs::Piwigo::SQL;
+use Plg::Projs::Prj;
 
 use base qw(
     Base::Obj
@@ -161,6 +162,42 @@ sub dhelp {
     return $mkr;    
 }
 
+sub init_prj {
+    my ($mkr) = @_;
+
+    if ($mkr->{root} && $mkr->{root_id} && $mkr->{proj}) {
+        $mkr->{prj} = Plg::Projs::Prj->new(
+            root   => $mkr->{root},
+            rootid => $mkr->{root_id},
+            proj   => $mkr->{proj},
+        );
+    }
+
+    return $mkr;    
+}
+
+sub init_img {
+    my ($mkr) = @_;
+
+    my $img_root = $ENV{IMG_ROOT} // catfile($ENV{HOME},qw(img_root));
+    my $h = {
+        img_root      => $img_root,
+        img_root_unix => win2unix($img_root),
+        dbfile_img    => catfile($img_root,qw(img.db)),
+    };
+
+    hash_inject($mkr, $h);
+
+    my $ref = {
+        dbfile => $mkr->{dbfile_img},
+        attr   => {},
+    };
+    
+    $mkr->{dbh_img} = dbi_connect($ref);
+
+    return $mkr;    
+}
+
 sub init {
     my ($mkr) = @_;
 
@@ -187,10 +224,13 @@ sub init {
         out_dir_pdf     => catfile($pdfout, $root_id, $proj),
         dbfile          => catfile($root,'projs.sqlite'),
         cmd             => 'bare',
-        img_root        => $ENV{IMG_ROOT} // catfile($ENV{HOME},qw(img_root)),
     };
 
-    #$mkr->init_pwg;
+    $mkr
+       #->init_pwg
+       ->init_img
+       ->init_prj
+       ;
 
     push @$tex_opts_a, 
         '-file-line-error',
@@ -209,7 +249,6 @@ sub init {
 
     hash_inject($mkr, $h);
 
-    $mkr->{img_root_unix} = win2unix($mkr->{img_root});
 
     return $mkr;
 }

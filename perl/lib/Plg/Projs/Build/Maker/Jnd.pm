@@ -4,6 +4,10 @@ package Plg::Projs::Build::Maker::Jnd;
 use strict;
 use warnings;
 
+use utf8;
+
+binmode STDOUT,':encoding(utf8)';
+
 use File::Slurp::Unicode;
 use File::Spec::Functions qw(catfile);
 
@@ -14,6 +18,10 @@ use File::stat;
 use File::Path qw( mkpath rmtree );
 use File::Copy qw( copy );
 use Data::Dumper qw(Dumper);
+
+use Base::DB qw(
+    dbh_select
+);
 
 ###jnd_compose
 sub cmd_jnd_compose {
@@ -38,51 +46,69 @@ sub cmd_jnd_compose {
     my (@tags);
     my $tags_projs = [ qw(projs), $mkr->{root_id}, $mkr->{proj} ];
 
+    my @keys = qw(url caption tags);
+    my %d;
+
 ###_cnv_loop
     foreach(@jlines) {
         chomp;
 
-###cnv_ifcmt
-        m/^\s*\\ifcmt/ && do { 
-            $is_cmt = 1;
-            next;
-        };
-
-###cnv_fi
+        m/^\s*\\ifcmt/ && do { $is_cmt = 1; next; };
         m/^\s*\\fi/ && do { 
-            if ($is_cmt) { $is_cmt = 0; next; }
-        };
+            $is_cmt = 0 if $is_cmt; 
 
-        unless($is_cmt){
-            push @nlines, $_;
-            next;
-        }
+            my ($url, $caption, $tags) = @d{@keys};
 
-###cnv_img_begin
-        m/^\s*img_begin/ && do { 
-            $is_img = 1; next;
-        };
+            my $w = {};
+            $w->{url}  = $d{url} if $d{url};
+            $w->{tags} = $d{tags} if $d{tags};
 
-###cnv_img_end
-        m/^\s*img_end/ && do { 
-            $is_img = 0; 
+            my ($rows, $cols, $q, $p) = dbh_select({
+                dbh => $mkr->{dbh_img},
+                q   => q{ SELECT img, caption, url FROM imgs },
+                p   => [],
+                w   => $w,
+            });
+            #for $row (@$rows){
+            #}
+            print Dumper({ rows => $rows }) . "\n";
 
             @tags = ();
-            
+            %d = ();
+
+            next; 
+        };
+
+        unless($is_cmt){ push @nlines, $_; next; }
+
+        m/^\s*img_begin/ && do { $is_img = 1; next; };
+        m/^\s*img_end/ && do { 
+            $is_img = 0; 
             next;
         };
 
-###cnv_tags
-        m/^\s*tags\s+(.*)/ && do { 
-            next unless $is_img;
+        while(1){
+            if ($is_img) {
+                for my $k (@keys){
+                    m/^\s*$k\s+(.*)$/g && do { 
+                        $d{$k} = $1; 
+                        $d{$k} =~ s/\s+//g;
+                    };
+                }
 
-            my $tags = $1;
-            $tags =~ s/\s+//g;
+                if ($d{tags}) {
+                    push @tags, [ split("," => $d{tags} ) ];
+                }
+                last;
+            }
+    
+            m/^\s*pic\s+(.*)$/g && do { 
+                $d{url} = $1;
+                last; 
+            };
 
-            push @tags, [ split("," => $tags) ];
-
-            next;
-        };
+            last;
+        }
 
     }
 

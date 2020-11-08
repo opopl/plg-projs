@@ -4,6 +4,10 @@ package Plg::Projs::Prj::Img;
 use strict;
 use warnings;
 
+use Base::Arg qw(
+	hash_inject
+);
+
 use base qw(
     Plg::Projs::Prj
 );
@@ -12,7 +16,7 @@ use Data::Dumper qw(Dumper);
 sub init {
     my ($self) = @_;
 
-    $self->SUPER::init();
+    $self->Plg::Projs::Prj::init();
 
     my @tags_base;
     push @tags_base,
@@ -22,10 +26,8 @@ sub init {
     my $h = {
         tags_base => [ @tags_base ]
     };
-        
-    my @k = keys %$h;
 
-    for(@k){ $self->{$_} = $h->{$_} unless defined $self->{$_}; }
+	hash_inject($self, $h);
 
     return $self;
 }
@@ -124,12 +126,20 @@ sub _range_tabular_line {
 sub run {
     my ($self) = @_;
 
-    my $pwg = $self->{pwg};
+	my $tex = $self->tex;
+    print $tex . "\n";
+
+
+}
+
+sub tex {
+    my ($self) = @_;
+
     my @tags_base = @{$self->{tags_base}};
     
     my @tex_lines;
     
-    my $cols = $self->{num_cols};
+    my $cols  = $self->{num_cols};
     my @range = @{$self->{range} || []};
 
     my $num;
@@ -137,8 +147,6 @@ sub run {
         $self->_range_tabular(\@range,$cols);
     
     my $tex = join("\n",@tex_lines);
-    print $tex . "\n";
-
 }
 
 1;

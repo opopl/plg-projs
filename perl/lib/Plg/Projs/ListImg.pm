@@ -306,7 +306,7 @@ sub load_file {
     my ($is_img, $is_cmt);
 
     my (%d);
-    my @keys = qw(url caption);
+    my @keys = qw( url caption tags );
 
     chdir $img_root;
 
@@ -336,7 +336,7 @@ sub load_file {
             my $img      = sprintf(q{%s.%s},$inum,$ext);
             my $img_file = catfile($img_root,$img);
 
-            my ($url,$caption) = @d{qw(url caption)};
+            my ($url, $caption, $tags) = @d{@keys};
             %d = ();
 
             my $img_db = dbh_select_fetchone({
@@ -378,6 +378,7 @@ sub load_file {
                     rootid  => $self->{rootid},
                     sec     => $sec,
                     img     => $img,
+                    tags    => $tags,
                 },
             });
 
