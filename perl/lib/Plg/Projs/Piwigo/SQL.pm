@@ -31,15 +31,15 @@ use Base::DB qw(
 sub new
 {
     my ($class, %opts) = @_;
-    my $self = bless (\%opts, ref ($class) || $class);
+    my $pwg = bless (\%opts, ref ($class) || $class);
 
-    $self->init if $self->can('init');
+    $pwg->init if $pwg->can('init');
 
-    return $self;
+    return $pwg;
 }
 
 sub init {
-    my ($self) = @_;
+    my ($pwg) = @_;
 
     my $h = {
         warn     => 1,
@@ -55,19 +55,19 @@ sub init {
         
     my @k = keys %$h;
 
-    for(@k){ $self->{$_} = $h->{$_} unless defined $self->{$_}; }
+    for(@k){ $pwg->{$_} = $h->{$_} unless defined $pwg->{$_}; }
 
-    $self
+    $pwg
         ->init_db
         ->ct_collected
         ;
 
-    return $self;
+    return $pwg;
 }
 
       
 sub get_opt {
-    my ($self) = @_;
+    my ($pwg) = @_;
 
     my(%opt, @optstr, $cmdline);
     
@@ -79,19 +79,19 @@ sub get_opt {
     );
     
     unless( @ARGV ){ 
-        $self->dhelp;
+        $pwg->dhelp;
         exit 0;
     }else{
         $cmdline = join(' ',@ARGV);
         GetOptions(\%opt,@optstr);
-        $self->{opt} = \%opt;
+        $pwg->{opt} = \%opt;
     }
 
-    return $self;   
+    return $pwg;   
 }
 
 sub dhelp {
-    my ($self) = @_;
+    my ($pwg) = @_;
 
     my $s = qq{
 
@@ -109,25 +109,32 @@ sub dhelp {
     print $s . "\n";
     exit 0;
 
-    return $self;   
+    return $pwg;   
 }
 
 
 sub _tex_pic_opts {
-    my ($self, $ref) = @_;
+    my ($pwg, $ref) = @_;
 
     my $width = $ref->{width};
 
     sprintf(q{width=%s\textwidth},$width); 
 };
 
+=head3 _tex_include_graphics
+
+    $pwg->_tex_include_graphics({
+    });
+
+=cut
+
 sub _tex_include_graphics {
-    my ($self, $ref) = @_;
+    my ($pwg, $ref) = @_;
 
     my $w        = $ref->{width};
     my $rel_path = $ref->{rel_path};
 
-    my $pic_opts = $self->_tex_pic_opts({ width => $w });
+    my $pic_opts = $pwg->_tex_pic_opts({ width => $w });
 
     my @tex;
 
@@ -140,7 +147,7 @@ sub _tex_include_graphics {
 }
 
 sub _img_include_graphics {
-    my ($self, $ref) = @_;
+    my ($pwg, $ref) = @_;
 
     my $w = $ref->{width};
 
@@ -150,7 +157,7 @@ sub _img_include_graphics {
 
     my @tags = @{ $ref->{tags} || [] };
 
-    my $rel_path = $self->_img_rel_path({ tags => \@tags });
+    my $rel_path = $pwg->_img_rel_path({ tags => \@tags });
 
     unless ($rel_path) {
         warn 'rel_path undefined for tags: ' . join(" ",@tags) . "\n";
@@ -164,18 +171,19 @@ sub _img_include_graphics {
     }
 
     push @tex,
-        $self->_tex_include_graphics({ 
+        $pwg->_tex_include_graphics({ 
              width    => $w,
-             rel_path => $rel_path })
+             rel_path => $rel_path 
+        })
         ;
 
     return @tex;   
 }
 
 sub _img_rel_path {
-    my ($self, $ref) = @_;
+    my ($pwg, $ref) = @_;
 
-    my @img = $self->_img_by_tags({ tags => $ref->{tags} });
+    my @img = $pwg->_img_by_tags({ tags => $ref->{tags} });
     my $first = shift @img;
 
     my $rel_path = $first->{rel_path};
@@ -185,7 +193,7 @@ sub _img_rel_path {
 
 
 sub _img_by_tags {
-    my ($self, $ref) = @_;
+    my ($pwg, $ref) = @_;
     
     my @tags = @{ $ref->{tags} || [] };
 
@@ -193,62 +201,62 @@ sub _img_by_tags {
     push @ARGV, 
         qw( -t ), join("," => @tags);
 
-    $self->run;
+    $pwg->run;
 
-    my @img = @{$self->{img} || []};
+    my @img = @{$pwg->{img} || []};
 
     return @img;
 }
 
 sub run {
-    my ($self, $ref) = @_;
+    my ($pwg, $ref) = @_;
 
     my $cmd;
     unless (keys %$ref) {
-        $self->get_opt;
-        $cmd = $self->{opt}->{cmd};
+        $pwg->get_opt;
+        $cmd = $pwg->{opt}->{cmd};
     }else{
         $cmd = $ref->{cmd} || '';
     }
 
     if ($cmd) {
         my $sub = 'cmd_' . $cmd;
-        if ($self->can($sub)){
-            $self->$sub;
+        if ($pwg->can($sub)){
+            $pwg->$sub;
         }
     }
 
-    return $self;
+    return $pwg;
 }
 
 sub init_db {
-    my ($self) = @_;
+    my ($pwg) = @_;
 
-    $self->{dbh} = dbi_connect({
-        warn   => $self->_sub_db_warn,
-        user   => $self->{user},
-        pwd    => $self->{pwd},
-        dbfile => $self->{dbfile},
-        driver => $self->{driver},
+    $pwg->{dbh} = dbi_connect({
+        warn   => $pwg->_sub_db_warn,
+        user   => $pwg->{user},
+        pwd    => $pwg->{pwd},
+        dbfile => $pwg->{dbfile},
+        driver => $pwg->{driver},
         attr => {
             mysql_enable_utf8 => 1,
         }
     });
 
-    return $self;
+    return $pwg;
 }
 
 sub ct_collected {
-    my ($self) = @_;
+    my ($pwg) = @_;
 
     my $q = '';
 
-    my $dbh = $self->{dbh};
+    my $dbh = $pwg->{dbh};
     unless ($dbh) {
-        if ($self->{warn}) {
+        if ($pwg->{warn}) {
             warn "ct_collected: NO DBH!" . "\n" ;
         }
-        return $self;
+        return $pwg;
     }
     
     $q .= qq{
@@ -281,44 +289,44 @@ sub ct_collected {
     };
 
     dbh_do({
-        warn => $self->_sub_db_warn,
+        warn => $pwg->_sub_db_warn,
         q    => $q,
         dbh  => $dbh,
     });
 
-    return $self;
+    return $pwg;
 }
 
 sub _sub_db_warn {
-    my ($self) = @_;
+    my ($pwg) = @_;
 
-    $self->{warn} ? sub { warn $_ for(@_) } : sub{};
+    $pwg->{warn} ? sub { warn $_ for(@_) } : sub{};
 
 }
 
 sub cmd_ct_collected {
-    my ($self) = @_;
+    my ($pwg) = @_;
 
-    $self
+    $pwg
         ->ct_collected
         ;
 
-    return $self;
+    return $pwg;
 }
 
 sub cmd_img_by_tags {
-    my ($self, $tags_s) = @_;
+    my ($pwg, $tags_s) = @_;
 
-    my $dbh = $self->{dbh};
+    my $dbh = $pwg->{dbh};
 
     unless ($dbh) {
         warn "img_by_tags: NO DBH!" . "\n";
-        return $self;
+        return $pwg;
     }
 
-    $self->ct_collected;
+    $pwg->ct_collected;
 
-    $tags_s ||= $self->{opt}->{tags};
+    $tags_s ||= $pwg->{opt}->{tags};
     $tags_s ||= '';
 
     my @tags_in = split("," => $tags_s);
@@ -338,7 +346,7 @@ sub cmd_img_by_tags {
     } 
 
     ($rows,$cols) = dbh_select({
-        warn => $self->_sub_db_warn,
+        warn => $pwg->_sub_db_warn,
         dbh  => $dbh,
         q    => qq{ SELECT DISTINCT path, comment FROM collected $cond },
         p    => [],
@@ -367,7 +375,7 @@ sub cmd_img_by_tags {
         }
         next unless $in;
 
-        my $full_path = catfile($self->{pwg_root},$path);
+        my $full_path = catfile($pwg->{pwg_root},$path);
         next if $done{$full_path};
     
         if ($^O eq 'MSWin32') {
@@ -385,10 +393,10 @@ sub cmd_img_by_tags {
         }
     }
 
-    $self->{img} = [@img];
+    $pwg->{img} = [@img];
     #print Dumper([@img]) . "\n";
 
-    $self;
+    $pwg;
 }
 
 1;
