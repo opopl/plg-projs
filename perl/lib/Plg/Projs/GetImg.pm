@@ -1,5 +1,5 @@
 
-package Plg::Projs::ListImg;
+package Plg::Projs::GetImg;
 
 use strict;
 use warnings;
@@ -8,7 +8,7 @@ use utf8;
 use Plg::Projs::Prj;
 
 use File::Spec::Functions qw(catfile);
-use File::Path qw(mkpath);
+use File::Path qw( mkpath rmtree );
 
 use FindBin qw($Bin $Script);
 use File::Basename qw(basename dirname);
@@ -108,8 +108,7 @@ sub init_prj {
 sub init_db {
     my ($self) = @_;
 
-    my $img_root = $ENV{IMG_ROOT} // catfile($ENV{HOME},qw(img_root));
-    mkpath $img_root unless -d $img_root;
+	my $img_root = $self->{img_root};
     
     my $dbfile = catfile($img_root,qw(img.db));
     
@@ -129,7 +128,7 @@ sub init_db {
     $self->{dbh} = $dbh;
     $Base::DB::DBH = $dbh;
 
-    if ($self->{db_reset}) {
+    if ($self->{reset}) {
         $self
             ->db_drop
             ->db_create
@@ -137,6 +136,20 @@ sub init_db {
     }
 
     
+    $self;
+}
+
+sub init_img_root {
+    my ($self) = @_;
+
+    my $img_root = $ENV{IMG_ROOT} // catfile($ENV{HOME},qw(img_root));
+	if ($self->{reset}) {
+		rmtree $img_root if -d $img_root;
+	}
+    mkpath $img_root unless -d $img_root;
+
+	$self->{img_root} = $img_root;
+
     $self;
 }
 
@@ -167,7 +180,7 @@ sub init_q {
     my %q = ( 
         create => qq{
             CREATE TABLE IF NOT EXISTS imgs (
-                url TEXT,
+                url TEXT UNIQUE,
                 inum INTEGER,
                 tags TEXT,
                 rootid TEXT,
@@ -200,6 +213,7 @@ sub init {
     $self
         ->get_opt
         ->init_prj
+        ->init_img_root
         ->init_q
         ->init_db
         ->init_lwp
@@ -221,7 +235,7 @@ sub get_opt {
         "proj|p=s",
         "root|r=s",
         "cmd|c=s",
-        "db_reset",
+        "reset",
         "debug|d",
     );
     
@@ -260,6 +274,8 @@ sub print_help {
                 perl $Script -p PROJ -r ROOT 
             DEBUGGING:
                 perl $Script -p PROJ -r ROOT -d
+            RESET DATABASE, REMOVE IMAGE FILES:
+                perl $Script --reset
     } . "\n";
     exit 0;
 
@@ -334,6 +350,7 @@ sub load_file {
             my $bname = basename($path);
             my ($ext) = ($bname =~ m/\.(\w+)$/);
             $ext ||= 'jpg';
+			$ext = lc $ext;
 
             my $img      = sprintf(q{%s.%s},$inum,$ext);
             my $img_file = catfile($img_root,$img);
@@ -355,13 +372,13 @@ sub load_file {
                 next;
             }
 
-			print qq{$img_db} . "\n";
-			print qq{$url} . "\n";
-			next;
+   #         print qq{$img_db} . "\n";
+			#print qq{$url} . "\n";
+			#next;
 
             my $curl = which 'curl';
             if ($curl) {
-                my $cmd = qq{$curl -o $img '$url'};
+                my $cmd = qq{ $curl -o "$img_file" '$url' };
                 my $x = qx{ $cmd 2>&1 };
                 $self->debug(["Command:", $x]);
             } else {
