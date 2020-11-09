@@ -1,5 +1,5 @@
 
-package Plg::Projs::Tex;
+package Plg::Projs::Tex::Mixin;
 
 use strict;
 use warnings;

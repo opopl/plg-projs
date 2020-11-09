@@ -11,6 +11,8 @@ binmode STDOUT,':encoding(utf8)';
 use File::Slurp::Unicode;
 use File::Spec::Functions qw(catfile);
 
+use Plg::Projs::Tex::Gen;
+
 use Capture::Tiny qw(
     capture_merged
 );
@@ -71,6 +73,7 @@ sub cmd_jnd_compose {
             });
             #for $row (@$rows){
             #}
+			my $gen = Plg::Projs::Tex::Gen->new;
             print Dumper({ rows => $rows }) . "\n";
 
             @tags = ();

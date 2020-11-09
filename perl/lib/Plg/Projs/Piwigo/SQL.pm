@@ -15,7 +15,7 @@ use open qw(:utf8 :std);
 use Encode;
 
 use base qw(
-    Plg::Projs::Tex
+    Plg::Projs::Tex::Mixin
 );
 use Base::Arg qw(
     hash_inject
