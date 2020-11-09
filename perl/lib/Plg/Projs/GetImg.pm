@@ -364,17 +364,8 @@ sub load_file {
             });
 
             if($img_db && -e catfile($img_root,$img_db)) {
-				#$self->debug([
-					#"img_db:", "\t" . $img_db || '',
-					#"url:", "\t" . $url,
-				#]);
-				#print qq{$img_db} . "\n";
                 next;
             }
-
-   #         print qq{$img_db} . "\n";
-			#print qq{$url} . "\n";
-			#next;
 
             my $curl = which 'curl';
             if ($curl) {
