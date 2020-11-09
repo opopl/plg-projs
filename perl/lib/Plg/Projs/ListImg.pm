@@ -174,7 +174,9 @@ sub init_q {
                 proj TEXT,
                 sec TEXT,
                 img TEXT,
-                caption TEXT
+                caption TEXT,
+				name TEXT,
+				ext TEXT
             );
         },
         drop => qq{
@@ -306,7 +308,7 @@ sub load_file {
     my ($is_img, $is_cmt);
 
     my (%d);
-    my @keys = qw( url caption tags );
+    my @keys = qw( url caption tags name );
 
     chdir $img_root;
 
@@ -336,7 +338,7 @@ sub load_file {
             my $img      = sprintf(q{%s.%s},$inum,$ext);
             my $img_file = catfile($img_root,$img);
 
-            my ($url, $caption, $tags) = @d{@keys};
+            my ($url, $caption, $tags, $name) = @d{@keys};
             %d = ();
 
             my $img_db = dbh_select_fetchone({
@@ -344,19 +346,23 @@ sub load_file {
                 p => [ $url ],
             });
 
-            $self->debug([
-	            "img_db:", "\t".$img_db,
-	            "url:", "\t".$url,
-            ]);
-
-            if($img_db && -e $img_db) {
+            if($img_db && -e catfile($img_root,$img_db)) {
+				#$self->debug([
+					#"img_db:", "\t" . $img_db || '',
+					#"url:", "\t" . $url,
+				#]);
+				#print qq{$img_db} . "\n";
                 next;
             }
 
+			print qq{$img_db} . "\n";
+			print qq{$url} . "\n";
+			next;
+
             my $curl = which 'curl';
             if ($curl) {
-                my $cmd = "$curl -o $img $url";
-                my $x = qx{$cmd 2>&1};
+                my $cmd = qq{$curl -o $img '$url'};
+                my $x = qx{ $cmd 2>&1 };
                 $self->debug(["Command:", $x]);
             } else {
                 my $res = $lwp->mirror($url,$img_file);
@@ -379,6 +385,8 @@ sub load_file {
                     sec     => $sec,
                     img     => $img,
                     tags    => $tags,
+                    ext     => $ext,
+                    name    => $name,
                 },
             });
 
