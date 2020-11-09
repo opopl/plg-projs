@@ -73,13 +73,35 @@ sub cmd_jnd_compose {
                 w   => $w,
             });
             my @fig = ();
-            push @fig, 
-                q| \begin{figure}[ht] |,
-                q| \end{figure} |,
-                ;
-            #for $row (@$rows){
-            #}
-            #my $gen = Plg::Projs::Tex::Gen->new;
+            if (@$rows == 1) {
+                my $rw = shift @$rows;
+                my $o = q{width=0.7\textwidth};
+
+                my $caption = $rw->{caption} || '';
+                my $img     = $rw->{img};
+
+                my $img_path = sprintf(q{\imgroot/%s},$img);
+
+                my $img_file = catfile($mkr->{img_root},$img);
+                unless (-e $img_file) {
+                    my $r = {    
+                        msg => q{Image file not found!},
+                        img => $img,
+                        url => $url,
+                    };
+                    warn Dumper($r) . "\n";
+                    next;
+                }
+
+	            push @fig, 
+	                q| \begin{figure}[ht] |,
+	                sprintf(q| \includegraphics[%s]{%s} |, $o, $img_path ),
+	                $caption ? ( sprintf(q| \caption{%s} |, $caption ) ) : (),
+	                q| \end{figure} |,
+	                ;
+            }
+            push @nlines, @fig;
+
             print Dumper({ \@fig }) . "\n";
 
             @tags = ();

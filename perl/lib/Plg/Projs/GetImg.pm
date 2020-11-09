@@ -114,7 +114,8 @@ sub init_db {
     
     my $ref = {
         dbfile => $dbfile,
-        attr   => {},
+        attr   => {
+        },
     };
     
     my $dbh = dbi_connect($ref);
