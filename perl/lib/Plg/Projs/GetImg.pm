@@ -108,7 +108,7 @@ sub init_prj {
 sub init_db {
     my ($self) = @_;
 
-	my $img_root = $self->{img_root};
+    my $img_root = $self->{img_root};
     
     my $dbfile = catfile($img_root,qw(img.db));
     
@@ -143,12 +143,12 @@ sub init_img_root {
     my ($self) = @_;
 
     my $img_root = $ENV{IMG_ROOT} // catfile($ENV{HOME},qw(img_root));
-	if ($self->{reset}) {
-		rmtree $img_root if -d $img_root;
-	}
+    if ($self->{reset}) {
+        rmtree $img_root if -d $img_root;
+    }
     mkpath $img_root unless -d $img_root;
 
-	$self->{img_root} = $img_root;
+    $self->{img_root} = $img_root;
 
     $self;
 }
@@ -188,8 +188,8 @@ sub init_q {
                 sec TEXT,
                 img TEXT,
                 caption TEXT,
-				name TEXT,
-				ext TEXT
+                name TEXT,
+                ext TEXT
             );
         },
         drop => qq{
@@ -340,21 +340,6 @@ sub load_file {
 
             next unless $d{url};
 
-            my $ref = {
-                q => q{ SELECT MAX(inum) FROM imgs },
-            };
-            my $max  = dbh_select_fetchone($ref);
-            my $inum = ($max) ? ($max + 1) : 1;
-
-            my ($scheme, $auth, $path, $query, $frag) = uri_split($d{url});
-            my $bname = basename($path);
-            my ($ext) = ($bname =~ m/\.(\w+)$/);
-            $ext ||= 'jpg';
-			$ext = lc $ext;
-
-            my $img      = sprintf(q{%s.%s},$inum,$ext);
-            my $img_file = catfile($img_root,$img);
-
             my ($url, $caption, $tags, $name) = @d{@keys};
             %d = ();
 
@@ -367,18 +352,61 @@ sub load_file {
                 next;
             }
 
-            my $curl = which 'curl';
-            if ($curl) {
-                my $cmd = qq{ $curl -o "$img_file" '$url' };
-                my $x = qx{ $cmd 2>&1 };
-                $self->debug(["Command:", $x]);
-            } else {
-                my $res = $lwp->mirror($url,$img_file);
-                unless ($res->is_success) {
-                    print "LWP Error: $url " . "\n";
-                    print $res->status_line . "\n";
-                    next;
+            my $ref = {
+                q => q{ SELECT MAX(inum) FROM imgs },
+            };
+            my $max  = dbh_select_fetchone($ref);
+            my $inum = ($max) ? ($max + 1) : 1;
+
+            my ($scheme, $auth, $path, $query, $frag) = uri_split($url);
+            my $bname = basename($path);
+            my ($ext) = ($bname =~ m/\.(\w+)$/);
+            $ext ||= 'jpg';
+            $ext = lc $ext;
+
+            my $img      = sprintf(q{%s.%s},$inum,$ext);
+            my $img_file = catfile($img_root,$img);
+
+            my @subs = (
+                sub { 
+                    my $curl = which 'curl';
+                    return unless $curl;
+
+                    print qq{try: curl} . "\n";
+
+                    my $cmd = qq{ $curl -o "$img_file" $url };
+                    my $x = qx{ $cmd 2>&1 };
+                    $self->debug(["Command:", $x]);
+                    return 'curl';
+                },
+                sub { 
+                    print qq{try: lwp} . "\n";
+
+                    my $res = $lwp->mirror($url,$img_file);
+                    unless ($res->is_success) {
+                        my $r = {
+                            msg         => 'LWP Error',
+                            url         => $url,
+                            status_line => $res->status_line,
+                        };
+                        warn Dumper($r) . "\n";
+                    }
+                    return 'lwp';
+                },
+                sub {
+	                my $r = {
+	                    url    => $url,
+	                    proj   => $self->{proj},
+	                    rootid => $self->{rootid},
+	                    sec    => $sec,
+	                };
+	                warn sprintf('URL Download Failure: %s',Dumper($r)) . "\n";
                 }
+            );
+
+            while(! -e $img_file){
+                my $s = shift @subs;
+                my $ss = $s->();
             }
             
             dbh_insert_hash({

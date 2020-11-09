@@ -62,8 +62,9 @@ sub cmd_jnd_compose {
             my ($url, $caption, $tags) = @d{@keys};
 
             my $w = {};
-            $w->{url}  = $d{url} if $d{url};
-            $w->{tags} = $d{tags} if $d{tags};
+            for(qw( url tags name )){
+                $w->{$_}  = $d{$_} if $d{$_};
+            }
 
             my ($rows, $cols, $q, $p) = dbh_select({
                 dbh => $mkr->{dbh_img},
@@ -71,10 +72,15 @@ sub cmd_jnd_compose {
                 p   => [],
                 w   => $w,
             });
+            my @fig = ();
+            push @fig, 
+                q| \begin{figure}[ht] |,
+                q| \end{figure} |,
+                ;
             #for $row (@$rows){
             #}
-			my $gen = Plg::Projs::Tex::Gen->new;
-            print Dumper({ rows => $rows }) . "\n";
+            #my $gen = Plg::Projs::Tex::Gen->new;
+            print Dumper({ \@fig }) . "\n";
 
             @tags = ();
             %d = ();
