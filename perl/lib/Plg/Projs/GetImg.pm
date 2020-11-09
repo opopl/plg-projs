@@ -394,13 +394,13 @@ sub load_file {
                     return 'lwp';
                 },
                 sub {
-	                my $r = {
-	                    url    => $url,
-	                    proj   => $self->{proj},
-	                    rootid => $self->{rootid},
-	                    sec    => $sec,
-	                };
-	                warn sprintf('URL Download Failure: %s',Dumper($r)) . "\n";
+                    my $r = {
+                        url    => $url,
+                        proj   => $self->{proj},
+                        rootid => $self->{rootid},
+                        sec    => $sec,
+                    };
+                    warn sprintf('URL Download Failure: %s',Dumper($r)) . "\n";
                 }
             );
 
