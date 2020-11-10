@@ -29,16 +29,43 @@ my @ex_vars_array=qw(
 ###export_funcs
     'funcs' => [qw( 
         q2quotes
+        texify
     )],
     'vars'  => [ @ex_vars_scalar,@ex_vars_array,@ex_vars_hash ]
 );
 
 @EXPORT_OK = ( @{ $EXPORT_TAGS{'funcs'} }, @{ $EXPORT_TAGS{'vars'} } );
 
+sub texify {
+    my ($ss) = @_;
+
+    my $s = _str($ss);
+
+    $s = q2quotes($s);
+
+    $$ss = $s if ref $ss eq 'SCALAR';
+    return $s;
+}
+
+sub _str {
+    my ($ss) = @_;
+
+    my $s;
+    if (ref $ss eq 'SCALAR'){ 
+        $s = $$ss;
+    } elsif (ref $ss eq 'ARRAY'){ 
+        $s = join("\n",@$ss);
+    }
+    elsif (! ref $ss){ 
+        $s = $ss;
+    }
+    return $s;
+}
+
 sub q2quotes {
     my ($ss, $cmd) = @_;
 
-    my $s = ref $ss eq 'SCALAR' ? $$ss : $ss;
+    my $s = _str($ss);
 
     $cmd ||= 'enquote';
     my $start = sprintf(q|\%s{|,$cmd);
@@ -63,7 +90,6 @@ sub q2quotes {
     $s = join("",@n);
 
     $$ss = $s if ref $ss eq 'SCALAR';
-
     return $s;
 }
 

@@ -13,7 +13,7 @@ use File::Spec::Functions qw(catfile);
 
 use Plg::Projs::Tex::Gen;
 use Plg::Projs::Tex qw(
-    q2quotes
+    texify 
 );
 
 use Capture::Tiny qw(
@@ -96,7 +96,7 @@ sub cmd_jnd_compose {
                     next;
                 }
 
-                q2quotes(\$caption);
+                texify(\$caption);
 
                 push @fig, 
                     q| \begin{figure}[ht] |,
@@ -106,8 +106,6 @@ sub cmd_jnd_compose {
                     ;
             }
             push @nlines, @fig;
-
-            #print Dumper({ fig => \@fig }) . "\n";
 
             @tags = ();
             %d = ();

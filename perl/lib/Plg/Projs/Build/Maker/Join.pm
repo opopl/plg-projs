@@ -13,6 +13,10 @@ use File::Spec::Functions qw(catfile);
 use File::Slurp::Unicode;
 use File::Path qw(mkpath);
 
+use Plg::Projs::Tex qw(
+	q2quotes
+);
+
 use File::Dat::Utils qw(readarr);
 
 sub _file_joined {
@@ -116,6 +120,8 @@ sub _join_lines {
 ###pat_sect
         m/$pats->{sect}/ && do {
             $sect = $1;
+
+			q2quotes(\$sect);
 
             $mkr->_line_process_pat_sect({ 
                sect    => $sect,
