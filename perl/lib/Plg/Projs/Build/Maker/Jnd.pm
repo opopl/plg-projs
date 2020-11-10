@@ -96,7 +96,6 @@ sub cmd_jnd_compose {
                     next;
                 }
 
-
                 q2quotes(\$caption);
 
                 push @fig, 
@@ -108,7 +107,7 @@ sub cmd_jnd_compose {
             }
             push @nlines, @fig;
 
-            print Dumper({ fig => \@fig }) . "\n";
+            #print Dumper({ fig => \@fig }) . "\n";
 
             @tags = ();
             %d = ();

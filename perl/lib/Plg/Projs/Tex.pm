@@ -27,34 +27,44 @@ my @ex_vars_array=qw(
 
 %EXPORT_TAGS = (
 ###export_funcs
-	'funcs' => [qw( 
-		q2quotes
-	)],
-	'vars'  => [ @ex_vars_scalar,@ex_vars_array,@ex_vars_hash ]
+    'funcs' => [qw( 
+        q2quotes
+    )],
+    'vars'  => [ @ex_vars_scalar,@ex_vars_array,@ex_vars_hash ]
 );
 
 @EXPORT_OK = ( @{ $EXPORT_TAGS{'funcs'} }, @{ $EXPORT_TAGS{'vars'} } );
 
 sub q2quotes {
-	my ($s_ref) = @_;
-	my $s = $$s_ref;
+    my ($ss, $cmd) = @_;
 
-    my @c = split("",$s);
-    my %is = ( qq => 0, q => 0 ) ;
+    my $s = ref $ss eq 'SCALAR' ? $$ss : $ss;
+
+    $cmd ||= 'enquote';
+    my $start = sprintf(q|\%s{|,$cmd);
+    my $end   = q|}|;
+
+    my @c  = split("" => $s);
+    my %is = ( qq => 0, q => 0 );
     my @n;
     while (@c) {
         local $_ = shift @c;
         /"/ && do {
             $is{qq} ^= 1;
+
+            push @n, $start if $is{qq};
+            push @n, $end unless $is{qq};
+            next;
         };
 
-        if ($is{qq}) {
-            # body...
-        }
         push @n, $_;
     }
 
-	$$s_ref = join("",@n);
+    $s = join("",@n);
+
+    $$ss = $s if ref $ss eq 'SCALAR';
+
+    return $s;
 }
 
 1;
