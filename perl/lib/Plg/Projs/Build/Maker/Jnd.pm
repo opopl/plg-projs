@@ -12,6 +12,9 @@ use File::Slurp::Unicode;
 use File::Spec::Functions qw(catfile);
 
 use Plg::Projs::Tex::Gen;
+use Plg::Projs::Tex qw(
+    q2quotes
+);
 
 use Capture::Tiny qw(
     capture_merged
@@ -93,16 +96,19 @@ sub cmd_jnd_compose {
                     next;
                 }
 
-	            push @fig, 
-	                q| \begin{figure}[ht] |,
-	                sprintf(q| \includegraphics[%s]{%s} |, $o, $img_path ),
-	                $caption ? ( sprintf(q| \caption{%s} |, $caption ) ) : (),
-	                q| \end{figure} |,
-	                ;
+
+                q2quotes(\$caption);
+
+                push @fig, 
+                    q| \begin{figure}[ht] |,
+                    sprintf(q| \includegraphics[%s]{%s} |, $o, $img_path ),
+                    $caption ? ( sprintf(q| \caption{%s} |, $caption ) ) : (),
+                    q| \end{figure} |,
+                    ;
             }
             push @nlines, @fig;
 
-            print Dumper({ \@fig }) . "\n";
+            print Dumper({ fig => \@fig }) . "\n";
 
             @tags = ();
             %d = ();
