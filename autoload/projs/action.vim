@@ -1027,11 +1027,15 @@ function! projs#action#bld_join (...)
   let proj = projs#proj#name()
   let proj = get(ref,'proj',proj)
 
-  let bfile = printf('%s.bld.pl',proj)
+  let target = projs#bld#target()
+
+  let bfile = projs#sec#file('_perl.bld')
 
   let start = localtime()
   call chdir(root)
-  let cmd = join([ 'perl', bfile, 'join' ], ' ' )
+
+  let a = [ 'perl', bfile, 'join', '-t', target ]
+  let cmd = join(a, ' ' )
 
   let env = {
     \ 'proj'  : proj,
