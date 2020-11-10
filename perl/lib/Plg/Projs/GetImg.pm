@@ -345,12 +345,15 @@ sub load_file {
             %d = ();
 
             my $img_db = dbh_select_fetchone({
-                q => q{ SELECT img FROM imgs WHERE url = ? },
+                q => q{ SELECT img, ext FROM imgs WHERE url = ? },
                 p => [ $url ],
             });
 
-            if($img_db && -e catfile($img_root,$img_db)) {
-                next;
+            if($img_db) {
+                my $img_db_file = catfile($img_root,$img_db);
+                if (-e $img_db_file) {
+                    next;
+                }
             }
 
             my $ref = {
@@ -375,7 +378,9 @@ sub load_file {
 
                     print qq{try: curl} . "\n";
 
-                    my $cmd = qq{ $curl -o "$img_file" $url };
+                    my $url_s = $^O eq 'MSWin32' ? qq{"$url"} : qq{$url};
+
+                    my $cmd = qq{ $curl -o "$img_file" $url_s };
                     my $x = qx{ $cmd 2>&1 };
                     $self->debug(["Command:", $x]);
                     return 'curl';

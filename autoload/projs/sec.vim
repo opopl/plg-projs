@@ -711,7 +711,7 @@ if 0
 
 endif
 
-"""end_projs_sec_new
+"""end_help_projs_sec_new
 
 function! projs#sec#new(sec,...)
     let sec        = a:sec
@@ -817,7 +817,7 @@ function! projs#sec#new(sec,...)
         let lines = nlines
       endif
 
-"""newsec__bld
+"""newsec__bld.
     elseif sec =~ '_bld\.'
       let target = substitute(copy(sec),'^_bld\.\(.*\)$','\1','g')
 
@@ -833,7 +833,7 @@ function! projs#sec#new(sec,...)
         let lines = nlines
       endif
 
-"""newsec__perl_
+"""newsec__perl.fig.
     elseif sec =~ '_perl\.fig\.'
       let fig_name = substitute(copy(sec),'^_perl\.fig\.\(.*\)','\1','g')
 
@@ -866,7 +866,7 @@ function! projs#sec#new(sec,...)
         let lines = nlines
       endif
 
-"""newsec__pm_
+"""newsec__pm.
     elseif sec =~ '_pm\.'
       let sec_name = substitute(copy(sec),'^_pm.\(.*\)','\1','g')
 
@@ -953,7 +953,7 @@ function! projs#sec#new(sec,...)
     endif
 
     if get(ref,'git_add')
-      let dir = fnamemodify(sec_file,':p:h')
+      let dir   = fnamemodify(sec_file,':p:h')
       let bname = fnamemodify(sec_file,':p:t')
 
       exe 'cd ' . dir
