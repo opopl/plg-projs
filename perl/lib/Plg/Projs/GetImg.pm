@@ -322,9 +322,9 @@ sub load_file {
     my @lines = read_file $file;
 
     # flags
-    my ($is_img, $is_cmt);
+    my ($is_img, $is_cmt, $url);
 
-    my (%d);
+    my (@data, $d);
     my @keys = qw( url caption tags name );
 
     chdir $img_root;
@@ -339,98 +339,101 @@ sub load_file {
         m/^\s*\\fi\b/g && do { 
             $is_cmt = 0 if $is_cmt; 
 
-            next unless $d{url};
+            next unless @data;
 
-            my ($url, $caption, $tags, $name) = @d{@keys};
-            %d = ();
+            while(@data){
+                $d = shift @data;
 
-            my $img_db = dbh_select_fetchone({
-                q => q{ SELECT img, ext FROM imgs WHERE url = ? },
-                p => [ $url ],
-            });
+                my ($url, $caption, $tags, $name) = @{$d}{@keys};
 
-            if($img_db) {
-                my $img_db_file = catfile($img_root,$img_db);
-                if (-e $img_db_file) {
-                    next;
-                }
-            }
+	            my $img_db = dbh_select_fetchone({
+	                q => q{ SELECT img, ext FROM imgs WHERE url = ? },
+	                p => [ $url ],
+	            });
 
-            my $ref = {
-                q => q{ SELECT MAX(inum) FROM imgs },
-            };
-            my $max  = dbh_select_fetchone($ref);
-            my $inum = ($max) ? ($max + 1) : 1;
+	            if($img_db) {
+	                my $img_db_file = catfile($img_root,$img_db);
+	                if (-e $img_db_file) {
+	                    next;
+	                }
+	            }
 
-            my ($scheme, $auth, $path, $query, $frag) = uri_split($url);
-            my $bname = basename($path);
-            my ($ext) = ($bname =~ m/\.(\w+)$/);
-            $ext ||= 'jpg';
-            $ext = lc $ext;
+	            my $ref = {
+	                q => q{ SELECT MAX(inum) FROM imgs },
+	            };
+	            my $max  = dbh_select_fetchone($ref);
+	            my $inum = ($max) ? ($max + 1) : 1;
+	
+	            my ($scheme, $auth, $path, $query, $frag) = uri_split($url);
+	            my $bname = basename($path);
+	            my ($ext) = ($bname =~ m/\.(\w+)$/);
+	            $ext ||= 'jpg';
+	            $ext = lc $ext;
+	
+	            my $img      = sprintf(q{%s.%s},$inum,$ext);
+	            my $img_file = catfile($img_root,$img);
 
-            my $img      = sprintf(q{%s.%s},$inum,$ext);
-            my $img_file = catfile($img_root,$img);
+	            my @subs = (
+	                sub { 
+	                    my $curl = which 'curl';
+	                    return unless $curl;
+	
+	                    print qq{try: curl} . "\n";
+	
+	                    my $url_s = $^O eq 'MSWin32' ? qq{"$url"} : qq{$url};
+	
+	                    my $cmd = qq{ $curl -o "$img_file" $url_s };
+	                    my $x = qx{ $cmd 2>&1 };
+	                    $self->debug(["Command:", $x]);
+	                    return 'curl';
+	                },
+	                sub { 
+	                    print qq{try: lwp} . "\n";
+	
+	                    my $res = $lwp->mirror($url,$img_file);
+	                    unless ($res->is_success) {
+	                        my $r = {
+	                            msg         => 'LWP Error',
+	                            url         => $url,
+	                            status_line => $res->status_line,
+	                        };
+	                        warn Dumper($r) . "\n";
+	                    }
+	                    return 'lwp';
+	                },
+	                sub {
+	                    my $r = {
+	                        url    => $url,
+	                        proj   => $self->{proj},
+	                        rootid => $self->{rootid},
+	                        sec    => $sec,
+	                    };
+	                    warn sprintf('URL Download Failure: %s',Dumper($r)) . "\n";
+	                }
+	            );
 
-            my @subs = (
-                sub { 
-                    my $curl = which 'curl';
-                    return unless $curl;
-
-                    print qq{try: curl} . "\n";
-
-                    my $url_s = $^O eq 'MSWin32' ? qq{"$url"} : qq{$url};
-
-                    my $cmd = qq{ $curl -o "$img_file" $url_s };
-                    my $x = qx{ $cmd 2>&1 };
-                    $self->debug(["Command:", $x]);
-                    return 'curl';
-                },
-                sub { 
-                    print qq{try: lwp} . "\n";
-
-                    my $res = $lwp->mirror($url,$img_file);
-                    unless ($res->is_success) {
-                        my $r = {
-                            msg         => 'LWP Error',
-                            url         => $url,
-                            status_line => $res->status_line,
-                        };
-                        warn Dumper($r) . "\n";
-                    }
-                    return 'lwp';
-                },
-                sub {
-                    my $r = {
-                        url    => $url,
-                        proj   => $self->{proj},
-                        rootid => $self->{rootid},
-                        sec    => $sec,
-                    };
-                    warn sprintf('URL Download Failure: %s',Dumper($r)) . "\n";
-                }
-            );
-
-            while(! -e $img_file){
-                my $s = shift @subs;
-                my $ss = $s->();
-            }
+	            while(! -e $img_file){
+	                my $s = shift @subs;
+	                my $ss = $s->();
+	            }
             
-            dbh_insert_hash({
-                t => 'imgs',
-                i => q{ INSERT OR REPLACE },
-                h => {
-                    inum    => $inum,
-                    url     => $url,
-                    caption => $caption || '',
-                    proj    => $self->{proj},
-                    rootid  => $self->{rootid},
-                    sec     => $sec,
-                    img     => $img,
-                    tags    => $tags,
-                    ext     => $ext,
-                    name    => $name,
-                },
-            });
+	            dbh_insert_hash({
+	                t => 'imgs',
+	                i => q{ INSERT OR REPLACE },
+	                h => {
+	                    inum    => $inum,
+	                    url     => $url,
+	                    proj    => $self->{proj},
+	                    rootid  => $self->{rootid},
+	                    sec     => $sec,
+	                    img     => $img,
+	                    ext     => $ext,
+	                    caption => $d->{caption} || '',
+	                    tags    => $d->{tags} || '',
+	                    name    => $d->{name} || '',
+	                },
+	            });
+            }
 
         };
 
@@ -439,16 +442,19 @@ sub load_file {
 
         while(1){
             if ($is_img) {
-                for my $k (@keys){
-                    m/^\s*$k\s+(.*)$/g && do { 
-                        $d{$k} = $1; 
-                    };
-                }
+                m/^\s*url\s+(.*)$/g && do { 
+                    $url = $1;
+                    last;
+                };
+
+                m/^\s*(\w+)\s+(.*)$/g && do { 
+                   $d->{$1} = $2; 
+                };
                 last;
             }
     
             m/^\s*pic\s+(.*)$/g && do { 
-                $d{url} = $1;
+                push @data, { url => $1 };
                 last; 
             };
 
