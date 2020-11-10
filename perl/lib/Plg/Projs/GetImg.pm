@@ -9,6 +9,7 @@ use Plg::Projs::Prj;
 
 use File::Spec::Functions qw(catfile);
 use File::Path qw( mkpath rmtree );
+use File::Copy qw( move );
 
 use FindBin qw($Bin $Script);
 use File::Basename qw(basename dirname);
@@ -19,6 +20,11 @@ use URI::Split qw(uri_split);
 use LWP::Simple qw(getstore);
 use LWP::UserAgent;
 use Getopt::Long qw(GetOptions);
+
+use Image::Info qw(
+    image_info
+    image_type
+);
 
 use base qw(
     Base::Opt
@@ -313,7 +319,7 @@ sub _subs_url {
             print qq{try: curl} . "\n";
             print Dumper({ url => $url }) . "\n";
     
-            my $url_s = $^O eq 'MSWin32' ? qq{"$url"} : qq{$url};
+            my $url_s = $^O eq 'MSWin32' ? qq{"$url"} : qq{"$url"};
     
             my $cmd = qq{ $curl -o "$img_file" $url_s };
             my $x = qx{ $cmd 2>&1 };
@@ -482,6 +488,19 @@ sub load_file {
                 }
 
                 next unless(-e $img_file);
+
+                my $itp = image_type($img_file) || {};
+                my $ft  = $itp->{file_type} || '';
+
+                if ($ft) {
+                    if (lc($ft) ne $ext) {
+                        $ext = lc $ft;
+                        my $img_new      = sprintf(q{%s.%s},$inum,$ext);
+                        my $img_file_new = catfile($img_root,$img_new);
+                        move($img_file, $img_file_new);
+                        $img_file = $img_file_new;
+                    }
+                }
 
                 my $idt = which 'identify';
                 if ($idt) {
