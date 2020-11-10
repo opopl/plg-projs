@@ -318,13 +318,15 @@ sub load_file {
     my $img_root = $self->{img_root};
 
     $self->debug(qq{Reading:\n\t$file_bn});
-###@lines
+###read_file @lines
     my @lines = read_file $file;
 
     # flags
     my ($is_img, $is_cmt, $url);
 
-    my (@data, $d);
+    my @data;
+    my $d = {};
+
     my @keys = qw( url caption tags name );
 
     chdir $img_root;
@@ -336,6 +338,7 @@ sub load_file {
         next if /^\s*%/;
 
         m/^\s*\\ifcmt\b/g && do { $is_cmt = 1; next; };
+###\fi
         m/^\s*\\fi\b/g && do { 
             $is_cmt = 0 if $is_cmt; 
 
@@ -343,8 +346,6 @@ sub load_file {
 
             while(@data){
                 $d = shift @data;
-
-                my ($url, $caption, $tags, $name) = @{$d}{@keys};
 
 	            my $img_db = dbh_select_fetchone({
 	                q => q{ SELECT img, ext FROM imgs WHERE url = ? },
@@ -436,13 +437,26 @@ sub load_file {
             }
 
         };
+###\fi_end
 
-        m/^\s*img_begin\b/g && do { $is_img=1; next; };
-        m/^\s*img_end\b/g && do { $is_img=0 if $is_img; next; };
+        m/^\s*img_begin\b/g && do { $is_img = 1; next; };
+
+###img_end
+        m/^\s*img_end\b/g && do { 
+            $is_img = 0 if $is_img; 
+
+            push @data, $d if keys %$d;
+            $d = {};
+
+            next; 
+        };
 
         while(1){
             if ($is_img) {
                 m/^\s*url\s+(.*)$/g && do { 
+                    push @data, $d if keys %$d;
+
+                    $d = { url => $1 };
                     $url = $1;
                     last;
                 };
@@ -450,11 +464,13 @@ sub load_file {
                 m/^\s*(\w+)\s+(.*)$/g && do { 
                    $d->{$1} = $2; 
                 };
+
                 last;
             }
     
             m/^\s*pic\s+(.*)$/g && do { 
-                push @data, { url => $1 };
+                $url = $1;
+                push @data, { url => $url };
                 last; 
             };
 
