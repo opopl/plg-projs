@@ -29,6 +29,7 @@ use base qw(
 use Base::DB qw( 
     dbi_connect 
     dbh_do
+    dbh_select
     dbh_select_fetchone
     dbh_insert_hash
 );
@@ -244,6 +245,8 @@ sub get_opt {
         "cmd|c=s",
         "reset",
         "debug|d",
+        "query|q=s",
+        "param=s@",
     );
     
     unless( @ARGV ){ 
@@ -284,6 +287,11 @@ sub print_help {
                 perl $Script -p PROJ -r ROOT --debug
             RESET DATABASE, REMOVE IMAGE FILES:
                 perl $Script --reset
+            QUERY IMAGE DATABASE:
+                perl $Script --cmd query -q "select count(*) from imgs" 
+                perl $Script --cmd query 
+                    --query "select count(*) from imgs where url = ? " 
+                    --param URL
     } . "\n";
     exit 0;
 
@@ -338,6 +346,29 @@ sub _subs_url {
   );
   return @subs;
 
+}
+
+sub cmd_count {
+    my ($self) = @_;
+
+    my $q = qq{ SELECT COUNT(*) FROM imgs };
+    my $count = dbh_select_fetchone({ q => $q });
+    print qq{$count} . "\n";
+}
+
+sub cmd_query {
+    my ($self) = @_;
+
+    my $q = $self->{query};
+
+    my $ref = {
+        q => $q,
+        p => [],
+    };
+    
+    my ($rows, $cols) = dbh_select($ref);
+
+    return $self;
 }
 
 sub cmd_load_file {
