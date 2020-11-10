@@ -22,6 +22,7 @@ use Getopt::Long qw(GetOptions);
 
 use base qw(
     Base::Opt
+    Base::Cmd
     Base::Logging
 );
 
@@ -211,6 +212,11 @@ sub init_q {
 sub init {
     my ($self) = @_;
 
+    my $h = {
+        cmd => 'load_file'
+    };
+    hash_inject($self, $h);
+
     $self
         ->get_opt
         ->init_prj
@@ -332,6 +338,14 @@ sub _subs_url {
   );
   return @subs;
 
+}
+
+sub cmd_load_file {
+    my ($self) = @_;
+
+    $self->load_file;
+
+    return $self;
 }
 
 sub load_file {
@@ -513,8 +527,7 @@ sub run {
     my ($self) = @_;
 
     $self
-        ->load_file
-        ;
+        ->run_cmd;
 
     return $self;
 }
