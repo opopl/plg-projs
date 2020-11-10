@@ -11,7 +11,7 @@ sub _pats {
          'ii'    => '^\s*\\\\ii\{(.+)\}.*$',
          'iifig' => '^\s*\\\\iifig\{(.+)\}.*$',
          'input' => '^\s*\\\\input\{(\S+)\}.*$',
-         'sect'  => '^\s*\\\\(part|chapter|section|subsection|subsubsection|paragraph)\{.*\}\s*$',
+         'sect'  => '^\s*\\\\(part|chapter|section|subsection|subsubsection|paragraph)\{(.*)\}\s*$',
     };
 
 	return $pats;

@@ -198,7 +198,8 @@ sub init_q {
                 img TEXT,
                 caption TEXT,
                 name TEXT,
-                ext TEXT
+                ext TEXT,
+                type TEXT
             );
         },
         drop => qq{
@@ -521,6 +522,7 @@ sub load_file {
                         caption => $d->{caption} || '',
                         tags    => $d->{tags} || '',
                         name    => $d->{name} || '',
+                        type    => $d->{type} || '',
                     },
                 });
             }
@@ -559,9 +561,14 @@ sub load_file {
                 last;
             }
     
-            m/^\s*pic\s+(.*)$/g && do { 
-                $url = $1;
-                push @data, { url => $url };
+            m/^\s*(pic|doc)\s+(.*)$/g && do { 
+                $url = $2;
+                $d = { url => $url };
+                if ($1 eq 'doc') {
+                    $d->{type} = 'doc';
+                }
+                push @data, $d;
+                $d = {};
                 last; 
             };
 

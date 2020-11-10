@@ -47,6 +47,16 @@ sub texify {
     return $s;
 }
 
+sub _back {
+    my ($ss, $s) = @_;
+
+    if (ref $ss eq 'SCALAR'){
+        $$ss = $s;
+    } elsif (ref $ss eq 'ARRAY'){
+        $ss = [ split("\n",$s) ];
+    }
+}
+
 sub _str {
     my ($ss) = @_;
 
@@ -89,7 +99,9 @@ sub q2quotes {
 
     $s = join("",@n);
 
-    $$ss = $s if ref $ss eq 'SCALAR';
+    _back($ss, $s);
+
+
     return $s;
 }
 
