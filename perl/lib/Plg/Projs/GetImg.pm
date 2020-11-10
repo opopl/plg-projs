@@ -435,6 +435,13 @@ sub load_file {
                     my $s = shift @subs;
                     my $ss = $s->();
                 }
+
+                next unless(-e $img_file);
+
+                my $idt = which 'identify';
+                if ($idt) {
+                    # body...
+                }
             
                 dbh_insert_hash({
                     t => 'imgs',
