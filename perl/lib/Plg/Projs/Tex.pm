@@ -52,7 +52,7 @@ sub texify {
 sub strip_comments {
     my ($ss, $s) = @_;
 
-    my $s = _str($ss);
+    #my $s = _str($ss);
 
     _back($ss, $s);
     return $s;
