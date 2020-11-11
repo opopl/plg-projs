@@ -107,10 +107,11 @@ sub q2quotes {
 sub rpl_dashes {
     my ($ss) = @_;
 
-    my $s = _str($ss);
+    local $_ = _str($ss);
+	s/\s+(-|–)\s+/ \\dshM /g;
 
-    _back($ss, $s);
-    return $s;
+    _back($ss, $_);
+    return $_;
 }
 
 1;

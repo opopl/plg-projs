@@ -497,17 +497,14 @@ sub load_file {
                     if (lc($ft) ne $ext) {
                         $ext = lc $ft;
                         my $img_new      = sprintf(q{%s.%s},$inum,$ext);
+						$img = $img_new;
+
                         my $img_file_new = catfile($img_root,$img_new);
                         move($img_file, $img_file_new);
                         $img_file = $img_file_new;
                     }
                 }
 
-                my $idt = which 'identify';
-                if ($idt) {
-                    # body...
-                }
-            
                 dbh_insert_hash({
                     t => 'imgs',
                     i => q{ INSERT OR REPLACE },
