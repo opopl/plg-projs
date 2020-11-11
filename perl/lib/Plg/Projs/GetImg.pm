@@ -318,7 +318,6 @@ sub _subs_url {
             return unless $curl;
     
             print qq{try: curl} . "\n";
-            print Dumper({ url => $url }) . "\n";
     
             my $url_s = $^O eq 'MSWin32' ? qq{"$url"} : qq{"$url"};
     
@@ -483,6 +482,16 @@ sub load_file {
                     img_file => $img_file,
                     sec      => $sec,
                 });
+
+                my @m; push @m,
+                     'Try downloading picture:',
+                     '  proj: ' . $self->{proj},
+                     '  sec:  ' . $sec,
+                     '  url:  ' . $url,
+                     '  img:  ' . $img,
+                     ;
+
+                print join("\n",@m) . "\n";
 
                 while(! -e $img_file){
                     my $s = shift @subs;
