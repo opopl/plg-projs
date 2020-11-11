@@ -473,6 +473,7 @@ sub load_file {
                 my ($ext) = ($bname =~ m/\.(\w+)$/);
                 $ext ||= 'jpg';
                 $ext = lc $ext;
+                $ext = 'jpg' if $ext eq 'jpeg';
     
                 my $img      = sprintf(q{%s.%s},$inum,$ext);
                 my $img_file = catfile($img_root,$img);
@@ -491,13 +492,14 @@ sub load_file {
                 next unless(-e $img_file);
 
                 my $itp = image_type($img_file) || {};
-                my $ft  = $itp->{file_type} || '';
+                my $ft  = lc( $itp->{file_type} || '');
+                $ft = 'jpg' if $ft eq 'jpeg';
 
                 if ($ft) {
-                    if (lc($ft) ne $ext) {
-                        $ext = lc $ft;
+                    if ($ft ne $ext) {
+                        $ext = $ft;
                         my $img_new      = sprintf(q{%s.%s},$inum,$ext);
-						$img = $img_new;
+                        $img = $img_new;
 
                         my $img_file_new = catfile($img_root,$img_new);
                         move($img_file, $img_file_new);
