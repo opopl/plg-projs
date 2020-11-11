@@ -1,6 +1,4 @@
 
-
-
 if exists("b:did_projs_ftplugin_tex")
   finish
 endif

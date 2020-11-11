@@ -560,7 +560,7 @@ if 0
        projs#maps
      called by
        projs#buf#onload_tex_tex
-       projs_ftplugin_tex
+			 ftp_tex_projs
 endif
 
 function! projs#onload (...)
@@ -570,6 +570,9 @@ function! projs#onload (...)
   if !base#buf#is_file()
     return 
   endif
+
+  let comps          = base#comps#bufact(&ft)
+  let b:comps_BufAct = comps
 
   let msg = [ printf('basename: %s', b:basename ) ]
   let prf = { 'plugin' : 'projs', 'func' : 'projs#onload' }

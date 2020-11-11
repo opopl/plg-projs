@@ -39,23 +39,23 @@ function! projs#buf#check ()
   let dirs = []
   for dirid in dirids
     let dir = base#path(dirid)
-		if isdirectory(dir)
-    	call add(dirs,dir)
-		endif
+    if isdirectory(dir)
+      call add(dirs,dir)
+    endif
   endfor
   
   if base#inlist( b:dirname, dirs )
     let b:root   = b:dirname
     let b:rootid = fnamemodify(b:root,':p:h:t')
 
-		let root_c = projs#root()
-		call projs#rootid(b:rootid)
+    let root_c = projs#root()
+    call projs#rootid(b:rootid)
 
-		if (root_c != b:root)
-			call projs#root(b:root)
+    if (root_c != b:root)
+      call projs#root(b:root)
 
-			call projs#init(b:rootid)
-		endif
+      call projs#init(b:rootid)
+    endif
   
     let b:is_projs_file = 1
   endif
@@ -101,17 +101,16 @@ endfunction
 
 if 0
   Used in:
-    projs_ftplugin_tex
+    ftp_tex_projs
     ftplugin/tex.vim
 endif
 
 function! projs#buf#onload_tex_tex ()
+  if &ft != 'tex' | return | endif
+
   let msg = [ 'basename: ' . b:basename ]
   let prf = { 'plugin' : 'projs', 'func' : 'projs#buf#onload_tex_tex' }
   call base#log(msg, prf)
-
-	let comps = base#comps#bufact('tex') 
-	let b:comps_BufAct = comps
 
   if !exists("b:proj")
     if !len(b:relpath_projs)

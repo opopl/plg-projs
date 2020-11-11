@@ -41,7 +41,8 @@ sub texify {
 
     my $s = _str($ss);
 
-    $s = q2quotes($s);
+    q2quotes(\$s);
+    rpl_dashes(\$s);
 
     $$ss = $s if ref $ss eq 'SCALAR';
     return $s;
@@ -100,8 +101,15 @@ sub q2quotes {
     $s = join("",@n);
 
     _back($ss, $s);
+    return $s;
+}
 
+sub rpl_dashes {
+    my ($ss) = @_;
 
+    my $s = _str($ss);
+
+    _back($ss, $s);
     return $s;
 }
 
