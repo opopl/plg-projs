@@ -110,6 +110,9 @@ function! projs#buf#onload_tex_tex ()
   let prf = { 'plugin' : 'projs', 'func' : 'projs#buf#onload_tex_tex' }
   call base#log(msg, prf)
 
+	let comps = base#comps#bufact('tex') 
+	let b:comps_BufAct = comps
+
   if !exists("b:proj")
     if !len(b:relpath_projs)
       let b:proj = substitute(b:basename,'^\(\w\+\)\..*','\1','g')

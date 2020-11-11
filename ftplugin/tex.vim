@@ -1,4 +1,6 @@
 
+
+
 if exists("b:did_projs_ftplugin_tex")
   finish
 endif
@@ -10,7 +12,7 @@ call base#buf#start()
 call projs#buf#check()
 
 """projs_ftplugin_tex
-"""ft_tex_projs
+"""ftp_tex_projs
 
 " if we are dealing with a 'projs' (La)TeX file
 "if ( ( b:dirname == b:root ) && ( b:ext == 'tex' ) )
