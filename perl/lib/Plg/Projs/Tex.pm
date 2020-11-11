@@ -41,10 +41,20 @@ sub texify {
 
     my $s = _str($ss);
 
+    #strip_comments(\$s);
     q2quotes(\$s);
     rpl_dashes(\$s);
 
-    $$ss = $s if ref $ss eq 'SCALAR';
+    _back($ss, $s);
+    return $s;
+}
+
+sub strip_comments {
+    my ($ss, $s) = @_;
+
+    my $s = _str($ss);
+
+    _back($ss, $s);
     return $s;
 }
 
