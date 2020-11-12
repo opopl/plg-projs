@@ -46,104 +46,137 @@ sub cmd_jnd_compose {
 
     my @nlines;
 ###_cnv_vars
-    my ($is_img, $is_cmt);
+    my ($is_img, $is_cmt, $url);
 
     my (@tags);
     my $tags_projs = [ qw(projs), $mkr->{root_id}, $mkr->{proj} ];
 
-    my @keys = qw(url caption tags);
-    my %d;
+    my @keys = qw(url caption tags name);
+    my ($d, @data);
+    $d = {};
 
 ###_cnv_loop
-    foreach(@jlines) {
-        chomp;
+    my $lnum=0;
+    #return $mkr;
+    LINES: foreach(@jlines) {
+        $lnum++; chomp;
 
         m/^\s*\\ifcmt/ && do { $is_cmt = 1; next; };
         m/^\s*\\fi/ && do { 
+            unless($is_cmt){
+                push @nlines, $_; next;
+            }
+
             $is_cmt = 0 if $is_cmt; 
 
-            my ($url, $caption, $tags) = @d{@keys};
+            next unless @data;
 
-            my $w = {};
-            for(qw( url tags name )){
-                $w->{$_}  = $d{$_} if $d{$_};
-            }
+            print join(" ", $lnum,  scalar @data ) . "\n";
 
-            my ($rows, $cols, $q, $p) = dbh_select({
-                dbh => $mkr->{dbh_img},
-                q   => q{ SELECT img, caption, url FROM imgs },
-                p   => [],
-                w   => $w,
-            });
-            my @fig = ();
-            if (@$rows == 1) {
-                my $rw = shift @$rows;
-                my $o = q{width=0.7\textwidth};
+            while(@data){
+                $d = shift @data;
 
-                my $caption = $rw->{caption} || '';
-                my $img     = $rw->{img};
-
-                my $img_path = sprintf(q{\imgroot/%s},$img);
-
-                my $img_file = catfile($mkr->{img_root},$img);
-                unless (-e $img_file) {
-                    my $r = {    
-                        msg => q{Image file not found!},
-                        img => $img,
-                        url => $url,
-                    };
-                    warn Dumper($r) . "\n";
-                    next;
+                my ($url, $caption, $tags, $name) = @{$d}{@keys};
+    
+                my $w = {};
+                for(qw( url name )){
+                    $w->{$_}  = $d->{$_} if $d->{$_};
                 }
+    
+                my ($rows, $cols, $q, $p) = dbh_select({
+                    dbh => $mkr->{dbh_img},
+                    q   => q{ SELECT img, caption, url FROM imgs },
+                    p   => [],
+                    w   => $w,
+                });
+                my @fig = ();
+                if (@$rows == 1) {
+                    my $rw = shift @$rows;
+                    my $o = q{width=0.7\textwidth};
+    
+                    my $caption = $rw->{caption} || '';
+                    my $img     = $rw->{img};
+    
+                    my $img_path = sprintf(q{\imgroot/%s},$img);
+    
+                    my $img_file = catfile($mkr->{img_root},$img);
+                    unless (-e $img_file) {
+                        my $r = {    
+                            msg => q{Image file not found!},
+                            img => $img,
+                            url => $url,
+                        };
+                        warn Dumper($r) . "\n";
+                        next;
+                    }
+    
+                    texify(\$caption);
+    
+                    push @fig, 
+                        q| \begin{figure}[ht] |,
+                        q| \centering |,
+                        sprintf(q| \includegraphics[%s]{%s} |, $o, $img_path ),
+                        $caption ? ( sprintf(q| \caption{%s} |, $caption ) ) : (),
+                        q| \end{figure} |,
+                        ;
+                }
+                push @nlines, @fig;
+    
+                @tags = ();
 
-                texify(\$caption);
-
-                push @fig, 
-                    q| \begin{figure}[ht] |,
-                    q| \centering |,
-                    sprintf(q| \includegraphics[%s]{%s} |, $o, $img_path ),
-                    $caption ? ( sprintf(q| \caption{%s} |, $caption ) ) : (),
-                    q| \end{figure} |,
-                    ;
             }
-            push @nlines, @fig;
-
-            @tags = ();
-            %d = ();
+            $d = {};
 
             next; 
         };
 
         unless($is_cmt){ push @nlines, $_; next; }
 
-        m/^\s*img_begin/ && do { $is_img = 1; next; };
-        m/^\s*img_end/ && do { 
-            $is_img = 0; 
-            next;
+        m/^\s*img_begin\b/g && do { $is_img = 1; next; };
+
+###img_end
+        m/^\s*img_end\b/g && do { 
+            $is_img = 0 if $is_img; 
+
+            push @data, $d if keys %$d;
+            $d = {};
+
+            next; 
         };
 
         while(1){
+###if_is_img
             if ($is_img) {
-                for my $k (@keys){
-                    m/^\s*$k\s+(.*)$/g && do { 
-                        $d{$k} = $1; 
-                        $d{$k} =~ s/\s+//g;
-                    };
-                }
+###match_url
+                m/^\s*url\s+(.*)$/g && do { 
+                    push @data, $d if keys %$d;
 
-                if ($d{tags}) {
-                    push @tags, [ split("," => $d{tags} ) ];
-                }
+                    $d = { url => $1 };
+                    $url = $1;
+                    last;
+                };
+
+                m/^\s*(\w+)\s+(.*)$/g && do { 
+                   $d->{$1} = $2; 
+                };
+
                 last;
             }
     
-            m/^\s*pic\s+(.*)$/g && do { 
-                $d{url} = $1;
+            m/^\s*(pic|doc)\s+(.*)$/g && do { 
+                $url = $2;
+                $d = { url => $url };
+                if ($1 eq 'doc') {
+                    $d->{type} = 'doc';
+                }
+                push @data, $d;
+                $d = {};
                 last; 
             };
 
             last;
         }
+
 
     }
 

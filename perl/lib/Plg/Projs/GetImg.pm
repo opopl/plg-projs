@@ -431,7 +431,7 @@ sub load_file {
 
     chdir $img_root;
 
-###LINES
+###loop_LINES
     my (@ok, @fail);
 
     LINES: while (@lines) {
@@ -499,7 +499,7 @@ sub load_file {
                 print join("\n",@m) . "\n";
 
                 while(! -e $img_file){
-                    my $s = shift @subs;
+                    my $s  = shift @subs;
                     my $ss = $s->();
                 }
 
@@ -603,12 +603,12 @@ sub load_file {
     }
     # end of loop: LINES
     if (@fail) {
-	    my @m; push @m, 
-	        'FAILURES: ' . scalar @fail,
+        my @m; push @m, 
+            'FAILURES: ' . scalar @fail,
             Dumper([ map { { url => $_->{url}, sec => $_->{sec} } } @fail ]),
-	        ;
-	
-	    warn join("\n",@m) . "\n";
+            ;
+    
+        warn join("\n",@m) . "\n";
     }
 
     return $self;
