@@ -417,6 +417,8 @@ sub load_file {
 
     my $img_root = $self->{img_root};
 
+    my $proj = $self->{proj};
+
     $self->debug(qq{Reading:\n\t$file_bn});
 ###read_file @lines
     my @lines = read_file $file;
@@ -430,6 +432,8 @@ sub load_file {
     chdir $img_root;
 
 ###LINES
+    my (@ok, @fail);
+
     LINES: while (@lines) {
         local $_ = shift @lines;
         chomp;
@@ -498,7 +502,19 @@ sub load_file {
                     my $ss = $s->();
                 }
 
-                next unless(-e $img_file);
+                my $dd = {
+                    url  => $url,
+                    img  => $img,
+                    sec  => $sec,
+                };
+                unless(-e $img_file){
+                    print qq{FAIL: $img} . "\n";
+                    push @fail, $dd;
+                    next;
+                }else{
+                    print qq{SUCCESS: $img} . "\n";
+                    push @ok, $dd;
+                }
 
                 my $itp = image_type($img_file) || {};
                 my $ft  = lc( $itp->{file_type} || '');

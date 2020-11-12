@@ -16,11 +16,12 @@ endif
 
 function! projs#db#create_tables ()
   let db_file = projs#db#file()
+
   let pylib   = projs#pylib()
+  call pymy#py3#add_lib( pylib . '/plg/projs' )
 
   let tables   = base#qw('projs tags')
 
-  call pymy#py3#add_lib( pylib . '/plg/projs' )
   for table in tables
     let sql_file = base#qw#catpath('plg projs data sql create_table_' . table . '.sql')
 python3 << eof

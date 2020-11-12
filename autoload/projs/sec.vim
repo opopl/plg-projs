@@ -576,14 +576,18 @@ endfunction
 function! projs#sec#insert_url (...)
   let ref = get(a:000,0,{})
 
-	let sec = projs#buf#sec()
+  let sec = projs#buf#sec()
   let sec = get(ref,'sec',sec)
 
   let url = get(ref,'url','')
 
+  let pylib   = projs#pylib()
+  call pymy#py3#add_lib( pylib . '/plg/projs' )
+
   let file = projs#sec#file(sec)
 python3 << eof
 import vim,in_place,re
+import db
 
 file      = vim.eval('file')
 url       = vim.eval('url')
@@ -605,16 +609,18 @@ url_tex = [ r'\Purl{%s}' % url ]
 #]
 
 lines_w = []
-f = open(file,'r')
+f     = open(file,'rb')
+
 lines = f.read().splitlines()
 
 try:
-  for line in lines:
+  for ln in lines:
+      line = ln.decode('utf-8')
       end_head = 0
       after_head = 0
       if re.match(r'^%%url\s+', line):
         url_cmt_done = 1
-        line = url_cmt
+        line         = url_cmt
       if re.match(r'^\s*\\url\{.*\}\s*$', line):
         url_tex_done = 1
       if re.match(r'^%%beginhead', line):
@@ -631,7 +637,7 @@ try:
 finally:
   f.close()
 
-b = vim.current.buffer
+b    = vim.current.buffer
 b[:] = []
 b[:] = lines_w
 

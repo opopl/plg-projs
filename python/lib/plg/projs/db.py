@@ -82,6 +82,32 @@ def cleanup(db_file, root, proj):
   conn.commit()
   conn.close()
 
+def update_dict(ref):
+  conn     = ref.get('conn')
+  table    = ref.get('table')
+  if not conn:
+    return
+  c = conn.cursor()
+
+  where     = ref.get('where',{})
+  update    = ref.get('update',{})
+
+  update_keys   = update.keys()
+  update_values = list( map(lambda k: update.get(k,''), update_keys) )
+
+  where_keys    = where.keys()
+  where_values  = list( map(lambda k: where.get(k,''), where_keys) )
+
+  values = []
+  set_s = ''
+  where_s = ''
+
+  q=''' UPDATE %s SET %s WHERE %s''' % (table,set_s,where_s)
+  try:
+    c.execute(q,values)
+  except sqlite3.IntegrityError as e:
+    print(e)
+
 def insert_dict(ref):
   conn     = ref.get('conn')
   table    = ref.get('table')
