@@ -99,10 +99,13 @@ def update_dict(ref):
   where_values  = list( map(lambda k: where.get(k,''), where_keys) )
 
   values = []
-  set_s = ''
-  where_s = ''
+  values.extend(update_values, where_values)
+
+  set_s = ','.join(list( map(lambda k: ' %s = ?' % k , update_keys ) ))
+  where_s = ' AND '.join(list( map(lambda k: ' %s = ?' % k , where_keys ) ))
 
   q=''' UPDATE %s SET %s WHERE %s''' % (table,set_s,where_s)
+  print(q)
   try:
     c.execute(q,values)
   except sqlite3.IntegrityError as e:
