@@ -579,6 +579,8 @@ function! projs#sec#insert_url (...)
   let sec = projs#buf#sec()
   let sec = get(ref,'sec',sec)
 
+  let proj = projs#proj#name()
+
   let url = get(ref,'url','')
 
   let pylib   = projs#pylib()
@@ -592,6 +594,9 @@ import db
 file      = vim.eval('file')
 url       = vim.eval('url')
 db_file   = vim.eval('projs#db#file()')
+
+proj      = vim.eval('proj')
+sec       = vim.eval('sec')
 
 is_head = 0
 
@@ -642,10 +647,15 @@ b    = vim.current.buffer
 b[:] = []
 b[:] = lines_w
 
-update_dict({ 
+db.update_dict({ 
   'db_file' : db_file,
+  'table'   : 'projs',
+  'update'  : {
+    'url' : url
+  },
   'where' : { 
-    'sec' : sec 
+    'sec'  : sec,
+    'proj' : proj,
   }
 })
 

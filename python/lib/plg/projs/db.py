@@ -106,7 +106,8 @@ def update_dict(ref):
   where_values  = list( map(lambda k: where.get(k,''), where_keys) )
 
   values = []
-  values.extend(update_values, where_values)
+  values.extend(update_values)
+  values.extend(where_values)
 
   set_s = ','.join(list( map(lambda k: ' %s = ?' % k , update_keys ) ))
   where_s = ' AND '.join(list( map(lambda k: ' %s = ?' % k , where_keys ) ))
@@ -136,7 +137,7 @@ def insert_dict(ref):
   quot_s   = ",".join(quot)
   q=''' INSERT OR REPLACE INTO %s (%s) VALUES (%s)''' % (table,fields_s,quot_s)
 
-  #c.execute(q,values)
+  c.execute(q,values)
 
   try:
     c.execute(q,values)
