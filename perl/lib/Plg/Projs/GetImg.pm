@@ -493,7 +493,7 @@ sub load_file {
                      '  sec:      ' . $sec,
                      '  url:      ' . $url,
                      '  img:      ' . $img,
-                     '  caption:  ' . $d->{caption} || '',
+                     '  caption:  ' . ($d->{caption} || ''),
                      ;
 
                 print join("\n",@m) . "\n";

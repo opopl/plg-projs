@@ -45,10 +45,8 @@ sub cmd_jnd_compose {
     my @jlines = read_file $jfile;
 
     my @nlines;
-###_cnv_vars
     my ($is_img, $is_cmt, $url);
 
-    my (@tags);
     my $tags_projs = [ qw(projs), $mkr->{root_id}, $mkr->{proj} ];
 
     my @keys = qw(url caption tags name);
@@ -71,7 +69,7 @@ sub cmd_jnd_compose {
 
             next unless @data;
 
-            print join(" ", $lnum,  scalar @data ) . "\n";
+            #print join(" ", $lnum,  scalar @data ) . "\n";
 
             while(@data){
                 $d = shift @data;
@@ -91,6 +89,7 @@ sub cmd_jnd_compose {
                 });
 
                 my ($width) = @{$d}{qw( width )};
+                $width ||= 0.7;
 
                 my @fig = ();
                 if (@$rows == 1) {
@@ -125,8 +124,6 @@ sub cmd_jnd_compose {
                 }
                 push @nlines, @fig;
     
-                @tags = ();
-
             }
             $d = {};
 
@@ -137,7 +134,7 @@ sub cmd_jnd_compose {
 
         m/^\s*img_begin\b/g && do { $is_img = 1; next; };
 
-###img_end
+###m_img_end
         m/^\s*img_end\b/g && do { 
             $is_img = 0 if $is_img; 
 
@@ -150,7 +147,7 @@ sub cmd_jnd_compose {
         while(1){
 ###if_is_img
             if ($is_img) {
-###match_url
+###m_url
                 m/^\s*url\s+(.*)$/g && do { 
                     push @data, $d if keys %$d;
 
@@ -169,6 +166,7 @@ sub cmd_jnd_compose {
                 last;
             }
     
+###m_pic
             m/^\s*(pic|doc)\s+(.*)$/g && do { 
                 $url = $2;
                 $d = { url => $url };
