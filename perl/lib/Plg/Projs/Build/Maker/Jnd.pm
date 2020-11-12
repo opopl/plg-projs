@@ -55,9 +55,9 @@ sub cmd_jnd_compose {
     my ($d, @data);
     $d = {};
 
-###_cnv_loop
     my $lnum=0;
     #return $mkr;
+###loop_LINES
     LINES: foreach(@jlines) {
         $lnum++; chomp;
 
@@ -82,17 +82,20 @@ sub cmd_jnd_compose {
                 for(qw( url name )){
                     $w->{$_}  = $d->{$_} if $d->{$_};
                 }
-    
+
                 my ($rows, $cols, $q, $p) = dbh_select({
                     dbh => $mkr->{dbh_img},
                     q   => q{ SELECT img, caption, url FROM imgs },
                     p   => [],
                     w   => $w,
                 });
+
+                my ($width) = @{$d}{qw( width )};
+
                 my @fig = ();
                 if (@$rows == 1) {
                     my $rw = shift @$rows;
-                    my $o = q{width=0.7\textwidth};
+                    my $o = sprintf(q{ width=%s\textwidth },$width);
     
                     my $caption = $rw->{caption} || '';
                     my $img     = $rw->{img};
@@ -157,6 +160,9 @@ sub cmd_jnd_compose {
                 };
 
                 m/^\s*(\w+)\s+(.*)$/g && do { 
+                   my $k = $1;
+                   #next unless grep { /^$k$/ } qw( caption name tags );
+
                    $d->{$1} = $2; 
                 };
 
