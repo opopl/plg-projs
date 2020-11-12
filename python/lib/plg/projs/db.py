@@ -84,9 +84,13 @@ def cleanup(db_file, root, proj):
 
 def update_dict(ref):
   conn     = ref.get('conn')
+  db_file  = ref.get('db_file')
   table    = ref.get('table')
   if not conn:
-    return
+    if db_file:
+      conn = sqlite3.connect(db_file)
+    else:
+      return
   c = conn.cursor()
 
   where     = ref.get('where',{})
