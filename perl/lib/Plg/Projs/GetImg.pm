@@ -551,6 +551,7 @@ sub load_file {
                     },
                 });
             }
+            $d = {};
 
         };
 ###\fi_end
