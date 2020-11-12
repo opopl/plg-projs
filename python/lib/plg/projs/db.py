@@ -84,8 +84,11 @@ def cleanup(db_file, root, proj):
 
 def update_dict(ref):
   conn     = ref.get('conn')
-  db_file  = ref.get('db_file')
   table    = ref.get('table')
+
+  db_file   = ref.get('db_file')
+  db_close  = ref.get('db_close')
+
   if not conn:
     if db_file:
       conn = sqlite3.connect(db_file)
@@ -114,6 +117,10 @@ def update_dict(ref):
     c.execute(q,values)
   except sqlite3.IntegrityError as e:
     print(e)
+
+  if db_close:
+    conn.commit()
+    conn.close()
 
 def insert_dict(ref):
   conn     = ref.get('conn')

@@ -591,6 +591,7 @@ import db
 
 file      = vim.eval('file')
 url       = vim.eval('url')
+db_file   = vim.eval('projs#db#file()')
 
 is_head = 0
 
@@ -640,6 +641,13 @@ finally:
 b    = vim.current.buffer
 b[:] = []
 b[:] = lines_w
+
+update_dict({ 
+  'db_file' : db_file,
+  'where' : { 
+    'sec' : sec 
+  }
+})
 
 eof
 
