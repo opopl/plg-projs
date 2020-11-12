@@ -27,11 +27,13 @@ proj = vim.eval('proj')
 
 t = '''
 %%file _main_
-%%file f_main\n
-\\def\proj{_proj_}\n
-\\def\ii#1{\inputiffileexists{\proj.#1.tex}{}{}}\n
-\\def\iif#1{\input{\proj/#1.tex}}\n
-\\def\idef#1{\inputiffileexists{_def.#1.tex}{}{}}\n
+%%file f_main
+
+\\def\PROJ{_proj_}
+\\def\ii#1{\InputIfFileExists{\PROJ.#1.tex}{}{}}
+\\def\iif#1{\input{\PROJ/#1.tex}}
+\\def\idef#1{\InputIfFileExists{_def.#1.tex}{}{}}
+
 '''
 t = re.sub(r'_proj_',proj,t)
 
@@ -43,11 +45,11 @@ eof
 endfunction
 
 function! projs#insert#uri ()
-	let url = input('url: ','')
+  let url = input('url: ','')
 
-	call projs#sec#insert_url({
-		\	'url' : url,
-		\	})
+  call projs#sec#insert_url({
+    \ 'url' : url,
+    \ })
 
 endfunction
 

@@ -100,6 +100,7 @@ sub cmd_jnd_compose {
 
                 push @fig, 
                     q| \begin{figure}[ht] |,
+                    q| \centering |,
                     sprintf(q| \includegraphics[%s]{%s} |, $o, $img_path ),
                     $caption ? ( sprintf(q| \caption{%s} |, $caption ) ) : (),
                     q| \end{figure} |,

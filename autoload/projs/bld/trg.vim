@@ -22,7 +22,7 @@ function! projs#bld#trg#choose ()
     let target = remove(targets,0)
   else
     call base#varset('this',targets)
-    while !len(target)
+    while (!len(target) || !base#inlist(target,targets) )
       let target = input(printf('[%s] target: ',proj),'','custom,base#complete#this')
     endw
   endif
