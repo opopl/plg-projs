@@ -656,7 +656,8 @@ db.update_dict({
   'where' : { 
     'sec'  : sec,
     'proj' : proj,
-  }
+  },
+	'db_close' : 1,
 })
 
 eof

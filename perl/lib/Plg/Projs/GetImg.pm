@@ -489,10 +489,11 @@ sub load_file {
 
                 my @m; push @m,
                      'Try downloading picture:',
-                     '  proj: ' . $self->{proj},
-                     '  sec:  ' . $sec,
-                     '  url:  ' . $url,
-                     '  img:  ' . $img,
+                     '  proj:     ' . $self->{proj},
+                     '  sec:      ' . $sec,
+                     '  url:      ' . $url,
+                     '  img:      ' . $img,
+                     '  caption:  ' . $d->{caption} || '',
                      ;
 
                 print join("\n",@m) . "\n";
@@ -599,6 +600,15 @@ sub load_file {
             last;
         }
 
+    }
+    # end of loop: LINES
+    if (@fail) {
+	    my @m; push @m, 
+	        'FAILURES: ' . scalar @fail,
+            Dumper([ map { { url => $_->{url}, sec => $_->{sec} } } @fail ]),
+	        ;
+	
+	    warn join("\n",@m) . "\n";
     }
 
     return $self;

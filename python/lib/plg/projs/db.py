@@ -113,7 +113,6 @@ def update_dict(ref):
   where_s = ' AND '.join(list( map(lambda k: ' %s = ?' % k , where_keys ) ))
 
   q=''' UPDATE %s SET %s WHERE %s''' % (table,set_s,where_s)
-  print(q)
   try:
     c.execute(q,values)
   except sqlite3.IntegrityError as e:
