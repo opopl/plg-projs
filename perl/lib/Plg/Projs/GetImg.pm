@@ -602,6 +602,14 @@ sub load_file {
         }
 
     }
+    if (@ok) {
+	    my @m; push @m, 
+	        sprintf('SUCCESS: %s images', scalar @ok)
+	        ;
+	    
+	    print join("\n",@m) . "\n";
+    }
+
     # end of loop: LINES
     if (@fail) {
         my @m; push @m, 
