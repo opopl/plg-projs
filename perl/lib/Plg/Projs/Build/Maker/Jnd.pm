@@ -47,14 +47,17 @@ sub cmd_jnd_compose {
     my @jlines = read_file $jfile;
 
     my @nlines;
-    my ($is_img, $is_cmt, $is_tab);
-    my ($tab);
+    my ($is_img, $is_cmt);
+    my ($is_tab, $tab);
 
     my @keys = qw(url caption tags name);
-    my ($url, $d, @data);
+    my ($url, $d, @data, @fig);
     $d = {};
 
-    my $lnum=0;
+    my ($img_width, $img_width_default);
+    $img_width_default = 0.7;
+
+    my $lnum = 0;
     #return $mkr;
 ###loop_LINES
     LINES: foreach(@jlines) {
@@ -70,6 +73,19 @@ sub cmd_jnd_compose {
             $is_cmt = 0 if $is_cmt; 
 
             next unless @data;
+
+            push @fig, 
+                q| \begin{figure}[ht] |,
+                q| \centering |,
+                ;
+
+            if ($tab) {
+                my $cols  = $tab->{cols} || 2;
+                my $align = $tab->{align} || 'c';
+                push @fig, 
+                    sprintf(q| \begin{tabular}{*{%s}{%s}} |,$cols,$align)
+                    ;
+            }
 
             #print join(" ", $lnum,  scalar @data ) . "\n";
 
@@ -90,13 +106,11 @@ sub cmd_jnd_compose {
                     w   => $w,
                 });
 
-                my ($width) = @{$d}{qw( width )};
-                $width ||= 0.7;
+                $img_width = $d->{width} || $img_width_default;
 
-                my @fig = ();
                 if (@$rows == 1) {
                     my $rw = shift @$rows;
-                    my $o = sprintf(q{ width=%s\textwidth },$width);
+                    my $o = sprintf(q{ width=%s\textwidth },$img_width);
     
                     my $caption = $rw->{caption} || '';
                     my $img     = $rw->{img};
@@ -117,18 +131,19 @@ sub cmd_jnd_compose {
                     texify(\$caption);
     
                     push @fig, 
-                        q| \begin{figure}[ht] |,
-                        q| \centering |,
                         sprintf(q| \includegraphics[%s]{%s} |, $o, $img_path ),
                         $caption ? ( sprintf(q| \caption{%s} |, $caption ) ) : (),
-                        q| \end{figure} |,
                         ;
                 }
-                push @nlines, @fig;
-    
             }
+
+            push @fig, q|\end{tabular}| if $tab;
+
+            push @fig, q| \end{figure} | ;
+            push @nlines, @fig;
+            @fig = ();
             $d = {};
-            $tab = {};
+            $tab = undef;
 
             next; 
         };
@@ -142,11 +157,14 @@ sub cmd_jnd_compose {
             my $opts_s = $1;
             next unless $opts_s;
 
-            my @tab_opts = grep { length } map { defined ? trim($_) : () }  split("," => $opts_s);
+            $tab={};
+
+            my @tab_opts = grep { length } map { defined ? trim($_) : () } split("," => $opts_s);
             for(@tab_opts){
-                my ($k, $v) = (/[^=]+=[^=]+/g);
+                my ($k, $v) = (/([^=]+)=([^=]+)/g);
                 $tab->{$k} = $v;
             }
+            print Dumper($tab) . "\n";
             next; 
         };
 
