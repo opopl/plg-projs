@@ -16,6 +16,8 @@ use Plg::Projs::Tex qw(
     texify 
 );
 
+use String::Util qw(trim);
+
 use Capture::Tiny qw(
     capture_merged
 );
@@ -45,12 +47,11 @@ sub cmd_jnd_compose {
     my @jlines = read_file $jfile;
 
     my @nlines;
-    my ($is_img, $is_cmt, $url);
-
-    my $tags_projs = [ qw(projs), $mkr->{root_id}, $mkr->{proj} ];
+    my ($is_img, $is_cmt, $is_tab);
+    my ($tab);
 
     my @keys = qw(url caption tags name);
-    my ($d, @data);
+    my ($url, $d, @data);
     $d = {};
 
     my $lnum=0;
@@ -60,6 +61,7 @@ sub cmd_jnd_compose {
         $lnum++; chomp;
 
         m/^\s*\\ifcmt/ && do { $is_cmt = 1; next; };
+###m_\fi
         m/^\s*\\fi/ && do { 
             unless($is_cmt){
                 push @nlines, $_; next;
@@ -126,11 +128,28 @@ sub cmd_jnd_compose {
     
             }
             $d = {};
+            $tab = {};
 
             next; 
         };
+###end_m_\fi
 
         unless($is_cmt){ push @nlines, $_; next; }
+
+###m_tab_begin
+        m/^\s*tab_begin\b(.*)$/g && do { 
+            $is_tab = 1; 
+            my $opts_s = $1;
+            next unless $opts_s;
+
+            my @tab_opts = grep { length } map { defined ? trim($_) : () }  split("," => $opts_s);
+            for(@tab_opts){
+                my ($k, $v) = (/[^=]+=[^=]+/g);
+                $tab->{$k} = $v;
+            }
+            next; 
+        };
+        m/^\s*tab_end\b/g && do { $is_tab = 0; next; };
 
         m/^\s*img_begin\b/g && do { $is_img = 1; next; };
 
