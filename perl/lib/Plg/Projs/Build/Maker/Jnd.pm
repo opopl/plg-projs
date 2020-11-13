@@ -149,6 +149,8 @@ sub cmd_jnd_compose {
             }
             next; 
         };
+
+###m_tab_end
         m/^\s*tab_end\b/g && do { $is_tab = 0; next; };
 
         m/^\s*img_begin\b/g && do { $is_img = 1; next; };
