@@ -55,6 +55,8 @@ sub cmd_jnd_compose {
     my ($d, @data, @fig);
     $d = {};
 
+    my @fig_start = ( q|\begin{figure}[ht] |, q|  \centering | );
+
     my ($img_width, $img_width_default);
     $img_width_default = 0.7;
 
@@ -75,11 +77,6 @@ sub cmd_jnd_compose {
 
             next unless @data;
 
-            push @fig, 
-                q| \begin{figure}[ht] |,
-                q| \centering |,
-                ;
-
 ###if_tab_push_fig
             if ($tab) {
                 $i_col = 1;
@@ -87,7 +84,8 @@ sub cmd_jnd_compose {
                 $tab->{cols} ||= 2;
                 $tab->{align} ||= 'c';
                 push @fig, 
-                    sprintf(q| \begin{tabular}{*{%s}{%s}} |,@{$tab}{qw(cols align)});
+                    @fig_start,
+                    sprintf(q| \begin{tabular}{*{%s}{%s}} |,@{$tab}{qw(cols align)}),
                     ;
             }
 
@@ -132,10 +130,13 @@ sub cmd_jnd_compose {
                         warn Dumper($r) . "\n";
                         next;
                     }
-    
+
+                    unless ($tab) {
+                        push @fig,@fig_start; 
+                    }
     
                     push @fig, 
-                        sprintf(q| \includegraphics[%s]{%s} |, $o, $img_path ),
+                        sprintf(q|  \includegraphics[%s]{%s} |, $o, $img_path ),
                         ;
 ###if_tab_col
                     if ($tab) {
@@ -148,18 +149,21 @@ sub cmd_jnd_compose {
                             $i_col++;
                         }
                         push @fig, $s;
+                    }else{
+                        push @fig, q|\end{figure}|;
                     }
                 }
             }
 ###end_loop_@data
 
             if($tab){
-                push @fig, q|\end{tabular}|;
+                push @fig, 
+                    $caption ? ( sprintf(q| \caption{%s} |, $caption ) ) : (),
+                    q|  \end{tabular}|,
+                    q|\end{figure}|,
             }
 
             push @fig, 
-                $caption ? ( sprintf(q| \caption{%s} |, $caption ) ) : (),
-                q| \end{figure} | ;
 
             push @nlines, @fig;
 
