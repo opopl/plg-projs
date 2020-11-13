@@ -216,6 +216,8 @@ sub cmd_jnd_compose {
         while(1){
 ###m_pic
             m/^\s*(pic|doc)\s+(.*)$/g && do { 
+                push @data, $d if keys %$d; $d = {};
+
                 $is_img = 1;
 
                 $url = $2;
@@ -223,8 +225,6 @@ sub cmd_jnd_compose {
                 if ($1 eq 'doc') {
                     $d->{type} = 'doc';
                 }
-                push @data, $d;
-                $d = {};
                 last; 
             };
 
