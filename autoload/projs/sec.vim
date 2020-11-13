@@ -661,7 +661,8 @@ db.update_dict({
 })
 
 eof
-
+	let b:url = url
+	call base#rdw('Updated URL: ', url)
 
 endfunction
 
