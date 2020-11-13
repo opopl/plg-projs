@@ -191,18 +191,21 @@ sub cmd_jnd_compose {
             next; 
         };
 
-###m_tab_end
-        m/^\s*tab_end\b/g && do { $is_tab = 0; next; };
-
         m/^\s*img_begin\b/g && do { $is_img = 1; next; };
+
+###m_tab_end
+        m/^\s*tab_end\b/g && do { 
+            $is_tab = 0; 
+
+            push @data, $d if keys %$d; $d = {};
+            next; 
+        };
 
 ###m_img_end
         m/^\s*img_end\b/g && do { 
             $is_img = 0 if $is_img; 
 
-            push @data, $d if keys %$d;
-            $d = {};
-
+            push @data, $d if keys %$d; $d = {};
             next; 
         };
 
