@@ -48,10 +48,11 @@ sub cmd_jnd_compose {
 
     my @nlines;
     my ($is_img, $is_cmt);
-    my ($is_tab, $tab);
+    my ($is_tab, $tab, $i_col);
 
     my @keys = qw(url caption tags name);
-    my ($url, $d, @data, @fig);
+    my ($url, $caption);
+    my ($d, @data, @fig);
     $d = {};
 
     my ($img_width, $img_width_default);
@@ -79,7 +80,10 @@ sub cmd_jnd_compose {
                 q| \centering |,
                 ;
 
+###if_tab_push_fig
             if ($tab) {
+                $i_col = 1;
+
                 my $cols  = $tab->{cols} || 2;
                 my $align = $tab->{align} || 'c';
                 push @fig, 
@@ -112,7 +116,6 @@ sub cmd_jnd_compose {
                     my $rw = shift @$rows;
                     my $o = sprintf(q{ width=%s\textwidth },$img_width);
     
-                    my $caption = $rw->{caption} || '';
                     my $img     = $rw->{img};
     
                     my $img_path = sprintf(q{\imgroot/%s},$img);
@@ -132,17 +135,36 @@ sub cmd_jnd_compose {
     
                     push @fig, 
                         sprintf(q| \includegraphics[%s]{%s} |, $o, $img_path ),
-                        $caption ? ( sprintf(q| \caption{%s} |, $caption ) ) : (),
                         ;
+###if_tab_col
+                    if ($tab) {
+                        my $s;
+                        if ( $i_col == $cols ) {
+                            $i_col = 1;
+                            $s = q{\\};
+                        }else{
+                            $s = q{&};
+                            $i_col++;
+                        }
+                        push @fig, $s;
+                    }
                 }
             }
+###end_loop_@data
 
-            push @fig, q|\end{tabular}| if $tab;
+            if($tab){
+                push @fig, q|\end{tabular}|;
+            }
 
-            push @fig, q| \end{figure} | ;
+            push @fig, 
+                $caption ? ( sprintf(q| \caption{%s} |, $caption ) ) : (),
+                q| \end{figure} | ;
+
             push @nlines, @fig;
+
             @fig = ();
             $d = {};
+            $caption = '';
             $tab = undef;
 
             next; 
