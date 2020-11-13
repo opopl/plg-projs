@@ -56,6 +56,9 @@ sub cmd_jnd_compose {
     $d = {};
 
     my @fig_start = ( q|\begin{figure}[ht] |, q|  \centering | );
+    my @fig_end = ( q|\end{figure}| );
+
+    my @tab_end = ( q|  \end{tabular}|  );
 
     my ($img_width, $img_width_default);
     $img_width_default = 0.7;
@@ -150,7 +153,7 @@ sub cmd_jnd_compose {
                         }
                         push @fig, $s;
                     }else{
-                        push @fig, q|\end{figure}|;
+                        push @fig, @fig_end;
                     }
                 }
             }
@@ -159,11 +162,8 @@ sub cmd_jnd_compose {
             if($tab){
                 push @fig, 
                     $caption ? ( sprintf(q| \caption{%s} |, $caption ) ) : (),
-                    q|  \end{tabular}|,
-                    q|\end{figure}|,
+                    @tab_end, @fig_end,
             }
-
-            push @fig, 
 
             push @nlines, @fig;
 
@@ -214,6 +214,20 @@ sub cmd_jnd_compose {
         };
 
         while(1){
+###m_pic
+            m/^\s*(pic|doc)\s+(.*)$/g && do { 
+                $is_img = 1;
+
+                $url = $2;
+                $d = { url => $url };
+                if ($1 eq 'doc') {
+                    $d->{type} = 'doc';
+                }
+                push @data, $d;
+                $d = {};
+                last; 
+            };
+
 ###if_is_img
             if ($is_img) {
 ###m_url
@@ -234,18 +248,6 @@ sub cmd_jnd_compose {
 
                 last;
             }
-    
-###m_pic
-            m/^\s*(pic|doc)\s+(.*)$/g && do { 
-                $url = $2;
-                $d = { url => $url };
-                if ($1 eq 'doc') {
-                    $d->{type} = 'doc';
-                }
-                push @data, $d;
-                $d = {};
-                last; 
-            };
 
             last;
         }
