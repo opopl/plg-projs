@@ -84,10 +84,10 @@ sub cmd_jnd_compose {
             if ($tab) {
                 $i_col = 1;
 
-                my $cols  = $tab->{cols} || 2;
-                my $align = $tab->{align} || 'c';
+                $tab->{cols} ||= 2;
+                $tab->{align} ||= 'c';
                 push @fig, 
-                    sprintf(q| \begin{tabular}{*{%s}{%s}} |,$cols,$align)
+                    sprintf(q| \begin{tabular}{*{%s}{%s}} |,@{$tab}{qw(cols align)});
                     ;
             }
 
@@ -97,6 +97,8 @@ sub cmd_jnd_compose {
                 $d = shift @data;
 
                 my ($url, $caption, $tags, $name) = @{$d}{@keys};
+
+                texify(\$caption) if $caption;
     
                 my $w = {};
                 for(qw( url name )){
@@ -131,7 +133,6 @@ sub cmd_jnd_compose {
                         next;
                     }
     
-                    texify(\$caption);
     
                     push @fig, 
                         sprintf(q| \includegraphics[%s]{%s} |, $o, $img_path ),
@@ -139,9 +140,9 @@ sub cmd_jnd_compose {
 ###if_tab_col
                     if ($tab) {
                         my $s;
-                        if ( $i_col == $cols ) {
+                        if ( $i_col == $tab->{cols} ) {
                             $i_col = 1;
-                            $s = q{\\};
+                            $s = q{\\\\};
                         }else{
                             $s = q{&};
                             $i_col++;
