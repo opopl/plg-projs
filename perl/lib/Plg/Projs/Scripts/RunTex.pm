@@ -63,6 +63,7 @@ sub json_load {
 
         my $in_data = $self->{in_data} = $h;
 
+        my $ind = $in_data->{bld}->{ind} || [];
         my $obj_bld =  Plg::Projs::Prj::Builder->new(
             root    => $in_data->{root} || '',
             root_id => $in_data->{root_id} || '',
@@ -74,13 +75,15 @@ sub json_load {
             bld_skip_init     => 1,
             preamble => {
                 index => {
-                    ind => $in_data->{bld}->{ind} || [], 
+                    ind => $ind, 
                 },
             }
         );
         $self->{obj_bld} = $obj_bld;
+        print Dumper($ind) . "\n";
 
-
+    }else{
+        warn qq{[RunTex] JSON input file absent: $j_file} . "\n";
     }
 
     return $self;
