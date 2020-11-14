@@ -16,6 +16,14 @@ use Base::Data qw(
     d_path
 );
 
+=head3 _gen_sec
+
+=head4 Call tree
+
+	_join_lines  Plg::Projs::Build::Maker::Join
+
+=cut
+
 sub _gen_sec {
     my ($bld, $sec) = @_;
 
