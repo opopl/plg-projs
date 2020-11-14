@@ -6,7 +6,7 @@ if 0
 endif
 
 function! projs#pdf#invoke#bld_view (...)
-  call projs#pdf#view({ 'type' : 'bld'})
+  call projs#pdf#view({ 'type' : 'bld' })
 
 endf
 

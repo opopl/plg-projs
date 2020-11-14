@@ -49,25 +49,31 @@ sub cmd_jnd_compose {
 
     my @nlines;
     my ($is_img, $is_cmt);
-    my ($is_tab, $tab, $i_col);
 
-    my @keys = qw(url caption tags name);
-    my ($url, $caption);
+###vars_$tab
+    my ($is_tab, $tab, $i_col);
+    my @tab_end = ( q|  \end{tabular}|  );
+
     my ($d, @data, @fig);
     $d = {};
+    my @keys = qw(url caption tags name);
+    my ($url, $caption);
 
     my @fig_start = ( q|\begin{figure}[ht] |, q|  \centering | );
     my @fig_end = ( q|\end{figure}| );
 
-    my @tab_end = ( q|  \end{tabular}|  );
-
+###vars_$img_width
     my ($img_width, $img_width_default);
     $img_width_default = 0.7;
+
+    my $get_width = sub {
+       $d->{width} || (defined $tab && $tab->{width}) || $img_width_default;
+    };
 
     my $push_d = sub { push @data, $d if keys %$d; };
     my $push_d_reset = sub { $push_d->(); $d = {}; };
     my $tex_caption = sub { 
-		$caption ? ( sprintf(q| \caption{%s} |, $caption ) ) : ();
+        $caption ? ( sprintf(q| \caption{%s} |, $caption ) ) : ();
     };
 
     my $lnum = 0;
@@ -98,6 +104,7 @@ sub cmd_jnd_compose {
 
                 $tab->{cols} ||= 2;
                 $tab->{align} ||= 'c';
+                $tab->{width} ||= ( $img_width_default / $tab->{cols} );
                 push @fig, 
                     @fig_start,
                     sprintf(q| \begin{tabular}{*{%s}{%s}} |,@{$tab}{qw(cols align)}),
@@ -106,6 +113,7 @@ sub cmd_jnd_compose {
 
             #print join(" ", $lnum,  scalar @data ) . "\n";
 
+###while_@data
             while(@data){
                 $d = shift @data;
 
@@ -126,13 +134,12 @@ sub cmd_jnd_compose {
                     w   => $w,
                 });
 
-                $img_width = $d->{width} || $img_width_default;
+                $img_width = $get_width->();
 
                 if (@$rows == 1) {
                     my $rw = shift @$rows;
-                    my $o = sprintf(q{ width=%s\textwidth },$img_width);
     
-                    my $img     = $rw->{img};
+                    my $img = $rw->{img};
     
                     my $img_path = sprintf(q{\imgroot/%s},$img);
     
@@ -151,6 +158,7 @@ sub cmd_jnd_compose {
                         push @fig,@fig_start; 
                     }
     
+                    my $o = sprintf(q{ width=%s\textwidth },$img_width);
                     push @fig, 
                         sprintf(q|  \includegraphics[%s]{%s} |, $o, $img_path ),
                         ;

@@ -100,7 +100,7 @@ function! projs#pdf#view (...)
 	    let target = get(targets,0,'')
 	  endif
 	
-	  while !len(target)
+	  while (!len(target) || !base#inlist(target,targets) )
 	    call base#varset('this',targets)
 	    let target = input('target:','','custom,base#complete#this')
 	  endw
