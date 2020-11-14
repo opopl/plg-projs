@@ -19,11 +19,16 @@ use File::Spec::Functions qw(catfile);
 use File::Basename qw(basename dirname);
 use File::Slurp::Unicode;
 
+use JSON::XS;
+
+
 use File::stat;
 use File::Path qw( mkpath rmtree );
 use File::Copy qw( copy );
 
 use Cwd;
+
+use JSON::Dumper::Compact;
 
 use FindBin qw($Bin $Script);
 use File::Find qw(find);
@@ -212,8 +217,8 @@ sub init {
 
     my $pdfout = $ENV{PDFOUT};
 
-	my $bld = $mkr->{bld} || {};
-	my $target = $bld->{target} || '';
+    my $bld    = $mkr->{bld} || {};
+    my $target = $bld->{target} || '';
 
     my @build_dir_a = ( "builds", $proj, "b_pdflatex" );
 
@@ -361,6 +366,37 @@ sub _cmds_texindy {
 
 
     return @cmds;
+}
+
+=head3 cmd_json_out
+
+=head4 call tree
+
+    called by
+        cmd_jnd_compose
+
+=cut
+
+sub cmd_json_out_runtex {
+    my ($mkr) = @_;
+
+    my $coder = JSON::XS->new->ascii->pretty->allow_nonref;
+#$pretty_printed_unencoded = $coder->encode ($perl_scalar);
+#$perl_scalar = $coder->decode ($unicode_json_text);
+
+    my $bld = $mkr->{bld};
+    my $json_file = catfile($mkr->{src_dir},'run_tex.json');
+
+    my $ind = $bld->_bld_ind;
+
+    my $h = {
+        ind => $ind,
+    };
+
+    my $j_data = JSON::Dumper::Compact->encode($h);
+    write_file($json_file,$j_data);
+
+    return $mkr;
 }
 
 sub cmd_join {

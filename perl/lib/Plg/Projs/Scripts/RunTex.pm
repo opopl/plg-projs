@@ -12,6 +12,7 @@ use Data::Dumper qw(Dumper);
 
 use File::stat;
 use File::Path qw(rmtree);
+use File::Slurp::Unicode;
 
 use Getopt::Long qw(GetOptions);
 
@@ -29,6 +30,19 @@ sub new
     return $self;
 }
 
+sub json_load {
+    my ($self) = @_;
+
+    my $j_file = 'run_tex.json';
+    if (-e $j_file) {
+        my $json = read_file $j_file;
+        print Dumper($json) . "\n";
+        exit;
+    }
+
+    return $self;
+}
+
 
 sub init {
     my $self = shift;
@@ -40,6 +54,7 @@ sub init {
 
     $self
         ->get_proj
+        ->json_load
         ->get_opt
         ->init_blx
         ;

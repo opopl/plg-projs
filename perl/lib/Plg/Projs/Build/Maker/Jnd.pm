@@ -35,6 +35,7 @@ sub cmd_jnd_compose {
     my ($mkr) = @_;
 
     $mkr
+        ->cmd_json_out_runtex
         ->cmd_join
         ->copy_to_src
         ->create_bat_in_src
