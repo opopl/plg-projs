@@ -299,6 +299,8 @@ sub _cmd_tex {
         '-file-line-error',
     ];
 
+	#print qq{[RunTex] run tex_exe #$tex_count} . "\n";
+
     my $proj    = $mkr->{proj};
 
     my $cmd     = sprintf('%s %s %s',$mkr->{tex_exe},join(" ",@$opts),$proj);

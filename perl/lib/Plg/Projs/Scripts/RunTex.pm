@@ -47,6 +47,8 @@ sub _sub_gen_print_index {
     
         my $pi_file = q{print_index.tex};
         write_file($pi_file,join("\n",@pi_lines) . "\n");
+
+        print qq{[RunTex] writing: $pi_file } . "\n";
     
         return $self;
     };
@@ -232,6 +234,7 @@ sub run {
         $blx->_cmd_tex,
         $blx->_cmd_bibtex,
         $blx->_cmd_tex,
+        $blx->_cmd_tex,
         ;
 
     my $i = 1;
@@ -261,7 +264,7 @@ sub run {
             
             my @bbl = $blx->_find_([$root],[qw(bbl)]);
 
-            push @cmds, 
+            unshift @cmds, 
                $blx->_cmd_tex,
                $sub_pi,
                ;
