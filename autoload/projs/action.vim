@@ -342,6 +342,7 @@ function! projs#action#url_view_html ()
     \ 'load_buf' : 1,
     \ 'Fc'       : Fc,
     \ }
+	return
   call base#fileopen(r)
 endfunction
 

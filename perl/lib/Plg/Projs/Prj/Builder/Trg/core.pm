@@ -1,11 +1,12 @@
 
-package Plg::Projs::Prj::Builder::Trg::usual;
+
+package Plg::Projs::Prj::Builder::Trg::core;
 
 use utf8;
 use strict;
 use warnings;
 
-sub trg_inj_usual {
+sub trg_inj_core {
     my ($self) = @_;
 
     my $bld = $self;
@@ -33,12 +34,12 @@ sub trg_inj_usual {
     };
 
     my $h = {
-        tex_exe => 'pdflatex',
-        sii => {},
+        tex_exe    => 'pdflatex',
+        sii        => {},
         opts_maker => $om,
     };
 
-    $self->trg_inject( 'usual' => $h );
+    $self->trg_inject( 'core' => $h );
 
     return $self;
 }

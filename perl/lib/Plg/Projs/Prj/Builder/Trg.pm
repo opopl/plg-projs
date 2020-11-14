@@ -30,11 +30,13 @@ use XML::LibXML::Cache;
 use XML::Simple qw(XMLin XMLout);
 
 use base qw(
-    Plg::Projs::Prj::Builder::Trg::usual
+    Plg::Projs::Prj::Builder::Trg::core
 );
 
 sub inj_targets {
     my ($bld) = @_;
+
+	$bld->trg_inj_core;
 
     foreach my $trg ($bld->_trg_list) {
         my $sub = 'trg_inj_' . $trg;

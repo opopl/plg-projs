@@ -44,15 +44,6 @@ sub inj_base {
 
     my $h = {
         trg_list => [qw( usual )],
-        #om_keys => [qw(
-            #append
-            #generate
-            #join_lines
-            #load_dat 
-            #sections
-            #skip
-            #tex_exe
-        #)],
         maps_act => {
             'compile_pwg' => 'build_pwg',
             'compile'     => 'jnd_build',

@@ -63,6 +63,12 @@ sub cmd_jnd_compose {
     my ($img_width, $img_width_default);
     $img_width_default = 0.7;
 
+    my $push_d = sub { push @data, $d if keys %$d; };
+    my $push_d_reset = sub { $push_d->(); $d = {}; };
+    my $tex_caption = sub { 
+		$caption ? ( sprintf(q| \caption{%s} |, $caption ) ) : ();
+    };
+
     my $lnum = 0;
     #return $mkr;
 ###loop_LINES
@@ -74,6 +80,11 @@ sub cmd_jnd_compose {
         m/^\s*\\fi/ && do { 
             unless($is_cmt){
                 push @nlines, $_; next;
+            }
+
+            if ($is_img) {
+                $is_img = 0;
+                $push_d_reset->();
             }
 
             $is_cmt = 0 if $is_cmt; 
@@ -97,7 +108,8 @@ sub cmd_jnd_compose {
             while(@data){
                 $d = shift @data;
 
-                my ($url, $caption, $tags, $name) = @{$d}{@keys};
+                my ($tags, $name);
+                ($url, $caption, $tags, $name) = @{$d}{@keys};
 
                 texify(\$caption) if $caption;
     
@@ -153,7 +165,8 @@ sub cmd_jnd_compose {
                         }
                         push @fig, $s;
                     }else{
-                        push @fig, @fig_end;
+                        push @fig, 
+                            $tex_caption->(), @fig_end;
                     }
                 }
             }
@@ -161,8 +174,8 @@ sub cmd_jnd_compose {
 
             if($tab){
                 push @fig, 
-                    $caption ? ( sprintf(q| \caption{%s} |, $caption ) ) : (),
-                    @tab_end, @fig_end,
+                    @tab_end, $tex_caption->(),
+                    @fig_end ;
             }
 
             push @nlines, @fig;
@@ -201,7 +214,7 @@ sub cmd_jnd_compose {
         m/^\s*tab_end\b/g && do { 
             $is_tab = 0; 
 
-            push @data, $d if keys %$d; $d = {};
+            $push_d_reset->();
             next; 
         };
 
@@ -209,14 +222,14 @@ sub cmd_jnd_compose {
         m/^\s*img_end\b/g && do { 
             $is_img = 0 if $is_img; 
 
-            push @data, $d if keys %$d; $d = {};
+            $push_d_reset->();
             next; 
         };
 
         while(1){
 ###m_pic
             m/^\s*(pic|doc)\s+(.*)$/g && do { 
-                push @data, $d if keys %$d; $d = {};
+                $push_d_reset->();
 
                 $is_img = 1;
 
@@ -232,7 +245,7 @@ sub cmd_jnd_compose {
             if ($is_img) {
 ###m_url
                 m/^\s*url\s+(.*)$/g && do { 
-                    push @data, $d if keys %$d;
+                    $push_d_reset->();
 
                     $d = { url => $1 };
                     $url = $1;

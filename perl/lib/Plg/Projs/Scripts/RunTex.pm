@@ -169,7 +169,7 @@ sub run {
     push @cmds, 
         $blx->_cmd_tex,
         $blx->_cmd_bibtex,
-        #$blx->_cmd_tex,
+        $blx->_cmd_tex,
         ;
 
     my $i = 1;
