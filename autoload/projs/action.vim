@@ -306,8 +306,11 @@ function! projs#action#buf_update ()
 endfunction
 
 function! projs#action#url_view_html ()
-  if !exists("b:url")
-    call base#rdwe('b:url does not exist! abort')
+	let url_db = projs#db#url()
+	let url    = base#value#var('b:url',url_db)
+
+  if !len(url)
+    call base#rdwe('zero URL! abort')
     return
   endif
 
@@ -324,7 +327,7 @@ function! projs#action#url_view_html ()
   let s:obj = { 
     \ 'proj' : b:proj ,
     \ 'sec'  : b:sec  ,
-    \ 'url'  : b:url  ,
+    \ 'url'  : url,
     \ }
 
   function! s:obj.init () dict
@@ -379,6 +382,10 @@ function! projs#action#url_insert ()
         \ 'url' : url, 
         \ 'sec' : projs#buf#sec() 
         \ })
+  let y = input('fetch URL? (1/0): ',1)
+  if y
+    call projs#action#url_fetch()
+  endif
 
 endfunction
 

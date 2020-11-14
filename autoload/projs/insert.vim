@@ -50,6 +50,10 @@ function! projs#insert#uri ()
   call projs#sec#insert_url({
     \ 'url' : url,
     \ })
+  let y = input('fetch URL? (1/0): ',1)
+  if y
+    call projs#action#url_fetch()
+  endif
 
 endfunction
 
