@@ -110,7 +110,7 @@ sub _sct_lines {
 
             #write_file($pi_file,join("\n",@pi_lines) . "\n");
 
-            push @lines, q|\InputIfFileExists{print_index}{}{}|;
+            push @lines, q|\InputIfFileExists{print_index.tex}{}{}|;
 
             next;
         };
