@@ -53,6 +53,8 @@ sub init {
 
 sub prj_load_xml {
     my ($self) = @_;
+
+	return $self if $self->{prj_skip_load_xml};
     
     my $proj = $self->{proj};
     my $root = $self->{root};
@@ -180,6 +182,8 @@ sub init_proj {
 
 sub init_db {
     my ($self) = @_;
+
+    return $self if $self->{prj_skip_db};
 
     $self->{db_file} ||= catfile($self->{root},'projs.sqlite');
     my $db_file = $self->{db_file};

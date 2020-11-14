@@ -13,8 +13,15 @@ function! projs#bld#do#pdf_view ()
 endfunction
 
 function! projs#bld#do#jnd_view ()
-  let sec = printf('_tex_jnd_')
-  call projs#sec#open_load_buf(sec)
+
+	let target = projs#bld#target()
+	let proj = projs#proj#name()
+
+  let jnd_tex = join([ projs#root(), 'builds', proj, 'src', target, 'jnd.tex' ],"/")
+	call base#fileopen({ 
+		\	'files'    : [jnd_tex],
+		\	'load_buf' : 1,
+		\	})
 
 endfunction
 

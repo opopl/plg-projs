@@ -1128,7 +1128,7 @@ function! projs#action#bld_compile (...)
   endif
   let cmd = join(a, ' ' )
 
-  let jnd_pdf = projs#bld#jnd_pdf() 
+	let jnd_pdf = projs#bld#jnd_pdf({ 'target' : target }) 
   let jnd_tex = projs#bld#jnd_tex() 
 
   let env = {

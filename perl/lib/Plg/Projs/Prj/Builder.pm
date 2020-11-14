@@ -66,6 +66,8 @@ sub init {
 
     $bld->Plg::Projs::Prj::init();
 
+    return $bld if $bld->{bld_skip_init};
+
     $bld
         ->inj_base
         ->prj_load_xml

@@ -145,10 +145,14 @@ function! projs#bld#target ()
 
 endfunction
 
-function! projs#bld#jnd_pdf ()
+function! projs#bld#jnd_pdf (...)
+	let ref = get(a:000,0,{})
+
+	let target = get(ref,'target','')
+
   let proj  = projs#proj#name()
 
-  let jnd_pdf = base#qw#catpath( projs#rootid(),printf('builds %s src jnd.pdf',proj))
+  let jnd_pdf = base#qw#catpath( projs#rootid(),printf('builds %s src %s jnd.pdf',proj,target))
   return jnd_pdf
 endfunction
 

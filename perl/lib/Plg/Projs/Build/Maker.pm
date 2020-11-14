@@ -381,19 +381,20 @@ sub cmd_json_out_runtex {
     my ($mkr) = @_;
 
     my $coder = JSON::XS->new->ascii->pretty->allow_nonref;
-#$pretty_printed_unencoded = $coder->encode ($perl_scalar);
-#$perl_scalar = $coder->decode ($unicode_json_text);
 
     my $bld = $mkr->{bld};
     my $json_file = catfile($mkr->{src_dir},'run_tex.json');
 
-    my $ind = $bld->_bld_ind;
-
     my $h = {
-        ind => $ind,
+		bld => {
+        	ind => $bld->_bld_ind,
+		},
+        proj         => $bld->{proj},
+        root         => $bld->{root},
+        root_id      => $bld->{root_id},
     };
 
-    my $j_data = JSON::Dumper::Compact->encode($h);
+    my $j_data = $coder->encode($h);
     write_file($json_file,$j_data);
 
     return $mkr;

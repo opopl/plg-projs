@@ -102,12 +102,12 @@ sub _sct_lines {
         };
 ###@printindex
         /^\@printindex$/ && do {
-            my @pi_lines = $bld->_bld_ind_printindex;
+#            my @pi_lines = $bld->_bld_ind_printindex;
 
-            my $mkr      = $bld->{maker};
-            my $pi_file  = catfile($mkr->{src_dir},qw(print_index.tex));
+            #my $mkr      = $bld->{maker};
+            #my $pi_file  = catfile($mkr->{src_dir},qw(print_index.tex));
 
-            write_file($pi_file,join("\n",@pi_lines) . "\n");
+            #write_file($pi_file,join("\n",@pi_lines) . "\n");
 
             push @lines, q|\InputIfFileExists{print_index}{}{}|;
 
