@@ -155,7 +155,9 @@ endfunction
 
 function! projs#action#term_build_dir ()
   let proj   = projs#proj#name()
-  let bdir   = projs#path([ 'builds', proj, 'src' ])
+
+  let target = projs#bld#target()
+  let bdir   = projs#path([ 'builds', proj, 'src', target ])
 
   call base#cd(bdir)
   if has('terminal')
@@ -166,7 +168,9 @@ endfunction
 
 function! projs#action#cd_builds ()
   let proj   = projs#proj#name()
-  let bdir   = projs#path([ 'builds', proj, 'src' ])
+
+  let target = projs#bld#target()
+  let bdir   = projs#path([ 'builds', proj, 'src', target ])
 
   if !isdirectory(bdir)
      call base#mkdir(bdir)
@@ -306,8 +310,8 @@ function! projs#action#buf_update ()
 endfunction
 
 function! projs#action#url_view_html ()
-	let url_db = projs#db#url()
-	let url    = base#value#var('b:url',url_db)
+  let url_db = projs#db#url()
+  let url    = base#value#var('b:url',url_db)
 
   if !len(url)
     call base#rdwe('zero URL! abort')
@@ -342,7 +346,7 @@ function! projs#action#url_view_html ()
     \ 'load_buf' : 1,
     \ 'Fc'       : Fc,
     \ }
-	return
+  return
   call base#fileopen(r)
 endfunction
 

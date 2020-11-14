@@ -212,6 +212,9 @@ sub init {
 
     my $pdfout = $ENV{PDFOUT};
 
+	my $bld = $mkr->{bld} || {};
+	my $target = $bld->{target} || '';
+
     my @build_dir_a = ( "builds", $proj, "b_pdflatex" );
 
     my $h = {
@@ -241,7 +244,7 @@ sub init {
     my $tex_opts = join(" ", @$tex_opts_a);
 
     $h = { %$h,
-        src_dir       => catfile($h->{build_dir},qw( .. src)),
+        src_dir       => catfile($h->{build_dir},qw( .. src),$target),
         tex_opts      => $tex_opts,
         tex_opts_a    => $tex_opts_a,
         out_dir_pdf_b => catfile($h->{out_dir_pdf}, qw(b_pdflatex) )
