@@ -219,7 +219,7 @@ sub run {
     my $proj = $self->{proj};
     my $tex  = $self->{tex_exe};
 
-    my $sub_pi = $self->_sub_gen_print_index()->();
+    my $sub_pi = $self->_sub_gen_print_index;
 
     my $r = { 
         dir  => $root,
@@ -227,7 +227,6 @@ sub run {
     my @cmds; 
     push @cmds, 
         $blx->_cmd_tex,
-        $sub_pi,
         $blx->_cmd_bibtex,
         $blx->_cmd_tex,
         ;
@@ -260,7 +259,9 @@ sub run {
             my @bbl = $blx->_find_([$root],[qw(bbl)]);
 
             push @cmds, 
-               $blx->_cmd_tex;
+               $blx->_cmd_tex,
+               $sub_pi,
+               ;
 
             if (@bbl) {
                 push @cmds, 

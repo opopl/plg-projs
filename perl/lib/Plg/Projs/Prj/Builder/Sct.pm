@@ -6,6 +6,7 @@ use utf8;
 use strict;
 use warnings;
 
+use Cwd qw(getcwd);
 use String::Util qw(trim);
 use Data::Dumper qw(Dumper);
 
@@ -202,6 +203,9 @@ sub _bld_ind_printindex {
         my $title = $x->{title};
 
         my $idx_file = $name ? qq{$name.idx} : qq{jnd.idx};
+
+        print qq{$idx_file} . "\n";
+        print getcwd() . "\n";
         return unless -e $idx_file;
 
         my $t = q{
