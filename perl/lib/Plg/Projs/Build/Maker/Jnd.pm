@@ -204,7 +204,7 @@ sub cmd_jnd_compose {
                 my ($k, $v) = (/([^=]+)=([^=]+)/g);
                 $tab->{$k} = $v;
             }
-            print Dumper($tab) . "\n";
+            #print Dumper($tab) . "\n";
             next; 
         };
 

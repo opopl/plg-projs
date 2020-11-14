@@ -99,7 +99,9 @@ sub _sct_lines {
         };
 ###@printindex
         /^\@printindex$/ && do {
-            push @lines, $bld->_bld_ind_printindex;
+            #push @lines, $bld->_bld_ind_printindex;
+
+            push @lines, q|\InputIfFileExists{print_index}{}{}|;
 
             next;
         };
