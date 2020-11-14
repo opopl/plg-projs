@@ -9,6 +9,9 @@ use warnings;
 use String::Util qw(trim);
 use Data::Dumper qw(Dumper);
 
+use File::Slurp::Unicode;
+use File::Spec::Functions qw(catfile);
+
 use Base::String qw(
     str_split_sn
 );
@@ -99,7 +102,12 @@ sub _sct_lines {
         };
 ###@printindex
         /^\@printindex$/ && do {
-            #push @lines, $bld->_bld_ind_printindex;
+            my @pi_lines = $bld->_bld_ind_printindex;
+
+            my $mkr      = $bld->{maker};
+            my $pi_file  = catfile($mkr->{src_dir},qw(print_index.tex));
+
+            write_file($pi_file,join("\n",@pi_lines) . "\n");
 
             push @lines, q|\InputIfFileExists{print_index}{}{}|;
 
