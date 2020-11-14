@@ -195,11 +195,14 @@ sub _bld_ind_makeindex {
 sub _bld_ind_printindex {
     my ($bld) = @_;
 
-    my $ind_pr = sub { 
+    my $sub_ind_pr = sub { 
         my ($x) = @_;
 
         my $name  = $x->{name};
         my $title = $x->{title};
+
+        my $idx_file = $name ? qq{$name.idx} : qq{jnd.idx};
+        return unless -e $idx_file;
 
         my $t = q{
 \cleardoublepage
@@ -216,7 +219,7 @@ sub _bld_ind_printindex {
         return $t;
     };
 
-    my @lines = $bld->_bld_ind_lines($ind_pr);
+    my @lines = $bld->_bld_ind_lines($sub_ind_pr);
     return @lines;
 }
 
@@ -230,10 +233,12 @@ sub _bld_ind_lines {
 
     if (ref $ind eq "ARRAY"){
         foreach my $x (@$ind) {
-            push @lines, $sub->($x);
+            my $s = $sub->($x);
+            push @lines, $s if $s;
         }
     }elsif(ref $ind eq "HASH"){
-        push @lines, $sub->($ind);
+        my $s = $sub->($ind);
+        push @lines, $s if $s;
     }
     return @lines;
 }
