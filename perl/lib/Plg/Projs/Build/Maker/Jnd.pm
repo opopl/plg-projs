@@ -73,9 +73,16 @@ sub cmd_jnd_compose {
        hash_inject($tab, $h);
     };
     my $tab_col = sub {
+        return unless $tab;
         my ( $type ) = @_;
         $tab->{col_type} = $type if $type;
         return $tab->{col_type};
+    };
+    my $tab_cell_cap = sub {
+        return unless $tab;
+        my $rc = $tab->{row_caps};
+        my $i_col = $tab->{i_col};
+        return $rc->{$i_col};
     };
     my $tab_col_toggle = sub {
         while(1){
@@ -123,6 +130,8 @@ sub cmd_jnd_compose {
 ###loop_LINES
     LINES: foreach(@jlines) {
         $lnum++; chomp;
+
+        m/^\s*%/ && $is_cmt && do { push @nlines,$_; next; };
 
         m/^\s*\\ifcmt/ && do { $is_cmt = 1; next; };
 ###m_\fi
@@ -203,11 +212,23 @@ sub cmd_jnd_compose {
                     }
     
                     my $o = sprintf(q{ width=%s\textwidth },$img_width);
-                    push @fig, 
-                        sprintf(q|%% %s|,$rw->{url}),
-                        sprintf(q|  \includegraphics[%s]{%s} |, $o, $img_path ),
-                        $caption ? (sprintf(q|%% %s|,$caption)) : (),
-                        ;
+###push_includegraphics
+                    while(1){
+                        my $tp = $tab_col->();
+                        $tp && ($tp eq 'cap') && do { 
+                            my $cap = $tab_cell_cap->();
+                            push @fig, $cap if $cap;
+                            last; 
+                        };
+
+                        push @fig, 
+                            $tab ? (sprintf('%% row: %s, col: %s ', @{$tab}{qw(i_row i_col)})) : (),
+                            sprintf(q|%% %s|,$rw->{url}),
+                            sprintf(q|  \includegraphics[%s]{%s} |, $o, $img_path ),
+                            $caption ? (sprintf(q|%% %s|,$caption)) : (),
+                            ;
+                        last;
+                    }
 ###if_tab_col
                     if ($tab) {
                         $caption = undef;
