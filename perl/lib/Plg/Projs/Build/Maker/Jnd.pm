@@ -69,6 +69,7 @@ sub cmd_jnd_compose {
            i_row      => 1,
            col_type   => 'img',
            row_caps   => {},
+           cap_figs   => {},
        };
        hash_inject($tab, $h);
     };
@@ -184,7 +185,8 @@ sub cmd_jnd_compose {
 ###if_tab_push_row_caps
                 if ($tab) {
                     my $i_col = $tab->{i_col};
-                    $tab->{row_caps}->{$i_col} = $caption if $caption;
+                    $tab->{i_cap} ++;
+                    #$caption if $caption;
                 }
 
                 $img_width = $get_width->();
