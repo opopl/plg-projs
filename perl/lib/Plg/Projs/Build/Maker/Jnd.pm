@@ -66,13 +66,24 @@ sub cmd_jnd_compose {
            align      => 'c',
            env        => 'tabular',
            i_col      => 1,
+           i_row      => 1,
            col_type   => 'img',
+           row_caps   => {},
        };
        hash_inject($tab, $h);
     };
     my $tab_col = sub {
         my ( $type ) = @_;
-        $tab->{col_type} = $type;
+        $tab->{col_type} = $type if $type;
+        return $tab->{col_type};
+    };
+    my $tab_col_toggle = sub {
+        while(1){
+            my $tp = $tab_col->();
+            ( $tp eq 'cap') && do { $tab_col->('img'); last; };
+            ( $tp eq 'img') && do { $tab_col->('cap'); last; };
+            last;
+        }
     };
 
     my $tab_start = sub {
@@ -92,11 +103,11 @@ sub cmd_jnd_compose {
     my ($img_width, $img_width_default);
     $img_width_default = 0.7;
 
+###subs
     my $get_width = sub {
        $d->{width} || (defined $tab && $tab->{width}) || $img_width_default;
     };
 
-###subs
     my $push_d = sub { push @data, $d if keys %$d; };
     my $push_d_reset = sub { $push_d->(); $d = {}; };
 
@@ -129,7 +140,7 @@ sub cmd_jnd_compose {
 
             next unless @data;
 
-###if_tab_push_fig
+###if_tab_push_tab_start
             if ($tab) {
                 $tab_defaults->();
 
@@ -143,11 +154,6 @@ sub cmd_jnd_compose {
             while(@data){
                 $d = shift @data;
 
-                my ($tags, $name);
-                ($url, $caption, $tags, $name) = @{$d}{@keys};
-
-                texify(\$caption) if $caption;
-    
                 my $w = {};
                 for(qw( url name )){
                     $w->{$_}  = $d->{$_} if $d->{$_};
@@ -159,6 +165,18 @@ sub cmd_jnd_compose {
                     p   => [],
                     w   => $w,
                 });
+                next unless @$rows;
+
+                my ($tags, $name);
+                ($url, $caption, $tags, $name) = @{$d}{@keys};
+
+                texify(\$caption) if $caption;
+
+###if_tab_push_row_caps
+                if ($tab) {
+                    my $i_col = $tab->{i_col};
+                    $tab->{row_caps}->{$i_col} = $caption if $caption;
+                }
 
                 $img_width = $get_width->();
 
@@ -193,9 +211,19 @@ sub cmd_jnd_compose {
 ###if_tab_col
                     if ($tab) {
                         $caption = undef;
-                        my $s;
+                        my ($s, $tp, %caps);
+
+                        $tp   = $tab_col->();
+                        %caps = %{$tab->{row_caps}};
+
                         if ( $tab->{i_col} == $tab->{cols} ) {
                             $tab->{i_col} = 1;
+
+                            $tab->{i_row}++ if $tp eq 'img';
+                            $tab->{row_caps} = {} if $tp eq 'cap';
+
+                            # if there are any captions, switch row type to 'cap'
+                            $tab_col_toggle->() if keys %caps;
                             $s = q{\\\\};
                         }else{
                             $s = q{&};
