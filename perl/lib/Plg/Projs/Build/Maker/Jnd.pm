@@ -17,6 +17,10 @@ use Plg::Projs::Tex qw(
 );
 
 use String::Util qw(trim);
+use Base::Arg qw(
+    hash_inject
+    hash_apply
+);
 
 use Capture::Tiny qw(
     capture_merged
@@ -51,14 +55,26 @@ sub cmd_jnd_compose {
     my ($is_img, $is_cmt);
 
 ###vars_$tab
-    my ($is_tab, $tab, $i_col);
+    my ($is_tab, $tab);
+
+###subs_$tab
     my $tab_end = sub { ($tab && $tab->{env}) ? sprintf(q| \end{%s}|,$tab->{env}) : '' };
     my $tab_defaults = sub {
        return unless $tab;
-       $tab->{cols} ||= 2;
-       $tab->{align} ||= 'c';
-       $tab->{env} ||= 'tabular';
+       my $h = {
+           cols       => 2,
+           align      => 'c',
+           env        => 'tabular',
+           i_col      => 1,
+           col_type   => 'img',
+       };
+       hash_inject($tab, $h);
     };
+    my $tab_col = sub {
+        my ( $type ) = @_;
+        $tab->{col_type} = $type;
+    };
+
     my $tab_start = sub {
        ($tab) ? sprintf(q| \begin{%s}{*{%s}{%s}} |,@{$tab}{qw(env cols align)}) : '';
     };
@@ -80,10 +96,15 @@ sub cmd_jnd_compose {
        $d->{width} || (defined $tab && $tab->{width}) || $img_width_default;
     };
 
+###subs
     my $push_d = sub { push @data, $d if keys %$d; };
     my $push_d_reset = sub { $push_d->(); $d = {}; };
+
     my $tex_caption = sub { 
         $caption ? ( sprintf(q| \caption{%s} |, $caption ) ) : ();
+    };
+    my $tex_caption_tab = sub { 
+        $tab->{caption} ? ( sprintf(q| \caption{%s} |, $tab->{caption} ) ) : ();
     };
 
     my $lnum = 0;
@@ -110,7 +131,6 @@ sub cmd_jnd_compose {
 
 ###if_tab_push_fig
             if ($tab) {
-                $i_col = 1;
                 $tab_defaults->();
 
                 $tab->{width} ||= ( $img_width_default / $tab->{cols} );
@@ -166,17 +186,20 @@ sub cmd_jnd_compose {
     
                     my $o = sprintf(q{ width=%s\textwidth },$img_width);
                     push @fig, 
+                        sprintf(q|%% %s|,$rw->{url}),
                         sprintf(q|  \includegraphics[%s]{%s} |, $o, $img_path ),
+                        $caption ? (sprintf(q|%% %s|,$caption)) : (),
                         ;
 ###if_tab_col
                     if ($tab) {
+                        $caption = undef;
                         my $s;
-                        if ( $i_col == $tab->{cols} ) {
-                            $i_col = 1;
+                        if ( $tab->{i_col} == $tab->{cols} ) {
+                            $tab->{i_col} = 1;
                             $s = q{\\\\};
                         }else{
                             $s = q{&};
-                            $i_col++;
+                            $tab->{i_col}++;
                         }
                         push @fig, $s;
                     }else{
@@ -189,7 +212,7 @@ sub cmd_jnd_compose {
 
             if($tab){
                 push @fig, 
-                    $tab_end->(), $tex_caption->(),
+                    $tab_end->(), $tex_caption_tab->(),
                     @fig_end ;
             }
 
@@ -230,6 +253,7 @@ sub cmd_jnd_compose {
             $is_tab = 0; 
 
             $push_d_reset->();
+            $caption = undef;
             next; 
         };
 
