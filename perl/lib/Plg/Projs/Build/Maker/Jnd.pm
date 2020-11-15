@@ -70,7 +70,7 @@ sub cmd_jnd_compose {
            i_cap      => 1,
            col_type   => 'img',
            row_caps   => {},
-           cap_figs   => [],
+           cap_list   => [],
        };
        hash_inject($tab, $h);
     };
@@ -98,10 +98,19 @@ sub cmd_jnd_compose {
         my $i_cap  = $rc_col->{i_cap};
         return $i_cap;
     };
-
-
     my $tab_start = sub {
        ($tab) ? sprintf(q| \begin{%s}{*{%s}{%s}} |,@{$tab}{qw(env cols align)}) : '';
+    };
+
+    my $tex_caption_tab = sub { 
+        my $c = $tab->{caption} || '';
+        return unless $c;
+
+        my @caps = map { sprintf('\textbf{(%s)} %s', @{$_}{qw(i_cap caption)}) } @{$tab->{cap_list}};
+        my $c_long = join(" ", $c, @caps );
+
+        my @c; push @c, sprintf(q| \caption[%s]{%s} |, $c, $c_long );
+        return @c;
     };
 
 ###vars_@data
@@ -128,9 +137,7 @@ sub cmd_jnd_compose {
     my $tex_caption = sub { 
         $caption ? ( sprintf(q| \caption{%s} |, $caption ) ) : ();
     };
-    my $tex_caption_tab = sub { 
-        $tab->{caption} ? ( sprintf(q| \caption{%s} |, $tab->{caption} ) ) : ();
-    };
+
 
     my $lnum = 0;
     #return $mkr;
@@ -167,13 +174,8 @@ sub cmd_jnd_compose {
             #print join(" ", $lnum,  scalar @data ) . "\n";
 
 ###while_@data
-            my $z = 0;
             while(1){
                 $ct   = $tab_col_type->();
-                print qq{$ct} . "\n" if $ct;
-
-                $z++;
-                last if ($z == 30);
 
 ###if_ct_img
                 if (!$ct || ($ct eq 'img')) {
@@ -202,13 +204,12 @@ sub cmd_jnd_compose {
                         my $i_col = $tab->{i_col};
     
                         if ($caption) {
-                            print qq{i_col: $i_col} . "\n";
                             $tab->{row_caps}->{$i_col} = { 
                                 caption => $caption,
                                 i_cap   => $tab->{i_cap},
                             };
         
-                            push @{$tab->{cap_figs}},
+                            push @{$tab->{cap_list}},
                                 { 
                                     i_col   => $tab->{i_col},
                                     i_row   => $tab->{i_row},
@@ -250,7 +251,7 @@ sub cmd_jnd_compose {
 
 	                    push @fig, 
 	                        $tab ? (sprintf('%% row: %s, col: %s ', @{$tab}{qw(i_row i_col)})) : (),
-	                        sprintf(q|%% %s|,$url),
+							#sprintf(q|%% %s|,$url),
 	                        sprintf(q|  \includegraphics[%s]{%s} |, $o, $img_path ),
 	                        $caption ? (sprintf(q|%% %s|,$caption)) : (),
 	                        ;
@@ -258,7 +259,7 @@ sub cmd_jnd_compose {
 
 ###end_if_ct_img
                     }elsif($ct eq 'cap'){
-                        print join(" ",qq{$ct},@{$tab}{qw(i_col i_row)}) . "\n" if $ct;
+                        #print join(" ",qq{$ct},@{$tab}{qw(i_col i_row)}) . "\n" if $ct;
                         my $num_cap = $tab_num_cap->();
                         push @fig, sprintf('(%s)',$num_cap) if $num_cap;
                     }
@@ -272,7 +273,6 @@ sub cmd_jnd_compose {
                         %caps = %{$tab->{row_caps}};
 
                         if ( $tab->{i_col} == $tab->{cols} ) {
-                            print Dumper(\%caps) . "\n";
 
                             $tab->{i_col} = 1;
 
