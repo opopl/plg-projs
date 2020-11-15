@@ -336,6 +336,7 @@ sub cmd_jnd_compose {
             next; 
         };
 
+###m_img_begin
         m/^\s*img_begin\b/g && do { $is_img = 1; next; };
 
 ###m_tab_end
@@ -394,6 +395,11 @@ sub cmd_jnd_compose {
             last;
         }
 
+###m_caption
+        m/^\s*(\w+)\s+(.*)$/g && do { 
+            $tab->{$1} = $2 if $tab;
+            next;
+        };
 
     }
 
