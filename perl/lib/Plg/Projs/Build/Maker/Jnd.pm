@@ -178,7 +178,7 @@ sub cmd_jnd_compose {
                 $ct   = $tab_col_type->();
 
 ###if_ct_img
-                if (!$ct || ($ct eq 'img')) {
+                if (@data && (!$ct || ($ct eq 'img')) ){
                     $d = shift @data;
     
                     my $w = {};
@@ -272,7 +272,7 @@ sub cmd_jnd_compose {
 
                         %caps = %{$tab->{row_caps}};
 
-                        if ( $tab->{i_col} == $tab->{cols} ) {
+                        if (!@data || ( $tab->{i_col} == $tab->{cols} )) {
 
                             $tab->{i_col} = 1;
 
@@ -295,7 +295,11 @@ sub cmd_jnd_compose {
                             $tex_caption->(), @fig_end;
                     }
 
-                last if ( (!$ct || ($ct eq 'img')) && !@data);
+                    print @data . "\n";
+                unless (@data) {
+                    last unless $ct;
+                    last if ( $ct eq 'cap' ) && ($tab->{i_col} == $tab->{cols});
+                }
                 next;
             }
 ###end_loop_@data
