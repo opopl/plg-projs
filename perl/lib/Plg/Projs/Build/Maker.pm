@@ -256,6 +256,7 @@ sub init {
     };
 
     hash_inject($mkr, $h);
+    mkpath $mkr->{src_dir};
 
 
     return $mkr;
