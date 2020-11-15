@@ -67,9 +67,10 @@ sub cmd_jnd_compose {
            env        => 'tabular',
            i_col      => 1,
            i_row      => 1,
+           i_cap      => 1,
            col_type   => 'img',
            row_caps   => {},
-           cap_figs   => {},
+           cap_figs   => [],
        };
        hash_inject($tab, $h);
     };
@@ -79,11 +80,13 @@ sub cmd_jnd_compose {
         $tab->{col_type} = $type if $type;
         return $tab->{col_type};
     };
-    my $tab_cell_cap = sub {
+    my $tab_num_cap = sub {
         return unless $tab;
         my $rc = $tab->{row_caps};
+        return unless keys %$rc;
         my $i_col = $tab->{i_col};
-        return $rc->{$i_col};
+        my $i_cap = $rc->{$i_col}->{i_cap};
+        return $i_cap;
     };
     my $tab_col_toggle = sub {
         while(1){
@@ -185,8 +188,23 @@ sub cmd_jnd_compose {
 ###if_tab_push_row_caps
                 if ($tab) {
                     my $i_col = $tab->{i_col};
-                    $tab->{i_cap} ++;
-                    #$caption if $caption;
+
+                    if ($caption) {
+                        $tab->{row_caps}->{$i_col} = { 
+                            caption => $caption,
+                            i_cap   => $tab->{i_cap},
+                        };
+    
+                        push @{$tab->{cap_figs}},
+                            { 
+                                i_col   => $tab->{i_col},
+                                i_row   => $tab->{i_row},
+                                i_cap   => $tab->{i_cap},
+                                caption => $caption,
+                            }
+                        ;
+                        $tab->{i_cap}++;
+                    }
                 }
 
                 $img_width = $get_width->();
@@ -218,8 +236,8 @@ sub cmd_jnd_compose {
                     while(1){
                         my $tp = $tab_col->();
                         $tp && ($tp eq 'cap') && do { 
-                            my $cap = $tab_cell_cap->();
-                            push @fig, $cap if $cap;
+                            my $num_cap = $tab_num_cap->();
+                            push @fig, sprintf('(%s)',$num_cap) if $num_cap;
                             last; 
                         };
 
@@ -240,6 +258,8 @@ sub cmd_jnd_compose {
                         %caps = %{$tab->{row_caps}};
 
                         if ( $tab->{i_col} == $tab->{cols} ) {
+                            print Dumper(\%caps) . "\n";
+
                             $tab->{i_col} = 1;
 
                             $tab->{i_row}++ if $tp eq 'img';
