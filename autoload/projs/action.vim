@@ -1129,7 +1129,7 @@ function! projs#action#bld_compile (...)
   let cmd = join(a, ' ' )
 
 	let jnd_pdf = projs#bld#jnd_pdf({ 'target' : target }) 
-  let jnd_tex = projs#bld#jnd_tex() 
+	let jnd_tex = projs#bld#jnd_tex({ 'target' : target }) 
 
   let env = {
     \ 'proj'    : proj,

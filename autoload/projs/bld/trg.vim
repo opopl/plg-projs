@@ -27,6 +27,8 @@ function! projs#bld#trg#choose ()
     endw
   endif
 
+	call base#varset('projs_bld_target',target)
+
   return target
 
 endfunction

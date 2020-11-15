@@ -52,8 +52,18 @@ sub cmd_jnd_compose {
 
 ###vars_$tab
     my ($is_tab, $tab, $i_col);
-    my @tab_end = ( q|  \end{tabular}|  );
+    my $tab_end = sub { ($tab && $tab->{env}) ? sprintf(q| \end{%s}|,$tab->{env}) : '' };
+    my $tab_defaults = sub {
+       return unless $tab;
+       $tab->{cols} ||= 2;
+       $tab->{align} ||= 'c';
+       $tab->{env} ||= 'tabular';
+    };
+    my $tab_start = sub {
+       ($tab) ? sprintf(q| \begin{%s}{*{%s}{%s}} |,@{$tab}{qw(env cols align)}) : '';
+    };
 
+###vars_@data
     my ($d, @data, @fig);
     $d = {};
     my @keys = qw(url caption tags name);
@@ -101,14 +111,10 @@ sub cmd_jnd_compose {
 ###if_tab_push_fig
             if ($tab) {
                 $i_col = 1;
+                $tab_defaults->();
 
-                $tab->{cols} ||= 2;
-                $tab->{align} ||= 'c';
                 $tab->{width} ||= ( $img_width_default / $tab->{cols} );
-                push @fig, 
-                    @fig_start,
-                    sprintf(q| \begin{tabular}{*{%s}{%s}} |,@{$tab}{qw(cols align)}),
-                    ;
+                push @fig, @fig_start, $tab_start->();
             }
 
             #print join(" ", $lnum,  scalar @data ) . "\n";
@@ -183,7 +189,7 @@ sub cmd_jnd_compose {
 
             if($tab){
                 push @fig, 
-                    @tab_end, $tex_caption->(),
+                    $tab_end->(), $tex_caption->(),
                     @fig_end ;
             }
 

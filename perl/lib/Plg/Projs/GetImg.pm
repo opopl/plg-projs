@@ -426,8 +426,10 @@ sub load_file {
     # flags
     my ($is_img, $is_cmt, $url);
 
-    my @data;
-    my $d = {};
+    my @data; my $d = {};
+
+    my $push_d = sub { push @data, $d if keys %$d; };
+    my $push_d_reset = sub { $push_d->(); $d = {}; };
 
     chdir $img_root;
 
@@ -447,6 +449,7 @@ sub load_file {
 
             next unless @data;
 
+###while_@data
             while(@data){
                 $d = shift @data;
 
@@ -509,11 +512,11 @@ sub load_file {
                     sec  => $sec,
                 };
                 unless(-e $img_file){
-                    print qq{FAIL: $img} . "\n";
+                    print qq{DOWNLOAD FAIL: $img} . "\n";
                     push @fail, $dd;
                     next;
                 }else{
-                    print qq{SUCCESS: $img} . "\n";
+                    print qq{DOWNLOAD SUCCESS: $img} . "\n";
                     push @ok, $dd;
                 }
 
@@ -533,7 +536,7 @@ sub load_file {
                     }
                 }
 
-                dbh_insert_hash({
+                my $ok = dbh_insert_hash({
                     t => 'imgs',
                     i => q{ INSERT OR REPLACE },
                     h => {
@@ -562,18 +565,29 @@ sub load_file {
         m/^\s*img_end\b/g && do { 
             $is_img = 0 if $is_img; 
 
-            push @data, $d if keys %$d;
-            $d = {};
+            $push_d_reset->();
 
             next; 
         };
 
         while(1){
+###m_pic
+            m/^\s*(pic|doc)\s+(.*)$/g && do { 
+                $push_d_reset->();
+                $is_img = 1;
+
+                $url = $2;
+                $d = { url => $url };
+                if ($1 eq 'doc') {
+                    $d->{type} = 'doc';
+                }
+                last; 
+            };
 ###if_is_img
             if ($is_img) {
 ###match_url
                 m/^\s*url\s+(.*)$/g && do { 
-                    push @data, $d if keys %$d;
+                    $push_d_reset->();
 
                     $d = { url => $1 };
                     $url = $1;
@@ -586,28 +600,17 @@ sub load_file {
 
                 last;
             }
-    
-            m/^\s*(pic|doc)\s+(.*)$/g && do { 
-                $url = $2;
-                $d = { url => $url };
-                if ($1 eq 'doc') {
-                    $d->{type} = 'doc';
-                }
-                push @data, $d;
-                $d = {};
-                last; 
-            };
 
             last;
         }
 
     }
     if (@ok) {
-	    my @m; push @m, 
-	        sprintf('SUCCESS: %s images', scalar @ok)
-	        ;
-	    
-	    print join("\n",@m) . "\n";
+        my @m; push @m, 
+            sprintf('SUCCESS: %s images', scalar @ok)
+            ;
+        
+        print join("\n",@m) . "\n";
     }
 
     # end of loop: LINES
