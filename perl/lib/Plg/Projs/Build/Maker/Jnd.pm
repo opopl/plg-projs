@@ -246,15 +246,15 @@ sub cmd_jnd_compose {
                             push @fig,@fig_start; 
                         }
 
-	                    my $o = sprintf(q{ width=%s\textwidth },$img_width);
+                        my $o = sprintf(q{ width=%s\textwidth },$img_width);
 ###push_includegraphics
 
-	                    push @fig, 
-	                        $tab ? (sprintf('%% row: %s, col: %s ', @{$tab}{qw(i_row i_col)})) : (),
-							#sprintf(q|%% %s|,$url),
-	                        sprintf(q|  \includegraphics[%s]{%s} |, $o, $img_path ),
-	                        $caption ? (sprintf(q|%% %s|,$caption)) : (),
-	                        ;
+                        push @fig, 
+                            $tab ? (sprintf('%% row: %s, col: %s ', @{$tab}{qw(i_row i_col)})) : (),
+                            #sprintf(q|%% %s|,$url),
+                            sprintf(q|  \includegraphics[%s]{%s} |, $o, $img_path ),
+                            $caption ? (sprintf(q|%% %s|,$caption)) : (),
+                            ;
                     }
 
 ###end_if_ct_img
@@ -272,16 +272,20 @@ sub cmd_jnd_compose {
 
                         %caps = %{$tab->{row_caps}};
 
-                        if (!@data || ( $tab->{i_col} == $tab->{cols} )) {
+                        my $at_end = ( $tab->{i_col} == $tab->{cols} ) ? 1 : 0;
+                        if ($at_end) {
 
                             $tab->{i_col} = 1;
 
                             $tab->{i_row}++ if $ct eq 'img';
                             $tab->{row_caps} = {} if $ct eq 'cap';
 
-                            # if there are any captions, switch row type to 'cap'
+                            unless(@data){
+                                last unless keys %caps;
+                            }
 
 ###call_tab_col_toggle
+                            # if there are any captions, switch row type to 'cap'
                             $ct = $tab_col_type_toggle->() if keys %caps;
 
                             $s = q{\\\\};
@@ -295,7 +299,6 @@ sub cmd_jnd_compose {
                             $tex_caption->(), @fig_end;
                     }
 
-                    print @data . "\n";
                 unless (@data) {
                     last unless $ct;
                     last if ( $ct eq 'cap' ) && ($tab->{i_col} == $tab->{cols});
