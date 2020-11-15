@@ -55,7 +55,7 @@ sub cmd_jnd_compose {
     my ($is_img, $is_cmt);
 
 ###vars_$tab
-    my ($is_tab, $tab);
+    my ($is_tab, $tab, $ct);
 
 ###subs_$tab
     my $tab_end = sub { ($tab && $tab->{env}) ? sprintf(q| \end{%s}|,$tab->{env}) : '' };
@@ -74,28 +74,31 @@ sub cmd_jnd_compose {
        };
        hash_inject($tab, $h);
     };
-    my $tab_col = sub {
+    my $tab_col_type = sub {
         return unless $tab;
         my ( $type ) = @_;
         $tab->{col_type} = $type if $type;
         return $tab->{col_type};
     };
+    my $tab_col_type_toggle = sub {
+        while(1){
+            my $ct = $tab_col_type->();
+            ( $ct eq 'cap') && do { $tab_col_type->('img'); last; };
+            ( $ct eq 'img') && do { $tab_col_type->('cap'); last; };
+            last;
+        }
+        return $tab_col_type->();
+    };
     my $tab_num_cap = sub {
         return unless $tab;
         my $rc = $tab->{row_caps};
         return unless keys %$rc;
-        my $i_col = $tab->{i_col};
-        my $i_cap = $rc->{$i_col}->{i_cap};
+        my $i_col  = $tab->{i_col};
+        my $rc_col = $rc->{$i_col} || {};
+        my $i_cap  = $rc_col->{i_cap};
         return $i_cap;
     };
-    my $tab_col_toggle = sub {
-        while(1){
-            my $tp = $tab_col->();
-            ( $tp eq 'cap') && do { $tab_col->('img'); last; };
-            ( $tp eq 'img') && do { $tab_col->('cap'); last; };
-            last;
-        }
-    };
+
 
     my $tab_start = sub {
        ($tab) ? sprintf(q| \begin{%s}{*{%s}{%s}} |,@{$tab}{qw(env cols align)}) : '';
@@ -105,7 +108,7 @@ sub cmd_jnd_compose {
     my ($d, @data, @fig);
     $d = {};
     my @keys = qw(url caption tags name);
-    my ($url, $caption);
+    my ($img, $img_path, $url, $caption);
 
     my @fig_start = ( q|\begin{figure}[ht] |, q|  \centering | );
     my @fig_end = ( q|\end{figure}| );
@@ -164,97 +167,108 @@ sub cmd_jnd_compose {
             #print join(" ", $lnum,  scalar @data ) . "\n";
 
 ###while_@data
-            while(@data){
-                $d = shift @data;
+            my $z = 0;
+            while(1){
+                $ct   = $tab_col_type->();
+                print qq{$ct} . "\n" if $ct;
 
-                my $w = {};
-                for(qw( url name )){
-                    $w->{$_}  = $d->{$_} if $d->{$_};
-                }
+                $z++;
+                last if ($z == 30);
 
-                my ($rows, $cols, $q, $p) = dbh_select({
-                    dbh => $mkr->{dbh_img},
-                    q   => q{ SELECT img, caption, url FROM imgs },
-                    p   => [],
-                    w   => $w,
-                });
-                next unless @$rows;
+###if_ct_img
+                if (!$ct || ($ct eq 'img')) {
+                    $d = shift @data;
+    
+                    my $w = {};
+                    for(qw( url name )){
+                        $w->{$_}  = $d->{$_} if $d->{$_};
+                    }
+    
+                    my ($rows, $cols, $q, $p) = dbh_select({
+                        dbh => $mkr->{dbh_img},
+                        q   => q{ SELECT img, caption, url FROM imgs },
+                        p   => [],
+                        w   => $w,
+                    });
+                    next unless @$rows;
 
-                my ($tags, $name);
-                ($url, $caption, $tags, $name) = @{$d}{@keys};
-
-                texify(\$caption) if $caption;
+                    my ($tags, $name);
+                    ($url, $caption, $tags, $name) = @{$d}{@keys};
+    
+                    texify(\$caption) if $caption;
 
 ###if_tab_push_row_caps
-                if ($tab) {
-                    my $i_col = $tab->{i_col};
-
-                    if ($caption) {
-                        $tab->{row_caps}->{$i_col} = { 
-                            caption => $caption,
-                            i_cap   => $tab->{i_cap},
-                        };
+                    if ($tab) {
+                        my $i_col = $tab->{i_col};
     
-                        push @{$tab->{cap_figs}},
-                            { 
-                                i_col   => $tab->{i_col},
-                                i_row   => $tab->{i_row},
-                                i_cap   => $tab->{i_cap},
+                        if ($caption) {
+                            print qq{i_col: $i_col} . "\n";
+                            $tab->{row_caps}->{$i_col} = { 
                                 caption => $caption,
-                            }
-                        ;
-                        $tab->{i_cap}++;
-                    }
-                }
-
-                $img_width = $get_width->();
-
-                if (@$rows == 1) {
-                    my $rw = shift @$rows;
-    
-                    my $img = $rw->{img};
-    
-                    my $img_path = sprintf(q{\imgroot/%s},$img);
-    
-                    my $img_file = catfile($mkr->{img_root},$img);
-                    unless (-e $img_file) {
-                        my $r = {    
-                            msg => q{Image file not found!},
-                            img => $img,
-                            url => $url,
-                        };
-                        warn Dumper($r) . "\n";
-                        next;
-                    }
-
-                    unless ($tab) {
-                        push @fig,@fig_start; 
-                    }
-    
-                    my $o = sprintf(q{ width=%s\textwidth },$img_width);
-###push_includegraphics
-                    while(1){
-                        my $tp = $tab_col->();
-                        $tp && ($tp eq 'cap') && do { 
-                            my $num_cap = $tab_num_cap->();
-                            push @fig, sprintf('(%s)',$num_cap) if $num_cap;
-                            last; 
-                        };
-
-                        push @fig, 
-                            $tab ? (sprintf('%% row: %s, col: %s ', @{$tab}{qw(i_row i_col)})) : (),
-                            sprintf(q|%% %s|,$rw->{url}),
-                            sprintf(q|  \includegraphics[%s]{%s} |, $o, $img_path ),
-                            $caption ? (sprintf(q|%% %s|,$caption)) : (),
+                                i_cap   => $tab->{i_cap},
+                            };
+        
+                            push @{$tab->{cap_figs}},
+                                { 
+                                    i_col   => $tab->{i_col},
+                                    i_row   => $tab->{i_row},
+                                    i_cap   => $tab->{i_cap},
+                                    caption => $caption,
+                                }
                             ;
-                        last;
+                            $tab->{i_cap}++;
+                        }
                     }
+
+                    $img_width = $get_width->();
+    
+                    if (@$rows == 1) {
+                        my $rw = shift @$rows;
+                        $rows = [];
+        
+                        ($img, $url) = @{$rw}{qw(img url)};
+        
+                        my $img_path = sprintf(q{\imgroot/%s},$img);
+        
+                        my $img_file = catfile($mkr->{img_root},$img);
+                        unless (-e $img_file) {
+                            my $r = {    
+                                msg => q{Image file not found!},
+                                img => $img,
+                                url => $url,
+                            };
+                            warn Dumper($r) . "\n";
+                            next;
+                        }
+    
+                        unless ($tab) {
+                            push @fig,@fig_start; 
+                        }
+
+	                    my $o = sprintf(q{ width=%s\textwidth },$img_width);
+###push_includegraphics
+
+	                    push @fig, 
+	                        $tab ? (sprintf('%% row: %s, col: %s ', @{$tab}{qw(i_row i_col)})) : (),
+	                        sprintf(q|%% %s|,$url),
+	                        sprintf(q|  \includegraphics[%s]{%s} |, $o, $img_path ),
+	                        $caption ? (sprintf(q|%% %s|,$caption)) : (),
+	                        ;
+                    }
+
+###end_if_ct_img
+                    }elsif($ct eq 'cap'){
+                        print join(" ",qq{$ct},@{$tab}{qw(i_col i_row)}) . "\n" if $ct;
+                        my $num_cap = $tab_num_cap->();
+                        push @fig, sprintf('(%s)',$num_cap) if $num_cap;
+                    }
+###end_if_ct_cap
+
 ###if_tab_col
                     if ($tab) {
                         $caption = undef;
-                        my ($s, $tp, %caps);
+                        my ($s, %caps);
 
-                        $tp   = $tab_col->();
                         %caps = %{$tab->{row_caps}};
 
                         if ( $tab->{i_col} == $tab->{cols} ) {
@@ -262,11 +276,14 @@ sub cmd_jnd_compose {
 
                             $tab->{i_col} = 1;
 
-                            $tab->{i_row}++ if $tp eq 'img';
-                            $tab->{row_caps} = {} if $tp eq 'cap';
+                            $tab->{i_row}++ if $ct eq 'img';
+                            $tab->{row_caps} = {} if $ct eq 'cap';
 
                             # if there are any captions, switch row type to 'cap'
-                            $tab_col_toggle->() if keys %caps;
+
+###call_tab_col_toggle
+                            $ct = $tab_col_type_toggle->() if keys %caps;
+
                             $s = q{\\\\};
                         }else{
                             $s = q{&};
@@ -277,7 +294,9 @@ sub cmd_jnd_compose {
                         push @fig, 
                             $tex_caption->(), @fig_end;
                     }
-                }
+
+                last if ( (!$ct || ($ct eq 'img')) && !@data);
+                next;
             }
 ###end_loop_@data
 
