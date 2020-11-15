@@ -446,6 +446,7 @@ sub load_file {
 ###\fi
         m/^\s*\\fi\b/g && do { 
             $is_cmt = 0 if $is_cmt; 
+            $is_img = 0;
 
             next unless @data;
 
@@ -573,12 +574,15 @@ sub load_file {
         while(1){
 ###m_pic
             m/^\s*(pic|doc)\s+(.*)$/g && do { 
+                my $kwd = $1;
+
                 $push_d_reset->();
                 $is_img = 1;
 
                 $url = $2;
+
                 $d = { url => $url };
-                if ($1 eq 'doc') {
+                if ($kwd eq 'doc') {
                     $d->{type} = 'doc';
                 }
                 last; 
