@@ -138,6 +138,13 @@ sub cmd_jnd_compose {
         $caption ? ( sprintf(q| \caption{%s} |, $caption ) ) : ();
     };
 
+    my $set_null = sub {
+        @fig = ();
+        $d = {};
+        $caption = '';
+        #$tab = undef;
+    };
+
 
     my $lnum = 0;
     #return $mkr;
@@ -179,7 +186,8 @@ sub cmd_jnd_compose {
 
 ###if_ct_img
                 if (@data && (!$ct || ($ct eq 'img')) ){
-                    $d = shift @data;
+                    $d = shift @data || {};
+                    $img = undef;
     
                     my $w = {};
                     for(qw( url name )){
@@ -192,6 +200,17 @@ sub cmd_jnd_compose {
                         p   => [],
                         w   => $w,
                     });
+
+                    unless (@$rows) {
+                         my $r = {    
+                             msg => q{ No image found in Database! },
+                             url => $url,
+                         };
+                         warn Dumper($r) . "\n";
+                         push @nlines, qq{%Image not found: $url };
+                         next;
+                    }
+
                     next unless @$rows;
 
                     my ($tags, $name);
@@ -226,8 +245,8 @@ sub cmd_jnd_compose {
                     if (@$rows == 1) {
                         my $rw = shift @$rows;
                         $rows = [];
-        
-                        ($img, $url) = @{$rw}{qw(img url)};
+
+                        ($img) = @{$rw}{qw(img)};
         
                         my $img_path = sprintf(q{\imgroot/%s},$img);
         
@@ -242,9 +261,7 @@ sub cmd_jnd_compose {
                             next;
                         }
     
-                        unless ($tab) {
-                            push @fig,@fig_start; 
-                        }
+                        push @fig,@fig_start unless $tab;
 
                         my $o = sprintf(q{ width=%s\textwidth },$img_width);
 ###push_includegraphics
@@ -258,10 +275,13 @@ sub cmd_jnd_compose {
                     }
 
 ###end_if_ct_img
-                    }elsif($ct eq 'cap'){
+                    }elsif($ct && ($ct eq 'cap')){
                         #print join(" ",qq{$ct},@{$tab}{qw(i_col i_row)}) . "\n" if $ct;
                         my $num_cap = $tab_num_cap->();
                         push @fig, sprintf('(%s)',$num_cap) if $num_cap;
+
+                    }else{
+                        last;
                     }
 ###end_if_ct_cap
 
@@ -294,14 +314,16 @@ sub cmd_jnd_compose {
                             $tab->{i_col}++;
                         }
                         push @fig, $s;
-                    }else{
-                        push @fig, 
-                            $tex_caption->(), @fig_end;
+                    }elsif(keys %$d){
+                        #print Dumper({ '$d' => $d }) . "\n";
+###push_fig_end
+                        push @fig, $tex_caption->(), @fig_end;
+
                     }
 
                 unless (@data) {
-                    last unless $ct;
-                    last if ( $ct eq 'cap' ) && ($tab->{i_col} == $tab->{cols});
+                    do { last; } unless $ct;
+                    do { last; } if ( $ct eq 'cap' ) && ($tab->{i_col} == $tab->{cols});
                 }
                 next;
             }
@@ -315,10 +337,7 @@ sub cmd_jnd_compose {
 
             push @nlines, @fig;
 
-            @fig = ();
-            $d = {};
-            $caption = '';
-            $tab = undef;
+            $set_null->();
 
             next; 
         };
@@ -348,7 +367,7 @@ sub cmd_jnd_compose {
 
 ###m_tab_end
         m/^\s*tab_end\b/g && do { 
-            $is_tab = 0; 
+            $is_tab = 0; $is_img = 0;
 
             $push_d_reset->();
             $caption = undef;

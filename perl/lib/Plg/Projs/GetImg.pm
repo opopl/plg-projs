@@ -3,7 +3,14 @@ package Plg::Projs::GetImg;
 
 use strict;
 use warnings;
+
 use utf8;
+
+binmode STDOUT,':encoding(utf8)';
+
+#use POSIX qw(locale_h);
+#use locale;
+#setlocale(LC_CTYPE,'UTF-8');
 
 use Plg::Projs::Prj;
 
@@ -44,6 +51,7 @@ use Base::Arg qw(
     hash_inject 
 );
 
+use Data::Dumper::AutoEncode;
 use Data::Dumper qw(Dumper);
 use File::Slurp::Unicode;
 
@@ -428,6 +436,7 @@ sub load_file {
 
     my @data; my $d = {};
 
+###subs
     my $push_d = sub { push @data, $d if keys %$d; };
     my $push_d_reset = sub { $push_d->(); $d = {}; };
 
@@ -448,8 +457,13 @@ sub load_file {
             $is_cmt = 0 if $is_cmt; 
             $is_img = 0;
 
+            $push_d_reset->();
+
             next unless @data;
 
+            #if ($sec =~ /writers/){
+                #print Dumper(\@data) . "\n";
+            #}      
 ###while_@data
             while(@data){
                 $d = shift @data;
@@ -461,6 +475,14 @@ sub load_file {
                     q => q{ SELECT img FROM imgs WHERE url = ? },
                     p => [ $url ],
                 });
+
+#                if ($sec =~ /writers/){
+                    #print eDumper({ 
+                            #img_db => $img_db ,
+                            #url => $url,
+                            #d => $d,
+                   #}) . "\n";
+                #};
 
                 if($img_db) {
                     my $img_db_file = catfile($img_root,$img_db);
@@ -474,6 +496,7 @@ sub load_file {
                 };
                 my $max  = dbh_select_fetchone($ref);
                 my $inum = ($max) ? ($max + 1) : 1;
+
     
                 my ($scheme, $auth, $path, $query, $frag) = uri_split($url);
                 my $bname = basename($path);
