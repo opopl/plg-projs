@@ -209,18 +209,18 @@ sub _bld_ind_printindex {
         return unless -e $idx_file;
 
 #\printindex[$name]
+#\InputIfFileExists{%s.ind}{}{}
         my $t = q{
 \cleardoublepage
 \phantomsection
 \addcontentsline{toc}{chapter}{%s}
-\InputIfFileExists{%s.ind}{}{}
-
+\printindex%s
         };
 
         my $s_title = $title ? $title : '\indexname';
         my $s_name  = $name ? qq{[$name]} : '';
 
-        $t = sprintf($t, $s_title, $name );
+        $t = sprintf($t, $s_title, $s_name );
         return $t;
     };
 

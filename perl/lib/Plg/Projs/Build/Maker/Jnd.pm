@@ -142,7 +142,7 @@ sub cmd_jnd_compose {
         @fig = ();
         $d = {};
         $caption = '';
-        #$tab = undef;
+        $tab = undef;
     };
 
 
@@ -339,7 +339,7 @@ sub cmd_jnd_compose {
 
             $set_null->();
 
-            next; 
+            next LINES; 
         };
 ###end_m_\fi
 
