@@ -511,7 +511,7 @@ sub load_file {
 
         print join("\n",@m) . "\n";
 
-        rmtree  $img_file if $reload->();
+        $reload->() && (-e $img_file) && do { rmtree $img_file; };
 
         while(! -e $img_file){
             my $s  = shift @subs;
