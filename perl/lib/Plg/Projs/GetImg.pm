@@ -415,6 +415,8 @@ sub load_file {
             my $file = catfile($root,$_->{file});
             my $sec  = $_->{sec};
 
+            next unless -e $file;
+
             $self->load_file({
                 file => $file,
                 sec  => $sec,
@@ -598,7 +600,6 @@ sub load_file {
                 next if $reload->();
 
                 $db_insert_img->();
-
             }
 
             $d = {};
