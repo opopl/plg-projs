@@ -595,7 +595,7 @@ sub load_file {
                 $get_img_file->();
     
 ###call_$fetch
-                $fetch->();
+                return unless $fetch->();
                 
                 next if $reload->();
 
