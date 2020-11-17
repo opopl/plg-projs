@@ -431,7 +431,8 @@ sub load_file {
 ###read_file @lines
     my @lines = read_file $file;
 
-    # flags
+###vars
+    my %vars;
     my ($is_img, $is_cmt, $url);
 
     my @data; my $d = {};
@@ -439,6 +440,8 @@ sub load_file {
 ###subs
     my $push_d = sub { push @data, $d if keys %$d; };
     my $push_d_reset = sub { $push_d->(); $d = {}; };
+
+    my $reload = sub { $vars{reload} || $d->{reload} };
 
     chdir $img_root;
 
@@ -471,18 +474,12 @@ sub load_file {
                 $url = $d->{url};
                 next unless $url;
 
-                my $img_db = dbh_select_fetchone({
+                my ($img_db, $inum);
+
+                $img_db = dbh_select_fetchone({
                     q => q{ SELECT img FROM imgs WHERE url = ? },
                     p => [ $url ],
                 });
-
-#                if ($sec =~ /writers/){
-                    #print eDumper({ 
-                            #img_db => $img_db ,
-                            #url => $url,
-                            #d => $d,
-                   #}) . "\n";
-                #};
 
                 if($img_db) {
                     my $img_db_file = catfile($img_root,$img_db);
@@ -495,8 +492,7 @@ sub load_file {
                     q => q{ SELECT MAX(inum) FROM imgs },
                 };
                 my $max  = dbh_select_fetchone($ref);
-                my $inum = ($max) ? ($max + 1) : 1;
-
+                $inum = ($max) ? ($max + 1) : 1;
     
                 my ($scheme, $auth, $path, $query, $frag) = uri_split($url);
                 my $bname = basename($path);
@@ -578,7 +574,9 @@ sub load_file {
                     },
                 });
             }
+
             $d = {};
+            %vars = ();
 
         };
 ###\fi_end
@@ -597,7 +595,7 @@ sub load_file {
         while(1){
 ###m_pic
             m/^\s*(pic|doc)\s+(.*)$/g && do { 
-                my $kwd = $1;
+                my $k = $1;
 
                 $push_d_reset->();
                 $is_img = 1;
@@ -605,14 +603,14 @@ sub load_file {
                 $url = $2;
 
                 $d = { url => $url };
-                if ($kwd eq 'doc') {
+                if ($k eq 'doc') {
                     $d->{type} = 'doc';
                 }
                 last; 
             };
 ###if_is_img
             if ($is_img) {
-###match_url
+###m_url
                 m/^\s*url\s+(.*)$/g && do { 
                     $push_d_reset->();
 
@@ -627,6 +625,12 @@ sub load_file {
 
                 last;
             }
+
+###m_vars
+            m/^\s*(\w+)\s+(.*)$/g && do { 
+                $vars{$1} = $2;
+                last;
+            };
 
             last;
         }
