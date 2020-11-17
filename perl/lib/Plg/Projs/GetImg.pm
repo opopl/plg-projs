@@ -547,6 +547,7 @@ sub load_file {
         }
         $ext = undef;
 
+        return 1;
     };
 
     chdir $img_root;
