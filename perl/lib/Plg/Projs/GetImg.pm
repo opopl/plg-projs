@@ -603,8 +603,6 @@ sub load_file {
     
 ###call_$fetch
                 return unless $fetch->();
-                
-                #next if $reload->();
 
                 $db_insert_img->();
             }
