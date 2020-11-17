@@ -580,25 +580,31 @@ sub load_file {
                 $url = $d->{url};
                 next unless $url;
 
-                my $img_db = dbh_select_fetchone({
-                    q => q{ SELECT img FROM imgs WHERE url = ? },
-                    p => [ $url ],
-                });
-
-                if($img_db) {
-                    my $img_db_file = catfile($img_root,$img_db);
-                    if ( -e $img_db_file ) {
-                        next;
+                if ($reload->()) {
+                    $inum = dbh_select_fetchone({
+                        q => q{ SELECT inum FROM imgs WHERE url = ? },
+                        p => [ $url ],
+                    });
+                }else{
+                    my $img_db = dbh_select_fetchone({
+                        q => q{ SELECT img FROM imgs WHERE url = ? },
+                        p => [ $url ],
+                    });
+    
+                    if($img_db) {
+                        my $img_db_file = catfile($img_root,$img_db);
+                        if ( -e $img_db_file ) {
+                            next;
+                        }
                     }
+                    $db_get_inum_max->();
                 }
-
-                $db_get_inum_max->();
                 $get_img_file->();
     
 ###call_$fetch
                 return unless $fetch->();
                 
-                next if $reload->();
+                #next if $reload->();
 
                 $db_insert_img->();
             }
