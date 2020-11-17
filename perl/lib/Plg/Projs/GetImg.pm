@@ -447,13 +447,47 @@ sub load_file {
 
     my $reload = sub { $self->{reload} || $vars{reload} || $d->{reload} };
 
-###subs_db
+###subs_db_insert_img
+    my $db_insert_img = sub {
+        my $ok = dbh_insert_hash({
+            t => 'imgs',
+            i => q{ INSERT OR REPLACE },
+            h => {
+                inum    => $inum,
+                url     => $url,
+                proj    => $self->{proj},
+                rootid  => $self->{rootid},
+                sec     => $sec,
+                img     => $img,
+                ext     => $ext,
+                caption => $d->{caption} || '',
+                tags    => $d->{tags} || '',
+                name    => $d->{name} || '',
+                type    => $d->{type} || '',
+            },
+        });
+    };
+
+###subs_db_get_inum_max
     my $db_get_inum_max = sub {
         my $ref = {
             q => q{ SELECT MAX(inum) FROM imgs },
         };
         my $max  = dbh_select_fetchone($ref);
         $inum = ($max) ? ($max + 1) : 1;
+    };
+
+###subs_$get_img_file
+    my $get_img_file = sub {
+        my ($scheme, $auth, $path, $query, $frag) = uri_split($url);
+        my $bname = basename($path);
+        ($ext) = ($bname =~ m/\.(\w+)$/);
+        $ext ||= 'jpg';
+        $ext = lc $ext;
+        $ext = 'jpg' if $ext eq 'jpeg';
+    
+        $img      = sprintf(q{%s.%s},$inum,$ext);
+        $img_file = catfile($img_root,$img);
     };
 
 ###subs_$fetch
@@ -556,39 +590,15 @@ sub load_file {
                 }
 
                 $db_get_inum_max->();
+                $get_img_file->();
     
-                my ($scheme, $auth, $path, $query, $frag) = uri_split($url);
-                my $bname = basename($path);
-                ($ext) = ($bname =~ m/\.(\w+)$/);
-                $ext ||= 'jpg';
-                $ext = lc $ext;
-                $ext = 'jpg' if $ext eq 'jpeg';
-    
-                $img      = sprintf(q{%s.%s},$inum,$ext);
-                $img_file = catfile($img_root,$img);
-
 ###call_$fetch
                 $fetch->();
                 
                 next if $reload->();
 
-                my $ok = dbh_insert_hash({
-                    t => 'imgs',
-                    i => q{ INSERT OR REPLACE },
-                    h => {
-                        inum    => $inum,
-                        url     => $url,
-                        proj    => $self->{proj},
-                        rootid  => $self->{rootid},
-                        sec     => $sec,
-                        img     => $img,
-                        ext     => $ext,
-                        caption => $d->{caption} || '',
-                        tags    => $d->{tags} || '',
-                        name    => $d->{name} || '',
-                        type    => $d->{type} || '',
-                    },
-                });
+                $db_insert_img->();
+
             }
 
             $d = {};
