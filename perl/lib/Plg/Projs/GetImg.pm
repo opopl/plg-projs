@@ -259,6 +259,7 @@ sub get_opt {
         "root|r=s",
         "cmd|c=s",
         "reset",
+        "reload",
         "debug|d",
         "query|q=s",
         "param=s@",
@@ -434,6 +435,9 @@ sub load_file {
 ###vars
     my %vars;
     my ($is_img, $is_cmt, $url);
+    
+    my ($img_file, $img, $ext, $inum);
+    my (@ok, @fail);
 
     my @data; my $d = {};
 
@@ -441,12 +445,77 @@ sub load_file {
     my $push_d = sub { push @data, $d if keys %$d; };
     my $push_d_reset = sub { $push_d->(); $d = {}; };
 
-    my $reload = sub { $vars{reload} || $d->{reload} };
+    my $reload = sub { $self->{reload} || $vars{reload} || $d->{reload} };
+
+###subs_db
+    my $db_get_inum_max = sub {
+        my $ref = {
+            q => q{ SELECT MAX(inum) FROM imgs },
+        };
+        my $max  = dbh_select_fetchone($ref);
+        $inum = ($max) ? ($max + 1) : 1;
+    };
+
+###subs_$fetch
+    my $fetch = sub {
+        my @subs = $self->_subs_url({ 
+             url      => $url,
+             img_file => $img_file,
+             sec      => $sec,
+        });
+
+        my @m; push @m,
+             'Try downloading picture:',
+             '  proj:     ' . $self->{proj},
+             '  sec:      ' . $sec,
+             '  url:      ' . $url,
+             '  img:      ' . $img,
+             '  caption:  ' . ($d->{caption} || ''),
+             ;
+
+        print join("\n",@m) . "\n";
+
+        while(! -e $img_file){
+            my $s  = shift @subs;
+            my $ss = $s->();
+        }
+
+        my $dd = {
+            url  => $url,
+            img  => $img,
+            sec  => $sec,
+        };
+        unless(-e $img_file){
+            print qq{DOWNLOAD FAIL: $img} . "\n";
+            push @fail, $dd;
+            return ;
+        }else{
+            print qq{DOWNLOAD SUCCESS: $img} . "\n";
+            push @ok, $dd;
+        }
+
+        my $itp = image_type($img_file) || {};
+        my $ft  = lc( $itp->{file_type} || '');
+        $ft = 'jpg' if $ft eq 'jpeg';
+
+        if ($ft) {
+            if ($ft ne $ext) {
+                $ext = $ft;
+                my $img_new      = sprintf(q{%s.%s},$inum,$ext);
+                $img = $img_new;
+
+                my $img_file_new = catfile($img_root,$img_new);
+                move($img_file, $img_file_new);
+                $img_file = $img_file_new;
+            }
+        }
+        $ext = undef;
+
+    };
 
     chdir $img_root;
 
 ###loop_LINES
-    my (@ok, @fail);
 
     LINES: while (@lines) {
         local $_ = shift @lines;
@@ -474,9 +543,7 @@ sub load_file {
                 $url = $d->{url};
                 next unless $url;
 
-                my ($img_db, $inum);
-
-                $img_db = dbh_select_fetchone({
+                my $img_db = dbh_select_fetchone({
                     q => q{ SELECT img FROM imgs WHERE url = ? },
                     p => [ $url ],
                 });
@@ -488,73 +555,22 @@ sub load_file {
                     }
                 }
 
-                my $ref = {
-                    q => q{ SELECT MAX(inum) FROM imgs },
-                };
-                my $max  = dbh_select_fetchone($ref);
-                $inum = ($max) ? ($max + 1) : 1;
+                $db_get_inum_max->();
     
                 my ($scheme, $auth, $path, $query, $frag) = uri_split($url);
                 my $bname = basename($path);
-                my ($ext) = ($bname =~ m/\.(\w+)$/);
+                ($ext) = ($bname =~ m/\.(\w+)$/);
                 $ext ||= 'jpg';
                 $ext = lc $ext;
                 $ext = 'jpg' if $ext eq 'jpeg';
     
-                my $img      = sprintf(q{%s.%s},$inum,$ext);
-                my $img_file = catfile($img_root,$img);
+                $img      = sprintf(q{%s.%s},$inum,$ext);
+                $img_file = catfile($img_root,$img);
 
-                my @subs = $self->_subs_url({ 
-                    url      => $url,
-                    img_file => $img_file,
-                    sec      => $sec,
-                });
-
-                my @m; push @m,
-                     'Try downloading picture:',
-                     '  proj:     ' . $self->{proj},
-                     '  sec:      ' . $sec,
-                     '  url:      ' . $url,
-                     '  img:      ' . $img,
-                     '  caption:  ' . ($d->{caption} || ''),
-                     ;
-
-                print join("\n",@m) . "\n";
-
-                while(! -e $img_file){
-                    my $s  = shift @subs;
-                    my $ss = $s->();
-                }
-
-                my $dd = {
-                    url  => $url,
-                    img  => $img,
-                    sec  => $sec,
-                };
-                unless(-e $img_file){
-                    print qq{DOWNLOAD FAIL: $img} . "\n";
-                    push @fail, $dd;
-                    next;
-                }else{
-                    print qq{DOWNLOAD SUCCESS: $img} . "\n";
-                    push @ok, $dd;
-                }
-
-                my $itp = image_type($img_file) || {};
-                my $ft  = lc( $itp->{file_type} || '');
-                $ft = 'jpg' if $ft eq 'jpeg';
-
-                if ($ft) {
-                    if ($ft ne $ext) {
-                        $ext = $ft;
-                        my $img_new      = sprintf(q{%s.%s},$inum,$ext);
-                        $img = $img_new;
-
-                        my $img_file_new = catfile($img_root,$img_new);
-                        move($img_file, $img_file_new);
-                        $img_file = $img_file_new;
-                    }
-                }
+###call_$fetch
+                $fetch->();
+                
+                next if $reload->();
 
                 my $ok = dbh_insert_hash({
                     t => 'imgs',
