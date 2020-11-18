@@ -5,6 +5,8 @@ use strict;
 use warnings;
 use utf8;
 
+use Data::Dumper qw(Dumper);
+
 binmode STDOUT,':encoding(utf8)';
 
 use Exporter ();
@@ -51,7 +53,7 @@ sub texify {
     q2quotes();
     rpl_dashes();
 
-    _back($ss, $s);
+    _back($ss);
     return $s_full;
 }
 
@@ -79,8 +81,8 @@ sub _str {
         for(@split){
             chomp;
 
-            do { push @before, $_; next; } if $i < $s_start;
-            do { push @after, $_; next; } if $i > $s_end;
+            do { push @before, $_; $i++; next; } if $i < $s_start;
+            do { push @after, $_; $i++; next; } if $i > $s_end;
 
             push @center,$_;
             $i++;
