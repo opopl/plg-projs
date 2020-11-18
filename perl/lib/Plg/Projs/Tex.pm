@@ -15,18 +15,21 @@ use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
 @EXPORT  = qw( );
 $VERSION = '0.01';
 
-###export_vars_scalar
+###our
+our($l_start,$l_end);
+
+our(@split,@before,@after,@center);
+
+our ($s, $s_full);
+
 my @ex_vars_scalar=qw(
 );
-###export_vars_hash
 my @ex_vars_hash=qw(
 );
-###export_vars_array
 my @ex_vars_array=qw(
 );
 
 %EXPORT_TAGS = (
-###export_funcs
     'funcs' => [qw( 
         q2quotes
         texify
@@ -37,16 +40,55 @@ my @ex_vars_array=qw(
 @EXPORT_OK = ( @{ $EXPORT_TAGS{'funcs'} }, @{ $EXPORT_TAGS{'vars'} } );
 
 sub texify {
-    my ($ss) = @_;
+    my ($ss,$s_start,$s_end) = @_;
 
-    my $s = _str($ss);
+    $s_start //= $l_start;
+    $s_end //= $l_end;
+
+    _str($ss,$s_start,$s_end);
 
     #strip_comments(\$s);
-    q2quotes(\$s);
-    rpl_dashes(\$s);
+    q2quotes();
+    rpl_dashes();
 
     _back($ss, $s);
-    return $s;
+    return $s_full;
+}
+
+sub _str {
+    my ($ss,$s_start,$s_end) = @_;
+
+    $s_start //= $l_start;
+    $s_end //= $l_end;
+
+    if (ref $ss eq 'SCALAR'){ 
+        $s = $$ss;
+        @split = split("\n" => $s);
+
+    } elsif (ref $ss eq 'ARRAY'){ 
+        @split = @$ss;
+        $s = join("\n",@split);
+    }
+    elsif (! ref $ss){ 
+        $s = $ss;
+        @split = split("\n" => $s);
+    }
+
+    if (defined $s_start && defined $s_end) {
+        my $i = 1;
+        for(@split){
+            do { push @before, $_; next; } if $i < $s_start;
+            do { push @after, $_; next; } if $i > $s_end;
+
+            push @center,$_;
+            $i++;
+        }
+
+    }else{
+        @center = @split;
+    }
+    $s = join("\n",@center);
+
 }
 
 sub strip_comments {
@@ -59,34 +101,21 @@ sub strip_comments {
 }
 
 sub _back {
-    my ($ss, $s) = @_;
-
-    if (ref $ss eq 'SCALAR'){
-        $$ss = $s;
-    } elsif (ref $ss eq 'ARRAY'){
-        $ss = [ split("\n",$s) ];
-    }
-}
-
-sub _str {
     my ($ss) = @_;
 
-    my $s;
-    if (ref $ss eq 'SCALAR'){ 
-        $s = $$ss;
-    } elsif (ref $ss eq 'ARRAY'){ 
-        $s = join("\n",@$ss);
+    @split = (@before,@center,@after);
+    $s_full = join("\n",@split);
+
+    if (ref $ss eq 'SCALAR'){
+        $$ss = $s_full;
+
+    } elsif (ref $ss eq 'ARRAY'){
+        $ss = [ @split ];
     }
-    elsif (! ref $ss){ 
-        $s = $ss;
-    }
-    return $s;
 }
 
 sub q2quotes {
     my ($ss, $cmd) = @_;
-
-    my $s = _str($ss);
 
     $cmd ||= 'enquote';
     my $start = sprintf(q|\%s{|,$cmd);
@@ -109,19 +138,15 @@ sub q2quotes {
     }
 
     $s = join("",@n);
-
-    _back($ss, $s);
-    return $s;
+    @center = split("\n",$s);
 }
 
 sub rpl_dashes {
-    my ($ss) = @_;
 
-    local $_ = _str($ss);
-	s/\s+(-|–)\s+/ \\dshM /g;
+    local $_ = $s;
+    s/\s+(-|–)\s+/ \\dshM /g;
 
-    _back($ss, $_);
-    return $_;
+    $s = $_;
 }
 
 1;

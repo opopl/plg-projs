@@ -5,9 +5,7 @@ use warnings;
 
 use Data::Dumper qw(Dumper);
 
-use Plg::Projs::Tex qw(
-    texify
-);
+use Plg::Projs::Tex qw( texify );
 
 use File::Slurp::Unicode;
 use Base::Arg qw( hash_inject );
@@ -94,8 +92,11 @@ sub print_help {
 sub run {
     my ($self) = @_;
 
-    my $file = $self->{file};
-    my $tex  = read_file $file;
+    my $file      = $self->{file};
+    my @tex_lines = read_file $file;
+
+    my $start = $self->{start} || 1;
+    my $end = $self->{end} || scalar @tex_lines;
     
     texify(\$tex);
 
