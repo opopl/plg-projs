@@ -95,7 +95,8 @@ sub run {
     my $file = $self->{file};
     my $tex  = read_file $file;
 
-    texify(\$tex,@{$self}{qw( start end )});
+    my @a = @{$self}{qw( start end )};
+    texify(\$tex,@a);
 
     write_file($file,$tex);
 
