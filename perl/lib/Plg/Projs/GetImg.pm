@@ -13,6 +13,7 @@ binmode STDOUT,':encoding(utf8)';
 #setlocale(LC_CTYPE,'UTF-8');
 
 use Plg::Projs::Prj;
+use Cwd qw(getcwd);
 
 use File::Spec::Functions qw(catfile);
 use File::Path qw( mkpath rmtree );
@@ -78,6 +79,14 @@ sub init_lwp {
     };
 
     hash_inject($self, $h);
+
+    return $self;
+}
+
+sub init_root {
+    my ($self) = @_;
+
+    $self->{root} ||= getcwd();
 
     return $self;
 }
@@ -235,6 +244,7 @@ sub init {
 
     $self
         ->get_opt
+        ->init_root
         ->init_prj
         ->init_img_root
         ->init_q
