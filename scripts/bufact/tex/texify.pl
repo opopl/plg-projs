@@ -4,16 +4,10 @@ use strict;
 use warnings;
 use utf8;
 
-use Data::Dumper qw(Dumper);
-
-use Plg::Projs::Tex qw(
-    texify
+use base qw(
+	Plg::Projs::Scripts::DoTexify
 );
-use File::Slurp::Unicode;
 
-my $file = shift @ARGV;
-my $tex  = read_file $file;
+__PACKAGE__->new->run;
 
-texify(\$tex);
 
-write_file($file,$tex);
