@@ -77,6 +77,8 @@ sub _str {
     if (defined $s_start && defined $s_end) {
         my $i = 1;
         for(@split){
+            chomp;
+
             do { push @before, $_; next; } if $i < $s_start;
             do { push @after, $_; next; } if $i > $s_end;
 
