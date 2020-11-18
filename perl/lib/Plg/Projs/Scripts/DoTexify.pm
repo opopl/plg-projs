@@ -88,8 +88,7 @@ sub print_help {
     return $self;   
 }
 
-
-sub run {
+sub process_file {
     my ($self) = @_;
 
     my $file = $self->{file};
@@ -99,6 +98,21 @@ sub run {
     texify(\$tex,@a);
 
     write_file($file,$tex);
+
+    return $self;   
+}
+
+sub run {
+    my ($self) = @_;
+
+    while(1){
+        if ($self->{file}) {
+            $self->process_file;
+            last;
+        }
+
+        last;
+    }
 
     return $self;
 }

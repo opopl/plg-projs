@@ -1128,8 +1128,8 @@ function! projs#action#bld_compile (...)
   endif
   let cmd = join(a, ' ' )
 
-	let jnd_pdf = projs#bld#jnd_pdf({ 'target' : target }) 
-	let jnd_tex = projs#bld#jnd_tex({ 'target' : target }) 
+  let jnd_pdf = projs#bld#jnd_pdf({ 'target' : target }) 
+  let jnd_tex = projs#bld#jnd_tex({ 'target' : target }) 
 
   let env = {
     \ 'proj'    : proj,
@@ -1420,6 +1420,36 @@ endfunction
 function! projs#action#html_out_view ()
   call projs#html_out#view ()
 endfunction
+
+
+function! projs#action#get_img ()
+  let pl   = base#qw#catpath('plg projs scripts bufact tex get_img.pl')
+
+  let pl_e = shellescape(pl)
+
+  let proj = projs#proj#name()
+  let cmd  = join([ 'perl', pl_e, '-p', proj ], ' ')
+
+  call base#rdw('Getting images: ' . proj)
+  
+  let env = { 'proj' : proj }
+  function env.get(temp_file) dict
+    let temp_file = a:temp_file
+    let code      = self.return_code
+  
+    if filereadable(a:temp_file)
+      let out = readfile(a:temp_file)
+      call base#buf#open_split({ 'lines' : out })
+    endif
+  endfunction
+  
+  call asc#run({ 
+    \ 'path' : projs#root(),
+    \ 'cmd'  : cmd,
+    \ 'Fn'   : asc#tab_restore(env)
+    \ })
+
+endf
 
 function! projs#action#add_to_db ()
   let dbfile = projs#db#file()
