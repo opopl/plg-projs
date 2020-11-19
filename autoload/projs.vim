@@ -560,7 +560,7 @@ if 0
        projs#maps
      called by
        projs#buf#onload_tex_tex
-			 ftp_tex_projs
+       ftp_tex_projs
 endif
 
 function! projs#onload (...)
@@ -1111,7 +1111,15 @@ function! projs#rootid (...)
 endf  
 
 function! projs#url_dir ()
-  let url_dir = join([ projs#root(), 'html', 'url' ],'/')
+  let html_root = base#envvar('html_root','')
+
+  let url_dir = ''
+  if len(html_root)
+    let url_dir = join([ html_root, 'projs', projs#rootid() ], '/')
+  else
+    let url_dir = join([ projs#root(), 'html', 'url' ],'/')
+  endif
+
   return url_dir
 endf    
 
