@@ -1436,10 +1436,17 @@ function! projs#action#get_img ()
   function env.get(temp_file) dict
     let temp_file = a:temp_file
     let code      = self.return_code
-  
-    if filereadable(a:temp_file)
-      let out = readfile(a:temp_file)
-      call base#buf#open_split({ 'lines' : out })
+
+    if filereadable(a:temp_file) 
+	    let out  = readfile(a:temp_file)
+			let last = get(out,-1,'')
+			if last =~ 'SUCCESS:\s\+\(\d\+\)\s\+images'
+				call base#rdw(last)
+			else
+				call base#rdwe(last)
+	      call base#buf#open_split({ 'lines' : out })
+			endif
+		else
     endif
   endfunction
   
