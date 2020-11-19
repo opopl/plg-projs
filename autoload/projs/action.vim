@@ -1440,7 +1440,7 @@ function! projs#action#get_img ()
     if filereadable(a:temp_file) 
 	    let out  = readfile(a:temp_file)
 			let last = get(out,-1,'')
-			if last =~ 'SUCCESS:\s\+\(\d\+\)\s\+images'
+			if last =~ 'SUCCESS:\s\+\(\d\+\)\s\+images' || last =~ 'NO IMAGES'
 				call base#rdw(last)
 			else
 				call base#rdwe(last)

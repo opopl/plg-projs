@@ -56,6 +56,8 @@ use Data::Dumper::AutoEncode;
 use Data::Dumper qw(Dumper);
 use File::Slurp::Unicode;
 
+my (@ok, @fail);
+
 sub new
 {
     my ($class, %opts) = @_;
@@ -404,6 +406,7 @@ sub cmd_load_file {
     return $self;
 }
 
+
 sub load_file {
     my ($self, $ref) = @_;
     $ref ||= {};
@@ -432,6 +435,8 @@ sub load_file {
                 sec  => $sec,
             });
         }
+
+		$self->info_ok_fail;
         return $self;
     }
     $file_bn = basename($file);
@@ -449,7 +454,6 @@ sub load_file {
     my ($is_img, $is_cmt, $url);
     
     my ($img_file, $img, $ext, $inum);
-    my (@ok, @fail);
 
     my @data; my $d = {};
 
@@ -680,6 +684,13 @@ sub load_file {
         }
 
     }
+
+    return $self;
+}
+
+sub info_ok_fail {
+    my ($self) = @_;
+
     if (@ok) {
         my @m; push @m, 
             sprintf('SUCCESS: %s images', scalar @ok)
@@ -688,11 +699,18 @@ sub load_file {
         print join("\n",@m) . "\n";
     }
 
+	unless (@ok || @fail) {
+        my @m; push @m, 
+			sprintf('NO IMAGES! %s',$self->{proj} ? 'proj: ' . $self->{proj} : '');
+        print join("\n",@m) . "\n";
+	}
+
     # end of loop: LINES
     if (@fail) {
         my @m; push @m, 
-            'FAILURES: ' . scalar @fail,
+            'FAIL dump: ' . scalar @fail,
             Dumper([ map { { url => $_->{url}, sec => $_->{sec} } } @fail ]),
+            sprintf('FAIL: %s images', scalar @fail),
             ;
     
         warn join("\n",@m) . "\n";
