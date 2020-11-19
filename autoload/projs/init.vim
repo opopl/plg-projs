@@ -298,6 +298,8 @@ endif
 """PrjInsert
   command! -nargs=* -complete=custom,projs#complete#prjinsert PrjInsert
     \ call projs#insert(<f-args>)
+  command! -nargs=* -complete=custom,projs#complete#prjinsert PIN
+    \ call projs#insert(<f-args>)
   
 """PrjSwitch
   command! -nargs=* -complete=custom,projs#complete#switch PrjSwitch

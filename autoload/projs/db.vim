@@ -347,8 +347,10 @@ if 0
     let secs = projs#db#secnames ({ 'ext' : 'pl' })
     call base#buf#open_split({ 'lines' : secs })
 
+    let secs = projs#db#secnames ({ 'pat' : '^aa' })
+
     let secs = projs#db#secnames ()
-    echo secs
+    call base#buf#open_split({ 'lines' : secs })
 
   Return
     LIST - array of secnames
@@ -359,9 +361,10 @@ if 0
 endif
 
 function! projs#db#secnames (...)
+  let ref  = get(a:000,0,{})
+
   call projs#db#init_py ()
 
-  let ref  = get(a:000,0,{})
   let proj = projs#proj#name()
 
   if base#type(ref) == 'String'
@@ -418,6 +421,8 @@ eof
 
 		call add(fsecs,sec)
 	endfor
+
+	let fsecs = sort(fsecs)
 
   return fsecs
 endfunction
