@@ -139,28 +139,32 @@ function! projs#insert#ii_url ()
 
   let sec  = projs#buf#sec()
 
-  let ii_sec = printf('%s.', sec)
+  let ii_prefix = printf('%s.', sec)
 
   let list = matchlist(sec,'^\(\w\+\)_\(\d\+\)$')
   let month = get(list,1,'')
   let year  = get(list,2,'')
 
   if len(month) && len(year) && base#inlist(month,base#varget('projs_months_3',[]))
-    let ii_sec = ''
+    let ii_prefix = ''
   endif
-  
-  let ii_sec = input('ii_sec name: ',ii_sec)
 
-  let pat = printf('^%s',sec)
+  let pat = len(ii_prefix) ? printf('^%s',ii_prefix) : ''
+  let r = {}
+  if len(pat)
+    call extend(r,{ 'pat' : pat })
+  endif
 
   let comps = []
-  let secs = projs#db#secnames ({ 'pat' : pat })
+  let secs = projs#db#secnames (r)
   for sec in secs
-    let c = matchstr(sec, printf('^\zs%s\.\ze.*$',sec) )
-    call add(comps,c)
+    call add(comps,sec)
   endfor
   "call base#buf#open_split({ 'lines' : comps })
-  call base#buf#open_split({ 'lines' : secs})
+  "call base#buf#open_split({ 'lines' : secs})
+
+  call base#varset('this',comps)
+  let ii_sec = input('ii_sec name: ',ii_prefix,'custom,base#complete#this')
 
 endfunction
 
