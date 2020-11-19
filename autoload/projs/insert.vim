@@ -165,6 +165,7 @@ function! projs#insert#ii_url ()
     call extend(r,{ 'pat' : pat })
   endif
 
+  let url = ''
   if !is_date
     let url = input('URL: ','')
   endif
@@ -198,7 +199,10 @@ function! projs#insert#ii_url ()
     call append(line('$'),lines)
   endif
 
-  call projs#sec#new(ii_sec)
+  let r_new = {
+      \  'url' : url,
+      \  }
+  call projs#sec#new(ii_sec,r_new)
   call base#tg#update('projs_this')
 
 endfunction
