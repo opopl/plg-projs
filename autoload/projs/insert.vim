@@ -139,13 +139,23 @@ function! projs#insert#ii_url ()
 
   let sec  = projs#buf#sec()
 
+  let buf_ii = []
+  let buf_lines = readfile(b:file)
+  for ln in buf_lines
+    let ii = matchstr(ln, '^\\ii{\zs\w\+\ze}.*$' )
+    if len(ii)
+      call add(buf_ii,ii)
+    endif
+  endfor
+
   let ii_prefix = printf('%s.', sec)
 
   let list = matchlist(sec,'^\(\w\+\)_\(\d\+\)$')
   let month = get(list,1,'')
   let year  = get(list,2,'')
 
-  if len(month) && len(year) && base#inlist(month,base#varget('projs_months_3',[]))
+  let is_date = len(month) && len(year) && base#inlist(month,base#varget('projs_months_3',[])) ? 1 : 0
+  if is_date
     let ii_prefix = ''
   endif
 
@@ -155,16 +165,38 @@ function! projs#insert#ii_url ()
     call extend(r,{ 'pat' : pat })
   endif
 
+  if !is_date
+    let url = input('URL: ','')
+  endif
+
   let comps = []
-  let secs = projs#db#secnames (r)
-  for sec in secs
-    call add(comps,sec)
-  endfor
-  "call base#buf#open_split({ 'lines' : comps })
-  "call base#buf#open_split({ 'lines' : secs})
+  if is_date
+    let mon_num = projs#util#month_number(month)
+    let day_nums = base#varget('projs_day_nums',[])
+    for dn in day_nums
+      call add(comps,printf('%s_%s_%s',dn,mon_num,year))
+    endfor
+  else
+
+    let secs = projs#db#secnames (r)
+    for sec in secs
+      call add(comps,sec)
+    endfor
+  endif
 
   call base#varset('this',comps)
   let ii_sec = input('ii_sec name: ',ii_prefix,'custom,base#complete#this')
+
+  let do_ii = 1
+  if base#inlist(ii_sec,buf_ii)
+    let do_ii = input('Section already here, insert? (1/0):',0)
+  endif
+
+  if do_ii
+	  let lines = []
+	  call add(lines,printf('\ii{%s}',ii_sec))
+	  call append(line('$'),lines)
+  endif
 
 endfunction
 
