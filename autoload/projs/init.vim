@@ -291,6 +291,8 @@ endif
 """PrjDB
   command! -nargs=* -complete=custom,projs#complete#prjdb PrjDB
     \ call projs#db#action(<f-args>)
+  command! -nargs=* -complete=custom,projs#complete#prjdb PDB
+    \ call projs#db#action(<f-args>)
   
   command! -nargs=* -complete=custom,projs#complete#htlatex PrjHtlatex
     \ call projs#htlatex(<f-args>)
