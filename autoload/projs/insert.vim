@@ -178,7 +178,7 @@ function! projs#insert#ii_url ()
     endfor
   else
 
-    let secs = projs#db#secnames (r)
+    let secs = projs#db#secnames(r)
     for sec in secs
       call add(comps,sec)
     endfor
@@ -193,10 +193,13 @@ function! projs#insert#ii_url ()
   endif
 
   if do_ii
-	  let lines = []
-	  call add(lines,printf('\ii{%s}',ii_sec))
-	  call append(line('$'),lines)
+    let lines = []
+    call add(lines,printf('\ii{%s}',ii_sec))
+    call append(line('$'),lines)
   endif
+
+  call projs#sec#new(ii_sec)
+  call base#tg#update('projs_this')
 
 endfunction
 

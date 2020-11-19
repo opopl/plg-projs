@@ -657,12 +657,12 @@ db.update_dict({
     'sec'  : sec,
     'proj' : proj,
   },
-	'db_close' : 1,
+  'db_close' : 1,
 })
 
 eof
-	let b:url = url
-	call base#rdw('Updated URL: ', url)
+  let b:url = url
+  call base#rdw('Updated URL: ', url)
 
 endfunction
 
@@ -738,6 +738,13 @@ if 0
 endif
 
 """end_help_projs_sec_new
+
+if 0
+  call tree
+    called by
+    calls
+      projs#sec#header
+endif
 
 function! projs#sec#new(sec,...)
     let sec        = a:sec
@@ -1196,10 +1203,10 @@ function! projs#sec#header (...)
   let keymap     = get(ref,'keymap','')
   let parent_sec = get(ref,'parent_sec','')
 
-  let url    = get(ref,'url','')
-  let author = get(ref,'author','')
-  let title  = get(ref,'title','')
-  let tags   = get(ref,'tags','')
+  let url        = get(ref,'url','')
+  let author     = get(ref,'author','')
+  let title      = get(ref,'title','')
+  let tags       = get(ref,'tags','')
   
   let header = []
 
