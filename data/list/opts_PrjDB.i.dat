@@ -22,3 +22,4 @@ sec_add_tags
 rm_sec
 #
 list_secs
+alter_tables

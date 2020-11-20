@@ -32,6 +32,22 @@ def create_tables(db_file, sql_file):
   conn.commit()
   conn.close()
 
+def sql_file_exec(db_file, sql_file):
+  conn = sqlite3.connect(db_file)
+  c = conn.cursor()
+  
+  sql = open(sql_file, 'r').read()
+  for q in sqlparse.split(sql):
+    try:
+        c.execute(q)
+    except sqlite3.OperationalError as e:
+        print(e)
+    except:
+        print("Errors ",sys.exc_info()[0]," for sqlite query: " + q )
+  
+  conn.commit()
+  conn.close()
+
 def drop_tables(db_file):
   print('''Dropping tables in db: %s ''' % db_file)
   conn = sqlite3.connect(db_file)

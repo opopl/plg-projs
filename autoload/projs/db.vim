@@ -25,9 +25,9 @@ function! projs#db#create_tables ()
   for table in tables
     let sql_file = base#qw#catpath('plg projs data sql create_table_' . table . '.sql')
 
-		let msg = [ 'creating table: ', table ]
-		let prf = { 'plugin' : 'projs', 'func' : 'projs#db#create_tables' }
-		call base#log(msg, prf)
+    let msg = [ 'creating table: ', table ]
+    let prf = { 'plugin' : 'projs', 'func' : 'projs#db#create_tables' }
+    call base#log(msg, prf)
 python3 << eof
 
 import vim
@@ -37,7 +37,7 @@ import db
 db_file  = vim.eval('db_file')
 sql_file = vim.eval('sql_file')
 
-db.create_tables( db_file, sql_file )
+db.sql_file_exec( db_file, sql_file )
 
 eof
   endfor
@@ -159,11 +159,11 @@ function! projs#db#fill_from_files (...)
   
     if filereadable(a:temp_file)
       let out = readfile(a:temp_file)
-			let tail = remove(out,-1)
-      if tail =~ '\s*OK\s*'
-				call base#rdw_printf([ 'OK: fill_from_files; rootid: %s', projs#rootid() ],'MoreMsg')
-			else
-				call base#rdwe(printf('FAIL: fill_from_files; rootid: %s',projs#rootid()) )
+      let tail = remove(out,-1)
+      if tail =~ 'OK'
+        call base#rdw_printf([ 'OK: fill_from_files; rootid: %s', projs#rootid() ],'MoreMsg')
+      else
+        call base#rdwe(printf('FAIL: fill_from_files; rootid: %s',projs#rootid()) )
       endif
     endif
   endfunction
@@ -422,14 +422,14 @@ eof
     let secs = py3eval('nsecs')
   endif
 
-	let fsecs = []
-	for sec in secs
-		if !projs#sec#exists(sec) | continue | endif
+  let fsecs = []
+  for sec in secs
+    if !projs#sec#exists(sec) | continue | endif
 
-		call add(fsecs,sec)
-	endfor
+    call add(fsecs,sec)
+  endfor
 
-	let fsecs = sort(fsecs)
+  let fsecs = sort(fsecs)
 
   return fsecs
 endfunction
