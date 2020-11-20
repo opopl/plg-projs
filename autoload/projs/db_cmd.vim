@@ -4,6 +4,10 @@ function! projs#db_cmd#create_tables ()
   call projs#db#create_tables ()
 endf
 
+function! projs#db_cmd#alter_tables ()
+  call projs#db#alter_tables ()
+endf
+
 if 0
   call tree
     calls

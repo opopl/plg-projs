@@ -14,6 +14,7 @@ CREATE TABLE IF NOT EXISTS projs (
     projtype TEXT,
     author TEXT,
     author_id TEXT,
+	-- section id
 	id TEXT,
     pic TEXT,
     rootid TEXT,

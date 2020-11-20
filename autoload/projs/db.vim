@@ -14,6 +14,36 @@ if 0
         pymy#py#add_lib
 endif
 
+function! projs#db#alter_tables ()
+  let db_file = projs#db#file()
+
+  let pylib   = projs#pylib()
+  call pymy#py3#add_lib( pylib . '/plg/projs' )
+
+  let tables   = base#qw('projs tags')
+
+  for table in tables
+    let sql_file = base#qw#catpath('plg projs data sql alter_table_' . table . '.sql')
+
+    let msg = [ 'altering table: ', table ]
+    let prf = { 'plugin' : 'projs', 'func' : 'projs#db#alter_tables' }
+    call base#log(msg, prf)
+python3 << eof
+
+import vim
+import sqlite3,sqlparse
+import db
+
+db_file  = vim.eval('db_file')
+sql_file = vim.eval('sql_file')
+
+db.sql_file_exec( db_file, sql_file )
+
+eof
+  endfor
+
+endfunction
+
 function! projs#db#create_tables ()
   let db_file = projs#db#file()
 
