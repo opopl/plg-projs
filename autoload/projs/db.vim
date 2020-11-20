@@ -25,6 +25,10 @@ function! projs#db#alter_tables ()
   for table in tables
     let sql_file = base#qw#catpath('plg projs data sql alter_table_' . table . '.sql')
 
+    if !filereadable(sql_file)
+      continue
+    endif
+
     let msg = [ 'altering table: ', table ]
     let prf = { 'plugin' : 'projs', 'func' : 'projs#db#alter_tables' }
     call base#log(msg, prf)
@@ -54,6 +58,10 @@ function! projs#db#create_tables ()
 
   for table in tables
     let sql_file = base#qw#catpath('plg projs data sql create_table_' . table . '.sql')
+
+    if !filereadable(sql_file)
+      continue
+    endif
 
     let msg = [ 'creating table: ', table ]
     let prf = { 'plugin' : 'projs', 'func' : 'projs#db#create_tables' }
