@@ -20,7 +20,7 @@ function! projs#db#alter_tables ()
   let pylib   = projs#pylib()
   call pymy#py3#add_lib( pylib . '/plg/projs' )
 
-  let tables   = base#qw('projs tags')
+  let tables   = base#qw('projs tags authors')
 
   for table in tables
     let sql_file = base#qw#catpath('plg projs data sql alter_table_' . table . '.sql')
@@ -48,13 +48,38 @@ eof
 
 endfunction
 
+function! projs#db#author_add (...)
+	let ref = get(a:000,0,{})
+
+	let author    = get(ref,'author','')
+	let author_id = get(ref,'author_id','')
+
+python3 << eof
+
+import vim
+import sqlite3
+import db
+
+author     = vim.eval('author')
+author_id  = vim.eval('author_id')
+
+r = {
+	'author'    : author,
+	'author_id' : author_id
+}
+
+db.author_add(r)
+
+eof
+endfunction
+
 function! projs#db#create_tables ()
   let db_file = projs#db#file()
 
   let pylib   = projs#pylib()
   call pymy#py3#add_lib( pylib . '/plg/projs' )
 
-  let tables   = base#qw('projs tags')
+  let tables   = base#qw('projs tags authors')
 
   for table in tables
     let sql_file = base#qw#catpath('plg projs data sql create_table_' . table . '.sql')

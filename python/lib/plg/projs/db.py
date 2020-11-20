@@ -32,6 +32,10 @@ def create_tables(db_file, sql_file):
   conn.commit()
   conn.close()
 
+def author_add(r):
+  author    = r.get('author')
+  author_id = r.get('author_id')
+
 def sql_file_exec(db_file, sql_file):
   conn = sqlite3.connect(db_file)
   c = conn.cursor()

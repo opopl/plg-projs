@@ -18,6 +18,20 @@ function! projs#db_cmd#fill_from_files (...)
   call projs#db#fill_from_files ()
 endf
 
+function! projs#db_cmd#author_add (...)
+
+	let rootid = projs#rootid()
+
+	let author    = input(printf('[%s] author: ',rootid),'')
+	let author_id = input(printf('[%s] author_id: ',rootid),'','custom,projs#complete#author_ids')
+
+	let r = 	{
+			\	'author'    : author,
+			\	'author_id' : author_id,
+			\	}
+  call projs#db#author_add (r)
+endf
+
 function! projs#db_cmd#query_split (...)
   call projs#db#query_split ()
 endf
