@@ -144,9 +144,8 @@ function! projs#db#fill_from_files (...)
       \ "--dbfile" , projs#db#file(),
     \ ]
 
-  if len(projs)
-    let projs_s = join(projs, ",")
-    call extend(cmd_a,[ '--list', projs_s ])
+  if all
+    call extend(cmd_a,[ '-a' ])
   else
     call extend(cmd_a,[ '--proj', proj ])
   endif
@@ -167,8 +166,9 @@ function! projs#db#fill_from_files (...)
   endfunction
   
   call asc#run({ 
-    \  'cmd' : cmd, 
-    \  'Fn'  : asc#tab_restore(env) 
+    \  'path' : projs#root(), 
+    \  'cmd'  : cmd, 
+    \  'Fn'   : asc#tab_restore(env) 
     \  })
 
 endfunction

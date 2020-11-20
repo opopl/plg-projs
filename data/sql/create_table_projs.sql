@@ -13,6 +13,8 @@ CREATE TABLE IF NOT EXISTS projs (
     parent TEXT,
     projtype TEXT,
     author TEXT,
+    author_id TEXT,
+	id TEXT,
     pic TEXT,
     rootid TEXT,
     url TEXT,
