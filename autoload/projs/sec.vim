@@ -763,6 +763,10 @@ function! projs#sec#new(sec,...)
         \   "lines"      : [],
         \   "sec_type"   : '',
         \   "url"        : '',
+        \   "author"     : '',
+        \   "author_id"  : '',
+        \   "title"      : '',
+        \   "tags"       : '',
         \   }
 
     if a:0 
@@ -777,7 +781,13 @@ function! projs#sec#new(sec,...)
 
     let parent_sec = get(ref,'parent_sec',parent_sec)
     let sec_type   = get(ref,'sec_type','')
-    let url        = get(ref,'url','')
+
+    let url       = get(ref,'url','')
+
+    let author    = get(ref,'author','')
+    let author_id = get(ref,'author_id','')
+    let title     = get(ref,'title','')
+    let tags      = get(ref,'tags','')
 
     let o = base#varget('projs_opts_PrjSecNew',{})
 
@@ -801,6 +811,9 @@ function! projs#sec#new(sec,...)
       \ 'ext'        : sec_ext,
       \ 'parent_sec' : parent_sec,
       \ 'url'        : url,
+      \ 'author_id'  : author_id,
+      \ 'author'     : author,
+      \ 'tags'       : tags,
       \ }
 
     if sec_ext == 'tex'
@@ -810,6 +823,13 @@ function! projs#sec#new(sec,...)
       endif
     endif
     call extend(lines, projs#sec#header(rh) )
+
+		if len(url)
+    	call extend(lines, [ printf('\Purl{%s}',url) ])
+		endif
+		if len(author)
+    	call extend(lines, [ printf('\Pauthor{%s}',author) ])
+		endif
 
     let projtype = projs#varget('projtype','regular')
     let sub = 'projs#newseclines#'.projtype.'#'.sec
