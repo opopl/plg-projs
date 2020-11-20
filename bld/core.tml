@@ -99,6 +99,7 @@
              titletoc
              xparse 
              p.core
+             p.env
              p.rus
              p.secs
              p.toc

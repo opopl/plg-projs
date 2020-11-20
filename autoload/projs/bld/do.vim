@@ -37,6 +37,13 @@ function! projs#bld#do#dump_sec ()
 
 endfunction
 
+function! projs#bld#do#last ()
+	let last = base#varget('projs_bld_last',{})
+	if len(last)
+	endif
+
+endfunction
+
 function! projs#bld#do#dump ()
 
   let path = projs#bld#input_path()

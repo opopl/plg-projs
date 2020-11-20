@@ -1046,8 +1046,14 @@ function! projs#action#bld_join (...)
   let start = localtime()
   call chdir(root)
 
-  let a = [ 'perl', bfile, 'join', '-t', target ]
+	let act = 'join'
+
+  let a = [ 'perl', bfile, act, '-t', target ]
   let cmd = join(a, ' ' )
+
+	call base#varset('projs_bld_last',{ 
+		\	'cmd' : cmd, 
+		\	'act' : act })
 
   let env = {
     \ 'proj'  : proj,
@@ -1121,12 +1127,17 @@ function! projs#action#bld_compile (...)
   let start = localtime()
   call chdir(root)
 
-  let a = [ 'perl', bfile, 'compile', '-t', target ]
+	let act = 'compile'
+  let a = [ 'perl', bfile, act, '-t', target ]
 
   if len(config)
     call extend(a,[ '-c' ,config ])
   endif
   let cmd = join(a, ' ' )
+
+	call base#varset('projs_bld_last',{ 
+		\	'cmd' : cmd, 
+		\	'act' : act })
 
   let jnd_pdf = projs#bld#jnd_pdf({ 'target' : target }) 
   let jnd_tex = projs#bld#jnd_tex({ 'target' : target }) 

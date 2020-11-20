@@ -952,6 +952,7 @@ function! projs#maps (...)
     call extend(maps.nnoremap,{
             \  ';v'    : 'call projs#pdf#view({ "viewer" : "evince" })',
             \  ';k'    : 'call projs#pdf#view({ "okular" : "okular" })',
+            \  ';z'    : 'PrjPdf bare_view',
             \ })
 
     call base#varset('projs_maps',maps)
