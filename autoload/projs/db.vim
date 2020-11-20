@@ -24,6 +24,10 @@ function! projs#db#create_tables ()
 
   for table in tables
     let sql_file = base#qw#catpath('plg projs data sql create_table_' . table . '.sql')
+
+		let msg = [ 'creating table: ', table ]
+		let prf = { 'plugin' : 'projs', 'func' : 'projs#db#create_tables' }
+		call base#log(msg, prf)
 python3 << eof
 
 import vim
