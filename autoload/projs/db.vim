@@ -161,7 +161,7 @@ function! projs#db#fill_from_files (...)
       let out = readfile(a:temp_file)
 			let tail = remove(out,-1)
       if tail =~ '\s*OK\s*'
-				call base#rdw_printf([ 'OK: fill_from_files; rootid: %s' ],'MoreMsg')
+				call base#rdw_printf([ 'OK: fill_from_files; rootid: %s', projs#rootid() ],'MoreMsg')
 			else
 				call base#rdwe(printf('FAIL: fill_from_files; rootid: %s',projs#rootid()) )
       endif
