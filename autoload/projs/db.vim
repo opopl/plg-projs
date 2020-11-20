@@ -135,10 +135,10 @@ function! projs#db#fill_from_files (...)
   call projs#varset('db_proj_select', proj)
 
   let db_fill_py = base#qw#catpath('plg','projs scripts db_fill.py')
-  let py2_exe    = base#envvar('PY2_EXE','C:\Python27\python.exe')
+  let py3_exe    = base#envvar('PY3_EXE','python3')
 
   let cmd_a = [ 
-      \ shellescape(py2_exe), 
+      \ shellescape(py3_exe), 
       \ shellescape(db_fill_py),
       \ "--root"   , projs#root(),
       \ "--dbfile" , projs#db#file(),
@@ -159,8 +159,11 @@ function! projs#db#fill_from_files (...)
   
     if filereadable(a:temp_file)
       let out = readfile(a:temp_file)
-      if len(out)
-        call base#buf#open_split({ 'lines' : out })
+			let tail = remove(out,-1)
+      if tail =~ '\s*OK\s*'
+				call base#rdw_printf([ 'OK: fill_from_files; rootid: %s' ],'MoreMsg')
+			else
+				call base#rdwe(printf('FAIL: fill_from_files; rootid: %s',projs#rootid()) )
       endif
     endif
   endfunction

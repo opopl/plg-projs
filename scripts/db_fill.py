@@ -77,5 +77,6 @@ if args.list:
   for proj in projs:
     db.fill_from_files( dbfile, root, rootid, proj, logfun )
 
-
+print('OK')
+exit(0)
 #xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
