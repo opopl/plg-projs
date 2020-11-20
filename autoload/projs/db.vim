@@ -822,22 +822,24 @@ function! projs#db#pid ()
   return pid
 endfunction
 
-"  projs#db#action
-"
-"  Purpose:
-"   projs (SQLite) database-related actions
-"    
-"  Usage:
-"    call projs#db#action (act)
-"  Returns:
-"
-"  Call tree:
-"    calls:
-"      pymy#data#tabulate
-"      base#buf#open_split
-"      projs#db_cmd#*
-"    called by:
-"      PrjDB
+if 0
+  projs#db#action
+
+  Purpose:
+   projs (SQLite) database-related actions
+    
+  Usage:
+    call projs#db#action (act)
+  Returns:
+
+  Call tree:
+    calls:
+      pymy#data#tabulate
+      base#buf#open_split
+      projs#db_cmd#*
+    called by:
+      PrjDB
+endif
 
 function! projs#db#action (...)
   let act = get(a:000,0,'')
