@@ -49,12 +49,20 @@ sub texify {
 
     _str($ss,$s_start,$s_end);
 
-    #strip_comments(\$s);
-    q2quotes();
-    rpl_dashes();
+	_do();
 
     _back($ss);
     return $s_full;
+}
+
+sub _do {
+    local $_ = $s;
+
+    q2quotes();
+    rpl_dashes();
+    rpl_underscore();
+
+    $s = $_;
 }
 
 sub _str {
@@ -145,12 +153,13 @@ sub q2quotes {
     @center = split("\n",$s);
 }
 
-sub rpl_dashes {
+sub rpl_underscore {
+    s/\b_\b/\_/g;
+}
 
-    local $_ = $s;
+sub rpl_dashes {
     s/\s+(-|–)\s+/ \\dshM /g;
 
-    $s = $_;
 }
 
 1;
