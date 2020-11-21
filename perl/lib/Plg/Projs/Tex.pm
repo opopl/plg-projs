@@ -49,20 +49,17 @@ sub texify {
 
     _str($ss,$s_start,$s_end);
 
-	_do();
+    _do();
 
     _back($ss);
     return $s_full;
 }
 
 sub _do {
-    local $_ = $s;
-
     q2quotes();
     rpl_dashes();
     rpl_underscore();
 
-    $s = $_;
 }
 
 sub _str {
@@ -115,7 +112,9 @@ sub strip_comments {
 sub _back {
     my ($ss) = @_;
 
+    @center = split("\n",$s);
     @split = (@before,@center,@after);
+
     $s_full = join("\n",@split) . "\n";
 
     if (ref $ss eq 'SCALAR'){
@@ -150,16 +149,23 @@ sub q2quotes {
     }
 
     $s = join("",@n);
-    @center = split("\n",$s);
 }
 
 sub rpl_underscore {
-    s/\b_\b/\_/g;
+    local $_ = $s;
+
+    s/\b_\b/\\_/g;
+    s/_/\\_/g;
+
+    $s = $_;
 }
 
 sub rpl_dashes {
-    s/\s+(-|–)\s+/ \\dshM /g;
+    local $_ = $s;
 
+    s/\s+(-|–)\s+/ \\dshM /g;
+    
+    $s = $_;
 }
 
 1;
