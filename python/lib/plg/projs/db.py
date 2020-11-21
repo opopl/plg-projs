@@ -33,8 +33,20 @@ def create_tables(db_file, sql_file):
   conn.close()
 
 def author_add(r):
+  db_file   = r.get('db_file')
   author    = r.get('author')
   author_id = r.get('author_id')
+
+  conn = sqlite3.connect(db_file)
+  insert_dict({
+    'conn'      : conn,
+    'authors'   : 'authors',
+    'author'    : author,
+    'author_id' : author_id,
+  })
+
+  conn.commit()
+  conn.close()
 
 def sql_file_exec(db_file, sql_file):
   conn = sqlite3.connect(db_file)
