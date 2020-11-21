@@ -24,3 +24,4 @@ rm_sec
 list_secs
 alter_tables
 author_add
+author_list

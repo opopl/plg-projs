@@ -18,18 +18,34 @@ function! projs#db_cmd#fill_from_files (...)
   call projs#db#fill_from_files ()
 endf
 
+function! projs#db_cmd#author_list (...)
+  let dbfile = projs#db#file()
+  
+  let q = 'SELECT author, author_id FROM authors'
+  let p = []
+  
+  let list = pymy#sqlite#query_screen({
+    \ 'dbfile' : dbfile,
+    \ 'p'      : p,
+    \ 'q'      : q,
+    \ })
+  call base#buf#open_split({ 'lines' : list })
+  return 1
+
+endf
+
 function! projs#db_cmd#author_add (...)
 
-	let rootid = projs#rootid()
+  let rootid = projs#rootid()
 
-	let author    = input(printf('[%s] author: ',rootid),'')
-	let author_id = input(printf('[%s] author_id: ',rootid),'','custom,projs#complete#author_ids')
+  let author    = input(printf('[%s] author: ',rootid),'')
+  let author_id = input(printf('[%s] author_id: ',rootid),'','custom,projs#complete#author_ids')
 
-	let r = 	{
-			\	'author'    : author,
-			\	'author_id' : author_id,
-			\	'root_id'   : rootid,
-			\	}
+  let r =   {
+      \ 'author'    : author,
+      \ 'author_id' : author_id,
+      \ 'root_id'   : rootid,
+      \ }
   call projs#db#author_add (r)
 endf
 
@@ -534,8 +550,8 @@ function! projs#db_cmd#rm_sec ()
   let sec = input('section: ','','custom,projs#complete#secnames')
 
   call projs#db#sec#remove({ 
-		\	'sec' : sec 
-		\	})
+    \ 'sec' : sec 
+    \ })
 
 endfunction
 
@@ -545,16 +561,16 @@ function! projs#db_cmd#list_secs_fig ()
 endfunction
 
 function! projs#db_cmd#list_secs (...)
-	let ref = get(a:000,0,{})
+  let ref = get(a:000,0,{})
 
-	let ext    = get(ref,'ext','tex')
-	let pat    = get(ref,'pat','')
-	let prompt = get(ref,'prompt',1)
+  let ext    = get(ref,'ext','tex')
+  let pat    = get(ref,'pat','')
+  let prompt = get(ref,'prompt',1)
 
-	if prompt
-	  let ext = input('extension: ',ext)
-	  let pat = input('pattern: ',pat)
-	endif
+  if prompt
+    let ext = input('extension: ',ext)
+    let pat = input('pattern: ',pat)
+  endif
 
   let secs = projs#db#secnames({ 
     \ 'ext' : ext,
@@ -562,10 +578,10 @@ function! projs#db_cmd#list_secs (...)
     \ })
 
   let lines = [ 'SECTIONS: ' ]
-	let data = [' ']
-	for sec in secs
-		call add(data,[sec])
-	endfor
+  let data = [' ']
+  for sec in secs
+    call add(data,[sec])
+  endfor
   call extend(lines, pymy#data#tabulate({
     \ 'data'    : data,
     \ 'headers' : base#qw('section'),

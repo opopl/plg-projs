@@ -41,9 +41,11 @@ def author_add(r):
   conn = sqlite3.connect(db_file)
   insert_dict({
     'conn'      : conn,
-    'authors'   : 'authors',
-    'author'    : author,
-    'author_id' : author_id,
+    'table'     : 'authors',
+    'insert'  : {
+      'author'    : author,
+      'author_id' : author_id
+    }
   })
 
   conn.commit()
