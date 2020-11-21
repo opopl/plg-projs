@@ -95,6 +95,14 @@ function! projs#complete#prjact (...)
    return projs#complete#vars([ 'opts_PrjAct' ])
 endfunction
 
+function! projs#complete#author_ids (...)
+	let ids = projs#db#author_ids()
+	let comps = []
+	call extend(comps,ids)
+	return join(comps, "\n")
+
+endfunction
+
 function! projs#complete#bld (...)
    return projs#complete#vars([ 'opts_BLD' ])
 endfunction

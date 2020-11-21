@@ -34,6 +34,7 @@ def create_tables(db_file, sql_file):
 
 def author_add(r):
   db_file   = r.get('db_file')
+
   author    = r.get('author')
   author_id = r.get('author_id')
 

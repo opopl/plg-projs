@@ -28,6 +28,7 @@ function! projs#db_cmd#author_add (...)
 	let r = 	{
 			\	'author'    : author,
 			\	'author_id' : author_id,
+			\	'root_id'   : rootid,
 			\	}
   call projs#db#author_add (r)
 endf

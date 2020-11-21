@@ -48,24 +48,52 @@ eof
 
 endfunction
 
-function! projs#db#author_add (...)
-	let ref = get(a:000,0,{})
+function! projs#db#author_ids (...)
+   let dbfile = projs#db#file()
+   
+   let q = 'SELECT author_id FROM authors'
+   let p = []
+   
+   let author_ids = pymy#sqlite#query_as_list({
+     \  'dbfile' : dbfile,
+     \  'p'      : p,
+     \  'q'      : q,
+     \  })
+   return author_ids
 
-	let author    = get(ref,'author','')
-	let author_id = get(ref,'author_id','')
+endfunction
+
+if 0
+  call tree
+    called by
+      projs#db_cmd#author_add
+endif
+
+function! projs#db#author_add (...)
+  let ref = get(a:000,0,{})
+
+  let author    = get(ref,'author','')
+  let author_id = get(ref,'author_id','')
+
+  let root_id   = get(ref,'root_id','')
+
+  let db_file   = projs#db#file()
 
 python3 << eof
 
-import vim
-import sqlite3
-import db
+import vim, db
+
+db_file    = vim.eval('db_file')
 
 author     = vim.eval('author')
 author_id  = vim.eval('author_id')
+root_id    = vim.eval('root_id')
 
 r = {
-	'author'    : author,
-	'author_id' : author_id
+  'db_file'   : db_file,
+  'author'    : author,
+  'author_id' : author_id,
+  'root_id'   : root_id
 }
 
 db.author_add(r)
