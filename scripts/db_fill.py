@@ -51,10 +51,9 @@ if args.proj:
   proj = args.proj
   db.fill_from_files( dbfile, root, rootid, proj, logfun )
 
-
 #create tables anew
 if args.create:
-  db.drop_tables({ 'dbfile' : dbfile })
+  db.drop_tbl({ 'dbfile' : dbfile, 'tbl' : 'projs' })
   sql_dir = os.path.join(dirname,'..','data','sql')
   f = []
   for (dirpath, dirnames, filenames) in os.walk(sql_dir):

@@ -67,15 +67,21 @@ def sql_file_exec(db_file, sql_file):
   conn.commit()
   conn.close()
 
-def drop_table(db_file):
+def drop_tbl(r):
   db_file = r.get('db_file')
-  table   = r.get('table')
+  tbl     = r.get('tbl')
 
-  print('''Dropping table in db: %s, table: %s ''' % db_file,table)
+  if not tbl:
+    return
+
+  tables = [ x.strip() for x in tbl.split(',') if x ]
+
   conn = sqlite3.connect(db_file)
-  c = conn.cursor()
-  
-  c.execute('''DROP TABLE IF EXISTS projs''')
+  for t in tables:
+    print('''Dropping table in db: %s, table: %s ''' % db_file,t)
+    c = conn.cursor()
+    
+    c.execute('''DROP TABLE IF EXISTS %s''' % t)
   
   conn.commit()
   conn.close()
