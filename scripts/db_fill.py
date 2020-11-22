@@ -54,7 +54,7 @@ if args.proj:
 
 #create tables anew
 if args.create:
-  db.drop_tables(dbfile)
+  db.drop_tables({ 'dbfile' : dbfile })
   sql_dir = os.path.join(dirname,'..','data','sql')
   f = []
   for (dirpath, dirnames, filenames) in os.walk(sql_dir):

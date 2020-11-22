@@ -67,8 +67,11 @@ def sql_file_exec(db_file, sql_file):
   conn.commit()
   conn.close()
 
-def drop_tables(db_file):
-  print('''Dropping tables in db: %s ''' % db_file)
+def drop_table(db_file):
+  db_file = r.get('db_file')
+  table   = r.get('table')
+
+  print('''Dropping table in db: %s, table: %s ''' % db_file,table)
   conn = sqlite3.connect(db_file)
   c = conn.cursor()
   
