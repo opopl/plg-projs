@@ -161,14 +161,14 @@ function! projs#insert#ii_url ()
   if !is_date
     let url = input('URL: ','')
   endif
+
 	let pref = projs#util#ii_prefix_from_url(url)
 	if len(pref)
 		let ii_prefix .= printf('%s.',pref)
 	endif
 
 	let inum = 1
-	"let q = printf("SELECT COUNT(*) FROM projs WHERE sec LIKE '%s%%'",ii_prefix)
-	return
+	let q = printf("SELECT COUNT(*) FROM projs WHERE sec LIKE '%s%%'",ii_prefix)
 	let ref = {
 		\	'q'      : q,
 		\	'dbfile' : projs#db#file(),
@@ -177,10 +177,8 @@ function! projs#insert#ii_url ()
 	let rwh = get(rows,0,{})
 	let vals = values(rwh)
 	let cnt = vals[0]
-	"echo cnt
-	"echo q
-
-	return
+	let inum = cnt + 1
+	let ii_prefix .= printf('%s.',inum)
 
   let title = ''
   let title = input('ii section title: ','')
