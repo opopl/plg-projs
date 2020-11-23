@@ -165,6 +165,9 @@ function! projs#insert#ii_url ()
   let title = ''
   let title = input('TITLE: ','')
 
+  let headcmd  = projs#buf#headcmd('chapter')
+  let sec_type = projs#util#subsec(headcmd)
+
   let comps = []
   if is_date
     let mon_num = projs#util#month_number(month)
@@ -195,8 +198,9 @@ function! projs#insert#ii_url ()
   endif
 
   let r_new = {
-      \  'url'   : url,
-      \  'title' : title,
+      \  'url'      : url,
+      \  'title'    : title,
+      \  'sec_type' : sec_type,
       \  }
   call projs#sec#new(ii_sec,r_new)
   call base#tg#update('projs_this')

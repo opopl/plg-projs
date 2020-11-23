@@ -20,3 +20,18 @@ function! projs#util#month_number (...)
   return num
   
 endfunction
+
+function! projs#util#subsec (...)
+  let seccmd = get(a:000,0,'')
+
+  let maps = {
+      \  'part'          : 'chapter',
+      \  'chapter'       : 'section',
+      \  'section'       : 'subsection',
+      \  'subsection'    : 'subsubsection',
+      \  'subsubsection' : 'paragraph',
+      \  'paragraph'     : 'subparagraph',
+      \  }
+  let ss = get(maps,seccmd,'')
+  return ss
+endfunction
