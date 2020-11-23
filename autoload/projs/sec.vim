@@ -978,8 +978,6 @@ function! projs#sec#new(sec,...)
 
 """newsec_sec_type
         if len(sec_type)
-          let rootid = projs#rootid()
-
 					if len(title)
 						let l_title = [ 
 							\	printf('\%s{%s}' , sec_type, title) ,

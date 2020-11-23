@@ -58,7 +58,7 @@ sub texify {
 sub _do {
     q2quotes();
     rpl_dashes();
-    rpl_underscore();
+    rpl_special();
 
 }
 
@@ -151,11 +151,14 @@ sub q2quotes {
     $s = join("",@n);
 }
 
-sub rpl_underscore {
+sub rpl_special {
     local $_ = $s;
 
     s/\b_\b/\\_/g;
     s/_/\\_/g;
+    s/%/\\%/g;
+    s/(\s+)\\(\s+)/$1\\verb|\\|$2/g;
+    s/\b\\(\w+)\b/\\verb|$1|/g;
 
     $s = $_;
 }
