@@ -45,14 +45,15 @@ my @ex_vars_array=qw(
 sub texify {
     my ($ss,$cmd,$s_start,$s_end) = @_;
 
-	$cmd ||= 'texify';
+	$cmd ||= 'rpl_quotes';
+	my @cmds; push @cmds, $cmd;
 
     $s_start //= $l_start;
     $s_end //= $l_end;
 
     _str($ss,$s_start,$s_end);
 
-    _do();
+    _do(\@cmds);
 
     _back($ss);
     return $s_full;
@@ -144,7 +145,7 @@ sub _back {
     }
 }
 
-sub q2quotes {
+sub rpl_quotes {
     my ($ss, $cmd) = @_;
 
     $cmd ||= 'enquote';
@@ -170,6 +171,14 @@ sub q2quotes {
     $s = join("",@n);
 }
 
+sub rpl_verbs {
+    local $_ = $s;
+
+    s/[^\\]+\\(\w+)\b/\\verb|$1|/g;
+
+    $s = $_;
+}
+
 sub rpl_special {
     local $_ = $s;
 
@@ -177,7 +186,6 @@ sub rpl_special {
     s/_/\\_/g;
     s/%/\\%/g;
     s/(\s+)\\(\s+)/$1\\verb|\\|$2/g;
-    s/[^\\]+\\(\w+)\b/\\verb|$1|/g;
 
     $s = $_;
 }
