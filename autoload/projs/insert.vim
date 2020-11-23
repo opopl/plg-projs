@@ -161,7 +161,10 @@ function! projs#insert#ii_url ()
   if !is_date
     let url = input('URL: ','')
   endif
-	let struct = base#url#struct(url)
+	let pref = projs#util#ii_prefix_from_url(url)
+	if len(pref)
+		let ii_prefix .= printf('%s.',pref)
+	endif
 
   let title = ''
   let title = input('ii section title: ','')

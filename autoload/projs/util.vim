@@ -21,6 +21,20 @@ function! projs#util#month_number (...)
   
 endfunction
 
+function! projs#util#ii_prefix_from_url (...)
+	let url = get(a:000,0,'')
+
+	let struct = base#url#struct(url)
+	let host   = get(struct,'host','')
+
+	let pref = ''
+	if host =~ 'gazeta.ua'
+		let pref = 'news.ua.gazeta'
+	endif
+	return pref
+
+endfunction
+
 function! projs#util#subsec (...)
   let seccmd = get(a:000,0,'')
 
