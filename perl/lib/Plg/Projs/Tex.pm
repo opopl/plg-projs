@@ -35,7 +35,6 @@ my @ex_vars_array=qw(
     'funcs' => [qw( 
         q2quotes
         texify
-        verbify
     )],
     'vars'  => [ @ex_vars_scalar,@ex_vars_array,@ex_vars_hash ]
 );
@@ -45,8 +44,8 @@ my @ex_vars_array=qw(
 sub texify {
     my ($ss,$cmd,$s_start,$s_end) = @_;
 
-	$cmd ||= 'rpl_quotes';
-	my @cmds; push @cmds, $cmd;
+    $cmd ||= 'rpl_quotes';
+    my @cmds; push @cmds, $cmd;
 
     $s_start //= $l_start;
     $s_end //= $l_end;
@@ -60,22 +59,22 @@ sub texify {
 }
 
 sub _acts {
-	my @a;
-	push @a,
-		'q2quotes',
-		'rpl_dashes',
-		'rpl_special',
-		;
-	return [@a];
+    my @a;
+    push @a,
+        'rpl_quotes',
+        'rpl_dashes',
+        'rpl_special',
+        ;
+    return [@a];
 }
 
 sub _do {
-	my ($acts) = @_;
-	$acts ||= _acts();
+    my ($acts) = @_;
+    $acts ||= _acts();
 
-	foreach my $x (@$acts) {
-		eval $x .'()';
-	}
+    foreach my $x (@$acts) {
+        eval $x .'()';
+    }
     #q2quotes();
     #rpl_dashes();
     #rpl_special();
@@ -146,7 +145,7 @@ sub _back {
 }
 
 sub rpl_quotes {
-    my ($ss, $cmd) = @_;
+    my ($cmd) = @_;
 
     $cmd ||= 'enquote';
     my $start = sprintf(q|\%s{|,$cmd);
