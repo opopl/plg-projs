@@ -139,8 +139,6 @@ function! projs#insert#ii_url ()
 
   let sec  = projs#buf#sec()
 
-
-
   let ii_prefix = printf('%s.', sec)
 
   let list  = matchlist(sec,'^\(\w\+\)_\(\d\+\)$')
@@ -164,6 +162,9 @@ function! projs#insert#ii_url ()
     let url = input('URL: ','')
   endif
 
+  let title = ''
+  let title = input('TITLE: ','')
+
   let comps = []
   if is_date
     let mon_num = projs#util#month_number(month)
@@ -183,7 +184,7 @@ function! projs#insert#ii_url ()
   let ii_sec = input('ii_sec name: ',ii_prefix,'custom,base#complete#this')
 
   let do_ii = 1
-  if base#inlist(ii_sec,projs#buf#ii())
+  if projs#buf#ii_has(sec)
     let do_ii = input('Section already here, insert? (1/0):',0)
   endif
 
@@ -194,7 +195,8 @@ function! projs#insert#ii_url ()
   endif
 
   let r_new = {
-      \  'url' : url,
+      \  'url'   : url,
+      \  'title' : title,
       \  }
   call projs#sec#new(ii_sec,r_new)
   call base#tg#update('projs_this')
