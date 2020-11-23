@@ -210,18 +210,20 @@ function! projs#buf#ii (...)
   return buf_ii
 endfunction
 
-function! projs#buf#headcmd ()
-  let lines = readfile(b:file)
-  let cmd = ''
+function! projs#buf#headcmd (...)
+  " default value
+  let cmd   = get(a:000,0,'')
 
-  let pat = '\\\zs\(part\|chapter\|section\|subsection\|subsubsection\|paragraph\|subparagraph\)\ze{.*$'
+  let lines = readfile(b:file)
+
+  let pat = '^\\\zs\(part\|chapter\|section\|subsection\|subsubsection\|paragraph\|subparagraph\)\ze{.*$'
   for line in lines
+    echo line
     if line =~ pat
       let cmd = matchstr(line,pat)
       break
     endif
   endfor
-  return cmd
 
 endfunction
 
