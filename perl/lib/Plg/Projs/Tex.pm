@@ -173,7 +173,7 @@ sub rpl_quotes {
 sub rpl_verbs {
     local $_ = $s;
 
-    s/[^\\]+\\(\w+)\b/\\verb|$1|/g;
+    s/([^\\]+)\\(\w+)\b/$1\\verb|\\$2|/g;
 
     $s = $_;
 }
