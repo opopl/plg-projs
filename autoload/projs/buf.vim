@@ -218,12 +218,12 @@ function! projs#buf#headcmd (...)
 
   let pat = '^\\\zs\(part\|chapter\|section\|subsection\|subsubsection\|paragraph\|subparagraph\)\ze{.*$'
   for line in lines
-    echo line
     if line =~ pat
       let cmd = matchstr(line,pat)
       break
     endif
   endfor
+  return cmd
 
 endfunction
 
