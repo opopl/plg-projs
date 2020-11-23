@@ -166,6 +166,22 @@ function! projs#insert#ii_url ()
 		let ii_prefix .= printf('%s.',pref)
 	endif
 
+	let inum = 1
+	"let q = printf("SELECT COUNT(*) FROM projs WHERE sec LIKE '%s%%'",ii_prefix)
+	return
+	let ref = {
+		\	'q'      : q,
+		\	'dbfile' : projs#db#file(),
+		\	}
+	let [rows,cols] = pymy#sqlite#query(ref)
+	let rwh = get(rows,0,{})
+	let vals = values(rwh)
+	let cnt = vals[0]
+	"echo cnt
+	"echo q
+
+	return
+
   let title = ''
   let title = input('ii section title: ','')
 
