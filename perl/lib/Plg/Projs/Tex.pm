@@ -56,9 +56,19 @@ sub texify {
     return $s_full;
 }
 
+sub _acts {
+	my @a;
+	push @a,
+		'q2quotes',
+		'rpl_dashes',
+		'rpl_special',
+		;
+	return [@a];
+}
+
 sub _do {
 	my ($acts) = @_;
-	$acts ||= [qw( q2quotes rpl_dashes rpl_special )];
+	$acts ||= _acts();
 
 	foreach my $x (@$acts) {
 		eval $x .'()';
