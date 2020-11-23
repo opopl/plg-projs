@@ -163,7 +163,7 @@ function! projs#insert#ii_url ()
   endif
 
   let title = ''
-  let title = input('TITLE: ','')
+  let title = input('ii section title: ','')
 
   let headcmd  = projs#buf#headcmd('chapter')
   let sec_type = projs#util#subsec(headcmd)
@@ -202,6 +202,7 @@ function! projs#insert#ii_url ()
       \  'title'    : title,
       \  'sec_type' : sec_type,
       \  }
+
   call projs#sec#new(ii_sec,r_new)
   call base#tg#update('projs_this')
 

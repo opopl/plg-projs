@@ -746,6 +746,8 @@ if 0
       projs#sec#header
 endif
 
+"""sec_new_start
+
 function! projs#sec#new(sec,...)
     let sec        = a:sec
 
@@ -784,10 +786,12 @@ function! projs#sec#new(sec,...)
 
     let url       = get(ref,'url','')
 
-    let author    = get(ref,'author','')
-    let author_id = get(ref,'author_id','')
-    let title     = get(ref,'title','')
-    let tags      = get(ref,'tags','')
+    let author     = get(ref,'author','')
+    let author_id  = get(ref,'author_id','')
+    let author_url = get(ref,'author_url','')
+
+    let title      = get(ref,'title','')
+    let tags       = get(ref,'tags','')
 
     let o = base#varget('projs_opts_PrjSecNew',{})
 
@@ -812,8 +816,10 @@ function! projs#sec#new(sec,...)
       \ 'parent_sec' : parent_sec,
       \ 'url'        : url,
       \ 'author_id'  : author_id,
+      \ 'author_url' : author_url,
       \ 'author'     : author,
       \ 'tags'       : tags,
+      \ 'title'      : title,
       \ }
 
     if sec_ext == 'tex'
@@ -970,9 +976,18 @@ function! projs#sec#new(sec,...)
           call extend(lines, projs#sec#lines_seccmd(r_sc))
         endif
 
+"""newsec_sec_type
         if len(sec_type)
           let bw = base#word('insert_plus')
           let rootid = projs#rootid()
+
+					if len(title)
+						let l_title = [ 
+							\	printf('\%s{%s}' , sec_type, title) 
+							\	printf('\label{sec:%s}' , sec) 
+							\	],
+						call extend(lines, l_title)
+					endif
 
           "let src_f .= '\small\LaTeX~section: \verb|%s| project: \verb|%s| rootid: \verb|%s|'
 
@@ -1024,7 +1039,7 @@ function! projs#sec#new(sec,...)
     
     return 1
 endfunction
-"""end_projs_sec_new
+"""sec_new_end
 
 function! projs#sec#perl_open (sec,...)
   let sec = a:sec
@@ -1232,8 +1247,11 @@ function! projs#sec#header (...)
   let title      = get(ref,'title','')
   let tags       = get(ref,'tags','')
 
-  let author    = get(ref,'author','')
-  let author_id = get(ref,'author_id','')
+  let author     = get(ref,'author','')
+  let author_id  = get(ref,'author_id','')
+  let author_url = get(ref,'author_url','')
+
+  let title      = get(ref,'title','')
   
   let header = []
 
@@ -1248,8 +1266,11 @@ function! projs#sec#header (...)
     call extend(header,[ '%%parent ' . parent_sec ])
     call extend(header,[ ' ' ])
     call extend(header,[ '%%url '    . url    ] )
+    call extend(header,[ ' ' ])
     call extend(header,[ '%%author ' . author ] )
     call extend(header,[ '%%author_id ' . author_id ] )
+    call extend(header,[ '%%author_url ' . author_url ] )
+    call extend(header,[ ' ' ])
     call extend(header,[ '%%tags '   . tags   ] )
     call extend(header,[ '%%title '  . title  ] )
     call extend(header,[ ' ' ])
