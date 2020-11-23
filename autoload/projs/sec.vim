@@ -980,9 +980,9 @@ function! projs#sec#new(sec,...)
         if len(sec_type)
 					if len(title)
 						let l_title = [ 
-							\	printf('\%s{%s}' , sec_type, title) ,
+							\	printf('\%s{%s}' , sec_type, title),
 							\	printf('\label{sec:%s}' , sec),
-							\	],
+							\	]
 						call extend(lines, l_title)
 					endif
 
