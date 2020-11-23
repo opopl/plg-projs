@@ -139,18 +139,12 @@ function! projs#insert#ii_url ()
 
   let sec  = projs#buf#sec()
 
-  let buf_ii = []
-  let buf_lines = readfile(b:file)
-  for ln in buf_lines
-    let ii = matchstr(ln, '^\\ii{\zs\w\+\ze}.*$' )
-    if len(ii)
-      call add(buf_ii,ii)
-    endif
-  endfor
+
 
   let ii_prefix = printf('%s.', sec)
 
-  let list = matchlist(sec,'^\(\w\+\)_\(\d\+\)$')
+  let list  = matchlist(sec,'^\(\w\+\)_\(\d\+\)$')
+
   let month = get(list,1,'')
   let year  = get(list,2,'')
 
@@ -189,7 +183,7 @@ function! projs#insert#ii_url ()
   let ii_sec = input('ii_sec name: ',ii_prefix,'custom,base#complete#this')
 
   let do_ii = 1
-  if base#inlist(ii_sec,buf_ii)
+  if base#inlist(ii_sec,projs#buf#ii())
     let do_ii = input('Section already here, insert? (1/0):',0)
   endif
 

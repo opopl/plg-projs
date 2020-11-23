@@ -183,6 +183,33 @@ function! projs#buf#onload_tex_tex ()
   
 endfunction
 
+function! projs#buf#ii_has (sec)
+  let sec = a:sec
+  return base#inlist(sec,projs#buf#ii())
+
+endfunction
+
+function! projs#buf#ii (...)
+  let ref = get(a:000,0,{})
+
+  let file      = exists('b:file') ? b:file : '' 
+  let file      = get(ref,'file',file)
+
+  let buf_ii    = []
+
+  if !filereadable(file) | return [] | endif
+
+  let buf_lines = readfile(file)
+
+  for ln in buf_lines
+    let ii = matchstr(ln, '^\\ii{\zs\w\+\ze}.*$' )
+    if len(ii)
+      call add(buf_ii,ii)
+    endif
+  endfor
+  return buf_ii
+endfunction
+
 function! projs#buf#sec ()
   return exists('b:sec') ? b:sec : ''
 
