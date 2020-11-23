@@ -1,72 +1,37 @@
 
 \documentclass[a4paper,11pt]{extreport}
- 
-\usepackage{mathtext}
-\usepackage{extsizes}
-\usepackage{iftex}
+
 \usepackage{titletoc}
-
-\ifxetex
-    \usepackage{xltxtra}
-    \usepackage{polyglossia}
-    
-    %\setmainlanguage{churchslavonic}
-    %\usepackage{churchslavonic}
-    
-    \setmainlanguage{russian}
-    
-    \setotherlanguage{english}
-    %\setotherlanguage{churchslavonic}
-    
-    \setkeys{russian}{babelshorthands=true}
-    
-    \setmainfont{Times New Roman}
-    \setromanfont{Times New Roman} 
-    
-    \setsansfont{Arial} 
-    \setmonofont{Courier New} 
-    
-    \newfontfamily{\cyrillicfont}{Times New Roman} 
-    \newfontfamily{\cyrillicfontrm}{Times New Roman}
-    \newfontfamily{\cyrillicfonttt}{Courier New}
-    \newfontfamily{\cyrillicfontsf}{Arial}
-    
-    \addto\captionsrussian{%
-      \renewcommand{\figurename}{Рис.}%
-      \renewcommand{\tablename}{Табл.}%
-    }
-\else
-    \usepackage[OT1,T2A,T3]{fontenc}
-    \usepackage[utf8]{inputenc}
-    \usepackage[english,russian]{babel}
-\fi
-
-\usepackage[ %
-    letterpaper, %
-    unicode, %
-    linktocpage, %
-    bookmarksdepth=subparagraph,%
-    bookmarksnumbered=true,%
-]{hyperref}
-
-\usepackage{bookmark}
+\usepackage{xparse}
+\usepackage{p.core}
+\usepackage{p.env}
+\usepackage{p.rus}
+\usepackage{p.secs}
+\usepackage{p.toc}
+\usepackage[xindy]{imakeidx}
+\usepackage{p.hyperref}
 \usepackage[hmargin={1cm,1cm},vmargin={2cm,2cm},centering]{geometry}
-
-\usepackage{ifthen}
-\usepackage{longtable}
+\usepackage{color}
+\usepackage{xcolor}
+\usepackage{colortbl}
 \usepackage{graphicx}
-\usepackage{projs}
-\usepackage{multicol}
+\usepackage{tikz}
 \usepackage{pgffor}
-
-\usepackage{etoolbox}
-\usepackage{color,xcolor,colortbl}
-
-\usepackage{makeidx}
-
+\usepackage[export]{adjustbox}
+\usepackage{longtable}
+\usepackage{multicol}
+\usepackage{filecontents}
+\usepackage[useregional]{datetime2}
+\usepackage{mathtext}
+\usepackage{nameref}
 \makeindex
+%\makeindex[name=eng,title=Index]
+%\makeindex[title=Предметный указатель,name=rus]
+%\makeindex[title=Имена,name=names.rus]
+%\makeindex[name=authors.rus,title=Авторы]
+%\makeindex[title=Города,name=cities.rus]
+%\makeindex[title=Смерти,name=deaths.rus]
+%\makeindex[title={Писатели, Поэты, Мыслители},name=writers.rus]
 
-\newif\ifDEBUG
-\DEBUGfalse
+ 
 
-\def\indicesname{Указатели}

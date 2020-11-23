@@ -74,8 +74,9 @@ function! projs#visual#ii_to_new_secs (start, end, ... )
 
   let secs = projs#visual#ii#secs(start,end)
 
-  let sec_type = 'subsection'
-  let sec_type = input('section type:',sec_type,'custom,projs#complete#sectypes')
+	let sec_type = 'subsection'
+  "let sec_type = 'subsection'
+  "let sec_type = input('section type:',sec_type,'custom,projs#complete#sectypes')
 
   for sec in secs
     let r = {
