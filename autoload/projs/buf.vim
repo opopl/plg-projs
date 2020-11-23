@@ -210,6 +210,21 @@ function! projs#buf#ii (...)
   return buf_ii
 endfunction
 
+function! projs#buf#headcmd ()
+  let lines = readfile(b:file)
+  let cmd = ''
+
+  let pat = '\\\zs\(part\|chapter\|section\|subsection\|subsubsection\|paragraph\|subparagraph\)\ze{.*$'
+  for line in lines
+    if line =~ pat
+      let cmd = matchstr(line,pat)
+      break
+    endif
+  endfor
+  return cmd
+
+endfunction
+
 function! projs#buf#sec ()
   return exists('b:sec') ? b:sec : ''
 
