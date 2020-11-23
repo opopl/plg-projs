@@ -35,6 +35,7 @@ my @ex_vars_array=qw(
     'funcs' => [qw( 
         q2quotes
         texify
+        verbify
     )],
     'vars'  => [ @ex_vars_scalar,@ex_vars_array,@ex_vars_hash ]
 );
@@ -56,9 +57,15 @@ sub texify {
 }
 
 sub _do {
-    q2quotes();
-    rpl_dashes();
-    rpl_special();
+	my ($acts) = @_;
+	$acts ||= [qw( q2quotes rpl_dashes rpl_special )];
+
+	foreach my $x (@$acts) {
+		eval $x .'()';
+	}
+    #q2quotes();
+    #rpl_dashes();
+    #rpl_special();
 
 }
 
@@ -158,7 +165,7 @@ sub rpl_special {
     s/_/\\_/g;
     s/%/\\%/g;
     s/(\s+)\\(\s+)/$1\\verb|\\|$2/g;
-    s/\b\\(\w+)\b/\\verb|$1|/g;
+    s/[^\\]+\\(\w+)\b/\\verb|$1|/g;
 
     $s = $_;
 }
