@@ -1,3 +1,4 @@
+
 package Plg::Projs::Scripts::DoTexify;
 
 use strict;
@@ -46,6 +47,7 @@ sub get_opt {
         "start|s=s",
         "end|e=s",
         "file|f=s",
+        "cmd|c=s",
     );
     
     unless( @ARGV ){ 
@@ -92,10 +94,12 @@ sub process_file {
     my ($self) = @_;
 
     my $file = $self->{file};
+    my $cmd  = $self->{cmd};
+
     my $tex  = read_file $file;
 
     my @a = @{$self}{qw( start end )};
-    texify(\$tex,@a);
+    texify(\$tex,$cmd,@a);
 
     write_file($file,$tex);
 

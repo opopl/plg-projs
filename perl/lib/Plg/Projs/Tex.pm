@@ -43,7 +43,9 @@ my @ex_vars_array=qw(
 @EXPORT_OK = ( @{ $EXPORT_TAGS{'funcs'} }, @{ $EXPORT_TAGS{'vars'} } );
 
 sub texify {
-    my ($ss,$s_start,$s_end) = @_;
+    my ($ss,$cmd,$s_start,$s_end) = @_;
+
+	$cmd ||= 'texify';
 
     $s_start //= $l_start;
     $s_end //= $l_end;
