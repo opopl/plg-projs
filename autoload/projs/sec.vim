@@ -978,38 +978,17 @@ function! projs#sec#new(sec,...)
 
 """newsec_sec_type
         if len(sec_type)
-          let bw = base#word('insert_plus')
           let rootid = projs#rootid()
 
 					if len(title)
 						let l_title = [ 
-							\	printf('\%s{%s}' , sec_type, title) 
-							\	printf('\label{sec:%s}' , sec) 
+							\	printf('\%s{%s}' , sec_type, title) ,
+							\	printf('\label{sec:%s}' , sec),
 							\	],
 						call extend(lines, l_title)
 					endif
 
-          "let src_f .= '\small\LaTeX~section: \verb|%s| project: \verb|%s| rootid: \verb|%s|'
-
-"          let s_a = [' ']
-          "call add(s_a,'{')
-          "call add(s_a,'\ifDEBUG')
-          "call add(s_a,'\small')
-          "call add(s_a,'\LaTeX~section: \verb|%s| project: \verb|%s| rootid: \verb|%s| ')
-          "call add(s_a,'\fi')
-          "call add(s_a,'}')
-
-          "let src_f = join(s_a, "")
-
-          "call extend(lines, [
-            "\ printf('\%s{%s}' , sec_type, bw),
-            "\ printf('\%s{%s}' , 'url', bw),
-            "\ printf('  '),
-            "\ printf('\vspace{%s}','0.5cm'),
-            "\ printf(src_f, sec, proj, rootid),
-            "\ printf('\vspace{%s}','0.5cm'),
-            "\ printf('  '),
-            "\ ])
+          let bw = base#word('insert_plus')
         endif
  
     endif
