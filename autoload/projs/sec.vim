@@ -834,25 +834,25 @@ function! projs#sec#new(sec,...)
 "
     if sec_ext == 'tex'
         if len(sec_type)
-					if len(title)
-						let l_title = [ 
-							\	' ',
-							\	printf('\%s{%s}' , sec_type, title),
-							\	printf('\label{sec:%s}' , sec),
-							\	]
-						call extend(lines, l_title)
-					endif
+          if len(title)
+            let l_title = [ 
+              \ ' ',
+              \ printf('\%s{%s}' , sec_type, title),
+              \ printf('\label{sec:%s}' , sec),
+              \ ]
+            call extend(lines, l_title)
+          endif
 
           let bw = base#word('insert_plus')
         endif
     endif
 
-		if len(url)
-    	call extend(lines, [ printf('\Purl{%s}',url) ])
-		endif
-		if len(author)
-    	call extend(lines, [ printf('\Pauthor{%s}',author) ])
-		endif
+    if len(url)
+      call extend(lines, [ printf('\Purl{%s}',url) ])
+    endif
+    if len(author)
+      call extend(lines, [ printf('\Pauthor{%s}',author) ])
+    endif
 
     let projtype = projs#varget('projtype','regular')
     let sub = 'projs#newseclines#'.projtype.'#'.sec

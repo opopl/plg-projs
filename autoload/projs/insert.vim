@@ -162,7 +162,11 @@ function! projs#insert#ii_url ()
     let url = input('URL: ','')
   endif
 
-	let pref = projs#util#ii_prefix_from_url(url)
+	let pref = projs#util#ii_prefix_from_url({ 
+		\	'url'    : url,
+		\	'prompt' : 1,
+		\	})
+
 	if len(pref)
 		let ii_prefix .= printf('%s.',pref)
 	endif
