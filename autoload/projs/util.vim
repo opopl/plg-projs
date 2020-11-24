@@ -14,7 +14,7 @@ if 0
       projs#insert#ii_url
 endif
 
-function! projs#util#ii_prefix_from_url (...)
+function! projs#util#ii_data_from_url (...)
   let ref = get(a:000,0,{})
 
   let url    = get(ref,'url','')
@@ -31,11 +31,18 @@ function! projs#util#ii_prefix_from_url (...)
     if host =~ pat
       let pref = get(pats,pat,'')
       if pat == 'facebook.com'
+        let fb_data = projs#url#fb#data({ 'url' : url })
+        let author_id = get(fb_data,'author_id','')
+        let pref .=  printf('.%s',author_id)
       endif
       break
     endif
   endfor
-  return pref
+
+  return { 
+    \ 'pref'      : pref,
+    \ 'author_id' : author_id,
+    \ }
 
 endfunction
 
