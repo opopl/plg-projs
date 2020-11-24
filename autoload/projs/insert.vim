@@ -169,7 +169,7 @@ function! projs#insert#ii_url ()
 		\	})
 	let pref      = get(ii_data,'pref','')
 	let author_id = get(ii_data,'author_id','')
-	let author    = projs#author#get(author_id)
+	let author    = projs#author#get({ 'a_id' : author_id })
 
 	if len(pref)
 		let ii_prefix .= printf('%s.',pref)
@@ -224,10 +224,11 @@ function! projs#insert#ii_url ()
   endif
 
   let r_new = {
-      \  'url'      : url,
-      \  'title'    : title,
-      \  'sec_type' : sec_type,
+      \  'url'       : url,
+      \  'title'     : title,
+      \  'sec_type'  : sec_type,
       \  'author_id' : author_id,
+      \  'author'    : author,
       \  }
 
   call projs#sec#new(ii_sec,r_new)
