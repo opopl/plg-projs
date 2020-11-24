@@ -179,6 +179,13 @@ function! projs#insert#ii_url ()
 		let author_id = input('author_id: ','','custom,base#complete#this')
 		let author    = projs#author#get({ 'a_id' : author_id })
 
+		if len(author)
+			echo printf('Found author: %s',author)
+		else
+			call projs#author#add({ 'a' : author, 'a_id' : author_id })
+			echo printf('Added author: %s => %s',author_id, author)
+		endif
+
     let pref     .=  printf('.%s',author_id)
 	endif
 
