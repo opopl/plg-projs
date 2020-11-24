@@ -54,6 +54,8 @@ endfunction
 function! projs#util#subsec (...)
   let seccmd = get(a:000,0,'')
 
+  let pats = base#varget('projs_maps_subsec',{})
+
   let maps = {
       \  'part'          : 'chapter',
       \  'chapter'       : 'section',
@@ -65,3 +67,5 @@ function! projs#util#subsec (...)
   let ss = get(maps,seccmd,'')
   return ss
 endfunction
+
+
