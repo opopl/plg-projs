@@ -13,8 +13,11 @@ function! projs#data#dict (...)
 	call extend(a,[ printf('%s.i.dat',id) ])
 
   let file = join(a, '/')
+
+	if !filereadable(file) | return {} | endif
+		
 	let dict = base#readdict({ 'file' : file })
 
-	return file
+	return dict
 	
 endfunction
