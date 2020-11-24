@@ -24,7 +24,13 @@ function! projs#util#ii_prefix_from_url (...)
   let host   = get(struct,'host','')
 
   let pref = ''
-  let pats = base#varget('projs_site_patterns',{})
+
+  let file_pats = join([ projs#root(), 'data', 'dict', 'site_patterns.i.dat' ], )
+  if !filereadable(file_pats)
+    return pref
+  endif
+
+  let pats = base#readdict({ 'file' : file_pats })
 
   for pat in keys(pats)
     if host =~ pat
