@@ -33,6 +33,14 @@ function! projs#author#add (...)
 	let a_id = get(ref,'a_id','')
 	let a    = get(ref,'a','')
 
+	let file = projs#author#file()
+	let ids  = projs#author#ids()
+
+	if !base#inlist(a_id,ids)
+		let lines = [ printf('%s %s', a_id, a) ]
+		call writefile(lines,file,'a')
+	endif
+
 endfunction
 
 function! projs#author#hash ()
