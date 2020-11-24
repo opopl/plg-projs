@@ -25,7 +25,7 @@ function! projs#util#ii_prefix_from_url (...)
 
   let pref = ''
 
-  let pats = projs#data$dict({ 'id' : 'site_patterns' })
+  let pats = projs#data#dict({ 'id' : 'site_patterns' })
 
   for pat in keys(pats)
     if host =~ pat
