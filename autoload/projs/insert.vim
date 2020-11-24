@@ -190,6 +190,7 @@ function! projs#insert#ii_url ()
 
   let title = ''
   let title = input('ii section title: ','')
+	let title = base#rmwh(title)
 
   let headcmd  = projs#buf#headcmd('chapter')
   let sec_type = projs#util#subsec(headcmd)

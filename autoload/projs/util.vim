@@ -33,7 +33,9 @@ function! projs#util#ii_data_from_url (...)
       if pat == 'facebook.com'
         let fb_data = projs#url#fb#data({ 'url' : url })
         let author_id = get(fb_data,'author_id','')
-        let pref .=  printf('.%s',author_id)
+        if len(author_id)
+          let pref .=  printf('.%s',author_id)
+        endif
       endif
       break
     endif
