@@ -25,10 +25,11 @@ function! projs#util#ii_prefix_from_url (...)
 
   let pref = ''
 
-  let file_pats = join([ projs#root(), 'data', 'dict', 'site_patterns.i.dat' ], )
+  let file_pats = join([ projs#root(), 'data', 'dict', 'site_patterns.i.dat' ], '/' )
   if !filereadable(file_pats)
     return pref
   endif
+
 
   let pats = base#readdict({ 'file' : file_pats })
 
