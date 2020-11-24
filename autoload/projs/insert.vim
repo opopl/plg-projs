@@ -170,12 +170,17 @@ function! projs#insert#ii_url ()
 
 	let pref      = get(ii_data,'pref','')
 	let author_id = get(ii_data,'author_id','')
+	let author    = projs#author#get({ 'a_id' : author_id })
+
 	if !len(author_id)
 		let a_ids = projs#author#ids() 
 		call base#varset('this',a_ids)
+
 		let author_id = input('author_id: ','','custom,base#complete#this')
+		let author    = projs#author#get({ 'a_id' : author_id })
+
+    let pref     .=  printf('.%s',author_id)
 	endif
-	let author    = projs#author#get({ 'a_id' : author_id })
 
 	if len(pref)
 		let ii_prefix .= printf('%s.',pref)

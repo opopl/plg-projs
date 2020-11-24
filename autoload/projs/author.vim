@@ -17,6 +17,24 @@ function! projs#author#get (...)
 	
 endfunction
 
+function! projs#author#file (...)
+	let ref = get(a:000,0,{})
+
+	let proj = get(ref,'proj','')
+
+	let file = projs#data#dict_file({ 'proj' : proj, 'id' : 'authors' })
+	return file
+
+endfunction
+
+function! projs#author#add (...)
+	let ref = get(a:000,0,{})
+
+	let a_id = get(ref,'a_id','')
+	let a    = get(ref,'a','')
+
+endfunction
+
 function! projs#author#hash ()
 	let hash   = projs#data#dict({ 'id' : 'authors' })
 	return hash
