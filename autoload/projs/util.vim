@@ -22,16 +22,26 @@ function! projs#util#month_number (...)
 endfunction
 
 function! projs#util#ii_prefix_from_url (...)
-	let url = get(a:000,0,'')
+  let url = get(a:000,0,'')
 
-	let struct = base#url#struct(url)
-	let host   = get(struct,'host','')
+  let struct = base#url#struct(url)
+  let host   = get(struct,'host','')
 
-	let pref = ''
-	if host =~ 'gazeta.ua'
-		let pref = 'news.ua.gazeta'
-	endif
-	return pref
+  let pref = ''
+  let pats = {
+      \ 'gazeta.ua'       : 'news.ua.gazeta',
+      \ 'strana.ua'       : 'news.ua.strana',
+      \ 'obozrevatel.com' : 'news.ua.obozrevatel',
+      \ 'pravda.com.ua'   : 'news.ua.pravda',
+      \ }
+
+  for pat in keys(pats)
+    if host =~ pat
+      let pref = get(pats,pat,'')
+      break
+    endif
+  endfor
+  return pref
 
 endfunction
 

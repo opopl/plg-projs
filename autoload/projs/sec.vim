@@ -830,6 +830,21 @@ function! projs#sec#new(sec,...)
     endif
     call extend(lines, projs#sec#header(rh) )
 
+    if sec_ext == 'tex'
+        if len(sec_type)
+					if len(title)
+						let l_title = [ 
+							\	' ',
+							\	printf('\%s{%s}' , sec_type, title),
+							\	printf('\label{sec:%s}' , sec),
+							\	]
+						call extend(lines, l_title)
+					endif
+
+          let bw = base#word('insert_plus')
+        endif
+    endif
+
 		if len(url)
     	call extend(lines, [ printf('\Purl{%s}',url) ])
 		endif
@@ -977,17 +992,8 @@ function! projs#sec#new(sec,...)
         endif
 
 """newsec_sec_type
-        if len(sec_type)
-					if len(title)
-						let l_title = [ 
-							\	printf('\%s{%s}' , sec_type, title),
-							\	printf('\label{sec:%s}' , sec),
-							\	]
-						call extend(lines, l_title)
-					endif
+"
 
-          let bw = base#word('insert_plus')
-        endif
  
     endif
 
