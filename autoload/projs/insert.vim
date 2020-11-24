@@ -166,7 +166,8 @@ function! projs#insert#ii_url ()
 		\	'url'    : url,
 		\	'prompt' : 1,
 		\	})
-	let pref = get(ii_data,'pref','')
+	let pref      = get(ii_data,'pref','')
+	let author_id = get(ii_data,'author_id','')
 
 	if len(pref)
 		let ii_prefix .= printf('%s.',pref)
@@ -224,6 +225,7 @@ function! projs#insert#ii_url ()
       \  'url'      : url,
       \  'title'    : title,
       \  'sec_type' : sec_type,
+      \  'author_id' : author_id,
       \  }
 
   call projs#sec#new(ii_sec,r_new)
