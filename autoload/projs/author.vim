@@ -16,3 +16,15 @@ function! projs#author#get (...)
 	return author
 	
 endfunction
+
+function! projs#author#hash ()
+	let hash   = projs#data#dict({ 'id' : 'authors' })
+	return hash
+endfunction
+
+function! projs#author#ids ()
+	let hash   = projs#author#hash()
+	let ids = keys(hash)
+	let ids = base#uniq(ids)
+	return ids
+endfunction
