@@ -39,7 +39,6 @@ function! projs#util#ii_prefix_from_url (...)
   let pref = ''
   let pats = base#varget('projs_site_patterns',{})
 
-
   for pat in keys(pats)
     if host =~ pat
       let pref = get(pats,pat,'')
