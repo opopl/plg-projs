@@ -402,10 +402,10 @@ function! projs#db#url_set (...)
   
   let ref = {
     \ "dbfile" : dbfile,
-    \ "u" : "UPDATE",
-    \ "t" : t, 
-    \ "h" : h, 
-    \ "w" : w, 
+    \ "u"      : "UPDATE",
+    \ "t"      : t,
+    \ "h"      : h,
+    \ "w"      : w,
     \ }
     
   call pymy#sqlite#update_hash(ref)

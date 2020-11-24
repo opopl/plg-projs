@@ -830,6 +830,8 @@ function! projs#sec#new(sec,...)
     endif
     call extend(lines, projs#sec#header(rh) )
 
+"""newsec_sec_type
+"
     if sec_ext == 'tex'
         if len(sec_type)
 					if len(title)
@@ -991,8 +993,6 @@ function! projs#sec#new(sec,...)
           call extend(lines, projs#sec#lines_seccmd(r_sc))
         endif
 
-"""newsec_sec_type
-"
 
  
     endif
