@@ -76,7 +76,7 @@ function! projs#author#select ()
     let author_id = input( printf('[rootid: %s] author_id: ',rootid),'','custom,base#complete#this')
   endw
 
-  let author    = projs#author#get({ 'a_id' : author_id })
+  let author = projs#author#get({ 'a_id' : author_id })
   let author = input(printf('[rootid: %s] author: ',rootid),author)
 
   let a_data = {
