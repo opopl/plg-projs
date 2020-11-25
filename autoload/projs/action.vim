@@ -1601,6 +1601,8 @@ endfunction
 """pa_author_add
 function! projs#action#author_add ()
 	let hash = projs#author#hash()
+
+	let author_id = 
 	echo hash
 
 endfunction
