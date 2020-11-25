@@ -866,12 +866,18 @@ function! projs#sec#new(sec,...)
     if len(url)
       call extend(lines, [ printf('\Purl{%s}',url) ])
     endif
-    if len(author)
-      call extend(lines, [ printf('\Pauthor{%s}',author) ])
+    if len(author_id)
+      call extend(lines, [ 
+					\	'\ifcmt',
+					\	'	begin_author',
+					\	'   ' . printf('author_id %s',author_id),
+					\	'	end_author',
+					\	'\fi',
+					\	])
     endif
 
     let projtype = projs#varget('projtype','regular')
-    let sub = 'projs#newseclines#'.projtype.'#'.sec
+    let sub = printf('projs#newseclines#%s#%s', projtype, sec)
 
     try
       let r = {
