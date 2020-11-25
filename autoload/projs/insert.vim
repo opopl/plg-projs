@@ -243,10 +243,29 @@ function! projs#insert#ii_url ()
     let do_ii = input('Section already here, insert? (1/0):',0)
   endif
 
+
+
   if do_ii
     let lines = []
     call add(lines,printf('\ii{%s}',ii_sec))
-    call append(line('.'),lines)
+
+		let msg_a = [
+				\	'Choices for appending:'
+				\	'	1 - append at end',	
+				\	'	2 - append at current line',	
+				\	'	',
+				\	'Choice number:',	
+				\	]
+		let msg = join(msg_a, "\n")
+		let a_choice = input(msg,1)
+
+		let map = {
+				\	1 : line('$'),
+				\	2 : line('.'),
+				\	}
+		let pos = get(map,a_choice,1)
+
+    call append(pos,lines)
   endif
 
   let r_new = {
