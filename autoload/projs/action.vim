@@ -1598,9 +1598,38 @@ function! projs#action#tex_show_command ()
 
 endfunction
 
+"""pa_author_add
 function! projs#action#author_add ()
 	let hash = projs#author#hash()
 	echo hash
+
+endfunction
+
+"""pa_author_list
+function! projs#action#author_list ()
+	let hash = projs#author#hash()
+
+	let data = []
+	let head = [ 'author_id', 'author' ]
+
+	let proj = projs#proj#name()
+
+	for author_id in sort(keys(hash))
+		let author = get(hash,author_id,'')
+
+		call add(data, [ author_id, author ])
+	endfor
+
+	let lines = []
+	call extend(lines,[ printf('List of authors for project: %s' , proj) ])
+
+	let l_data = pymy#data#tabulate({
+		\ 'data'    : data,
+		\ 'headers' : head,
+		\ })
+	call extend(lines,l_data)
+
+	call base#buf#open_split({ 'lines' : lines })
 
 endfunction
 
