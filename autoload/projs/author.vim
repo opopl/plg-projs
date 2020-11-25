@@ -61,15 +61,20 @@ function! projs#author#hash_save ()
   endfor
 
   call writefile(lines,file)
+  call base#rdw( printf('Authors file updated, rootid: %s', projs#rootid() )  )
 endfunction
 
 function! projs#author#select ()
   let ids = projs#author#ids()
 
   call base#varset('this',ids)
-  let author_id = input('author_id: ','','custom,base#complete#this')
-  let author    = projs#author#get({ 'a_id' : author_id })
 
+  let author_id = ''
+  while !len(author_id)
+    let author_id = input('author_id: ','','custom,base#complete#this')
+  endw
+
+  let author    = projs#author#get({ 'a_id' : author_id })
   let author = input('author: ',author)
 
   let a_data = {
