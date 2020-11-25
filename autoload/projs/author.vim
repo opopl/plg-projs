@@ -67,15 +67,17 @@ endfunction
 function! projs#author#select ()
   let ids = projs#author#ids()
 
+  let rootid = projs#rootid()
+
   call base#varset('this',ids)
 
   let author_id = ''
   while !len(author_id)
-    let author_id = input('author_id: ','','custom,base#complete#this')
+    let author_id = input( printf('[rootid: %s] author_id: ',rootid),'','custom,base#complete#this')
   endw
 
   let author    = projs#author#get({ 'a_id' : author_id })
-  let author = input('author: ',author)
+  let author = input(printf('[rootid: %s] author: ',rootid),author)
 
   let a_data = {
       \ 'a'    : author,
