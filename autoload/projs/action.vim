@@ -1046,14 +1046,14 @@ function! projs#action#bld_join (...)
   let start = localtime()
   call chdir(root)
 
-	let act = 'join'
+  let act = 'join'
 
   let a = [ 'perl', bfile, act, '-t', target ]
   let cmd = join(a, ' ' )
 
-	call base#varset('projs_bld_last',{ 
-		\	'cmd' : cmd, 
-		\	'act' : act })
+  call base#varset('projs_bld_last',{ 
+    \ 'cmd' : cmd, 
+    \ 'act' : act })
 
   let env = {
     \ 'proj'  : proj,
@@ -1127,7 +1127,7 @@ function! projs#action#bld_compile (...)
   let start = localtime()
   call chdir(root)
 
-	let act = 'compile'
+  let act = 'compile'
   let a = [ 'perl', bfile, act, '-t', target ]
 
   if len(config)
@@ -1135,9 +1135,9 @@ function! projs#action#bld_compile (...)
   endif
   let cmd = join(a, ' ' )
 
-	call base#varset('projs_bld_last',{ 
-		\	'cmd' : cmd, 
-		\	'act' : act })
+  call base#varset('projs_bld_last',{ 
+    \ 'cmd' : cmd, 
+    \ 'act' : act })
 
   let jnd_pdf = projs#bld#jnd_pdf({ 'target' : target }) 
   let jnd_tex = projs#bld#jnd_tex({ 'target' : target }) 
@@ -1449,15 +1449,15 @@ function! projs#action#get_img ()
     let code      = self.return_code
 
     if filereadable(a:temp_file) 
-	    let out  = readfile(a:temp_file)
-			let last = get(out,-1,'')
-			if last =~ 'SUCCESS:\s\+\(\d\+\)\s\+images' || last =~ 'NO IMAGES'
-				call base#rdw(last)
-			else
-				call base#rdwe(last)
-	      call base#buf#open_split({ 'lines' : out })
-			endif
-		else
+      let out  = readfile(a:temp_file)
+      let last = get(out,-1,'')
+      if last =~ 'SUCCESS:\s\+\(\d\+\)\s\+images' || last =~ 'NO IMAGES'
+        call base#rdw(last)
+      else
+        call base#rdwe(last)
+        call base#buf#open_split({ 'lines' : out })
+      endif
+    else
     endif
   endfunction
   
@@ -1600,38 +1600,41 @@ endfunction
 
 """pa_author_add
 function! projs#action#author_add ()
-	let hash = projs#author#hash()
+  let hash = projs#author#hash()
 
-	let author_id = 
-	echo hash
+  let a_data    = projs#author#select()
+  let author_id = get(a_data,'author_id','')
+  let author    = get(a_data,'author','')
+
+
 
 endfunction
 
 """pa_author_list
 function! projs#action#author_list ()
-	let hash = projs#author#hash()
+  let hash = projs#author#hash()
 
-	let data = []
-	let head = [ 'author_id', 'author' ]
+  let data = []
+  let head = [ 'author_id', 'author' ]
 
-	let proj = projs#proj#name()
+  let proj = projs#proj#name()
 
-	for author_id in sort(keys(hash))
-		let author = get(hash,author_id,'')
+  for author_id in sort(keys(hash))
+    let author = get(hash,author_id,'')
 
-		call add(data, [ author_id, author ])
-	endfor
+    call add(data, [ author_id, author ])
+  endfor
 
-	let lines = []
-	call extend(lines,[ printf('List of authors for project: %s' , proj) ])
+  let lines = []
+  call extend(lines,[ printf('List of authors for project: %s' , proj) ])
 
-	let l_data = pymy#data#tabulate({
-		\ 'data'    : data,
-		\ 'headers' : head,
-		\ })
-	call extend(lines,l_data)
+  let l_data = pymy#data#tabulate({
+    \ 'data'    : data,
+    \ 'headers' : head,
+    \ })
+  call extend(lines,l_data)
 
-	call base#buf#open_split({ 'lines' : lines })
+  call base#buf#open_split({ 'lines' : lines })
 
 endfunction
 
