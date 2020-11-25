@@ -1598,6 +1598,12 @@ function! projs#action#tex_show_command ()
 
 endfunction
 
+function! projs#action#author_add ()
+	let hash = projs#author#hash()
+	echo hash
+
+endfunction
+
 if 0
   see also:
 endif

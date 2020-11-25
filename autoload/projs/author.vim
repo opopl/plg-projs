@@ -23,6 +23,9 @@ function! projs#author#file (...)
 	let proj = get(ref,'proj','')
 
 	let file = projs#data#dict_file({ 'proj' : proj, 'id' : 'authors' })
+	let dir  = fnamemodify(file,':p:h')
+	call base#mkdir(dir)
+
 	return file
 
 endfunction
