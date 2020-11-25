@@ -257,13 +257,13 @@ function! projs#insert#ii_url ()
 				\	'Choice number:',	
 				\	]
 		let msg = join(msg_a, "\n")
-		let a_choice = input(msg,1)
+		let a_choice = input(msg,'1')
 
 		let map = {
-				\	1 : line('$'),
-				\	2 : line('.'),
+				\	'1' : line('$'),
+				\	'2' : line('.'),
 				\	}
-		let pos = get(map,a_choice,1)
+		let pos = get(map,a_choice,line('$'))
 
     call append(pos,lines)
   endif
