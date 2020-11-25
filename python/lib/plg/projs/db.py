@@ -78,7 +78,7 @@ def drop_tbl(r):
 
   conn = sqlite3.connect(db_file)
   for t in tables:
-    print('''Dropping table in db: %s, table: %s ''' % db_file,t)
+    print('''Dropping table in db: %s, table: %s ''' % (db_file,t) )
     c = conn.cursor()
     
     c.execute('''DROP TABLE IF EXISTS %s''' % t)
