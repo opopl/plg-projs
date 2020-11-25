@@ -40,18 +40,27 @@ function! projs#author#add (...)
 	call extend(hash,{ a_id : a })
 	call base#varset('projs_hash_authors',hash)
 
-	let file = projs#author#file()
-	let ids  = projs#author#ids()
-
-	let lines = []
-	if !base#inlist(a_id,ids)
-		let lines = [ printf('%s %s', a_id, a) ]
-		call writefile(lines,file,'a')
-	endif
+	call projs#author#hash_save ()
 
 endfunction
 
 function! projs#author#hash_save ()
+	let file = projs#author#file()
+
+	let hash = base#varget('projs_hash_authors',{})
+
+	let ids = sort(keys(hash))
+	let ids = base#uniq(ids)
+
+	let lines = [] 
+	
+	for author_id in ids
+		let author = get(hash,author_id,'')
+
+		call add(lines, printf('%s %s', author_id, author ))
+	endfor
+
+	call writefile(lines,file)
 endfunction
 
 function! projs#author#hash ()
