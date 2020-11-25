@@ -36,14 +36,22 @@ function! projs#author#add (...)
 	let a_id = get(ref,'a_id','')
 	let a    = get(ref,'a','')
 
+	let hash   = projs#data#dict({ 'id' : 'authors' })
+	call extend(hash,{ a_id : a })
+	call base#varset('projs_hash_authors',hash)
+
 	let file = projs#author#file()
 	let ids  = projs#author#ids()
 
+	let lines = []
 	if !base#inlist(a_id,ids)
 		let lines = [ printf('%s %s', a_id, a) ]
 		call writefile(lines,file,'a')
 	endif
 
+endfunction
+
+function! projs#author#hash_save ()
 endfunction
 
 function! projs#author#hash ()
