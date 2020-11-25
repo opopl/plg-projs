@@ -53,18 +53,18 @@ if args.proj:
 
 #create tables anew
 if args.create:
-  db.drop_tbl({ 'dbfile' : dbfile, 'tbl' : 'projs' })
-  sql_dir = os.path.join(dirname,'..','data','sql')
-  f = []
-  for (dirpath, dirnames, filenames) in os.walk(sql_dir):
-    f.extend(filenames)
-    break
-  pt = re.compile('^create_table_(\w+)\.sql')
-  for file in f:
-    m = pt.match(file)
-    if m:
-        sql_file = os.path.join(sql_dir,file)
-        db.create_tables(dbfile, sql_file)
+  db.drop_tbl({ 'db_file' : dbfile, 'tbl' : 'projs' })
+#  sql_dir = os.path.join(dirname,'..','data','sql')
+  #f = []
+  #for (dirpath, dirnames, filenames) in os.walk(sql_dir):
+    #f.extend(filenames)
+    #break
+  #pt = re.compile('^create_table_(\w+)\.sql')
+  #for file in f:
+    #m = pt.match(file)
+    #if m:
+        #sql_file = os.path.join(sql_dir,file)
+        #db.create_tables(dbfile, sql_file)
 
 if args.all:
   db.fill_from_files( dbfile, root, rootid, '', logfun )

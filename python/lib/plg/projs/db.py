@@ -62,7 +62,7 @@ def sql_file_exec(db_file, sql_file):
     except sqlite3.OperationalError as e:
         print(e)
     except:
-        print("Errors ",sys.exc_info()[0]," for sqlite query: " + q )
+        print("Errors ", sys.exc_info()[0], " for sqlite query: " + q )
   
   conn.commit()
   conn.close()
