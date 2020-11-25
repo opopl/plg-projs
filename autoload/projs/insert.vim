@@ -163,56 +163,59 @@ function! projs#insert#ii_url ()
   endif
 
 """ii_data
-	let ii_data = projs#util#ii_data_from_url({ 
-		\	'url'    : url,
-		\	'prompt' : 1,
-		\	})
+  let ii_data = projs#util#ii_data_from_url({ 
+    \ 'url'    : url,
+    \ 'prompt' : 1,
+    \ })
 
-	let pref      = get(ii_data,'pref','')
-	let author_id = get(ii_data,'author_id','')
-	let author    = projs#author#get({ 'a_id' : author_id })
+  let pref      = get(ii_data,'pref','')
+  let author_id = get(ii_data,'author_id','')
+  let author    = projs#author#get({ 'a_id' : author_id })
 
-	if !len(author_id)
-		let a_ids = projs#author#ids() 
-		call base#varset('this',a_ids)
+  if !len(author_id)
+    let a_ids = projs#author#ids() 
+    call base#varset('this',a_ids)
 
-		let author_id = input('author_id: ','','custom,base#complete#this')
-		let author    = projs#author#get({ 'a_id' : author_id })
+    let author_id = input('author_id: ','','custom,base#complete#this')
+    let author    = projs#author#get({ 'a_id' : author_id })
 
-		if len(author)
-			echo printf('Found author: %s',author)
-		else
-			let firstname = input('[Add Author] First Name: ','')
-			let surname   = input('[Add Author] SurName: ','')
-			let author    = join([surname, firstname], ',')
+    if len(author)
+      echo printf('Found author: %s',author)
+    else
+      let firstname = input('[Add Author] First Name: ','')
+      let surname   = input('[Add Author] SurName: ','')
 
-			call projs#author#add({ 'a' : author, 'a_id' : author_id })
-			echo printf('Added author: %s => %s',author_id, author)
-		endif
+      if len(firstname) && len(surname)
+        let author    = join([surname, firstname], ',')
+  
+        call projs#author#add({ 'a' : author, 'a_id' : author_id })
+        echo printf('Added author: %s => %s',author_id, author)
+      endif
+    endif
 
     let pref     .=  len(author_id) ? printf('.%s',author_id) : ''
-	endif
+  endif
 
-	if len(pref)
-		let ii_prefix .= printf('%s.',pref)
-	endif
+  if len(pref)
+    let ii_prefix .= printf('%s.',pref)
+  endif
 
-	let inum = 1
-	let q = printf("SELECT COUNT(*) FROM projs WHERE sec LIKE '%s%%'",ii_prefix)
-	let ref = {
-		\	'q'      : q,
-		\	'dbfile' : projs#db#file(),
-		\	}
-	let [rows,cols] = pymy#sqlite#query(ref)
-	let rwh = get(rows,0,{})
-	let vals = values(rwh)
-	let cnt = vals[0]
-	let inum = cnt + 1
-	let ii_prefix .= printf('%s.',inum)
+  let inum = 1
+  let q = printf("SELECT COUNT(*) FROM projs WHERE sec LIKE '%s%%'",ii_prefix)
+  let ref = {
+    \ 'q'      : q,
+    \ 'dbfile' : projs#db#file(),
+    \ }
+  let [rows,cols] = pymy#sqlite#query(ref)
+  let rwh = get(rows,0,{})
+  let vals = values(rwh)
+  let cnt = vals[0]
+  let inum = cnt + 1
+  let ii_prefix .= printf('%s.',inum)
 
   let title = ''
   let title = input('ii section title: ','')
-	let title = base#rmwh(title)
+  let title = base#rmwh(title)
 
   let headcmd  = projs#buf#headcmd('chapter')
   let sec_type = projs#util#subsec(headcmd)
@@ -243,7 +246,7 @@ function! projs#insert#ii_url ()
   if do_ii
     let lines = []
     call add(lines,printf('\ii{%s}',ii_sec))
-    call append(line('$'),lines)
+    call append(line('.'),lines)
   endif
 
   let r_new = {

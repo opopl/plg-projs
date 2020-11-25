@@ -23,7 +23,8 @@ function! projs#util#ii_data_from_url (...)
   let struct = base#url#struct(url)
   let host   = get(struct,'host','')
 
-  let pref = ''
+  let pref      = ''
+  let author_id = ''
 
   let pats = projs#data#dict({ 'id' : 'site_patterns' })
 

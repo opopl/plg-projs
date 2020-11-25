@@ -417,7 +417,9 @@ function! projs#sec#add_to_secnames (sec)
   endif
 endfunction
 
-function! projs#sec#add_to_dat (sec)
+function! projs#sec#add_to_dat (sec,...)
+  let ref = get(a:000,0,{})
+
   let sec = a:sec 
 
   let sfile = projs#sec#file(sec)
@@ -490,7 +492,7 @@ function! projs#sec#add_to_db (sec,...)
   let tags   = get(ref,'tags','')
   let author = get(ref,'author','')
 
-  let sec = a:sec 
+  let sec    = a:sec
 
   let dbfile  = projs#db#file()
 
@@ -512,7 +514,7 @@ function! projs#sec#add_to_db (sec,...)
   
   let ref = {
     \ "dbfile" : dbfile,
-    \ "i"      : "INSERT OR IGNORE",
+    \ "i"      : "INSERT OR REPLACE",
     \ "t"      : t,
     \ "h"      : h,
     \ }
@@ -545,12 +547,14 @@ endfunction
 "   called by:
 "     projs#sec#new
 
-function! projs#sec#add (sec)
+function! projs#sec#add (sec,...)
+  let ref = get(a:000,0,{})
+
   let sec   = a:sec
 
   call projs#sec#add_to_secnames(sec)
   call projs#sec#add_to_dat(sec)
-  call projs#sec#add_to_db(sec)
+  call projs#sec#add_to_db(sec,ref)
   "call projs#sec#add_to_xml(sec)
 
   return 1
@@ -1001,7 +1005,15 @@ function! projs#sec#new(sec,...)
 
     call writefile(lines,sec_file)
 
-    call projs#sec#add(sec)
+    let db_data = {
+      \ 'url'       : url,
+      \ 'tags'      : tags,
+      \ 'url'       : url,
+      \ 'title'     : title,
+      \ 'author'    : author,
+      \ 'author_id' : author_id,
+      \ }
+    call projs#sec#add(sec,{ 'db_data' : db_data })
 
     let rx = (sec =~ '^_perl\.') 
     if rx
