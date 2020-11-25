@@ -486,11 +486,22 @@ eof
 
 endfunction
 
+if 0
+  usage
+    projs#sec#add_to_db(sec)
+    projs#sec#add_to_db(sec,{ 'db_data' : db_data })
+  call tree
+    called by
+      projs#sec#new
+endif
+
 function! projs#sec#add_to_db (sec,...)
   let ref = get(a:000,0,{})
 
   let tags   = get(ref,'tags','')
   let author = get(ref,'author','')
+
+  let db_data = get(ref,'db_data',{})
 
   let sec    = a:sec
 
@@ -511,6 +522,7 @@ function! projs#sec#add_to_db (sec,...)
     \ "tags"   : tags,
     \ "author" : author,
     \ }
+  call extend(h,db_data)
   
   let ref = {
     \ "dbfile" : dbfile,
@@ -1006,13 +1018,14 @@ function! projs#sec#new(sec,...)
     call writefile(lines,sec_file)
 
     let db_data = {
-      \ 'url'       : url,
-      \ 'tags'      : tags,
-      \ 'url'       : url,
-      \ 'title'     : title,
-      \ 'author'    : author,
-      \ 'author_id' : author_id,
+      \ 'url'        : url,
+      \ 'tags'       : tags,
+      \ 'title'      : title,
+      \ 'author'     : author,
+      \ 'author_id'  : author_id,
+      \ 'author_url' : author_url,
       \ }
+"""sec_new_sec_add
     call projs#sec#add(sec,{ 'db_data' : db_data })
 
     let rx = (sec =~ '^_perl\.') 
