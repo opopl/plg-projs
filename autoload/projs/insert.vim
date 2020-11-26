@@ -182,15 +182,8 @@ function! projs#insert#ii_url ()
     if len(author)
       echo printf('Found author: %s',author)
     else
-      let firstname = input('[Add Author] First Name: ','')
-      let surname   = input('[Add Author] SurName: ','')
+			let author = projs#author#add_prompt({ 'a_id' : author_id })
 
-      if len(firstname) && len(surname)
-        let author    = join([surname, firstname], ',')
-  
-        call projs#author#add({ 'a' : author, 'a_id' : author_id })
-        echo printf('Added author: %s => %s',author_id, author)
-      endif
     endif
 
     let pref     .=  len(author_id) ? printf('.%s',author_id) : ''

@@ -64,6 +64,30 @@ function! projs#author#hash_save ()
   call base#rdw( printf('Authors file updated, rootid: %s', projs#rootid() )  )
 endfunction
 
+if 0
+	call tree
+		called by
+			projs#insert#ii_url
+endif
+
+function! projs#author#add_prompt (...)
+	let ref       = get(a:000,0,{})
+
+	let author_id = get(ref,'a_id','')
+
+  let firstname = input('[Add Author] First Name: ','')
+  let surname   = input('[Add Author] SurName: ','')
+
+	let author = ''
+  if len(firstname) && len(surname)
+    let author    = join([surname, firstname], ',')
+
+    call projs#author#add({ 'a' : author, 'a_id' : author_id })
+    echo printf('Added author: %s => %s',author_id, author)
+  endif
+
+endfunction
+
 function! projs#author#select ()
   let ids = projs#author#ids()
 
