@@ -32,7 +32,10 @@ function! projs#util#ii_data_from_url (...)
     if host =~ pat
       let pref = get(pats,pat,'')
       if pat == 'facebook.com'
-        let fb_data   = projs#url#fb#data({ 'url' : url })
+        let fb_data   = projs#url#fb#data({ 
+					\	'url'    : url,
+					\	'prompt' : prompt,
+					\	})
 
         let author_id = get(fb_data,'author_id','')
         if len(author_id)

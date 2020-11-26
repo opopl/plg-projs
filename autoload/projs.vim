@@ -923,6 +923,7 @@ function! projs#maps (...)
             \  ';bb'   : 'call projs#action#bld_compile()'  ,
             \  ';bx'   : 'call projs#action#bld_compile_xelatex()'  ,
             \  ';bj'   : 'PrjAct bld_join'  ,
+            \  ';bl'   : 'BLD last_compile'  ,
             \  ';e'    : 'PrjAct edt'  ,
             \  '<F2>'  : 'PrjBuild Cleanup'    ,
             \  '<F3>'  : 'copen'               ,
