@@ -1143,9 +1143,9 @@ function! projs#action#bld_compile (...)
   endif
   let cmd = join(a, ' ' )
 
-  call base#varset('projs_bld_last',{ 
-    \ 'cmd' : cmd, 
-    \ 'act' : act })
+  call base#varset('projs_bld_last_compile',{ 
+    \ 'cmd'    : cmd,
+    \ 'config' : config, })
 
   let jnd_pdf = projs#bld#jnd_pdf({ 'target' : target }) 
   let jnd_tex = projs#bld#jnd_tex({ 'target' : target }) 

@@ -37,10 +37,16 @@ function! projs#bld#do#dump_sec ()
 
 endfunction
 
-function! projs#bld#do#last ()
+function! projs#bld#do#last_compile ()
 	let last = base#varget('projs_bld_last_compile',{})
-	if len(last)
-	endif
+
+	let config = get(last,'config','')
+	let target = base#varget('projs_bld_target','')
+
+	call projs#action#bld_compile({
+		\	'config' : config,
+		\	'target' : target,
+		\	})
 
 endfunction
 
