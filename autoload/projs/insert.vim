@@ -63,7 +63,21 @@ function! projs#insert#uri ()
 
 endfunction
 
-function! projs#insert#cmt_fig ()
+function! projs#insert#cmt_pic ()
+	let url     = input('url: ','')
+	let caption = input('caption: ','')
+	let lines = []
+
+	call add(lines,'\ifcmt')
+	call add(lines,printf('	pic %s',url))
+	if len(caption)
+		call add(lines,printf('	caption %s',caption))
+	endif
+	call add(lines,'\fi')
+
+endfunction
+
+function! projs#insert#cmt_fig_old ()
   let proj   = projs#proj#name()
   let rootid = projs#rootid()
   let sec    = projs#buf#sec()

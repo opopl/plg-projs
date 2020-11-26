@@ -444,7 +444,13 @@ sub create_bat_in_src {
                 'rm *.mtc*',
                 'rm *.maf*',
                 'rm *.ptc*',
-                'latexmk -C'
+				# htlatex
+                'rm *.4tc',
+                'rm *.4ct',
+                'rm *.mw',
+                'rm *.tmp',
+                'rm *.xref',
+                'latexmk -C',
             ];
         },
         '_latexmk_pdf' => sub { 

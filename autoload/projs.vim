@@ -925,6 +925,7 @@ function! projs#maps (...)
             \  ';bj'   : 'PrjAct bld_join'  ,
             \  ';bl'   : 'BLD last_compile'  ,
             \  ';e'    : 'PrjAct edt'  ,
+            \  ';gi'   : 'PrjAct get_img'  ,
             \  '<F2>'  : 'PrjBuild Cleanup'    ,
             \  '<F3>'  : 'copen'               ,
             \  '<F4>'  : 'cclose'              ,
