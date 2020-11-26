@@ -139,30 +139,36 @@ sub cmd_jnd_compose {
     my ($sec);
 
 ###subs_fig
-    my $fig_env = sub { (defined $tab && $tab->{fig_env}) || $d->{fig_env} || 'figure'; };
+    my $fig_env = sub { $tab_val->('fig_env') || $d->{fig_env} || 'figure'; };
     my $fig_start = sub { 
         my @s;
         my $fe = $fig_env->();
-        ( $fe eq 'figure' ) && do {
-            push @s,
-                q|\begin{figure}[ht] |, 
-                q|  \centering | ;
-        };
+		for($fe){
+        	/^(figure)/ && do {
+	            push @s,
+	                q|\begin{figure}[ht] |, 
+	                q|  \centering |;
+				last;
+        	};
+        	/^(wrapfigure)/ && do {
+				last;
+			};
+
+			last;
+		}
 
         return @s;
     };
     my $fig_end = sub {
         my @e;
         my $fe = $fig_env->();
-        ( $fe eq 'figure' ) && do {
-            push @e, ( q|\end{figure}| ) ;
-        };
+        push @e, printf(q|\end{%s}|,$fe);
         return @e;
     };
 
 ###subs
     my $get_width = sub {
-       $d->{width} || (defined $tab && $tab->{width}) || $img_width_default;
+       $d->{width} || $tab_val->('width') || $img_width_default;
     };
 
     my $push_d = sub { push @data, $d if keys %$d; };
