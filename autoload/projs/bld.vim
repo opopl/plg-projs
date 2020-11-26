@@ -136,6 +136,12 @@ function! projs#bld#make_secs ()
   
 endfunction
 
+if 0
+  call tree
+    called by
+      projs#action#bld_compile
+endif
+
 function! projs#bld#target ()
 
   let target = projs#bld#trg#choose()

@@ -1119,8 +1119,16 @@ function! projs#action#bld_compile (...)
 
   let config = get(ref,'config','')
 
+  let target = get(ref,'target','')
+
   call projs#bld#make_secs()
-  let target = projs#bld#target()
+
+  if !len(target)
+    let target = projs#bld#target()
+  endif
+  if len(target)
+    call base#varset('projs_bld_target',target)
+  endif
 
   let bfile = projs#sec#file('_perl.bld')
 

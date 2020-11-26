@@ -38,7 +38,7 @@ function! projs#bld#do#dump_sec ()
 endfunction
 
 function! projs#bld#do#last ()
-	let last = base#varget('projs_bld_last',{})
+	let last = base#varget('projs_bld_last_compile',{})
 	if len(last)
 	endif
 
