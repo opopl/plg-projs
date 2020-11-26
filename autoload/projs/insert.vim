@@ -26,8 +26,14 @@ import vim,re
 proj = vim.eval('proj')
 
 t = '''
+%beginhead
+
 %%file _main_
 %%file f_main
+
+%%url
+
+%endhead
 
 \\def\PROJ{_proj_}
 \\def\ii#1{\InputIfFileExists{\PROJ.#1.tex}{}{}}

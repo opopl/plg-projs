@@ -146,7 +146,7 @@ sub cmd_jnd_compose {
     };
 
     my $get_width_tex = sub {
-        my $w = get_width->();
+        my $w = $get_width->();
         for($w){
             /^(\d+(?:|\.\d+))$/ && do {
                 $w = qq{$w\\textwidth};
