@@ -129,6 +129,9 @@ sub cmd_jnd_compose {
     my ($img_width, $img_width_default);
     $img_width_default = 0.7;
 
+###vars_$sec
+	my ($sec);
+
 ###subs
     my $get_width = sub {
        $d->{width} || (defined $tab && $tab->{width}) || $img_width_default;
@@ -148,7 +151,6 @@ sub cmd_jnd_compose {
         $tab = undef;
     };
 
-
     my $lnum = 0;
     #return $mkr;
 ###loop_LINES
@@ -156,6 +158,11 @@ sub cmd_jnd_compose {
         $lnum++; chomp;
 
         m/^\s*%/ && $is_cmt && do { push @nlines,$_; next; };
+
+###m_ii
+		m/^\s*%%\s*\\ii\{(.*)\}\s*$/ && do {
+			$sec = $1;
+		};
 
         m/^\s*\\ifcmt/ && do { $is_cmt = 1; next; };
 ###m_\fi
@@ -357,9 +364,23 @@ sub cmd_jnd_compose {
 
         m/^\s*author_end\b(.*)$/g && do { 
 			$d_author = undef;
+
+			my $w = {
+				proj => $proj,
+				#sec => $sec,
+			};
+            my ($rows, $cols, $q, $p) = dbh_select({
+                #dbh => $mkr->{dbh_img},
+                q   => q{ SELECT img, caption, url FROM imgs },
+                p   => [],
+                #w   => $w,
+            });
 		};
 
         if ($d_author) {
+        	m/^\s*(\w+)\s+(\w+)$/g && do { 
+				$d_author->{$1} = $2;
+			};
 		}
 
 ###m_tab_begin
