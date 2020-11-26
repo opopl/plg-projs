@@ -9,6 +9,8 @@ endif
 function! projs#url#fb#data (...)
 	let ref = get(a:000,0,{})
 
+	let prompt = get(ref,'prompt',0)
+
 	let url    = get(ref,'url','')
 	let struct = base#url#struct(url)
 
@@ -20,6 +22,10 @@ function! projs#url#fb#data (...)
 	let auth   = get(path_a,0,'')
 
 	let author_id = get(fb_authors,auth,'')
+
+	if !len(author_id) && prompt
+
+	endif
 
 	let data = {
 			\	'author_id' : author_id,
