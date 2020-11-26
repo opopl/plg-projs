@@ -32,6 +32,7 @@ use Data::Dumper qw(Dumper);
 
 use Base::DB qw(
     dbh_select
+    dbh_select_first
 );
 
 ###jnd_compose
@@ -371,14 +372,18 @@ sub cmd_jnd_compose {
                 sec       => $sec,
             };
             my $dbh = $mkr->{bld}->{dbh};
-            my ($rows, $cols, $q, $p) = dbh_select({
+            my ($row) = dbh_select_first({
                 dbh => $dbh,
-                q   => q{ SELECT img, caption, url FROM imgs },
+                q   => q{ SELECT author, author_url FROM projs },
                 p   => [],
-                #w   => $w,
+                w   => $w,
             });
+            my $author = $row->{author};
+            
+            push @nlines, sprintf(q{\Pauthor{%s}}, $author) if $author;
 
             $d_author = undef;
+            next;
         };
 
         if ($d_author) {
