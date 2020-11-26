@@ -59,6 +59,12 @@ sub cmd_jnd_compose {
     my ($is_tab, $tab, $ct);
 
 ###subs_$tab
+    my $tab_val = sub { 
+        my ($k) = @_;
+        return unless $tab;
+        $tab->{$k};
+    };
+
     my $tab_end = sub { ($tab && $tab->{env}) ? sprintf(q| \end{%s}|,$tab->{env}) : '' };
     my $tab_defaults = sub {
        return unless $tab;
@@ -133,26 +139,26 @@ sub cmd_jnd_compose {
     my ($sec);
 
 ###subs_fig
-	my $fig_env = sub { (defined $tab && $tab->{fig_env}) || $d->{fig_env} || 'figure'; };
+    my $fig_env = sub { (defined $tab && $tab->{fig_env}) || $d->{fig_env} || 'figure'; };
     my $fig_start = sub { 
-		my @s;
-		my $fe = $fig_env->();
-		( $fe eq 'figure' ) && do {
-			push @s,
-				q|\begin{figure}[ht] |, 
-				q|  \centering | ;
-		};
+        my @s;
+        my $fe = $fig_env->();
+        ( $fe eq 'figure' ) && do {
+            push @s,
+                q|\begin{figure}[ht] |, 
+                q|  \centering | ;
+        };
 
-		return @s;
-	};
+        return @s;
+    };
     my $fig_end = sub {
-		my @e;
-		my $fe = $fig_env->();
-		( $fe eq 'figure' ) && do {
-			push @e, ( q|\end{figure}| ) ;
-		};
-		return @e;
-	};
+        my @e;
+        my $fe = $fig_env->();
+        ( $fe eq 'figure' ) && do {
+            push @e, ( q|\end{figure}| ) ;
+        };
+        return @e;
+    };
 
 ###subs
     my $get_width = sub {
