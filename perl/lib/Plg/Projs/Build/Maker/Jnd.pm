@@ -70,6 +70,7 @@ sub cmd_jnd_compose {
            i_row      => 1,
            i_cap      => 1,
            col_type   => 'img',
+           fig_env    => 'figure',
            row_caps   => {},
            cap_list   => [],
        };
@@ -123,8 +124,6 @@ sub cmd_jnd_compose {
     my @keys = qw(url caption tags name);
     my ($img, $img_path, $url, $caption);
 
-    my @fig_start = ( q|\begin{figure}[ht] |, q|  \centering | );
-    my @fig_end = ( q|\end{figure}| );
 
 ###vars_$img_width
     my ($img_width, $img_width_default);
@@ -132,6 +131,28 @@ sub cmd_jnd_compose {
 
 ###vars_$sec
     my ($sec);
+
+###subs_fig
+	my $fig_env = sub { (defined $tab && $tab->{fig_env}) || $d->{fig_env} || 'figure'; };
+    my $fig_start = sub { 
+		my @s;
+		my $fe = $fig_env->();
+		( $fe eq 'figure' ) && do {
+			push @s,
+				q|\begin{figure}[ht] |, 
+				q|  \centering | ;
+		};
+
+		return @s;
+	};
+    my $fig_end = sub {
+		my @e;
+		my $fe = $fig_env->();
+		( $fe eq 'figure' ) && do {
+			push @e, ( q|\end{figure}| ) ;
+		};
+		return @e;
+	};
 
 ###subs
     my $get_width = sub {
@@ -186,7 +207,7 @@ sub cmd_jnd_compose {
                 $tab_defaults->();
 
                 $tab->{width} ||= ( $img_width_default / $tab->{cols} );
-                push @fig, @fig_start, $tab_start->();
+                push @fig, $fig_start->(), $tab_start->();
             }
 
             #print join(" ", $lnum,  scalar @data ) . "\n";
@@ -272,7 +293,7 @@ sub cmd_jnd_compose {
                             next;
                         }
     
-                        push @fig,@fig_start unless $tab;
+                        push @fig,$fig_start->() unless $tab;
 
                         my $o = sprintf(q{ width=%s\textwidth },$img_width);
 ###push_includegraphics
@@ -328,7 +349,7 @@ sub cmd_jnd_compose {
                     }elsif(keys %$d){
                         #print Dumper({ '$d' => $d }) . "\n";
 ###push_fig_end
-                        push @fig, $tex_caption->(), @fig_end;
+                        push @fig, $tex_caption->(), $fig_end->();
 
                     }
 
@@ -343,7 +364,7 @@ sub cmd_jnd_compose {
             if($tab){
                 push @fig, 
                     $tab_end->(), $tex_caption_tab->(),
-                    @fig_end ;
+                    $fig_end->();
             }
 
             push @nlines, @fig;

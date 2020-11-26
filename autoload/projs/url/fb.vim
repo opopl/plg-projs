@@ -36,6 +36,11 @@ function! projs#url#fb#data (...)
     call base#varset('this',projs#author#ids())
     let author_id = input(printf('[ facebook auth: %s ] Enter new author_id: ',fb_auth), '', 'custom,base#complete#this')
 
+    let author = projs#author#get({ 'a_id' : author_id })
+    if !len(author)
+			let author = projs#author#add_prompt({ 'a_id' : author_id })
+    endif
+
     call projs#facebook#add_author_id({ 
       \ 'author_id' : author_id ,
       \ 'fb_auth'   : fb_auth ,

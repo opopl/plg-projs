@@ -183,7 +183,6 @@ function! projs#insert#ii_url ()
       echo printf('Found author: %s',author)
     else
 			let author = projs#author#add_prompt({ 'a_id' : author_id })
-
     endif
 
     let pref     .=  len(author_id) ? printf('.%s',author_id) : ''

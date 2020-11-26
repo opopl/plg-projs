@@ -86,6 +86,8 @@ function! projs#author#add_prompt (...)
     echo printf('Added author: %s => %s',author_id, author)
   endif
 
+	return author
+
 endfunction
 
 function! projs#author#select ()
