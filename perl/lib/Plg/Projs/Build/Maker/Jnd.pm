@@ -145,6 +145,17 @@ sub cmd_jnd_compose {
        $d->{width} || $tab_val->('width') || $img_width_default;
     };
 
+    my $get_width_tex = sub {
+        my $w = get_width->();
+        for($w){
+            /^(\d+(?:|\.\d+))$/ && do {
+                $w = qq{$w\\textwidth};
+            };
+            last;
+        }
+        return $w;
+    };
+
     my $push_d = sub { push @data, $d if keys %$d; };
     my $push_d_reset = sub { $push_d->(); $d = {}; };
 
@@ -164,20 +175,20 @@ sub cmd_jnd_compose {
     my $fig_start = sub { 
         my @s;
         my $fe = $fig_env->();
-		for($fe){
-        	/^(figure)/ && do {
-	            push @s,
-	                q|\begin{figure}[ht] |, 
-	                q|  \centering |;
-				last;
-        	};
-        	/^(wrapfigure)/ && do {
-				push @s, sprintf(q/\begin{%s}{R}{%s}/,$fe,$get_width->() );
-				last;
-			};
+        for($fe){
+            /^(figure)/ && do {
+                push @s,
+                    q|\begin{figure}[ht] |, 
+                    q|  \centering |;
+                last;
+            };
+            /^(wrapfigure)/ && do {
+                push @s, sprintf(q/\begin{%s}{R}{%s}/,$fe,$get_width_tex->() );
+                last;
+            };
 
-			last;
-		}
+            last;
+        }
 
         return @s;
     };
