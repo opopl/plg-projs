@@ -9,6 +9,13 @@ function! projs#facebook#add_author_id (...)
 	call extend(fb_authors,{ fb_auth : author_id })
 
 	let f = projs#facebook#file_auth ()
+
+	let lines = []
+	for k in sort(keys(fb_authors))
+		let v = get(fb_authors,k,'')
+		call add(lines,printf('%s %s',k,v))
+	endfor
+	call writefile(lines,f)
 	
 endfunction
 
