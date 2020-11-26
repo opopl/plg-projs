@@ -113,6 +113,9 @@ sub cmd_jnd_compose {
         return @c;
     };
 
+###vars_author
+    my ($d_author);
+
 ###vars_@data
     my ($d, @data, @fig);
     $d = {};
@@ -345,6 +348,20 @@ sub cmd_jnd_compose {
 
         unless($is_cmt){ push @nlines, $_; next; }
 
+###m_author_begin
+        m/^\s*author_begin\b(.*)$/g && do { 
+			$d_author = {};
+			$proj;
+			$root;
+		};
+
+        m/^\s*author_end\b(.*)$/g && do { 
+			$d_author = undef;
+		};
+
+        if ($d_author) {
+		}
+
 ###m_tab_begin
         m/^\s*tab_begin\b(.*)$/g && do { 
             $is_tab = 1; 
@@ -382,6 +399,8 @@ sub cmd_jnd_compose {
             next; 
         };
 
+
+
         while(1){
 ###m_pic
             m/^\s*(pic|doc)\s+(.*)$/g && do { 
@@ -396,6 +415,7 @@ sub cmd_jnd_compose {
                 }
                 last; 
             };
+
 
 ###if_is_img
             if ($is_img) {

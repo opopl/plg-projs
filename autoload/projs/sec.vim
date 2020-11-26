@@ -869,9 +869,9 @@ function! projs#sec#new(sec,...)
     if len(author_id)
       call extend(lines, [ 
 					\	'\ifcmt',
-					\	'	begin_author',
+					\	'	author_begin',
 					\	'   ' . printf('author_id %s',author_id),
-					\	'	end_author',
+					\	'	author_end',
 					\	'\fi',
 					\	])
     endif

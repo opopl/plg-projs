@@ -250,7 +250,7 @@ function! projs#insert#ii_url ()
     call add(lines,printf('\ii{%s}',ii_sec))
 
 		let msg_a = [
-				\	'Choices for appending:'
+				\	'Choices for appending:',
 				\	'	1 - append at end',	
 				\	'	2 - append at current line',	
 				\	'	',

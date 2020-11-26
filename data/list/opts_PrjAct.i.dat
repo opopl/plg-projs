@@ -40,7 +40,7 @@ status
 ###edt
 edt
 ###bld
-bld_compile
+#bld_compile
 bld_compile_xelatex
 bld_join
 out_bld
