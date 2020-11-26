@@ -138,33 +138,7 @@ sub cmd_jnd_compose {
 ###vars_$sec
     my ($sec);
 
-###subs_fig
-    my $fig_env = sub { $tab_val->('fig_env') || $d->{fig_env} || 'figure'; };
-    my $fig_start = sub { 
-        my @s;
-        my $fe = $fig_env->();
-		for($fe){
-        	/^(figure)/ && do {
-	            push @s,
-	                q|\begin{figure}[ht] |, 
-	                q|  \centering |;
-				last;
-        	};
-        	/^(wrapfigure)/ && do {
-				last;
-			};
 
-			last;
-		}
-
-        return @s;
-    };
-    my $fig_end = sub {
-        my @e;
-        my $fe = $fig_env->();
-        push @e, printf(q|\end{%s}|,$fe);
-        return @e;
-    };
 
 ###subs
     my $get_width = sub {
@@ -183,6 +157,35 @@ sub cmd_jnd_compose {
         $d = {};
         $caption = '';
         $tab = undef;
+    };
+
+###subs_fig
+    my $fig_env = sub { $tab_val->('fig_env') || $d->{fig_env} || 'figure'; };
+    my $fig_start = sub { 
+        my @s;
+        my $fe = $fig_env->();
+		for($fe){
+        	/^(figure)/ && do {
+	            push @s,
+	                q|\begin{figure}[ht] |, 
+	                q|  \centering |;
+				last;
+        	};
+        	/^(wrapfigure)/ && do {
+				push @s, sprintf(q/\begin{%s}{R}{%s}/,$fe,$get_width->() );
+				last;
+			};
+
+			last;
+		}
+
+        return @s;
+    };
+    my $fig_end = sub {
+        my @e;
+        my $fe = $fig_env->();
+        push @e, sprintf(q|\end{%s}|,$fe);
+        return @e;
     };
 
     my $lnum = 0;
