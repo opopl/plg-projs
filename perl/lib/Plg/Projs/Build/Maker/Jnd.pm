@@ -130,7 +130,7 @@ sub cmd_jnd_compose {
     $img_width_default = 0.7;
 
 ###vars_$sec
-	my ($sec);
+    my ($sec);
 
 ###subs
     my $get_width = sub {
@@ -160,9 +160,9 @@ sub cmd_jnd_compose {
         m/^\s*%/ && $is_cmt && do { push @nlines,$_; next; };
 
 ###m_ii
-		m/^\s*%%\s*\\ii\{(.*)\}\s*$/ && do {
-			$sec = $1;
-		};
+        m/^\s*%%\s*\\ii\{(.*)\}\s*$/ && do {
+            $sec = $1;
+        };
 
         m/^\s*\\ifcmt/ && do { $is_cmt = 1; next; };
 ###m_\fi
@@ -357,31 +357,36 @@ sub cmd_jnd_compose {
 
 ###m_author_begin
         m/^\s*author_begin\b(.*)$/g && do { 
-			$d_author = {};
-			$proj;
-			$root;
-		};
+            $d_author = {};
+        };
 
+###m_author_end
         m/^\s*author_end\b(.*)$/g && do { 
-			$d_author = undef;
+            my $a_id = $d_author->{author_id};
+            next unless $a_id;
 
-			my $w = {
-				proj => $proj,
-				#sec => $sec,
-			};
+            my $w = {
+                author_id => $a_id,
+                proj      => $proj,
+                sec       => $sec,
+            };
+            my $dbh = $mkr->{bld}->{dbh};
             my ($rows, $cols, $q, $p) = dbh_select({
-                #dbh => $mkr->{dbh_img},
+                dbh => $dbh,
                 q   => q{ SELECT img, caption, url FROM imgs },
                 p   => [],
                 #w   => $w,
             });
-		};
+
+            $d_author = undef;
+        };
 
         if ($d_author) {
-        	m/^\s*(\w+)\s+(\w+)$/g && do { 
-				$d_author->{$1} = $2;
-			};
-		}
+            m/^\s*(\w+)\s+(\w+)\s*$/g && do { 
+                $d_author->{$1} = $2;
+                next;
+            };
+        }
 
 ###m_tab_begin
         m/^\s*tab_begin\b(.*)$/g && do { 
