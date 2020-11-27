@@ -17,6 +17,12 @@ function! projs#zlan#zo#add ()
   let rootid = projs#rootid()
   let proj   = projs#proj#name()
 
+  let zdata = projs#zlan#data()
+  let l = keys(zdata)
+  echo zdata
+  "call base#buf#open_split({ 'lines' : l })
+  return
+
   let prefix = printf('[ rootid: %s, proj: %s ]',rootid, proj)
 
   let keys = base#varget('projs_zlan_keys',[])
@@ -37,6 +43,5 @@ function! projs#zlan#zo#add ()
     endif
   endfor
 
-  let zdata = projs#zlan#data()
   
 endfunction
