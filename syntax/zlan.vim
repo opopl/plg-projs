@@ -18,6 +18,9 @@ endif
 
 syntax keyword zlanKeyword page url title in 
 
+syn match	zlanComment	"^#.*"
+
 highlight link zlanKeyword Keyword
+highlight def link zlanComment	Comment
 
 let b:current_syntax = "zlan"
