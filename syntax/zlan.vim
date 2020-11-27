@@ -18,7 +18,7 @@ endif
 
 syntax keyword zlanKeyword page url title in 
 
-syn match	zlanComment	"^#.*"
+syn match	zlanComment	"^\s*#.*$"
 
 highlight link zlanKeyword Keyword
 highlight def link zlanComment	Comment
