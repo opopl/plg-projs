@@ -721,6 +721,35 @@ function! projs#db#file_backup_flash ()
   return db_file_b
 endfunction
 
+if 0
+	usage
+		let [ rows_h, cols ] = projs#db#data_get()
+
+		let [ rows_h, cols ] = projs#db#data_get({
+			\	'proj' : proj,
+			\	})
+
+	call tree
+		called by
+endif
+
+function! projs#db#buf_data ()
+  let proj = exists('b:proj') ? b:proj : projs#proj#name()
+
+  let file = b:file
+  let file = fnamemodify(file,':t')
+
+  let r = { 
+    \ 'file' : file, 
+    \ 'proj' : proj 
+    \ }
+
+  let [ rows_h, cols ] = projs#db#data_get(r)
+  let row_h            = get(rows_h,0,{})
+
+	return row_h
+endif
+
 function! projs#db#data_get (...)
   let ref = get(a:000,0,{})
 
@@ -818,12 +847,12 @@ endfunction
 if 0
   
   call projs#db#update_col({ 
-    \ 'col'  : col,
-    \ 'val'  : new_val,
-    \ 'proj' : proj,
-    \ 'sec'  : sec,
-    \ 'dbfile'  : dbfile,
-    \ 'prompt'  : 1,
+    \ 'col'    : col,
+    \ 'val'    : new_val,
+    \ 'proj'   : proj,
+    \ 'sec'    : sec,
+    \ 'dbfile' : dbfile,
+    \ 'prompt' : 1,
     \ })
 endif
 

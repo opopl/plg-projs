@@ -394,6 +394,7 @@ function! projs#action#url_insert ()
 
 endfunction
 
+"""pa_url_fetch
 function! projs#action#url_fetch ()
     let proj = b:proj 
     let file = b:basename

@@ -50,6 +50,17 @@ eof
 
 endfunction
 
+"""pin_pauthor
+function! projs#insert#author_tex ()
+	let a_data    = projs#author#select()
+	
+	let lines = []
+
+	let author_id = get(a_data,'author_id','')
+	let author    = get(a_data,'author','')
+
+endfunction
+
 function! projs#insert#uri ()
   let url = input('url: ','')
 
@@ -63,17 +74,20 @@ function! projs#insert#uri ()
 
 endfunction
 
+"""pin_cmt_pic
 function! projs#insert#cmt_pic ()
-	let url     = input('url: ','')
-	let caption = input('caption: ','')
+	let url     = input('[pic] url: ','')
+	let caption = input('[pic] caption: ','')
+
 	let lines = []
 
 	call add(lines,'\ifcmt')
-	call add(lines,printf('	pic %s',url))
+	call add(lines,printf('	 pic %s',url))
 	if len(caption)
-		call add(lines,printf('	caption %s',caption))
+		call add(lines,printf('	 caption %s',caption))
 	endif
 	call add(lines,'\fi')
+	call append('.',lines)
 
 endfunction
 

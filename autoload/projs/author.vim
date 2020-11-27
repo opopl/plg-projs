@@ -90,6 +90,13 @@ function! projs#author#add_prompt (...)
 
 endfunction
 
+if 0
+	purpose
+		choose author data via command-line input
+	usage
+		let a_data = projs#author#select()
+endif
+
 function! projs#author#select ()
   let ids = projs#author#ids()
 
