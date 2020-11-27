@@ -23,12 +23,12 @@ function! projs#zlan#data ()
       let save = 1
     endif
 
-    if line =~ "^\t"
-      let save = 1
+    if line =~ '^\t'
       for k in zkeys
-        let pat = printf('^\t%s\s\+\zs.*\ze$', k)
+        let pat  = printf('^\t%s\s\+\zs.*\ze$', k)
         let list = matchlist(line, pat)
-        let v = get(list,0,'')
+        let v    = get(list,0,'')
+
         if len(v)
           call extend(d,{ k : v })
         endif

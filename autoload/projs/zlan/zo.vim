@@ -54,8 +54,9 @@ function! projs#zlan#zo#add ()
   call extend(d,{ 'host' : host })
 
   call extend(zdata,{ url : d })
+  let zorder = get(zdata,'order',[])
+  call add(zorder,url)
 
   call projs#zlan#save({ 'zdata' : zdata })
-
   
 endfunction
