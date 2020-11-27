@@ -40,21 +40,16 @@ function! projs#zlan#data ()
           call extend(d,{ k : v })
         endif
       endfor
-        "Same as |match()|, but return a |List|.  The first item in the
-        "list is the matched string, same as what matchstr() would
-        "return.  Following items are submatches, like "\1", "\2", etc.
-        "in |:substitute|.  When an optional submatch didn't match an
-        "empty string is used.  Example: 
-        "echo matchlist('acd', '\(a\)\?\(b\)\?\(c\)\?\(.*\)')
-        "Results in: ['acd', 'a', '', 'c', 'd', '', '', '', '', '']
-        "When there is no match an empty list is returned.
-        "
-        "Can also be used as a |method|: >
-        "GetList()->matchlist('word')
-      
     endif
   endfor
 
   return zdata
   
+endfunction
+
+function! projs#zlan#save (...)
+  let ref = get(a:000,0,{})
+
+  let zdata = get(ref,'zdata',{})
+
 endfunction

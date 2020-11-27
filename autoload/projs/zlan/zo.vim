@@ -19,9 +19,6 @@ function! projs#zlan#zo#add ()
 
   let zdata = projs#zlan#data()
   let l = keys(zdata)
-  echo zdata
-  "call base#buf#open_split({ 'lines' : l })
-  return
 
   let prefix = printf('[ rootid: %s, proj: %s ]',rootid, proj)
 
