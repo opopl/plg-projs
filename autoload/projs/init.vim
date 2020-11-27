@@ -188,6 +188,9 @@ function! projs#init#cmds (...)
 """PrjNew
   command! -nargs=* -complete=custom,projs#complete            PrjNew
     \ call projs#new(<f-args>) 
+
+  command! -nargs=* -complete=custom,projs#complete#ZLAN            ZLAN
+    \ call projs#zlan(<f-args>) 
   
 """PrjPdf
   command! -nargs=* -complete=custom,projs#complete#prjpdf     PrjPdf

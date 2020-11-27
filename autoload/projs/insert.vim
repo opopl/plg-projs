@@ -192,11 +192,18 @@ function! projs#insert#ii ()
     let do_ii = input('Section already here, insert? (1/0):',0)
   endif
 
-  if do_ii
-    let lines = []
-    call add(lines,printf('\ii{%s}',ii_sec))
-		call append('$',lines)
-  endif
+	if !do_ii | return | endif
+
+  let lines = []
+  call add(lines,printf('\ii{%s}',ii_sec))
+	call append('.',lines)
+
+ 	let r_new = {
+      \  }
+
+  call projs#sec#new(ii_sec,r_new)
+  call base#tg#update('projs_this')
+
 
 endfunction
 
