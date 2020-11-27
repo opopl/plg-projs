@@ -52,6 +52,15 @@ endfunction
 
 """pin_pauthor
 function! projs#insert#author_tex ()
+
+	let db_buf_data = projs#db#buf_data()
+	let author_id   = get(db_buf_data,'author_id','')
+
+	let lines = []
+	if len(author_id)
+		<++>
+	endif
+
 	let a_data    = projs#author#select()
 	
 	let lines = []

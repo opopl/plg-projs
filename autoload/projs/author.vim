@@ -30,6 +30,14 @@ function! projs#author#file (...)
 
 endfunction
 
+function! projs#author#tex_cmt (...)
+	let lines = []
+
+	call add(lines,'\ifcmt')
+	call add(lines,'\fi')
+
+endfunction
+
 function! projs#author#add (...)
   let ref = get(a:000,0,{})
 

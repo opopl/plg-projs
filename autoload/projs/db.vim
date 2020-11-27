@@ -748,7 +748,7 @@ function! projs#db#buf_data ()
   let row_h            = get(rows_h,0,{})
 
 	return row_h
-endif
+endf
 
 function! projs#db#data_get (...)
   let ref = get(a:000,0,{})
