@@ -17,25 +17,14 @@ function! projs#zlan#data ()
 
   while len(lines) 
     let line = remove(lines,0)
+    let save = 0
 
-    if line =~ '^page'
-      let url = get(copy(d),'url','')
-      if len(url)
-        unlet d.url
-        call add(zorder,url)
+    if ((line =~ '^page') || !len(lines))
+      let save = 1
+    endif
 
-        let dd = copy(d)
-
-        let struct = base#url#struct(url)
-        let host   = get(struct,'host','')
-
-        call extend(dd,{ 'host' : host })
-
-        call extend(zdata,{ url : dd })
-      endif
-      let d = {}
-
-    elseif line =~ '^\t'
+    if line =~ "^\t"
+      let save = 1
       for k in zkeys
         let pat = printf('^\t%s\s\+\zs.*\ze$', k)
         let list = matchlist(line, pat)
@@ -44,6 +33,24 @@ function! projs#zlan#data ()
           call extend(d,{ k : v })
         endif
       endfor
+    endif
+
+    if save
+      let url = get(copy(d),'url','')
+      if len(url)
+        unlet d.url
+        call add(zorder,url)
+  
+        let dd = copy(d)
+  
+        let struct = base#url#struct(url)
+        let host   = get(struct,'host','')
+  
+        call extend(dd,{ 'host' : host })
+  
+        call extend(zdata,{ url : dd })
+      endif
+      let d = {}
     endif
 
   endw
