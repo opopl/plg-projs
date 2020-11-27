@@ -51,22 +51,20 @@ eof
 endfunction
 
 """pin_pauthor
-function! projs#insert#author_tex ()
+function! projs#insert#cmt_author ()
 
 	let db_buf_data = projs#db#buf_data()
 	let author_id   = get(db_buf_data,'author_id','')
 
-	let lines = []
-	if len(author_id)
-		<++>
+	if !len(author_id)
+		let a_data    = projs#author#select()
+	
+		let author_id = get(a_data,'author_id','')
+		let author    = get(a_data,'author','')
 	endif
 
-	let a_data    = projs#author#select()
-	
-	let lines = []
-
-	let author_id = get(a_data,'author_id','')
-	let author    = get(a_data,'author','')
+	let lines = projs#cmt#author({ 'author_id' : author_id })
+	call append('.',lines)
 
 endfunction
 
