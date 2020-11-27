@@ -33,7 +33,9 @@ function! projs#zlan#zo#add ()
       let d[k] = input(msg,'')
 
 	    if k == 'url'
-	      " code
+        if !len(d[k])
+          continue
+        endif
 	    endif
 
       break
