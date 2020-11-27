@@ -1666,8 +1666,6 @@ function! projs#zlan (...)
 
 endfunction
 
-endfunction
-
 function! projs#git (...)
     call projs#rootcd()
     

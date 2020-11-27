@@ -95,6 +95,10 @@ function! projs#complete#prjact (...)
    return projs#complete#vars([ 'opts_PrjAct' ])
 endfunction
 
+function! projs#complete#ZLAN (...)
+   return projs#complete#vars([ 'opts_ZLAN' ])
+endfunction
+
 function! projs#complete#author_ids (...)
 	let ids = projs#db#author_ids()
 	let comps = []
