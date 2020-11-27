@@ -19,7 +19,8 @@ function! projs#zlan#zo#add ()
 
   let prefix = printf('[ rootid: %s, proj: %s ]',rootid, proj)
 
-  let keys = base#qw('url title in ii')
+  let keys = base#varget('projs_zlan_keys',[])
+
   let d = {}
   for k in keys
     let d[k] = input(printf('%s %s: ',prefix,k),'')

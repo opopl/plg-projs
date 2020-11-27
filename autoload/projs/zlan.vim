@@ -6,7 +6,7 @@ function! projs#zlan#import ()
 	let zdata = {}
 
 	let flags = {}
-	let d = {}
+	let d     = {}
 
 	for line in lines
 		if line =~ '^page'
@@ -15,6 +15,8 @@ function! projs#zlan#import ()
 				unlet d.url
 				call extend(zdata,{ url : copy(d) })
 			endif
+
+		elseif line =~ '^\t'
 		endif
 	endfor
 	
