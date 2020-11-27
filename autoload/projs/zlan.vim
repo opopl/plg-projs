@@ -15,7 +15,9 @@ function! projs#zlan#data ()
 
   let zkeys = base#varget('projs_zlan_keys',[])
 
-  for line in lines
+  while len(lines) 
+    let line = remove(lines,0)
+
     if line =~ '^page'
       let url = get(copy(d),'url','')
       if len(url)
@@ -43,7 +45,8 @@ function! projs#zlan#data ()
         endif
       endfor
     endif
-  endfor
+
+  endw
 
   call extend(zdata,{ 'order' : zorder })
 

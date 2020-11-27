@@ -35,12 +35,12 @@ function! projs#zlan#zo#add ()
       let d[k] = input(msg_head . msg,'')
       let msg_head = ''
 
-	    if k == 'url'
+      if k == 'url'
         if !len(d[k])
           let msg_head = "Non-zero URL required\n"
           continue
         endif
-	    endif
+      endif
 
       break
     endw
