@@ -26,14 +26,18 @@ function! projs#zlan#zo#add ()
 
   let d = {}
   for k in keys
-    let msg = printf('%s %s: ',prefix,k)
 
     let keep = 1
+    let msg = printf('%s %s: ',prefix,k)
+    let msg_head = ''
+
     while keep
-      let d[k] = input(msg,'')
+      let d[k] = input(msg_head . msg,'')
+      let msg_head = ''
 
 	    if k == 'url'
         if !len(d[k])
+          let msg_head = "Non-zero URL required\n"
           continue
         endif
 	    endif
@@ -44,6 +48,14 @@ function! projs#zlan#zo#add ()
 
   let url = get(copy(d),'url','')
   unlet d.url
+
+  let struct = base#url#struct(url)
+  let host = get(struct,'host','')
+  call extend(d,{ 'host' : host })
+
+  call extend(zdata,{ url : d })
+
+  call projs#zlan#save({ 'zdata' : zdata })
 
   
 endfunction

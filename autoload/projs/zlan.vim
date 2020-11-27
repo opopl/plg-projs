@@ -68,12 +68,20 @@ function! projs#zlan#save (...)
     if len(d)
       call add(zlines,'page')
       for k in zkeys
-        let v = get(d,k,'')
-        call add(zlines,"\t" . k . ' ' . v)
+        let v = ''
+        if k == 'url'
+          let v = url
+        else
+          let v = get(d,k,'')
+        endif
+
+        if len(v)
+          call add(zlines,"\t" . k . ' ' . v)
+        endif
       endfor
     endif
   endfor
 
-  call writefile(lines,zfile)
+  call writefile(zlines,zfile)
 
 endfunction
