@@ -50,7 +50,8 @@ function! projs#zlan#zo#add ()
   unlet d.url
 
   let struct = base#url#struct(url)
-  let host = get(struct,'host','')
+  let host   = get(struct,'host','')
+
   call extend(d,{ 'host' : host })
 
   call extend(zdata,{ url : d })
@@ -58,5 +59,6 @@ function! projs#zlan#zo#add ()
   call add(zorder,url)
 
   call projs#zlan#save({ 'zdata' : zdata })
+  call base#rdw_printf(['added ZLAN entry ' ],'MoreMsg')
   
 endfunction

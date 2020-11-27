@@ -16,7 +16,7 @@ endif
 "hi def link confTodo	Todo
 "hi def link confString	String
 
-syntax keyword zlanKeyword page url title in 
+syntax keyword zlanKeyword page url title in ii
 
 syn match	zlanComment	"^\s*#.*$"
 
