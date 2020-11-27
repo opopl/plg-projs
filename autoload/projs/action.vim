@@ -1441,7 +1441,7 @@ function! projs#action#html_out_view ()
   call projs#html_out#view ()
 endfunction
 
-
+"""pa_get_img
 function! projs#action#get_img ()
   let pl   = base#qw#catpath('plg projs scripts bufact tex get_img.pl')
 
@@ -1460,8 +1460,13 @@ function! projs#action#get_img ()
     if filereadable(a:temp_file) 
       let out  = readfile(a:temp_file)
       let last = get(out,-1,'')
-      if last =~ 'SUCCESS:\s\+\(\d\+\)\s\+images' || last =~ 'NO IMAGES'
+
+      if last =~ 'SUCCESS:\s\+\(\d\+\)\s\+images' 
         call base#rdw(last)
+
+      elseif last =~ 'NO IMAGES'
+        call base#rdw(last,'Conditional')
+
       else
         call base#rdwe(last)
         call base#buf#open_split({ 'lines' : out })
