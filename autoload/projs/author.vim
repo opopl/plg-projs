@@ -83,15 +83,10 @@ function! projs#author#add_prompt (...)
 
 	let author_id = get(ref,'a_id','')
 
-  let firstname = input('[Add Author] First Name: ','')
-  let surname   = input('[Add Author] SurName: ','')
-
-	let author = ''
-  if len(firstname) && len(surname)
-    let author    = join([surname, firstname], ',')
-
+  let author = input(printf('[rootid: %s, Add Author] Surname, Firstname: ',projs#rootid()),'')
+  if len(author)
     call projs#author#add({ 'a' : author, 'a_id' : author_id })
-    echo printf('Added author: %s => %s',author_id, author)
+    echo printf('[rootid: %s] Added author: %s => %s',projs#rootid(), author_id, author)
   endif
 
 	return author
