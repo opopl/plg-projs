@@ -3,7 +3,7 @@ function! projs#zlan#zo#view ()
   let zfile = projs#sec#file('_zlan_')
 
   call base#fileopen({ 
-    \ 'files'    : [zfile] ,
+    \ 'files'    : [ zfile ],
     \ 'load_buf' : 1,
     \ })
   
@@ -36,5 +36,7 @@ function! projs#zlan#zo#add ()
       call add(lines,"\t". k . ' ' . v)
     endif
   endfor
+
+  let zdata = projs#zlan#data()
   
 endfunction
