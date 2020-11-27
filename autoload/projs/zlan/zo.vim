@@ -26,19 +26,22 @@ function! projs#zlan#zo#add ()
 
   let d = {}
   for k in keys
-    let d[k] = input(printf('%s %s: ',prefix,k),'')
+    let msg = printf('%s %s: ',prefix,k)
+
+    let keep = 1
+    while keep
+      let d[k] = input(msg,'')
+
+	    if k == 'url'
+	      " code
+	    endif
+
+      break
+    endw
   endfor
 
-  let zfile = projs#sec#file('_zlan_')
-
-  let lines = []
-  call add(lines,'page')
-  for k in keys
-    let v = get(d,k,'')
-    if len(v)
-      call add(lines,"\t". k . ' ' . v)
-    endif
-  endfor
+  let url = get(copy(d),'url','')
+  unlet d.url
 
   
 endfunction
