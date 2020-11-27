@@ -175,6 +175,33 @@ function! projs#insert#t_file ()
 
 endfunction
 
+"""pin_ii
+function! projs#insert#ii ()
+  let proj = projs#proj#name()
+
+  let sec  = projs#buf#sec()
+
+  let ii_prefix = printf('%s.', sec)
+
+	let comps = []
+  call base#varset('this',comps)
+  let ii_sec = input('ii_sec name: ',ii_prefix,'custom,base#complete#this')
+
+  let do_ii = 1
+  if projs#buf#ii_has(sec)
+    let do_ii = input('Section already here, insert? (1/0):',0)
+  endif
+
+  if do_ii
+    let lines = []
+    call add(lines,printf('\ii{%s}',ii_sec))
+		call append('$',lines)
+  endif
+
+endfunction
+
+
+"""pin_ii_url
 function! projs#insert#ii_url ()
   let proj = projs#proj#name()
 
@@ -275,8 +302,6 @@ function! projs#insert#ii_url ()
   if projs#buf#ii_has(sec)
     let do_ii = input('Section already here, insert? (1/0):',0)
   endif
-
-
 
   if do_ii
     let lines = []
