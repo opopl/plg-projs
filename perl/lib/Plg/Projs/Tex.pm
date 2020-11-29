@@ -177,11 +177,11 @@ sub rpl_quotes {
             next;
         };
 
-		( grep { /^$c$/ } keys %br ) && do {
+		( grep { /^\Q$c\E$/ } keys %br ) && do {
       		push @n, $start;
 			next;
 		};
-		( grep { /^$c$/ } values %br ) && do {
+		( grep { /^\Q$c\E$/ } values %br ) && do {
       		push @n, $end;
 			next;
 		};
