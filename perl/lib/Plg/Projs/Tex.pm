@@ -186,12 +186,6 @@ sub rpl_quotes {
 			next;
 		};
 
-		for (keys %br){
-	        /"/ && do {
-	            next C;
-	        };
-		}	
-
         push @n, $_;
     }
 
