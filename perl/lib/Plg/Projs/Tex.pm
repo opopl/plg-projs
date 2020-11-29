@@ -155,13 +155,18 @@ sub rpl_quotes {
     my @c  = split("" => $s);
     my %is = ( qq => 0, q => 0 );
     my @n;
+
+	my $push_qq = sub {
+      $is{qq} ^= 1;
+
+      push @n, $start if $is{qq};
+      push @n, $end unless $is{qq};
+	};
+
     while (@c) {
         local $_ = shift @c;
         /"/ && do {
-            $is{qq} ^= 1;
-
-            push @n, $start if $is{qq};
-            push @n, $end unless $is{qq};
+			$push_qq->();
             next;
         };
 
