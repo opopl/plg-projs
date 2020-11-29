@@ -163,12 +163,34 @@ sub rpl_quotes {
       push @n, $end unless $is{qq};
 	};
 
-    while (@c) {
+	# opening/closing quotes
+	my %br = (
+		q{“} => q{”}
+	);
+
+	C: while (@c) {
         local $_ = shift @c;
+		my $c = $_;
+
         /"/ && do {
 			$push_qq->();
             next;
         };
+
+		( grep { /^$c$/ } keys %br ) && do {
+      		push @n, $start;
+			next;
+		};
+		( grep { /^$c$/ } values %br ) && do {
+      		push @n, $end;
+			next;
+		};
+
+		for (keys %br){
+	        /"/ && do {
+	            next C;
+	        };
+		}	
 
         push @n, $_;
     }
