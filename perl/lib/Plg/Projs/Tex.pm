@@ -6,6 +6,9 @@ use warnings;
 use utf8;
 
 use Data::Dumper qw(Dumper);
+use Base::String qw(
+	str_split
+);
 
 binmode STDOUT,':encoding(utf8)';
 
@@ -45,7 +48,7 @@ sub texify {
     my ($ss,$cmd,$s_start,$s_end) = @_;
 
     $cmd ||= 'rpl_quotes';
-    my @cmds; push @cmds, $cmd;
+    my @cmds; push @cmds, str_split($cmd);
 
     $s_start //= $l_start;
     $s_end //= $l_end;
@@ -203,10 +206,8 @@ sub rpl_verbs {
 sub rpl_special {
     local $_ = $s;
 
-    s/\b_\b/\\_/g;
     s/_/\\_/g;
     s/%/\\%/g;
-    s/(\s+)\\(\s+)/$1\\verb|\\|$2/g;
 
     $s = $_;
 }
