@@ -137,7 +137,7 @@ sub _back {
     @center = split("\n",$s);
     @split = (@before,@center,@after);
 
-    $s_full = join("\n",@split) . "\n";
+    $s_full = join("\n",@split);
 
     if (ref $ss eq 'SCALAR'){
         $$ss = $s_full;
