@@ -926,6 +926,8 @@ function! projs#maps (...)
             \  ';bl'   : 'BLD last_compile'  ,
             \  ';e'    : 'PrjAct edt'  ,
             \  ';gi'   : 'PrjAct get_img'  ,
+            \  ';kr'   : 'KEYMAP russian_jcukenwin'  ,
+            \  ';ku'   : 'KEYMAP ukrainian_jcuken'  ,
             \  '<F2>'  : 'PrjBuild Cleanup'    ,
             \  '<F3>'  : 'copen'               ,
             \  '<F4>'  : 'cclose'              ,
