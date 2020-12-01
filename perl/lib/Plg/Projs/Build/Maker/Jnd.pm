@@ -171,8 +171,14 @@ sub cmd_jnd_compose {
     };
 
 ###subs_fig
-    my $fig_env = sub { $tab_val->('fig_env') || $d->{fig_env} || 'figure'; };
-    my $fig_start = sub { 
+    my ($fig_env, $fig_start, $fig_end, $fig_skip);
+
+    $fig_env = sub { $tab_val->('fig_env') || $d->{fig_env} || 'figure'; };
+
+###sub_fig_start
+    $fig_start = sub { 
+        return () if $fig_skip->();
+
         my @s;
         my $fe = $fig_env->();
         for($fe){
@@ -192,11 +198,19 @@ sub cmd_jnd_compose {
 
         return @s;
     };
-    my $fig_end = sub {
+###sub_fig_end
+    $fig_end = sub {
         my @e;
+        return () if $fig_skip->();
+
         my $fe = $fig_env->();
         push @e, sprintf(q|\end{%s}|,$fe);
         return @e;
+    };
+
+    $fig_skip = sub {
+        my $t = $d->{type} || '';
+        (grep { /^$t$/ } qw(ig)) ? 1 : 0;
     };
 
     my $lnum = 0;
@@ -480,20 +494,17 @@ sub cmd_jnd_compose {
 
 
         while(1){
-###m_pic
-            m/^\s*(pic|doc)\s+(.*)$/g && do { 
+###m_pic_doc_ig
+            m/^\s*(pic|doc|ig)\s+(.*)$/g && do { 
                 $push_d_reset->();
 
                 $is_img = 1;
 
                 $url = $2;
                 $d = { url => $url };
-                if ($1 eq 'doc') {
-                    $d->{type} = 'doc';
-                }
+                $d->{type} = $1;
                 last; 
             };
-
 
 ###if_is_img
             if ($is_img) {
