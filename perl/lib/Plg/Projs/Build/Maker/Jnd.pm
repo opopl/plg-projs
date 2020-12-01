@@ -138,14 +138,15 @@ sub cmd_jnd_compose {
 ###vars_$sec
     my ($sec);
 
-
-
 ###subs
-    my $get_width = sub {
+    my ($get_width, $get_width_tex);
+    my ($push_d, $push_d_reset, $set_null, $tex_caption);
+
+    $get_width = sub {
        $d->{width} || $tab_val->('width') || $img_width_default;
     };
 
-    my $get_width_tex = sub {
+    $get_width_tex = sub {
         my $w = $get_width->();
         for($w){
             /^(\d+(?:|\.\d+))$/ && do {
@@ -156,14 +157,14 @@ sub cmd_jnd_compose {
         return $w;
     };
 
-    my $push_d = sub { push @data, $d if keys %$d; };
-    my $push_d_reset = sub { $push_d->(); $d = {}; };
+    $push_d = sub { push @data, $d if keys %$d; };
+    $push_d_reset = sub { $push_d->(); $d = {}; };
 
-    my $tex_caption = sub { 
+    $tex_caption = sub { 
         $caption ? ( sprintf(q| \caption{%s} |, $caption ) ) : ();
     };
 
-    my $set_null = sub {
+    $set_null = sub {
         @fig = ();
         $d = {};
         $caption = '';
@@ -208,6 +209,7 @@ sub cmd_jnd_compose {
         return @e;
     };
 
+###sub_fig_skip
     $fig_skip = sub {
         my $t = $d->{type} || '';
         (grep { /^$t$/ } qw(ig)) ? 1 : 0;
