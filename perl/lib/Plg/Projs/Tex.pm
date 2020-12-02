@@ -150,8 +150,8 @@ sub _back {
 sub rpl_quotes {
     my ($cmd) = @_;
 
-    #$cmd ||= 'enquote';
-    $cmd ||= 'zqq';
+	$cmd ||= 'enquote';
+    #$cmd ||= 'zqq';
     my $start = sprintf(q|\%s{|,$cmd);
     my $end   = q|}|;
 
