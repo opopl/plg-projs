@@ -14,7 +14,7 @@ use File::Slurp::Unicode;
 use File::Path qw(mkpath);
 
 use Plg::Projs::Tex qw(
-	texify
+    texify
 );
 
 use File::Dat::Utils qw(readarr);
@@ -120,10 +120,10 @@ sub _join_lines {
 ###pat_sect
         m/$pats->{sect}/ && do {
             $sect = $1;
-			my $title = $2;
-			texify(\$title);
+            my $title = $2;
+            texify(\$title);
 
-			s|$pats->{sect}|\\$1\{$title\}|g;
+            s|$pats->{sect}|\\$1\{$title\}|g;
 
             $mkr->_line_process_pat_sect({ 
                sect    => $sect,

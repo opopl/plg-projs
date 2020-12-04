@@ -537,6 +537,7 @@ sub load_file {
             img  => $img,
             sec  => $sec,
         };
+
         unless(-e $img_file){
             print qq{DOWNLOAD FAIL: $img} . "\n";
             push @fail, $dd;
@@ -547,6 +548,8 @@ sub load_file {
         }
 
         my $itp = image_type($img_file) || {};
+        my $iif = image_info($img_file) || {};
+
         my $ft  = lc( $itp->{file_type} || '');
         $ft = 'jpg' if $ft eq 'jpeg';
 
