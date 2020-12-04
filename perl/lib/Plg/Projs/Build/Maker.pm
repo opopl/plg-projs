@@ -300,7 +300,7 @@ sub _cmd_tex {
         '-file-line-error',
     ];
 
-	#print qq{[RunTex] run tex_exe #$tex_count} . "\n";
+    #print qq{[RunTex] run tex_exe #$tex_count} . "\n";
 
     my $proj    = $mkr->{proj};
 
@@ -389,9 +389,9 @@ sub cmd_json_out_runtex {
     my $json_file = catfile($mkr->{src_dir},'run_tex.json');
 
     my $h = {
-		bld => {
-        	ind => $bld->_bld_ind,
-		},
+        bld => {
+            ind => $bld->_bld_ind,
+        },
         proj         => $bld->{proj},
         root         => $bld->{root},
         root_id      => $bld->{root_id},
@@ -399,6 +399,15 @@ sub cmd_json_out_runtex {
 
     my $j_data = $coder->encode($h);
     write_file($json_file,$j_data);
+
+    return $mkr;
+}
+
+sub cmd_print_ii_include {
+    my ($mkr) = @_;
+
+    my @include = $mkr->_ii_include;
+    print qq{$_} . "\n" for(@include);
 
     return $mkr;
 }
@@ -444,7 +453,7 @@ sub create_bat_in_src {
                 'rm *.mtc*',
                 'rm *.maf*',
                 'rm *.ptc*',
-				# htlatex
+                # htlatex
                 'rm *.4tc',
                 'rm *.4ct',
                 'rm *.mw',
@@ -615,14 +624,16 @@ sub run_cmd {
     my $cmd = $ref->{cmd} || $mkr->{cmd};
 
     if ($cmd) {
-        my $sub = 'cmd_'.$cmd;
-        if ($mkr->can($sub)) {
-            $mkr->$sub;
-        }else{
-            warn "No command defined: " . $cmd . "\n";
-            exit 1;
+        unless (ref $cmd) {
+            my $sub = 'cmd_' . $cmd;
+            if ($mkr->can($sub)) {
+                $mkr->$sub;
+            }else{
+                warn "[Maker] No command defined: " . $cmd . "\n";
+                exit 1;
+            }
+            exit 0;
         }
-        exit 0;
     }
 
     return $mkr;

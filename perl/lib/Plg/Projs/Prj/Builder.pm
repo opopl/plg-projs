@@ -45,12 +45,13 @@ sub inj_base {
     my $h = {
         trg_list => [qw( usual )],
         maps_act => {
-            'compile_pwg' => 'build_pwg',
-            'compile'     => 'jnd_build',
-            'join'        => 'jnd_compose',
-            'show_trg'  => sub { $bld->act_show_trg; },
-            'show_acts' => sub { $bld->act_show_acts; },
-            'dump_bld'  => sub { $bld->act_dump_bld; },
+            'compile_pwg'      => 'build_pwg',
+            'compile'          => 'jnd_build',
+            'join'             => 'jnd_compose',
+            'show_trg'         => sub { $bld->act_show_trg; },
+            'show_acts'        => sub { $bld->act_show_acts; },
+            'dump_bld'         => sub { $bld->act_dump_bld; },
+            'print_ii_include' => 'print_ii_include',
         },
         act_default    => 'compile',
         target_default => 'usual',
@@ -177,6 +178,7 @@ sub print_help {
             perl $Script show_acts
             perl $Script dump_bld -d 'opts_maker sections' 
             perl $Script join
+            perl $Script print_ii_include
         DEBUG:
             perl -d $Script join
     } . "\n";
