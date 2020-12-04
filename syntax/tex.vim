@@ -15,12 +15,10 @@ endif
 "hi def link confComment	Comment
 "hi def link confTodo	Todo
 "hi def link confString	String
+"
+syntax region enQuote start=/\\enquote{/ skip=/[^{}]\+/ end=/}/
 
-syntax keyword zlanKeyword page url title in ii tags
+highlight link enQuote String
 
-syn match	zlanComment	"^\s*#.*$"
+let b:projs_current_syntax = "tex"
 
-highlight link zlanKeyword Keyword
-highlight def link zlanComment	Comment
-
-let b:projs_current_syntax = "zlan"
