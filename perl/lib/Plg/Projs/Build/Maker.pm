@@ -412,6 +412,24 @@ sub cmd_print_ii_include {
     return $mkr;
 }
 
+sub cmd_print_ii_exclude {
+    my ($mkr) = @_;
+
+    my @exclude = $mkr->_ii_exclude;
+    print qq{$_} . "\n" for(@exclude);
+
+    return $mkr;
+}
+
+sub cmd_print_ii_base {
+    my ($mkr) = @_;
+
+    my @include = $mkr->_ii_base;
+    print qq{$_} . "\n" for(@include);
+
+    return $mkr;
+}
+
 sub cmd_join {
     my ($mkr) = @_;
 

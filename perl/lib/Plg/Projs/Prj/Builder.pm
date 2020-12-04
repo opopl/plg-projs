@@ -42,6 +42,12 @@ use Plg::Projs::Build::Maker;
 sub inj_base {
     my ($bld) = @_;
 
+	my %print = map { my $a = 'print_' . $_; ( $a => $a ) } qw( 
+		ii_include 
+		ii_base 
+		ii_exclude 
+	);
+
     my $h = {
         trg_list => [qw( usual )],
         maps_act => {
@@ -51,7 +57,7 @@ sub inj_base {
             'show_trg'         => sub { $bld->act_show_trg; },
             'show_acts'        => sub { $bld->act_show_acts; },
             'dump_bld'         => sub { $bld->act_dump_bld; },
-            'print_ii_include' => 'print_ii_include',
+			%print,
         },
         act_default    => 'compile',
         target_default => 'usual',
