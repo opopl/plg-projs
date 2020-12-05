@@ -59,8 +59,9 @@ function! projs#bld#do#print_ii_tree ()
 	endif
 
   call projs#bld#run({
-      \ 'act'  : 'print_ii_tree',
-      \ 'opts' : opts,
+      \ 'act'        : 'print_ii_tree',
+      \ 'opts'       : opts,
+      \ 'skip_split' : 1,
       \ })
 
 endfunction

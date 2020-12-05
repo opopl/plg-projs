@@ -10,6 +10,13 @@ function! projs#bld#run_Fc (self, temp_file)
 
     let skip_split = get(self,'skip_split',0)
 
+    let s:obj = {}
+    function! s:obj.init (...) dict
+    endfunction
+    let Fc      = s:obj.init
+    let Fc      = get(self,'Fc',Fc)
+    let Fc_args = get(self,'Fc_args',[])
+
     let stl       = get(self,'stl',[])
   
     if !filereadable(a:temp_file)
@@ -23,13 +30,17 @@ function! projs#bld#run_Fc (self, temp_file)
     call extend(stl_add,stl)
     let cmds_after = [] 
 
-		if ! skip_split
-	    call base#buf#open_split({ 
-	      \  'lines'      : out,
-	      \  'stl_add'    : stl_add,
-	      \  'cmds_after' : cmds_after,
-	      \  })
-		endif
+    if ! skip_split
+      call base#buf#open_split({ 
+        \  'lines'      : out,
+        \  'stl_add'    : stl_add,
+        \  'cmds_after' : cmds_after,
+        \  })
+    endif
+
+    if type(Fc) == type(function('call'))
+      call call(Fc,Fc_args)
+    endif
 
 endfunction
 
@@ -55,6 +66,14 @@ function! projs#bld#input_path (...)
 
 endf
 
+""cmt
+if 0
+  call tree
+    called by
+      projs#bld#do#print_ii_tree
+endif
+""endcmt
+
 function! projs#bld#run (...)
   let ref  = get(a:000,0,{})
 
@@ -62,6 +81,8 @@ function! projs#bld#run (...)
   let opts = get(ref,'opts',[])
 
   let stl  = get(ref,'stl',[])
+
+  let Fc  = get(ref,'Fc','')
 
   let skip_split  = get(ref,'skip_split',0)
 
@@ -85,6 +106,7 @@ function! projs#bld#run (...)
     \ 'act'        : act,
     \ 'stl'        : stl,
     \ 'skip_split' : skip_split,
+    \ 'Fc'         : Fc,
     \ }
   
   function env.get(temp_file) dict
