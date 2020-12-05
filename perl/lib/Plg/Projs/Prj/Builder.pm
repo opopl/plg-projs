@@ -253,15 +253,35 @@ sub run_maker {
 sub read_in_file {
     my ($bld) = @_;
 
-	my $in_file = $bld->_opt_argv_('in_file','');
+    my $in_file = $bld->_opt_argv_('in_file','');
     return $bld unless ($in_file && -e $in_file);
 
-	my ($ext) = ( $in_file =~ m/\.(\w+)$/ );
-	for($ext){
-		/^ctl$/ && do {
-			my @lines = read_file $in_file;
-		};
-	}
+    my ($ext) = ( $in_file =~ m/\.(\w+)$/ );
+    for($ext){
+        /^ctl$/ && do {
+            my @lines = read_file $in_file;
+
+            my ($var_name, $var_type, %vars);
+            while(@lines){
+                local $_ = shift @lines;
+                chomp;
+
+                next if /^[\s\t]+#/;
+
+                /^list\s+(\w+)$/ && do {
+                    $var_type = 'list';
+                    $var_name = $1;
+                    next;
+                };
+
+                /^[\t]+(\w+)$/ && do {
+                    if ($var_type eq 'list') {
+                        $vars{$var_name} ||= [];
+                    }
+                };
+            }
+        };
+    }
 
     return $bld;
 }
