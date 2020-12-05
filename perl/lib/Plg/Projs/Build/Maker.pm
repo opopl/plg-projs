@@ -439,6 +439,7 @@ sub cmd_print_ii_base {
 sub cmd_print_ii_tree {
     my ($mkr) = @_;
 
+    $mkr->_join_lines;
 	print Dumper($mkr->{ii_tree}->{body}) . "\n";
 
     return $mkr;

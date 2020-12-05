@@ -6,6 +6,8 @@ use utf8;
 use strict;
 use warnings;
 
+use File::Slurp::Unicode;
+
 use XML::Hash::LX;
 use XML::Simple qw( XMLout XMLin );
 use Deep::Hash::Utils qw(reach);
@@ -83,6 +85,7 @@ sub init {
         ->inj_targets
         ->get_act
         ->get_opt
+        ->read_in_file
         ->set_target                            # set $bld->{target} from --target switch
         ->trg_load_xml({ 'target' => 'core' })  # load into targets/core 
         ->trg_load_xml                          # load into targets/$target
@@ -243,6 +246,22 @@ sub run_maker {
 
     local @ARGV = ();
     $m->run;
+
+    return $bld;
+}
+
+sub read_in_file {
+    my ($bld) = @_;
+
+	my $in_file = $bld->_opt_argv_('in_file','');
+    return $bld unless ($in_file && -e $in_file);
+
+	my ($ext) = ( $in_file =~ m/\.(\w+)$/ );
+	for($ext){
+		/^ctl$/ && do {
+			my @lines = read_file $in_file;
+		};
+	}
 
     return $bld;
 }
