@@ -248,12 +248,7 @@ sub _bld_ind_lines {
     return @lines;
 }
 
-sub _bld_var {
-    my ($bld, $var) = @_;
 
-    my $val = $bld->_val_('vars ' . $var) // '';
-    return $val;
-}
 
 sub _bld_env {
     my ($bld, $var) = @_;

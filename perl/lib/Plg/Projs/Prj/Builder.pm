@@ -24,6 +24,7 @@ use base qw(
     Plg::Projs::Prj::Builder::Sct
     Plg::Projs::Prj::Builder::Trg
     Plg::Projs::Prj::Builder::Txt
+    Plg::Projs::Prj::Builder::Var
 );
 
 use FindBin qw($Bin $Script);
@@ -163,6 +164,11 @@ sub print_help {
     print qq{
         LOCATION:
             $0
+        OPTIONS:
+			 -t --target TARGET
+			 -d --data DATA #TODO
+			 -c --config CONFIG e.g. 'xelatex'
+			 -i --in_file INFILE
         USAGE:
              perl $Script ACT 
              perl $Script ACT -t TARGET
@@ -214,6 +220,7 @@ sub get_opt {
         "config|c=s",
         "target|t=s",
         "data|d=s",
+        "in_file|i=s",
     );
 
     GetOptions(\%opt,@optstr);

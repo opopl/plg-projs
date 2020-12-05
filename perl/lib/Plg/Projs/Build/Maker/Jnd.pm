@@ -504,7 +504,9 @@ sub cmd_jnd_compose {
 
                 $url = $2;
                 $d = { url => $url };
-                $d->{type} = $1;
+
+				my $k = $1;
+				$d->{type} = $k;
                 last; 
             };
 

@@ -126,7 +126,7 @@ sub _trg_data {
 
     my $pl = xml2dict($dom, 
         attr    => '',
-        array   => [ qw( scts ) ],
+        array   => [ qw( scts vars ) ],
         txt_sub => sub {
             my ($txt_ref) = @_; 
             #$bld->_txt_expand({ txt_ref => $txt_ref });

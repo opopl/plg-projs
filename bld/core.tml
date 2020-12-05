@@ -2,7 +2,20 @@
 <bld>
   <tex_exe>pdflatex</tex_exe>
   <vars>
-    <pagestyle>fancy</pagestyle>
+    <var name="ii_base" >
+        titlepage
+        defs
+        listfigs 
+        listtabs
+        tabcont
+    </var>
+    <var name="ii_preamble" >
+      preamble.index 
+      preamble.packages 
+      preamble.acrobat_menu 
+      preamble.filecontents
+    </var>
+    <var name="pagestyle" value="fancy" />
   </vars>
   <decs>
     do_ind_titletoc
@@ -99,6 +112,8 @@
              titletoc
              xparse 
              p.core
+             p.fancyquote
+             <!--p.shadequote-->
              p.env
              p.rus
              p.secs

@@ -645,7 +645,7 @@ sub load_file {
 
         while(1){
 ###m_pic
-            m/^\s*(pic|doc)\s+(.*)$/g && do { 
+            m/^\s*(pic|doc|ig)\s+(.*)$/g && do { 
                 my $k = $1;
 
                 $push_d_reset->();
