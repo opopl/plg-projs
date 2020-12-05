@@ -436,7 +436,7 @@ sub load_file {
             });
         }
 
-		$self->info_ok_fail;
+        $self->info_ok_fail;
         return $self;
     }
     $file_bn = basename($file);
@@ -506,12 +506,16 @@ sub load_file {
         $img_file = catfile($img_root,$img);
     };
 
-	my $do_fetch = sub { 
-		((! -e $img_file) || $img_err) ? 1 : 0;
-	};
+###subs_$fetch_on
+    my ($fetch_on, $fetch, $fetch_i, $fetch_tries);
+
+    $fetch_tries = 3;
+    $fetch_on = sub { 
+        ((! -e $img_file) || $img_err) ? 1 : 0;
+    };
 
 ###subs_$fetch
-    my $fetch = sub {
+    $fetch = sub {
         my @subs = $self->_subs_url({ 
              url      => $url,
              img_file => $img_file,
@@ -531,7 +535,7 @@ sub load_file {
 
         $reload->() && (-e $img_file) && do { rmtree $img_file; };
 
-        while($do_fetch->()){
+        while($fetch_on->()){
             my $s  = shift @subs;
             my $ss = $s->();
         }
@@ -553,9 +557,16 @@ sub load_file {
 
         my $itp = image_type($img_file) || {};
         my $iif = image_info($img_file) || {};
-		
-		$img_err = $iif->{error};
-		print Dumper($iif) . "\n";
+        
+        $img_err = $iif->{error};
+        if ($img_err) {
+            print qq{IMAGE FAIL: $img} . "\n";
+            print qq{   $img_err} . "\n";
+        }else{
+            foreach my $k (qw(file_media_type)) {
+                print qq{   $k => } . $iif->{$k} . "\n" if $iif->{$k};
+            }
+        }
 
         my $ft  = lc( $itp->{file_type} || '');
         $ft = 'jpg' if $ft eq 'jpeg';
@@ -575,6 +586,7 @@ sub load_file {
 
         return 1;
     };
+###end_of_$fetch
 
     chdir $img_root;
 
@@ -709,11 +721,11 @@ sub info_ok_fail {
         print join("\n",@m) . "\n";
     }
 
-	unless (@ok || @fail) {
+    unless (@ok || @fail) {
         my @m; push @m, 
-			sprintf('NO IMAGES! %s',$self->{proj} ? 'proj: ' . $self->{proj} : '');
+            sprintf('NO IMAGES! %s',$self->{proj} ? 'proj: ' . $self->{proj} : '');
         print join("\n",@m) . "\n";
-	}
+    }
 
     # end of loop: LINES
     if (@fail) {
