@@ -442,10 +442,13 @@ sub cmd_print_ii_tree {
     my $file_tree = $mkr->_file_tree;
     my $tree = $mkr->{ii_tree} || {};
 
-    my $proj = $mkr->{proj};
+    my $proj    = $mkr->{proj};
+    my $root_id = $mkr->{root_id};
 
     my @lines;
     foreach my $sec (sort keys %$tree) {
+        next unless $sec;
+
         push @lines, $sec;
 
         my $d = $tree->{$sec};
@@ -464,7 +467,7 @@ sub cmd_print_ii_tree {
 
     my $f_bn = basename($file_tree);
 
-    print qq{[proj: $proj] Tree written to: $f_bn} . "\n";
+    print qq{[proj: $proj, root_id: $root_id] Tree written to: $f_bn} . "\n";
 
     return $mkr;
 }
