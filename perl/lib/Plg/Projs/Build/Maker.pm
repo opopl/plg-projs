@@ -232,6 +232,7 @@ sub init {
         out_dir_pdf     => catfile($pdfout, $root_id, $proj),
         dbfile          => catfile($root,'projs.sqlite'),
         cmd             => 'bare',
+		ii_tree         => {},			 # see _join_lines 
     };
 
     $mkr
@@ -403,6 +404,7 @@ sub cmd_json_out_runtex {
     return $mkr;
 }
 
+###print_ii_include
 sub cmd_print_ii_include {
     my ($mkr) = @_;
 
@@ -412,6 +414,7 @@ sub cmd_print_ii_include {
     return $mkr;
 }
 
+###print_ii_exclude
 sub cmd_print_ii_exclude {
     my ($mkr) = @_;
 
@@ -421,11 +424,22 @@ sub cmd_print_ii_exclude {
     return $mkr;
 }
 
+###print_ii_base
 sub cmd_print_ii_base {
     my ($mkr) = @_;
 
     my @include = $mkr->_ii_base;
     print qq{$_} . "\n" for(@include);
+
+    return $mkr;
+}
+
+
+###print_ii_tree
+sub cmd_print_ii_tree {
+    my ($mkr) = @_;
+
+	print Dumper($mkr->{ii_tree}->{body}) . "\n";
 
     return $mkr;
 }

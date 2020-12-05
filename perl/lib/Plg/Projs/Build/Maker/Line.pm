@@ -107,6 +107,7 @@ sub _line_process_pat_ii {
 
     $iall = ( grep { /^$ii_sec$/ } @$include_with_children ) ? 1 : $iall;
 
+###inc_ii_sec
     my $inc = $iall || ( !$iall && grep { /^$ii_sec$/ } @include )
         ? 1 : 0;
 

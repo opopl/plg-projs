@@ -43,11 +43,12 @@ use Plg::Projs::Build::Maker;
 sub inj_base {
     my ($bld) = @_;
 
-	my %print = map { my $a = 'print_' . $_; ( $a => $a ) } qw( 
-		ii_include 
-		ii_base 
-		ii_exclude 
-	);
+    my %print = map { my $a = $_; ( $a => $a ) } qw( 
+        print_ii_include 
+        print_ii_base 
+        print_ii_exclude 
+        print_ii_tree
+    );
 
     my $h = {
         trg_list => [qw( usual )],
@@ -58,7 +59,7 @@ sub inj_base {
             'show_trg'         => sub { $bld->act_show_trg; },
             'show_acts'        => sub { $bld->act_show_acts; },
             'dump_bld'         => sub { $bld->act_dump_bld; },
-			%print,
+            %print,
         },
         act_default    => 'compile',
         target_default => 'usual',
@@ -82,11 +83,11 @@ sub init {
         ->inj_targets
         ->get_act
         ->get_opt
-        ->set_target							# set $bld->{target} from --target switch
+        ->set_target                            # set $bld->{target} from --target switch
         ->trg_load_xml({ 'target' => 'core' })  # load into targets/core 
-        ->trg_load_xml 							# load into targets/$target
-        ->trg_apply('core')						# apply 'core' target data into $bld instance
-        ->trg_apply								# apply $target data into $bld instance
+        ->trg_load_xml                          # load into targets/$target
+        ->trg_apply('core')                     # apply 'core' target data into $bld instance
+        ->trg_apply                             # apply $target data into $bld instance
         ->process_config
         ->act_exe
         ->init_maker
@@ -156,7 +157,7 @@ sub print_help {
     my ($bld) = @_;
 
     my @acts   = $bld->_acts;
-    my $acts_s = join(" ",@acts);
+    my $acts_s = join("\n",map { (" "x13) . $_} sort @acts);
 
     my $trg_list   = $bld->{trg_list} || [];
     my $trg_list_s = join(" ",@$trg_list);
@@ -165,10 +166,10 @@ sub print_help {
         LOCATION:
             $0
         OPTIONS:
-			 -t --target TARGET
-			 -d --data DATA #TODO
-			 -c --config CONFIG e.g. 'xelatex'
-			 -i --in_file INFILE
+             -t --target TARGET
+             -d --data DATA #TODO
+             -c --config CONFIG e.g. 'xelatex'
+             -i --in_file INFILE
         USAGE:
              perl $Script ACT 
              perl $Script ACT -t TARGET
@@ -176,7 +177,7 @@ sub print_help {
              perl $Script ACT -c CONFIG -t TARGET
              perl $Script ACT -c CONFIG -t TARGET -d DATA
         ACTS:
-            $acts_s
+$acts_s
         TARGETS:
             $trg_list_s
         DEFAULT ACT:

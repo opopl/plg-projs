@@ -52,9 +52,12 @@ sub _txt_expand {
         #}
         #$_ = $s;
 
+###m_@var
         s/\@var\{(\w+)\}/$bld->_bld_var($1)/ge; 
+###m_@env
         s/\@env\{(\w+)\}/$bld->_bld_env($1)/ge; 
 
+###m_@ifdec
         /\@ifdec\{([^{}]+)\}/ && do {
             my $df = $1;
 
