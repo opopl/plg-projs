@@ -453,7 +453,7 @@ sub load_file {
     my %vars;
     my ($is_img, $is_cmt, $url);
     
-    my ($img_file, $img, $ext, $inum);
+    my ($img_file, $img, $img_err, $ext, $inum);
 
     my @data; my $d = {};
 
@@ -506,6 +506,10 @@ sub load_file {
         $img_file = catfile($img_root,$img);
     };
 
+	my $do_fetch = sub { 
+		((! -e $img_file) || $img_err) ? 1 : 0;
+	};
+
 ###subs_$fetch
     my $fetch = sub {
         my @subs = $self->_subs_url({ 
@@ -527,7 +531,7 @@ sub load_file {
 
         $reload->() && (-e $img_file) && do { rmtree $img_file; };
 
-        while(! -e $img_file){
+        while($do_fetch->()){
             my $s  = shift @subs;
             my $ss = $s->();
         }
@@ -549,6 +553,9 @@ sub load_file {
 
         my $itp = image_type($img_file) || {};
         my $iif = image_info($img_file) || {};
+		
+		$img_err = $iif->{error};
+		print Dumper($iif) . "\n";
 
         my $ft  = lc( $itp->{file_type} || '');
         $ft = 'jpg' if $ft eq 'jpeg';

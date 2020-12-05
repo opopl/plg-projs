@@ -3,17 +3,16 @@
   <tex_exe>pdflatex</tex_exe>
   <vars>
     <var name="ii_base" >
+        body preamble index bib
         titlepage
         defs
         listfigs 
         listtabs
         tabcont
-    </var>
-    <var name="ii_preamble" >
-      preamble.index 
-      preamble.packages 
-      preamble.acrobat_menu 
-      preamble.filecontents
+        preamble.index 
+        preamble.packages 
+        preamble.acrobat_menu 
+        preamble.filecontents
     </var>
     <var name="pagestyle" value="fancy" />
   </vars>

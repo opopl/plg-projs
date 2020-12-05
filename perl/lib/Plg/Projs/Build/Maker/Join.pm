@@ -17,6 +17,11 @@ use Plg::Projs::Tex qw(
     texify
 );
 
+use Base::String qw(
+    str_split
+    str_split_sn
+);
+
 use File::Dat::Utils qw(readarr);
 
 sub _file_joined {
@@ -296,20 +301,10 @@ sub _ii_exclude {
 sub _ii_base {
     my ($mkr) = @_;
 
-    my @base_preamble;
-    push @base_preamble,
-        map { sprintf('preamble.%s',$_) } 
-        qw( index packages acrobat_menu filecontents );
+    my $bld  = $mkr->{bld};
+    my $v    = $bld->_bld_var('ii_base');
+    my @base = str_split_sn($v);
 
-    my @base;
-    push @base,
-        qw( body preamble index bib ),
-        @base_preamble,
-        qw( titlepage ),
-        qw( defs ),
-        qw( listfigs listtabs ),
-        qw( tabcont ),
-        ;
     return @base;
 }
 
