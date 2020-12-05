@@ -232,7 +232,7 @@ sub init {
         out_dir_pdf     => catfile($pdfout, $root_id, $proj),
         dbfile          => catfile($root,'projs.sqlite'),
         cmd             => 'bare',
-		ii_tree         => {},			 # see _join_lines 
+        ii_tree         => {},           # see _join_lines 
     };
 
     $mkr
@@ -434,13 +434,37 @@ sub cmd_print_ii_base {
     return $mkr;
 }
 
-
 ###print_ii_tree
 sub cmd_print_ii_tree {
     my ($mkr) = @_;
 
     $mkr->_join_lines;
-	print Dumper($mkr->{ii_tree}->{body}) . "\n";
+    my $file_tree = $mkr->_file_tree;
+    my $tree = $mkr->{ii_tree} || {};
+
+    my $proj = $mkr->{proj};
+
+    my @lines;
+    foreach my $sec (sort keys %$tree) {
+        push @lines, $sec;
+
+        my $d = $tree->{$sec};
+        foreach my $k (qw( parents children )) {
+            my $a = $d->{$k};
+            next unless $a;
+            if (ref $a eq 'ARRAY') {
+                push @lines, 
+                    "\t" . $k,
+                    map { "\t\t" . $_ } @$a;
+            }
+        }
+    }
+
+    write_file($file_tree,join("\n",@lines) . "\n");
+
+    my $f_bn = basename($file_tree);
+
+    print qq{[proj: $proj] Tree written to: $f_bn} . "\n";
 
     return $mkr;
 }

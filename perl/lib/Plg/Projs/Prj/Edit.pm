@@ -91,6 +91,7 @@ sub _sub_edit_line_replace {
     my $self = shift;
 
     local $_ = shift;
+    return $_;
 
     s/(\s+)–(\s+)/$1---$2/g;
     s/(\s+)—(\s+)/$1---$2/g;

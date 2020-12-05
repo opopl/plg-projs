@@ -42,6 +42,7 @@ sub _file_joined {
 
 =cut
 
+###jlines
 sub _join_lines {
     my ($mkr, $sec, $ref) = @_;
 
@@ -59,8 +60,10 @@ sub _join_lines {
 
     my $file = $ref->{file} || '';
 
+    my $root    = $mkr->{root};
     my $root_id = $mkr->{root_id} || '';
     my $proj    = $ref->{proj} || $mkr->{proj};
+
 
     my @include = $mkr->_ii_include;
 
@@ -74,8 +77,6 @@ sub _join_lines {
 
     my $ss_insert = $ss->{insert} || {};
     my $line_sub  = $mkr->_val_('sections line_sub') || sub { shift };
-
-    my $root = $mkr->{root};
 
     chdir $root;
 
@@ -317,6 +318,14 @@ sub _ii_base {
     my @base = str_split_sn($v);
 
     return @base;
+}
+
+
+sub _file_tree {
+    my ($mkr) = @_;
+
+    my $file_tree = catfile($mkr->{root},$mkr->{proj} . '.tree');
+    return $file_tree;
 }
 
 sub _file_ii_exclude {
