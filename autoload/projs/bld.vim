@@ -5,8 +5,10 @@ function! projs#bld#run_Fc (self, temp_file)
 
     let code      = self.return_code
 
-    let act       = self.act
-    let proj      = self.proj
+    let act           = self.act
+    let proj          = self.proj
+
+    let skip_split = get(self,'skip_split',0)
 
     let stl       = get(self,'stl',[])
   
@@ -20,12 +22,14 @@ function! projs#bld#run_Fc (self, temp_file)
         \ ]
     call extend(stl_add,stl)
     let cmds_after = [] 
-    
-    call base#buf#open_split({ 
-      \  'lines'      : out,
-      \  'stl_add'    : stl_add,
-      \  'cmds_after' : cmds_after,
-      \  })
+
+		if ! skip_split
+	    call base#buf#open_split({ 
+	      \  'lines'      : out,
+	      \  'stl_add'    : stl_add,
+	      \  'cmds_after' : cmds_after,
+	      \  })
+		endif
 
 endfunction
 
@@ -59,6 +63,8 @@ function! projs#bld#run (...)
 
   let stl  = get(ref,'stl',[])
 
+  let skip_split  = get(ref,'skip_split',0)
+
   let proj = projs#proj#name()
   let root = projs#root()
 
@@ -73,11 +79,12 @@ function! projs#bld#run (...)
   let cmd = join(a, ' ' )
 
   let env = {
-    \ 'proj'    : proj,
-    \ 'root'    : root,
-    \ 'cmd'     : cmd,
-    \ 'act'     : act,
-    \ 'stl'     : stl,
+    \ 'proj'       : proj,
+    \ 'root'       : root,
+    \ 'cmd'        : cmd,
+    \ 'act'        : act,
+    \ 'stl'        : stl,
+    \ 'skip_split' : skip_split,
     \ }
   
   function env.get(temp_file) dict

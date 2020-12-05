@@ -438,7 +438,10 @@ sub cmd_print_ii_base {
 sub cmd_print_ii_tree {
     my ($mkr) = @_;
 
-    $mkr->_join_lines;
+    $mkr->_join_lines('_main_',{ 
+        ii_include_all => 1,
+    });
+
     my $file_tree = $mkr->_file_tree;
     my $tree = $mkr->{ii_tree} || {};
 
@@ -467,7 +470,7 @@ sub cmd_print_ii_tree {
 
     my $f_bn = basename($file_tree);
 
-    print qq{[proj: $proj, root_id: $root_id] Tree written to: $f_bn} . "\n";
+    #print qq{[proj: $proj, root_id: $root_id] Tree written to: $f_bn} . "\n";
 
     return $mkr;
 }
