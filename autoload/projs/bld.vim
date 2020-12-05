@@ -10,11 +10,7 @@ function! projs#bld#run_Fc (self, temp_file)
 
     let skip_split = get(self,'skip_split',0)
 
-    let s:obj = {}
-    function! s:obj.init (...) dict
-    endfunction
-    let Fc      = s:obj.init
-    let Fc      = get(self,'Fc',Fc)
+    let Fc      = get(self,'Fc','')
     let Fc_args = get(self,'Fc_args',[])
 
     let stl       = get(self,'stl',[])
@@ -98,6 +94,14 @@ function! projs#bld#run (...)
   call extend(a,opts)
 
   let cmd = join(a, ' ' )
+
+  let s:obj = { 'proj' : proj }
+  function! s:obj.init (...) dict
+    let proj = get(self,'proj','')
+    call base#rdw(printf('[proj: %s, rootid: %s] print_ii_tree', proj, projs#rootid() ))
+  endfunction
+  
+  let Fc = s:obj.init
 
   let env = {
     \ 'proj'       : proj,
