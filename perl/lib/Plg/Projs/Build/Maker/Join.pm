@@ -216,13 +216,22 @@ sub _join_lines {
     my @append = $mkr->_line_plus($sec,'append');
     push @lines, @append;
 
-    if ($sec eq '_main_') {
+    if ( ($sec eq '_main_') && (! $ref->{skip_write} )) {
         write_file($jfile,join("\n",@lines) . "\n");
     }
 
     return @lines;
 }
 # end _join_lines
+#
+
+sub _ii_only {
+    my ($mkr) = @_;
+
+    my @ii_only;
+
+    return @ii_only;
+}
 
 =head3 _ii_include
 

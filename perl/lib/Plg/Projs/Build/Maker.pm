@@ -440,6 +440,7 @@ sub cmd_print_ii_tree {
 
     $mkr->_join_lines('_main_',{ 
         ii_include_all => 1,
+        skip_write     => 1,
     });
 
     my $file_tree = $mkr->_file_tree;

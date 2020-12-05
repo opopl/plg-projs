@@ -89,12 +89,12 @@ sub init {
         ->inj_targets
         ->get_act
         ->get_opt
-        ->read_in_file
         ->set_target                            # set $bld->{target} from --target switch
         ->trg_load_xml({ 'target' => 'core' })  # load into targets/core 
         ->trg_load_xml                          # load into targets/$target
         ->trg_apply('core')                     # apply 'core' target data into $bld instance
         ->trg_apply                             # apply $target data into $bld instance
+        ->read_in_file
         ->process_config
         ->act_exe
         ->init_maker
@@ -288,7 +288,15 @@ sub read_in_file {
             }
             $bld->{ctl} ||= {}; 
             $bld->{ctl}->{vars} = \%vars; 
-            print Dumper($bld->{ctl}) . "\n";
+            while(my($k,$v)=each %vars){
+                if (ref $bld->{vars} eq 'ARRAY') {
+                    push @{$bld->{vars}}, { 
+                        name  => $k,
+                        value => $v,
+                    };
+                }
+            }
+            #print Dumper($bld->{ctl}) . "\n";
         };
     }
 
