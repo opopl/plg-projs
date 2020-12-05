@@ -26,9 +26,13 @@ function! projs#url#fb#data (...)
 
   let fb_authors = projs#data#dict({ 'id' : 'fb_authors' })
 
+  let path_a     = split(path,'/')
+  let path_front = get(path_a,0,'')
 
-  let path_a  = split(path,'/')
-  let fb_auth = get(path_a,0,'')
+  let fb_auth = path_front
+  if path_front =~ 'permalink.php'
+    let fb_auth = ''
+  endif
 
   let author_id = get(fb_authors,fb_auth,'')
 
@@ -38,7 +42,7 @@ function! projs#url#fb#data (...)
 
     let author = projs#author#get({ 'a_id' : author_id })
     if !len(author)
-			let author = projs#author#add_prompt({ 'a_id' : author_id })
+      let author = projs#author#add_prompt({ 'a_id' : author_id })
     endif
 
     call projs#facebook#add_author_id({ 

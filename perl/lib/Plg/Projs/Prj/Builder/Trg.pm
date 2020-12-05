@@ -36,7 +36,7 @@ use base qw(
 sub inj_targets {
     my ($bld) = @_;
 
-	$bld->trg_inj_core;
+  $bld->trg_inj_core;
 
     foreach my $trg ($bld->_trg_list) {
         my $sub = 'trg_inj_' . $trg;
@@ -116,6 +116,20 @@ sub _trg_dom_find {
 
 }
 
+=head3 _trg_data($ref)
+
+=head4 Usage
+
+=head4 Call tree
+
+  Called by
+    trg_load_xml
+  Calls
+	  _trg_dom
+	  xml2dict
+
+=cut
+
 sub _trg_data {
     my ($bld, $ref) = @_;
 
@@ -138,6 +152,17 @@ sub _trg_data {
     return $h_bld;
 }
 
+=head3 trg_load_xml($ref)
+
+=head4 Usage
+
+=head4 Call tree
+
+  _trg_data
+    _trg_dom
+    xml2dict
+
+=cut
 
 sub trg_load_xml {
     my ($bld, $ref) = @_;
