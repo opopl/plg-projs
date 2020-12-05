@@ -262,7 +262,7 @@ sub read_in_file {
 
     my ($ext) = ( $in_file =~ m/\.(\w+)$/ );
     for($ext){
-        /^ctl$/ && do {
+        /^zc$/ && do {
             my @lines = read_file $in_file;
 
             my ($var_name, $var_type, %vars);
@@ -286,6 +286,9 @@ sub read_in_file {
                     }
                 };
             }
+            $bld->{ctl} ||= {}; 
+            $bld->{ctl}->{vars} = \%vars; 
+            print Dumper($bld->{ctl}) . "\n";
         };
     }
 
