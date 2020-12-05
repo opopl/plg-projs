@@ -35,6 +35,10 @@ use Data::Dumper qw(Dumper);
 use File::Spec::Functions qw(catfile);
 use Getopt::Long qw(GetOptions);
 
+use Base::String qw(
+    str_split_sn
+);
+
 use Base::Arg qw(
     hash_update
     hash_inject
@@ -274,9 +278,11 @@ sub read_in_file {
                     next;
                 };
 
-                /^[\t]+(\w+)$/ && do {
+                /^[\t]+(.*)$/ && do {
+                    my $val = $1;
                     if ($var_type eq 'list') {
                         $vars{$var_name} ||= [];
+                        push @{$vars{$var_name}}, str_split_sn($val);
                     }
                 };
             }

@@ -50,6 +50,21 @@ function! projs#bld#do#last_compile ()
 
 endfunction
 
+function! projs#bld#do#print_ii_tree ()
+	let opts = []
+
+	let target = projs#bld#target()
+	if len(target)
+		call extend(opts,[ '-t', target ])
+	endif
+
+  call projs#bld#run({
+      \ 'act'  : 'print_ii_tree',
+      \ 'opts' : opts,
+      \ })
+
+endfunction
+
 function! projs#bld#do#dump ()
 
   let path = projs#bld#input_path()
