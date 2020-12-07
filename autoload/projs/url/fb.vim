@@ -39,6 +39,7 @@ function! projs#url#fb#data (...)
   let fb_group = ''
 
   let author_id = ''
+  let author    = ''
 
   if path_front =~ 'permalink.php'
     let fb_auth = ''
@@ -53,7 +54,7 @@ function! projs#url#fb#data (...)
       let author_id = printf('fb_group.%s',fb_group_id)
       let author    = projs#author#get({ 'author_id' : author_id })
       if !len(author)
-        let author = projs#author#add_prompt({ 'author_id' : author_id })
+        let author = projs#action#author_add({ 'author_id' : author_id })
       endif
     endif
   endif

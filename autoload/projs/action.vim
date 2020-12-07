@@ -1614,16 +1614,18 @@ endfunction
 
 """pa_author_add
 function! projs#action#author_add ()
+  let ref = get(a:000,0,{})
+
+  let author_id = get(ref,'author_id','')
+
   let hash = projs#author#hash()
 
-  let a_data    = projs#author#select()
-  let author_id = get(a_data,'author_id','')
+  let a_data    = projs#author#select({ 'author_id' : author_id })
   let author    = get(a_data,'author','')
 
   call projs#author#add({ 
      \  'author_id' : author_id,
      \  'author'    : author })
-
 
 endfunction
 
