@@ -31,10 +31,10 @@ function! projs#author#file (...)
 endfunction
 
 function! projs#author#tex_cmt (...)
-	let lines = []
+  let lines = []
 
-	call add(lines,'\ifcmt')
-	call add(lines,'\fi')
+  call add(lines,'\ifcmt')
+  call add(lines,'\fi')
 
 endfunction
 
@@ -73,15 +73,15 @@ function! projs#author#hash_save ()
 endfunction
 
 if 0
-	call tree
-		called by
-			projs#insert#ii_url
+  call tree
+    called by
+      projs#insert#ii_url
 endif
 
 function! projs#author#add_prompt (...)
-	let ref       = get(a:000,0,{})
+  let ref       = get(a:000,0,{})
 
-	let author_id = get(ref,'a_id','')
+  let author_id = get(ref,'a_id','')
 
   let author = input(printf('[rootid: %s, Add Author] Surname, Firstname: ',projs#rootid()),'')
   if len(author)
@@ -89,15 +89,18 @@ function! projs#author#add_prompt (...)
     echo printf('[rootid: %s] Added author: %s => %s',projs#rootid(), author_id, author)
   endif
 
-	return author
+  return author
 
 endfunction
 
 if 0
-	purpose
-		choose author data via command-line input
-	usage
-		let a_data = projs#author#select()
+  purpose
+    choose author data via command-line input
+  usage
+    let a_data = projs#author#select()
+  call tree
+    called by
+      projs#insert#cmt_author
 endif
 
 function! projs#author#select ()

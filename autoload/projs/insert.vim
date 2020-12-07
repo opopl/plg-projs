@@ -53,18 +53,19 @@ endfunction
 """pin_pauthor
 function! projs#insert#cmt_author ()
 
-	let db_buf_data = projs#db#buf_data()
-	let author_id   = get(db_buf_data,'author_id','')
+  let db_buf_data = projs#db#buf_data()
 
-	if !len(author_id)
-		let a_data    = projs#author#select()
-	
-		let author_id = get(a_data,'author_id','')
-		let author    = get(a_data,'author','')
-	endif
+  let author_id   = get(db_buf_data,'author_id','')
 
-	let lines = projs#cmt#author({ 'author_id' : author_id })
-	call append('.',lines)
+  if !len(author_id)
+    let a_data    = projs#author#select()
+  
+    let author_id = get(a_data,'a_id','')
+    let author    = get(a_data,'a','')
+  endif
+
+  let lines = projs#cmt#author({ 'author_id' : author_id })
+  call append('.',lines)
 
 endfunction
 
@@ -83,18 +84,18 @@ endfunction
 
 """pin_cmt_pic
 function! projs#insert#cmt_pic ()
-	let url     = input('[pic] url: ','')
-	let caption = input('[pic] caption: ','')
+  let url     = input('[pic] url: ','')
+  let caption = input('[pic] caption: ','')
 
-	let lines = []
+  let lines = []
 
-	call add(lines,'\ifcmt')
-	call add(lines,printf('	 pic %s',url))
-	if len(caption)
-		call add(lines,printf('	 caption %s',caption))
-	endif
-	call add(lines,'\fi')
-	call append('.',lines)
+  call add(lines,'\ifcmt')
+  call add(lines,printf('  pic %s',url))
+  if len(caption)
+    call add(lines,printf('  caption %s',caption))
+  endif
+  call add(lines,'\fi')
+  call append('.',lines)
 
 endfunction
 
@@ -183,7 +184,7 @@ function! projs#insert#ii ()
 
   let ii_prefix = printf('%s.', sec)
 
-	let comps = []
+  let comps = []
   call base#varset('this',comps)
   let ii_sec = input('ii_sec name: ',ii_prefix,'custom,base#complete#this')
 
@@ -192,13 +193,13 @@ function! projs#insert#ii ()
     let do_ii = input('Section already here, insert? (1/0):',0)
   endif
 
-	if !do_ii | return | endif
+  if !do_ii | return | endif
 
   let lines = []
   call add(lines,printf('\ii{%s}',ii_sec))
-	call append('.',lines)
+  call append('.',lines)
 
- 	let r_new = {
+  let r_new = {
       \  }
 
   call projs#sec#new(ii_sec,r_new)
@@ -257,7 +258,7 @@ function! projs#insert#ii_url ()
     if len(author)
       echo printf('Found author: %s',author)
     else
-			let author = projs#author#add_prompt({ 'a_id' : author_id })
+      let author = projs#author#add_prompt({ 'a_id' : author_id })
     endif
 
     let pref     .=  len(author_id) ? printf('.%s',author_id) : ''
@@ -314,21 +315,21 @@ function! projs#insert#ii_url ()
     let lines = []
     call add(lines,printf('\ii{%s}',ii_sec))
 
-		let msg_a = [
-				\	'Choices for appending:',
-				\	'	1 - append at end',	
-				\	'	2 - append at current line',	
-				\	'	',
-				\	'Choice number:',	
-				\	]
-		let msg = join(msg_a, "\n")
-		let a_choice = input(msg,'1')
+    let msg_a = [
+        \ 'Choices for appending:',
+        \ ' 1 - append at end', 
+        \ ' 2 - append at current line',  
+        \ ' ',
+        \ 'Choice number:', 
+        \ ]
+    let msg = join(msg_a, "\n")
+    let a_choice = input(msg,'1')
 
-		let map = {
-				\	'1' : line('$'),
-				\	'2' : line('.'),
-				\	}
-		let pos = get(map,a_choice,line('$'))
+    let map = {
+        \ '1' : line('$'),
+        \ '2' : line('.'),
+        \ }
+    let pos = get(map,a_choice,line('$'))
 
     call append(pos,lines)
   endif
