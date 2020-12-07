@@ -8,10 +8,10 @@ endif
 function! projs#author#get (...)
   let ref = get(a:000,0,{})
 
-  let a_id = get(ref,'a_id','')
+  let author_id = get(ref,'author_id','')
 
   let data   = projs#data#dict({ 'id' : 'authors' })
-  let author = get(data,a_id,'')
+  let author = get(data,author_id,'')
 
   return author
   
@@ -115,12 +115,12 @@ function! projs#author#select ()
     let author_id = input( printf('[rootid: %s] author_id: ',rootid),'','custom,base#complete#this')
   endw
 
-  let author = projs#author#get({ 'a_id' : author_id })
+  let author = projs#author#get({ 'author_id' : author_id })
   let author = input(printf('[rootid: %s] author: ',rootid),author)
 
   let a_data = {
-      \ 'a'    : author,
-      \ 'a_id' : author_id,
+      \ 'author'    : author,
+      \ 'author_id' : author_id,
       \ }
   return a_data
 

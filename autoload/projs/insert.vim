@@ -246,7 +246,7 @@ function! projs#insert#ii_url ()
 
   let pref      = get(ii_data,'pref','')
   let author_id = get(ii_data,'author_id','')
-  let author    = projs#author#get({ 'a_id' : author_id })
+  let author    = projs#author#get({ 'author_id' : author_id })
 
   if !len(author_id)
     let a_ids = projs#author#ids() 
