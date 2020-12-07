@@ -93,24 +93,28 @@ function! projs#author#add_prompt (...)
 
 endfunction
 
-if 0
-  purpose
-    choose author data via command-line input
-  usage
-    let a_data = projs#author#select()
-  call tree
-    called by
-      projs#insert#cmt_author
-endif
+"if 0
+"  purpose
+"    choose author data via command-line input
+"  usage
+"   let a_data = projs#author#select()
+"		let a_data = projs#author#select({ 'author_id' : author_id })
+"  call tree
+"    called by
+"      projs#insert#cmt_author
+"endif
 
-function! projs#author#select ()
+function! projs#author#select (...)
+	let ref = get(a:000,0,{})
+
+  let author_id = get(ref,'author_id','')
+
   let ids = projs#author#ids()
 
   let rootid = projs#rootid()
 
   call base#varset('this',ids)
 
-  let author_id = ''
   while !len(author_id)
     let author_id = input( printf('[rootid: %s] author_id: ',rootid),'','custom,base#complete#this')
   endw

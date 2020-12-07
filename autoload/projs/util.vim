@@ -13,9 +13,9 @@ if 0
   call tree
     called by
       projs#insert#ii_url
-		calls
-			projs#data#dict
-			projs#url#fb#data
+    calls
+      projs#data#dict
+      projs#url#fb#data
 endif
 ""endcmt
 
@@ -38,9 +38,9 @@ function! projs#util#ii_data_from_url (...)
       let pref = get(pats,pat,'')
       if pat == 'facebook.com'
         let fb_data   = projs#url#fb#data({ 
-					\	'url'    : url,
-					\	'prompt' : prompt,
-					\	})
+          \ 'url'    : url,
+          \ 'prompt' : prompt,
+          \ })
 
         let author_id = get(fb_data,'author_id','')
         if len(author_id)

@@ -1617,12 +1617,12 @@ function! projs#action#author_add ()
   let hash = projs#author#hash()
 
   let a_data    = projs#author#select()
-  let author_id = get(a_data,'a_id','')
-  let author    = get(a_data,'a','')
+  let author_id = get(a_data,'author_id','')
+  let author    = get(a_data,'author','')
 
   call projs#author#add({ 
-     \  'a_id' : author_id,
-     \  'a'    : author })
+     \  'author_id' : author_id,
+     \  'author'    : author })
 
 
 endfunction

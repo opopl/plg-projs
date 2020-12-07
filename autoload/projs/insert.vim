@@ -209,7 +209,15 @@ function! projs#insert#ii ()
 endfunction
 
 
-
+if 0
+  usage
+    call projs#insert#ii_url
+  call tree
+    calls
+      projs#buf#sec
+      projs#util#ii_data_from_url
+      projs#author#get
+endif
 
 """pin_ii_url
 function! projs#insert#ii_url ()
