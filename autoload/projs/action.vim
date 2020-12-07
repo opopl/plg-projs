@@ -1613,7 +1613,7 @@ function! projs#action#tex_show_command ()
 endfunction
 
 """pa_author_add
-function! projs#action#author_add ()
+function! projs#action#author_add (...)
   let ref = get(a:000,0,{})
 
   let author_id = get(ref,'author_id','')

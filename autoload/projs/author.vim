@@ -83,7 +83,8 @@ function! projs#author#add_prompt (...)
 
   let author_id = get(ref,'author_id','')
 
-  let author = input(printf('[rootid: %s, Add Author] Surname, Firstname: ',projs#rootid()),'')
+  let author = ''
+  let author = input(printf('[rootid: %s, author_id: %s, Add Author] Surname, Firstname: ', projs#rootid(), author_id ),author)
   if len(author)
     call projs#author#add({ 'author' : author, 'author_id' : author_id })
     echo printf('[rootid: %s] Added author: %s => %s',projs#rootid(), author_id, author)
@@ -98,14 +99,14 @@ endfunction
 "    choose author data via command-line input
 "  usage
 "   let a_data = projs#author#select()
-"		let a_data = projs#author#select({ 'author_id' : author_id })
+"   let a_data = projs#author#select({ 'author_id' : author_id })
 "  call tree
 "    called by
 "      projs#insert#cmt_author
 "endif
 
 function! projs#author#select (...)
-	let ref = get(a:000,0,{})
+  let ref = get(a:000,0,{})
 
   let author_id = get(ref,'author_id','')
 
@@ -115,8 +116,11 @@ function! projs#author#select (...)
 
   call base#varset('this',ids)
 
-  while !len(author_id)
-    let author_id = input( printf('[rootid: %s] author_id: ',rootid),'','custom,base#complete#this')
+  while(1)
+    let author_id = input( printf('[rootid: %s] author_id: ',rootid),author_id,'custom,base#complete#this')
+    if len(author_id)
+      break
+    endif
   endw
 
   let author = projs#author#get({ 'author_id' : author_id })

@@ -51,10 +51,12 @@ function! projs#url#fb#data (...)
     let fb_group_id = get(fb_groups,fb_group,'')
 
     if len(fb_group_id)
+      echo 'Facebook group id: ' . fb_group_id
+
       let author_id = printf('fb_group.%s',fb_group_id)
       let author    = projs#author#get({ 'author_id' : author_id })
       if !len(author)
-        let author = projs#action#author_add({ 'author_id' : author_id })
+        let author = projs#author#add_prompt({ 'author_id' : author_id })
       endif
     endif
   endif
