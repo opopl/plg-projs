@@ -12,6 +12,8 @@ function! projs#bld#do#pdf_view ()
 
 endfunction
 
+
+
 function! projs#bld#do#jnd_view ()
 
 	let target = projs#bld#target()

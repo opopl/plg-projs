@@ -41,11 +41,11 @@ endfunction
 function! projs#author#add (...)
   let ref = get(a:000,0,{})
 
-  let a_id = get(ref,'a_id','')
-  let a    = get(ref,'a','')
+  let author_id = get(ref,'author_id','')
+  let author    = get(ref,'author','')
 
   let hash   = projs#data#dict({ 'id' : 'authors' })
-  call extend(hash,{ a_id : a })
+  call extend(hash,{ author_id : author })
   call base#varset('projs_hash_authors',hash)
 
   call projs#author#hash_save ()
@@ -81,11 +81,11 @@ endif
 function! projs#author#add_prompt (...)
   let ref       = get(a:000,0,{})
 
-  let author_id = get(ref,'a_id','')
+  let author_id = get(ref,'author_id','')
 
   let author = input(printf('[rootid: %s, Add Author] Surname, Firstname: ',projs#rootid()),'')
   if len(author)
-    call projs#author#add({ 'a' : author, 'a_id' : author_id })
+    call projs#author#add({ 'author' : author, 'author_id' : author_id })
     echo printf('[rootid: %s] Added author: %s => %s',projs#rootid(), author_id, author)
   endif
 

@@ -60,8 +60,8 @@ function! projs#insert#cmt_author ()
   if !len(author_id)
     let a_data    = projs#author#select()
   
-    let author_id = get(a_data,'a_id','')
-    let author    = get(a_data,'a','')
+    let author_id = get(a_data,'author_id','')
+    let author    = get(a_data,'author','')
   endif
 
   let lines = projs#cmt#author({ 'author_id' : author_id })
@@ -209,6 +209,8 @@ function! projs#insert#ii ()
 endfunction
 
 
+
+
 """pin_ii_url
 function! projs#insert#ii_url ()
   let proj = projs#proj#name()
@@ -249,16 +251,16 @@ function! projs#insert#ii_url ()
   let author    = projs#author#get({ 'author_id' : author_id })
 
   if !len(author_id)
-    let a_ids = projs#author#ids() 
-    call base#varset('this',a_ids)
+    let author_ids = projs#author#ids() 
+    call base#varset('this',author_ids)
 
     let author_id = input('author_id: ','','custom,base#complete#this')
-    let author    = projs#author#get({ 'a_id' : author_id })
+    let author    = projs#author#get({ 'author_id' : author_id })
 
     if len(author)
       echo printf('Found author: %s',author)
     else
-      let author = projs#author#add_prompt({ 'a_id' : author_id })
+      let author = projs#author#add_prompt({ 'author_id' : author_id })
     endif
 
     let pref     .=  len(author_id) ? printf('.%s',author_id) : ''
