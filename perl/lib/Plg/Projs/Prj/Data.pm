@@ -37,7 +37,7 @@ sub _data_dict_file {
         push @a,$proj;
     }
 
-    my $file = catfile(@a,printf(q{%s.i.dat}, $id) );
+    my $file = catfile(@a,sprintf(q{%s.i.dat}, $id) );
     return $file;
 }
 

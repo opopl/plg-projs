@@ -10,6 +10,7 @@ binmode STDOUT,':encoding(utf8)';
 use File::Basename qw(basename dirname);
 use File::Path qw(make_path remove_tree mkpath rmtree);
 use File::Slurp::Unicode;
+use Data::Dumper qw(Dumper);
 
 ###see_also projs#author#get
 
@@ -20,6 +21,7 @@ sub _author_get {
 	my $author_id = $ref->{author_id} || '';
 
 	my $data   = $self->_data_dict({ 'id' => 'authors' });
+	print Dumper($data) . "\n";
 	my $author = $data->{$author_id} || '';
 
 	return $author;
@@ -80,7 +82,7 @@ sub author_hash_save {
 		next unless $author;
 		push @lines, sprintf('%s %s', $author_id, $author);
 	}
-	write_file($file,join("\n",@lines));
+	write_file($file,join("\n",@lines) . "\n");
 
 	return $self;
 }

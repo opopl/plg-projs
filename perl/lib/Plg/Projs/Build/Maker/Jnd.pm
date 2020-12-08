@@ -426,24 +426,12 @@ sub cmd_jnd_compose {
 
 ###m_author_end
         m/^\s*author_end\b(.*)$/g && do { 
-            my $a_id = $d_author->{author_id};
-            next unless $a_id;
+            my $author_id = $d_author->{author_id};
+            next unless $author_id;
             #$rootid;
+            my $prj    = $mkr->{prj};
+            my $author = $prj->_author_get({ author_id => $author_id });
 
-            my $w = {
-                author_id => $a_id,
-                proj      => $proj,
-                sec       => $sec,
-            };
-            my $dbh = $mkr->{bld}->{dbh};
-            my ($row) = dbh_select_first({
-                dbh => $dbh,
-                q   => q{ SELECT author, author_url FROM projs },
-                p   => [],
-                w   => $w,
-            });
-            my $author = $row->{author};
-            
             push @nlines, sprintf(q{\Pauthor{%s}}, $author) if $author;
 
             $d_author = undef;
