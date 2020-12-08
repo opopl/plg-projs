@@ -17,6 +17,16 @@ function! projs#author#get (...)
   
 endfunction
 
+"if 0
+"  usage
+"    let file = projs#author#file({ 'proj' : proj})
+"    let file = projs#author#file()
+"  call tree
+"    called by
+"    calls
+"      projs#data#dict_file
+"endif
+
 function! projs#author#file (...)
   let ref = get(a:000,0,{})
 

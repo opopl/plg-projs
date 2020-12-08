@@ -27,9 +27,10 @@ sub _data_dict_file {
 	my ($self, $ref) = @_;
 	$ref ||= {};
 
+	my $root = $self->{root};
+
 	my $id   = $ref->{id} || '';
 	my $proj = $ref->{proj} || '';
-	my $root = $self->{root};
 
 	my @a = ( $root,qw(data dict));
 	if ($proj) {
