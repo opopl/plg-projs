@@ -118,9 +118,7 @@ sub _join_lines {
     my @prepend = $mkr->_line_plus($sec,'prepend');
     push @lines, @prepend;
 
-    $mkr->{ii_tree}->{$sec} ||= {};
-    $mkr->{ii_tree}->{$sec}->{children} ||= [];
-    $mkr->{ii_tree}->{$sec}->{parents} ||= [];
+	$mkr->tree_init({ sec => $sec });
 
 ###for_@f_lines
     foreach(@f_lines) {
@@ -170,11 +168,11 @@ sub _join_lines {
         m/$pats->{ii}/ && do {
             my $ii_sec   = $1;
 
-            $mkr->{ii_tree}->{$ii_sec} ||= {};
-            $mkr->{ii_tree}->{$ii_sec}->{parents} ||= [];
-            push @{ $mkr->{ii_tree}->{$ii_sec}->{parents} }, $sec;
-
-            push @{ $mkr->{ii_tree}->{$sec}->{children} }, $ii_sec;
+			$mkr
+				->tree_init({ sec => $ii_sec })
+				->tree_add_parent({ sec => $ii_sec, parent => $sec })
+				->tree_add_child({ sec => $sec, child => $ii_sec })
+				;
 
             $mkr->_line_process_pat_ii({ 
                 delim          => $delim,
