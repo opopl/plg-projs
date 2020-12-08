@@ -1662,6 +1662,16 @@ function! projs#action#author_list ()
 
 endfunction
 
+function! projs#action#tree_view ()
+	let file = projs#tree#file()
+
+	call base#fileopen({ 
+		\	'files'    : [file] ,
+		\	'load_buf' : 1,
+		\	})
+
+endfunction
+
 if 0
   see also:
 endif

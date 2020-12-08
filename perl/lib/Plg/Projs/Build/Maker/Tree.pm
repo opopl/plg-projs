@@ -30,6 +30,23 @@ sub tree_init {
     return $mkr;
 }
 
+sub tree_read {
+    my ($mkr,$ref) = @_;
+    $ref ||= {};
+
+    my $file_tree = $mkr->_file_tree;
+	my @lines = read_file $file_tree;
+
+	$mkr->{ii_tree} ||= {};
+
+	my ($sec);
+	while (@lines) {
+		local $_ = shift @lines;
+	}
+
+    return $mkr;
+}
+
 sub tree_write {
     my ($mkr,$ref) = @_;
     $ref ||= {};
