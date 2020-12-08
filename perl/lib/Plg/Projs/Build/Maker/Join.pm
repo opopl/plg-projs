@@ -330,13 +330,6 @@ sub _ii_base {
 }
 
 
-sub _file_tree {
-    my ($mkr) = @_;
-
-    my $file_tree = catfile($mkr->{root},$mkr->{proj} . '.tree');
-    return $file_tree;
-}
-
 sub _file_ii_exclude {
     my ($mkr) = @_;
             

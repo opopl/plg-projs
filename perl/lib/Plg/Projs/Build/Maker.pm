@@ -49,6 +49,7 @@ use base qw(
 
     Plg::Projs::Build::Maker::Pwg
     Plg::Projs::Build::Maker::Jnd
+    Plg::Projs::Build::Maker::Tree
 );
 
 use Base::File qw(
