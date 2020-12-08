@@ -25,6 +25,12 @@ use Base::DB qw(
     dbh_select
 );
 
+use base qw(
+	Base::Opt
+	Plg::Projs::Prj::Author
+	Plg::Projs::Prj::Data
+);
+
 use Base::Arg qw(
     hash_inject
 );

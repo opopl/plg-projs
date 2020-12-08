@@ -38,6 +38,9 @@ function! projs#author#tex_cmt (...)
 
 endfunction
 
+if 0
+endif
+
 function! projs#author#add (...)
   let ref = get(a:000,0,{})
 

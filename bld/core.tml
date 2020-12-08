@@ -112,6 +112,7 @@
              xparse 
              p.core
              p.fancyquote
+             p.fb
              <!--p.shadequote-->
              p.env
              p.rus

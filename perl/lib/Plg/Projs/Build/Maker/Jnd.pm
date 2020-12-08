@@ -428,6 +428,7 @@ sub cmd_jnd_compose {
         m/^\s*author_end\b(.*)$/g && do { 
             my $a_id = $d_author->{author_id};
             next unless $a_id;
+            #$rootid;
 
             my $w = {
                 author_id => $a_id,
@@ -505,8 +506,8 @@ sub cmd_jnd_compose {
                 $url = $2;
                 $d = { url => $url };
 
-				my $k = $1;
-				$d->{type} = $k;
+                my $k = $1;
+                $d->{type} = $k;
                 last; 
             };
 

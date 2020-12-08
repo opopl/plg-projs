@@ -1621,7 +1621,9 @@ function! projs#action#author_add (...)
   let hash = projs#author#hash()
 
   let a_data    = projs#author#select({ 'author_id' : author_id })
+
   let author    = get(a_data,'author','')
+  let author_id = get(a_data,'author_id','')
 
   call projs#author#add({ 
      \  'author_id' : author_id,
