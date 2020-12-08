@@ -1,9 +1,63 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <bld>
   <tex_exe>pdflatex</tex_exe>
+  <vars>
+    <var name="pagestyle" value="fancy" />
+  </vars>
+  <decs>
+    do_ind_titletoc
+  </decs>
+  <preamble>
+    <langs main="russian">
+      english
+      russian
+    </langs>
+    <index>
+        <ind name="" />
+        <!--<ind name="eng" title="Index" />-->
+        <!--<ind name="rus" title="Предметный указатель" />-->
+        <!--<ind name="names.rus" title="Имена" />-->
+        <!--<ind name="authors.rus" title="Авторы" />-->
+        <!--<ind name="cities.rus" title="Города" />-->
+        <!--<ind name="deaths.rus" title="Смерти" />-->
+        <!--<ind name="writers.rus" title="{Писатели, Поэты, Мыслители}" />-->
+    </index>
+  </preamble>
   <sii>
     <insert titletoc="1" hyperlinks="1" />
   </sii>
   <opts_maker>
+    <skip get_opt="1" />
+    <load_dat ii_include="0" ii_exclude="1" />
+    <join_lines>
+      <!--available options: chapter, section etc. -->
+      <include_below>
+      </include_below>
+    </join_lines>
+    <sections>
+      <include>
+        _base_
+        body
+        defs
+      </include>
+      <include_with_children>
+        preamble
+        body
+      </include_with_children>
+      <ins_order>
+         hyperlinks
+         titletoc
+      </ins_order>
+      <generate>
+      </generate>
+      <append>
+        <each>
+        </each>
+        <only>
+          <defs>
+          </defs>
+        </only>
+      </append>
+    </sections>
   </opts_maker>
 </bld>

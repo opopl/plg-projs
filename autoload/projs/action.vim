@@ -1098,15 +1098,18 @@ function! projs#action#view_bld_log (...)
 endf
 
 
-if 0
-  Usage
-    projs#action#bld_compile()
-  Call tree
-    calls
-      projs#proj#name
-      projs#root
-      projs#action#bld_compile_Fc
-endif
+"if 0
+"  Usage
+"    projs#action#bld_compile()
+"  Call tree
+"    calls
+"      projs#proj#name
+"      projs#root
+"      projs#action#bld_compile_Fc
+"      projs#bld#make_secs
+"        projs#sec#new
+"      projs#sec#file
+"endif
 
 """PA_bld_compile
 function! projs#action#bld_compile (...) 

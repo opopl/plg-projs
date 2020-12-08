@@ -112,12 +112,13 @@
              xparse 
              p.core
              p.fancyquote
-             p.fb
              <!--p.shadequote-->
              p.env
              p.rus
              p.secs
              p.toc
+             p.fb
+             p.sechyperlinks
              imakeidx
              p.hyperref
 
