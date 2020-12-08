@@ -20,7 +20,7 @@ sub _author_get {
 	my $author_id = $ref->{author_id} || '';
 
 	my $data   = $self->_data_dict({ 'id' => 'authors' });
-	my $author = $data->{'author_id'} || '';
+	my $author = $data->{$author_id} || '';
 
 	return $author;
 }

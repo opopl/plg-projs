@@ -5,40 +5,40 @@ use strict;
 use warnings;
 
 use File::Spec::Functions qw(catfile);
+use File::Dat::Utils qw(readhash);
 
-=head3 _data_dict
-
-	see also:
-		projs#data#dict
-
-=cut
+###see_also projs#data#dict
 
 sub _data_dict {
-	my ($self) = @_;
+    my ($self, $ref) = @_;
+    $ref ||= {};
 
-	my $data;
+    my $file = $self->_data_dict_file($ref);
+    return {} unless -e $file;
 
-	return $data;
+    my $dict = readhash($file);
+
+    return $dict;
 }
 
-# see also: projs#data#dict_file
+###see_also projs#data#dict_file
 
 sub _data_dict_file {
-	my ($self, $ref) = @_;
-	$ref ||= {};
+    my ($self, $ref) = @_;
+    $ref ||= {};
 
-	my $root = $self->{root};
+    my $root = $self->{root};
 
-	my $id   = $ref->{id} || '';
-	my $proj = $ref->{proj} || '';
+    my $id   = $ref->{id} || '';
+    my $proj = $ref->{proj} || '';
 
-	my @a = ( $root,qw(data dict));
-	if ($proj) {
-		push @a,$proj;
-	}
+    my @a = ( $root, qw( data dict ));
+    if ($proj) {
+        push @a,$proj;
+    }
 
-	my $file = catfile(@a,printf(q{%s.i.dat}, $id) );
-	return $file;
+    my $file = catfile(@a,printf(q{%s.i.dat}, $id) );
+    return $file;
 }
 
 1;
