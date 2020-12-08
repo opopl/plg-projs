@@ -30,19 +30,34 @@ sub tree_init {
     return $mkr;
 }
 
-sub tree_read {
-    my ($mkr,$ref) = @_;
+sub tree_import {
+    my ($mkr, $ref) = @_;
     $ref ||= {};
 
     my $file_tree = $mkr->_file_tree;
-	my @lines = read_file $file_tree;
+    my @lines     = read_file $file_tree;
 
-	$mkr->{ii_tree} ||= {};
+    $mkr->{ii_tree} ||= {};
+    my $tree = $mkr->{ii_tree};
 
-	my ($sec);
-	while (@lines) {
-		local $_ = shift @lines;
-	}
+    my ($sec, $prop);
+    while (@lines) {
+        local $_ = shift @lines;
+
+        /^(\S+)$/ && do {
+            $sec = $1;
+            $tree->{$sec} ||= {};
+
+            next;
+        };
+
+        /^\t(\w+)$/ && do {
+            $prop = $1;
+            $tree->{$prop} ||= {};
+
+            next;
+        };
+    }
 
     return $mkr;
 }
@@ -84,7 +99,7 @@ sub tree_fill {
     my ($mkr,$ref) = @_;
     $ref ||= {};
 
-	# this will fill in $mkr->{ii_tree} object
+    # this will fill in $mkr->{ii_tree} object
     $mkr->_join_lines('_main_',{ 
         ii_include_all => 1,
         skip_write     => 1,
