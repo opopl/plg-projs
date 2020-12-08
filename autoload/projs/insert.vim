@@ -263,13 +263,16 @@ function! projs#insert#ii_url ()
     call base#varset('this',author_ids)
 
     let author_id = input('author_id: ','','custom,base#complete#this')
-    let author    = projs#author#get({ 'author_id' : author_id })
 
-    if len(author)
-      echo printf('Found author: %s',author)
-    else
-      let author = projs#author#add_prompt({ 'author_id' : author_id })
-    endif
+		if len(author_id)
+	    let author    = projs#author#get({ 'author_id' : author_id })
+	
+	    if len(author)
+	      echo printf('Found author: %s',author)
+	    else
+	      let author = projs#author#add_prompt({ 'author_id' : author_id })
+	    endif
+		endif
 
     let pref     .=  len(author_id) ? printf('.%s',author_id) : ''
   endif
