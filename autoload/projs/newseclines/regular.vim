@@ -70,6 +70,7 @@ text = r'''
 \phantomsection
  
 \addcontentsline{toc}{chapter}{\contentsname}
+\hypertarget{tabcont}{}
  
 \tableofcontents
 \newpage
