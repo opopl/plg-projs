@@ -37,8 +37,7 @@ sub tree_import {
     my $file_tree = $mkr->_file_tree;
     my @lines     = read_file $file_tree;
 
-    $mkr->{ii_tree} ||= {};
-    my $tree = $mkr->{ii_tree};
+    my $tree = {};
 
     my ($sec, $prop);
     while (@lines) {
@@ -47,17 +46,26 @@ sub tree_import {
         /^(\S+)$/ && do {
             $sec = $1;
             $tree->{$sec} ||= {};
+            $prop = undef;
 
             next;
         };
 
         /^\t(\w+)$/ && do {
             $prop = $1;
-            $tree->{$prop} ||= {};
+            $tree->{$prop} ||= [];
 
             next;
         };
+
+        /^\t\t(\S+)$/ && do {
+            my $sc = $1;
+            push @{$tree->{$prop}}, $sc;
+            next;
+        };
     }
+
+    $mkr->{ii_tree} = $tree;
 
     return $mkr;
 }
