@@ -30,7 +30,8 @@ sub _author_file {
 	my ($self, $ref) = @_;
 	$ref ||= {};
 
-	my $proj = $self->_opt_($ref,'proj','');
+	my $proj = $ref->{proj} || '';
+
 	my $file = $self->_data_dict_file({ 
 		proj => $proj,
 		id   => 'authors',
