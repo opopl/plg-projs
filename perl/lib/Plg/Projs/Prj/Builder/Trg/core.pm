@@ -27,7 +27,7 @@ sub trg_inj_core {
             append => {
                 each => sub { },
                 only => {
-                    defs => sub { [ $bld->_def_sechyperlinks ] },
+                    #defs => sub { [ $bld->_def_sechyperlinks ] },
                 },
             },
         }

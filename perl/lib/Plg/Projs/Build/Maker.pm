@@ -439,38 +439,12 @@ sub cmd_print_ii_base {
 sub cmd_print_ii_tree {
     my ($mkr) = @_;
 
-    $mkr->_join_lines('_main_',{ 
-        ii_include_all => 1,
-        skip_write     => 1,
-    });
+	$mkr
+		->tree_fill
+		->tree_write
+		;
 
-    my $file_tree = $mkr->_file_tree;
-    my $tree = $mkr->{ii_tree} || {};
-
-    my $proj    = $mkr->{proj};
-    my $root_id = $mkr->{root_id};
-
-    my @lines;
-    foreach my $sec (sort keys %$tree) {
-        next unless $sec;
-
-        push @lines, $sec;
-
-        my $d = $tree->{$sec};
-        foreach my $k (qw( parents children )) {
-            my $a = $d->{$k};
-            next unless $a;
-            if (ref $a eq 'ARRAY') {
-                push @lines, 
-                    "\t" . $k,
-                    map { "\t\t" . $_ } @$a;
-            }
-        }
-    }
-
-    write_file($file_tree,join("\n",@lines) . "\n");
-
-    my $f_bn = basename($file_tree);
+    #my $f_bn = basename($file_tree);
 
     #print qq{[proj: $proj, root_id: $root_id] Tree written to: $f_bn} . "\n";
 

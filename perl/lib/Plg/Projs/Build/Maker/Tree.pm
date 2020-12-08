@@ -30,6 +30,52 @@ sub tree_init {
     return $mkr;
 }
 
+sub tree_write {
+    my ($mkr,$ref) = @_;
+    $ref ||= {};
+
+    my $file_tree = $mkr->_file_tree;
+    my $tree = $mkr->{ii_tree} || {};
+
+    my $proj    = $mkr->{proj};
+    my $root_id = $mkr->{root_id};
+
+    my @lines;
+    foreach my $sec (sort keys %$tree) {
+        next unless $sec;
+
+        push @lines, $sec;
+
+        my $d = $tree->{$sec};
+        foreach my $k (qw( parents children )) {
+            my $a = $d->{$k};
+            next unless $a;
+            if (ref $a eq 'ARRAY') {
+                push @lines, 
+                    "\t" . $k,
+                    map { "\t\t" . $_ } @$a;
+            }
+        }
+    }
+
+    write_file($file_tree,join("\n",@lines) . "\n");
+
+    return $mkr;
+}
+
+sub tree_fill {
+    my ($mkr,$ref) = @_;
+    $ref ||= {};
+
+	# this will fill in $mkr->{ii_tree} object
+    $mkr->_join_lines('_main_',{ 
+        ii_include_all => 1,
+        skip_write     => 1,
+    });
+
+    return $mkr;
+}
+
 sub tree_add_child {
     my ($mkr,$ref) = @_;
     $ref ||= {};
@@ -54,7 +100,7 @@ sub tree_add_parent {
 
     if ($sec && $parent) {
         $mkr->tree_init({ sec => $sec });
-	    push @{ $mkr->{ii_tree}->{$sec}->{parents} }, $parent;
+        push @{ $mkr->{ii_tree}->{$sec}->{parents} }, $parent;
     }
 
     return $mkr;
