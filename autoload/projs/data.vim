@@ -29,7 +29,7 @@ function! projs#data#dict_choose ()
 
 endfunction
 
-function! projs#data#dict_dir ()
+function! projs#data#dict_dir (...)
   let ref = get(a:000,0,{})
 
   let proj = get(ref,'proj','')

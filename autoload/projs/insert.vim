@@ -319,6 +319,8 @@ function! projs#insert#ii_url ()
   call base#varset('this',comps)
   let ii_sec = input('ii_sec name: ',ii_prefix,'custom,base#complete#this')
 
+  let tags   = input('tags: ','')
+
   let do_ii = 1
   if projs#buf#ii_has(sec)
     let do_ii = input('Section already here, insert? (1/0):',0)
@@ -353,6 +355,7 @@ function! projs#insert#ii_url ()
       \  'sec_type'  : sec_type,
       \  'author_id' : author_id,
       \  'author'    : author,
+      \  'tags'      : tags,
       \  }
 
   call projs#sec#new(ii_sec,r_new)
