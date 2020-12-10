@@ -89,12 +89,15 @@ function! projs#insert#cmt_pic ()
 
   let lines = []
 
+  call add(lines,'')
   call add(lines,'\ifcmt')
   call add(lines,printf('  pic %s',url))
   if len(caption)
     call add(lines,printf('  caption %s',caption))
   endif
   call add(lines,'\fi')
+  call add(lines,'')
+
   call append('.',lines)
 
 endfunction
