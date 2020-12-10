@@ -12,14 +12,17 @@ sub info {
 }
 
 sub blk {
-    my ($self,$wnd) = @_;
+    my ($self) = @_;
 
-    $wnd->Button(
-        -text => 'bld_compile_xelatex',
-        -command => $self->_vim_server_sub({
-            'expr'  => 'projs#vim_server#pa#bld_compile_xelatex()'
-        })
-    )->pack( ); 
+    sub { my ($wnd) = @_; $wnd ||= $self->{mw};
+
+	    $wnd->Button(
+	        -text => 'bld_compile_xelatex',
+	        -command => $self->_vim_server_sub({
+	            'expr'  => 'projs#vim_server#pa#bld_compile_xelatex()'
+	        })
+	    )->pack( ); 
+    }
 }
 
 1;

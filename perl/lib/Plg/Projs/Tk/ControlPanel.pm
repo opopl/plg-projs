@@ -156,14 +156,21 @@ sub tk_add_pages {
 	my @pages;
 	for(@page_order){
 		my $pack = sprintf('%s::%s',$pf, $_);
-		eval { require $pack; };
+		my ($info,$blk);
+		eval { 
+			require $pack; 
+			$info = $pack->info();
+			$blk = $pack->blk($self);
+		};
 		if($@){
 			next;
 		}
 
-		#push @pages, {
-			#name => $n
-		#}
+		push @pages, {
+			name  => $info->{name},
+			label => $info->{label},
+			blk   => $blk,
+		}
 	}
 	
 
