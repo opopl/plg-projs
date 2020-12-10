@@ -432,6 +432,9 @@ sub cmd_jnd_compose {
             my $prj    = $mkr->{prj};
             my $author = $prj->_author_get({ author_id => $author_id });
 
+			$author =~ s/\(/ \\textbraceleft /g;
+			$author =~ s/\)/ \\textbraceright /g;
+
             push @nlines, sprintf(q{\Pauthor{%s}}, $author) if $author;
 
             $d_author = undef;

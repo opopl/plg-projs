@@ -102,6 +102,19 @@ function! projs#insert#cmt_pic ()
 
 endfunction
 
+function! projs#insert#item_usr ()
+  let usr    = input('user: ','')
+
+  let lines = []
+  call add(lines,'')
+	call add(lines,printf('\item \cusr{%s}',usr))
+  call add(lines,'')
+  call add(lines,'<++>')
+
+  call append('.',lines)
+
+endfunction
+
 function! projs#insert#cmt_fig_old ()
   let proj   = projs#proj#name()
   let rootid = projs#rootid()

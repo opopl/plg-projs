@@ -10,8 +10,17 @@ snippet fig
 	fig_end
 snippet leftbar
 	\begin{leftbar}
-		\bfseries
-		<++>
+		\begingroup
+			\bfseries
+				<++>
+		\endgroup
+	\end{leftbar}
+snippet lbem
+	\begin{leftbar}
+		\begingroup
+			\em
+				<++>
+		\endgroup
 	\end{leftbar}
 snippet itz
 	\begin{itemize}
