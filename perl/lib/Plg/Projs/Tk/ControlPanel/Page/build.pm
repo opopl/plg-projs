@@ -12,7 +12,7 @@ sub info {
 }
 
 sub blk {
-    my ($self) = @_;
+    my ($class,$self) = @_;
 
     sub { my ($wnd) = @_; $wnd ||= $self->{mw};
 

@@ -12,12 +12,15 @@ use warnings;
 
 use Data::Dumper qw(Dumper);
 
+use Module::Loaded qw(is_loaded);
+
 use Tk;
 use Tk::NoteBook;
 use Tk::widgets;
 use Tk::MatchEntry;
 
 use Plg::Projs::Prj;
+#use Plg::Projs::Tk::ControlPanel::Page::build;
 
 use Base::Util qw(
 	iswin
@@ -152,16 +155,15 @@ sub tk_add_pages {
 	for(@page_order){
 		my $pack = sprintf('%s::%s',$pf, $_);
 		my ($info,$blk);
-		eval { 
-			require $pack; 
-			$info = $pack->info();
-			$blk = $pack->blk($self);
-		};
-		if($@){
-			print Dumper(\@INC) . "\n";
-			warn qq{$@} . "\n";
-
+		eval sprintf('require %s',$pack);
+		if ($@) {
+			warn 'Failure load module ' . $pack . "\n";
+			warn $@ . "\n";
 			next;
+		}
+		if (is_loaded($pack)) {
+			$info = $pack->info();
+			$blk  = $pack->blk($self);
 		}
 
 		push @pages, {
@@ -170,7 +172,6 @@ sub tk_add_pages {
 			blk   => $blk,
 		}
 	}
-	
 
     $self
         ->nb_create
