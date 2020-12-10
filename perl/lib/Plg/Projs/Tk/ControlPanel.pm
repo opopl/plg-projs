@@ -159,6 +159,7 @@ sub tk_add_pages {
                     ;
             }
         },
+###blk_build
         {
             'name'  => 'bld',
             'label' => 'Build', 
@@ -166,11 +167,15 @@ sub tk_add_pages {
                 my ($wnd) = @_;
 
                 $wnd->Button(
-                    -text => 'bld_compile'
+                    -text => 'bld_compile',
+					-command => sub {},
                 )->pack( ); 
 
                 $wnd->Button(
-                    -text => 'bld_compile_xelatex'
+                    -text => 'bld_compile_xelatex',
+		            -command => $self->_vim_server_sub({
+		                'expr'  => 'projs#vim_server#pa#bld_compile_xelatex()'
+		            })
                 )->pack( ); 
 
                 $wnd->Button(
@@ -245,73 +250,8 @@ sub tk_frame_secs {
     return $self;
 }
 
-sub tk_frame_view { 
-    my ($self, $wnd) = @_;
 
-    $wnd ||= $self->{mw};
 
-    $wnd->Label( 
-        -text => 'View', 
-        -height => 2,
-    )->pack;
-
-    my $fr_view = $wnd->Frame()->pack(-side => 'top', -fill => 'x');
-
-    $fr_view->Button(
-        -text    => 'View HTML',
-        -command => $self->_vim_server_sub({
-            'expr'  => 'projs#vim_server#html_out_view()'
-        })
-    )->pack(-side => 'left');
-
-    $fr_view->Button(
-        -text    => 'View PDF',
-        -command => $self->_vim_server_sub({
-            'expr'  => 'projs#vim_server#pdf_out_view()'
-        })
-    )->pack(-side => 'left');
-
-    return $self;
-}
-
-sub tk_frame_build { 
-    my ($self) = @_;
-
-    my $mw = $self->{mw};
-
-    $mw->Label( 
-        -text   => 'Build', 
-        -height => 2,
-    )->pack;
-
-    my $fr_build = $mw->Frame()->pack(
-        -side => 'top', 
-        -fill => 'x'
-    );
-
-    $fr_build->Button(
-        -text    => 'Build PDF',
-        -command => $self->_vim_server_sub({
-            'expr'  => 'projs#vim_server#async_build()'
-        })
-    )->pack(-side => 'left');
-
-    $fr_build->Button(
-        -text    => 'Build HTML',
-        -command => $self->_vim_server_sub({
-            'expr'  => 'projs#vim_server#async_build_htlatex()'
-        })
-    )->pack(-side => 'left');
-
-    $fr_build->Button(
-        -text    => 'Cleanup',
-        -command => $self->_vim_server_sub({
-            'expr'  => 'projs#vim_server#build_cleanup()'
-        })
-    )->pack(-side => 'left');
-
-    return $self;
-}
 
 sub _vim_servername {
     my ($self) = @_;

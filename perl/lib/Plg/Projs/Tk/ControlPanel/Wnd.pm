@@ -104,6 +104,74 @@ sub wnd_fill_projects_entry {
     return $self;
 }
 
+sub wnd_frame_build { 
+    my ($self, $wnd) = @_;
+    $wnd ||= $self->{mw};
+
+    $wnd->Label( 
+        -text   => 'Build', 
+        -height => 2,
+    )->pack;
+
+    my $fr_build = $wnd->Frame()->pack(
+        -side => 'top', 
+        -fill => 'x'
+    );
+
+    $fr_build->Button(
+        -text    => 'Build PDF',
+        -command => $self->_vim_server_sub({
+            'expr'  => 'projs#vim_server#async_build()'
+        })
+    )->pack(-side => 'left');
+
+    $fr_build->Button(
+        -text    => 'Build HTML',
+        -command => $self->_vim_server_sub({
+            'expr'  => 'projs#vim_server#async_build_htlatex()'
+        })
+    )->pack(-side => 'left');
+
+    $fr_build->Button(
+        -text    => 'Cleanup',
+        -command => $self->_vim_server_sub({
+            'expr'  => 'projs#vim_server#build_cleanup()'
+        })
+    )->pack(-side => 'left');
+
+    return $self;
+}
+
+sub wnd_frame_view { 
+    my ($self, $wnd) = @_;
+
+    $wnd ||= $self->{mw};
+
+    $wnd->Label( 
+        -text => 'View', 
+        -height => 2,
+    )->pack;
+
+    my $fr_view = $wnd->Frame()->pack(-side => 'top', -fill => 'x');
+
+    $fr_view->Button(
+        -text    => 'View HTML',
+        -command => $self->_vim_server_sub({
+            'expr'  => 'projs#vim_server#html_out_view()'
+        })
+    )->pack(-side => 'left');
+
+    $fr_view->Button(
+        -text    => 'View PDF',
+        -command => $self->_vim_server_sub({
+            'expr'  => 'projs#vim_server#pdf_out_view()'
+        })
+    )->pack(-side => 'left');
+
+    return $self;
+}
+
+
 
 1;
  
