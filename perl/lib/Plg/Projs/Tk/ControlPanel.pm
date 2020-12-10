@@ -149,45 +149,23 @@ sub tk_add_pages {
 
     my $prj = $self->{prj};
 
-    my @pages = (
-        {
-            'name'  => 'projs',
-            'label' => 'Projects', 
-###blk_projs
-            'blk'   =>  sub {
-                my ($wnd) = @_;
+	my @page_order;
+	push @page_order, 'build';
+	my $pf = 'Plg::Projs::Tk::ControlPanel::Page';
 
-                $self
-                    ->wnd_fill_projects_entry($wnd)
-                    #->wnd_fill_projects_buttons($wnd)
-                    ;
-            }
-        },
-###blk_build
-        {
-            'name'  => 'bld',
-            'label' => 'Build', 
-            'blk'   =>  sub {
-                my ($wnd) = @_;
+	my @pages;
+	for(@page_order){
+		my $pack = sprintf('%s::%s',$pf, $_);
+		eval { require $pack; };
+		if($@){
+			next;
+		}
 
-                #$wnd->Button(
-                    #-text => 'bld_compile',
-					#-command => sub {},
-                #)->pack( ); 
-
-                $wnd->Button(
-                    -text => 'bld_compile_xelatex',
-		            -command => $self->_vim_server_sub({
-		                'expr'  => 'projs#vim_server#pa#bld_compile_xelatex()'
-		            })
-                )->pack( ); 
-
-                #$wnd->Button(
-                    #-text => 'out_bld'
-                #)->pack( ); 
-            }
-        }
-    );
+		#push @pages, {
+			#name => $n
+		#}
+	}
+	
 
     $self
         ->nb_create
