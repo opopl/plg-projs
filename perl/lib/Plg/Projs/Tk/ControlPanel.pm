@@ -24,6 +24,10 @@ use lib "$Bin/../perl/lib";
 
 use Plg::Projs::Prj;
 
+use Base::Util qw(
+	iswin
+);
+
 use Base::Arg qw(
     hash_update
 );
@@ -166,10 +170,10 @@ sub tk_add_pages {
             'blk'   =>  sub {
                 my ($wnd) = @_;
 
-                $wnd->Button(
-                    -text => 'bld_compile',
-					-command => sub {},
-                )->pack( ); 
+                #$wnd->Button(
+                    #-text => 'bld_compile',
+					#-command => sub {},
+                #)->pack( ); 
 
                 $wnd->Button(
                     -text => 'bld_compile_xelatex',
@@ -178,9 +182,9 @@ sub tk_add_pages {
 		            })
                 )->pack( ); 
 
-                $wnd->Button(
-                    -text => 'out_bld'
-                )->pack( ); 
+                #$wnd->Button(
+                    #-text => 'out_bld'
+                #)->pack( ); 
             }
         }
     );
@@ -281,7 +285,7 @@ sub _vim_server_cmd {
     my $args = [    
         'gvim',
         '--servername ',$self->_vim_servername,
-        '--remote-expr',$expr
+        '--remote-expr',( iswin() ? $expr : qq{"$expr"} )
     ];
 
     my $cmd = join(" " => @$args);
