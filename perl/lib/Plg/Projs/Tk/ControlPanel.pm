@@ -17,11 +17,6 @@ use Tk::NoteBook;
 use Tk::widgets;
 use Tk::MatchEntry;
 
-use FindBin qw( $Bin $Script );
-
-use lib "$Bin/../../base/perl/lib";
-use lib "$Bin/../perl/lib";
-
 use Plg::Projs::Prj;
 
 use Base::Util qw(
@@ -163,6 +158,8 @@ sub tk_add_pages {
 			$blk = $pack->blk($self);
 		};
 		if($@){
+			warn qq{$@} . "\n";
+
 			next;
 		}
 
