@@ -158,6 +158,7 @@ sub tk_add_pages {
 			$blk = $pack->blk($self);
 		};
 		if($@){
+			print Dumper(\@INC) . "\n";
 			warn qq{$@} . "\n";
 
 			next;
