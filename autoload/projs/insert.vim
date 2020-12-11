@@ -109,7 +109,7 @@ function! projs#insert#item_usr ()
   call add(lines,'')
 	call add(lines,printf('\iusr{%s}',usr))
   call add(lines,'')
-  call add(lines,'<++>')
+  call add(lines,base#const#pp())
 
   call append('.',lines)
 
@@ -263,6 +263,13 @@ function! projs#insert#ii_url ()
   if !is_date
     let url = input('URL: ','')
   endif
+
+	let data = projs#db#url_data({ 'url' : url })
+	let sec  = get(data,'sec','')
+	if len(sec)
+		call base#rdwe('URL already stored, sec: ' . sec)
+		return 
+	endif
 
 """ii_data
   let ii_data = projs#util#ii_data_from_url({ 

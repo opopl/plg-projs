@@ -376,7 +376,7 @@ import db
 eof
 endfunction
 
-function! projs#db#url_is_saved (...)
+function! projs#db#url_data (...)
   let ref  = get(a:000,0,{})
 
   let url = get(ref,'url','')
@@ -386,12 +386,12 @@ function! projs#db#url_is_saved (...)
   
   let ref = {
     \ "dbfile" : dbfile,
-    \ "q"      : "select sec from projs where url = ?",
+    \ "q"      : "SELECT proj, sec FROM projs WHERE url = ?",
 		\ "p"      : [ url ],
     \ }
     
-  let sec = pymy#sqlite#query_fetchone(ref)
-	return sec
+  let [ rwh, cols ] = pymy#sqlite#query_first(ref)
+	return rwh
 
 endfunction
 
