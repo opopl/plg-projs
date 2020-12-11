@@ -376,6 +376,25 @@ import db
 eof
 endfunction
 
+function! projs#db#url_is_saved (...)
+  let ref  = get(a:000,0,{})
+
+  let url = get(ref,'url','')
+
+  let dbfile  = projs#db#file()
+  let dbfile  = get(ref,'dbfile',dbfile)
+  
+  let ref = {
+    \ "dbfile" : dbfile,
+    \ "q"      : "select sec from projs where url = ?",
+		\ "p"      : [ url ],
+    \ }
+    
+  let sec = pymy#sqlite#query_fetchone(ref)
+	return sec
+
+endfunction
+
 function! projs#db#url_set (...)
   let ref  = get(a:000,0,{})
 

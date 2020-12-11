@@ -107,7 +107,7 @@ function! projs#insert#item_usr ()
 
   let lines = []
   call add(lines,'')
-	call add(lines,printf('\item \cusr{%s}',usr))
+	call add(lines,printf('\iusr{%s}',usr))
   call add(lines,'')
   call add(lines,'<++>')
 
