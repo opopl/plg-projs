@@ -263,8 +263,8 @@ sub _ii_include {
     }
     
     $mkr
-        ->_ii_include_updown(\@include)     # handle ii_updown
         ->_ii_include_filter(\@include)     # check for _base_ _all_
+        ->_ii_include_updown(\@include)     # handle ii_updown
         ;
 
     return @include;
@@ -332,6 +332,7 @@ sub _ii_include_updown {
             @updown = str_split_sn($ii_updown);
         }
 
+        my $j = 0;
         while (1) {
             my $s = shift @updown;
 
@@ -341,16 +342,25 @@ sub _ii_include_updown {
             @children = @{$mkr->_tree_sec_get($s,'children') || []};
 
             while(@parents){
-                my $p = shift @parents;
+                my $par = shift @parents;
 
-                $i{$p}=1;
+                $i{$par} = 1;
 
-                push @parents,@{$mkr->_tree_sec_get($s,'parents') || []};
+                push @parents,@{$mkr->_tree_sec_get($par,'parents') || []};
+            }
+
+            while(@children){
+                my $cld = shift @children;
+
+                $i{$cld} = 1;
+
+                push @children,@{$mkr->_tree_sec_get($cld,'children') || []};
             }
 
             last unless @updown;
+            last if $j==20;
+            $j++;
         }
-
 
     }
 
