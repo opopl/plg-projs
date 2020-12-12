@@ -199,6 +199,7 @@ $acts_s
             perl $Script dump_bld -d 'opts_maker sections' 
             perl $Script join
             perl $Script print_ii_include
+            perl $Script -i a.zc 
         DEBUG:
             perl -d $Script join
     } . "\n";
@@ -296,7 +297,7 @@ sub read_in_file {
                     };
                 }
             }
-            #print Dumper($bld->{ctl}) . "\n";
+            print Dumper($bld->_bld_var('ii_updown')) . "\n";
         };
     }
 

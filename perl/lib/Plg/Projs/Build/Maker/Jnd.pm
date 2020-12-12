@@ -442,7 +442,7 @@ sub cmd_jnd_compose {
         };
 
         if ($d_author) {
-            m/^\s*(\w+)\s+(\w+)\s*$/g && do { 
+            m/^\s*(\w+)\s+(\S+)\s*$/g && do { 
                 $d_author->{$1} = $2;
                 next;
             };

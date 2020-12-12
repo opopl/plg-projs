@@ -6,6 +6,7 @@ use warnings;
 use utf8;
 
 use File::Spec::Functions qw(catfile);
+use File::Slurp::Unicode;
 
 binmode STDOUT,':encoding(utf8)';
 
