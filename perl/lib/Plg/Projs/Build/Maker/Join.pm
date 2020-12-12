@@ -242,8 +242,6 @@ sub _ii_only {
 sub _ii_include {
     my ($mkr) = @_;
 
-    my $bld = $mkr->{bld};
-
     my (@include);
     my $f_in = $mkr->_file_ii_include;
 
@@ -263,37 +261,11 @@ sub _ii_include {
     
         last;
     }
-    my $ii_updown = $bld->_bld_var('ii_updown') || '';
-    if ($ii_updown) {
-        $mkr
-            ->tree_import
-            #->tree_dump
-            ;
-
-        my (@updown, @up, @down);
-        if(ref $ii_updown eq 'ARRAY'){
-            @updown = @$ii_updown;
-        }elsif(!ref $ii_updown){
-            @updown = str_split_sn($ii_updown);
-        }
-
-        while (1) {
-            my $s = shift @updown;
-
-            my ($parents, $children);
-
-            $parents  = $mkr->_tree_sec_get($s,'parents') || [];
-            $children = $mkr->_tree_sec_get($s,'children') || [];
-
-            last unless @updown;
-        }
-
-
-    }
-
-    # check for keywords: 
-    #   _base_ _all_
-    $mkr->_ii_include_filter(\@include);
+    
+    $mkr
+        ->_ii_include_updown(\@include)     # handle ii_updown
+        ->_ii_include_filter(\@include)     # check for _base_ _all_
+        ;
 
     return @include;
 }
@@ -330,6 +302,56 @@ sub _ii_include_filter {
     }elsif ($i{_base_}) {
         $i{$_} = 1 for(@base);
         delete $i{_base_};
+    }
+
+    @$include = sort keys %i;
+
+    return $mkr;
+}
+
+#called by _ii_include
+sub _ii_include_updown {
+    my ($mkr, $include) = @_;
+
+    my %i = map { $_ => 1 } @$include;
+
+    my $bld = $mkr->{bld};
+
+    my $ii_updown = $bld->_bld_var('ii_updown') || '';
+
+    if ($ii_updown) {
+        $mkr
+            ->tree_import
+            #->tree_dump
+            ;
+
+        my (@updown, @up, @down);
+        if(ref $ii_updown eq 'ARRAY'){
+            @updown = @$ii_updown;
+        }elsif(!ref $ii_updown){
+            @updown = str_split_sn($ii_updown);
+        }
+
+        while (1) {
+            my $s = shift @updown;
+
+            my (@parents, @children);
+
+            @parents  = @{$mkr->_tree_sec_get($s,'parents') || []};
+            @children = @{$mkr->_tree_sec_get($s,'children') || []};
+
+            while(@parents){
+                my $p = shift @parents;
+
+                $i{$p}=1;
+
+                push @parents,@{$mkr->_tree_sec_get($s,'parents') || []};
+            }
+
+            last unless @updown;
+        }
+
+
     }
 
     @$include = sort keys %i;
