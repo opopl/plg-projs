@@ -319,49 +319,47 @@ sub _ii_include_updown {
 
     my $ii_updown = $bld->_bld_var('ii_updown') || '';
 
-    if ($ii_updown) {
-        $mkr
-            ->tree_import
-            #->tree_dump
-            ;
+    return $mkr unless ($ii_updown);
+    $mkr
+        ->tree_import
+        #->tree_dump
+        ;
 
-        my (@updown, @up, @down);
-        if(ref $ii_updown eq 'ARRAY'){
-            @updown = @$ii_updown;
-        }elsif(!ref $ii_updown){
-            @updown = str_split_sn($ii_updown);
+    my (@updown, @up, @down);
+    if(ref $ii_updown eq 'ARRAY'){
+        @updown = @$ii_updown;
+    }elsif(!ref $ii_updown){
+        @updown = str_split_sn($ii_updown);
+    }
+
+    my $j = 0;
+    while (1) {
+        my $s = shift @updown;
+
+        my (@parents, @children);
+
+        @parents  = @{$mkr->_tree_sec_get($s,'parents') || []};
+        @children = @{$mkr->_tree_sec_get($s,'children') || []};
+
+        while(@parents){
+            my $par = shift @parents;
+
+            $i{$par} = 1;
+
+            push @parents,@{$mkr->_tree_sec_get($par,'parents') || []};
         }
 
-        my $j = 0;
-        while (1) {
-            my $s = shift @updown;
+        while(@children){
+            my $cld = shift @children;
 
-            my (@parents, @children);
+            $i{$cld} = 1;
 
-            @parents  = @{$mkr->_tree_sec_get($s,'parents') || []};
-            @children = @{$mkr->_tree_sec_get($s,'children') || []};
-
-            while(@parents){
-                my $par = shift @parents;
-
-                $i{$par} = 1;
-
-                push @parents,@{$mkr->_tree_sec_get($par,'parents') || []};
-            }
-
-            while(@children){
-                my $cld = shift @children;
-
-                $i{$cld} = 1;
-
-                push @children,@{$mkr->_tree_sec_get($cld,'children') || []};
-            }
-
-            last unless @updown;
-            last if $j==20;
-            $j++;
+            push @children,@{$mkr->_tree_sec_get($cld,'children') || []};
         }
 
+        last unless @updown;
+        last if $j==20;
+        $j++;
     }
 
     @$include = sort keys %i;
