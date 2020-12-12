@@ -118,7 +118,7 @@ sub _join_lines {
     my @prepend = $mkr->_line_plus($sec,'prepend');
     push @lines, @prepend;
 
-	$mkr->tree_init({ sec => $sec });
+    $mkr->tree_init({ sec => $sec });
 
 ###for_@f_lines
     foreach(@f_lines) {
@@ -168,11 +168,11 @@ sub _join_lines {
         m/$pats->{ii}/ && do {
             my $ii_sec   = $1;
 
-			$mkr
-				->tree_init({ sec => $ii_sec })
-				->tree_add_parent({ sec => $ii_sec, parent => $sec })
-				->tree_add_child({ sec => $sec, child => $ii_sec })
-				;
+            $mkr
+                ->tree_init({ sec => $ii_sec })
+                ->tree_add_parent({ sec => $ii_sec, parent => $sec })
+                ->tree_add_child({ sec => $sec, child => $ii_sec })
+                ;
 
             $mkr->_line_process_pat_ii({ 
                 delim          => $delim,
@@ -242,7 +242,7 @@ sub _ii_only {
 sub _ii_include {
     my ($mkr) = @_;
 
-	my $bld = $mkr->{bld};
+    my $bld = $mkr->{bld};
 
     my (@include);
     my $f_in = $mkr->_file_ii_include;
@@ -263,13 +263,36 @@ sub _ii_include {
     
         last;
     }
-	my $ii_updown = $bld->_bld_var('ii_updown') || '';
-	if ($ii_updown) {
-		$mkr->tree_import;
-	}
+    my $ii_updown = $bld->_bld_var('ii_updown') || '';
+    if ($ii_updown) {
+        $mkr
+            ->tree_import
+            #->tree_dump
+            ;
 
-	# check for keywords: 
-	# 	_base_ _all_
+        my (@updown, @up, @down);
+        if(ref $ii_updown eq 'ARRAY'){
+            @updown = @$ii_updown;
+        }elsif(!ref $ii_updown){
+            @updown = str_split_sn($ii_updown);
+        }
+
+        while (1) {
+            my $s = shift @updown;
+
+            my ($parents, $children);
+
+            $parents  = $mkr->_tree_sec_get($s,'parents') || [];
+            $children = $mkr->_tree_sec_get($s,'children') || [];
+
+            last unless @updown;
+        }
+
+
+    }
+
+    # check for keywords: 
+    #   _base_ _all_
     $mkr->_ii_include_filter(\@include);
 
     return @include;
