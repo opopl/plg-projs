@@ -289,7 +289,7 @@ sub read_in_file {
             }
             $bld->{ctl} ||= {}; 
             $bld->{ctl}->{vars} = \%vars; 
-            while(my($k,$v)=each %vars){
+            while(my($k,$v) = each %vars){
                 if (ref $bld->{vars} eq 'ARRAY') {
                     push @{$bld->{vars}}, { 
                         name  => $k,

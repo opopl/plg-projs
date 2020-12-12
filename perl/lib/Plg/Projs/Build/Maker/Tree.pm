@@ -7,6 +7,7 @@ use utf8;
 
 use File::Spec::Functions qw(catfile);
 use File::Slurp::Unicode;
+use Data::Dumper qw(Dumper);
 
 binmode STDOUT,':encoding(utf8)';
 
@@ -69,6 +70,14 @@ sub tree_import {
     $mkr->{ii_tree} = $tree;
 
     return $mkr;
+}
+
+sub tree_dump {
+    my ($mkr,$ref) = @_;
+    $ref ||= {};
+
+	print Dumper($mkr->{ii_tree}) . "\n";
+
 }
 
 sub tree_write {

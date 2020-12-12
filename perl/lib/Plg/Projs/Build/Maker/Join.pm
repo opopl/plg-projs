@@ -242,6 +242,8 @@ sub _ii_only {
 sub _ii_include {
     my ($mkr) = @_;
 
+	my $bld = $mkr->{bld};
+
     my (@include);
     my $f_in = $mkr->_file_ii_include;
 
@@ -261,7 +263,13 @@ sub _ii_include {
     
         last;
     }
+	my $ii_updown = $bld->_bld_var('ii_updown') || '';
+	if ($ii_updown) {
+		$mkr->tree_import;
+	}
 
+	# check for keywords: 
+	# 	_base_ _all_
     $mkr->_ii_include_filter(\@include);
 
     return @include;
