@@ -86,7 +86,7 @@ sub init {
 
     $bld
         ->inj_base
-        ->prj_load_xml
+        ->prj_load_xml          # process PROJ.xml file, set trg_list
         ->inj_targets
         ->get_act
         ->get_opt
@@ -269,6 +269,16 @@ sub process_ii_updown {
                 name  => $x,
                 value => $v,
             };
+        }
+
+        for($x){
+            /^ii_updown$/ && do {
+                my $sec_updown = $v;
+                my $t = sprintf('buf.%s',$sec_updown);
+                $bld->trg_list_add($t);
+                last;
+            };
+            last;
         }
     }
 

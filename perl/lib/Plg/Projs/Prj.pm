@@ -26,9 +26,9 @@ use Base::DB qw(
 );
 
 use base qw(
-	Base::Opt
-	Plg::Projs::Prj::Author
-	Plg::Projs::Prj::Data
+    Base::Opt
+    Plg::Projs::Prj::Author
+    Plg::Projs::Prj::Data
 );
 
 use Base::Arg qw(
@@ -60,7 +60,7 @@ sub init {
 sub prj_load_xml {
     my ($self) = @_;
 
-	return $self if $self->{prj_skip_load_xml};
+    return $self if $self->{prj_skip_load_xml};
     
     my $proj = $self->{proj};
     my $root = $self->{root};
@@ -77,15 +77,15 @@ sub prj_load_xml {
 
     my $pl = xml2dict($dom, attr => '@');
 
-	$self->{cnf} = {};
+    $self->{cnf} = {};
 
-	my $name = deepvalue($pl,qw( proj @name ));
-	if ($name && ($name eq $proj)) {
-		delete $pl->{proj}->{'@name'};
-    	$self->{cnf} = $pl->{proj};
-	}else{
-    	$self->{cnf} = $pl->{$proj};
-	}
+    my $name = deepvalue($pl,qw( proj @name ));
+    if ($name && ($name eq $proj)) {
+        delete $pl->{proj}->{'@name'};
+        $self->{cnf} = $pl->{proj};
+    }else{
+        $self->{cnf} = $pl->{$proj};
+    }
 
     my $include = $self->_val_list_ref_('cnf targets include');
     my $exclude = $self->_val_list_ref_('cnf targets exclude');

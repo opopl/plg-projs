@@ -47,6 +47,14 @@ sub inj_targets {
     return $bld;
 }
 
+sub trg_list_add {
+    my ($bld, @t) = @_;
+    $bld->{trg_list} ||= [];
+
+    push @{$bld->{trg_list}}, @t;
+    return $bld;
+}
+
 sub _trg_list {
     my ($bld) = @_;
 
