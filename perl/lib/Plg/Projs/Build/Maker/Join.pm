@@ -262,7 +262,7 @@ Used in:
 sub ii_filter {
     my ($mkr, $include) = @_;
 
-	$include ||= $mkr->{ii_include};
+    $include ||= $mkr->{ii_include};
 
     my %i = map { $_ => 1 } @$include;
 
@@ -286,9 +286,9 @@ sub ii_filter {
 sub ii_insert_updown {
     my ($mkr, $include) = @_;
 
-	$include ||= $mkr->{ii_include};
+    $include ||= $mkr->{ii_include};
 
-	my (%i, %i_updown, %i_base);
+    my (%i, %i_updown, %i_base);
 
     %i_base = map { $_ => 1 } $mkr->_ii_base;
 
@@ -341,10 +341,10 @@ sub ii_insert_updown {
         #last if $j==100;
         $j++;
     }
-	%i = ( %i_updown, %i_base );
+    %i = ( %i_updown, %i_base );
 
     @$include = sort keys %i;
-	delete $mkr->{join_lines}->{include_below};
+    delete $mkr->{join_lines}->{include_below};
 
     return $mkr;
 }
