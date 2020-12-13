@@ -231,50 +231,21 @@ sub _ii_only {
     return @ii_only;
 }
 
-=head3 _ii_include
-
-=head4 Usage
-
-    my @include = $mkr->_ii_include();
-
-=cut
-
 sub _ii_include {
     my ($mkr) = @_;
 
-    my (@include);
-    my $f_in = $mkr->_file_ii_include;
-
-    my @i = $mkr->_val_list_(qw( sections include ));
-    push @include, @i;
-
-    my $load_dat = $mkr->_val_(qw( load_dat ii_include ));
-
-    while(1){
-        last unless $load_dat;
-    
-        if (-e $f_in) {
-            push @include, readarr($f_in);
-        }else{
-            $mkr->{ii_include_all} = 1;
-        }
-    
-        last;
+    my $iii = $mkr->{ii_include};
+    if($iii && (ref $iii eq 'ARRAY') && @$iii){
+        return @$iii;
     }
-    
-    $mkr
-        ->_ii_include_filter(\@include)     # check for _base_ _all_
-        ->_ii_include_updown(\@include)     # handle ii_updown
-        ;
-
-    return @include;
+    return ();
 }
 
-=head3 _ii_include_filter
+=head3 ii_filter
 
 =head4 Usage
 
-    $mkr->_ii_include_filter(\@include);
+    $mkr->ii_filter(\@include);
 
 =head4 Filtering Keywords
 
@@ -288,7 +259,7 @@ Used in:
 
 =cut
 
-sub _ii_include_filter {
+sub ii_filter {
     my ($mkr, $include) = @_;
 
     my %i = map { $_ => 1 } @$include;
@@ -309,13 +280,14 @@ sub _ii_include_filter {
     return $mkr;
 }
 
-#called by _ii_include
-sub _ii_include_updown {
+#called by init_ii_include
+sub ii_insert_updown {
     my ($mkr, $include) = @_;
 
     my %i = map { $_ => 1 } @$include;
 
     my $bld = $mkr->{bld};
+    return $mkr unless $bld;
 
     my $ii_updown = $bld->_bld_var('ii_updown') || '';
 
@@ -335,6 +307,8 @@ sub _ii_include_updown {
     my $j = 0;
     while (1) {
         my $s = shift @updown;
+
+        $i{$s} = 1;
 
         my (@parents, @children);
 
@@ -363,6 +337,7 @@ sub _ii_include_updown {
     }
 
     @$include = sort keys %i;
+    #print Dumper($include) . "\n";
 
     return $mkr;
 }
@@ -382,6 +357,8 @@ sub _ii_base {
     my ($mkr) = @_;
 
     my $bld  = $mkr->{bld};
+    return () unless $bld;
+
     my $v    = $bld->_bld_var('ii_base');
     my @base = str_split_sn($v);
 

@@ -62,6 +62,7 @@ sub inj_base {
             'compile_pwg'      => 'build_pwg',
             'compile'          => 'jnd_build',
             'join'             => 'jnd_compose',
+            'relax'            => 'relax',
             'show_trg'         => sub { $bld->act_show_trg; },
             'show_acts'        => sub { $bld->act_show_acts; },
             'dump_bld'         => sub { $bld->act_dump_bld; },
@@ -94,7 +95,8 @@ sub init {
         ->trg_load_xml                          # load into targets/$target
         ->trg_apply('core')                     # apply 'core' target data into $bld instance
         ->trg_apply                             # apply $target data into $bld instance
-        ->read_in_file
+        ->read_in_file                  # process -i --in_file switch
+        ->process_ii_updown               
         ->process_config
         ->act_exe
         ->init_maker
@@ -230,6 +232,7 @@ sub get_opt {
         "target|t=s",
         "data|d=s",
         "in_file|i=s",
+        "ii_updown=s",
     );
 
     GetOptions(\%opt,@optstr);
@@ -239,7 +242,6 @@ sub get_opt {
         map { s/'//g; s/'$//g; $_ }
         split(',' => ($opt{config} || '')) 
     ];
-
 
     return $bld;   
 }
@@ -251,6 +253,24 @@ sub run_maker {
 
     local @ARGV = ();
     $m->run;
+
+    return $bld;
+}
+
+sub process_ii_updown {
+    my ($bld) = @_;
+
+    foreach my $x (qw(ii_updown)) {
+        my $v = $bld->{opt}->{$x};
+        next unless $v;
+
+        if (ref $bld->{vars} eq 'ARRAY') {
+            push @{$bld->{vars}}, { 
+                name  => $x,
+                value => $v,
+            };
+        }
+    }
 
     return $bld;
 }
@@ -297,7 +317,6 @@ sub read_in_file {
                     };
                 }
             }
-            print Dumper($bld->_bld_var('ii_updown')) . "\n";
         };
     }
 

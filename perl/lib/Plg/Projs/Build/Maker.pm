@@ -204,12 +204,44 @@ sub init_img {
     return $mkr;    
 }
 
+sub init_ii_include {
+    my ($mkr) = @_;
+
+    my @include;
+
+    my $f_in = $mkr->_file_ii_include;
+
+    my @i = $mkr->_val_list_(qw( sections include ));
+    push @include, @i;
+
+    my $load_dat = $mkr->_val_(qw( load_dat ii_include ));
+
+    while(1){
+        last unless $load_dat;
+    
+        if (-e $f_in) {
+            push @include, readarr($f_in);
+        }else{
+            $mkr->{ii_include_all} = 1;
+        }
+    
+        last;
+    }
+    
+    $mkr
+        ->ii_filter(\@include)     			# check for _base_ _all_
+        ->ii_insert_updown(\@include)     	# handle ii_updown
+        ;
+
+    $mkr->{ii_include} = [@include];
+
+    return $mkr;    
+}
+
 sub init {
     my ($mkr) = @_;
 
     $mkr->get_opt;
-
-    my $tex_opts_a = [];
 
     my $proj    = $mkr->{proj};
 
@@ -235,13 +267,16 @@ sub init {
         cmd             => 'bare',
         ii_tree         => {},           # see _join_lines 
     };
+    hash_inject($mkr, $h);
 
     $mkr
        #->init_pwg
        ->init_img
        ->init_prj
+       ->init_ii_include
        ;
 
+    my $tex_opts_a = [];
     push @$tex_opts_a, 
         '-file-line-error',
         '-interaction nonstopmode',
@@ -447,6 +482,12 @@ sub cmd_print_ii_tree {
     #my $f_bn = basename($file_tree);
 
     #print qq{[proj: $proj, root_id: $root_id] Tree written to: $f_bn} . "\n";
+
+    return $mkr;
+}
+
+sub cmd_relax {
+    my ($mkr) = @_;
 
     return $mkr;
 }
@@ -695,7 +736,6 @@ sub cmd_bare {
     my $root = $mkr->{root};
 
     my @dirids = qw( 
-        out_dir 
         out_dir_pdf 
         out_dir_pdf_b 
     );
@@ -705,7 +745,7 @@ sub cmd_bare {
         mkpath $dir;
     }
 
-    my $proj_bib = catfile( $mkr->{out_dir}, "$proj.bib" );
+    my $proj_bib = catfile( $mkr->{build_dir}, "$proj.bib" );
     copy( $mkr->{bib_file}, $proj_bib ) 
         if -e $mkr->{bib_file};
     
