@@ -231,13 +231,13 @@ sub init_ii_include {
     $mkr->{ii_include} = \@include;
     
     $mkr
-        ->ii_filter     		# check for _base_ _all_
-        ->ii_insert_updown     	# handle ii_updown
+        ->ii_filter             # check for _base_ _all_
+        ->ii_insert_updown      # handle ii_updown
         ;
 
-	#delete $mkr->{join_lines}->{include_with_children} = ;
-	#print Dumper($mkr->_val_('sections')) . "\n";
-	#print Dumper($mkr->_val_('join_lines')) . "\n";
+    #delete $mkr->{join_lines}->{include_with_children} = ;
+    #print Dumper($mkr->_val_('sections')) . "\n";
+    #print Dumper($mkr->_val_('join_lines')) . "\n";
     print Dumper($mkr->{ii_include}) . "\n";
 
     return $mkr;    
@@ -479,10 +479,10 @@ sub cmd_print_ii_base {
 sub cmd_print_ii_tree {
     my ($mkr) = @_;
 
-	$mkr
-		->tree_fill
-		->tree_write
-		;
+    $mkr
+        ->tree_fill
+        ->tree_write
+        ;
 
     #my $f_bn = basename($file_tree);
 

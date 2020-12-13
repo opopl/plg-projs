@@ -36,7 +36,7 @@ use base qw(
 sub inj_targets {
     my ($bld) = @_;
 
-  $bld->trg_inj_core;
+    $bld->trg_inj_core;
 
     foreach my $trg ($bld->_trg_list) {
         my $sub = 'trg_inj_' . $trg;
@@ -125,8 +125,8 @@ sub _trg_dom_find {
   Called by
     trg_load_xml
   Calls
-	  _trg_dom
-	  xml2dict
+      _trg_dom
+      xml2dict
 
 =cut
 

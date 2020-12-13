@@ -75,9 +75,17 @@ sub prj_load_xml {
 
     $self->{dom_xml_trg} = $dom;
 
-    my $pl = xml2dict($dom, attr => '');
-    $self->{cnf} = $pl->{$proj} || {};
+    my $pl = xml2dict($dom, attr => '@');
 
+	$self->{cnf} = {};
+
+	my $name = deepvalue($pl,qw( proj @name ));
+	if ($name && ($name eq $proj)) {
+		delete $pl->{proj}->{'@name'};
+    	$self->{cnf} = $pl->{proj};
+	}else{
+    	$self->{cnf} = $pl->{$proj};
+	}
 
     my $include = $self->_val_list_ref_('cnf targets include');
     my $exclude = $self->_val_list_ref_('cnf targets exclude');

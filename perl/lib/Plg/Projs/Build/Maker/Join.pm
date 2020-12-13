@@ -255,7 +255,7 @@ sub _ii_include {
 
 Used in:
 
-    _ii_include
+    init_ii_include
 
 =cut
 
