@@ -235,10 +235,9 @@ sub init_ii_include {
         ->ii_insert_updown      # handle ii_updown
         ;
 
-    #delete $mkr->{join_lines}->{include_with_children} = ;
     #print Dumper($mkr->_val_('sections')) . "\n";
     #print Dumper($mkr->_val_('join_lines')) . "\n";
-    print Dumper($mkr->{ii_include}) . "\n";
+    #print Dumper($mkr->{ii_include}) . "\n";
 
     return $mkr;    
 }

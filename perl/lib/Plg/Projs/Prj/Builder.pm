@@ -129,7 +129,12 @@ sub act_exe {
 sub set_target {
     my ($bld) = @_;
 
-    $bld->{target} = $bld->_opt_argv_('target',$bld->{target_default});
+    local $_ = $bld->{target} = $bld->_opt_argv_('target',$bld->{target_default});
+    if (/^_buf\.(\S+)$/) {
+        my $sec = $1;
+
+        $bld->{opt}->{ii_updown} = $sec;
+    }
     return $bld;
 }
 

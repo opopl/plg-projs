@@ -1,8 +1,10 @@
 
 function! projs#bld#do#show_trg ()
-  call projs#bld#run({
-      \ 'act' : 'show_trg'
-      \ })
+  "call projs#bld#run({
+      "\ 'act' : 'show_trg'
+      "\ })
+  let targets = projs#bld#trg#list()
+  call base#buf#open_split({ 'lines' : targets })
 
 endfunction
 

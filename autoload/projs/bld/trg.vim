@@ -8,10 +8,11 @@ function! projs#bld#trg#list ()
     \ "split_output" : 0,
     \ })
   let targets    = base#varget('sysout',[])
+  let targets = sort(targets)
 
   let sec_buf = projs#buf#sec()
   if len(sec_buf)
-    call add(targets,printf('buf.%s',sec_buf))
+    call add(targets,printf('_buf.%s',sec_buf))
   endif
   return targets
   
