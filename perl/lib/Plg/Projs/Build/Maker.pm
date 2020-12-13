@@ -227,13 +227,18 @@ sub init_ii_include {
     
         last;
     }
+
+    $mkr->{ii_include} = \@include;
     
     $mkr
-        ->ii_filter(\@include)     			# check for _base_ _all_
-        ->ii_insert_updown(\@include)     	# handle ii_updown
+        ->ii_filter     		# check for _base_ _all_
+        ->ii_insert_updown     	# handle ii_updown
         ;
 
-    $mkr->{ii_include} = [@include];
+	#delete $mkr->{join_lines}->{include_with_children} = ;
+	#print Dumper($mkr->_val_('sections')) . "\n";
+	#print Dumper($mkr->_val_('join_lines')) . "\n";
+    print Dumper($mkr->{ii_include}) . "\n";
 
     return $mkr;    
 }

@@ -262,6 +262,8 @@ Used in:
 sub ii_filter {
     my ($mkr, $include) = @_;
 
+	$include ||= $mkr->{ii_include};
+
     my %i = map { $_ => 1 } @$include;
 
     my @base = $mkr->_ii_base;
@@ -284,7 +286,11 @@ sub ii_filter {
 sub ii_insert_updown {
     my ($mkr, $include) = @_;
 
-    my %i = map { $_ => 1 } @$include;
+	$include ||= $mkr->{ii_include};
+
+	my (%i, %i_updown, %i_base);
+
+    %i_base = map { $_ => 1 } $mkr->_ii_base;
 
     my $bld = $mkr->{bld};
     return $mkr unless $bld;
@@ -308,7 +314,7 @@ sub ii_insert_updown {
     while (1) {
         my $s = shift @updown;
 
-        $i{$s} = 1;
+        $i_updown{$s} = 1;
 
         my (@parents, @children);
 
@@ -318,7 +324,7 @@ sub ii_insert_updown {
         while(@parents){
             my $par = shift @parents;
 
-            $i{$par} = 1;
+            $i_updown{$par} = 1;
 
             push @parents,@{$mkr->_tree_sec_get($par,'parents') || []};
         }
@@ -326,18 +332,19 @@ sub ii_insert_updown {
         while(@children){
             my $cld = shift @children;
 
-            $i{$cld} = 1;
+            $i_updown{$cld} = 1;
 
             push @children,@{$mkr->_tree_sec_get($cld,'children') || []};
         }
 
         last unless @updown;
-        last if $j==20;
+        #last if $j==100;
         $j++;
     }
+	%i = ( %i_updown, %i_base );
 
     @$include = sort keys %i;
-    #print Dumper($include) . "\n";
+	delete $mkr->{join_lines}->{include_below};
 
     return $mkr;
 }
