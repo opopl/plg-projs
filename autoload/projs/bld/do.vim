@@ -12,18 +12,24 @@ function! projs#bld#do#pdf_view ()
 
 endfunction
 
-
+if 0
+  call tree
+    calls
+      projs#bld#target
+        projs#bld#trg#choose
+          projs#bld#trg#list
+endif
 
 function! projs#bld#do#jnd_view ()
 
-	let target = projs#bld#target()
-	let proj = projs#proj#name()
+  let target  = projs#bld#target()
+  let proj    = projs#proj#name()
 
   let jnd_tex = join([ projs#root(), 'builds', proj, 'src', target, 'jnd.tex' ],"/")
-	call base#fileopen({ 
-		\	'files'    : [jnd_tex],
-		\	'load_buf' : 1,
-		\	})
+  call base#fileopen({ 
+    \ 'files'    : [jnd_tex],
+    \ 'load_buf' : 1,
+    \ })
 
 endfunction
 
@@ -40,25 +46,25 @@ function! projs#bld#do#dump_sec ()
 endfunction
 
 function! projs#bld#do#last_compile ()
-	let last = base#varget('projs_bld_last_compile',{})
+  let last = base#varget('projs_bld_last_compile',{})
 
-	let config = get(last,'config','')
-	let target = base#varget('projs_bld_target','')
+  let config = get(last,'config','')
+  let target = base#varget('projs_bld_target','')
 
-	call projs#action#bld_compile({
-		\	'config' : config,
-		\	'target' : target,
-		\	})
+  call projs#action#bld_compile({
+    \ 'config' : config,
+    \ 'target' : target,
+    \ })
 
 endfunction
 
 function! projs#bld#do#print_ii_tree ()
-	let opts = []
+  let opts = []
 
-	let target = projs#bld#target()
-	if len(target)
-		call extend(opts,[ '-t', target ])
-	endif
+  let target = projs#bld#target()
+  if len(target)
+    call extend(opts,[ '-t', target ])
+  endif
 
   call projs#bld#run({
       \ 'act'        : 'print_ii_tree',

@@ -8,6 +8,11 @@ function! projs#bld#trg#list ()
     \ "split_output" : 0,
     \ })
   let targets    = base#varget('sysout',[])
+
+  let sec_buf = projs#buf#sec()
+  if len(sec_buf)
+    call add(targets,printf('buf.%s',sec_buf))
+  endif
   return targets
   
 endfunction
@@ -27,7 +32,7 @@ function! projs#bld#trg#choose ()
     endw
   endif
 
-	call base#varset('projs_bld_target',target)
+  call base#varset('projs_bld_target',target)
 
   return target
 
