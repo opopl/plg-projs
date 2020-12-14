@@ -89,11 +89,16 @@ function! projs#insert#cmt_pic ()
 
   let lines = []
 
+	let width = '0.5'
+	let fig_env = 'wrapfigure'
+
   call add(lines,'')
   call add(lines,'\ifcmt')
   call add(lines,printf('  pic %s',url))
   if len(caption)
     call add(lines,printf('  caption %s',caption))
+    call add(lines,printf('  width %s',width))
+    call add(lines,printf('  fig_env %s',fig_env))
   endif
   call add(lines,'\fi')
   call add(lines,'')
