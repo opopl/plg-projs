@@ -8,6 +8,12 @@ function! projs#bld#do#show_trg ()
 
 endfunction
 
+if 0
+  call tree
+    calls 
+      projs#pdf#view
+endif
+
 function! projs#bld#do#pdf_view ()
 
   call projs#pdf#view({ 'type' : 'bld' })
