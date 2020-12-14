@@ -94,16 +94,8 @@ function! projs#pdf#view (...)
 	      call extend(d_files,{ t : file })
 	    endif
 	  endfor
-	
-	  let target = '' 
-	  if len(targets) == 1
-	    let target = get(targets,0,'')
-	  endif
-	
-	  while (!len(target) || !base#inlist(target,targets) )
-	    call base#varset('this',targets)
-	    let target = input('target:','','custom,base#complete#this')
-	  endw
+
+		let target = projs#bld#trg#choose()
 	
 	  let pdf_file = get(d_files,target,'')
   elseif type == 'bare'

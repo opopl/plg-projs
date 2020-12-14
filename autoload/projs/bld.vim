@@ -124,6 +124,15 @@ function! projs#bld#run (...)
 
 endf
 
+if 0
+	call tree
+		calls 
+			projs#proj#name
+			projs#bld#make_secs
+			projs#fc#match_proj
+			base#util#split_acts
+endif
+
 function! projs#bld#do (...)
   let act  = get(a:000,0,'')
 
