@@ -110,6 +110,12 @@ function! projs#visual#delete_empty_lines (...)
 
 endfunction
 
+function! projs#visual#verb_replace (...)
+	let macro = input('macro: ','iusr')
+	exe "'<,'>" . printf('s/^\\verb|\(.*\)|/\\%s{\1}/g',macro)
+
+endfunction
+
 function! projs#visual#trim (...)
   exe "'<,'>s/\s*$//g"
   exe "'<,'>s/^\s*//g"

@@ -97,9 +97,10 @@ function! projs#insert#cmt_pic ()
   call add(lines,printf('  pic %s',url))
   if len(caption)
     call add(lines,printf('  caption %s',caption))
-    call add(lines,printf('  width %s',width))
-    call add(lines,printf('  fig_env %s',fig_env))
   endif
+
+  call add(lines,printf('  width %s',width))
+  call add(lines,printf('  fig_env %s',fig_env))
   call add(lines,'\fi')
   call add(lines,'')
 
