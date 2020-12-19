@@ -267,7 +267,7 @@ function! projs#insert#ii_url ()
 
   let url = ''
   if !is_date
-    let url = input('URL: ','')
+    let url = input('[PIN ii_url] URL: ','')
   endif
 
 	let data = projs#db#url_data({ 'url' : url })

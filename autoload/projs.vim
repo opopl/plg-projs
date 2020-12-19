@@ -928,6 +928,8 @@ function! projs#maps (...)
             \  ';gi'   : 'PrjAct get_img'  ,
             \  ';kr'   : 'KEYMAP russian_jcukenwin'  ,
             \  ';ku'   : 'KEYMAP ukrainian_jcuken'  ,
+            \  ';iu'   : 'PIN ii_url',
+            \  ';ii'   : 'PIN ii',
             \  '<F2>'  : 'PrjBuild Cleanup'    ,
             \  '<F3>'  : 'copen'               ,
             \  '<F4>'  : 'cclose'              ,
