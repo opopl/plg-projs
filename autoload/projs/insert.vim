@@ -89,8 +89,8 @@ function! projs#insert#cmt_pic ()
 
   let lines = []
 
-	let width = '0.5'
-	let fig_env = 'wrapfigure'
+  let width = '0.5'
+  let fig_env = 'wrapfigure'
 
   call add(lines,'')
   call add(lines,'\ifcmt')
@@ -113,7 +113,7 @@ function! projs#insert#item_usr ()
 
   let lines = []
   call add(lines,'')
-	call add(lines,printf('\iusr{%s}',usr))
+  call add(lines,printf('\iusr{%s}',usr))
   call add(lines,'')
   call add(lines,base#const#pp())
 
@@ -270,12 +270,12 @@ function! projs#insert#ii_url ()
     let url = input('[PIN ii_url] URL: ','')
   endif
 
-	let data = projs#db#url_data({ 'url' : url })
-	let sec  = get(data,'sec','')
-	if len(sec)
-		call base#rdwe('URL already stored, sec: ' . sec)
-		return 
-	endif
+  let data = projs#db#url_data({ 'url' : url })
+  let sec  = get(data,'sec','')
+  if len(sec)
+    call base#rdwe('URL already stored, sec: ' . sec)
+    return 
+  endif
 
 """ii_data
   let ii_data = projs#util#ii_data_from_url({ 
@@ -287,23 +287,41 @@ function! projs#insert#ii_url ()
   let author_id = get(ii_data,'author_id','')
   let author    = projs#author#get({ 'author_id' : author_id })
 
+  let author_id_list = []
   if !len(author_id)
     let author_ids = projs#author#ids() 
     call base#varset('this',author_ids)
 
-    let author_id = input('author_id: ','','custom,base#complete#this')
+    let i_au = 1
+    let m_added = []
+    while(1)
+      let author_id = input( join(m_added, "\n") . 'author_id: ','','custom,base#complete#this')
+      call add(author_id_list,author_id)
 
-		if len(author_id)
-	    let author    = projs#author#get({ 'author_id' : author_id })
-	
-	    if len(author)
-	      echo printf('Found author: %s',author)
-	    else
-	      let author = projs#author#add_prompt({ 'author_id' : author_id })
-	    endif
-		endif
+      call add(m_added,printf('[%s] Added: %s', i_au, author_id))
 
-    let pref     .=  len(author_id) ? printf('.%s',author_id) : ''
+      let i_au += 1
+      if author_id =~ ',$'
+        continue
+      else
+        break
+      endif
+    endw
+
+    let author_id_first = get(author_id_list,0,'')
+    if len(author_id_first)
+      let author    = projs#author#get({ 'author_id' : author_id_first })
+  
+      if len(author)
+        echo printf('Found author: %s',author)
+      else
+        let author = projs#author#add_prompt({ 'author_id' : author_id_first })
+      endif
+    endif
+
+    let pref     .=  len(author_id_first) ? printf('.%s',author_id_first) : ''
+  else
+    call extend(author_id_list,split(author_id,","))
   endif
 
   if len(pref)
@@ -382,7 +400,7 @@ function! projs#insert#ii_url ()
       \  'url'       : url,
       \  'title'     : title,
       \  'sec_type'  : sec_type,
-      \  'author_id' : author_id,
+      \  'author_id' : author_id_list_str,
       \  'author'    : author,
       \  'tags'      : tags,
       \  }

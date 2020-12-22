@@ -426,18 +426,21 @@ sub cmd_jnd_compose {
 
 ###m_author_end
         m/^\s*author_end\b(.*)$/g && do { 
-            my $author_id = $d_author->{author_id};
-            next unless $author_id;
-            #$rootid;
-            my $prj    = $mkr->{prj};
-            my $author = $prj->_author_get({ author_id => $author_id });
+            my @author_ids = split("," => $d_author->{author_id} || '');
+            next unless @author_ids;
 
-			$author =~ s/\(/ \\textbraceleft /g;
-			$author =~ s/\)/ \\textbraceright /g;
+            foreach my $author_id (@author_ids) {
+                my $prj    = $mkr->{prj};
+                my $author = $prj->_author_get({ author_id => $author_id });
+    
+                $author =~ s/\(/ \\textbraceleft /g;
+                $author =~ s/\)/ \\textbraceright /g;
+    
+                push @nlines, sprintf(q{\Pauthor{%s}}, $author) if $author;
+    
+                $d_author = undef;
 
-            push @nlines, sprintf(q{\Pauthor{%s}}, $author) if $author;
-
-            $d_author = undef;
+            }
             next;
         };
 
@@ -513,6 +516,7 @@ sub cmd_jnd_compose {
                     last;
                 };
 
+###m_other
                 m/^\s*(\w+)\s+(.*)$/g && do { 
                    my $k = $1;
                    #next unless grep { /^$k$/ } qw( caption name tags );
@@ -526,7 +530,7 @@ sub cmd_jnd_compose {
             last;
         }
 
-###m_caption
+###m_other_tab
         m/^\s*(\w+)\s+(.*)$/g && do { 
             $tab->{$1} = $2 if $tab;
             next;
