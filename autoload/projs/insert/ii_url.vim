@@ -1,4 +1,3 @@
 
-
-function! projs#insert#ii_url#sec ()
+function! projs#insert#ii_url#get_pref ()
 endf
