@@ -1,11 +1,11 @@
 
-function! projs#insert#ii_url#get_pref (...)
+function! projs#insert#ii_url#get_pref_auth (...)
   let ref = get(a:000,0,{})
 
   let author_id      = get(ref,'author_id','')
-  let author_id_list = []
+  let pref           = get(ref,'pref','')
 
-  let pref = ''
+  let author_id_list = []
 
   if !len(author_id)
     let author_ids = projs#author#ids() 
