@@ -309,6 +309,33 @@ fun! projs#checksecdir()
 
 endf
 
+function! projs#img (...)
+  let act  = get(a:000,0,'')
+
+  let acts = base#varget('projs_opts_IMG',[])
+
+  let proj = projs#proj#name()
+
+  let fmt_sub = 'projs#img#%s'
+  let front = [
+      \ 'Current project:' , "\t" . proj,
+      \ 'Possible IMG actions: ' 
+      \ ]
+  let desc = base#varget('projs_desc_IMG',{})
+
+  let Fc = projs#fc#match_proj({ 'proj' : proj })
+  
+  call base#util#split_acts({
+    \ 'act'     : act,
+    \ 'acts'    : acts,
+    \ 'desc'    : desc,
+    \ 'front'   : front,
+    \ 'fmt_sub' : fmt_sub,
+    \ 'Fc'      : Fc,
+    \ })
+
+endfunction
+
 function! projs#insert (...)
   let ins = get(a:000,0,'')
 
