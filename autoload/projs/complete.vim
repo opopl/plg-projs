@@ -95,6 +95,11 @@ function! projs#complete#prjact (...)
    return projs#complete#vars([ 'opts_PrjAct' ])
 endfunction
 
+
+function! projs#complete#IMG (...)
+   return projs#complete#vars([ 'opts_IMG' ])
+endfunction
+
 function! projs#complete#ZLAN (...)
    return projs#complete#vars([ 'opts_ZLAN' ])
 endfunction
