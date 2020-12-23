@@ -955,6 +955,7 @@ function! projs#maps (...)
             \  ';gi'   : 'PrjAct get_img'  ,
             \  ';kr'   : 'KEYMAP russian_jcukenwin'  ,
             \  ';ku'   : 'KEYMAP ukrainian_jcuken'  ,
+            \  ';aa'   : 'PA author_add',
             \  ';iu'   : 'PIN ii_url',
             \  ';ii'   : 'PIN ii',
             \  '<F2>'  : 'PrjBuild Cleanup'    ,
