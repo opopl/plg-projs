@@ -43,6 +43,7 @@ function! projs#insert#ii_url#get_pref_auth (...)
   else
     call extend(author_id_list,split(author_id,","))
   endif
+  let author_id_first = get(author_id_list,0,'')
 
   let d_pref = {
       \  'author_id_list'  : author_id_list,
