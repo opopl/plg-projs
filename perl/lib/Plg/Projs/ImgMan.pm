@@ -14,6 +14,9 @@ use Base::DB qw(
     dbh_select_as_list
     dbi_connect
 );
+use Getopt::Long qw(GetOptions);
+use File::Basename qw(basename dirname);
+use FindBin qw($Bin $Script);
 
 sub new
 {
@@ -23,6 +26,10 @@ sub new
     $self->init if $self->can('init');
 
     return $self;
+}
+
+sub _img_root {
+    my ($self) = @_;
 }
 
 sub init {
@@ -36,8 +43,57 @@ sub init {
     return $self;
 }
 
+      
+sub get_opt {
+    my ($self) = @_;
+    
+    Getopt::Long::Configure(qw(bundling no_getopt_compat no_auto_abbrev no_ignore_case_always));
+    
+    my (@optstr, %opt);
+    @optstr=( 
+        "what|w=s",
+    );
+    
+    unless( @ARGV ){ 
+        $self->dhelp;
+        exit 0;
+    }else{
+        GetOptions(\%opt,@optstr);
+        $self->{opt} = \%opt;
+    }
+
+    foreach my $k (keys %opt) {
+        $self->{$k} = $opt{$k};
+    }
+
+    return $self;    
+}
+
+sub dhelp {
+    my ($self) = @_;
+
+    my $s = qq{
+
+    USAGE
+        $Script OPTIONS
+    OPTIONS
+
+    EXAMPLES
+        $Script ...
+
+    };
+
+    print $s . "\n";
+
+    return $self;    
+}
+
 sub run {
     my ($self) = @_;
+
+    $self
+        ->get_opt
+        ;
 
     return $self;
 }
