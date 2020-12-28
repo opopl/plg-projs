@@ -43,6 +43,14 @@ sub init {
     return $self;
 }
 
+sub init_db {
+    my ($self) = @_;
+
+    $self->{img_db} ||= catfile($self->{img_root},'img.db');
+
+    return $self;
+}
+
       
 sub get_opt {
     my ($self) = @_;
@@ -50,8 +58,10 @@ sub get_opt {
     Getopt::Long::Configure(qw(bundling no_getopt_compat no_auto_abbrev no_ignore_case_always));
     
     my (@optstr, %opt);
-    @optstr=( 
-        "what|w=s",
+    @optstr = ( 
+        "img_root=s",
+        "img_db=s",
+        "cmd|c=s",
     );
     
     unless( @ARGV ){ 
@@ -77,9 +87,12 @@ sub dhelp {
     USAGE
         $Script OPTIONS
     OPTIONS
+            --img_root DIR      directory with images, default is \$ENV{IMG_ROOT}
+            --img_db   FILE     SQLite database file, default is IMG_ROOT/img.db
+        -c  --cmd      CMD
 
     EXAMPLES
-        $Script ...
+        $Script --img_root IMG_ROOT --img_db IMG_DB
 
     };
 
@@ -93,6 +106,7 @@ sub run {
 
     $self
         ->get_opt
+        ->init_db
         ;
 
     return $self;
