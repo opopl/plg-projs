@@ -5,7 +5,7 @@ use strict;
 use warnings;
 
 use Base::Arg qw(
-	hash_inject
+    hash_inject
 );
 
 use base qw(
@@ -27,7 +27,7 @@ sub init {
         tags_base => [ @tags_base ]
     };
 
-	hash_inject($self, $h);
+    hash_inject($self, $h);
 
     return $self;
 }
@@ -126,7 +126,7 @@ sub _range_tabular_line {
 sub run {
     my ($self) = @_;
 
-	my $tex = $self->tex;
+    my $tex = $self->tex;
     print $tex . "\n";
 
 
