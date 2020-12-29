@@ -18,6 +18,7 @@ use Getopt::Long qw(GetOptions);
 use File::Basename qw(basename dirname);
 use FindBin qw($Bin $Script);
 use File::Spec::Functions qw(catfile);
+use Data::Table;
 
 sub new
 {
@@ -48,6 +49,62 @@ sub init_db {
     my ($self) = @_;
 
     $self->{img_db} ||= catfile($self->{img_root},'img.db');
+	
+	my $ref = {
+		dbfile => $self->{img_db},
+	};
+	
+	my $dbh = $self->{img_dbh} = dbi_connect($ref);
+
+    return $self;
+}
+
+sub c_list {
+    my ($self) = @_;
+
+	my $dbh = $self->{img_dbh};
+    return $self unless $dbh;
+
+	my $ref = {
+		dbh => $dbh,
+		q => q{ SELECT * FROM imgs },
+		p => [  ],
+	};
+	
+	my $data=[];
+	my ($rows) = dbh_select($ref);
+	my $header = [qw(inum ext type img sec)];
+	foreach my $row (@$rows) {
+		push @$data, [ map { $row->{$_} } @$header ];
+	}
+	my $dt = Data::Table->new($data,$header,0);
+	print $dt->tsv . "\n";
+
+    return $self;
+}
+
+sub _imgs {
+    my ($self) = @_;
+}
+
+sub c_info {
+    my ($self) = @_;
+
+	my $q = q{SELECT sql FROM sqlite_master WHERE name = ?};
+	my $p = [qw(imgs)];
+
+	my $dbh = $self->{img_dbh};
+    return $self unless $dbh;
+
+	my $ref = {
+		dbh => $dbh,
+		q   => $q,
+		p   => $p,
+	};
+	
+	my ($rows) = dbh_select($ref);
+	my $sql = $rows->[0]->{'sql'} || '' ;
+	print $sql . "\n";
 
     return $self;
 }
@@ -115,6 +172,15 @@ sub run {
         ->get_opt
         ->init_db
         ;
+	my $cmd = $self->{cmd};
+	if ($cmd) {
+		my $sub = 'c_' . $cmd;
+		if ($self->can($sub)){
+			$self->$sub;
+		}else{
+			warn qq{[ImgMan] command not defined: $cmd} . "\n";
+		}
+	}
 
     return $self;
 }
