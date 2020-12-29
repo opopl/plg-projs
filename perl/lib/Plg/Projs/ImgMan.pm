@@ -101,8 +101,8 @@ sub _imgs {
 sub c_info {
     my ($self) = @_;
 
-	my $q = q{SELECT sql FROM sqlite_master WHERE name = ?};
-	my $p = [qw(imgs)];
+	my $q = q{ SELECT sql FROM sqlite_master WHERE name = ? };
+	my $p = [qw( imgs )];
 
 	my $dbh = $self->{img_dbh};
     return $self unless $dbh;
