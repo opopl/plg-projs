@@ -20,6 +20,11 @@ use FindBin qw($Bin $Script);
 use File::Spec::Functions qw(catfile);
 use Data::Table;
 
+use Image::Info qw(
+    image_info
+    image_type
+);
+
 sub new
 {
     my ($class, %opts) = @_;
@@ -62,17 +67,8 @@ sub init_db {
 sub c_list {
     my ($self) = @_;
 
-	my $dbh = $self->{img_dbh};
-    return $self unless $dbh;
-
-	my $ref = {
-		dbh => $dbh,
-		q => q{ SELECT * FROM imgs },
-		p => [  ],
-	};
-	
 	my $data=[];
-	my ($rows) = dbh_select($ref);
+	my $rows = $self->_imgs;
 	my $header = [qw(inum ext type img sec)];
 	foreach my $row (@$rows) {
 		push @$data, [ map { $row->{$_} } @$header ];
@@ -84,7 +80,22 @@ sub c_list {
 }
 
 sub _imgs {
-    my ($self) = @_;
+    my ($self, $ref) = @_;
+	$ref ||= {};
+	my $cond = $ref->{cond} || '';
+
+	my $dbh = $self->{img_dbh};
+    return $self unless $dbh;
+
+	my $ref = {
+		dbh  => $dbh,
+		q    => q{ SELECT * FROM imgs },
+		p    => [  ],
+		cond => $cond,
+	};
+	
+	my ($rows) = dbh_select($ref);
+	return $rows;
 }
 
 sub c_info {
@@ -111,6 +122,8 @@ sub c_info {
 
 sub c_cnv {
     my ($self) = @_;
+
+	my $imgs = $self->_imgs;
 
     return $self;
 }
