@@ -607,7 +607,7 @@ sub load_file {
         $ext = undef;
 
 		print '=' x 50 . "\n";
-		print qq{Final image location:} . basename($img_file) . "\n";
+		print qq{Final image location: } . basename($img_file) . "\n";
 		print '=' x 50 . "\n";
 
         return 1;
