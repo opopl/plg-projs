@@ -523,6 +523,7 @@ sub load_file {
         });
 
         my @m; push @m,
+			 'x' x 50,
              'Try downloading picture:',
              '  proj:     ' . $self->{proj},
              '  sec:      ' . $sec,
@@ -557,18 +558,25 @@ sub load_file {
 
         my $itp = image_type($img_file) || {};
         my $iif = image_info($img_file) || {};
+
+		my $media_type_str = $iif->{file_media_type} || '';
+		my ($img_type) = ( $media_type_str =~ m{image\/(\w+)} );
         
         $img_err = $iif->{error};
         if ($img_err) {
-            print qq{IMAGE FAIL: $img} . "\n";
+            print qq{image_info FAIL: $img} . "\n";
             print qq{   $img_err} . "\n";
         }else{
+            print qq{image_info OK: $img} . "\n";
             foreach my $k (qw(file_media_type)) {
                 print qq{   $k => } . $iif->{$k} . "\n" if $iif->{$k};
             }
         }
 
         my $ft  = lc( $itp->{file_type} || '');
+		print qq{image file_type: $ft} . "\n";
+		print '=' x 50 . "\n";
+
         $ft = 'jpg' if $ft eq 'jpeg';
 
         if ($ft) {

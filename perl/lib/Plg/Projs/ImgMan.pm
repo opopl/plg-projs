@@ -17,6 +17,7 @@ use Base::DB qw(
 use Getopt::Long qw(GetOptions);
 use File::Basename qw(basename dirname);
 use FindBin qw($Bin $Script);
+use File::Spec::Functions qw(catfile);
 
 sub new
 {
@@ -47,6 +48,12 @@ sub init_db {
     my ($self) = @_;
 
     $self->{img_db} ||= catfile($self->{img_root},'img.db');
+
+    return $self;
+}
+
+sub c_cnv {
+    my ($self) = @_;
 
     return $self;
 }
@@ -85,14 +92,14 @@ sub dhelp {
     my $s = qq{
 
     USAGE
-        $Script OPTIONS
+        perl $Script OPTIONS
     OPTIONS
             --img_root DIR      directory with images, default is \$ENV{IMG_ROOT}
             --img_db   FILE     SQLite database file, default is IMG_ROOT/img.db
         -c  --cmd      CMD
 
     EXAMPLES
-        $Script --img_root IMG_ROOT --img_db IMG_DB
+        perl $Script --img_root IMG_ROOT --img_db IMG_DB
 
     };
 
