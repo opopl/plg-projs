@@ -241,7 +241,7 @@ if 0
       projs#author#get
 endif
 
-"""pin_ii_url
+"""pin_ii_url {
 function! projs#insert#ii_url ()
   let proj = projs#proj#name()
 
@@ -380,9 +380,12 @@ function! projs#insert#ii_url ()
       \  }
 
   call projs#sec#new(ii_sec,r_new)
+  call projs#sec#url#fetch(ii_sec,{ 'url' : url })
+
   call base#tg#update('projs_this')
 
 endfunction
+" } end of: ii_url
 
 
 function! projs#insert#def_ii ()
