@@ -394,12 +394,15 @@ function! projs#action#url_insert ()
 endfunction
 
 """pa_url_fetch
-function! projs#action#url_fetch ()
+function! projs#action#url_fetch (...)
+  let ref = get(a:000,0,{})
+
   let proj = b:proj 
   let file = b:basename
 
   "let url = projs#action#url_fetch#url()
   let url = projs#db#url()
+  let url = get(ref,'url',url)
 
   let ofile = projs#buf#url_file()
 
