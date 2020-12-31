@@ -63,7 +63,7 @@ excel_import
 vim_files_adjust
 buf_update
 url_fetch
-url_delete_fetched
+#url_delete_fetched
 url_view_html
 url_view_txt
 maps_update

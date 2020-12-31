@@ -346,7 +346,6 @@ function! projs#action#url_view_html ()
     \ 'load_buf' : 1,
     \ 'Fc'       : Fc,
     \ }
-  return
   call base#fileopen(r)
 endfunction
 
@@ -396,34 +395,11 @@ endfunction
 
 """pa_url_fetch
 function! projs#action#url_fetch ()
-    let proj = b:proj 
-    let file = b:basename
+  let proj = b:proj 
+  let file = b:basename
 
-    let url = ''
-    let urls = [
-        \ exists('b:url') ? b:url : '',
-        \ projs#db#url(),
-        \ projs#buf#url(),
-        \ ] 
-
-    while !strlen(url) && len(urls)
-      let url = remove(urls,0)
-      if strlen(url)
-        break
-      endif
-    endw
-
-    if !strlen(url)
-      let url = projs#select#url()
-      let b:url = url
-      call projs#db#url_set({
-        \ 'url' : url
-        \   })
-
-      call projs#sec#insert_url({ 
-        \ 'url' : url, 
-        \ 'sec' : projs#buf#sec() })
-    endif
+  "let url = projs#action#url_fetch#url()
+  let url = projs#db#url()
 
   let ofile = projs#buf#url_file()
 
@@ -431,56 +407,8 @@ function! projs#action#url_fetch ()
 
   let old_mtime = filereadable(ofile) ? base#file#mtime(ofile) : ''
 
-  let s:obj = {}
-  function! s:obj.init (...) dict
-    let ref = get(a:000,0,{})
+  let Fc =  projs#action#url_fetch#Fc ()
 
-    let ofile     = get(ref,'ofile','')
-    let old_mtime = get(ref,'old_mtime','')
-
-    let mtime = base#file#mtime(ofile)
-
-    let ok = 0 
-
-    """ file exists already
-    if len(old_mtime) 
-     if (str2nr(mtime) > str2nr(old_mtime) )
-      let ok = 1
-     endif
-    else
-      if filereadable(ofile)
-        let ok = 1
-      endif
-    endif
-
-    if ok
-      call base#rdw('SUCCESS: URL FETCH')
-    else
-      call base#rdwe('FAIL: URL FETCH')
-    endif
-
-    "let cmd = printf('htw --file %s --cmd vh_convert',shellescape(ofile))
-    let cmd = printf('links -dump -force-html -html-tables 1 %s',shellescape(ofile))
-
-    let env = {}
-    function env.get(temp_file) dict
-      let code = self.return_code
-    
-      if filereadable(a:temp_file)
-        let out = readfile(a:temp_file)
-        "call base#buf#open_split({ 'lines' : out })
-        call append('$',out)
-      endif
-    endfunction
-    
-    call asc#run({ 
-      \  'cmd' : cmd, 
-      \  'Fn'  : asc#tab_restore(env) 
-      \  })
-
-  endfunction
-  
-  let Fc = s:obj.init
   let Fc_args = [{ 
     \ 'ofile'     : ofile,
     \ 'old_mtime' : old_mtime,
@@ -1663,12 +1591,12 @@ function! projs#action#author_list ()
 endfunction
 
 function! projs#action#tree_view ()
-	let file = projs#tree#file()
+  let file = projs#tree#file()
 
-	call base#fileopen({ 
-		\	'files'    : [file] ,
-		\	'load_buf' : 1,
-		\	})
+  call base#fileopen({ 
+    \ 'files'    : [file] ,
+    \ 'load_buf' : 1,
+    \ })
 
 endfunction
 
