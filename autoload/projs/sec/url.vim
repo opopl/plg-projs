@@ -1,6 +1,7 @@
 
 "see also: 
-"
+" projs#action#url_fetch
+" pa_url_fetch
 function! projs#sec#url#fetch (sec,...)
   let ref = get(a:000,0,{})
 
@@ -18,7 +19,7 @@ function! projs#sec#url#fetch (sec,...)
 
   let old_mtime = filereadable(ofile) ? base#file#mtime(ofile) : ''
 
-  let Fc =  projs#sec#url#fetch_Fc ()
+  let Fc =  projs#sec#url#fetch_Fc ({ 'sec' : sec })
 
   let Fc_args = [{ 
     \ 'ofile'     : ofile,
@@ -40,12 +41,24 @@ if 0
   call tree
     called by
       projs#sec#url#fetch
+  usage
+    let Fc = projs#sec#url#fetch_Fc({ 'sec' : sec })
 endif
 
 function! projs#sec#url#fetch_Fc (...)
-  let s:obj = {}
+  let ref = get(a:000,0,{})
+
+  let sec = get(ref,'sec','')
+
+  let s:obj = {
+    \ 'sec' : sec,
+    \ }
+  " {
   function! s:obj.init (...) dict
     let ref = get(a:000,0,{})
+
+    let sec      = get(self,'sec','')
+    let sec_file = projs#sec#file(sec)
 
     let ofile     = get(ref,'ofile','')
     let old_mtime = get(ref,'old_mtime','')
@@ -53,6 +66,10 @@ function! projs#sec#url#fetch_Fc (...)
     let mtime = base#file#mtime(ofile)
 
     let ok = 0 
+
+    let msg = [ ofile, sec_file ]
+    let prf = { 'plugin' : 'aa', 'func' : 'aa' }
+    call base#log(msg, prf)
 
     """ file exists already
     if len(old_mtime) 
@@ -66,9 +83,9 @@ function! projs#sec#url#fetch_Fc (...)
     endif
 
     if ok
-      call base#rdw('SUCCESS: URL FETCH')
+      call base#rdw(printf('SUCCESS: URL FETCH, sec: %s', sec ))
     else
-      call base#rdwe('FAIL: URL FETCH')
+      call base#rdwe(printf('FAIL: URL FETCH, sec: %s', sec))
     endif
 
     let cmd = printf('links -dump -force-html -html-tables 1 %s',shellescape(ofile))
@@ -78,9 +95,8 @@ function! projs#sec#url#fetch_Fc (...)
       let code = self.return_code
     
       if filereadable(a:temp_file)
-        let out = readfile(a:temp_file)
-        "call base#buf#open_split({ 'lines' : out })
-        call append('$',out)
+        let html_out = readfile(a:temp_file)
+        call writefile(html_out,sec_file,'a')
       endif
     endfunction
     
@@ -90,6 +106,7 @@ function! projs#sec#url#fetch_Fc (...)
       \  })
 
   endfunction
+  " }
   
   let Fc = s:obj.init
   return Fc
