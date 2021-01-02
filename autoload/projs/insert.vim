@@ -270,6 +270,9 @@ function! projs#insert#ii_url ()
     let url = input('[PIN ii_url] URL: ','')
   endif
 
+  call projs#sec#url#fetch({ 'url' : url })
+  return
+
   let data = projs#db#url_data({ 'url' : url })
   let sec  = get(data,'sec','')
   if len(sec)
@@ -380,7 +383,6 @@ function! projs#insert#ii_url ()
       \  }
 
   call projs#sec#new(ii_sec,r_new)
-  call projs#sec#url#fetch(ii_sec,{ 'url' : url })
 
   call base#tg#update('projs_this')
 

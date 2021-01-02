@@ -270,6 +270,10 @@ function! projs#sec#file (...)
   let sec = projs#proj#secname()
   let sec = get(a:000,0,sec)
 
+  if !len(sec)
+    return ''
+  endif
+
   let secfile = projs#path( projs#sec#file_base_a(sec) )
   return secfile
 endf
@@ -873,12 +877,12 @@ function! projs#sec#new(sec,...)
     endif
     if len(author_id)
       call extend(lines, [ 
-					\	'\ifcmt',
-					\	'	author_begin',
-					\	'   ' . printf('author_id %s',author_id),
-					\	'	author_end',
-					\	'\fi',
-					\	])
+          \ '\ifcmt',
+          \ ' author_begin',
+          \ '   ' . printf('author_id %s',author_id),
+          \ ' author_end',
+          \ '\fi',
+          \ ])
     endif
 
     let projtype = projs#varget('projtype','regular')

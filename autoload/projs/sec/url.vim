@@ -2,10 +2,10 @@
 "see also: 
 " projs#action#url_fetch
 " pa_url_fetch
-function! projs#sec#url#fetch (sec,...)
+function! projs#sec#url#fetch (...)
   let ref = get(a:000,0,{})
 
-  let sec = a:sec
+  let sec = get(ref,'sec','')
 
   let url = projs#db#url()
   let url = get(ref,'url',url)
@@ -14,12 +14,13 @@ function! projs#sec#url#fetch (sec,...)
   let proj = get(ref,'proj',proj)
 
   let ofile = projs#sec#url#local(sec)
+  let old_mtime = filereadable(ofile) ? base#file#mtime(ofile) : ''
 
   call base#rdw(ofile)
 
-  let old_mtime = filereadable(ofile) ? base#file#mtime(ofile) : ''
-
-  let Fc =  projs#sec#url#fetch_Fc ({ 'sec' : sec })
+  let Fc =  projs#sec#url#fetch_Fc ({ 
+    \ 'sec' : sec,
+    \ })
 
   let Fc_args = [{ 
     \ 'ofile'     : ofile,
@@ -37,6 +38,36 @@ function! projs#sec#url#fetch (sec,...)
 
 endfunction
 
+
+
+function! projs#sec#url#dump_to_sec (...)
+  let ref = get(a:000,0,{})
+
+  let sec = get(ref,'sec','')
+  let sec_file = projs#sec#file(sec)
+
+  let ofile = projs#sec#url#local(sec)
+
+  let cmd = printf('links -dump -force-html -html-tables 1 %s',shellescape(ofile))
+
+  let env = { 'sec_file' : sec_file }
+  function env.get(temp_file) dict
+    let code = self.return_code
+
+    let sec_file = get(self,'sec_file','')
+    
+    if filereadable(a:temp_file)
+      let html_out = readfile(a:temp_file)
+      call writefile(html_out,sec_file,'a')
+    endif
+  endfunction
+    
+  call asc#run({ 
+      \  'cmd' : cmd, 
+      \  'Fn'  : asc#tab_restore(env) 
+      \  })
+endf
+
 if 0
   call tree
     called by
@@ -45,20 +76,14 @@ if 0
     let Fc = projs#sec#url#fetch_Fc({ 'sec' : sec })
 endif
 
+" to be called after successful 'curl' run
 function! projs#sec#url#fetch_Fc (...)
   let ref = get(a:000,0,{})
 
-  let sec = get(ref,'sec','')
-
-  let s:obj = {
-    \ 'sec' : sec,
-    \ }
+  let s:obj = {}
   " {
   function! s:obj.init (...) dict
     let ref = get(a:000,0,{})
-
-    let sec      = get(self,'sec','')
-    let sec_file = projs#sec#file(sec)
 
     let ofile     = get(ref,'ofile','')
     let old_mtime = get(ref,'old_mtime','')
@@ -66,10 +91,6 @@ function! projs#sec#url#fetch_Fc (...)
     let mtime = base#file#mtime(ofile)
 
     let ok = 0 
-
-    let msg = [ ofile, sec_file ]
-    let prf = { 'plugin' : 'aa', 'func' : 'aa' }
-    call base#log(msg, prf)
 
     """ file exists already
     if len(old_mtime) 
@@ -83,28 +104,10 @@ function! projs#sec#url#fetch_Fc (...)
     endif
 
     if ok
-      call base#rdw(printf('SUCCESS: URL FETCH, sec: %s', sec ))
+      call base#rdw(printf('SUCCESS: URL FETCH'))
     else
-      call base#rdwe(printf('FAIL: URL FETCH, sec: %s', sec))
+      call base#rdwe(printf('FAIL: URL FETCH'))
     endif
-
-    let cmd = printf('links -dump -force-html -html-tables 1 %s',shellescape(ofile))
-
-    let env = {}
-    function env.get(temp_file) dict
-      let code = self.return_code
-    
-      if filereadable(a:temp_file)
-        let html_out = readfile(a:temp_file)
-        call writefile(html_out,sec_file,'a')
-      endif
-    endfunction
-    
-    call asc#run({ 
-      \  'cmd' : cmd, 
-      \  'Fn'  : asc#tab_restore(env) 
-      \  })
-
   endfunction
   " }
   
