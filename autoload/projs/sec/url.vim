@@ -14,18 +14,8 @@ function! projs#sec#url#fetch (...)
   let proj = get(ref,'proj',proj)
 
   let ofile = projs#sec#url#local(sec)
-  let old_mtime = filereadable(ofile) ? base#file#mtime(ofile) : ''
 
   call base#rdw(ofile)
-
-  let Fc =  projs#sec#url#fetch_Fc ({ 
-    \ 'sec' : sec,
-    \ })
-
-  let Fc_args = [{ 
-    \ 'ofile'     : ofile,
-    \ 'old_mtime' : old_mtime,
-    \ }]
 
   call idephp#curl#run({ 
     \ 'url'         : url,
