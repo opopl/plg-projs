@@ -243,7 +243,9 @@ endif
 
 """pin_ii_url {
 function! projs#insert#ii_url ()
-  let proj = projs#proj#name()
+  let proj   = projs#proj#name()
+
+  let rootid = projs#rootid()
 
   let sec  = projs#buf#sec()
 
@@ -270,8 +272,13 @@ function! projs#insert#ii_url ()
     let url = input('[PIN ii_url] URL: ','')
   endif
 
-  call projs#sec#url#fetch({ 'url' : url })
-  return
+  let html_file = base#qw#catpath('html_root projs ' . rootid . ' pin ii_url 1.htm')
+  call idephp#curl#run({ 
+    \ 'url'         : url,
+    \ 'insecure'    : 1 ,
+    \ 'output_file' : html_file,
+    \ })
+  return 
 
   let data = projs#db#url_data({ 'url' : url })
   let sec  = get(data,'sec','')

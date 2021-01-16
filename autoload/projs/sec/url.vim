@@ -21,8 +21,6 @@ function! projs#sec#url#fetch (...)
     \ 'url'         : url,
     \ 'insecure'    : 1 ,
     \ 'output_file' : ofile,
-    \ 'Fc'          : Fc,
-    \ 'Fc_args'     : Fc_args,
     \ })
 
 
