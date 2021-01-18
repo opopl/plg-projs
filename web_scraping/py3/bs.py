@@ -13,6 +13,12 @@ class BS:
 This script will parse input URL
 '''
 
+  # data
+  data = {}
+
+  # directories
+  dirs = {}
+
   # input YAML file
   f_yaml = None
 
@@ -31,7 +37,7 @@ This script will parse input URL
     for k, v in args.items():
       self.k = v
 
-  def getopt(self):
+  def get_opt(self):
     self.parser = argparse.ArgumentParser(usage=self.usage)
     
     self.parser.add_argument("-u", "--url", help="input URL",default="")
@@ -43,13 +49,29 @@ This script will parse input URL
       self.parser.print_help()
       sys.exit()
 
-    self.url = self.oa.url
+    self.url    = self.oa.url
     self.f_yaml = self.oa.f_yaml
 
+    self \
+      .init_dirs() \
+      .mk_dirs()
+
+    return self
+
+  def init_dirs(self):
     if self.f_yaml:
-      pp = pathlib.PurePath(self.f_yaml)
-      st = pp.stem
-      os.makedirs(os.path.join('out',st))
+      pp = pathlib.Path(self.f_yaml).resolve()
+      dir = str(pp.parent)
+      stem = pp.stem
+      self.dirs['out'] = os.path.join(dir,'out',stem)
+    
+    self.dirs['html_bare'] = os.path.join(self.dirs['out'],'html','bare')
+
+    return self
+
+  def mk_dirs(self):
+    for k,v in self.dirs.items():
+      os.makedirs(v,exist_ok=True)
 
     return self
 
@@ -66,19 +88,38 @@ This script will parse input URL
     url = ref.get('url','')
     ii  = ref.get('ii','')
 
+    dt = { 
+      'imgs' : [],
+      'title' : '',
+    }
+
     page = requests.get(url)
     c = page.content
     soup = BeautifulSoup(c,'html5lib')
+
+    out_file_bare = os.path.join(self.dirs['out'],'html','bare')
 
     print({ 
         #'title' : soup.title.get_text(),
         'h1' : soup.h1.get_text(),
     })
 
+    for img in soup.find_all("img"):
+      d = {}
+      for k in [ 'src', 'alt', 'data-src' ]:
+        if img.has_attr(k):
+          d[k] = img[k]
+      print(d)
+      print(img.string)
+
+      dt['imgs'].append(d)
+
+    self.data[url] = dt
+
     return self
 
   def main(self):
-    self.getopt()
+    self.get_opt()
 
     if not self.url:
       if self.f_yaml and os.path.isfile(self.f_yaml):
