@@ -19,6 +19,12 @@ This script will parse input URL
   # directories
   dirs = {}
 
+  # code, e.g. html, tex
+  code = {
+    'tex' : None,
+    'html' : None,
+  }
+
   # input YAML file
   f_yaml = None
 
@@ -52,9 +58,6 @@ This script will parse input URL
     self.url    = self.oa.url
     self.f_yaml = self.oa.f_yaml
 
-    self \
-      .init_dirs() \
-      .mk_dirs()
 
     return self
 
@@ -99,22 +102,28 @@ This script will parse input URL
 
     page = requests.get(url)
     c = page.content
+
+    ii_file = os.path.join(self.dirs['html_cache'],ii + '.html')
+    print(ii_file)
+    with open(ii_file, 'wb') as f:
+      f.write(c)
+
     soup = BeautifulSoup(c,'html5lib')
 
     out_file_bare = os.path.join(self.dirs['out'],'html','bare')
 
-    print({ 
-        #'title' : soup.title.get_text(),
-        'h1' : soup.h1.get_text(),
-    })
+    #print({ 
+        ##'title' : soup.title.get_text(),
+        #'h1' : soup.h1.get_text(),
+    #})
 
     for img in soup.find_all("img"):
       d = {}
       for k in [ 'src', 'alt', 'data-src' ]:
         if img.has_attr(k):
           d[k] = img[k]
-      print(d)
-      print(img.string)
+      #print(d)
+      #print(img.string)
 
       dt['imgs'].append(d)
 
@@ -122,9 +131,7 @@ This script will parse input URL
 
     return self
 
-  def main(self):
-    self.get_opt()
-
+  def parse(self):
     if not self.url:
       if self.f_yaml and os.path.isfile(self.f_yaml):
         self.parse_yaml(self.f_yaml)
@@ -132,6 +139,16 @@ This script will parse input URL
         print('''Neither URL nor YAML provided, exiting''')
       exit()
     self.parse_url(self.url)
+    
+    return self
+
+  def main(self):
+
+    self           \
+      .get_opt()   \
+      .init_dirs() \
+      .mk_dirs()   \
+      .parse()
 
 BS().main()
 
