@@ -72,6 +72,7 @@ This script will parse input URL
       self.dirs['out'] = os.path.join(dir,'out',stem)
     
     self.dirs.update({ 
+      'html'       : os.path.join(self.dirs['out'],'html'),
       'html_cache' : os.path.join(self.dirs['out'],'html','cache'),
       'html_clean' : os.path.join(self.dirs['out'],'html','clean'),
       'tex_out'    : os.path.join(self.dirs['out'],'tex'),
@@ -94,8 +95,8 @@ This script will parse input URL
 
     return self
 
-  def _file_ii_html_cache(self,ii):
-    ii_file = os.path.join(self.dirs['html_cache'],ii + '.html')
+  def _file_ii_html(self,ii,type):
+    ii_file = os.path.join(self.dirs['html'],type,ii + '.html')
     return ii_file
   
   def parse_url(self,ref={}):
@@ -107,21 +108,19 @@ This script will parse input URL
       'title' : '',
     }
 
-    ii_file = self._file_ii_html_cache(ii)
+    ii_cached = self._file_ii_html(ii,'cache')
 
-    if os.path.isfile(ii_file):
-      with open(ii_file,'r') as f:
+    if os.path.isfile(ii_cached):
+      with open(ii_cached,'r') as f:
         self.content = f.read()
     else:
-	    page = requests.get(url)
-	    self.content = page.content
+      page = requests.get(url)
+      self.content = page.content
 
-	    with open(ii_file, 'wb') as f:
-	      f.write(self.content)
+      with open(ii_cached, 'wb') as f:
+        f.write(self.content)
 
     soup = BeautifulSoup(self.content,'html5lib')
-
-    out_file_bare = os.path.join(self.dirs['out'],'html','bare')
 
     #print({ 
         ##'title' : soup.title.get_text(),
