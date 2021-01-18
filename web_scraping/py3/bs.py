@@ -16,6 +16,9 @@ This script will parse input URL
   # data
   data = {}
 
+  # current HTML content
+  content = None
+
   # directories
   dirs = {}
 
@@ -90,6 +93,10 @@ This script will parse input URL
         self.parse_url(d)
 
     return self
+
+  def _file_ii_html_cache(self,ii):
+    ii_file = os.path.join(self.dirs['html_cache'],ii + '.html')
+    return ii_file
   
   def parse_url(self,ref={}):
     url = ref.get('url','')
@@ -100,15 +107,19 @@ This script will parse input URL
       'title' : '',
     }
 
-    page = requests.get(url)
-    c = page.content
+    ii_file = self._file_ii_html_cache(ii)
 
-    ii_file = os.path.join(self.dirs['html_cache'],ii + '.html')
-    print(ii_file)
-    with open(ii_file, 'wb') as f:
-      f.write(c)
+    if os.path.isfile(ii_file):
+      with open(ii_file,'r') as f:
+        self.content = f.read()
+    else:
+	    page = requests.get(url)
+	    self.content = page.content
 
-    soup = BeautifulSoup(c,'html5lib')
+	    with open(ii_file, 'wb') as f:
+	      f.write(self.content)
+
+    soup = BeautifulSoup(self.content,'html5lib')
 
     out_file_bare = os.path.join(self.dirs['out'],'html','bare')
 
