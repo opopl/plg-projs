@@ -65,7 +65,11 @@ This script will parse input URL
       stem = pp.stem
       self.dirs['out'] = os.path.join(dir,'out',stem)
     
-    self.dirs['html_bare'] = os.path.join(self.dirs['out'],'html','bare')
+    self.dirs.update({ 
+      'html_cache' : os.path.join(self.dirs['out'],'html','cache'),
+      'html_clean' : os.path.join(self.dirs['out'],'html','clean'),
+      'tex_out'    : os.path.join(self.dirs['out'],'tex'),
+    })
 
     return self
 
