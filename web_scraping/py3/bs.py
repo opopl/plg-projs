@@ -39,12 +39,14 @@ This script will parse input URL
       d = yaml.full_load(f)
       urls = d.get('urls',[])
       for d in urls:
-        url = d.get('url','') 
-        self.parse_url(url)
+        self.parse_url(d)
 
     return self
   
-  def parse_url(self,url):
+  def parse_url(self,ref={}):
+    url = ref.get('url','')
+    ii  = ref.get('ii','')
+
     page = requests.get(url)
     c = page.content
     soup = BeautifulSoup(c,'html5lib')
