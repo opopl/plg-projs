@@ -23,14 +23,35 @@ if len(sys.argv) == 1:
   sys.exit()
 
 url = args.url
-f_yaml = args.yaml
+f_yaml = args.f_yaml
 
-if not url:
-  print('URL not provided!')
-  exit()
+def parse_yaml(f_yaml=''):
+  with open(f_yaml) as f:
+    d = yaml.full_load(f)
+    urls = d.get('urls',[])
+    for d in urls:
+      url = d.get('url','') 
+      parse_url(url)
 
-page=requests.get(url)
-c = page.content
-soup = BeautifulSoup(c,'html5lib')
+def parse_url(url):
+  page=requests.get(url)
+  c = page.content
+  soup = BeautifulSoup(c,'html5lib')
 
-soup.html.find_all('img').get_text()
+  print({ 
+      #'title' : soup.title.get_text(),
+      'h1' : soup.h1.get_text(),
+  })
+
+def main():
+
+  if not url:
+    if f_yaml and os.path.isfile(f_yaml):
+      parse_yaml(f_yaml)
+    else:
+      print('''Neither URL nor YAML provided, exiting''')
+    exit()
+  parse_url(url)
+
+main()
+
