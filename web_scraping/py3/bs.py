@@ -8,6 +8,33 @@ import yaml
 import pathlib
 from urllib.parse import urlparse
 
+  #https://code.activestate.com/recipes/577346-getattr-with-arbitrary-depth/
+def m_getattr(obj, attr, default = None):
+    """
+    Get a named attribute from an object; multi_getattr(x, 'a.b.c.d') is
+    equivalent to x.a.b.c.d. When a default argument is given, it is
+    returned when any attribute in the chain doesn't exist; without
+    it, an exception is raised when a missing attribute is encountered.
+
+    """
+    attributes = attr.split(".")
+    for i in attributes:
+        try:
+            obj = getattr(obj, i)
+            print(obj)
+        except AttributeError:
+            if default:
+                return default
+            else:
+                raise
+    return obj
+
+def m_get(dict, path, default = None):
+    keys = path.split(".")
+    for k in keys:
+      dict = dict.get(k,default)
+    return dict
+
 class BS:
   # class attributes {
   usage='''
@@ -64,6 +91,8 @@ This script will parse input URL
 
     return self
 
+
+
   def init_dirs(self):
     if self.f_yaml:
       pp = pathlib.Path(self.f_yaml).resolve()
@@ -92,6 +121,10 @@ This script will parse input URL
       for k,v in d.items():
         setattr(self,k,v)
 
+    print(getattr(self,'hosts',{}))
+    print(getattr(self,'sites',{}))
+    print(m_getattr(self,'sites.strana.clean',{}))
+
     return self
 
   def _file_ii_html(self,ii,type):
@@ -103,7 +136,8 @@ This script will parse input URL
     ii  = ref.get('ii','')
 
     u = urlparse(url)
-    print(u)
+    host = u.netloc.split(':')[0]
+    print(host)
 
     dt = { 
       'imgs' : [],
