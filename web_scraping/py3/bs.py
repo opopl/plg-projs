@@ -61,7 +61,6 @@ This script will parse input URL
     self.url    = self.oa.url
     self.f_yaml = self.oa.f_yaml
 
-
     return self
 
   def init_dirs(self):
