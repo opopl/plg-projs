@@ -5,13 +5,27 @@ from bs4 import BeautifulSoup
 import getopt,argparse
 import sys,os
 import yaml
+import pathlib
 
 class BS:
+  # class attributes {
   usage='''
 This script will parse input URL
 '''
+
+  # input YAML file
   f_yaml = None
+
+  # input URL
   url = None
+
+  # output directory
+  out_dir = None
+
+  #command-line options
+  oa = None
+
+  # end: attributes }
 
   def __init__(self,args={}):
     for k, v in args.items():
@@ -31,6 +45,11 @@ This script will parse input URL
 
     self.url = self.oa.url
     self.f_yaml = self.oa.f_yaml
+
+    if self.f_yaml:
+      pp = pathlib.PurePath(self.f_yaml)
+      st = pp.stem
+      os.makedirs(os.path.join('out',st))
 
     return self
 
