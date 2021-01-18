@@ -6,6 +6,7 @@ import getopt,argparse
 import sys,os
 import yaml
 import pathlib
+from urllib.parse import urlparse
 
 class BS:
   # class attributes {
@@ -85,9 +86,11 @@ This script will parse input URL
 
     return self
 
-  def parse_yaml(self,f_yaml=''):
+  def load_yaml(self,f_yaml=''):
     with open(f_yaml) as f:
       d = yaml.full_load(f)
+      for k,v in d.items():
+        setattr(self,k,v)
       urls = d.get('urls',[])
       for d in urls:
         self.parse_url(d)
@@ -101,6 +104,9 @@ This script will parse input URL
   def parse_url(self,ref={}):
     url = ref.get('url','')
     ii  = ref.get('ii','')
+
+    u = urlparse(url)
+    print(u)
 
     dt = { 
       'imgs' : [],
@@ -143,7 +149,7 @@ This script will parse input URL
   def parse(self):
     if not self.url:
       if self.f_yaml and os.path.isfile(self.f_yaml):
-        self.parse_yaml(self.f_yaml)
+        self.load_yaml(self.f_yaml)
       else:
         print('''Neither URL nor YAML provided, exiting''')
       exit()
