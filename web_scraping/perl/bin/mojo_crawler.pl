@@ -1,4 +1,3 @@
-#!/usr/bin/env perl
 #
 use 5.010;
 use open qw(:locale);
@@ -7,6 +6,7 @@ use utf8;
 use warnings qw(all);
 
 use Mojo::UserAgent;
+
 use Mojo::IOLoop;
 
 # FIFO queue
@@ -24,8 +24,10 @@ $ua->proxy->detect;
 # Keep track of active connections
 my $active = 0;
 
-Mojo::IOLoop->recurring(
-    0 => sub {
+my $loop = Mojo::IOLoop->singleton;
+
+$loop->recurring(
+    1 => sub {
         for ($active + 1 .. $max_conn) {
 
             # Dequeue or halt if there are no active crawlers anymore
@@ -39,12 +41,12 @@ Mojo::IOLoop->recurring(
         }
     }
 );
+$DB::single = 1;
 
-Mojo::IOLoop->stop;
+$loop->start unless $loop->is_running;
+exit;
 
-#$DB::single = 1;
 # Start event loop if necessary
-Mojo::IOLoop->start unless Mojo::IOLoop->is_running;
 
 sub get_callback {
     my (undef, $tx) = @_;

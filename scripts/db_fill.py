@@ -2,7 +2,6 @@
 import sys,os
 import getopt,argparse
 
-import argparse
 import re
 
 usage='''

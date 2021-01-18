@@ -10,6 +10,15 @@ use URI;
 use Web::Scraper;
 use Encode;
 
+use File::Basename qw(basename dirname);
+use FindBin qw($Bin $Script);
+
+unless (@ARGV) {
+	die "USAGE: \n$Script URI";
+}
+
+my $uri = shift @ARGV;
+
 # First, create your scraper block
 my $authors = scraper {
     # Parse all TDs inside 'table[width="100%]"', store them into
@@ -23,7 +32,7 @@ my $authors = scraper {
     };
 };
 
-my $res = $authors->scrape( URI->new("http://search.cpan.org/author/?A") );
+my $res = $authors->scrape( URI->new($uri) );
 
 # iterate the array 'authors'
 for my $author (@{$res->{authors}}) {
