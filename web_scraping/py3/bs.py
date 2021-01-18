@@ -91,9 +91,6 @@ This script will parse input URL
       d = yaml.full_load(f)
       for k,v in d.items():
         setattr(self,k,v)
-      urls = d.get('urls',[])
-      for d in urls:
-        self.parse_url(d)
 
     return self
 
@@ -150,10 +147,13 @@ This script will parse input URL
     if not self.url:
       if self.f_yaml and os.path.isfile(self.f_yaml):
         self.load_yaml(self.f_yaml)
-      else:
-        print('''Neither URL nor YAML provided, exiting''')
-      exit()
-    self.parse_url(self.url)
+
+      urls = getattr(self,'urls',[]) 
+      for d in urls:
+        self.parse_url(d)
+
+    else:
+      self.parse_url(self.url)
     
     return self
 
