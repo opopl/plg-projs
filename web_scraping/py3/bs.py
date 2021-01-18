@@ -6,52 +6,66 @@ import getopt,argparse
 import sys,os
 import yaml
 
-usage='''
+class BS:
+  usage='''
 This script will parse input URL
 '''
+  f_yaml = None
+  url = None
 
-parser = argparse.ArgumentParser(usage=usage)
+  def __init__(self,args={}):
+    for k, v in args.items():
+      self.k = v
 
-parser.add_argument("-u", "--url", help="input URL",default="")
-parser.add_argument("-y", "--f_yaml", help="input YAML file",default="")
+  def getopt(self):
+    self.parser = argparse.ArgumentParser(usage=self.usage)
+    
+    self.parser.add_argument("-u", "--url", help="input URL",default="")
+    self.parser.add_argument("-y", "--f_yaml", help="input YAML file",default="")
+    
+    self.oa = self.parser.parse_args()
 
-args = parser.parse_args()
-data = {}
+    if len(sys.argv) == 1:
+      self.parser.print_help()
+      sys.exit()
 
-if len(sys.argv) == 1:
-  parser.print_help()
-  sys.exit()
+    self.url = self.oa.url
+    self.f_yaml = self.oa.f_yaml
 
-url = args.url
-f_yaml = args.f_yaml
+    return self
 
-def parse_yaml(f_yaml=''):
-  with open(f_yaml) as f:
-    d = yaml.full_load(f)
-    urls = d.get('urls',[])
-    for d in urls:
-      url = d.get('url','') 
-      parse_url(url)
+  def parse_yaml(self,f_yaml=''):
+    with open(f_yaml) as f:
+      d = yaml.full_load(f)
+      urls = d.get('urls',[])
+      for d in urls:
+        url = d.get('url','') 
+        self.parse_url(url)
 
-def parse_url(url):
-  page=requests.get(url)
-  c = page.content
-  soup = BeautifulSoup(c,'html5lib')
+    return self
+  
+  def parse_url(self,url):
+    page = requests.get(url)
+    c = page.content
+    soup = BeautifulSoup(c,'html5lib')
 
-  print({ 
-      #'title' : soup.title.get_text(),
-      'h1' : soup.h1.get_text(),
-  })
+    print({ 
+        #'title' : soup.title.get_text(),
+        'h1' : soup.h1.get_text(),
+    })
 
-def main():
+    return self
 
-  if not url:
-    if f_yaml and os.path.isfile(f_yaml):
-      parse_yaml(f_yaml)
-    else:
-      print('''Neither URL nor YAML provided, exiting''')
-    exit()
-  parse_url(url)
+  def main(self):
+    self.getopt()
 
-main()
+    if not self.url:
+      if self.f_yaml and os.path.isfile(self.f_yaml):
+        self.parse_yaml(self.f_yaml)
+      else:
+        print('''Neither URL nor YAML provided, exiting''')
+      exit()
+    self.parse_url(self.url)
+
+BS().main()
 
