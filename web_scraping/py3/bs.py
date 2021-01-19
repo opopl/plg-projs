@@ -134,8 +134,10 @@ This script will parse input URL
     ii = self.ii
     return os.path.join(self.dirs['html'],'ii',ii)
 
-  def _dir_ii_img(self,ii):
+  def _dir_ii_img(self):
     img_dir = os.path.join(self._dir_ii(),'img')
+    if not os.path.isdir(img_dir):
+      os.makedirs(img_dir,exist_ok=True)
     return img_dir
 
   def _file_ii_html(self,type):
@@ -216,6 +218,7 @@ This script will parse input URL
         #'h1' : soup.h1.get_text(),
     #})
 
+    img_dir = self._dir_ii_img()
     for img in self.soup.find_all("img"):
       if img.has_attr('src'):
         src = img['src']
