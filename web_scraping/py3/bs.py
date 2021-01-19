@@ -156,16 +156,19 @@ This script will parse input URL
     ii   = g(self,'ii','')
 
     clean = g(self,[ 'sites', site, 'clean' ],[])
-    print(clean)
+
+    #import pdb; pdb.set_trace()
     for c in clean:
-      els_clean = self.soup.findAll(c)
+      s = c.split('.')
+      tag = s.pop(0)
+      classes = s
+      els_clean = self.soup.findAll(tag,classes)
       for el in els_clean:
         el.decompose()
 
     ii_clean = self._file_ii_html(ii,'clean')
     mk_parent_dir(ii_clean)
-    print(Path(ii_clean).as_uri())
-    #import pdb; pdb.set_trace()
+    print("\t" + Path(ii_clean).as_uri())
     with open(ii_clean, 'w') as f:
       f.write(self.soup.prettify())
 
