@@ -357,6 +357,11 @@ This script will parse input URL
 
             print(f'Local path: {ipath}')
             #i.save(ipath)
+            d = {
+              'url' : url,
+              'img' : os.path.basename(ipath),
+            }
+            print(d)
           except:
             print(f'[Image.open] exception: {url}')
             raise
