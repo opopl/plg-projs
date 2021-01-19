@@ -15,7 +15,14 @@ def mk_parent_dir(file):
   os.makedirs(p)
 
 def m_get(obj, path, default = None):
-    keys = path.split(".")
+    if type(path) is str:
+      keys = path.split(".")
+    elif type(path) is list:
+      keys = path
+
+    if not keys:
+      return default
+
     for k in keys:
       if not obj:
         obj = default
@@ -128,7 +135,9 @@ This script will parse input URL
 
     u = urlparse(url)
     host = u.netloc.split(':')[0]
-    print(host)
+
+    site = m_get(self,[ 'hosts', host, 'site' ],'')
+    print(site)
 
     dt = { 
       'imgs' : [],
