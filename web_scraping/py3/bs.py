@@ -269,23 +269,27 @@ This script will parse input URL
     ext = map.get(imgobj.format,'jpg')
     return ext
 
-  def _img_path(self,url,ext='jpg'):
+  def _img_path(self, url, ext='jpg'):
     if not ( self.img_db and os.path.isfile(self.img_db) ):
       pass
     else:
       conn = sqlite3.connect(self.img_db)
-      conn.row_factory = sqlite3.Row
       c = conn.cursor()
   
       c.execute('''SELECT img FROM imgs WHERE url = ?''',[ url ])
       rw = c.fetchone()
+
       if not rw:
         c.execute('''SELECT MAX(inum) FROM imgs''')
         rw = c.fetchone()
-        inum = rw['inum']
+        inum = rw[0]
         inum += 1
-        ipath = os.path.join(self.img_root, f'{inum}.{ext}')
-        return ipath
+        img = f'{inum}.{ext}'
+      else:
+        img = rw[0]
+
+      ipath = os.path.join(self.img_root, img)
+      return ipath
 
   def _img_saved(self,url):
     ok = 0
@@ -350,9 +354,12 @@ This script will parse input URL
             
             print(f'Image format: {i.format}')
             ipath = self._img_path(url,self._img_ext(i))
-            i.save(ipath)
+
+            print(f'Local path: {ipath}')
+            #i.save(ipath)
           except:
-            print(f'[Image.open] FAIL: {url}')
+            print(f'[Image.open] exception: {url}')
+            raise
 
     return self
 
