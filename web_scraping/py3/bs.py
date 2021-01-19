@@ -241,17 +241,17 @@ This script will parse input URL
   def rm_empty(self):
     all = self.soup.find_all(True)
     while 1:
+      if not len(all):
+        break
+
       el = all.pop(0)
+      #import pdb; pdb.set_trace()
       if el.name == 'img':
         continue
 
       if len(el.get_text(strip=True)) == 0:
-        el.decompose()
-      #txt = el.string.strip()
-      #if not txt and not len(list(el.children)):
-        #el.decompose()
-      if not len(all):
-        break
+        if not el.find('img'):
+          el.decompose()
     return self
 
   def do_unwrap(self):
@@ -341,6 +341,11 @@ This script will parse input URL
 
     img_dir = self._dir_ii_img()
     for img in self.soup.find_all("img"):
+      print(img)
+      caption = ''
+      if img.has_attr('alt'):
+        caption = img['alt']
+
       if img.has_attr('src'):
         src = img['src']
         u = urlparse(src)
@@ -361,13 +366,25 @@ This script will parse input URL
               continue
             
             print(f'Image format: {i.format}')
-            idata = self._img_data(url,self._img_ext(i))
+            iext = self._img_ext(i)
+            idata = self._img_data(url,iext)
 
-            print(f'Local path: {ipath}')
+            img   = idata.get("img","")
+            inum  = idata.get('inum','')
+            ipath = idata.get('path','')
+
+            print(f'Local path: {idata.get("path","")}')
+            if os.path.isfile(ipath):
+              print('[Warning] image file already exists: f{img}')
             #i.save(ipath)
             d = {
-              'url' : url,
-              'img' : os.path.basename(ipath),
+              'url'    : url,
+              'img'    : img,
+              'inum'   : inum,
+              'ext'    : iext,
+              'rootid' : self.rootid,
+              'proj'   : self.proj,
+              'caption' : caption,
             }
             print(d)
           except:
