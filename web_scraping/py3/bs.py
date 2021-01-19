@@ -9,6 +9,7 @@ import re
 
 from pathlib import Path
 from urllib.parse import urlparse
+from urllib.parse import urljoin
 
   #https://code.activestate.com/recipes/577346-getattr-with-arbitrary-depth/
 
@@ -180,6 +181,7 @@ This script will parse input URL
 
     u = urlparse(self.url)
     self.host = u.netloc.split(':')[0]
+    self.base = u.scheme + '://' + u.netloc 
     self.site = g(self,[ 'hosts', self.host, 'site' ],'')
 
     self \
@@ -192,6 +194,7 @@ This script will parse input URL
   def do_imgs(self):
     site = g(self,'site','')
     host = g(self,'host','')
+    base = g(self,'base','')
     ii   = g(self,'ii','')
         #dt = { 
       #'imgs' : [],
@@ -204,7 +207,14 @@ This script will parse input URL
     #})
 
     for img in self.soup.find_all("img"):
-      #print(img)
+      src = img['src']
+      u = urlparse(src)
+      if not u.netloc:
+        #print(u.netloc)
+        url = urljoin(base,src)
+      else:
+        url = src
+      print(url)
 
       #d = {}
       #for k in [ 'src', 'alt', 'data-src' ]:
