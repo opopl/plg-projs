@@ -5,6 +5,7 @@ from bs4 import BeautifulSoup
 import getopt,argparse
 import sys,os
 import yaml
+import re
 
 from pathlib import Path
 from urllib.parse import urlparse
@@ -155,12 +156,15 @@ This script will parse input URL
     ii   = g(self,'ii','')
 
     clean = g(self,[ 'sites', site, 'clean' ],[])
-    els_clean = self.soup.findAll(clean)
-    for el in els_clean:
-      el.decompose()
+    print(clean)
+    for c in clean:
+      els_clean = self.soup.findAll(c)
+      for el in els_clean:
+        el.decompose()
 
     ii_clean = self._file_ii_html(ii,'clean')
     mk_parent_dir(ii_clean)
+    print(Path(ii_clean).as_uri())
     #import pdb; pdb.set_trace()
     with open(ii_clean, 'w') as f:
       f.write(self.soup.prettify())
