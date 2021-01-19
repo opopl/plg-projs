@@ -269,7 +269,8 @@ This script will parse input URL
     ext = map.get(imgobj.format,'jpg')
     return ext
 
-  def _img_path(self, url, ext='jpg'):
+  def _img_data(self, url, ext='jpg'):
+    d = {}
     if not ( self.img_db and os.path.isfile(self.img_db) ):
       pass
     else:
@@ -289,7 +290,14 @@ This script will parse input URL
         img = rw[0]
 
       ipath = os.path.join(self.img_root, img)
-      return ipath
+
+      d.update({ 
+        'inum' : inum,
+        'img'  : img,
+        'path' : ipath
+      })
+
+    return d
 
   def _img_saved(self,url):
     ok = 0
@@ -353,7 +361,7 @@ This script will parse input URL
               continue
             
             print(f'Image format: {i.format}')
-            ipath = self._img_path(url,self._img_ext(i))
+            idata = self._img_data(url,self._img_ext(i))
 
             print(f'Local path: {ipath}')
             #i.save(ipath)
