@@ -7,11 +7,16 @@ import sys,os
 import yaml
 import re
 
+import sqlite3
+import sqlparse
+
 from pathlib import Path
 from urllib.parse import urlparse
 from urllib.parse import urljoin
 
 from PIL import Image
+
+#[method for method in dir(meta) if method.startswith('__') is False]
 
   #https://code.activestate.com/recipes/577346-getattr-with-arbitrary-depth/
 
@@ -54,6 +59,9 @@ This script will parse input URL
 
   # data
   data = {}
+
+  # current page's base URL
+  base_url = None
 
   # current HTML content
   content = None
@@ -140,6 +148,10 @@ This script will parse input URL
       os.makedirs(img_dir,exist_ok=True)
     return img_dir
 
+  def _file_ii_txt(self,id):
+    txt_file = os.path.join(self._dir_ii(),id + '.txt')
+    return txt_file
+
   def _file_ii_html(self,type):
     ii_file = os.path.join(self._dir_ii(),type + '.html')
     return ii_file
@@ -172,16 +184,23 @@ This script will parse input URL
 
     #import pdb; pdb.set_trace()
     for c in clean:
-      s = c.split('.')
-      tag = s.pop(0)
-      classes = s
-      els_clean = self.soup.findAll(tag,classes)
+      #s = c.split('.')
+      #tag = s.pop(0)
+      #classes = s
+      #els_clean = self.soup.findAll(tag,classes)
+      els_clean = self.soup.select(c)
       for el in els_clean:
         el.decompose()
 
+    return self
+
+  def save_clean(self):
+
     ii_clean = self._file_ii_html('clean')
     mk_parent_dir(ii_clean)
+
     print("\t" + Path(ii_clean).as_uri())
+
     with open(ii_clean, 'w') as f:
       f.write(self.soup.prettify())
 
@@ -193,21 +212,47 @@ This script will parse input URL
 
     u = urlparse(self.url)
     self.host = u.netloc.split(':')[0]
-    self.base = u.scheme + '://' + u.netloc 
+    self.base_url = u.scheme + '://' + u.netloc 
     self.site = g(self,[ 'hosts', self.host, 'site' ],'')
 
-    self \
-        .load_soup()  \
-        .do_clean() \
-        .do_imgs()
+    self             \
+        .load_soup() \
+        .do_meta()   \
+        .do_clean()  \
+        .do_unwrap() \
+        .do_imgs()   \
+        .save_clean()
 
     return self
 
+  def do_unwrap(self):
+    while 1:
+      div = self.soup.select_one('div')
+      if not div:
+        break
+      div.unwrap()
+    return self
+
+  def do_css(self):
+    return self
+
+  def do_meta(self):
+    #import pdb; pdb.set_trace()
+    meta = self.soup.select("meta")
+    txt = []
+    meta_file = self._file_ii_txt('meta')
+    for m in meta:
+      ms = str(m)
+      txt.append(ms)
+    with open(meta_file, 'w') as f:
+        f.write("\n".join(txt))
+    return self
+
   def do_imgs(self):
-    site = g(self,'site','')
-    host = g(self,'host','')
-    base = g(self,'base','')
-    ii   = g(self,'ii','')
+    site     = g(self,'site','')
+    host     = g(self,'host','')
+    base_url = g(self,'base_url','')
+    ii       = g(self,'ii','')
         #dt = { 
       #'imgs' : [],
       #'title' : '',
@@ -224,12 +269,12 @@ This script will parse input URL
         src = img['src']
         u = urlparse(src)
         if not u.netloc:
-          url = urljoin(base,src)
+          url = urljoin(base_url,src)
         else:
           url = src
-        r = requests.get(url)
-        print(url)
-        print(r.status_code)
+        #r = requests.get(url)
+        #print(url)
+        #print(r.status_code)
 
       #d = {}
       #for k in [ 'src', 'alt', 'data-src' ]:
@@ -265,5 +310,5 @@ This script will parse input URL
       .mk_dirs()   \
       .parse()
 
-BS().main()
+BS({}).main()
 

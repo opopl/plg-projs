@@ -1,8 +1,9 @@
 
-import sqlite3
 import re
 import os
-import sqlparse,sys
+import sqlite3
+import sqlparse
+import sys
 
 #import pprint
 #pp = pprint.PrettyPrinter(indent=4)
