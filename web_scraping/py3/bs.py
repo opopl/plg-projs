@@ -99,8 +99,6 @@ This script will parse input URL
     
     self.dirs.update({ 
       'html'       : os.path.join(self.dirs['out'],'html'),
-      'html_cache' : os.path.join(self.dirs['out'],'html','cache'),
-      'html_clean' : os.path.join(self.dirs['out'],'html','clean'),
       'tex_out'    : os.path.join(self.dirs['out'],'tex'),
     })
 
@@ -138,7 +136,6 @@ This script will parse input URL
     }
 
     ii_cached = self._file_ii_html(ii,'cache')
-    import pdb; pdb.set_trace()
 
     if os.path.isfile(ii_cached):
       with open(ii_cached,'r') as f:
