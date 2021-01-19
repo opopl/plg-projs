@@ -250,8 +250,10 @@ This script will parse input URL
         continue
 
       if len(el.get_text(strip=True)) == 0:
-        if not el.find('img'):
-          el.decompose()
+        print(el)
+        j = el.find('img')
+        print(j.count())
+          #el.decompose()
     return self
 
   def do_unwrap(self):
@@ -343,6 +345,7 @@ This script will parse input URL
     for img in self.soup.find_all("img"):
       print(img)
       caption = ''
+      continue
       if img.has_attr('alt'):
         caption = img['alt']
 
@@ -360,7 +363,8 @@ This script will parse input URL
           print(f"Getting image: \n\t{url}")
           #import pdb; pdb.set_trace()
           try:
-            i = Image.open(requests.get(url, stream = True).raw)
+            i = None
+            #i = Image.open(requests.get(url, stream = True).raw)
             if not i:
               print(f'[Image.open] FAIL: {url}')
               continue
