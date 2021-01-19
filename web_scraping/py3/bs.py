@@ -5,16 +5,17 @@ from bs4 import BeautifulSoup
 import getopt,argparse
 import sys,os
 import yaml
-import pathlib
+
+from pathlib import Path
 from urllib.parse import urlparse
 
   #https://code.activestate.com/recipes/577346-getattr-with-arbitrary-depth/
 
 def mk_parent_dir(file):
-  p = str(pathlib.Path(file).parent)
-  os.makedirs(p)
+  p = str(Path(file).parent)
+  os.makedirs(p,exist_ok=True)
 
-def m_get(obj, path, default = None):
+def g(obj, path, default = None):
     if type(path) is str:
       keys = path.split(".")
     elif type(path) is list:
@@ -99,7 +100,7 @@ This script will parse input URL
 
   def init_dirs(self):
     if self.f_yaml:
-      pp = pathlib.Path(self.f_yaml).resolve()
+      pp = Path(self.f_yaml).resolve()
       dir = str(pp.parent)
       stem = pp.stem
       self.dirs['out'] = os.path.join(dir,'out',stem)
@@ -128,24 +129,12 @@ This script will parse input URL
   def _file_ii_html(self,ii,type):
     ii_file = os.path.join(self.dirs['html'],'ii',ii,type + '.html')
     return ii_file
-  
-  def parse_url(self,ref={}):
-    url = ref.get('url','')
-    ii  = ref.get('ii','')
 
-    u = urlparse(url)
-    host = u.netloc.split(':')[0]
-
-    site = m_get(self,[ 'hosts', host, 'site' ],'')
-    print(site)
-
-    dt = { 
-      'imgs' : [],
-      'title' : '',
-    }
+  def load_soup(self,ref={}):
+    url = ref.get('url',self.url)
+    ii  = ref.get('ii',self.ii)
 
     ii_cached = self._file_ii_html(ii,'cache')
-
     if os.path.isfile(ii_cached):
       with open(ii_cached,'r') as f:
         self.content = f.read()
@@ -157,24 +146,60 @@ This script will parse input URL
       with open(ii_cached, 'wb') as f:
         f.write(self.content)
 
-    soup = BeautifulSoup(self.content,'html5lib')
+    self.soup = BeautifulSoup(self.content,'html5lib')
+
+    return self
+
+  def do_clean(self):
+    site = g(self,'site','')
+    ii   = g(self,'ii','')
+
+    clean = g(self,[ 'sites', site, 'clean' ],[])
+    els_clean = self.soup.findAll(clean)
+    for el in els_clean:
+      el.decompose()
+
+    ii_clean = self._file_ii_html(ii,'clean')
+    mk_parent_dir(ii_clean)
+    #import pdb; pdb.set_trace()
+    with open(ii_clean, 'w') as f:
+      f.write(self.soup.prettify())
+
+    return self
+  
+  def parse_url(self,ref={}):
+    self.url = ref.get('url','')
+    self.ii  = ref.get('ii','')
+
+    u = urlparse(self.url)
+    self.host = u.netloc.split(':')[0]
+    self.site = g(self,[ 'hosts', self.host, 'site' ],'')
+
+    self \
+        .load_soup()  \
+        .do_clean()
+
+    #dt = { 
+      #'imgs' : [],
+      #'title' : '',
+    #}
 
     #print({ 
         ##'title' : soup.title.get_text(),
         #'h1' : soup.h1.get_text(),
     #})
 
-    for img in soup.find_all("img"):
-      d = {}
-      for k in [ 'src', 'alt', 'data-src' ]:
-        if img.has_attr(k):
-          d[k] = img[k]
-      #print(d)
-      #print(img.string)
+#    for img in soup.find_all("img"):
+      #d = {}
+      #for k in [ 'src', 'alt', 'data-src' ]:
+        #if img.has_attr(k):
+          #d[k] = img[k]
+      ##print(d)
+      ##print(img.string)
 
-      dt['imgs'].append(d)
+      #dt['imgs'].append(d)
 
-    self.data[url] = dt
+    #self.data[url] = dt
 
     return self
 
