@@ -87,6 +87,9 @@ This script will parse input URL
   #command-line options
   oa = None
 
+  # tex lines
+  tex_lines = []
+
   # end: attributes }
 
   def __init__(self,args={}):
@@ -230,9 +233,11 @@ This script will parse input URL
     all = self.soup.find_all(True)
     while 1:
       el = all.pop(0)
-      txt = el.string.strip()
-      if not txt and not len(list(el.children)):
+      if len(el.get_text(strip=True)) == 0:
         el.decompose()
+      #txt = el.string.strip()
+      #if not txt and not len(list(el.children)):
+        #el.decompose()
       if not len(all):
         break
     return self
