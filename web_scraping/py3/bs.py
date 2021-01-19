@@ -289,7 +289,13 @@ This script will parse input URL
 
     if self.img_db and os.path.isfile(self.img_db):
       conn = sqlite3.connect(self.img_db)
+      conn.row_factory = sqlite3.Row
       c = conn.cursor()
+
+      c.execute('''SELECT url FROM imgs''')
+      rows = c.fetchall()
+      for row in rows:
+        print(row)
 
     img_dir = self._dir_ii_img()
     for img in self.soup.find_all("img"):
