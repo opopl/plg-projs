@@ -262,7 +262,14 @@ This script will parse input URL
       div.unwrap()
     return self
 
-  def _img_path(self,url):
+  def _img_ext(self,imgobj=None):
+    map = {
+       'JPEG'  : 'jpg'
+    }
+    ext = map.get(imgobj.format,'jpg')
+    return ext
+
+  def _img_path(self,url,ext='jpg'):
     if not ( self.img_db and os.path.isfile(self.img_db) ):
       pass
     else:
@@ -277,7 +284,6 @@ This script will parse input URL
         rw = c.fetchone()
         inum = rw['inum']
         inum += 1
-        ext = 'jpg'
         ipath = os.path.join(self.img_root, f'{inum}.{ext}')
         return ipath
 
@@ -343,6 +349,8 @@ This script will parse input URL
               continue
             
             print(f'Image format: {i.format}')
+            ipath = self._img_path(url,self._img_ext(i))
+            i.save(ipath)
           except:
             print(f'[Image.open] FAIL: {url}')
 
