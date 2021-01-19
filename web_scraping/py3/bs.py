@@ -184,9 +184,16 @@ This script will parse input URL
 
     self \
         .load_soup()  \
-        .do_clean()
+        .do_clean() \
+        .do_imgs()
 
-    #dt = { 
+    return self
+
+  def do_imgs(self):
+    site = g(self,'site','')
+    host = g(self,'host','')
+    ii   = g(self,'ii','')
+        #dt = { 
       #'imgs' : [],
       #'title' : '',
     #}
@@ -196,7 +203,9 @@ This script will parse input URL
         #'h1' : soup.h1.get_text(),
     #})
 
-#    for img in soup.find_all("img"):
+    for img in self.soup.find_all("img"):
+      #print(img)
+
       #d = {}
       #for k in [ 'src', 'alt', 'data-src' ]:
         #if img.has_attr(k):
@@ -207,7 +216,6 @@ This script will parse input URL
       #dt['imgs'].append(d)
 
     #self.data[url] = dt
-
     return self
 
   def parse(self):
