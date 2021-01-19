@@ -9,31 +9,25 @@ import pathlib
 from urllib.parse import urlparse
 
   #https://code.activestate.com/recipes/577346-getattr-with-arbitrary-depth/
-def m_getattr(obj, attr, default = None):
-    """
-    Get a named attribute from an object; multi_getattr(x, 'a.b.c.d') is
-    equivalent to x.a.b.c.d. When a default argument is given, it is
-    returned when any attribute in the chain doesn't exist; without
-    it, an exception is raised when a missing attribute is encountered.
-
-    """
-    attributes = attr.split(".")
-    for i in attributes:
-        try:
-            obj = getattr(obj, i)
-            print(obj)
-        except AttributeError:
-            if default:
-                return default
-            else:
-                raise
-    return obj
-
-def m_get(dict, path, default = None):
+def m_get(obj, path, default = None):
     keys = path.split(".")
     for k in keys:
-      dict = dict.get(k,default)
-    return dict
+      if not obj:
+        obj = default
+        break
+      if isinstance(obj,dict):
+        if k in obj:
+          obj = obj.get(k)
+        else:
+          obj = default
+          break
+      elif isinstance(obj,object):
+        if hasattr(obj,k):
+          obj = getattr(obj, k)
+        else:
+          obj = default
+          break
+    return obj
 
 class BS:
   # class attributes {
@@ -91,8 +85,6 @@ This script will parse input URL
 
     return self
 
-
-
   def init_dirs(self):
     if self.f_yaml:
       pp = pathlib.Path(self.f_yaml).resolve()
@@ -121,14 +113,16 @@ This script will parse input URL
       for k,v in d.items():
         setattr(self,k,v)
 
-    print(getattr(self,'hosts',{}))
-    print(getattr(self,'sites',{}))
-    print(m_getattr(self,'sites.strana.clean',{}))
+    import pdb; pdb.set_trace()
+    print(m_get(self,'hosts',{}))
+    print(m_get(self,'sites',{}))
+    print(m_get(self,'sites.strana',{}))
+    print(m_get(self,'sites.strana.clean',{}))
 
     return self
 
   def _file_ii_html(self,ii,type):
-    ii_file = os.path.join(self.dirs['html'],type,ii + '.html')
+    ii_file = os.path.join(self.dirs['html'],'ii',ii,type + '.html')
     return ii_file
   
   def parse_url(self,ref={}):
@@ -145,6 +139,7 @@ This script will parse input URL
     }
 
     ii_cached = self._file_ii_html(ii,'cache')
+    import pdb; pdb.set_trace()
 
     if os.path.isfile(ii_cached):
       with open(ii_cached,'r') as f:
@@ -153,6 +148,8 @@ This script will parse input URL
       page = requests.get(url)
       self.content = page.content
 
+      p_ii = str(Path(ii_cached))
+      os.makedirs(p_ii)
       with open(ii_cached, 'wb') as f:
         f.write(self.content)
 
