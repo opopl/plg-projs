@@ -11,6 +11,8 @@ from pathlib import Path
 from urllib.parse import urlparse
 from urllib.parse import urljoin
 
+from PIL import Image
+
   #https://code.activestate.com/recipes/577346-getattr-with-arbitrary-depth/
 
 def mk_parent_dir(file):
@@ -128,15 +130,23 @@ This script will parse input URL
 
     return self
 
-  def _file_ii_html(self,ii,type):
-    ii_file = os.path.join(self.dirs['html'],'ii',ii,type + '.html')
+  def _dir_ii(self):
+    ii = self.ii
+    return os.path.join(self.dirs['html'],'ii',ii)
+
+  def _dir_ii_img(self,ii):
+    img_dir = os.path.join(self._dir_ii(),'img')
+    return img_dir
+
+  def _file_ii_html(self,type):
+    ii_file = os.path.join(self._dir_ii(),type + '.html')
     return ii_file
 
   def load_soup(self,ref={}):
     url = ref.get('url',self.url)
     ii  = ref.get('ii',self.ii)
 
-    ii_cached = self._file_ii_html(ii,'cache')
+    ii_cached = self._file_ii_html('cache')
     if os.path.isfile(ii_cached):
       with open(ii_cached,'r') as f:
         self.content = f.read()
@@ -167,7 +177,7 @@ This script will parse input URL
       for el in els_clean:
         el.decompose()
 
-    ii_clean = self._file_ii_html(ii,'clean')
+    ii_clean = self._file_ii_html('clean')
     mk_parent_dir(ii_clean)
     print("\t" + Path(ii_clean).as_uri())
     with open(ii_clean, 'w') as f:
@@ -211,11 +221,12 @@ This script will parse input URL
         src = img['src']
         u = urlparse(src)
         if not u.netloc:
-          #print(u.netloc)
           url = urljoin(base,src)
         else:
           url = src
+        r = requests.get(url)
         print(url)
+        print(r.status_code)
 
       #d = {}
       #for k in [ 'src', 'alt', 'data-src' ]:
