@@ -90,11 +90,18 @@ This script will parse input URL
   # tex lines
   tex_lines = []
 
+  img_db = None
+
   # end: attributes }
 
   def __init__(self,args={}):
+    self.img_root = os.environ.get('IMG_ROOT')
+
     for k, v in args.items():
       self.k = v
+
+    if self.img_root:
+      self.img_db = os.path.join(self.img_root,'img.db')
 
   def get_opt(self):
     self.parser = argparse.ArgumentParser(usage=self.usage)
@@ -279,6 +286,10 @@ This script will parse input URL
         ##'title' : soup.title.get_text(),
         #'h1' : soup.h1.get_text(),
     #})
+
+    if self.img_db and os.path.isfile(self.img_db):
+      conn = sqlite3.connect(self.img_db)
+      c = conn.cursor()
 
     img_dir = self._dir_ii_img()
     for img in self.soup.find_all("img"):
