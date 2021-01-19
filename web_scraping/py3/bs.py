@@ -9,6 +9,11 @@ import pathlib
 from urllib.parse import urlparse
 
   #https://code.activestate.com/recipes/577346-getattr-with-arbitrary-depth/
+
+def mk_parent_dir(file):
+  p = str(pathlib.Path(file).parent)
+  os.makedirs(p)
+
 def m_get(obj, path, default = None):
     keys = path.split(".")
     for k in keys:
@@ -113,12 +118,6 @@ This script will parse input URL
       for k,v in d.items():
         setattr(self,k,v)
 
-    import pdb; pdb.set_trace()
-    print(m_get(self,'hosts',{}))
-    print(m_get(self,'sites',{}))
-    print(m_get(self,'sites.strana',{}))
-    print(m_get(self,'sites.strana.clean',{}))
-
     return self
 
   def _file_ii_html(self,ii,type):
@@ -148,8 +147,7 @@ This script will parse input URL
       page = requests.get(url)
       self.content = page.content
 
-      p_ii = str(Path(ii_cached))
-      os.makedirs(p_ii)
+      mk_parent_dir(ii_cached)
       with open(ii_cached, 'wb') as f:
         f.write(self.content)
 
