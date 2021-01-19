@@ -220,9 +220,21 @@ This script will parse input URL
         .do_meta()   \
         .do_clean()  \
         .do_unwrap() \
+        .rm_empty() \
         .do_imgs()   \
         .save_clean()
 
+    return self
+
+  def rm_empty(self):
+    all = self.soup.find_all(True)
+    while 1:
+      el = all.pop(0)
+      txt = el.string.strip()
+      if not txt and not len(list(el.children)):
+        el.decompose()
+      if not len(all):
+        break
     return self
 
   def do_unwrap(self):
