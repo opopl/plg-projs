@@ -15,6 +15,9 @@ from urllib.parse import urlparse
 from urllib.parse import urljoin
 
 from PIL import Image
+from io import StringIO
+
+import shutil
 
 #[method for method in dir(meta) if method.startswith('__') is False]
 
@@ -192,7 +195,6 @@ This script will parse input URL
 
     clean = g(self,[ 'sites', site, 'clean' ],[])
 
-    #import pdb; pdb.set_trace()
     for c in clean:
       #s = c.split('.')
       #tag = s.pop(0)
@@ -240,6 +242,9 @@ This script will parse input URL
     all = self.soup.find_all(True)
     while 1:
       el = all.pop(0)
+      if el.name == 'img':
+        continue
+
       if len(el.get_text(strip=True)) == 0:
         el.decompose()
       #txt = el.string.strip()
@@ -257,11 +262,49 @@ This script will parse input URL
       div.unwrap()
     return self
 
+  def _img_path(self,url):
+    if not ( self.img_db and os.path.isfile(self.img_db) ):
+      pass
+    else:
+      conn = sqlite3.connect(self.img_db)
+      conn.row_factory = sqlite3.Row
+      c = conn.cursor()
+  
+      c.execute('''SELECT img FROM imgs WHERE url = ?''',[ url ])
+      rw = c.fetchone()
+      if not rw:
+        c.execute('''SELECT MAX(inum) FROM imgs''')
+        rw = c.fetchone()
+        inum = rw['inum']
+        inum += 1
+        ext = 'jpg'
+        ipath = os.path.join(self.img_root, f'{inum}.{ext}')
+        return ipath
+
+  def _img_saved(self,url):
+    ok = 0
+    if not ( self.img_db and os.path.isfile(self.img_db) ):
+      pass
+    else:
+      conn = sqlite3.connect(self.img_db)
+      c = conn.cursor()
+
+      c.execute('''SELECT inum FROM imgs WHERE url = ?''',[ url ])
+      rw = c.fetchone()
+      if not rw:
+        c.execute('''SELECT MAX(inum) FROM imgs''')
+        rw = c.fetchone()
+        inum = rw[0]
+
+      conn.commit()
+      conn.close()
+
+    return ok
+
   def do_css(self):
     return self
 
   def do_meta(self):
-    #import pdb; pdb.set_trace()
     meta = self.soup.select("meta")
     txt = []
     meta_file = self._file_ii_txt('meta')
@@ -277,25 +320,6 @@ This script will parse input URL
     host     = g(self,'host','')
     base_url = g(self,'base_url','')
     ii       = g(self,'ii','')
-        #dt = { 
-      #'imgs' : [],
-      #'title' : '',
-    #}
-
-    #print({ 
-        ##'title' : soup.title.get_text(),
-        #'h1' : soup.h1.get_text(),
-    #})
-
-    if self.img_db and os.path.isfile(self.img_db):
-      conn = sqlite3.connect(self.img_db)
-      conn.row_factory = sqlite3.Row
-      c = conn.cursor()
-
-      c.execute('''SELECT url FROM imgs''')
-      rows = c.fetchall()
-      for row in rows:
-        print(row)
 
     img_dir = self._dir_ii_img()
     for img in self.soup.find_all("img"):
@@ -306,20 +330,22 @@ This script will parse input URL
           url = urljoin(base_url,src)
         else:
           url = src
-        #r = requests.get(url)
-        #print(url)
-        #print(r.status_code)
 
-      #d = {}
-      #for k in [ 'src', 'alt', 'data-src' ]:
-        #if img.has_attr(k):
-          #d[k] = img[k]
-      ##print(d)
-      ##print(img.string)
+        if self._img_saved(url):
+          pass
+        else:
+          print(f"Getting image: \n\t{url}")
+          #import pdb; pdb.set_trace()
+          try:
+            i = Image.open(requests.get(url, stream = True).raw)
+            if not i:
+              print(f'[Image.open] FAIL: {url}')
+              continue
+            
+            print(f'Image format: {i.format}')
+          except:
+            print(f'[Image.open] FAIL: {url}')
 
-      #dt['imgs'].append(d)
-
-    #self.data[url] = dt
     return self
 
   def parse(self):
