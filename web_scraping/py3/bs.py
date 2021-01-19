@@ -207,14 +207,15 @@ This script will parse input URL
     #})
 
     for img in self.soup.find_all("img"):
-      src = img['src']
-      u = urlparse(src)
-      if not u.netloc:
-        #print(u.netloc)
-        url = urljoin(base,src)
-      else:
-        url = src
-      print(url)
+      if img.has_attr('src'):
+        src = img['src']
+        u = urlparse(src)
+        if not u.netloc:
+          #print(u.netloc)
+          url = urljoin(base,src)
+        else:
+          url = src
+        print(url)
 
       #d = {}
       #for k in [ 'src', 'alt', 'data-src' ]:
