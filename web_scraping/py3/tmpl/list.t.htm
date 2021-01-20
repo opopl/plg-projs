@@ -3,13 +3,14 @@
   <head>
   </head>
   <body>
-    <table>
+    <table border="1">
       <tbody>
         {% for page in pages %}
             <tr> 
-              <td>{{ page.uri_remote }}</td> 
-              <td>{{ page.uri_clean }}</td> 
-              <td>{{ page.uri_cache }}</td> 
+              <td> <b> {{ page.title }} </b> </td> 
+              <td><a target="_blank" href="{{ page.uri.remote }}" > Remote </a></td> 
+              <td><a target="_blank" href="{{ page.uri.clean }}" > Clean </a></td> 
+              <td><a target="_blank" href="{{ page.uri.cache}}" > Cache </a></td> 
             </tr>
         {% endfor %}
       </tbody>

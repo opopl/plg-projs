@@ -140,8 +140,6 @@ This script will parse input URL
     self.template_loader = jinja2.FileSystemLoader(searchpath=self.dirs['tmpl'])
     self.template_env = jinja2.Environment(loader=self.template_loader)
 
-    t = self.template_env.get_template("list.t.htm")
-    #print(t.render())
 
     return self
 
@@ -202,19 +200,21 @@ This script will parse input URL
     url = ref.get('url',self.url)
     ii  = ref.get('ii',self.ii)
 
-    ii_cached = self._file_ii_html('cache')
-    if os.path.isfile(ii_cached):
-      with open(ii_cached,'r') as f:
+    self.ii_cache = self._file_ii_html('cache')
+    if os.path.isfile(self.ii_cache):
+      with open(self.ii_cache,'r') as f:
         self.content = f.read()
     else:
       page = requests.get(url)
       self.content = page.content
 
-      mk_parent_dir(ii_cached)
-      with open(ii_cached, 'wb') as f:
+      mk_parent_dir(self.ii_cache)
+      with open(self.ii_cache, 'wb') as f:
         f.write(self.content)
 
     self.soup = BeautifulSoup(self.content,'html5lib')
+
+    self.title = self.soup.select_one('head > title').string
 
     return self
 
@@ -261,9 +261,12 @@ This script will parse input URL
         'clean'  : Path(self.ii_clean).as_uri(),
         'cache'  : Path(self.ii_cache).as_uri(),
       },
+      'title' : self.title
     }
 
     self.pages.append(page)
+
+    print(self.pages)
 
     return self
   
@@ -465,6 +468,21 @@ This script will parse input URL
 
     return self
 
+  def render_page_list(self):
+
+    t = self.template_env.get_template("list.t.htm")
+    h = t.render(pages=self.pages)
+
+    h_file = os.path.join(self.dirs['html'],'list.html')
+
+    with open(h_file, 'w') as f:
+        f.write(h)
+
+    h_uri = Path(h_file).as_uri()
+    print(f'[BS] list: {h_uri}')
+
+    return self
+
   def parse(self):
     if not self.url:
       if self.f_yaml and os.path.isfile(self.f_yaml):
@@ -476,6 +494,8 @@ This script will parse input URL
 
     else:
       self.parse_url(self.url)
+
+    self.render_page_list()
     
     return self
 
