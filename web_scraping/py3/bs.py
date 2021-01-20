@@ -362,8 +362,8 @@ This script will parse input URL
     j = 0
     for el_img in self.soup.find_all("img"):
       j+=1
-      if j == 2:
-        break 
+      #if j == 5:
+        #break 
       caption = ''
       #if el_img.has_attr('alt'):
         #caption = el_img['alt']
