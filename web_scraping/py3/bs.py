@@ -245,15 +245,13 @@ This script will parse input URL
         break
 
       el = all.pop(0)
-      #import pdb; pdb.set_trace()
       if el.name == 'img':
         continue
 
       if len(el.get_text(strip=True)) == 0:
-        print(el)
         j = el.find('img')
-        print(j.count())
-          #el.decompose()
+        if not j:
+          el.decompose()
     return self
 
   def do_unwrap(self):
@@ -266,7 +264,8 @@ This script will parse input URL
 
   def _img_ext(self,imgobj=None):
     map = {
-       'JPEG'  : 'jpg'
+       'JPEG'  : 'jpg',
+       'PNG'   : 'png',
     }
     ext = map.get(imgobj.format,'jpg')
     return ext
@@ -342,15 +341,18 @@ This script will parse input URL
     ii       = g(self,'ii','')
 
     img_dir = self._dir_ii_img()
-    for img in self.soup.find_all("img"):
-      print(img)
-      caption = ''
-      continue
-      if img.has_attr('alt'):
-        caption = img['alt']
 
-      if img.has_attr('src'):
-        src = img['src']
+    j = 0
+    for el_img in self.soup.find_all("img"):
+      j+=1
+      if j == 2:
+        break 
+      caption = ''
+      if el_img.has_attr('alt'):
+        caption = el_img['alt']
+
+      if el_img.has_attr('src'):
+        src = el_img['src']
         u = urlparse(src)
         if not u.netloc:
           url = urljoin(base_url,src)
@@ -364,10 +366,9 @@ This script will parse input URL
           #import pdb; pdb.set_trace()
           try:
             i = None
-            #i = Image.open(requests.get(url, stream = True).raw)
+            i = Image.open(requests.get(url, stream = True).raw)
             if not i:
               print(f'[Image.open] FAIL: {url}')
-              continue
             
             print(f'Image format: {i.format}')
             iext = self._img_ext(i)
@@ -376,6 +377,14 @@ This script will parse input URL
             img   = idata.get("img","")
             inum  = idata.get('inum','')
             ipath = idata.get('path','')
+
+            ipath_uri = Path(ipath).as_uri()
+            print(ipath_uri)
+            el_img['src'] = ipath_uri
+            
+            n = self.soup.new_tag('img')
+            n['src'] = ipath_uri
+            el_img.replace_with(n)
 
             print(f'Local path: {idata.get("path","")}')
             if os.path.isfile(ipath):
