@@ -201,13 +201,20 @@ This script will parse input URL
     clean = g(self,[ 'sites', site, 'clean' ],[])
 
     for c in clean:
-      #s = c.split('.')
-      #tag = s.pop(0)
-      #classes = s
-      #els_clean = self.soup.findAll(tag,classes)
       els_clean = self.soup.select(c)
       for el in els_clean:
         el.decompose()
+
+    return self
+
+  def h_insert_url(self):
+    h = self.soup.select_one('h1,h2,h3,h4,h5,h6')
+
+    a = self.soup.new_tag('a', )
+    a['href'] = self.url
+    a.string = self.url
+    h.insert_after(a)
+    a.wrap(self.soup.new_tag('p'))
 
     return self
 
@@ -238,6 +245,7 @@ This script will parse input URL
         .do_clean()  \
         .do_unwrap() \
         .rm_empty() \
+        .h_insert_url() \
         .do_imgs()   \
         .save_clean()
 
