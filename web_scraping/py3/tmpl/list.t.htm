@@ -7,10 +7,13 @@
       <tbody>
         {% for page in pages %}
             <tr> 
-              <td> <b> {{ page.title }} </b> </td> 
+              <td>
+                <a target="_blank" href="{{ page.uri.base }}" > {{ page.uri.base }} </a>
+              </td> 
               <td><a target="_blank" href="{{ page.uri.remote }}" > Remote </a></td> 
               <td><a target="_blank" href="{{ page.uri.clean }}" > Clean </a></td> 
               <td><a target="_blank" href="{{ page.uri.cache}}" > Cache </a></td> 
+              <td> <b> {{ page.title }} </b> </td> 
             </tr>
         {% endfor %}
       </tbody>

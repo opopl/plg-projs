@@ -247,8 +247,6 @@ This script will parse input URL
     self.ii_clean = self._file_ii_html('clean')
     mk_parent_dir(self.ii_clean)
 
-    print("\t" + Path(self.ii_clean).as_uri())
-
     with open(self.ii_clean, 'w') as f:
       f.write(self.soup.prettify())
 
@@ -257,6 +255,7 @@ This script will parse input URL
   def page_add(self):
     page = {
       'uri' : { 
+        'base'   : self.base_url,
         'remote' : self.url,
         'clean'  : Path(self.ii_clean).as_uri(),
         'cache'  : Path(self.ii_cache).as_uri(),
@@ -265,8 +264,6 @@ This script will parse input URL
     }
 
     self.pages.append(page)
-
-    print(self.pages)
 
     return self
   
@@ -463,7 +460,8 @@ This script will parse input URL
         
         n = self.soup.new_tag('img')
         n['src'] = ipath_uri
-        n['width'] = 300
+        n['width'] = 500
+        el_img.wrap(self.soup.new_tag('p'))
         el_img.replace_with(n)
 
     return self
