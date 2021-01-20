@@ -17,15 +17,10 @@ from urllib.parse import urljoin
 from PIL import Image
 from io import StringIO
 
-from jinja2 import Template
+#from jinja2 import Template
 
+import jinja2
 import shutil
-
-Script = os.path.realpath(__file__)
-Bin = str(Path(Script).parent)
-
-tmpl_dir = os.path.join(Bin,'tmpl')
-print(f'[BS] Script location: {Script}')
 
 def add_libs(libs):
   for lib in libs:
@@ -138,7 +133,23 @@ This script will parse input URL
 
     return self
 
+  def init_tmpl(self):
+    self.template_loader = jinja2.FileSystemLoader(searchpath=self.dirs['tmpl'])
+    self.template_env = jinja2.Environment(loader=self.template_loader)
+
+    t = self.template_env.get_template("bs.t.htm")
+    print(t.render())
+
+    return self
+
   def init_dirs(self):
+    self.Script = os.path.realpath(__file__)
+    self.Bin = str(Path(self.Script).parent)
+    
+    self.dirs['tmpl'] = os.path.join(self.Bin,'tmpl')
+    print(f'[BS] Script location: {self.Script}')
+    print(f'[BS] Template directory: {self.dirs["tmpl"]}')
+
     if self.f_yaml:
       pp = Path(self.f_yaml).resolve()
       dir = str(pp.parent)
@@ -456,6 +467,7 @@ This script will parse input URL
     self           \
       .get_opt()   \
       .init_dirs() \
+      .init_tmpl() \
       .mk_dirs()   \
       .parse()
 
