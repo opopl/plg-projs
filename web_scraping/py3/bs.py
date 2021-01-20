@@ -362,8 +362,6 @@ This script will parse input URL
     j = 0
     for el_img in self.soup.find_all("img"):
       j+=1
-      #if j == 5:
-        #break 
       caption = ''
       #if el_img.has_attr('alt'):
         #caption = el_img['alt']
@@ -381,15 +379,14 @@ This script will parse input URL
           ipath = idata.get('path','')
           pass
         else:
-          print(f"Getting image: \n\t{url}")
-          #import pdb; pdb.set_trace()
+          print(f"[do_imgs] Getting image: \n\t{url}")
           try:
             i = None
             i = Image.open(requests.get(url, stream = True).raw)
             if not i:
               print(f'FAIL[do_imgs] Image.open: {url}')
             
-            print(f'Image format: {i.format}')
+            print(f'[do_imgs] Image format: {i.format}')
             iext = self._img_ext(i)
             idata = self._img_data(url,iext)
 
@@ -397,11 +394,12 @@ This script will parse input URL
             inum  = idata.get('inum','')
             ipath = idata.get('path','')
 
-            print(f'Local path: {idata.get("path","")}')
+            print(f'[do_imgs] Local path: {idata.get("path","")}')
             if os.path.isfile(ipath):
               print(f'WARN[do_imgs] image file already exists: {img}')
             else:
               i.save(ipath)
+              print(f'[do_imgs] Saved image: {img}')
 
             d = {
               'db_file' : self.img_db,
@@ -417,17 +415,16 @@ This script will parse input URL
               }
             }
             dbw.insert_dict(d)
-            print(d)
           except:
-            print(f'[Image.open] exception: {url}')
+            print(f'WARN[do_imgs] Image.open exception: {url}')
             raise
 
         ipath_uri = Path(ipath).as_uri()
-        print(ipath_uri)
         el_img['src'] = ipath_uri
         
         n = self.soup.new_tag('img')
         n['src'] = ipath_uri
+        n['width'] = 300
         el_img.replace_with(n)
 
     return self
