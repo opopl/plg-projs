@@ -16,8 +16,10 @@ def update_dict(ref):
   if not conn:
     if db_file:
       conn = sqlite3.connect(db_file)
+      db_close = 1
     else:
       return
+
   c = conn.cursor()
 
   where     = ref.get('where',{})
@@ -49,11 +51,24 @@ def update_dict(ref):
 def insert_dict(ref={}):
   conn     = ref.get('conn')
   table    = ref.get('table')
-  if not conn:
-    return
-  c = conn.cursor()
+
+  db_file   = ref.get('db_file')
+  db_close  = ref.get('db_close')
+
   insert   = ref.get('insert',{})
   fields   = insert.keys()
+  if len(fields) == 0:
+    return 
+
+  if not conn:
+    if db_file:
+      conn = sqlite3.connect(db_file)
+      db_close = 1
+    else:
+      return
+
+  c = conn.cursor()
+
   fields_s = ",".join(fields)
   values   = list( map(lambda k: insert.get(k,''), fields) )
   quot     = list( map(lambda k: '?', fields) )
@@ -66,6 +81,10 @@ def insert_dict(ref={}):
     c.execute(q,values)
   except sqlite3.IntegrityError as e:
     print(e)
+
+  if db_close:
+    conn.commit()
+    conn.close()
 
 def sql_file_exec(db_file, sql_file):
   conn = sqlite3.connect(db_file)

@@ -98,7 +98,9 @@ This script will parse input URL
   # tex lines
   tex_lines = []
 
+  # image database
   img_db = None
+  img_conn = None
 
   # end: attributes }
 
@@ -321,12 +323,13 @@ This script will parse input URL
       conn = sqlite3.connect(self.img_db)
       c = conn.cursor()
 
-      c.execute('''SELECT inum FROM imgs WHERE url = ?''',[ url ])
+      c.execute('''SELECT img FROM imgs WHERE url = ?''',[ url ])
       rw = c.fetchone()
-      if not rw:
-        c.execute('''SELECT MAX(inum) FROM imgs''')
-        rw = c.fetchone()
-        inum = rw[0]
+      if rw:
+        img = rw[0]
+        ipath = os.path.join(self.img_root, img)
+        if os.path.isfile(ipath):
+          ok = 1
 
       conn.commit()
       conn.close()
@@ -361,8 +364,8 @@ This script will parse input URL
       if j == 2:
         break 
       caption = ''
-      if el_img.has_attr('alt'):
-        caption = el_img['alt']
+      #if el_img.has_attr('alt'):
+        #caption = el_img['alt']
 
       if el_img.has_attr('src'):
         src = el_img['src']
@@ -381,7 +384,7 @@ This script will parse input URL
             i = None
             i = Image.open(requests.get(url, stream = True).raw)
             if not i:
-              print(f'[Image.open] FAIL: {url}')
+              print(f'FAIL[do_imgs] Image.open: {url}')
             
             print(f'Image format: {i.format}')
             iext = self._img_ext(i)
@@ -401,9 +404,12 @@ This script will parse input URL
 
             print(f'Local path: {idata.get("path","")}')
             if os.path.isfile(ipath):
-              print('[Warning] image file already exists: f{img}')
-            #i.save(ipath)
+              print(f'WARN[do_imgs] image file already exists: {img}')
+            else:
+              i.save(ipath)
+
             d = {
+              'db_file' : self.img_db,
               'url'    : url,
               'img'    : img,
               'inum'   : inum,
@@ -412,6 +418,7 @@ This script will parse input URL
               'proj'   : self.proj,
               'caption' : caption,
             }
+            dbw.insert_dict(d)
             print(d)
           except:
             print(f'[Image.open] exception: {url}')
