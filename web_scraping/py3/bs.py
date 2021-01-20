@@ -19,9 +19,14 @@ from io import StringIO
 
 import shutil
 
-#[method for method in dir(meta) if method.startswith('__') is False]
+def add_libs(libs):
+  for lib in libs:
+    if not lib in sys.path:
+      sys.path.append(lib)
 
-  #https://code.activestate.com/recipes/577346-getattr-with-arbitrary-depth/
+plg = os.environ.get('PLG')
+add_libs([ os.path.join(plg,'projs','python','lib') ])
+import Base.DBW as dbw
 
 def mk_parent_dir(file):
   p = str(Path(file).parent)
@@ -430,3 +435,6 @@ This script will parse input URL
 
 BS({}).main()
 
+
+#[method for method in dir(meta) if method.startswith('__') is False]
+#https://code.activestate.com/recipes/577346-getattr-with-arbitrary-depth/
