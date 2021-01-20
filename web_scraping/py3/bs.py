@@ -293,17 +293,18 @@ This script will parse input URL
       conn = sqlite3.connect(self.img_db)
       c = conn.cursor()
   
-      c.execute('''SELECT img FROM imgs WHERE url = ?''',[ url ])
+      c.execute('''SELECT img, inum FROM imgs WHERE url = ?''',[ url ])
       rw = c.fetchone()
 
-      if not rw:
+      if rw:
+        img = rw[0]
+        inum = rw[1]
+      else:
         c.execute('''SELECT MAX(inum) FROM imgs''')
         rw = c.fetchone()
         inum = rw[0]
         inum += 1
         img = f'{inum}.{ext}'
-      else:
-        img = rw[0]
 
       ipath = os.path.join(self.img_root, img)
 
@@ -376,6 +377,8 @@ This script will parse input URL
           url = src
 
         if self._img_saved(url):
+          idata = self._img_data(url)
+          ipath = idata.get('path','')
           pass
         else:
           print(f"Getting image: \n\t{url}")
@@ -394,14 +397,6 @@ This script will parse input URL
             inum  = idata.get('inum','')
             ipath = idata.get('path','')
 
-            ipath_uri = Path(ipath).as_uri()
-            print(ipath_uri)
-            el_img['src'] = ipath_uri
-            
-            n = self.soup.new_tag('img')
-            n['src'] = ipath_uri
-            el_img.replace_with(n)
-
             print(f'Local path: {idata.get("path","")}')
             if os.path.isfile(ipath):
               print(f'WARN[do_imgs] image file already exists: {img}')
@@ -410,19 +405,30 @@ This script will parse input URL
 
             d = {
               'db_file' : self.img_db,
-              'url'    : url,
-              'img'    : img,
-              'inum'   : inum,
-              'ext'    : iext,
-              'rootid' : self.rootid,
-              'proj'   : self.proj,
-              'caption' : caption,
+              'table'   : 'imgs',
+              'insert' : {
+                'url'    : url,
+                'img'    : img,
+                'inum'   : inum,
+                'ext'    : iext,
+                'rootid' : self.rootid,
+                'proj'   : self.proj,
+                'caption' : caption,
+              }
             }
             dbw.insert_dict(d)
             print(d)
           except:
             print(f'[Image.open] exception: {url}')
             raise
+
+        ipath_uri = Path(ipath).as_uri()
+        print(ipath_uri)
+        el_img['src'] = ipath_uri
+        
+        n = self.soup.new_tag('img')
+        n['src'] = ipath_uri
+        el_img.replace_with(n)
 
     return self
 

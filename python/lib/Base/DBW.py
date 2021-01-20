@@ -57,7 +57,8 @@ def insert_dict(ref={}):
 
   insert   = ref.get('insert',{})
   fields   = insert.keys()
-  if len(fields) == 0:
+
+  if ( len(fields) == 0 ) or not table:
     return 
 
   if not conn:
