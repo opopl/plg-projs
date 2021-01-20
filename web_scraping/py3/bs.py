@@ -17,7 +17,15 @@ from urllib.parse import urljoin
 from PIL import Image
 from io import StringIO
 
+from jinja2 import Template
+
 import shutil
+
+Script = os.path.realpath(__file__)
+Bin = str(Path(Script).parent)
+
+tmpl_dir = os.path.join(Bin,'tmpl')
+print(f'[BS] Script location: {Script}')
 
 def add_libs(libs):
   for lib in libs:
