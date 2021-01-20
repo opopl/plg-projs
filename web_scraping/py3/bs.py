@@ -98,6 +98,9 @@ This script will parse input URL
   #command-line options
   oa = None
 
+  # pages - stored info about processed urls
+  pages = []
+
   # tex lines
   tex_lines = []
 
@@ -137,8 +140,8 @@ This script will parse input URL
     self.template_loader = jinja2.FileSystemLoader(searchpath=self.dirs['tmpl'])
     self.template_env = jinja2.Environment(loader=self.template_loader)
 
-    t = self.template_env.get_template("bs.t.htm")
-    print(t.render())
+    t = self.template_env.get_template("list.t.htm")
+    #print(t.render())
 
     return self
 
@@ -241,13 +244,26 @@ This script will parse input URL
 
   def save_clean(self):
 
-    ii_clean = self._file_ii_html('clean')
-    mk_parent_dir(ii_clean)
+    self.ii_clean = self._file_ii_html('clean')
+    mk_parent_dir(self.ii_clean)
 
-    print("\t" + Path(ii_clean).as_uri())
+    print("\t" + Path(self.ii_clean).as_uri())
 
-    with open(ii_clean, 'w') as f:
+    with open(self.ii_clean, 'w') as f:
       f.write(self.soup.prettify())
+
+    return self
+
+  def page_add(self):
+    page = {
+      'uri' : { 
+        'remote' : self.url,
+        'clean'  : Path(self.ii_clean).as_uri(),
+        'cache'  : Path(self.ii_cache).as_uri(),
+      },
+    }
+
+    self.pages.append(page)
 
     return self
   
@@ -260,15 +276,16 @@ This script will parse input URL
     self.base_url = u.scheme + '://' + u.netloc 
     self.site = g(self,[ 'hosts', self.host, 'site' ],'')
 
-    self             \
-        .load_soup() \
-        .do_meta()   \
-        .do_clean()  \
-        .do_unwrap() \
-        .rm_empty() \
+    self                \
+        .load_soup()    \
+        .do_meta()      \
+        .do_clean()     \
+        .do_unwrap()    \
+        .rm_empty()     \
         .h_insert_url() \
-        .do_imgs()   \
-        .save_clean()
+        .do_imgs()      \
+        .save_clean()   \
+        .page_add()     \
 
     return self
 

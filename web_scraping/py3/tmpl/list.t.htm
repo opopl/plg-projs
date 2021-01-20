@@ -1,0 +1,18 @@
+<!doctype html>
+<html>
+  <head>
+  </head>
+  <body>
+    <table>
+      <tbody>
+        {% for page in pages %}
+            <tr> 
+              <td>{{ page.uri_remote }}</td> 
+              <td>{{ page.uri_clean }}</td> 
+              <td>{{ page.uri_cache }}</td> 
+            </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </body>
+</html>
