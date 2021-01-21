@@ -108,16 +108,24 @@ This script will parse input URL
   img_db = None
   img_conn = None
 
+  # url database
+  url_db = None
+  url_conn = None
+
   # end: attributes }
 
   def __init__(self,args={}):
     self.img_root = os.environ.get('IMG_ROOT')
+    self.html_root = os.environ.get('HTML_ROOT')
 
     for k, v in args.items():
       self.k = v
 
     if self.img_root:
       self.img_db = os.path.join(self.img_root,'img.db')
+
+    if self.html_root:
+      self.url_db = os.path.join(self.html_root,'h.db')
 
   def get_opt(self):
     self.parser = argparse.ArgumentParser(usage=self.usage)
@@ -140,6 +148,31 @@ This script will parse input URL
     self.template_loader = jinja2.FileSystemLoader(searchpath=self.dirs['tmpl'])
     self.template_env = jinja2.Environment(loader=self.template_loader)
 
+    return self
+
+  def init_db_urls(self):
+    print('[init_db_urls]')
+  
+    sql = '''
+            CREATE TABLE IF NOT EXISTS urls (
+                rid INTEGER UNIQUE,
+                remote TEXT UNIQUE NOT NULL,
+                date TEXT,
+                title TEXT,
+                author_id TEXT,
+                tags TEXT
+            );
+
+            CREATE TABLE IF NOT EXISTS tags (
+                tag TEXT NOT NULL UNIQUE,
+                rank INTEGER,
+                rids TEXT
+            );
+        '''
+    dbw.sql_do({ 
+      'sql'     : sql,
+      'db_file' : self.url_db
+    })
 
     return self
 
@@ -215,6 +248,8 @@ This script will parse input URL
     self.soup = BeautifulSoup(self.content,'html5lib')
 
     self.title = self.soup.select_one('head > title').string
+
+    self._url_db_save()
 
     return self
 
@@ -311,6 +346,36 @@ This script will parse input URL
       if not div:
         break
       div.unwrap()
+    return self
+
+  def _rid(self,url):
+    db_file = self.url_db
+    conn = sqlite3.connect(db_file)
+    c = conn.cursor()
+
+    return rid
+
+  def _url_db_save(self, ref={}):
+    url   = ref.get('url', self.url)
+    title = ref.get('title', self.title)
+
+    db_file = self.url_db
+    conn = sqlite3.connect(db_file)
+    c = conn.cursor()
+
+    d = {
+      'db_file' : self.url_db,
+      'table'   : 'urls',
+      'insert' : {
+        'url'   : url,
+        'rid'   : rid,
+        'title' : title,
+      }
+    }
+    dbw.insert_dict(d)
+    return rid
+
+  def _url_saved(self, url):
     return self
 
   def _img_ext(self,imgobj=None):
@@ -499,15 +564,15 @@ This script will parse input URL
 
   def main(self):
 
-    self           \
-      .get_opt()   \
-      .init_dirs() \
-      .init_tmpl() \
-      .mk_dirs()   \
-      .parse()
+    self              \
+      .get_opt()      \
+      .init_dirs()    \
+      .init_db_urls() \
+      .init_tmpl()    \
+      .mk_dirs()      \
+      .parse()        \
 
 BS({}).main()
-
 
 #[method for method in dir(meta) if method.startswith('__') is False]
 #https://code.activestate.com/recipes/577346-getattr-with-arbitrary-depth/
