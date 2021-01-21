@@ -398,6 +398,7 @@ This script will parse input URL
         'remote' : url,
         'rid'    : rid,
         'title'  : title,
+        'ii'     : self.ii,
       }
     }
     dbw.insert_dict(d)
