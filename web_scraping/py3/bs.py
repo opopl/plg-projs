@@ -108,6 +108,9 @@ This script will parse input URL
   img_db = None
   img_conn = None
 
+  # rid
+  rid = 0
+
   # url database
   url_db = None
   url_conn = None
@@ -159,6 +162,7 @@ This script will parse input URL
                 remote TEXT UNIQUE NOT NULL,
                 date TEXT,
                 title TEXT,
+                ii TEXT,
                 author_id TEXT,
                 tags TEXT
             );
@@ -213,7 +217,11 @@ This script will parse input URL
 
   def _dir_ii(self):
     ii = self.ii
-    return os.path.join(self.dirs['html'],'ii',ii)
+    #dir =  os.path.join(self.dirs['html'],'ii',ii)
+
+    dir =  os.path.join(self.html_root,'bs',str(self.rid))
+
+    return dir
 
   def _dir_ii_img(self):
     img_dir = os.path.join(self._dir_ii(),'img')
@@ -232,6 +240,8 @@ This script will parse input URL
   def load_soup(self,ref={}):
     url = ref.get('url',self.url)
     ii  = ref.get('ii',self.ii)
+
+    self.rid = self._rid_url(url)
 
     self.ii_cache = self._file_ii_html('cache')
     if os.path.isfile(self.ii_cache):
