@@ -259,7 +259,6 @@ This script will parse input URL
 
     self.title = self.soup.select_one('head > title').string.strip("\'\"")
 
-    self.db_save_url()
 
     return self
 
@@ -323,6 +322,7 @@ This script will parse input URL
 
     self                \
         .load_soup()    \
+        .db_save_url()  \
         .do_meta()      \
         .do_clean()     \
         .do_unwrap()    \
@@ -387,23 +387,25 @@ This script will parse input URL
     conn = sqlite3.connect(db_file)
     c = conn.cursor()
 
-    rid = self._rid_free()
+    self.rid = self._rid_free()
     if self._url_saved(url):
-      return
+      self.rid = self._rid_url()
+      return self
 
     d = {
       'db_file' : self.url_db,
       'table'   : 'urls',
       'insert' : {
         'remote' : url,
-        'rid'    : rid,
+        'rid'    : self.rid,
         'title'  : title,
         'ii'     : self.ii,
       }
     }
     dbw.insert_dict(d)
-    print(f'[db_save_url] url saved with rid {rid}')
-    return rid
+    print(f'[db_save_url] url saved with rid {self.rid}')
+
+    return self
 
   def _url_saved(self,url=None):
     if not url:
