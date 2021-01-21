@@ -249,7 +249,7 @@ This script will parse input URL
 
     self.title = self.soup.select_one('head > title').string
 
-    self._url_db_save()
+    self.db_save_url()
 
     return self
 
@@ -348,14 +348,25 @@ This script will parse input URL
       div.unwrap()
     return self
 
-  def _rid(self,url):
+  def _rid_free(self):
     db_file = self.url_db
     conn = sqlite3.connect(db_file)
     c = conn.cursor()
 
+    q = '''SELECT MAX(rid) FROM urls'''
+    c.execute(q)
+    rw = c.fetchone()[0]
+    rid = rw[0] if rw else 1
+    rid += 1
+
+    conn.commit()
+    conn.close()
+
     return rid
 
-  def _url_db_save(self, ref={}):
+  # called by
+  #   load_soup
+  def db_save_url(self, ref={}):
     url   = ref.get('url', self.url)
     title = ref.get('title', self.title)
 
@@ -363,20 +374,34 @@ This script will parse input URL
     conn = sqlite3.connect(db_file)
     c = conn.cursor()
 
+    import pdb; pdb.set_trace()
+    rid = self._rid_free()
+
     d = {
       'db_file' : self.url_db,
       'table'   : 'urls',
       'insert' : {
-        'url'   : url,
-        'rid'   : rid,
-        'title' : title,
+        'remote' : url,
+        'rid'    : rid,
+        'title'  : title,
       }
     }
     dbw.insert_dict(d)
     return rid
 
-  def _url_saved(self, url):
-    return self
+  def _rid_url(self,url=None):
+    db_file = self.url_db
+    conn = sqlite3.connect(db_file)
+    c = conn.cursor()
+
+    if not url:
+      url = self.url
+
+    q = '''SELECT rid FROM urls WHERE remote = ?'''
+    c.execute(q,[url])
+    rw = c.fetchone()
+
+    return ( 1 if rw else 0 )
 
   def _img_ext(self,imgobj=None):
     map = {
