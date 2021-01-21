@@ -259,6 +259,7 @@ This script will parse input URL
 
     self.title = self.soup.select_one('head > title').string.strip("\'\"")
 
+    print(f'[load_soup] title: {self.title}')
 
     return self
 
