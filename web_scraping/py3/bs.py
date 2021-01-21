@@ -247,7 +247,7 @@ This script will parse input URL
 
     self.soup = BeautifulSoup(self.content,'html5lib')
 
-    self.title = self.soup.select_one('head > title').string
+    self.title = self.soup.select_one('head > title').string.strip("\'\"")
 
     self.db_save_url()
 
@@ -355,8 +355,11 @@ This script will parse input URL
 
     q = '''SELECT MAX(rid) FROM urls'''
     c.execute(q)
-    rw = c.fetchone()[0]
-    rid = rw[0] if rw else 1
+    rw = c.fetchone()
+    rid = rw[0]
+    if rid == None:
+      rid = 0
+
     rid += 1
 
     conn.commit()
@@ -374,8 +377,9 @@ This script will parse input URL
     conn = sqlite3.connect(db_file)
     c = conn.cursor()
 
-    import pdb; pdb.set_trace()
     rid = self._rid_free()
+    if self._url_saved(url):
+      return
 
     d = {
       'db_file' : self.url_db,
@@ -387,7 +391,14 @@ This script will parse input URL
       }
     }
     dbw.insert_dict(d)
+    print(f'[db_save_url] url saved with rid {rid}')
     return rid
+
+  def _url_saved(self,url=None):
+    if not url:
+      url = self.url
+    rid = self._rid_url(url)
+    return 0 if rid == None else 1
 
   def _rid_url(self,url=None):
     db_file = self.url_db
@@ -401,7 +412,7 @@ This script will parse input URL
     c.execute(q,[url])
     rw = c.fetchone()
 
-    return ( 1 if rw else 0 )
+    return ( rw[0] if rw else None )
 
   def _img_ext(self,imgobj=None):
     map = {
