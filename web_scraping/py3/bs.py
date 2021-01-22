@@ -246,6 +246,8 @@ This script will parse input URL
     ii  = ref.get('ii',self.ii)
 
     self.rid = self._rid_url(url)
+    if not self.rid:
+      self.rid = self._rid_free()
 
     self.ii_cache = self._file_ii_html('cache')
     if os.path.isfile(self.ii_cache):
@@ -263,7 +265,7 @@ This script will parse input URL
 
     self.title = self.soup.select_one('head > title').string.strip("\'\"")
 
-    print(f'[load_soup] title: {self.title}')
+    print(f'[load_soup] rid: {self.rid}, title: {self.title}')
 
     return self
 
@@ -330,6 +332,10 @@ This script will parse input URL
 
     inc = g(self,'include.sites',[])
     exc = g(self,'exclude.sites',[])
+
+    if len(exc) == 0:
+      inc = self.list_hosts
+
     for lst in [ inc, exc ]:
       for i in lst:
         if i == '_all_':
@@ -351,7 +357,8 @@ This script will parse input URL
     self.base_url = u.scheme + '://' + u.netloc 
     self.site = g(self,[ 'hosts', self.host, 'site' ],'')
 
-    import pdb; pdb.set_trace()
+    if self._site_skip():
+      return self
 
     self                \
         .load_soup()    \
@@ -420,9 +427,12 @@ This script will parse input URL
     conn = sqlite3.connect(db_file)
     c = conn.cursor()
 
+    print(title)
+
     self.rid = self._rid_free()
     if self._url_saved(url):
       self.rid = self._rid_url()
+      print('URL IS SAVED!')
       return self
 
     d = {
@@ -439,6 +449,15 @@ This script will parse input URL
     print(f'[db_save_url] url saved with rid {self.rid}')
 
     return self
+
+  def _site_skip(self,site=None):
+    if not site:
+      site = self.site
+
+    inc = self.list_hosts_inc
+
+    skip = 0 if site in inc else 1
+    return skip
 
   def _url_saved(self,url=None):
     if not url:
