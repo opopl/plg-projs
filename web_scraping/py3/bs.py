@@ -219,11 +219,10 @@ This script will parse input URL
 
     return self
 
-  def _dir_ii(self):
-    ii = self.ii
-    #dir =  os.path.join(self.dirs['html'],'ii',ii)
+  def _dir_ii(self,ref={}):
+    rid = ref.get('rid',self.rid)
 
-    dir =  os.path.join(self.html_root,'bs',str(self.rid))
+    dir = os.path.join(self.html_root,'bs',str(rid))
 
     return dir
 
@@ -237,8 +236,11 @@ This script will parse input URL
     txt_file = os.path.join(self._dir_ii(),id + '.txt')
     return txt_file
 
-  def _file_ii_html(self,type):
-    ii_file = os.path.join(self._dir_ii(),type + '.html')
+  def _file_ii_html(self,ref={}):
+    type = ref.get('type','cache')
+    rid  = ref.get('rid',self.rid)
+
+    ii_file = os.path.join(self._dir_ii({ 'rid' : rid }),type + '.html')
     return ii_file
 
   def load_soup(self,ref={}):
@@ -249,7 +251,7 @@ This script will parse input URL
     if not self.rid:
       self.rid = self._rid_free()
 
-    self.ii_cache = self._file_ii_html('cache')
+    self.ii_cache = self._file_ii_html()
     if os.path.isfile(self.ii_cache):
       with open(self.ii_cache,'r') as f:
         self.content = f.read()
@@ -295,7 +297,7 @@ This script will parse input URL
 
   def save_clean(self):
 
-    self.ii_clean = self._file_ii_html('clean')
+    self.ii_clean = self._file_ii_html({ 'type' : 'clean' })
     mk_parent_dir(self.ii_clean)
 
     with open(self.ii_clean, 'w') as f:
@@ -428,7 +430,7 @@ This script will parse input URL
     c = conn.cursor()
 
     self.rid = self._rid_free()
-    if self._url_saved(url):
+    if self._url_saved_db(url):
       self.rid = self._rid_url()
       return self
 
@@ -460,11 +462,26 @@ This script will parse input URL
     val = g(self, [ 'cnf', key  ],0)
     return val
 
-  def _url_saved(self,url=None):
+  def _url_saved_db(self,url=None):
     if not url:
       url = self.url
     rid = self._rid_url(url)
     return 0 if rid == None else 1
+
+  def _url_saved_fs(self,url=None):
+    if not url:
+      url = self.url
+
+    rid = self._rid_url(url)
+
+    if rid == None:
+      return 0
+
+    self.rid = rid
+    self.ii_cache = self._file_ii_html()
+    if os.path.isfile(self.ii_cache):
+      return 1
+    return 0
 
   def _rid_url(self,url=None):
     db_file = self.url_db
