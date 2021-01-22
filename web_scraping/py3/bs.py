@@ -427,12 +427,9 @@ This script will parse input URL
     conn = sqlite3.connect(db_file)
     c = conn.cursor()
 
-    print(title)
-
     self.rid = self._rid_free()
     if self._url_saved(url):
       self.rid = self._rid_url()
-      print('URL IS SAVED!')
       return self
 
     d = {
