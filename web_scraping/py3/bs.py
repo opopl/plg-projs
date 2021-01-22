@@ -315,6 +315,32 @@ This script will parse input URL
     self.pages.append(page)
 
     return self
+
+  def fill_vars(self):
+    self.fill_list_hosts()
+    return self
+
+  def fill_list_hosts(self):
+
+    hosts = g(self,'hosts',[])
+    l = [ hosts.get(x).get('site','') for x in hosts.keys() ]
+    l = list(set(l))
+    l = list(filter(lambda x: len(x) > 0,l))
+    self.list_hosts = l
+
+    inc = g(self,'include.sites',[])
+    exc = g(self,'exclude.sites',[])
+    for lst in [ inc, exc ]:
+      for i in lst:
+        if i == '_all_':
+          lst.extend(self.list_hosts)
+          lst.remove('_all_')
+
+    self.list_hosts_inc = inc
+    self.list_hosts_exc = exc
+
+
+    return self
   
   def parse_url(self,ref={}):
     self.url = ref.get('url','')
@@ -324,13 +350,6 @@ This script will parse input URL
     self.host = u.netloc.split(':')[0]
     self.base_url = u.scheme + '://' + u.netloc 
     self.site = g(self,[ 'hosts', self.host, 'site' ],'')
-
-    inc = g(self,'include.sites',[])
-    exc = g(self,'exclude.sites',[])
-    hosts = g(self,'hosts',[])
-    l = [ hosts.get(x).get('site','') for x in hosts.keys() ]
-    l = list(set(l))
-    l = list(filter(lambda x: len(x) > 0,l))
 
     import pdb; pdb.set_trace()
 
@@ -637,6 +656,7 @@ This script will parse input URL
       .init_tmpl()        \
       .mk_dirs()          \
       .load_yaml()        \
+      .fill_vars()        \
       .parse()            \
       .render_page_list() \
 
