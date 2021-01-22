@@ -207,11 +207,15 @@ This script will parse input URL
 
     return self
 
-  def load_yaml(self,f_yaml=''):
-    with open(f_yaml) as f:
-      d = yaml.full_load(f)
-      for k,v in d.items():
-        setattr(self,k,v)
+  def load_yaml(self, f_yaml=None):
+    if not f_yaml:
+      f_yaml = self.f_yaml
+
+    if f_yaml and os.path.isfile(f_yaml):
+      with open(f_yaml) as f:
+        d = yaml.full_load(f)
+        for k,v in d.items():
+          setattr(self,k,v)
 
     return self
 
@@ -320,6 +324,15 @@ This script will parse input URL
     self.host = u.netloc.split(':')[0]
     self.base_url = u.scheme + '://' + u.netloc 
     self.site = g(self,[ 'hosts', self.host, 'site' ],'')
+
+    inc = g(self,'include.sites',[])
+    exc = g(self,'exclude.sites',[])
+    hosts = g(self,'hosts',[])
+    l = [ hosts.get(x).get('site','') for x in hosts.keys() ]
+    l = list(set(l))
+    l = list(filter(lambda x: len(x) > 0,l))
+
+    import pdb; pdb.set_trace()
 
     self                \
         .load_soup()    \
@@ -604,30 +617,28 @@ This script will parse input URL
     return self
 
   def parse(self):
-    if not self.url:
-      if self.f_yaml and os.path.isfile(self.f_yaml):
-        self.load_yaml(self.f_yaml)
 
+    if not self.url:
       urls = getattr(self,'urls',[]) 
       for d in urls:
         self.parse_url(d)
 
     else:
       self.parse_url(self.url)
-
-    self.render_page_list()
     
     return self
 
   def main(self):
 
-    self              \
-      .get_opt()      \
-      .init_dirs()    \
-      .init_db_urls() \
-      .init_tmpl()    \
-      .mk_dirs()      \
-      .parse()        \
+    self                  \
+      .get_opt()          \
+      .init_dirs()        \
+      .init_db_urls()     \
+      .init_tmpl()        \
+      .mk_dirs()          \
+      .load_yaml()        \
+      .parse()            \
+      .render_page_list() \
 
 BS({}).main()
 
