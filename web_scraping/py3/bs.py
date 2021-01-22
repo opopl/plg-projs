@@ -456,6 +456,10 @@ This script will parse input URL
     skip = 0 if site in inc else 1
     return skip
 
+  def _opt(self,key=None):
+    val = g(self, [ 'opts', key  ],0)
+    return val
+
   def _url_saved(self,url=None):
     if not url:
       url = self.url
