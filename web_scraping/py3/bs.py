@@ -533,9 +533,16 @@ This script will parse input URL
           print(f"[do_imgs] Getting image: \n\t{url}")
           try:
             i = None
-            i = Image.open(requests.get(url, stream = True).raw)
-            if not i:
+            try:
+              i = Image.open(requests.get(url, stream = True).raw)
+            except:
               print(f'FAIL[do_imgs] Image.open: {url}')
+              print(f'FAIL[do_imgs] Image.open failure: {sys.exc_info()[0]}')
+              continue
+
+            if not i:
+              print(f'FAIL[do_imgs] no Image.open instance: {url}')
+              continue
             
             print(f'[do_imgs] Image format: {i.format}')
             iext = self._img_ext(i)
