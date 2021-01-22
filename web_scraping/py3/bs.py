@@ -247,6 +247,7 @@ This script will parse input URL
     url = ref.get('url',self.url)
     ii  = ref.get('ii',self.ii)
 
+
     self.rid = self._rid_url(url)
     if not self.rid:
       self.rid = self._rid_free()
@@ -360,6 +361,9 @@ This script will parse input URL
     self.site = g(self,[ 'hosts', self.host, 'site' ],'')
 
     if self._site_skip():
+      return self
+
+    if self._url_saved_fs():
       return self
 
     self                \
@@ -477,8 +481,7 @@ This script will parse input URL
     if rid == None:
       return 0
 
-    self.rid = rid
-    self.ii_cache = self._file_ii_html()
+    self.ii_cache = self._file_ii_html({ 'rid' : rid })
     if os.path.isfile(self.ii_cache):
       return 1
     return 0
