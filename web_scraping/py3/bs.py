@@ -159,7 +159,14 @@ This script will parse input URL
                 ii_num INTEGER,
                 ii_full TEXT,
                 author_id TEXT,
+                author TEXT,
                 tags TEXT
+            );
+
+            CREATE TABLE IF NOT EXISTS authors (
+                id TEXT NOT NULL UNIQUE,
+                url TEXT,
+                name TEXT
             );
 
             CREATE TABLE IF NOT EXISTS tags (
@@ -395,6 +402,7 @@ This script will parse input URL
         .load_soup()                                    \
         .in_load_site_module()                          \
         .page_get_date()                                \
+        .page_get_author()                              \
         .db_save_url()                                  \
         .page_save_data({ 'tags' : 'meta,script,img' }) \
         .page_save_data_img()                           \
@@ -406,6 +414,16 @@ This script will parse input URL
         .page_do_imgs()                                 \
         .page_save_clean()                              \
         .page_add()                                     \
+
+    return self
+
+  def page_get_author(self,ref={}):
+    p = self.page_obj_site
+    if not p:
+      return
+
+    p.get_author()
+    import pdb; pdb.set_trace()
 
     return self
 
@@ -472,6 +490,25 @@ This script will parse input URL
     conn.close()
 
     return rid
+
+  def _db_get_auth(self, ref={}):
+    auth_id = ref.get('auth_id')
+    if not auth_id:
+      return
+
+    db_file = self.url_db
+    conn = sqlite3.connect(db_file)
+    conn.row_factory = sqlite3.Row
+    c = conn.cursor()
+
+    q = '''SELECT id, name, url FROM authors WHERE id = ?'''
+    c.execute(q,[auth_id])
+    rw = c.fetchone()
+
+    conn.commit()
+    conn.close()
+
+    return auth
 
   # called by
   #   load_soup
