@@ -232,15 +232,17 @@ This script will parse input URL
       os.makedirs(img_dir,exist_ok=True)
     return img_dir
 
-  def _file_ii_txt(self,id):
-    txt_file = os.path.join(self._dir_ii(),id + '.txt')
-    return txt_file
+  def _file_ii_uri(self,ref={}):
+    ii_file = self._file_ii(ref)
+    uri = Path(ii_file).as_uri()
+    return uri
 
-  def _file_ii_html(self,ref={}):
+  def _file_ii(self,ref={}):
     type = ref.get('type','cache')
+    ext  = ref.get('ext','html')
     rid  = ref.get('rid',self.rid)
 
-    ii_file = os.path.join(self._dir_ii({ 'rid' : rid }),type + '.html')
+    ii_file = os.path.join(self._dir_ii({ 'rid' : rid }),f'{type}.{ext}')
     return ii_file
 
   def load_soup(self,ref={}):
@@ -252,7 +254,7 @@ This script will parse input URL
     if not self.rid:
       self.rid = self._rid_free()
 
-    self.ii_cache = self._file_ii_html()
+    self.ii_cache = self._file_ii()
     if os.path.isfile(self.ii_cache):
       with open(self.ii_cache,'r') as f:
         self.content = f.read()
@@ -272,7 +274,7 @@ This script will parse input URL
 
     return self
 
-  def do_clean(self):
+  def page_clean(self):
     site = g(self,'site','')
     ii   = g(self,'ii','')
 
@@ -285,7 +287,7 @@ This script will parse input URL
 
     return self
 
-  def h_insert_url(self):
+  def page_header_insert_url(self):
     h = self.soup.select_one('h1,h2,h3,h4,h5,h6')
 
     a = self.soup.new_tag('a', )
@@ -296,9 +298,9 @@ This script will parse input URL
 
     return self
 
-  def save_clean(self):
+  def page_save_clean(self):
 
-    self.ii_clean = self._file_ii_html({ 'type' : 'clean' })
+    self.ii_clean = self._file_ii({ 'type' : 'clean' })
     mk_parent_dir(self.ii_clean)
 
     with open(self.ii_clean, 'w') as f:
@@ -311,8 +313,11 @@ This script will parse input URL
       'uri' : { 
         'base'   : self.base_url,
         'remote' : self.url,
-        'clean'  : Path(self.ii_clean).as_uri(),
-        'cache'  : Path(self.ii_cache).as_uri(),
+        'meta'   : self._file_ii_uri({ 'type' : 'meta', 'ext'   : 'txt' }),
+        'img'    : self._file_ii_uri({ 'type' : 'img', 'ext'    : 'txt' }),
+        'script' : self._file_ii_uri({ 'type' : 'script', 'ext' : 'txt' }),
+        'clean'  : self._file_ii_uri({ 'type' : 'clean' }),
+        'cache'  : self._file_ii_uri(),
       },
       'title' : self.title
     }
@@ -360,27 +365,27 @@ This script will parse input URL
     self.base_url = u.scheme + '://' + u.netloc 
     self.site = g(self,[ 'hosts', self.host, 'site' ],'')
 
-    if self._site_skip():
-      return self
+    if not ref.get('reload',0):
+      if self._site_skip() \
+          or self._url_saved_fs(): 
+        return self
 
-    if self._url_saved_fs():
-      return self
-
-    self                \
-        .load_soup()    \
-        .db_save_url()  \
-        .do_meta()      \
-        .do_clean()     \
-        .do_unwrap()    \
-        .rm_empty()     \
-        .h_insert_url() \
-        .do_imgs()      \
-        .save_clean()   \
-        .page_add()     \
+    self                          \
+        .load_soup()              \
+        .db_save_url()            \
+        .page_save_txt({ 'tags' : 'meta,script,img'})  \
+        .page_clean()             \
+        .page_replace_links()     \
+        .page_unwrap()            \
+        .page_rm_empty()          \
+        .page_header_insert_url() \
+        .page_do_imgs()           \
+        .page_save_clean()             \
+        .page_add()               \
 
     return self
 
-  def rm_empty(self):
+  def page_rm_empty(self):
     all = self.soup.find_all(True)
     while 1:
       if not len(all):
@@ -396,7 +401,20 @@ This script will parse input URL
           el.decompose()
     return self
 
-  def do_unwrap(self):
+  def page_replace_links(self):
+    j=0
+    next = self.soup.html
+    while 1:
+      if not next:
+        break 
+      j+=1
+      next = next.find_next()
+      if hasattr(next,'name') and next.name == 'meta':
+        print(next)
+
+    return self
+
+  def page_unwrap(self):
     while 1:
       div = self.soup.select_one('div')
       if not div:
@@ -481,7 +499,7 @@ This script will parse input URL
     if rid == None:
       return 0
 
-    self.ii_cache = self._file_ii_html({ 'rid' : rid })
+    self.ii_cache = self._file_ii({ 'rid' : rid })
     if os.path.isfile(self.ii_cache):
       return 1
     return 0
@@ -563,10 +581,33 @@ This script will parse input URL
   def do_css(self):
     return self
 
-  def do_meta(self):
+  def page_save_txt(self,ref={}):
+    tag  = ref.get('tag',None)
+    tags = ref.get('tags',[])
+
+    tags_a = tags
+    if type(tags) is str:
+      tags_a = tags.split(',')
+    for tag in tags_a:
+      self.page_save_txt({ 'tag' : tag})
+
+    if not tag:
+      return self
+
+    els = self.soup.select(tag)
+    txt = []
+    txt_file = self._file_ii({ 'type' : tag, 'ext' : 'txt' })
+    for e in els:
+      ms = str(e)
+      txt.append(ms)
+    with open(txt_file, 'w') as f:
+        f.write("\n".join(txt))
+    return self
+
+  def page_save_img(self):
     meta = self.soup.select("meta")
     txt = []
-    meta_file = self._file_ii_txt('meta')
+    meta_file = self._file_ii({ 'type' : 'meta', 'ext' : 'txt' })
     for m in meta:
       ms = str(m)
       txt.append(ms)
@@ -574,7 +615,7 @@ This script will parse input URL
         f.write("\n".join(txt))
     return self
 
-  def do_imgs(self):
+  def page_do_imgs(self):
     site     = g(self,'site','')
     host     = g(self,'host','')
     base_url = g(self,'base_url','')
@@ -602,21 +643,21 @@ This script will parse input URL
           ipath = idata.get('path','')
           pass
         else:
-          print(f"[do_imgs] Getting image: \n\t{url}")
+          print(f"[page_do_imgs] Getting image: \n\t{url}")
           try:
             i = None
             try:
               i = Image.open(requests.get(url, stream = True).raw)
             except:
-              print(f'FAIL[do_imgs] Image.open: {url}')
-              print(f'FAIL[do_imgs] Image.open failure: {sys.exc_info()[0]}')
+              print(f'FAIL[page_do_imgs] Image.open: {url}')
+              print(f'FAIL[page_do_imgs] Image.open failure: {sys.exc_info()[0]}')
               continue
 
             if not i:
-              print(f'FAIL[do_imgs] no Image.open instance: {url}')
+              print(f'FAIL[page_do_imgs] no Image.open instance: {url}')
               continue
             
-            print(f'[do_imgs] Image format: {i.format}')
+            print(f'[page_do_imgs] Image format: {i.format}')
             iext = self._img_ext(i)
             idata = self._img_data(url,iext)
 
@@ -624,12 +665,12 @@ This script will parse input URL
             inum  = idata.get('inum','')
             ipath = idata.get('path','')
 
-            print(f'[do_imgs] Local path: {idata.get("path","")}')
+            print(f'[page_do_imgs] Local path: {idata.get("path","")}')
             if os.path.isfile(ipath):
-              print(f'WARN[do_imgs] image file already exists: {img}')
+              print(f'WARN[page_do_imgs] image file already exists: {img}')
             else:
               i.save(ipath)
-              print(f'[do_imgs] Saved image: {img}')
+              print(f'[page_do_imgs] Saved image: {img}')
 
             d = {
               'db_file' : self.img_db,
@@ -646,7 +687,7 @@ This script will parse input URL
             }
             dbw.insert_dict(d)
           except:
-            print(f'WARN[do_imgs] Image.open exception: {url}')
+            print(f'WARN[page_do_imgs] Image.open exception: {url}')
             raise
 
         ipath_uri = Path(ipath).as_uri()
