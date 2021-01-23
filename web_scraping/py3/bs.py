@@ -294,6 +294,7 @@ This script will parse input URL
 
     a = self.soup.new_tag('a', )
     a['href'] = self.url
+    a['target'] = '_blank'
     a.string = self.url
     h.insert_after(a)
     a.wrap(self.soup.new_tag('p'))
@@ -423,7 +424,6 @@ This script will parse input URL
       return
 
     p.get_author()
-    import pdb; pdb.set_trace()
 
     return self
 
@@ -459,8 +459,13 @@ This script will parse input URL
         break 
       j+=1
       next = next.find_next()
-      if hasattr(next,'name') and next.name == 'meta':
-        print(next)
+      if hasattr(next,'name') and next.name == 'a':
+        href = next['href']
+        u = urlparse(href)
+        if not u.netloc:
+          href = urljoin(self.base_url,href)
+          next['href'] = href
+        next['target'] = '_blank'
 
     return self
 
@@ -496,6 +501,8 @@ This script will parse input URL
     if not auth_id:
       return
 
+    auth = None
+
     db_file = self.url_db
     conn = sqlite3.connect(db_file)
     conn.row_factory = sqlite3.Row
@@ -504,6 +511,10 @@ This script will parse input URL
     q = '''SELECT id, name, url FROM authors WHERE id = ?'''
     c.execute(q,[auth_id])
     rw = c.fetchone()
+    if rw:
+      auth = {}
+      for k in rw.keys():
+        auth[k] = rw[k]
 
     conn.commit()
     conn.close()
@@ -531,7 +542,6 @@ This script will parse input URL
         'title'  : title,
         'ii'     : self.ii,
     }
-    import pdb; pdb.set_trace()
     if self.page['date']:
       insert.update({ 'date' : self.page['date'] })
 
