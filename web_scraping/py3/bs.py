@@ -154,7 +154,10 @@ This script will parse input URL
                 remote TEXT UNIQUE NOT NULL,
                 date TEXT,
                 title TEXT,
+                site TEXT,
                 ii TEXT,
+                ii_num INTEGER,
+                ii_full TEXT,
                 author_id TEXT,
                 tags TEXT
             );
@@ -366,6 +369,7 @@ This script will parse input URL
     m = self.modules['sites'][site] = __import__(mod)
 
     if m:
+      print(f'[in_load_site_module] loaded module for site: {site}' )
       p = self.page_obj_site = m.Page({ 
         'soup' : self.soup,
         'app'  : self,
@@ -390,8 +394,8 @@ This script will parse input URL
     self                                                \
         .load_soup()                                    \
         .in_load_site_module()                          \
-        .db_save_url()                                  \
         .page_get_date()                                \
+        .db_save_url()                                  \
         .page_save_data({ 'tags' : 'meta,script,img' }) \
         .page_save_data_img()                           \
         .page_clean()                                   \
@@ -490,8 +494,9 @@ This script will parse input URL
         'title'  : title,
         'ii'     : self.ii,
     }
-    if self.page.date:
-        insert.update({ 'date' : self.page.date })
+    import pdb; pdb.set_trace()
+    if self.page['date']:
+      insert.update({ 'date' : self.page['date'] })
 
     d = {
       'db_file' : self.url_db,
