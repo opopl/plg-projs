@@ -75,6 +75,11 @@ This script will parse input URL
   # data
   data = {}
 
+  # loaded python modules
+  modules = { 
+    'sites' : {}
+  }
+
   # current page's base URL
   base_url = None
 
@@ -89,6 +94,9 @@ This script will parse input URL
     'tex' : None,
     'html' : None,
   }
+
+  # input directory
+  in_dir = os.path.join(os.getcwd(),'in')
 
   # input YAML file
   f_yaml = None
@@ -128,11 +136,12 @@ This script will parse input URL
     for k, v in args.items():
       self.k = v
 
-    if self.img_root:
+    if (not self.img_db) and self.img_root:
       self.img_db = os.path.join(self.img_root,'img.db')
 
-    if self.html_root:
+    if (not self.url_db) and self.html_root:
       self.url_db = os.path.join(self.html_root,'h.db')
+
 
   def get_opt(self):
     self.parser = argparse.ArgumentParser(usage=self.usage)
@@ -359,6 +368,20 @@ This script will parse input URL
 
 
     return self
+
+  def in_load_site(self,ref={}):
+    site = ref.get('site',self.site)
+
+    a = [ self.in_dir, 'sites' ]
+    a.extend(site.split('.'))
+    mod = a[-1]
+    del a[-1]
+    lib  = '/'.join(a)
+    libs = [ lib ]
+
+    # module name
+    add_libs(libs)
+    m = self.modules['sites'][site] = __import__(mod)
   
   def parse_url(self,ref={}):
     self.url = ref.get('url','')
@@ -375,9 +398,10 @@ This script will parse input URL
         return self
 
     self                          \
+        .in_load_site()           \
         .load_soup()              \
         .db_save_url()            \
-        .page_save_data({ 'tags' : 'meta,script'})  \
+        .page_save_data({ 'tags' : 'meta,script,img' })  \
         .page_save_data_img()  \
         .page_clean()             \
         .page_replace_links()     \
