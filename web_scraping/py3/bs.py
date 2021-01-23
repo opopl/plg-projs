@@ -32,37 +32,8 @@ def add_libs(libs):
 plg = os.environ.get('PLG')
 add_libs([ os.path.join(plg,'projs','python','lib') ])
 import Base.DBW as dbw
+import Base.Util as util
 
-def mk_parent_dir(file):
-  p = str(Path(file).parent)
-  os.makedirs(p,exist_ok=True)
-
-def g(obj, path, default = None):
-    if type(path) is str:
-      keys = path.split(".")
-    elif type(path) is list:
-      keys = path
-
-    if not keys:
-      return default
-
-    for k in keys:
-      if not obj:
-        obj = default
-        break
-      if isinstance(obj,dict):
-        if k in obj:
-          obj = obj.get(k)
-        else:
-          obj = default
-          break
-      elif isinstance(obj,object):
-        if hasattr(obj,k):
-          obj = getattr(obj, k)
-        else:
-          obj = default
-          break
-    return obj
 
 class BS:
   # class attributes {
@@ -288,10 +259,10 @@ This script will parse input URL
     return self
 
   def page_clean(self):
-    site = g(self,'site','')
-    ii   = g(self,'ii','')
+    site = util.get(self,'site','')
+    ii   = util.get(self,'ii','')
 
-    clean = g(self,[ 'sites', site, 'clean' ],[])
+    clean = util.get(self,[ 'sites', site, 'clean' ],[])
 
     for c in clean:
       els_clean = self.soup.select(c)
@@ -345,14 +316,14 @@ This script will parse input URL
 
   def fill_list_hosts(self):
 
-    hosts = g(self,'hosts',[])
+    hosts = util.get(self,'hosts',[])
     l = [ hosts.get(x).get('site','') for x in hosts.keys() ]
     l = list(set(l))
     l = list(filter(lambda x: len(x) > 0,l))
     self.list_hosts = l
 
-    inc = g(self,'include.sites',[])
-    exc = g(self,'exclude.sites',[])
+    inc = util.get(self,'include.sites',[])
+    exc = util.get(self,'exclude.sites',[])
 
     if len(exc) == 0:
       inc = self.list_hosts
@@ -378,10 +349,15 @@ This script will parse input URL
     del a[-1]
     lib  = '/'.join(a)
     libs = [ lib ]
+    mod_file = os.path.join(lib,mod + '.py')
+    if not os.path.isfile(mod_file):
+      return self
 
     # module name
     add_libs(libs)
     m = self.modules['sites'][site] = __import__(mod)
+
+    return self
   
   def parse_url(self,ref={}):
     self.url = ref.get('url','')
@@ -390,7 +366,7 @@ This script will parse input URL
     u = urlparse(self.url)
     self.host = u.netloc.split(':')[0]
     self.base_url = u.scheme + '://' + u.netloc 
-    self.site = g(self,[ 'hosts', self.host, 'site' ],'')
+    self.site = util.get(self,[ 'hosts', self.host, 'site' ],'')
 
     if not ref.get('reload',0):
       if self._site_skip() \
@@ -510,7 +486,7 @@ This script will parse input URL
     return skip
 
   def _cnf(self,key=None):
-    val = g(self, [ 'cnf', key  ],0)
+    val = util.get(self, [ 'cnf', key  ],0)
     return val
 
   def _url_saved_db(self,url=None):
@@ -674,10 +650,10 @@ This script will parse input URL
     return self
 
   def page_do_imgs(self):
-    site     = g(self,'site','')
-    host     = g(self,'host','')
-    base_url = g(self,'base_url','')
-    ii       = g(self,'ii','')
+    site     = util.get(self,'site','')
+    host     = util.get(self,'host','')
+    base_url = util.get(self,'base_url','')
+    ii       = util.get(self,'ii','')
 
     img_dir = self._dir_ii_img()
 
