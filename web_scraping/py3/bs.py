@@ -24,6 +24,8 @@ from io import StringIO
 import jinja2
 import shutil
 
+import os,sys
+
 def add_libs(libs):
   for lib in libs:
     if not lib in sys.path:
@@ -246,7 +248,7 @@ This script will parse input URL
       page = requests.get(url)
       self.content = page.content
 
-      mk_parent_dir(self.ii_cache)
+      util.mk_parent_dir(self.ii_cache)
       with open(self.ii_cache, 'wb') as f:
         f.write(self.content)
 
@@ -285,7 +287,7 @@ This script will parse input URL
   def page_save_clean(self):
 
     self.ii_clean = self._file_ii({ 'type' : 'clean' })
-    mk_parent_dir(self.ii_clean)
+    util.mk_parent_dir(self.ii_clean)
 
     with open(self.ii_clean, 'w') as f:
       f.write(self.soup.prettify())
@@ -340,7 +342,7 @@ This script will parse input URL
 
     return self
 
-  def in_load_site(self,ref={}):
+  def in_load_site_module(self,ref={}):
     site = ref.get('site',self.site)
 
     a = [ self.in_dir, 'sites' ]
@@ -373,20 +375,20 @@ This script will parse input URL
           or self._url_saved_fs(): 
         return self
 
-    self                          \
-        .in_load_site()           \
-        .load_soup()              \
-        .db_save_url()            \
-        .page_save_data({ 'tags' : 'meta,script,img' })  \
-        .page_save_data_img()  \
-        .page_clean()             \
-        .page_replace_links()     \
-        .page_unwrap()            \
-        .page_rm_empty()          \
-        .page_header_insert_url() \
-        .page_do_imgs()           \
-        .page_save_clean()             \
-        .page_add()               \
+    self                                                \
+        .in_load_site_module()                          \
+        .load_soup()                                    \
+        .db_save_url()                                  \
+        .page_save_data({ 'tags' : 'meta,script,img' }) \
+        .page_save_data_img()                           \
+        .page_clean()                                   \
+        .page_replace_links()                           \
+        .page_unwrap()                                  \
+        .page_rm_empty()                                \
+        .page_header_insert_url()                       \
+        .page_do_imgs()                                 \
+        .page_save_clean()                              \
+        .page_add()                                     \
 
     return self
 
