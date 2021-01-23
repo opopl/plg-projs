@@ -10,6 +10,8 @@ import re
 import sqlite3
 import sqlparse
 
+import html.parser
+
 from pathlib import Path
 from urllib.parse import urlparse
 from urllib.parse import urljoin
@@ -67,6 +69,8 @@ class BS:
   usage='''
 This script will parse input URL
 '''
+
+  html_parser = html.parser.HTMLParser()
 
   # data
   data = {}
@@ -314,7 +318,7 @@ This script will parse input URL
         'base'   : self.base_url,
         'remote' : self.url,
         'meta'   : self._file_ii_uri({ 'type' : 'meta', 'ext'   : 'txt' }),
-        'img'    : self._file_ii_uri({ 'type' : 'img', 'ext'    : 'txt' }),
+        'img'    : self._file_ii_uri({ 'type' : 'img', 'ext'    : 'htm' }),
         'script' : self._file_ii_uri({ 'type' : 'script', 'ext' : 'txt' }),
         'clean'  : self._file_ii_uri({ 'type' : 'clean' }),
         'cache'  : self._file_ii_uri(),
@@ -373,7 +377,8 @@ This script will parse input URL
     self                          \
         .load_soup()              \
         .db_save_url()            \
-        .page_save_txt({ 'tags' : 'meta,script,img'})  \
+        .page_save_data({ 'tags' : 'meta,script'})  \
+        .page_save_data_img()  \
         .page_clean()             \
         .page_replace_links()     \
         .page_unwrap()            \
@@ -581,7 +586,9 @@ This script will parse input URL
   def do_css(self):
     return self
 
-  def page_save_txt(self,ref={}):
+  def page_save_data(self,ref={}):
+    ext  = ref.get('ext','txt')
+
     tag  = ref.get('tag',None)
     tags = ref.get('tags',[])
 
@@ -589,30 +596,40 @@ This script will parse input URL
     if type(tags) is str:
       tags_a = tags.split(',')
     for tag in tags_a:
-      self.page_save_txt({ 'tag' : tag})
+      self.page_save_data({ 'tag' : tag, 'ext' : ext })
 
     if not tag:
       return self
 
     els = self.soup.select(tag)
     txt = []
-    txt_file = self._file_ii({ 'type' : tag, 'ext' : 'txt' })
+    data_file = self._file_ii({ 'type' : tag, 'ext' : ext })
     for e in els:
       ms = str(e)
       txt.append(ms)
-    with open(txt_file, 'w') as f:
+    with open(data_file, 'w') as f:
         f.write("\n".join(txt))
     return self
 
-  def page_save_img(self):
-    meta = self.soup.select("meta")
-    txt = []
-    meta_file = self._file_ii({ 'type' : 'meta', 'ext' : 'txt' })
-    for m in meta:
-      ms = str(m)
-      txt.append(ms)
-    with open(meta_file, 'w') as f:
-        f.write("\n".join(txt))
+  def page_save_data_img(self):
+    data_file_img = self._file_ii({ 'type' : 'img', 'ext' : 'htm' })
+    data = {}
+
+    code = []
+    for el_img in self.soup.find_all("img"):
+      s = str(el_img)
+      se = jinja2.escape(s).rstrip()
+      se = str(se)
+      code.append(se)
+    print(code)
+
+    data.update({ 'code' : code })
+
+    t = self.template_env.get_template("img.t.htm")
+    h = t.render(data=data)
+
+    with open(data_file_img, 'w') as f:
+        f.write(h)
     return self
 
   def page_do_imgs(self):
