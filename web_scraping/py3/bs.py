@@ -616,17 +616,34 @@ This script will parse input URL
     data = {}
 
     code = []
-    for el_img in self.soup.find_all("img"):
-      s = str(el_img)
+    itms = []
+    for el in self.soup.find_all("img"):
+      itm = { 'uri': {} }
+
+      for k in [ 'data-src', 'src' ]:
+        if el.has_attr(k):
+            itm['uri'][k] = el[k] 
+
+      for k in [ 'alt' ]:
+        if el.has_attr(k):
+            itm[k] = el[k] 
+
+      s = str(el)
       se = jinja2.escape(s).rstrip()
       se = str(se)
       code.append(se)
-    print(code)
+      itms.append(itm)
 
-    data.update({ 'code' : code })
+    data.update({ 
+      'code'  : code,
+      'itms'  : itms,
+    })
 
     t = self.template_env.get_template("img.t.htm")
-    h = t.render(data=data)
+    h = t.render(
+      data=data,
+      baseurl=self.base_url
+    )
 
     with open(data_file_img, 'w') as f:
         f.write(h)

@@ -1,30 +1,56 @@
 <!doctype html>
 <html>
   <head>
+    <style>
+      .img_code {
+        background-color: white;
+        font-family: "Times New Roman", Times, serif;
+        font-size: 18px;
+      }
+
+      h1 {
+        font-size: 22px;
+      }
+    </style>
   </head>
+
+  {% set a_tab = '<a href="#h_tab">table</a>' %}
+  {% set a_code = '<a href="#h_code">code</a>' %}
+  {% set src_keys = [ 'data-src', 'src' ] %}
+
   <body>
-    <pre>
-      {% for line in data.code %}
-        {{ line }}
-      {% endfor %}
-    </pre>
-<!--    <table border="1">-->
-      <!--<tbody>-->
-        <!--{% for page in pages %}-->
-            <!--<tr> -->
-              <!--<td>-->
-                <!--<a target="_blank" href="{{ page.uri.base }}" > {{ page.uri.base }} </a>-->
-              <!--</td> -->
-              <!--<td><a target="_blank" href="{{ page.uri.remote }}" > Remote </a></td> -->
-              <!--<td><a target="_blank" href="{{ page.uri.clean }}" > Clean </a></td> -->
-              <!--<td><a target="_blank" href="{{ page.uri.cache}}" > Cache </a></td> -->
-              <!--<td><a target="_blank" href="{{ page.uri.meta}}" > meta </a></td> -->
-              <!--<td><a target="_blank" href="{{ page.uri.script}}" > script </a></td> -->
-              <!--<td><a target="_blank" href="{{ page.uri.img}}" > img </a></td> -->
-              <!--<td> <b> {{ page.title }} </b> </td> -->
-            <!--</tr>-->
-        <!--{% endfor %}-->
-      <!--</tbody>-->
-    <!--</table>-->
+     <h1 id="h_tab">Table</h1>
+         {{ a_code }}
+    <table border="1">
+      <!--<thead>-->
+        <!--<th>data-src (remote)</th>-->
+        <!--<th>data-src (code)</th>-->
+      <!--</thead>-->
+      <tbody>
+        {% for itm in data.itms %}
+            <tr> 
+            {% for k in src_keys %}
+              <td>
+              {% if itm.uri[k] %}
+                <a target="_blank" href="{{ baseurl }}/{{ itm.uri[k] }}" > {{ k }} </a>
+              {% endif %}
+              </td> 
+              <td>
+                <span class="img_code">{{ itm.uri[k] }}</span>
+              </td>
+            {% endfor %}
+              <td>
+                <span class="alt">{{ itm.alt }}</span>
+              </td>
+            </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+     <h1 id="h_code">Source code</h1>
+         {{ a_tab }}
+       {% for line in data.code %}
+       <br><span class="img_code">{{ line }}</span>
+       {%- endfor -%}
   </body>
 </html>
