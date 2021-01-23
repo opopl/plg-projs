@@ -86,6 +86,9 @@ This script will parse input URL
   # pages - stored info about processed urls
   pages = []
 
+  # current page data
+  page = {}
+
   # Page class instance from loaded site module
   page_obj_site = None
 
@@ -367,7 +370,6 @@ This script will parse input URL
         'soup' : self.soup,
         'app'  : self,
       })
-      import pdb; pdb.set_trace()
 
     return self
   
@@ -404,6 +406,10 @@ This script will parse input URL
     return self
 
   def page_get_date(self,ref={}):
+    p = self.page_obj_site
+    if not p:
+      return
+    p.get_date()
 
     return self
 
@@ -478,15 +484,19 @@ This script will parse input URL
       self.rid = self._rid_url()
       return self
 
-    d = {
-      'db_file' : self.url_db,
-      'table'   : 'urls',
-      'insert' : {
+    insert = {
         'remote' : url,
         'rid'    : self.rid,
         'title'  : title,
         'ii'     : self.ii,
-      }
+    }
+    if self.page.date:
+        insert.update({ 'date' : self.page.date })
+
+    d = {
+      'db_file' : self.url_db,
+      'table'   : 'urls',
+      'insert'  : insert,
     }
     dbw.insert_dict(d)
     print(f'[db_save_url] url saved with rid {self.rid}')
