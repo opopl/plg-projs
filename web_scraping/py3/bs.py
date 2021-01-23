@@ -325,7 +325,8 @@ This script will parse input URL
       'title' : self.title,
     })
 
-    self.pages.append(page)
+    if len(self.page):
+      self.pages.append(self.page)
 
     return self
 
