@@ -86,6 +86,9 @@ This script will parse input URL
   # pages - stored info about processed urls
   pages = []
 
+  # Page class instance from loaded site module
+  page_obj_site = None
+
   # tex lines
   tex_lines = []
 
@@ -107,7 +110,7 @@ This script will parse input URL
     self.html_root = os.environ.get('HTML_ROOT')
 
     for k, v in args.items():
-      self.k = v
+      setattr(self, k, v)
 
     if (not self.img_db) and self.img_root:
       self.img_db = os.path.join(self.img_root,'img.db')
@@ -359,6 +362,13 @@ This script will parse input URL
     add_libs(libs)
     m = self.modules['sites'][site] = __import__(mod)
 
+    if m:
+      p = self.page_obj_site = m.Page({ 
+        'soup' : self.soup,
+        'app'  : self,
+      })
+      import pdb; pdb.set_trace()
+
     return self
   
   def parse_url(self,ref={}):
@@ -376,9 +386,10 @@ This script will parse input URL
         return self
 
     self                                                \
-        .in_load_site_module()                          \
         .load_soup()                                    \
+        .in_load_site_module()                          \
         .db_save_url()                                  \
+        .page_get_date()                                \
         .page_save_data({ 'tags' : 'meta,script,img' }) \
         .page_save_data_img()                           \
         .page_clean()                                   \
@@ -389,6 +400,10 @@ This script will parse input URL
         .page_do_imgs()                                 \
         .page_save_clean()                              \
         .page_add()                                     \
+
+    return self
+
+  def page_get_date(self,ref={}):
 
     return self
 
