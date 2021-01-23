@@ -312,7 +312,7 @@ This script will parse input URL
     return self
 
   def page_add(self):
-    page = {
+    self.page.update({
       'uri' : { 
         'base'   : self.base_url,
         'remote' : self.url,
@@ -322,8 +322,8 @@ This script will parse input URL
         'clean'  : self._file_ii_uri({ 'type' : 'clean' }),
         'cache'  : self._file_ii_uri(),
       },
-      'title' : self.title
-    }
+      'title' : self.title,
+    })
 
     self.pages.append(page)
 
@@ -393,6 +393,8 @@ This script will parse input URL
     self.host = u.netloc.split(':')[0]
     self.base_url = u.scheme + '://' + u.netloc 
     self.site = util.get(self,[ 'hosts', self.host, 'site' ],'')
+
+    self.page = {}
 
     if not ref.get('reload',0):
       if self._site_skip() \
