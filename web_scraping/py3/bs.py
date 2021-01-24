@@ -728,6 +728,23 @@ This script will parse input URL
 
     return ii_num
 
+  def _img_local_uri(self, url):
+    if not ( self.img_db and os.path.isfile(self.img_db) ):
+      pass
+    else:
+      conn = sqlite3.connect(self.img_db)
+      c = conn.cursor()
+
+      c.execute('''SELECT img FROM imgs WHERE url = ?''',[ url ])
+      rw = c.fetchone()
+
+      img = rw[0] if rw else None
+      iuri = None
+      if img:
+        ipath = os.path.join(self.img_root,img)
+        iuri = Path(ipath).as_uri()
+      return iuri
+
   def _img_data(self, url, ext='jpg'):
     d = {}
     if not ( self.img_db and os.path.isfile(self.img_db) ):
@@ -832,9 +849,9 @@ This script will parse input URL
 
       for k in [ 'data-src', 'src' ]:
         if el.has_attr(k):
-            img_remote = el[k] 
-            img_data = self._img_data(img_remote)
-            img_local = img_data.get('uri')
+            img_remote_rel = el[k] 
+            img_remote = urljoin(self.base_url, img_remote_rel)
+            img_local = self._img_local_uri(img_remote)
 
             itm['uri'][k] = img_remote
             if img_local:
