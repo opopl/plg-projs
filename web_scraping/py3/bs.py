@@ -36,7 +36,6 @@ add_libs([ os.path.join(plg,'projs','python','lib') ])
 import Base.DBW as dbw
 import Base.Util as util
 
-
 class BS:
   # class attributes {
   usage='''
@@ -160,7 +159,8 @@ This script will parse input URL
                 ii_full TEXT,
                 author_id TEXT,
                 author TEXT,
-                tags TEXT
+                tags TEXT,
+                encoding TEXT
             );
 
             CREATE TABLE IF NOT EXISTS authors (
@@ -251,7 +251,6 @@ This script will parse input URL
     url = ref.get('url',self.url)
     ii  = ref.get('ii',self.ii)
 
-
     self.rid = self._rid_url(url)
     if not self.rid:
       self.rid = self._rid_free()
@@ -261,13 +260,18 @@ This script will parse input URL
       with open(self.ii_cache,'r') as f:
         self.content = f.read()
     else:
-      page = requests.get(url)
-      self.content = page.content
+      r = requests.get(url)
+
+      encoding = r.encoding if 'charset' in r.headers.get('content-type', '').lower() else None
+      import pdb; pdb.set_trace()
+
+      self.content = r.content
 
       util.mk_parent_dir(self.ii_cache)
       with open(self.ii_cache, 'wb') as f:
         f.write(self.content)
 
+    #soup = BeautifulSoup(r.content, from_encoding=encoding)
     self.soup = BeautifulSoup(self.content,'html5lib')
 
     self.title = self.soup.select_one('head > title').string.strip("\'\"")
@@ -397,7 +401,7 @@ This script will parse input URL
 
     self.page = {}
 
-    if not ref.get('reload',0):
+    if (not ref.get('reparse',0)) and (not ref.get('fail',0)):
       if self._site_skip() \
           or self._url_saved_fs(): 
         return self
