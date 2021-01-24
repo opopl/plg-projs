@@ -291,10 +291,15 @@ This script will parse input URL
     return self
 
   def load_soup_file_ii(self,ref={}):
-    type = ref.get('type','')
-    file = self._file_ii({ 'type' : type })
-    if os.path.join(file):
-      self.soups[file] = BeautifulSoup(self.content,'html5lib')
+    type = ref.get('type','cache')
+    ext  = ref.get('ext','html')
+
+    file = self._file_ii({ 'type' : type, 'ext' : ext })
+
+    if os.path.isfile(file):
+      with open(file,'r') as f:
+        html = f.read()
+        self.soups[file] = BeautifulSoup(html,'html5lib')
 
     return self
 
@@ -464,8 +469,9 @@ This script will parse input URL
         .page_save_data({ 'tags' : 'meta,script,img' }) \
         .page_save_data_img()                           \
         .page_clean()                                   \
-        .page_save_data_img({ 'type' : 'img_clean'})    \
+        .page_save_data_img({ 'type' : 'img_clean' })   \
         .page_do_imgs()                                 \
+        .load_soup_file_ii({ 'type' : 'img_clean'})     \
         .page_replace_links()                           \
         .page_unwrap()                                  \
         .page_rm_empty()                                \
@@ -517,9 +523,19 @@ This script will parse input URL
           el.decompose()
     return self
 
-  def page_replace_links(self):
+  def ii_replace_links(self,ref={}):
+    type = ref.get('type','cache')
+    ext  = ref.get('ext','html')
+
+    file = self._file_ii({ 'type' : type, 'ext' : ext })
+    soup = self.soups.get(file)
+    return self
+
+  def page_replace_links(self,ref={}):
+    soup = ref.get('soup',self.soup)
     j=0
-    next = self.soup.html
+
+    next = soup.html
     while 1:
       if not next:
         break 
