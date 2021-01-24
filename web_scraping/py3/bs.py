@@ -158,6 +158,7 @@ This script will parse input URL
                 ii_num INTEGER,
                 ii_full TEXT,
                 author_id TEXT,
+                author_id_first TEXT,
                 author TEXT,
                 tags TEXT,
                 encoding TEXT
@@ -424,6 +425,7 @@ This script will parse input URL
     self.page = {}
 
     self.page['acts'] = ref.get('acts','').split(',')
+    self.page['tags'] = ref.get('tags')
 
     if (not ref.get('reparse',0)) and (not ref.get('fail',0)):
       if self._site_skip() \
@@ -435,6 +437,7 @@ This script will parse input URL
         .in_load_site_module()                          \
         .page_get_date()                                \
         .page_get_author()                              \
+        .page_get_ii_full()                             \
         .db_save_url()                                  \
         .page_save_data({ 'tags' : 'meta,script,img' }) \
         .page_save_data_img()                           \
@@ -449,12 +452,21 @@ This script will parse input URL
 
     return self
 
+  def page_get_ii_full(self,ref={}):
+    self.page['ii_full'] = self._ii_full()
+    return self
+
   def page_get_author(self,ref={}):
     p = self.page_obj_site
     if not p:
       return
 
     p.get_author()
+
+    aid = self.page.get('author_id','')
+    f = aid.split(',')
+    if f and len(f):
+      self.page['author_id_first'] = f[0]
 
     return self
 
@@ -576,8 +588,10 @@ This script will parse input URL
         'site'   : self.site,
     }
 
-    for k in [ 'tags', 'encoding', 'author_id' ]:
+    kk = '''tags encoding author_id author_id_first ii_num ii_full'''
+    for k in kk.split(' '):
       insert.update({ k : self.page.get(k) })
+    import pdb; pdb.set_trace()
 
     if self.page['date']:
       insert.update({ 'date' : self.page['date'] })
@@ -660,16 +674,18 @@ This script will parse input URL
   def _ii_full(self):
     date = self.page.get('date')
     site = self.site
-    ii_num = self._ii_num()
+
+    self.page['ii_num'] = ii_num = self._ii_num()
+
     a_f = self.page.get('author_id_first')
-    a_fs = f'.{}' if a_f else ''
-    ii_full = f'{date}.{site}{a_fs}.{ii_num}.{self.ii}'
+    a_fs = f'.{a_f}' if a_f else ''
+
+    ii_full = f'{date}.site.{site}{a_fs}.{ii_num}.{self.ii}'
+
     return ii_full
 
   def _ii_num(self):
-    ii_num = self.page['ii_num']
-    if not ii_num:
-      ii_num = 1
+    ii_num = self.page.get('ii_num',1)
 
     return ii_num
 
