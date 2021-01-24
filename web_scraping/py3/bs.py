@@ -350,6 +350,7 @@ This script will parse input URL
         'cache'  : self._file_ii_uri(),
       },
       'title' : self.title,
+      'rid'   : self.rid,
     })
 
     if len(self.page):
@@ -424,7 +425,13 @@ This script will parse input URL
 
     self.page = {}
 
-    self.page['acts'] = ref.get('acts','').split(',')
+    acts = ref.get('acts')
+    if acts:
+      if type(acts) is list:
+        self.page['acts'] = acts
+      elif type(acts) is str:
+        self.page['acts'] = acts.split(',')
+
     self.page['tags'] = ref.get('tags')
 
     if (not ref.get('reparse',0)) and (not ref.get('fail',0)):
@@ -714,8 +721,6 @@ This script will parse input URL
     else:
       ii_num = 1
 
-    import pdb; pdb.set_trace()
-
     conn.commit()
     conn.close()
 
@@ -805,10 +810,12 @@ This script will parse input URL
     data_file_img = self._file_ii({ 'type' : 'img', 'ext' : 'htm' })
     data = {}
 
-    code = []
     itms = []
     for el in self.soup.find_all("img"):
-      itm = { 'uri': {} }
+      itm = { 
+        'uri'  : {},
+        'next' : None 
+      }
 
       for k in [ 'data-src', 'src' ]:
         if el.has_attr(k):
@@ -818,14 +825,21 @@ This script will parse input URL
         if el.has_attr(k):
             itm[k] = el[k] 
 
+      for ee in el.next_elements:
+        s = ee.string
+        if s:
+          s = s.strip()
+          if len(s):
+            itm['next'] = s
+            break
+
       s = str(el)
       se = jinja2.escape(s).rstrip()
-      se = str(se)
-      code.append(se)
+      code = str(se)
+      itm['code'] = code
       itms.append(itm)
 
     data.update({ 
-      'code'  : code,
       'itms'  : itms,
     })
 

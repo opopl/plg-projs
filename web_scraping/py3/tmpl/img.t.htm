@@ -6,6 +6,7 @@
         background-color: white;
         font-family: "Times New Roman", Times, serif;
         font-size: 18px;
+        font-weight: bold;
       }
 
       h1 {
@@ -49,8 +50,17 @@
 
      <h1 id="h_code">Source code</h1>
          {{ a_tab }}
-       {% for line in data.code %}
-       <br><span class="img_code">{{ line }}</span>
+     <table border="1">
+      </body>
+       {% for itm in data.itms %}
+        <tr>
+          <td><span class="img_code">{{ itm.code }}</span></td>
+        </tr>
+        <tr>
+          <td><span class="img_code">{{ itm.next }}</span></td>
+        </tr>
        {%- endfor -%}
+      </tbody>
+     </table>
   </body>
 </html>
