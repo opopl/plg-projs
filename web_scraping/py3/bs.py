@@ -450,8 +450,8 @@ This script will parse input URL
         .page_save_data({ 'tags' : 'meta,script,img' }) \
         .page_save_data_img()                           \
         .page_clean()                                   \
-        .page_do_imgs()                                 \
         .page_save_data_img({ 'type' : 'img_clean'})    \
+        .page_do_imgs()                                 \
         .page_replace_links()                           \
         .page_unwrap()                                  \
         .page_rm_empty()                                \
@@ -830,10 +830,6 @@ This script will parse input URL
   def page_save_data_img(self,ref={}):
     type = ref.get('type','img')
 
-    #if type == 'img_clean':
-      #return self
-    print(type)
-
     data_file_img = self._file_ii({ 
       'type' : type, 
       'ext'  : 'htm' 
@@ -850,7 +846,7 @@ This script will parse input URL
 
       for k in [ 'data-src', 'src' ]:
         if el.has_attr(k):
-            if type == 'img':
+            #if type == 'img':
               img_remote_rel = el[k] 
               img_remote = urljoin(self.base_url, img_remote_rel)
               img_local = self._img_local_uri(img_remote)
