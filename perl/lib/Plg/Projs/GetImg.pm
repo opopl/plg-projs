@@ -209,6 +209,7 @@ sub init_q {
         create => qq{
             CREATE TABLE IF NOT EXISTS imgs (
                 url TEXT UNIQUE,
+                url_parent TEXT,
                 inum INTEGER,
                 tags TEXT,
                 rootid TEXT,

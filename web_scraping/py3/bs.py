@@ -512,12 +512,13 @@ This script will parse input URL
       j+=1
       next = next.find_next()
       if hasattr(next,'name') and next.name == 'a':
-        href = next['href']
-        u = urlparse(href)
-        if not u.netloc:
-          href = urljoin(self.base_url,href)
-          next['href'] = href
-        next['target'] = '_blank'
+        if next.has_attr('href'):
+          href = next['href']
+          u = urlparse(href)
+          if not u.netloc:
+            href = urljoin(self.base_url,href)
+            next['href'] = href
+          next['target'] = '_blank'
 
     return self
 
@@ -953,13 +954,14 @@ This script will parse input URL
               'db_file' : self.img_db,
               'table'   : 'imgs',
               'insert' : {
-                'url'    : url,
-                'img'    : img,
-                'inum'   : inum,
-                'ext'    : iext,
-                'rootid' : self.rootid,
-                'proj'   : self.proj,
-                'caption' : caption,
+                'url'        : url,
+                'url_parent' : self.url,
+                'img'        : img,
+                'inum'       : inum,
+                'ext'        : iext,
+                'rootid'     : self.rootid,
+                'proj'       : self.proj,
+                'caption'    : caption,
               }
             }
             dbw.insert_dict(d)
