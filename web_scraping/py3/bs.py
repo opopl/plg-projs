@@ -88,6 +88,12 @@ This script will parse input URL
   # current page data
   page = {}
 
+  # beautiful soup instance for the current page
+  soup = None
+
+  # soups
+  soups = {}
+
   # Page class instance from loaded site module
   page_obj_site = None
 
@@ -281,6 +287,14 @@ This script will parse input URL
       f.write(self.content)
 
     self.page['fetched'] = 1
+
+    return self
+
+  def load_soup_file_ii(self,ref={}):
+    type = ref.get('type','')
+    file = self._file_ii({ 'type' : type })
+    if os.path.join(file):
+      self.soups[file] = BeautifulSoup(self.content,'html5lib')
 
     return self
 
@@ -846,16 +860,13 @@ This script will parse input URL
 
       for k in [ 'data-src', 'src' ]:
         if el.has_attr(k):
-            #if type == 'img':
-              img_remote_rel = el[k] 
-              img_remote = urljoin(self.base_url, img_remote_rel)
-              img_local = self._img_local_uri(img_remote)
+           img_remote_rel = el[k] 
+           img_remote = urljoin(self.base_url, img_remote_rel)
+           img_local = self._img_local_uri(img_remote)
   
-              itm['uri'][k] = img_remote_rel
-              if img_local:
-                itm['uri_local'][k] = img_local
-            #elif:
-              #img_local = el[k]
+           itm['uri'][k] = img_remote_rel
+           if img_local:
+             itm['uri_local'][k] = img_local
 
       for k in [ 'alt' ]:
         if el.has_attr(k):
