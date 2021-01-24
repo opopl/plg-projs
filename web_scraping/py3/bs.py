@@ -754,7 +754,7 @@ This script will parse input URL
       d.update({ 
         'inum' : inum,
         'img'  : img,
-        'path' : ipath
+        'path' : ipath,
         'uri'  : Path(ipath).as_uri()
       })
 
@@ -825,13 +825,20 @@ This script will parse input URL
     itms = []
     for el in self.soup.find_all("img"):
       itm = { 
-        'uri'  : {},
+        'uri'       : {},
+        'uri_local' : {},
         'next' : None 
       }
 
       for k in [ 'data-src', 'src' ]:
         if el.has_attr(k):
-            itm['uri'][k] = el[k] 
+            img_remote = el[k] 
+            img_data = self._img_data(img_remote)
+            img_local = img_data.get('uri')
+
+            itm['uri'][k] = img_remote
+            if img_local:
+              itm['uri_local'][k] = img_local
 
       for k in [ 'alt' ]:
         if el.has_attr(k):
