@@ -684,6 +684,11 @@ This script will parse input URL
     return ii_full
 
   def _ii_num(self):
+
+    ii_num = self.page.get('ii_num')
+    if ii_num:
+      return ii_num
+
     date = self.page.get('date')
     site = self.site
 
@@ -705,14 +710,14 @@ This script will parse input URL
     c.execute(q,[ self.url ])    
     rw = c.fetchone()
     if rw[0] is not None:
-      pass
+      ii_num = rw[0] + 1
+    else:
+      ii_num = 1
 
     import pdb; pdb.set_trace()
 
     conn.commit()
     conn.close()
-
-    ii_num = self.page.get('ii_num',1)
 
     return ii_num
 
