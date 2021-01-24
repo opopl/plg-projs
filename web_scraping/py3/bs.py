@@ -853,7 +853,7 @@ This script will parse input URL
             img_remote = urljoin(self.base_url, img_remote_rel)
             img_local = self._img_local_uri(img_remote)
 
-            itm['uri'][k] = img_remote
+            itm['uri'][k] = img_remote_rel
             if img_local:
               itm['uri_local'][k] = img_local
 

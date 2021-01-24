@@ -13,7 +13,15 @@
         font-family: "Times New Roman", Times, serif;
         font-size: 18px;
       }
+
       .link {
+      }
+
+      .uri_local {
+        color: green
+      }
+
+      .uri_remote {
       }
 
       h1 {
@@ -40,12 +48,14 @@
 
     {% if uri_local|length %}
       {% set href =  uri_local %}
+      {% set class = 'uri_local' %}
     {% elif uri|length %}
+      {% set class = 'uri_remote' %}
       {% set href =  baseurl + '/' + uri %}
     {% endif %}
     
     {% if href %}
-      <a class='link' target="_blank" href="{{ href }}" > {{ k }} </a>
+      <a class='link {{ class }}' target="_blank" href="{{ href }}" > {{ k }} </a>
     {% endif %}
   {% endmacro %}
 
