@@ -344,10 +344,11 @@ This script will parse input URL
         'base'   : self.base_url,
         'remote' : self.url,
         'meta'   : self._file_ii_uri({ 'type' : 'meta', 'ext'   : 'txt' }),
-        'img'    : self._file_ii_uri({ 'type' : 'img', 'ext'    : 'htm' }),
         'script' : self._file_ii_uri({ 'type' : 'script', 'ext' : 'txt' }),
         'clean'  : self._file_ii_uri({ 'type' : 'clean' }),
         'cache'  : self._file_ii_uri(),
+        'img'       : self._file_ii_uri({ 'type' : 'img', 'ext'       : 'htm' }),
+        'img_clean' : self._file_ii_uri({ 'type' : 'img_clean', 'ext' : 'htm' }),
       },
       'title' : self.title,
       'rid'   : self.rid,
@@ -449,6 +450,7 @@ This script will parse input URL
         .page_save_data({ 'tags' : 'meta,script,img' }) \
         .page_save_data_img()                           \
         .page_clean()                                   \
+        .page_save_data_img({ 'type' : 'img_clean'})    \
         .page_replace_links()                           \
         .page_unwrap()                                  \
         .page_rm_empty()                                \
@@ -806,8 +808,17 @@ This script will parse input URL
         f.write("\n".join(txt))
     return self
 
-  def page_save_data_img(self):
-    data_file_img = self._file_ii({ 'type' : 'img', 'ext' : 'htm' })
+  def page_save_data_img(self,ref={}):
+    type = ref.get('type','img')
+
+    if type == 'img_clean':
+      return self
+    print(type)
+
+    data_file_img = self._file_ii({ 
+      'type' : type, 
+      'ext'  : 'htm' 
+    })
     data = {}
 
     itms = []

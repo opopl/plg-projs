@@ -8,6 +8,13 @@
         font-size: 18px;
         font-weight: bold;
       }
+      .img_next_text {
+        background-color: white;
+        font-family: "Times New Roman", Times, serif;
+        font-size: 18px;
+      }
+      .link {
+      }
 
       h1 {
         font-size: 22px;
@@ -18,6 +25,16 @@
   {% set a_tab = '<a href="#h_tab">table</a>' %}
   {% set a_code = '<a href="#h_code">code</a>' %}
   {% set src_keys = [ 'data-src', 'src' ] %}
+
+  {% macro spaces(times) %}
+    {%- for n in range(times) -%}
+      &nbsp;
+    {%- endfor -%}
+  {% endmacro %}
+
+  {% macro a_img_uri(itm,k) %}
+    <a class='link' target="_blank" href="{{ baseurl }}/{{ itm.uri[k] }}" > {{ k }} </a>
+  {% endmacro %}
 
   <body>
      <h1 id="h_tab">Table</h1>
@@ -33,7 +50,7 @@
             {% for k in src_keys %}
               <td>
               {% if itm.uri[k] %}
-                <a target="_blank" href="{{ baseurl }}/{{ itm.uri[k] }}" > {{ k }} </a>
+                {{ a_img_uri(itm,k) }}
               {% endif %}
               </td> 
               <td>
@@ -54,10 +71,20 @@
       </body>
        {% for itm in data.itms %}
         <tr>
+          <td> {{ loop.index }} </td>
+          <td>
+            {{ a_img_uri(itm,'src') }}
+            {{ spaces(2) }}
+            {{ a_img_uri(itm,'data-src') }}
+          </td>
           <td><span class="img_code">{{ itm.code }}</span></td>
         </tr>
         <tr>
-          <td><span class="img_code">{{ itm.next }}</span></td>
+          <td></td>
+          <td></td>
+          <td>
+            <span class="img_next_text">{{ itm.next }}</span>
+          </td>
         </tr>
        {%- endfor -%}
       </tbody>
