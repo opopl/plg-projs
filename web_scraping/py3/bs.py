@@ -295,6 +295,7 @@ This script will parse input URL
     ext  = ref.get('ext','html')
 
     file = self._file_ii({ 'type' : type, 'ext' : ext })
+    print(file)
 
     if os.path.isfile(file):
       with open(file,'r') as f:
@@ -366,8 +367,8 @@ This script will parse input URL
         'script' : self._file_ii_uri({ 'type' : 'script', 'ext' : 'txt' }),
         'clean'  : self._file_ii_uri({ 'type' : 'clean' }),
         'cache'  : self._file_ii_uri(),
-        'img'       : self._file_ii_uri({ 'type' : 'img', 'ext'       : 'htm' }),
-        'img_clean' : self._file_ii_uri({ 'type' : 'img_clean', 'ext' : 'htm' }),
+        'img'       : self._file_ii_uri({ 'type' : 'img' }),
+        'img_clean' : self._file_ii_uri({ 'type' : 'img_clean' }),
       },
       'title' : self.title,
       'rid'   : self.rid,
@@ -471,8 +472,9 @@ This script will parse input URL
         .page_clean()                                   \
         .page_save_data_img({ 'type' : 'img_clean' })   \
         .page_do_imgs()                                 \
-        .load_soup_file_ii({ 'type' : 'img_clean'})     \
         .page_replace_links()                           \
+        .load_soup_file_ii({ 'type' : 'img_clean'})     \
+        .ii_replace_links({ 'type' : 'img_clean'})      \
         .page_unwrap()                                  \
         .page_rm_empty()                                \
         .page_header_insert_url()                       \
@@ -529,6 +531,8 @@ This script will parse input URL
 
     file = self._file_ii({ 'type' : type, 'ext' : ext })
     soup = self.soups.get(file)
+
+    self.page_replace_links({ 'soup' : soup })
     return self
 
   def page_replace_links(self,ref={}):
@@ -862,7 +866,7 @@ This script will parse input URL
 
     data_file_img = self._file_ii({ 
       'type' : type, 
-      'ext'  : 'htm' 
+      'ext'  : 'html' 
     })
     data = {}
 
@@ -906,7 +910,7 @@ This script will parse input URL
       'itms'  : itms,
     })
 
-    t = self.template_env.get_template("img.t.htm")
+    t = self.template_env.get_template("img.t.html")
     h = t.render(
       data=data,
       baseurl=self.base_url
@@ -1015,7 +1019,7 @@ This script will parse input URL
 
   def render_page_list(self):
 
-    t = self.template_env.get_template("list.t.htm")
+    t = self.template_env.get_template("list.t.html")
     h = t.render(pages=self.pages)
 
     h_file = os.path.join(self.dirs['html'],'list.html')
