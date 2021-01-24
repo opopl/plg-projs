@@ -532,10 +532,11 @@ This script will parse input URL
 
     file = self._file_ii({ 'type' : type, 'ext' : ext })
     soup = self.soups.get(file)
-    import pdb; pdb.set_trace()
 
     if soup:
       self.page_replace_links({ 'soup' : soup })
+      with open(file, 'w') as f:
+        f.write(soup.prettify())
     return self
 
   def page_replace_links(self,ref={}):
