@@ -755,6 +755,7 @@ This script will parse input URL
         'inum' : inum,
         'img'  : img,
         'path' : ipath
+        'uri'  : Path(ipath).as_uri()
       })
 
     return d

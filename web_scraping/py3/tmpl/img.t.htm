@@ -32,8 +32,14 @@
     {%- endfor -%}
   {% endmacro %}
 
+    <!--<a class='link' target="_blank" href="{{ baseurl }}/{{ uri }}" > {{ k }} </a>-->
+
   {% macro a_img_uri(itm,k) %}
-    <a class='link' target="_blank" href="{{ baseurl }}/{{ itm.uri[k] }}" > {{ k }} </a>
+    {% set uri  =  itm.uri.get(k,'') %}
+    {% if uri|length %}
+      {% set href =  baseurl + '/' + uri %}
+      <a class='link' target="_blank" href="{{ href }}" > {{ k }} </a>
+    {% endif %}
   {% endmacro %}
 
   <body>
