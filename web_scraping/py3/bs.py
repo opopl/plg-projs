@@ -450,12 +450,12 @@ This script will parse input URL
         .page_save_data({ 'tags' : 'meta,script,img' }) \
         .page_save_data_img()                           \
         .page_clean()                                   \
+        .page_do_imgs()                                 \
         .page_save_data_img({ 'type' : 'img_clean'})    \
         .page_replace_links()                           \
         .page_unwrap()                                  \
         .page_rm_empty()                                \
         .page_header_insert_url()                       \
-        .page_do_imgs()                                 \
         .page_save_clean()                              \
         .page_add()                                     \
 
@@ -850,13 +850,16 @@ This script will parse input URL
 
       for k in [ 'data-src', 'src' ]:
         if el.has_attr(k):
-            img_remote_rel = el[k] 
-            img_remote = urljoin(self.base_url, img_remote_rel)
-            img_local = self._img_local_uri(img_remote)
-
-            itm['uri'][k] = img_remote_rel
-            if img_local:
-              itm['uri_local'][k] = img_local
+            if type == 'img':
+              img_remote_rel = el[k] 
+              img_remote = urljoin(self.base_url, img_remote_rel)
+              img_local = self._img_local_uri(img_remote)
+  
+              itm['uri'][k] = img_remote_rel
+              if img_local:
+                itm['uri_local'][k] = img_local
+            #elif:
+              #img_local = el[k]
 
       for k in [ 'alt' ]:
         if el.has_attr(k):
@@ -886,6 +889,9 @@ This script will parse input URL
       baseurl=self.base_url
     )
 
+    soup = BeautifulSoup(h,'html5lib')
+    h = soup.prettify()
+
     with open(data_file_img, 'w') as f:
         f.write(h)
     return self
@@ -910,9 +916,12 @@ This script will parse input URL
 
       if el_img.has_attr('src'):
         src = el_img['src']
+        rel_src = None
         u = urlparse(src)
+
         if not u.netloc:
           url = urljoin(base_url,src)
+          rel_src = src
         else:
           url = src
 
@@ -974,6 +983,7 @@ This script will parse input URL
         
         n = self.soup.new_tag('img')
         n['src'] = ipath_uri
+        n['rel-src'] = rel_src
         n['width'] = 500
         el_img.wrap(self.soup.new_tag('p'))
         el_img.replace_with(n)
