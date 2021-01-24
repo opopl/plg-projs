@@ -48,9 +48,7 @@ def update_dict(ref):
     conn.commit()
     conn.close()
 
-def sql_do(ref={}):
-  sql      = ref.get('sql','')
-
+def sql_exec(q,p=[],ref={}):
   conn     = ref.get('conn')
   db_file  = ref.get('db_file')
   db_close = ref.get('db_close')
@@ -64,9 +62,33 @@ def sql_do(ref={}):
 
   c = conn.cursor()
 
+  try:
+     c.execute(q)
+  except sqlite3.OperationalError as e:
+     print(e)
+  except:
+     print("Errors ", sys.exc_info()[0], " for sqlite query: " + q )
+
+def sql_do(ref={}):
+  sql      = ref.get('sql','')
+
+  conn     = ref.get('conn')
+  db_file  = ref.get('db_file')
+  db_close = ref.get('db_close')
+
+  if not conn:
+    if db_file:
+      conn = sqlite3.connect(db_file)
+      conn.row_factory = sqlite3.Row
+      db_close = 1
+    else:
+      return
+
+  c = conn.cursor()
+
   for q in sqlparse.split(sql):
     try:
-        c.execute(q)
+        rw = c.execute(q,p)
     except sqlite3.OperationalError as e:
         print(e)
     except:

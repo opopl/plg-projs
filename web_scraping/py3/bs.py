@@ -591,7 +591,6 @@ This script will parse input URL
     kk = '''tags encoding author_id author_id_first ii_num ii_full'''
     for k in kk.split(' '):
       insert.update({ k : self.page.get(k) })
-    import pdb; pdb.set_trace()
 
     if self.page['date']:
       insert.update({ 'date' : self.page['date'] })
@@ -685,6 +684,27 @@ This script will parse input URL
     return ii_full
 
   def _ii_num(self):
+    date = self.page.get('date')
+    site = self.site
+
+    a_f = self.page.get('author_id_first')
+    a_fs = f'.{a_f}' if a_f else ''
+
+    pattern = f'{date}.site.{site}{a_fs}.'
+    import pdb; pdb.set_trace()
+
+    db_file = self.url_db
+    conn = sqlite3.connect(db_file)
+    conn.row_factory = sqlite3.Row
+    c = conn.cursor()
+
+    q = f'SELECT * from urls WHERE ii_full LIKE "{pattern}%"'
+    c.execute(q,[pattern])    
+    rw = c.fetchone()
+
+    conn.commit()
+    conn.close()
+
     ii_num = self.page.get('ii_num',1)
 
     return ii_num
