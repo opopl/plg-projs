@@ -263,12 +263,15 @@ This script will parse input URL
   def url_fetch(self,ref={}):
     url = ref.get('url',self.url)
 
-    if self.page['fetched']:
+    if self.page.get('fetched'):
       return self
 
     r = requests.get(url)
 
-    encoding = r.encoding if 'charset' in r.headers.get('content-type', '').lower() else None
+    encoding = 'utf-8'
+    if 'charset' in r.headers.get('content-type', '').lower():
+      encoding = r.encoding
+    self.page['encoding'] = encoding
 
     self.content = r.content
 
@@ -291,8 +294,7 @@ This script will parse input URL
     self.ii_cache = self._file_ii()
     self.url_load_content()
 
-    #soup = BeautifulSoup(r.content, from_encoding=encoding)
-    self.soup = BeautifulSoup(self.content,'html5lib')
+    self.soup = BeautifulSoup(self.content,'html5lib',from_encoding=self.page.get('encoding'))
 
     self.title = self.soup.select_one('head > title').string.strip("\'\"")
 
@@ -420,6 +422,8 @@ This script will parse input URL
     self.site = util.get(self,[ 'hosts', self.host, 'site' ],'')
 
     self.page = {}
+
+    self.page['acts'] = ref.get('acts','').split(',')
 
     if (not ref.get('reparse',0)) and (not ref.get('fail',0)):
       if self._site_skip() \
@@ -561,14 +565,20 @@ This script will parse input URL
     self.rid = self._rid_free()
     if self._url_saved_db(url):
       self.rid = self._rid_url()
-      return self
+      if not self._act('db_update'):
+        return self
 
     insert = {
         'remote' : url,
         'rid'    : self.rid,
         'title'  : title,
         'ii'     : self.ii,
+        'site'   : self.site,
     }
+
+    for k in [ 'tags', 'encoding', 'author_id' ]:
+      insert.update({ k : self.page.get(k) })
+
     if self.page['date']:
       insert.update({ 'date' : self.page['date'] })
 
@@ -591,10 +601,15 @@ This script will parse input URL
     skip = 0 if site in inc else 1
     return skip
 
-  def _act(self,keys=None):
-    acts = self.page.get('acts')
+  def _act(self,key=None):
+    acts = self.page.get('acts',[])
     if not acts:
       return 0
+
+    if key in acts:
+      return 1
+
+    return 0
 
   def _cnf(self,key=None):
     val = util.get(self, [ 'cnf', key  ],0)
@@ -641,6 +656,17 @@ This script will parse input URL
     }
     ext = map.get(imgobj.format,'jpg')
     return ext
+     
+  def _ii_full(self):
+    date = self.page.get('date')
+
+
+  def _ii_num(self):
+    ii_num = self.page['ii_num']
+    if not ii_num:
+      ii_num = 1
+
+    return ii_num
 
   def _img_data(self, url, ext='jpg'):
     d = {}
@@ -761,6 +787,9 @@ This script will parse input URL
     return self
 
   def page_do_imgs(self):
+    if self._act('no_img'):
+     return self
+
     site     = util.get(self,'site','')
     host     = util.get(self,'host','')
     base_url = util.get(self,'base_url','')
