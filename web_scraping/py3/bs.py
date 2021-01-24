@@ -247,6 +247,39 @@ This script will parse input URL
     ii_file = os.path.join(self._dir_ii({ 'rid' : rid }),f'{type}.{ext}')
     return ii_file
 
+  def url_load_content(self,ref={}):
+    if self._act('fetch'):
+      self.url_fetch()
+      return self
+
+    if os.path.isfile(self.ii_cache):
+      with open(self.ii_cache,'r') as f:
+        self.content = f.read()
+    else:
+        self.url_fetch()
+
+    return self
+
+  def url_fetch(self,ref={}):
+    url = ref.get('url',self.url)
+
+    if self.page['fetched']:
+      return self
+
+    r = requests.get(url)
+
+    encoding = r.encoding if 'charset' in r.headers.get('content-type', '').lower() else None
+
+    self.content = r.content
+
+    util.mk_parent_dir(self.ii_cache)
+    with open(self.ii_cache, 'wb') as f:
+      f.write(self.content)
+
+    self.page['fetched'] = 1
+
+    return self
+
   def load_soup(self,ref={}):
     url = ref.get('url',self.url)
     ii  = ref.get('ii',self.ii)
@@ -256,20 +289,7 @@ This script will parse input URL
       self.rid = self._rid_free()
 
     self.ii_cache = self._file_ii()
-    if os.path.isfile(self.ii_cache):
-      with open(self.ii_cache,'r') as f:
-        self.content = f.read()
-    else:
-      r = requests.get(url)
-
-      encoding = r.encoding if 'charset' in r.headers.get('content-type', '').lower() else None
-      import pdb; pdb.set_trace()
-
-      self.content = r.content
-
-      util.mk_parent_dir(self.ii_cache)
-      with open(self.ii_cache, 'wb') as f:
-        f.write(self.content)
+    self.url_load_content()
 
     #soup = BeautifulSoup(r.content, from_encoding=encoding)
     self.soup = BeautifulSoup(self.content,'html5lib')
@@ -570,6 +590,11 @@ This script will parse input URL
 
     skip = 0 if site in inc else 1
     return skip
+
+  def _act(self,keys=None):
+    acts = self.page.get('acts')
+    if not acts:
+      return 0
 
   def _cnf(self,key=None):
     val = util.get(self, [ 'cnf', key  ],0)
