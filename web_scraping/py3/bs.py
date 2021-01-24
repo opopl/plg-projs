@@ -811,8 +811,8 @@ This script will parse input URL
   def page_save_data_img(self,ref={}):
     type = ref.get('type','img')
 
-    if type == 'img_clean':
-      return self
+    #if type == 'img_clean':
+      #return self
     print(type)
 
     data_file_img = self._file_ii({ 
