@@ -460,6 +460,7 @@ This script will parse input URL
           or self._url_saved_fs(): 
         return self
 
+###pu
     self                                                \
         .load_soup()                                    \
         .in_load_site_module()                          \
@@ -531,8 +532,10 @@ This script will parse input URL
 
     file = self._file_ii({ 'type' : type, 'ext' : ext })
     soup = self.soups.get(file)
+    import pdb; pdb.set_trace()
 
-    self.page_replace_links({ 'soup' : soup })
+    if soup:
+      self.page_replace_links({ 'soup' : soup })
     return self
 
   def page_replace_links(self,ref={}):
