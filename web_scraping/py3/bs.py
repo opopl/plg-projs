@@ -691,16 +691,23 @@ This script will parse input URL
     a_fs = f'.{a_f}' if a_f else ''
 
     pattern = f'{date}.site.{site}{a_fs}.'
-    import pdb; pdb.set_trace()
 
     db_file = self.url_db
     conn = sqlite3.connect(db_file)
-    conn.row_factory = sqlite3.Row
+    #conn.row_factory = sqlite3.Row
     c = conn.cursor()
 
-    q = f'SELECT * from urls WHERE ii_full LIKE "{pattern}%"'
-    c.execute(q,[pattern])    
+    q = f'''SELECT 
+                MAX(ii_num) 
+            FROM urls 
+                WHERE ( NOT remote = ? ) AND ii_full LIKE "{pattern}%"
+         '''
+    c.execute(q,[ self.url ])    
     rw = c.fetchone()
+    if rw[0] is not None:
+      pass
+
+    import pdb; pdb.set_trace()
 
     conn.commit()
     conn.close()
