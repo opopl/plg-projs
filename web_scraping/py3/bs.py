@@ -659,7 +659,12 @@ This script will parse input URL
      
   def _ii_full(self):
     date = self.page.get('date')
-
+    site = self.site
+    ii_num = self._ii_num()
+    a_f = self.page.get('author_id_first')
+    a_fs = f'.{}' if a_f else ''
+    ii_full = f'{date}.{site}{a_fs}.{ii_num}.{self.ii}'
+    return ii_full
 
   def _ii_num(self):
     ii_num = self.page['ii_num']
