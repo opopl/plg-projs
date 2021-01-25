@@ -16,6 +16,8 @@ from pathlib import Path
 from urllib.parse import urlparse
 from urllib.parse import urljoin
 
+from url_normalize import url_normalize
+
 from PIL import Image
 from io import StringIO
 
@@ -951,6 +953,8 @@ This script will parse input URL
         if el.has_attr(k):
            img_remote_rel = el[k] 
            img_remote = urljoin(self.base_url, img_remote_rel)
+           img_remote = url_normalize(img_remote)
+           print(img_remote)
            img_local = self._img_local_uri(img_remote)
   
            itm['uri'][k] = img_remote_rel
@@ -1016,7 +1020,7 @@ This script will parse input URL
         u = urlparse(src)
 
         if not u.netloc:
-          url = urljoin(base_url,src)
+          url = util.urljoin(base_url,src)
           rel_src = src
         else:
           url = src
