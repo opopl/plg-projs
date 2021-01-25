@@ -28,6 +28,8 @@ from io import StringIO
 import jinja2
 import shutil
 
+import cyrtranslit
+
 import os,sys
 
 def add_libs(libs):
@@ -252,8 +254,9 @@ This script will parse input URL
     if os.path.isdir(self.in_dir):
       for f in Path(self.in_dir).glob('*.yaml'):
         k = Path(f).stem
-        d = yaml.full_load(f)
-        setattr(self, k, d)
+        with open(str(f),'r') as y:
+          d = yaml.full_load(y)
+          setattr(self, k, d)
 
     return self
 
@@ -534,6 +537,13 @@ This script will parse input URL
   def parse_url(self,ref={}):
     self.url = ref.get('url','')
     self.ii  = ref.get('ii','')
+
+    if not self.ii:
+      if self.title:
+        tt = self.title
+        tt = re.sub('\W', <+repl+>, tt, count=0, flags=0)
+        tt = re.sub('\W', <+repl+>, <+string+>, count=0, flags=0)
+        self.ii = cyrtranslit.to_latin(auth_id,'ru')
 
     if not self.url or self.url == const.plh:
       return self
