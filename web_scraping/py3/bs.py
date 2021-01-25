@@ -374,6 +374,8 @@ This script will parse input URL
     print(f'[load_soup] rid: {self.rid}, title: {self.title}')
     print(f'[load_soup] rid: {self.rid}, title_h: {title_h}')
 
+    self.page_ii_from_title()
+    
     return self
 
   def page_clean(self):
@@ -538,12 +540,7 @@ This script will parse input URL
     self.url = ref.get('url','')
     self.ii  = ref.get('ii','')
 
-    if not self.ii:
-      if self.title:
-        tt = self.title
-        tt = re.sub('\W', <+repl+>, tt, count=0, flags=0)
-        tt = re.sub('\W', <+repl+>, <+string+>, count=0, flags=0)
-        self.ii = cyrtranslit.to_latin(auth_id,'ru')
+
 
     if not self.url or self.url == const.plh:
       return self
@@ -590,6 +587,18 @@ This script will parse input URL
 
     self.parse_url_run()
 
+    return self
+
+  def page_ii_from_title(self,ref={}):
+    if self.ii:
+      return self
+
+    if self.title:
+      tt = self.title
+      tt = re.sub('\s', '_', tt)
+      tt = re.sub('\W', '', tt)
+      ttl = cyrtranslit.to_latin(tt,'ru')
+      import pdb; pdb.set_trace()
 
     return self
 
