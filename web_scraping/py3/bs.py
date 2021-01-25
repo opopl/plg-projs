@@ -303,7 +303,6 @@ This script will parse input URL
     tipe = ref.get('tipe','cache')
     ext  = ref.get('ext','html')
 
-    print(f'[load_soup_file_ii] tipe: {tipe}')
 
     tipes_in = ref.get('tipes')
     if tipes_in:
@@ -317,10 +316,11 @@ This script will parse input URL
           r = copy(ref)
           r['tipe'] = tipe
           self.load_soup_file_ii(r)
-          return self
+        return self
+
+    print(f'[load_soup_file_ii] tipe: {tipe}')
 
     file = self._file_ii({ 'tipe' : tipe, 'ext' : ext })
-    print(file)
 
     if os.path.isfile(file):
       with open(file,'r') as f:
@@ -583,7 +583,7 @@ This script will parse input URL
           r = copy(ref)
           r['tipe'] = tipe
           self.ii_replace_links(r)
-          return self
+        return self
 
     print(f'[ii_replace_links] {tipe}')
 
