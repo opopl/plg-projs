@@ -35,6 +35,7 @@ plg = os.environ.get('PLG')
 add_libs([ os.path.join(plg,'projs','python','lib') ])
 import Base.DBW as dbw
 import Base.Util as util
+import Base.Const as const
 
 class BS:
   # class attributes {
@@ -75,6 +76,7 @@ This script will parse input URL
 
   # input URL
   url = None
+
 
   # output directory
   out_dir = None
@@ -442,7 +444,7 @@ This script will parse input URL
     self.url = ref.get('url','')
     self.ii  = ref.get('ii','')
 
-    if not self.url or self.url == ( '<+' + '+>' ):
+    if not self.url or self.url == self.const['plh']:
       return self
 
     u = urlparse(self.url)
@@ -584,7 +586,7 @@ This script will parse input URL
               next['href'] = href
             next['target'] = '_blank'
           elif act == 'remote_to_db':
-            idata = 
+            idata = self._img_data({ 'url' : href })
             pass
 
     return self
