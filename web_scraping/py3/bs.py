@@ -493,7 +493,6 @@ This script will parse input URL
     print(f'[parse_url] start: {self.url}')
 
     tipes = util.qw('img img_clean')
-    import pdb; pdb.set_trace()
 
 ###pu
     self                                                \
