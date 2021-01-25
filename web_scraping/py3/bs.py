@@ -475,7 +475,7 @@ This script will parse input URL
         .page_do_imgs()                                  \
         .page_replace_links({ 'act' : 'rel_to_remote'})  \
         .load_soup_file_ii({ 'type' : 'img_clean'})      \
-        .ii_replace_links_local({ 'type' : 'img_clean'}) \
+        .ii_replace_links({ 'type' : 'img_clean' }) \
         .page_unwrap()                                   \
         .page_rm_empty()                                 \
         .page_header_insert_url()                        \
@@ -530,12 +530,19 @@ This script will parse input URL
     type = ref.get('type','cache')
     ext  = ref.get('ext','html')
 
-    file = self._file_ii({ 'type' : type, 'ext' : ext })
+    act  = ref.get('act','rel_to_remote')
+
+    file = self._file_ii({ 
+      'type' : type, 
+      'ext'  : ext 
+    })
     soup = self.soups.get(file)
 
-    import pdb; pdb.set_trace()
     if soup:
-      self.page_replace_links({ 'soup' : soup })
+      self.page_replace_links({ 
+        'soup' : soup, 
+        'act'  : act  
+      })
       with open(file, 'w') as f:
         f.write(soup.prettify())
     return self
@@ -790,35 +797,44 @@ This script will parse input URL
         iuri = Path(ipath).as_uri()
       return iuri
 
-  def _img_data(self, url, ext='jpg'):
-    d = {}
-    if not ( self.img_db and os.path.isfile(self.img_db) ):
-      pass
-    else:
-      conn = sqlite3.connect(self.img_db)
-      c = conn.cursor()
-  
-      c.execute('''SELECT img, inum FROM imgs WHERE url = ?''',[ url ])
-      rw = c.fetchone()
+  def _img_data(self, ref={}):
+    url    = ref.get('url','')
+    ext    = ref.get('ext','jpg')
 
-      if rw:
-        img = rw[0]
-        inum = rw[1]
-      else:
+    opts_s = ref.get('opts','')
+    opts   = opts_s.split(',')
+
+    if not ( self.img_db and os.path.isfile(self.img_db) ):
+      return 
+
+    d = None
+
+    conn = sqlite3.connect(self.img_db)
+    c = conn.cursor()
+  
+    c.execute('''SELECT img, inum FROM imgs WHERE url = ?''',[ url ])
+    rw = c.fetchone()
+
+    if rw:
+      img = rw[0]
+      inum = rw[1]
+    else:
+      if 'new' in opts:
         c.execute('''SELECT MAX(inum) FROM imgs''')
         rw = c.fetchone()
         inum = rw[0]
         inum += 1
         img = f'{inum}.{ext}'
 
+    if img:
       ipath = os.path.join(self.img_root, img)
-
-      d.update({ 
+  
+      d = { 
         'inum' : inum,
         'img'  : img,
         'path' : ipath,
         'uri'  : Path(ipath).as_uri()
-      })
+      }
 
     return d
 
@@ -963,7 +979,7 @@ This script will parse input URL
           url = src
 
         if self._img_saved(url):
-          idata = self._img_data(url)
+          idata = self._img_data({ 'url' : url })
           ipath = idata.get('path','')
           pass
         else:
@@ -983,7 +999,7 @@ This script will parse input URL
             
             print(f'[page_do_imgs] Image format: {i.format}')
             iext = self._img_ext(i)
-            idata = self._img_data(url,iext)
+            idata = self._img_data({ 'url' : url, 'ext' : iext })
 
             img   = idata.get("img","")
             inum  = idata.get('inum','')
