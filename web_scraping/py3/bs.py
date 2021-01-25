@@ -458,7 +458,6 @@ This script will parse input URL
         'app'  : self,
       })
 
-
     return self
   
   def parse_url(self,ref={}):
