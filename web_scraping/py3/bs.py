@@ -461,26 +461,26 @@ This script will parse input URL
         return self
 
 ###pu
-    self                                                \
-        .load_soup()                                    \
-        .in_load_site_module()                          \
-        .page_get_date()                                \
-        .page_get_author()                              \
-        .page_get_ii_full()                             \
-        .db_save_url()                                  \
-        .page_save_data({ 'tags' : 'meta,script,img' }) \
-        .page_save_data_img()                           \
-        .page_clean()                                   \
-        .page_save_data_img({ 'type' : 'img_clean' })   \
-        .page_do_imgs()                                 \
-        .page_replace_links()                           \
-        .load_soup_file_ii({ 'type' : 'img_clean'})     \
-        .ii_replace_links({ 'type' : 'img_clean'})      \
-        .page_unwrap()                                  \
-        .page_rm_empty()                                \
-        .page_header_insert_url()                       \
-        .page_save_clean()                              \
-        .page_add()                                     \
+    self                                                 \
+        .load_soup()                                     \
+        .in_load_site_module()                           \
+        .page_get_date()                                 \
+        .page_get_author()                               \
+        .page_get_ii_full()                              \
+        .db_save_url()                                   \
+        .page_save_data({ 'tags' : 'meta,script,img' })  \
+        .page_save_data_img()                            \
+        .page_clean()                                    \
+        .page_save_data_img({ 'type' : 'img_clean' })    \
+        .page_do_imgs()                                  \
+        .page_replace_links({ 'act' : 'rel_to_remote'})  \
+        .load_soup_file_ii({ 'type' : 'img_clean'})      \
+        .ii_replace_links_local({ 'type' : 'img_clean'}) \
+        .page_unwrap()                                   \
+        .page_rm_empty()                                 \
+        .page_header_insert_url()                        \
+        .page_save_clean()                               \
+        .page_add()                                      \
 
     return self
 
@@ -533,6 +533,7 @@ This script will parse input URL
     file = self._file_ii({ 'type' : type, 'ext' : ext })
     soup = self.soups.get(file)
 
+    import pdb; pdb.set_trace()
     if soup:
       self.page_replace_links({ 'soup' : soup })
       with open(file, 'w') as f:
@@ -541,6 +542,8 @@ This script will parse input URL
 
   def page_replace_links(self,ref={}):
     soup = ref.get('soup',self.soup)
+    act  = ref.get('act','rel_to_remote')
+
     j=0
 
     next = soup.html
@@ -552,11 +555,14 @@ This script will parse input URL
       if hasattr(next,'name') and next.name == 'a':
         if next.has_attr('href'):
           href = next['href']
-          u = urlparse(href)
-          if not u.netloc:
-            href = urljoin(self.base_url,href)
-            next['href'] = href
-          next['target'] = '_blank'
+
+          if act == 'rel_to_remote':
+            u = urlparse(href)
+            if not u.netloc:
+              href = urljoin(self.base_url,href)
+              next['href'] = href
+            next['target'] = '_blank'
+          elif act == 'remote_to_db':
 
     return self
 
