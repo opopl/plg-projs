@@ -481,6 +481,10 @@ This script will parse input URL
     self.base_url = u.scheme + '://' + u.netloc 
     self.site = util.get(self,[ 'hosts', self.host, 'site' ],'')
 
+    if not self.site:
+      print(f'[WARN] no site for url: {self.url}')
+      return self
+
     self.page = {}
 
     acts = ref.get('acts')
