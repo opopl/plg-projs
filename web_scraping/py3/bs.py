@@ -443,7 +443,14 @@ This script will parse input URL
     site = ref.get('site',self.site)
 
     [ lib, mod ] = self._site_libdir(site)
-    yaml_file = os.path.join(lib,mod + '.yaml')
+    site_yaml = os.path.join(lib,mod + '.yaml')
+
+    if not os.path.isfile(site_yaml):
+      return self
+
+    self.load_yaml(site_yaml)
+
+    print(f'[in_load_site_yaml] loaded YAML for site: {site}' )
     return self
 
   def in_load_site_module(self,ref={}):
@@ -480,6 +487,18 @@ This script will parse input URL
     self.host = u.netloc.split(':')[0]
     self.base_url = u.scheme + '://' + u.netloc 
     self.site = util.get(self,[ 'hosts', self.host, 'site' ],'')
+
+    hsts = self.hosts
+    try:
+      for pat in hsts.keys():
+        for k in pat.split(','):
+          if self.host.find(k) is not -1:
+            self.site = util.get(hsts,[ pat, 'site' ])
+            if self.site:
+              raise StopIteration
+
+    except StopIteration:
+      pass
 
     if not self.site:
       print(f'[WARN] no site for url: {self.url}')
