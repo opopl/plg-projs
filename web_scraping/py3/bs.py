@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 
 import requests
 from bs4 import BeautifulSoup
@@ -438,14 +439,18 @@ This script will parse input URL
 
     return self
 
+  def in_load_site_yaml(self,ref={}):
+    site = ref.get('site',self.site)
+
+    [ lib, mod ] = self._site_libdir(site)
+    yaml_file = os.path.join(lib,mod + '.yaml')
+    return self
+
   def in_load_site_module(self,ref={}):
     site = ref.get('site',self.site)
 
-    a = [ self.in_dir, 'sites' ]
-    a.extend(site.split('.'))
-    mod = a[-1]
-    del a[-1]
-    lib  = '/'.join(a)
+    [ lib, mod ] = self._site_libdir(site)
+
     libs = [ lib ]
     mod_file = os.path.join(lib,mod + '.py')
     if not os.path.isfile(mod_file):
@@ -501,6 +506,7 @@ This script will parse input URL
     self                                                \
         .load_soup()                                    \
         .in_load_site_module()                          \
+        .in_load_site_yaml()                            \
         .page_get_date()                                \
         .page_get_author()                              \
         .page_get_ii_full()                             \
@@ -730,6 +736,18 @@ This script will parse input URL
     print(f'[db_save_url] url saved with rid {self.rid}')
 
     return self
+
+  def _site_libdir(self,site=None):
+    if not site:
+      site = self.site
+
+    a = [ self.in_dir, 'sites' ]
+    a.extend(site.split('.'))
+    mod = a[-1]
+    del a[-1]
+    lib  = '/'.join(a)
+
+    return [ lib, mod ]
 
   def _site_skip(self,site=None):
     if not site:
