@@ -270,6 +270,8 @@ This script will parse input URL
   def url_fetch(self,ref={}):
     url = ref.get('url',self.url)
 
+    print(f'[url_fetch] fetching url: {url}')
+
     if self.page.get('fetched'):
       return self
 
@@ -455,7 +457,7 @@ This script will parse input URL
 
     self.page['tags'] = ref.get('tags')
 
-    if (not ref.get('reparse',0)) and (not ref.get('fail',0)):
+    if (not ref.get('redo',0)):
       if self._site_skip() \
           or self._url_saved_fs(): 
         return self
@@ -570,6 +572,7 @@ This script will parse input URL
               next['href'] = href
             next['target'] = '_blank'
           elif act == 'remote_to_db':
+            pass
 
     return self
 
