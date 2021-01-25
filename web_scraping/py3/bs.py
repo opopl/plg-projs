@@ -531,7 +531,7 @@ This script will parse input URL
   def page_get_author(self,ref={}):
     p = self.page_obj_site
     if not p:
-      return
+      return self
 
     p.get_author()
 
@@ -545,7 +545,8 @@ This script will parse input URL
   def page_get_date(self,ref={}):
     p = self.page_obj_site
     if not p:
-      return
+      return self
+
     p.get_date()
 
     return self
