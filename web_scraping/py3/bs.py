@@ -248,11 +248,11 @@ This script will parse input URL
     return uri
 
   def _file_ii(self,ref={}):
-    type = ref.get('type','cache')
+    tipe = ref.get('tipe','cache')
     ext  = ref.get('ext','html')
     rid  = ref.get('rid',self.rid)
 
-    ii_file = os.path.join(self._dir_ii({ 'rid' : rid }),f'{type}.{ext}')
+    ii_file = os.path.join(self._dir_ii({ 'rid' : rid }),f'{tipe}.{ext}')
     return ii_file
 
   def url_load_content(self,ref={}):
@@ -294,10 +294,10 @@ This script will parse input URL
     return self
 
   def load_soup_file_ii(self,ref={}):
-    type = ref.get('type','cache')
+    tipe = ref.get('tipe','cache')
     ext  = ref.get('ext','html')
 
-    file = self._file_ii({ 'type' : type, 'ext' : ext })
+    file = self._file_ii({ 'tipe' : tipe, 'ext' : ext })
     print(file)
 
     if os.path.isfile(file):
@@ -353,7 +353,7 @@ This script will parse input URL
 
   def page_save_clean(self):
 
-    self.ii_clean = self._file_ii({ 'type' : 'clean' })
+    self.ii_clean = self._file_ii({ 'tipe' : 'clean' })
     util.mk_parent_dir(self.ii_clean)
 
     with open(self.ii_clean, 'w') as f:
@@ -366,12 +366,12 @@ This script will parse input URL
       'uri' : { 
         'base'   : self.base_url,
         'remote' : self.url,
-        'meta'   : self._file_ii_uri({ 'type' : 'meta', 'ext'   : 'txt' }),
-        'script' : self._file_ii_uri({ 'type' : 'script', 'ext' : 'txt' }),
-        'clean'  : self._file_ii_uri({ 'type' : 'clean' }),
+        'meta'   : self._file_ii_uri({ 'tipe' : 'meta', 'ext'   : 'txt' }),
+        'script' : self._file_ii_uri({ 'tipe' : 'script', 'ext' : 'txt' }),
+        'clean'  : self._file_ii_uri({ 'tipe' : 'clean' }),
         'cache'  : self._file_ii_uri(),
-        'img'       : self._file_ii_uri({ 'type' : 'img' }),
-        'img_clean' : self._file_ii_uri({ 'type' : 'img_clean' }),
+        'img'       : self._file_ii_uri({ 'tipe' : 'img' }),
+        'img_clean' : self._file_ii_uri({ 'tipe' : 'img_clean' }),
       },
       'title' : self.title,
       'rid'   : self.rid,
@@ -483,12 +483,12 @@ This script will parse input URL
         .cmt(''' save image data => img.html''')        \
         .page_save_data_img()                           \
         .page_clean()                                   \
-        .page_save_data_img({ 'type' : 'img_clean' })   \
+        .page_save_data_img({ 'tipe' : 'img_clean' })   \
         .page_do_imgs()                                 \
         .page_replace_links({ 'act' : 'rel_to_remote'}) \
-        .load_soup_file_ii({ 'type' : 'img_clean'})     \
+        .load_soup_file_ii({ 'tipe' : 'img_clean'})     \
         .ii_replace_links({                             \
-            'types' : 'img,img_clean'  ,                \
+            'tipes' : 'img,img_clean'  ,                \
             'act'  : 'remote_to_db',                    \
         })                                              \
         .page_unwrap()                                  \
@@ -542,21 +542,21 @@ This script will parse input URL
     return self
 
   def ii_replace_links(self,ref={}):
-    type = ref.get('type','cache')
+    tipe = ref.get('tipe','cache')
     ext  = ref.get('ext','html')
     act  = ref.get('act','rel_to_remote')
 
-    types_in = ref.get('types','')
-    types    = types_in
-    if type(types_in) is str:
-      types = types_in.split(',') 
-      del ref['types']
-      for type in types:
+    tipes_in = ref.get('tipes','')
+    tipes    = tipes_in
+    if type(tipes_in) is str:
+      tipes = tipes_in.split(',') 
+      del ref['tipes']
+      for tipe in tipes:
         self.ii_replace_links(ref)
       return self
 
     file = self._file_ii({ 
-      'type' : type, 
+      'tipe' : tipe, 
       'ext'  : ext 
     })
     soup = self.soups.get(file)
@@ -918,7 +918,7 @@ This script will parse input URL
 
     els = self.soup.select(tag)
     txt = []
-    data_file = self._file_ii({ 'type' : tag, 'ext' : ext })
+    data_file = self._file_ii({ 'tipe' : tag, 'ext' : ext })
     for e in els:
       ms = str(e)
       txt.append(ms)
@@ -927,10 +927,10 @@ This script will parse input URL
     return self
 
   def page_save_data_img(self,ref={}):
-    type = ref.get('type','img')
+    tipe = ref.get('tipe','img')
 
     data_file_img = self._file_ii({ 
-      'type' : type, 
+      'tipe' : tipe, 
       'ext'  : 'html' 
     })
     data = {}
