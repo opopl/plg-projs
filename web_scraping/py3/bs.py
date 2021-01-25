@@ -811,20 +811,26 @@ This script will parse input URL
 
     conn = sqlite3.connect(self.img_db)
     c = conn.cursor()
-  
-    c.execute('''SELECT img, inum FROM imgs WHERE url = ?''',[ url ])
-    rw = c.fetchone()
 
-    if rw:
-      img = rw[0]
-      inum = rw[1]
-    else:
+    while 1:
       if 'new' in opts:
         c.execute('''SELECT MAX(inum) FROM imgs''')
         rw = c.fetchone()
         inum = rw[0]
         inum += 1
         img = f'{inum}.{ext}'
+        break
+      else:
+        c.execute('''SELECT img, inum FROM imgs WHERE url = ?''',[ url ])
+        rw = c.fetchone()
+  
+        if rw:
+          img = rw[0]
+          inum = rw[1]
+        else:
+          opts.append('new')
+          continue
+      break
 
     if img:
       ipath = os.path.join(self.img_root, img)
@@ -978,6 +984,7 @@ This script will parse input URL
         else:
           url = src
 
+        # image saved to fs && db
         if self._img_saved(url):
           idata = self._img_data({ 'url' : url })
           ipath = idata.get('path','')
@@ -999,7 +1006,11 @@ This script will parse input URL
             
             print(f'[page_do_imgs] Image format: {i.format}')
             iext = self._img_ext(i)
-            idata = self._img_data({ 'url' : url, 'ext' : iext })
+            idata = self._img_data({ 
+              'url'  : url,
+              'ext'  : iext,
+              'opts' : 'new',
+            })
 
             img   = idata.get("img","")
             inum  = idata.get('inum','')
