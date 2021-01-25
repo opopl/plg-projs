@@ -249,6 +249,12 @@ This script will parse input URL
         for k,v in d.items():
           setattr(self,k,v)
 
+    if os.path.isdir(self.in_dir):
+      for f in Path(self.in_dir).glob('*.yaml'):
+        k = Path(f).stem
+        d = yaml.full_load(f)
+    import pdb; pdb.set_trace()
+
     return self
 
   def _dir_ii(self,ref={}):
