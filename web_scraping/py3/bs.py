@@ -552,8 +552,12 @@ This script will parse input URL
       tipes = tipes_in.split(',') 
       del ref['tipes']
       for tipe in tipes:
-        self.ii_replace_links(ref)
+        r = ref
+        r['tipe'] = tipe
+        self.ii_replace_links(r)
       return self
+
+    print(f'[ii_replace_links] {tipe}')
 
     file = self._file_ii({ 
       'tipe' : tipe, 
