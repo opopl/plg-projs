@@ -14,8 +14,18 @@ import Base.Util as util
 import Base.Const as const
 # ----------------------------
 
-class CorePage:
+class SitePage:
+
+  soup        = None
+  app         = None
+  date_format = ''
 
   def __init__(self,args={}):
     for k, v in args.items():
       setattr(self, k, v)
+
+  def get_author(self,ref={}):
+    return self
+
+  def get_date(self,ref={}):
+    return self
