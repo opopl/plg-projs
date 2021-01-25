@@ -166,6 +166,7 @@ This script will parse input URL
                 remote TEXT UNIQUE NOT NULL,
                 date TEXT,
                 title TEXT,
+                title_h TEXT,
                 site TEXT,
                 ii TEXT,
                 ii_num INTEGER,
@@ -344,7 +345,10 @@ This script will parse input URL
 
     self.title = self.soup.select_one('head > title').string.strip("\'\"")
 
+    title_h = self.page['title_h'] = self.soup.select_one('h1').string.strip("\'\"")
+
     print(f'[load_soup] rid: {self.rid}, title: {self.title}')
+    print(f'[load_soup] rid: {self.rid}, title_h: {title_h}')
 
     return self
 
@@ -705,12 +709,12 @@ This script will parse input URL
     insert = {
         'remote' : url,
         'rid'    : self.rid,
-        'title'  : title,
         'ii'     : self.ii,
         'site'   : self.site,
+        'title'  : title,
     }
 
-    kk = '''tags encoding author_id author_id_first ii_num ii_full'''
+    kk = '''title_h tags encoding author_id author_id_first ii_num ii_full'''
     for k in kk.split(' '):
       insert.update({ k : self.page.get(k) })
 

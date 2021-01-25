@@ -12,6 +12,11 @@ def mk_parent_dir(file):
   p = str(Path(file).parent)
   os.makedirs(p,exist_ok=True)
 
+def url_parse(url):
+  u = urlparse(url)
+
+  return u
+
 def url_join(base,rel):
   url = urljoin(base,rel)
   url = url_normalize(url)
