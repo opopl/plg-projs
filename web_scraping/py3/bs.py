@@ -149,7 +149,10 @@ This script will parse input URL
 
   def init_tmpl(self):
     self.template_loader = jinja2.FileSystemLoader(searchpath=self.dirs['tmpl'])
-    self.template_env = jinja2.Environment(loader=self.template_loader)
+    env  = jinja2.Environment(loader=self.template_loader)
+    env.globals['url_join'] = util.url_join
+
+    self.template_env = env
 
     return self
 
@@ -595,7 +598,7 @@ This script will parse input URL
           if act == 'rel_to_remote':
             u = urlparse(href)
             if not u.netloc:
-              href = urljoin(self.base_url,href)
+              href = util.url_join(self.base_url,href)
               next['href'] = href
             next['target'] = '_blank'
           elif act == 'remote_to_db':
@@ -604,6 +607,7 @@ This script will parse input URL
               uri_local = idata.get('uri')
               if uri_local:
                 next['href'] = uri_local
+                next['class'] = 'link uri_local'
 
     return self
 
@@ -952,9 +956,7 @@ This script will parse input URL
       for k in [ 'data-src', 'src' ]:
         if el.has_attr(k):
            img_remote_rel = el[k] 
-           img_remote = urljoin(self.base_url, img_remote_rel)
-           img_remote = url_normalize(img_remote)
-           print(img_remote)
+           img_remote = util.url_join(self.base_url, img_remote_rel)
            img_local = self._img_local_uri(img_remote)
   
            itm['uri'][k] = img_remote_rel
@@ -1020,7 +1022,7 @@ This script will parse input URL
         u = urlparse(src)
 
         if not u.netloc:
-          url = util.urljoin(base_url,src)
+          url = util.url_join(base_url,src)
           rel_src = src
         else:
           url = src

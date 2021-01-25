@@ -51,7 +51,8 @@
       {% set class = 'uri_local' %}
     {% elif uri|length %}
       {% set class = 'uri_remote' %}
-      {% set href =  baseurl + '/' + uri %}
+      <!--{% set href =  baseurl + '/' + uri %}-->
+      {% set href =  url_join(baseurl, uri) %}
     {% endif %}
     
     {% if href %}
