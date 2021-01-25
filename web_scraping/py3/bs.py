@@ -99,6 +99,9 @@ This script will parse input URL
   # soups
   soups = {}
 
+  # site-specific data
+  sites = {}
+
   # Page class instance from loaded site module
   page_obj_site = None
 
@@ -460,6 +463,7 @@ This script will parse input URL
       return self
 
     d = self._yaml_data(site_yaml)
+    self.sites[site] = d
 
     print(f'[in_load_site_yaml] loaded YAML for site: {site}' )
     return self
@@ -484,6 +488,40 @@ This script will parse input URL
         'soup' : self.soup,
         'app'  : self,
       })
+
+    return self
+
+###pu
+  def parse_url_run(self,ref={}):
+    tipes = util.qw('img img_clean')
+
+    self                                                \
+        .load_soup()                                    \
+        .in_load_site_module()                          \
+        .in_load_site_yaml()                            \
+        .page_get_date()                                \
+        .page_get_author()                              \
+        .page_get_ii_full()                             \
+        .db_save_url()                                  \
+        .page_save_data({ 'tags' : 'meta,script,img' }) \
+        .cmt(''' save image data => img.html''')        \
+        .page_save_data_img()                           \
+        .page_clean()                                   \
+        .page_save_data_img({ 'tipe' : 'img_clean' })   \
+        .page_do_imgs()                                 \
+        .page_replace_links({ 'act' : 'rel_to_remote'}) \
+        .load_soup_file_ii({                            \
+            'tipes' : tipes                             \
+        })                                              \
+        .ii_replace_links({                             \
+            'tipes' : tipes,                            \
+            'act'  : 'remote_to_db',                    \
+        })                                              \
+        .page_unwrap()                                  \
+        .page_rm_empty()                                \
+        .page_header_insert_url()                       \
+        .page_save_clean()                              \
+        .page_add()                                     \
 
     return self
   
@@ -534,36 +572,8 @@ This script will parse input URL
     print('=' * 100)
     print(f'[parse_url] start: {self.url}')
 
-    tipes = util.qw('img img_clean')
+    self.parse_url_run()
 
-###pu
-    self                                                \
-        .load_soup()                                    \
-        .in_load_site_module()                          \
-        .in_load_site_yaml()                            \
-        .page_get_date()                                \
-        .page_get_author()                              \
-        .page_get_ii_full()                             \
-        .db_save_url()                                  \
-        .page_save_data({ 'tags' : 'meta,script,img' }) \
-        .cmt(''' save image data => img.html''')        \
-        .page_save_data_img()                           \
-        .page_clean()                                   \
-        .page_save_data_img({ 'tipe' : 'img_clean' })   \
-        .page_do_imgs()                                 \
-        .page_replace_links({ 'act' : 'rel_to_remote'}) \
-        .load_soup_file_ii({                            \
-            'tipes' : tipes                             \
-        })                                              \
-        .ii_replace_links({                             \
-            'tipes' : tipes,                            \
-            'act'  : 'remote_to_db',                    \
-        })                                              \
-        .page_unwrap()                                  \
-        .page_rm_empty()                                \
-        .page_header_insert_url()                       \
-        .page_save_clean()                              \
-        .page_add()                                     \
 
     return self
 
