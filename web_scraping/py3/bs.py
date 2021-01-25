@@ -435,13 +435,14 @@ This script will parse input URL
         'app'  : self,
       })
 
+
     return self
   
   def parse_url(self,ref={}):
     self.url = ref.get('url','')
     self.ii  = ref.get('ii','')
 
-    if not self.url or self.url == '<++>':
+    if not self.url or self.url == ( '<+' + '+>' ):
       return self
 
     u = urlparse(self.url)
@@ -468,8 +469,9 @@ This script will parse input URL
     print('=' * 100)
     print(f'[parse_url] start: {self.url}')
 
+
 ###pu
-    self                                                 \
+    self                                                \
         .load_soup()                                    \
         .in_load_site_module()                          \
         .page_get_date()                                \
@@ -582,6 +584,7 @@ This script will parse input URL
               next['href'] = href
             next['target'] = '_blank'
           elif act == 'remote_to_db':
+            idata = 
             pass
 
     return self
