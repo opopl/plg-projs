@@ -303,6 +303,22 @@ This script will parse input URL
     tipe = ref.get('tipe','cache')
     ext  = ref.get('ext','html')
 
+    print(f'[load_soup_file_ii] tipe: {tipe}')
+
+    tipes_in = ref.get('tipes')
+    if tipes_in:
+      tipes    = tipes_in
+      if type(tipes_in) is str:
+        tipes = tipes_in.split(',') 
+  
+      if len(tipes):
+        del ref['tipes']
+        for tipe in tipes:
+          r = copy(ref)
+          r['tipe'] = tipe
+          self.load_soup_file_ii(r)
+          return self
+
     file = self._file_ii({ 'tipe' : tipe, 'ext' : ext })
     print(file)
 
@@ -476,6 +492,8 @@ This script will parse input URL
     print('=' * 100)
     print(f'[parse_url] start: {self.url}')
 
+    tipes = util.qw('img img_clean')
+    import pdb; pdb.set_trace()
 
 ###pu
     self                                                \
@@ -492,9 +510,11 @@ This script will parse input URL
         .page_save_data_img({ 'tipe' : 'img_clean' })   \
         .page_do_imgs()                                 \
         .page_replace_links({ 'act' : 'rel_to_remote'}) \
-        .load_soup_file_ii({ 'tipe' : 'img_clean'})     \
+        .load_soup_file_ii({                            \
+            'tipes' : tipes          \
+        })                                              \
         .ii_replace_links({                             \
-            'tipes' : 'img,img_clean'  ,                \
+            'tipes' : tipes,         \
             'act'  : 'remote_to_db',                    \
         })                                              \
         .page_unwrap()                                  \
@@ -552,16 +572,19 @@ This script will parse input URL
     ext  = ref.get('ext','html')
     act  = ref.get('act','rel_to_remote')
 
-    tipes_in = ref.get('tipes','')
-    tipes    = tipes_in
-    if type(tipes_in) is str and tipes_in:
-      tipes = tipes_in.split(',') 
-      del ref['tipes']
-      for tipe in tipes:
-        r = copy(ref)
-        r['tipe'] = tipe
-        self.ii_replace_links(r)
-      return self
+    tipes_in = ref.get('tipes')
+    if tipes_in:
+      tipes    = tipes_in
+      if type(tipes_in) is str:
+        tipes = tipes_in.split(',') 
+  
+      if len(tipes):
+        del ref['tipes']
+        for tipe in tipes:
+          r = copy(ref)
+          r['tipe'] = tipe
+          self.ii_replace_links(r)
+          return self
 
     print(f'[ii_replace_links] {tipe}')
 

@@ -18,6 +18,10 @@ def url_join(base,rel):
 
   return url
 
+def qw(s):
+  a = s.split(' ')
+  return a
+
 def get(obj, path, default = None):
     if type(path) is str:
       keys = path.split(".")
