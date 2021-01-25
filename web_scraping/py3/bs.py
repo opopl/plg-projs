@@ -441,6 +441,9 @@ This script will parse input URL
     self.url = ref.get('url','')
     self.ii  = ref.get('ii','')
 
+    if not self.url or self.url == '<++>':
+      return self
+
     u = urlparse(self.url)
     self.host = u.netloc.split(':')[0]
     self.base_url = u.scheme + '://' + u.netloc 
@@ -462,27 +465,34 @@ This script will parse input URL
           or self._url_saved_fs(): 
         return self
 
+    print('=' * 100)
+    print(f'[parse_url] start: {self.url}')
+
 ###pu
     self                                                 \
-        .load_soup()                                     \
-        .in_load_site_module()                           \
-        .page_get_date()                                 \
-        .page_get_author()                               \
-        .page_get_ii_full()                              \
-        .db_save_url()                                   \
-        .page_save_data({ 'tags' : 'meta,script,img' })  \
-        .page_save_data_img()                            \
-        .page_clean()                                    \
-        .page_save_data_img({ 'type' : 'img_clean' })    \
-        .page_do_imgs()                                  \
-        .page_replace_links({ 'act' : 'rel_to_remote'})  \
-        .load_soup_file_ii({ 'type' : 'img_clean'})      \
-        .ii_replace_links({ 'type' : 'img_clean' }) \
-        .page_unwrap()                                   \
-        .page_rm_empty()                                 \
-        .page_header_insert_url()                        \
-        .page_save_clean()                               \
-        .page_add()                                      \
+        .load_soup()                                    \
+        .in_load_site_module()                          \
+        .page_get_date()                                \
+        .page_get_author()                              \
+        .page_get_ii_full()                             \
+        .db_save_url()                                  \
+        .page_save_data({ 'tags' : 'meta,script,img' }) \
+        .cmt(''' save image data => img.html''')        \
+        .page_save_data_img()                           \
+        .page_clean()                                   \
+        .page_save_data_img({ 'type' : 'img_clean' })   \
+        .page_do_imgs()                                 \
+        .page_replace_links({ 'act' : 'rel_to_remote'}) \
+        .load_soup_file_ii({ 'type' : 'img_clean'})     \
+        .ii_replace_links({                             \
+            'type' : 'img_clean'  ,                     \
+            'act'  : 'remote_to_db',                    \
+        })                                              \
+        .page_unwrap()                                  \
+        .page_rm_empty()                                \
+        .page_header_insert_url()                       \
+        .page_save_clean()                              \
+        .page_add()                                     \
 
     return self
 
@@ -678,14 +688,16 @@ This script will parse input URL
     skip = 0 if site in inc else 1
     return skip
 
+  def _skip(self,key=None):
+    skip = self.page.get('skip',[])
+    if key in skip:
+      return 1
+    return 0
+
   def _act(self,key=None):
     acts = self.page.get('acts',[])
-    if not acts:
-      return 0
-
     if key in acts:
       return 1
-
     return 0
 
   def _cnf(self,key=None):
@@ -867,6 +879,10 @@ This script will parse input URL
       conn.close()
 
     return ok
+
+  def cmt(self,cmt=''):
+    pass
+    return self
 
   def do_css(self):
     return self
