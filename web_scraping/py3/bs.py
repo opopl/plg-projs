@@ -253,7 +253,7 @@ This script will parse input URL
       for f in Path(self.in_dir).glob('*.yaml'):
         k = Path(f).stem
         d = yaml.full_load(f)
-    import pdb; pdb.set_trace()
+        setattr(self, k, d)
 
     return self
 
