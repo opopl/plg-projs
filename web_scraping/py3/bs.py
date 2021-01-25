@@ -595,9 +595,9 @@ This script will parse input URL
 
     if self.title:
       tt = self.title
-      tt = re.sub('\s', '_', tt)
-      tt = re.sub('\W', '', tt)
-      ttl = cyrtranslit.to_latin(tt,'ru')
+      tt = re.sub(r'\s', '_', tt)
+      ttl = cyrtranslit.to_latin(tt,'ru').lower()
+      ttl = re.sub(r'[\W\']+', '', ttl)
       import pdb; pdb.set_trace()
 
     return self
