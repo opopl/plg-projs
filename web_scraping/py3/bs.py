@@ -77,7 +77,6 @@ This script will parse input URL
   # input URL
   url = None
 
-
   # output directory
   out_dir = None
 
@@ -444,7 +443,7 @@ This script will parse input URL
     self.url = ref.get('url','')
     self.ii  = ref.get('ii','')
 
-    if not self.url or self.url == self.const['plh']:
+    if not self.url or self.url == const.plh:
       return self
 
     u = urlparse(self.url)
@@ -489,7 +488,7 @@ This script will parse input URL
         .page_replace_links({ 'act' : 'rel_to_remote'}) \
         .load_soup_file_ii({ 'type' : 'img_clean'})     \
         .ii_replace_links({                             \
-            'type' : 'img_clean'  ,                     \
+            'types' : 'img,img_clean'  ,                \
             'act'  : 'remote_to_db',                    \
         })                                              \
         .page_unwrap()                                  \
@@ -545,8 +544,16 @@ This script will parse input URL
   def ii_replace_links(self,ref={}):
     type = ref.get('type','cache')
     ext  = ref.get('ext','html')
-
     act  = ref.get('act','rel_to_remote')
+
+    types_in = ref.get('types','')
+    types    = types_in
+    if type(types_in) is str:
+      types = types_in.split(',') 
+      del ref['types']
+      for type in types:
+        self.ii_replace_links(ref)
+      return self
 
     file = self._file_ii({ 
       'type' : type, 
@@ -587,7 +594,10 @@ This script will parse input URL
             next['target'] = '_blank'
           elif act == 'remote_to_db':
             idata = self._img_data({ 'url' : href })
-            pass
+            if idata:
+              uri_local = idata.get('uri')
+              if uri_local:
+                next['href'] = uri_local
 
     return self
 
@@ -832,6 +842,7 @@ This script will parse input URL
     conn = sqlite3.connect(self.img_db)
     c = conn.cursor()
 
+    img = None
     while 1:
       if 'new' in opts:
         c.execute('''SELECT MAX(inum) FROM imgs''')
@@ -847,19 +858,17 @@ This script will parse input URL
         if rw:
           img = rw[0]
           inum = rw[1]
-        else:
-          opts.append('new')
-          continue
       break
 
     if img:
       ipath = os.path.join(self.img_root, img)
   
       d = { 
-        'inum' : inum,
-        'img'  : img,
-        'path' : ipath,
-        'uri'  : Path(ipath).as_uri()
+        'inum'   : inum,
+        'img'    : img,
+        'remote' : url,
+        'path'   : ipath,
+        'uri'    : Path(ipath).as_uri()
       }
 
     return d
