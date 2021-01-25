@@ -225,6 +225,17 @@ This script will parse input URL
 
     return self
 
+  def _yaml_data(self, f_yaml=None):
+    if not f_yaml:
+      f_yaml = self.f_yaml
+
+    if f_yaml and os.path.isfile(f_yaml):
+      with open(f_yaml) as f:
+        d = yaml.full_load(f)
+        return d
+
+    return 
+
   def load_yaml(self, f_yaml=None):
     if not f_yaml:
       f_yaml = self.f_yaml
@@ -448,7 +459,7 @@ This script will parse input URL
     if not os.path.isfile(site_yaml):
       return self
 
-    self.load_yaml(site_yaml)
+    d = self._yaml_data(site_yaml)
 
     print(f'[in_load_site_yaml] loaded YAML for site: {site}' )
     return self
@@ -492,7 +503,7 @@ This script will parse input URL
     try:
       for pat in hsts.keys():
         for k in pat.split(','):
-          if self.host.find(k) is not -1:
+          if self.host.find(k) != -1:
             self.site = util.get(hsts,[ pat, 'site' ])
             if self.site:
               raise StopIteration
