@@ -510,10 +510,10 @@ This script will parse input URL
         .page_do_imgs()                                 \
         .page_replace_links({ 'act' : 'rel_to_remote'}) \
         .load_soup_file_ii({                            \
-            'tipes' : tipes          \
+            'tipes' : tipes                             \
         })                                              \
         .ii_replace_links({                             \
-            'tipes' : tipes,         \
+            'tipes' : tipes,                            \
             'act'  : 'remote_to_db',                    \
         })                                              \
         .page_unwrap()                                  \
