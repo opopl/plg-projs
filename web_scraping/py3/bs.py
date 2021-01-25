@@ -17,6 +17,7 @@ from urllib.parse import urlparse
 from urllib.parse import urljoin
 
 from url_normalize import url_normalize
+from copy import copy
 
 from PIL import Image
 from io import StringIO
@@ -557,7 +558,7 @@ This script will parse input URL
       tipes = tipes_in.split(',') 
       del ref['tipes']
       for tipe in tipes:
-        r = ref
+        r = copy(ref)
         r['tipe'] = tipe
         self.ii_replace_links(r)
       return self
