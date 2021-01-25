@@ -548,7 +548,7 @@ This script will parse input URL
 
     tipes_in = ref.get('tipes','')
     tipes    = tipes_in
-    if type(tipes_in) is str:
+    if type(tipes_in) is str and tipes_in:
       tipes = tipes_in.split(',') 
       del ref['tipes']
       for tipe in tipes:
