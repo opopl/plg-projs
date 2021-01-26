@@ -164,7 +164,7 @@ This script will parse input URL
     return self
 
   def init_db_urls(self):
-    print('[init_db_urls]')
+    self.log('[init_db_urls]')
   
     sql = '''
             CREATE TABLE IF NOT EXISTS urls (
@@ -208,8 +208,8 @@ This script will parse input URL
     self.Bin = str(Path(self.Script).parent)
     
     self.dirs['tmpl'] = os.path.join(self.Bin,'tmpl')
-    print(f'[BS] Script location: {self.Script}')
-    print(f'[BS] Template directory: {self.dirs["tmpl"]}')
+    self.log(f'[BS] Script location: {self.Script}')
+    self.log(f'[BS] Template directory: {self.dirs["tmpl"]}')
 
     if self.f_yaml:
       pp = Path(self.f_yaml).resolve()
@@ -302,7 +302,7 @@ This script will parse input URL
   def url_fetch(self,ref={}):
     url = ref.get('url',self.url)
 
-    print(f'[url_fetch] fetching url: {url}')
+    self.log(f'[url_fetch] fetching url: {url}')
 
     if self.page.get('fetched'):
       return self
@@ -343,7 +343,7 @@ This script will parse input URL
           self.load_soup_file_ii(r)
         return self
 
-    print(f'[load_soup_file_ii] tipe: {tipe}')
+    self.log(f'[load_soup_file_ii] tipe: {tipe}')
 
     file = self._file_ii({ 'tipe' : tipe, 'ext' : ext })
 
@@ -353,6 +353,18 @@ This script will parse input URL
         self.soups[file] = BeautifulSoup(html,'html5lib')
 
     return self
+
+def log(self,msg=[]):
+  if type(msg) is list:
+    for m in msg:
+      self.log(m)
+    return self
+
+  elif type(msg) is str:
+    print(msg)
+      
+  
+  return self
 
   def load_soup(self,ref={}):
     url = ref.get('url',self.url)
@@ -371,8 +383,8 @@ This script will parse input URL
 
     title_h = self.page['title_h'] = self.soup.select_one('h1').string.strip("\'\"")
 
-    print(f'[load_soup] rid: {self.rid}, title: {self.title}')
-    print(f'[load_soup] rid: {self.rid}, title_h: {title_h}')
+    self.log(f'[load_soup] rid: {self.rid}, title: {self.title}')
+    self.log(f'[load_soup] rid: {self.rid}, title_h: {title_h}')
     
     return self
      
@@ -481,7 +493,7 @@ This script will parse input URL
     d = self._yaml_data(site_yaml)
     self.sites[site] = d
 
-    print(f'[in_load_site_yaml] loaded YAML for site: {site}' )
+    self.log(f'[in_load_site_yaml] loaded YAML for site: {site}' )
     return self
 
   def in_load_site_module(self,ref={}):
@@ -499,7 +511,7 @@ This script will parse input URL
     m = self.modules['sites'][site] = __import__(mod)
 
     if m:
-      print(f'[in_load_site_module] loaded module for site: {site}' )
+      self.log(f'[in_load_site_module] loaded module for site: {site}' )
       p = self.page_obj_site = m.Page({ 
         'soup' : self.soup,
         'app'  : self,
@@ -509,7 +521,7 @@ This script will parse input URL
 
   def update_ii(self):
     self.page_ii_from_title()
-    print(f'[load_soup] ii: {self.ii}')
+    self.log(f'[load_soup] ii: {self.ii}')
     
     return self
 
@@ -573,7 +585,7 @@ This script will parse input URL
       pass
 
     if not self.site:
-      print(f'[WARN] no site for url: {self.url}')
+      self.log(f'[WARN] no site for url: {self.url}')
       return self
 
     self.page = {}
@@ -592,8 +604,8 @@ This script will parse input URL
           or self._url_saved_fs(): 
         return self
 
-    print('=' * 100)
-    print(f'[parse_url] start: {self.url}')
+    self.log('=' * 100)
+    self.log(f'[parse_url] start: {self.url}')
 
     self.parse_url_run()
 
@@ -679,7 +691,7 @@ This script will parse input URL
           self.ii_replace_links(r)
         return self
 
-    print(f'[ii_replace_links] {tipe}')
+    self.log(f'[ii_replace_links] {tipe}')
 
     file = self._file_ii({ 
       'tipe' : tipe, 
@@ -814,7 +826,7 @@ This script will parse input URL
       'insert'  : insert,
     }
     dbw.insert_dict(d)
-    print(f'[db_save_url] url saved with rid {self.rid}')
+    self.log(f'[db_save_url] url saved with rid {self.rid}')
 
     return self
 
@@ -1164,21 +1176,21 @@ This script will parse input URL
             ipath = idata.get('path','')
 ###i
         if get_img:
-          print(f"[page_do_imgs] Getting image: \n\t{url}")
+          self.log(f"[page_do_imgs] Getting image: \n\t{url}")
           try:
             i = None
             try:
               i = Image.open(requests.get(url, stream = True).raw)
             except:
-              print(f'FAIL[page_do_imgs] Image.open: {url}')
-              print(f'FAIL[page_do_imgs] Image.open failure: {sys.exc_info()[0]}')
+              self.log(f'FAIL[page_do_imgs] Image.open: {url}')
+              self.log(f'FAIL[page_do_imgs] Image.open failure: {sys.exc_info()[0]}')
               continue
 
             if not i:
-              print(f'FAIL[page_do_imgs] no Image.open instance: {url}')
+              self.log(f'FAIL[page_do_imgs] no Image.open instance: {url}')
               continue
             
-            print(f'[page_do_imgs] Image format: {i.format}')
+            self.log(f'[page_do_imgs] Image format: {i.format}')
             iext = self._img_ext(i)
             idata = self._img_data({ 
               'url'  : url,
@@ -1190,12 +1202,12 @@ This script will parse input URL
             inum  = idata.get('inum','')
             ipath = idata.get('path','')
 
-            print(f'[page_do_imgs] Local path: {idata.get("path","")}')
+            self.log(f'[page_do_imgs] Local path: {idata.get("path","")}')
             if os.path.isfile(ipath):
-              print(f'WARN[page_do_imgs] image file already exists: {img}')
+              self.log(f'WARN[page_do_imgs] image file already exists: {img}')
             else:
               i.save(ipath)
-              print(f'[page_do_imgs] Saved image: {img}')
+              self.log(f'[page_do_imgs] Saved image: {img}')
 
             d = {
               'db_file' : self.img_db,
@@ -1213,8 +1225,10 @@ This script will parse input URL
             }
             dbw.insert_dict(d)
           except:
-            print(f'WARN[page_do_imgs] Image.open exception: {url}')
+            self.log(f'WARN[page_do_imgs] Image.open exception: {url}')
             raise
+
+        import pdb; pdb.set_trace()
 
         ipath_uri = Path(ipath).as_uri()
         el_img['src'] = ipath_uri
@@ -1239,7 +1253,7 @@ This script will parse input URL
         f.write(h)
 
     h_uri = Path(h_file).as_uri()
-    print(f'[BS] list: {h_uri}')
+    self.log(f'[BS] list: {h_uri}')
 
     return self
 
