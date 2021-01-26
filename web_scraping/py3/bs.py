@@ -363,37 +363,37 @@ This script will parse input URL
 
     return self
 
-def log(self,msg=[]):
-  if type(msg) is list:
-    for m in msg:
-      self.log(m)
-    return self
-
-  if not type(msg) is str:
-    return self
-    
-  print(msg)
-
-  db_file = self.url_db
-  conn = sqlite3.connect(db_file)
-  c = conn.cursor()
-
-  insert = {
-      'msg'   : msg,
-      'rid'   : self.rid,
-      'url'   : self.ii,
-      'site'  : self.site,
-      'time'  : util.now()
-  }
-
-  d = {
-     'db_file' : self.url_db,
-     'table'   : 'urls',
-     'insert'  : insert,
-  }
-  dbw.insert_dict(d)
+  def log(self,msg=[]):
+    if type(msg) is list:
+      for m in msg:
+        self.log(m)
+      return self
   
-  return self
+    if not type(msg) is str:
+      return self
+      
+    print(msg)
+  
+    db_file = self.url_db
+    conn = sqlite3.connect(db_file)
+    c = conn.cursor()
+  
+    insert = {
+        'msg'   : msg,
+        'rid'   : self.rid,
+        'url'   : self.ii,
+        'site'  : self.site,
+        'time'  : util.now()
+    }
+  
+    d = {
+       'db_file' : self.url_db,
+       'table'   : 'log',
+       'insert'  : insert,
+    }
+    dbw.insert_dict(d)
+    
+    return self
 
   def load_soup(self,ref={}):
     url = ref.get('url',self.url)
