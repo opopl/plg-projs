@@ -17,6 +17,14 @@ def url_parse(url):
 
   return u
 
+def obj_methods(obj):
+  methods = [m for m in dir(obj) if callable(getattr(obj, m)) ]
+  return methods
+
+def obj_has_method(obj, method):
+  has = 1 if method in obj_methods(obj) else 0
+  return has
+
 def url_join(base,rel):
   url = urljoin(base,rel)
   url = url_normalize(url)

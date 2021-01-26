@@ -375,6 +375,7 @@ This script will parse input URL
     print(f'[load_soup] rid: {self.rid}, title_h: {title_h}')
 
     self.page_ii_from_title()
+    print(f'[load_soup] ii: {self.ii}')
     
     return self
      
@@ -595,6 +596,8 @@ This script will parse input URL
     return self
 
   def page_ii_from_title(self,ref={}):
+    p = self.page_obj_site
+
     if self.ii:
       return self
 
