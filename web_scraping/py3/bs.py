@@ -199,7 +199,8 @@ This script will parse input URL
             CREATE TABLE IF NOT EXISTS log (
                 engine TEXT DEFAULT 'bs',
                 rid INTEGER,
-                remote TEXT,
+                url TEXT,
+                site TEXT,
                 msg TEXT,
                 time TEXT
             );
@@ -385,16 +386,12 @@ def log(self,msg=[]):
       'time'  : util.now()
   }
 
-    kk = '''date title_h tags encoding author_id author_id_first ii_num ii_full'''
-    for k in kk.split(' '):
-      insert.update({ k : self.page.get(k) })
-
-    d = {
-      'db_file' : self.url_db,
-      'table'   : 'urls',
-      'insert'  : insert,
-    }
-    dbw.insert_dict(d)
+  d = {
+     'db_file' : self.url_db,
+     'table'   : 'urls',
+     'insert'  : insert,
+  }
+  dbw.insert_dict(d)
   
   return self
 
