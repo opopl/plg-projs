@@ -601,6 +601,9 @@ This script will parse input URL
     if self.ii:
       return self
 
+    if util.obj_has_method(p, 'get_ii_from_file'):
+      p.get_ii_from_file()
+
     if self.title:
       tt = self.title
       tt = re.sub(r'\s', '_', tt)
