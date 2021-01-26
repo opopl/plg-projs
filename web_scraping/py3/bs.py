@@ -101,6 +101,9 @@ This script will parse input URL
   # soups
   soups = {}
 
+  # current site
+  site = None
+
   # site-specific data
   sites = {}
 
@@ -381,7 +384,7 @@ This script will parse input URL
     insert = {
         'msg'   : msg,
         'rid'   : self.rid,
-        'url'   : self.ii,
+        'url'   : self.url,
         'site'  : self.site,
         'time'  : util.now()
     }
@@ -1194,15 +1197,14 @@ This script will parse input URL
         else:
           url = src
 
-        get_img = 0
-        if self._act('get_img'):
-          get_img = 1
-
-        if not get_img:
+        get_img = 1
+        if not self._act('get_img'):
           # image saved to fs && db
           if self._img_saved(url):
             idata = self._img_data({ 'url' : url })
             ipath = idata.get('path','')
+            get_img = 0
+
 ###i
         if get_img:
           self.log(f"[page_do_imgs] Getting image: \n\t{url}")
@@ -1257,7 +1259,6 @@ This script will parse input URL
             self.log(f'WARN[page_do_imgs] Image.open exception: {url}')
             raise
 
-        import pdb; pdb.set_trace()
 
         ipath_uri = Path(ipath).as_uri()
         el_img['src'] = ipath_uri
