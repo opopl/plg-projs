@@ -199,6 +199,8 @@ This script will parse input URL
                 rids TEXT
             );
 
+            DROP TABLE IF EXISTS log;
+
             CREATE TABLE IF NOT EXISTS log (
                 engine TEXT DEFAULT 'bs',
                 rid INTEGER,
@@ -1215,7 +1217,7 @@ This script will parse input URL
             except:
               self.log(f'FAIL[page_do_imgs] Image.open: {url}')
               self.log(f'FAIL[page_do_imgs] Image.open failure: {sys.exc_info()[0]}')
-              continue
+              raise 
 
             if not i:
               self.log(f'FAIL[page_do_imgs] no Image.open instance: {url}')
@@ -1223,11 +1225,13 @@ This script will parse input URL
             
             self.log(f'[page_do_imgs] Image format: {i.format}')
             iext = self._img_ext(i)
-            idata = self._img_data({ 
+
+            dd = { 
               'url'  : url,
               'ext'  : iext,
               'opts' : 'new',
-            })
+            }
+            idata = self._img_data(dd)
 
             img   = idata.get("img","")
             inum  = idata.get('inum','')
