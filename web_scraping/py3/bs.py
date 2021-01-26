@@ -1153,12 +1153,17 @@ This script will parse input URL
         else:
           url = src
 
-        # image saved to fs && db
-        if self._img_saved(url):
-          idata = self._img_data({ 'url' : url })
-          ipath = idata.get('path','')
-          pass
-        else:
+        get_img = 0
+        if self._act('get_img'):
+          get_img = 1
+
+        if not get_img:
+          # image saved to fs && db
+          if self._img_saved(url):
+            idata = self._img_data({ 'url' : url })
+            ipath = idata.get('path','')
+###i
+        if get_img:
           print(f"[page_do_imgs] Getting image: \n\t{url}")
           try:
             i = None
