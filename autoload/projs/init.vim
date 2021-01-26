@@ -172,6 +172,9 @@ function! projs#init#cmds (...)
 """PI
   command! -nargs=* -complete=custom,projs#complete#projsdirs PI
     \ call projs#init(<f-args>)
+
+  command! -nargs=* -complete=custom,projs#complete#BS BS
+    \ call projs#bs#cmd(<f-args>)
   
 """ProjsVarEcho
   command! -nargs=* -complete=custom,projs#complete#varlist    ProjsVarEcho 

@@ -377,14 +377,21 @@ This script will parse input URL
     self.page_ii_from_title()
     
     return self
+     
+  def _clean(self, site=None):
+    if not site:
+      site = self.site
+
+    clean = []
+    clean.extend( util.get(self,[ 'sites', site, 'clean' ],[]) )
+    clean.extend( util.get(self,'cnf.clean',[]) )
+    
+    return clean
 
   def page_clean(self):
     site = util.get(self,'site','')
-    ii   = util.get(self,'ii','')
 
-    clean = util.get(self,[ 'sites', site, 'clean' ],[])
-
-    for c in clean:
+    for c in self._clean(site):
       els_clean = self.soup.select(c)
       for el in els_clean:
         el.decompose()
@@ -540,8 +547,6 @@ This script will parse input URL
     self.url = ref.get('url','')
     self.ii  = ref.get('ii','')
 
-
-
     if not self.url or self.url == const.plh:
       return self
 
@@ -598,7 +603,7 @@ This script will parse input URL
       tt = re.sub(r'\s', '_', tt)
       ttl = cyrtranslit.to_latin(tt,'ru').lower()
       ttl = re.sub(r'[\W\']+', '', ttl)
-      import pdb; pdb.set_trace()
+      self.ii = ttl
 
     return self
 

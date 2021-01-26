@@ -41,6 +41,10 @@ function! projs#complete#projsload (...)
  return join(comps,"\n")
 endfunction
 
+function! projs#complete#BS (...)
+  return projs#complete#vars([ 'opts_BS' ])
+endfunction
+
 function! projs#complete#varlist (...)
   return projs#complete#vars([ 'varlist' ])
 endfunction
@@ -105,10 +109,10 @@ function! projs#complete#ZLAN (...)
 endfunction
 
 function! projs#complete#author_ids (...)
-	let ids = projs#db#author_ids()
-	let comps = []
-	call extend(comps,ids)
-	return join(comps, "\n")
+  let ids = projs#db#author_ids()
+  let comps = []
+  call extend(comps,ids)
+  return join(comps, "\n")
 
 endfunction
 
@@ -129,8 +133,8 @@ function! projs#complete#prjbuf (...)
 endfunction
 
 if 0
-	echo projs#complete#db_tags('doctrine')
-	echo projs#complete#db_tags('doctrine,orm')
+  echo projs#complete#db_tags('doctrine')
+  echo projs#complete#db_tags('doctrine,orm')
 endif
 
 function! projs#complete#db_tags (...)
@@ -142,24 +146,24 @@ function! projs#complete#db_tags (...)
 
   let comps = []
 
-	if !strlen(arg)
-		call extend(comps,tags)
-	else
+  if !strlen(arg)
+    call extend(comps,tags)
+  else
 
-  	let parts = split(arg, ',' , 1)
-		call map(parts,'base#trim(v:val)')
+    let parts = split(arg, ',' , 1)
+    call map(parts,'base#trim(v:val)')
 
-		while len(parts)
-			let last = remove(parts,-1)
-			let prev = join(parts, ',')
-	
-			if strlen(prev)
-				call extend(comps,map( copy(tags), printf('"%s," . v:val',prev) ))
-			else
-				call extend(comps,tags)
-			endif
-		endw
-	endif
+    while len(parts)
+      let last = remove(parts,-1)
+      let prev = join(parts, ',')
+  
+      if strlen(prev)
+        call extend(comps,map( copy(tags), printf('"%s," . v:val',prev) ))
+      else
+        call extend(comps,tags)
+      endif
+    endw
+  endif
 
   return join(comps,"\n")
 endfunction
