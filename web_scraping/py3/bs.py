@@ -804,12 +804,9 @@ This script will parse input URL
         'title'  : title,
     }
 
-    kk = '''title_h tags encoding author_id author_id_first ii_num ii_full'''
+    kk = '''date title_h tags encoding author_id author_id_first ii_num ii_full'''
     for k in kk.split(' '):
       insert.update({ k : self.page.get(k) })
-
-    if self.page['date']:
-      insert.update({ 'date' : self.page['date'] })
 
     d = {
       'db_file' : self.url_db,
