@@ -373,9 +373,6 @@ This script will parse input URL
 
     print(f'[load_soup] rid: {self.rid}, title: {self.title}')
     print(f'[load_soup] rid: {self.rid}, title_h: {title_h}')
-
-    self.page_ii_from_title()
-    print(f'[load_soup] ii: {self.ii}')
     
     return self
      
@@ -510,6 +507,12 @@ This script will parse input URL
 
     return self
 
+  def update_ii(self):
+    self.page_ii_from_title()
+    print(f'[load_soup] ii: {self.ii}')
+    
+    return self
+
 ###pu
   def parse_url_run(self,ref={}):
     tipes = util.qw('img img_clean')
@@ -517,6 +520,7 @@ This script will parse input URL
     self                                                \
         .load_soup()                                    \
         .in_load_site_module()                          \
+        .update_ii()                                    \
         .in_load_site_yaml()                            \
         .page_get_date()                                \
         .page_get_author()                              \
@@ -602,7 +606,7 @@ This script will parse input URL
       return self
 
     if util.obj_has_method(p, 'generate_ii'):
-      p.get_ii_from_file()
+      p.generate_ii()
     else:
       if self.title:
         tt = self.title
