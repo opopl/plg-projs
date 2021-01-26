@@ -1200,9 +1200,10 @@ This script will parse input URL
           url = src
 
         get_img = 1
+        img_saved = self._img_saved(url)
         if not self._act('get_img'):
           # image saved to fs && db
-          if self._img_saved(url):
+          if img_saved:
             idata = self._img_data({ 'url' : url })
             ipath = idata.get('path','')
             get_img = 0
@@ -1229,8 +1230,10 @@ This script will parse input URL
             dd = { 
               'url'  : url,
               'ext'  : iext,
-              'opts' : 'new',
             }
+            if not img_saved:
+              dd.update({ 'opts' : 'new' })
+
             idata = self._img_data(dd)
 
             img   = idata.get("img","")
