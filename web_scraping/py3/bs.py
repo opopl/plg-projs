@@ -11,6 +11,7 @@ import re
 import sqlite3
 import sqlparse
 
+
 import html.parser
 
 from pathlib import Path
@@ -415,7 +416,11 @@ This script will parse input URL
 
     self.title = self.soup.select_one('head > title').string.strip("\'\"")
 
-    title_h = self.page['title_h'] = self.soup.select_one('h1').string.strip("\'\"")
+    h1 = self.soup.select_one('h1')
+    if h1:
+      s = h1.string
+      if s:
+        self.page['title_h'] = s.strip("\'\"")
 
     self.log(f'[load_soup] rid: {self.rid}, title: {self.title}')
     self.log(f'[load_soup] rid: {self.rid}, title_h: {title_h}')
@@ -1214,7 +1219,8 @@ This script will parse input URL
           try:
             i = None
             try:
-              i = Image.open(requests.get(url, stream = True).raw)
+              ir = requests.get(url, stream = True).raw
+              i = Image.open(ir)
             except:
               self.log(f'FAIL[page_do_imgs] Image.open: {url}')
               self.log(f'FAIL[page_do_imgs] Image.open failure: {sys.exc_info()[0]}')

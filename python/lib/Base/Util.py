@@ -8,6 +8,7 @@ from urllib.parse import urljoin
 
 from url_normalize import url_normalize
 import datetime
+import shutil
 
 def mk_parent_dir(file):
   p = str(Path(file).parent)
@@ -25,6 +26,9 @@ def obj_methods(obj):
 def obj_has_method(obj, method):
   has = 1 if method in obj_methods(obj) else 0
   return has
+
+def which(name):
+  return shutil.which(name)
 
 def now(fmt='%d-%m-%Y %H:%M:%S'):
   now = datetime.datetime.now().strftime(fmt)
