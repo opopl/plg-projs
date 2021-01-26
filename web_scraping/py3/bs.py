@@ -381,8 +381,8 @@ This script will parse input URL
       site = self.site
 
     clean = []
-    clean.extend( util.get(self,[ 'sites', site, 'clean' ],[]) )
-    clean.extend( util.get(self,'cnf.clean',[]) )
+    clean.extend( util.get(self,[ 'sites', site, 'sel', 'clean' ],[]) )
+    clean.extend( util.get(self,'cnf.sel.clean',[]) )
     
     return clean
 
