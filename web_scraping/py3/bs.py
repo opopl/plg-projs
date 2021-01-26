@@ -195,6 +195,14 @@ This script will parse input URL
                 rank INTEGER,
                 rids TEXT
             );
+
+            CREATE TABLE IF NOT EXISTS log (
+                engine TEXT DEFAULT 'bs',
+                rid INTEGER,
+                remote TEXT,
+                msg TEXT,
+                time TEXT
+            );
         '''
     dbw.sql_do({ 
       'sql'     : sql,
@@ -360,9 +368,33 @@ def log(self,msg=[]):
       self.log(m)
     return self
 
-  elif type(msg) is str:
-    print(msg)
-      
+  if not type(msg) is str:
+    return self
+    
+  print(msg)
+
+  db_file = self.url_db
+  conn = sqlite3.connect(db_file)
+  c = conn.cursor()
+
+  insert = {
+      'msg'   : msg,
+      'rid'   : self.rid,
+      'url'   : self.ii,
+      'site'  : self.site,
+      'time'  : util.now()
+  }
+
+    kk = '''date title_h tags encoding author_id author_id_first ii_num ii_full'''
+    for k in kk.split(' '):
+      insert.update({ k : self.page.get(k) })
+
+    d = {
+      'db_file' : self.url_db,
+      'table'   : 'urls',
+      'insert'  : insert,
+    }
+    dbw.insert_dict(d)
   
   return self
 
