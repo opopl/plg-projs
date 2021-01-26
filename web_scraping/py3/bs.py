@@ -601,15 +601,15 @@ This script will parse input URL
     if self.ii:
       return self
 
-    if util.obj_has_method(p, 'get_ii_from_file'):
+    if util.obj_has_method(p, 'generate_ii'):
       p.get_ii_from_file()
-
-    if self.title:
-      tt = self.title
-      tt = re.sub(r'\s', '_', tt)
-      ttl = cyrtranslit.to_latin(tt,'ru').lower()
-      ttl = re.sub(r'[\W\']+', '', ttl)
-      self.ii = ttl
+    else:
+      if self.title:
+        tt = self.title
+        tt = re.sub(r'\s', '_', tt)
+        ttl = cyrtranslit.to_latin(tt,'ru').lower()
+        ttl = re.sub(r'[\W\']+', '', ttl)
+        self.ii = ttl
 
     return self
 
