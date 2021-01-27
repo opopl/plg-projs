@@ -492,7 +492,8 @@ This script will parse input URL
   def page_clean(self):
     site = util.get(self,'site','')
 
-    for c in self._clean(site):
+    clean = self._clean(site)
+    for c in clean:
       els_clean = self.soup.select(c)
       for el in els_clean:
         el.decompose()
@@ -1298,7 +1299,7 @@ This script will parse input URL
                 write_to=i_tmp['png']
               )
               i = Image.open(i_tmp['png'])
-              import pdb; pdb.set_trace()
+              #import pdb; pdb.set_trace()
             
           if not i:
             self.log(f'FAIL[page_do_imgs] no Image.open instance: {url}')
@@ -1306,6 +1307,7 @@ This script will parse input URL
             
           self.log(f'[page_do_imgs] Image format: {i.format}')
           iext = self._img_ext(i)
+          i.close()
 
           dd = { 
             'url'  : url,
