@@ -358,6 +358,7 @@ This script will parse input URL
         self.content = f.read()
     else:
         self.url_fetch()
+        self.page_save_cache()
 
     return self
 
@@ -380,8 +381,6 @@ This script will parse input URL
     self.page['encoding'] = encoding
 
     self.content = r.content
-
-    self.page_save_cache()
 
     self.page['fetched'] = 1
 
