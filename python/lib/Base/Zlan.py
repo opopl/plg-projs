@@ -35,7 +35,7 @@ def data(ref={}):
       line = lines.pop(0)
       save = 0
 
-      m = re.match('^page', line, flags=0)
+      m = re.match('^page', line)
       
       #If zero or more characters at the beginning of string match the regular expression pattern, 
       #return a corresponding match object. 

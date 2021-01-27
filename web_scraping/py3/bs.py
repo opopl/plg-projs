@@ -46,6 +46,11 @@ import Base.DBW as dbw
 import Base.Util as util
 import Base.Const as const
 
+class Page:
+  def __init__(self,args={}):
+    for k, v in args.items():
+      setattr(self, k, v)
+
 class Pic:
   url = None
 
@@ -190,7 +195,7 @@ This script will parse input URL
   pages = []
 
   # current page data
-  page = {}
+  page = Page({})
 
   # beautiful soup instance for the current page
   soup = None
@@ -370,6 +375,7 @@ This script will parse input URL
     with open(f_zlan,'r') as f:
       zlines = f.readlines()
       for zl in zlines:
+        pass
 
     return self
 
@@ -486,9 +492,13 @@ This script will parse input URL
     r = requests.get(url,headers=headers)
 
     encoding = 'utf-8'
-    if 'charset' in r.headers.get('content-type', '').lower():
+
+    ct = r.headers.get('content-type', '').lower()
+    setattr(self.page, 'ct', ct)
+
+    if 'charset' in self.page.ct:
       encoding = r.encoding
-    self.page['encoding'] = encoding
+    self.page.encoding = encoding
 
     self.content = r.content
     bs = BeautifulSoup(self.content,'html5lib')
@@ -496,7 +506,7 @@ This script will parse input URL
 
     self.page_save_cache()
 
-    self.page['fetched'] = 1
+    self.page.set('fetched',  1)
 
     return self
 
@@ -691,7 +701,7 @@ This script will parse input URL
     })
 
     if len(self.page):
-      self.pages.append(self.page)
+      self.page.acts.append(self.page)
 
     return self
 
@@ -843,16 +853,17 @@ This script will parse input URL
     except:
       return self
 
-    self.page = {}
+    self.page = Page({})
 
     acts = ref.get('acts')
     if acts:
       if type(acts) is list:
         self.page['acts'] = acts
+        setattr(self.page, 'acts', acts)
       elif type(acts) is str:
-        self.page['acts'] = acts.split(',')
+        setattr(self.page, 'acts', acts.split(','))
 
-    self.page['tags'] = ref.get('tags')
+    setattr(self.page, 'tags', ref.get('tags') )
 
     if (not ref.get('redo',0)):
       if self._site_skip() \
@@ -1458,7 +1469,7 @@ This script will parse input URL
   def render_page_list(self):
 
     t = self.template_env.get_template("list.t.html")
-    h = t.render(pages=self.pages)
+    h = t.render(pages=self.page.acts)
 
     h_file = self._dir('html list.html')
 
