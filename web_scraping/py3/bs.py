@@ -134,6 +134,9 @@ This script will parse input URL
     for k, v in args.items():
       setattr(self, k, v)
 
+    for k in util.qw('img_root html_root'):
+      self.dirs[k] = util.get(self,k) 
+
     if (not self.img_db) and self.img_root:
       self.img_db = os.path.join(self.img_root,'img.db')
 
@@ -233,9 +236,9 @@ This script will parse input URL
       self.dirs['out'] = os.path.join(dir,'out',stem)
     
     self.dirs.update({ 
-      'html'       : os.path.join(self.dirs['out'],'html'),
-      'tex_out'    : os.path.join(self.dirs['out'],'tex'),
-      'tmp_img'    : os.path.join(self.img_root,'tmp'),
+      'html'       : self._dir({ 'obj' : 'out' , 'fs' : 'html'}),
+      'tex_out'    : self._dir({ 'obj' : 'out' , 'fs' : 'tex'}),
+      'tmp_img'    : self._dir({ 'obj' : 'img_root' , 'fs' : 'tmp'}),
     })
 
     return self
@@ -278,15 +281,31 @@ This script will parse input URL
 
     return self
 
-  # self._dir({ obj='out tmpl',fs='' })
-  def _dir(self, ref = {}):
-    path_obj = util.get(ref,'obj','')
-    path_fs  = util.get(ref,'fs','')
+  # self._dir({ obj = 'out.tmpl', fs = '' })
+  # self._dir('out.tmpl')
+  # self._dir('img_root','tmp')
+  def _dir(self, arg = {}, *args):
 
-    dir = util.get(self.dirs,path_obj)
+    dir = None
+
+    if type(arg) is dict:
+      path_obj = util.get(arg,'obj','')
+      path_fs  = util.get(arg,'fs','')
+
+    elif type(arg) is str:
+      path_obj = arg
+      if args:
+        path_fs = args[0]
+
+    if path_obj:
+      dir = util.get(self.dirs,path_obj)
+
+    if dir:
+      a = [ dir ]
+      if path_fs:
+        a.extend(path_fs.split(' '))
+        Path(*a)
     
-    path_fs_a = path_fs.split(' ')
-
     return dir
 
   def _dir_ii(self,ref={}):
