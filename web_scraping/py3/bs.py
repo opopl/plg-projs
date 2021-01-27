@@ -248,7 +248,6 @@ This script will parse input URL
   def mk_dirs(self):
     for k,v in self.dirs.items():
       #os.makedirs(v,exist_ok=True)
-      #import pdb; pdb.set_trace()
       Path(v).mkdir(exist_ok=True)
 
     return self
@@ -382,11 +381,18 @@ This script will parse input URL
 
     self.content = r.content
 
-    util.mk_parent_dir(self.ii_cache)
-    with open(self.ii_cache, 'wb') as f:
-      f.write(self.content)
+    self.page_save_cache()
 
     self.page['fetched'] = 1
+
+    return self
+
+  def page_save_cache(self):
+
+    util.mk_parent_dir(self.ii_cache)
+
+    with open(self.ii_cache, 'wb') as f:
+      f.write(self.content)
 
     return self
 
@@ -502,6 +508,9 @@ This script will parse input URL
 
   def page_header_insert_url(self):
     h = self.soup.select_one('h1,h2,h3,h4,h5,h6')
+
+    if not h:
+      return self
 
     a = self.soup.new_tag('a', )
     a['href'] = self.url
@@ -634,6 +643,10 @@ This script will parse input URL
         .cmt(''' save image data => img.html''')        \
         .page_save_data_img()                           \
         .page_clean()                                   \
+        .page_unwrap()                                  \
+        .page_rm_empty()                                \
+        .page_header_insert_url()                       \
+        .page_save_clean()                              \
         .page_save_data_img({ 'tipe' : 'img_clean' })   \
         .page_do_imgs()                                 \
         .page_replace_links({ 'act' : 'rel_to_remote'}) \
@@ -644,9 +657,6 @@ This script will parse input URL
             'tipes' : tipes,                            \
             'act'  : 'remote_to_db',                    \
         })                                              \
-        .page_unwrap()                                  \
-        .page_rm_empty()                                \
-        .page_header_insert_url()                       \
         .page_save_clean()                              \
         .page_add()                                     \
 
@@ -1240,7 +1250,8 @@ This script will parse input URL
     img_dir = self._dir_ii_img()
 
     j = 0
-    for el_img in self.soup.find_all("img"):
+    els_img = self.soup.find_all("img")
+    for el_img in els_img:
       j+=1
       caption = ''
       #if el_img.has_attr('alt'):
@@ -1299,7 +1310,6 @@ This script will parse input URL
                 write_to=i_tmp['png']
               )
               i = Image.open(i_tmp['png'])
-              #import pdb; pdb.set_trace()
             
           if not i:
             self.log(f'FAIL[page_do_imgs] no Image.open instance: {url}')
@@ -1307,7 +1317,6 @@ This script will parse input URL
             
           self.log(f'[page_do_imgs] Image format: {i.format}')
           iext = self._img_ext(i)
-          i.close()
 
           dd = { 
             'url'  : url,
@@ -1327,6 +1336,7 @@ This script will parse input URL
             self.log(f'WARN[page_do_imgs] image file already exists: {img}')
 
           i.save(ipath)
+          i.close()
           self.log(f'[page_do_imgs] Saved image: {img}')
 
           d = {
