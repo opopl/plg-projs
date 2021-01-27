@@ -237,9 +237,9 @@ This script will parse input URL
     
     import pdb; pdb.set_trace()
     self.dirs.update({ 
-      'html'       : self._dir({ 'obj' : 'out' , 'fs' : 'html'}),
-      'tex_out'    : self._dir({ 'obj' : 'out' , 'fs' : 'tex'}),
-      'tmp_img'    : self._dir({ 'obj' : 'img_root' , 'fs' : 'tmp'}),
+      'html'       : self._dir('out' , 'html'),
+      'tex_out'    : self._dir('out' , 'tex'),
+      'tmp_img'    : self._dir('img_root', 'tmpl' ),
     })
 
     return self
@@ -288,33 +288,36 @@ This script will parse input URL
   def _dir(self, arg = {}, *args):
 
     dir      = None
-    path_fs  = None
-    path_obj = None
+    path_fs  = []
+    path_obj = []
 
     if type(arg) is dict:
-      path_obj = util.get(arg,'obj','')
-      path_fs  = util.get(arg,'fs','')
+      path_obj = util.get(arg,'obj',[])
+      path_fs  = util.get(arg,'fs',[])
 
     elif type(arg) is str:
       path_obj = arg
       if args:
-        path_fs = args[0]
+        if type(args[0]) is str:
+          path_fs = args[0].split(' ')
+        elif type(args[0]) is list:
+          path_fs = args[0]
 
     if path_obj:
-      dir = util.get(self.dirs,path_obj)
+      if type(path_obj) is str:
+        z = path_obj.split(' ')
+        dir = util.get(self.dirs,z.pop(0))
+        if len(z):
+          path_fs = z + path_fs
+
+      elif type(path_obj) is list:
+        dir = util.get(self.dirs,path_obj)
 
     if dir:
       a = [ dir ]
       if path_fs:
-        ax = None
-        if type(path_fs) is str:
-          ax = path_fs.split(' ')
-        elif type(path_fs) is list:
-          ax = path_fs
-
-        if ax:
-          a.extend(ax)
-          dir = str(Path(*a))
+        a.extend(path_fs)
+        dir = str(Path(*a))
 
     
     return dir
