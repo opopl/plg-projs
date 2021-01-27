@@ -481,14 +481,14 @@ This script will parse input URL
     if h1:
       s = h1.string
       if s:
-        title_h = self.page['title_h'] = s.strip("\'\"\n")
+        title_h = self.page['title_h'] = s.strip("\'\"\n\t ")
 
     self.log(f'[load_soup] rid: {self.rid}, title: {self.title}')
     self.log(f'[load_soup] rid: {self.rid}, title_h: {title_h}')
     
     return self
 
-  def _clean_base(self):
+  def _clean_core(self):
     clean = []
     clean.extend( util.get(self,'cnf.sel.clean',[]) )
 
