@@ -349,16 +349,16 @@ This script will parse input URL
     return ii_file
 
   def url_load_content(self,ref={}):
-    if self._act('fetch'):
+    if not self._act('fetch'):
+      if os.path.isfile(self.ii_cache):
+        with open(self.ii_cache,'r') as f:
+          self.content = f.read()
+          return self
+
       self.url_fetch()
       return self
 
-    if os.path.isfile(self.ii_cache):
-      with open(self.ii_cache,'r') as f:
-        self.content = f.read()
-    else:
-        self.url_fetch()
-        self.page_save_cache()
+    self.url_fetch()
 
     return self
 
@@ -384,6 +384,8 @@ This script will parse input URL
     bs = BeautifulSoup(self.content,'html5lib')
     self.content = bs.prettify()
 
+    self.page_save_cache()
+
     self.page['fetched'] = 1
 
     return self
@@ -392,7 +394,7 @@ This script will parse input URL
 
     util.mk_parent_dir(self.ii_cache)
 
-    with open(self.ii_cache, 'wb') as f:
+    with open(self.ii_cache, 'w') as f:
       f.write(self.content)
 
     return self
@@ -472,14 +474,14 @@ This script will parse input URL
 
     self.soup = BeautifulSoup(self.content,'html5lib',from_encoding=self.page.get('encoding'))
 
-    self.title = self.soup.select_one('head > title').string.strip("\'\"")
+    self.title = self.soup.select_one('head > title').string.strip("\'\"\n\t ")
 
     h1 = self.soup.select_one('h1')
     title_h = ''
     if h1:
       s = h1.string
       if s:
-        title_h = self.page['title_h'] = s.strip("\'\"")
+        title_h = self.page['title_h'] = s.strip("\'\"\n")
 
     self.log(f'[load_soup] rid: {self.rid}, title: {self.title}')
     self.log(f'[load_soup] rid: {self.rid}, title_h: {title_h}')
