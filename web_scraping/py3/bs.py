@@ -162,7 +162,7 @@ This script will parse input URL
     return self
 
   def init_tmpl(self):
-    self.template_loader = jinja2.FileSystemLoader(searchpath=self.dirs['tmpl'])
+    self.template_loader = jinja2.FileSystemLoader(searchpath=self._dir('tmpl'))
     env  = jinja2.Environment(loader=self.template_loader)
     env.globals['url_join'] = util.url_join
 
@@ -235,11 +235,10 @@ This script will parse input URL
       stem = pp.stem
       self.dirs['out'] = os.path.join(dir,'out',stem)
     
-    import pdb; pdb.set_trace()
     self.dirs.update({ 
       'html'       : self._dir('out' , 'html'),
       'tex_out'    : self._dir('out' , 'tex'),
-      'tmp_img'    : self._dir('img_root', 'tmpl' ),
+      'tmp_img'    : self._dir('img_root', 'tmp' ),
     })
 
     return self
@@ -1332,7 +1331,7 @@ This script will parse input URL
     t = self.template_env.get_template("list.t.html")
     h = t.render(pages=self.pages)
 
-    h_file = os.path.join(self.dirs['html'],'list.html')
+    h_file = self._dir('html list.html')
 
     with open(h_file, 'w') as f:
         f.write(h)
