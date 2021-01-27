@@ -530,12 +530,16 @@ This script will parse input URL
 
     return self
 
-  def page_save_clean(self):
+  def page_save(self,ref={}):
+    tipe = util.get(ref,'tipe','clean')
 
-    self.ii_clean = self._file_ii({ 'tipe' : 'clean' })
-    util.mk_parent_dir(self.ii_clean)
+    sv = self._sv_ii({ 'tipe' : tipe })
+    if tipe == 'clean':
+       self.ii_clean = sv
 
-    with open(self.ii_clean, 'w') as f:
+    util.mk_parent_dir(sv)
+
+    with open(sv, 'w') as f:
       f.write(self.soup.prettify())
 
     return self
