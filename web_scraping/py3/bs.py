@@ -235,6 +235,7 @@ This script will parse input URL
     self.dirs.update({ 
       'html'       : os.path.join(self.dirs['out'],'html'),
       'tex_out'    : os.path.join(self.dirs['out'],'tex'),
+      'tmp_img'    : os.path.join(self.img_root,'tmp'),
     })
 
     return self
@@ -276,6 +277,11 @@ This script will parse input URL
           setattr(self, k, d)
 
     return self
+
+  def _dir(self, path_obj = '', path_fs = '' ):
+    dir = util.get(self.dirs,path_obj)
+
+    return dir
 
   def _dir_ii(self,ref={}):
     rid = ref.get('rid',self.rid)
@@ -1219,67 +1225,56 @@ This script will parse input URL
 ###i
         if get_img:
           self.log(f"[page_do_imgs] Getting image: \n\t{url}")
-          try:
-            i = None
-            try:
-              resp = requests.get(url, stream = True)
-              resp.raw.decoded_content = True
+          i = None
+          resp = requests.get(url, stream = True)
+          resp.raw.decoded_content = True
 
-              i = Image.open(resp.raw)
-            except UnidentifiedImageError:
-              self.log(f'FAIL[page_do_imgs] UnidentifiedImageError: {url}')
-              raise
-            except:
-              self.log(f'FAIL[page_do_imgs] Image.open: {url}')
-              self.log(f'FAIL[page_do_imgs] Image.open failure: {sys.exc_info()[0]}')
-              raise 
+          saved = os.path.join(self.img_root,'tmp')
 
-            if not i:
-              self.log(f'FAIL[page_do_imgs] no Image.open instance: {url}')
-              continue
+          i = Image.open(resp.raw)
             
-            self.log(f'[page_do_imgs] Image format: {i.format}')
-            iext = self._img_ext(i)
+          if not i:
+            self.log(f'FAIL[page_do_imgs] no Image.open instance: {url}')
+            continue
+            
+          self.log(f'[page_do_imgs] Image format: {i.format}')
+          iext = self._img_ext(i)
 
-            dd = { 
-              'url'  : url,
-              'ext'  : iext,
+          dd = { 
+            'url'  : url,
+            'ext'  : iext,
+          }
+          if not img_saved:
+            dd.update({ 'opts' : 'new' })
+
+          idata = self._img_data(dd)
+
+          img   = idata.get("img","")
+          inum  = idata.get('inum','')
+          ipath = idata.get('path','')
+
+          self.log(f'[page_do_imgs] Local path: {idata.get("path","")}')
+          if os.path.isfile(ipath):
+            self.log(f'WARN[page_do_imgs] image file already exists: {img}')
+          else:
+            i.save(ipath)
+            self.log(f'[page_do_imgs] Saved image: {img}')
+
+          d = {
+            'db_file' : self.img_db,
+            'table'   : 'imgs',
+            'insert' : {
+              'url'        : url,
+              'url_parent' : self.url,
+              'img'        : img,
+              'inum'       : inum,
+              'ext'        : iext,
+              'rootid'     : self.rootid,
+              'proj'       : self.proj,
+              'caption'    : caption,
             }
-            if not img_saved:
-              dd.update({ 'opts' : 'new' })
-
-            idata = self._img_data(dd)
-
-            img   = idata.get("img","")
-            inum  = idata.get('inum','')
-            ipath = idata.get('path','')
-
-            self.log(f'[page_do_imgs] Local path: {idata.get("path","")}')
-            if os.path.isfile(ipath):
-              self.log(f'WARN[page_do_imgs] image file already exists: {img}')
-            else:
-              i.save(ipath)
-              self.log(f'[page_do_imgs] Saved image: {img}')
-
-            d = {
-              'db_file' : self.img_db,
-              'table'   : 'imgs',
-              'insert' : {
-                'url'        : url,
-                'url_parent' : self.url,
-                'img'        : img,
-                'inum'       : inum,
-                'ext'        : iext,
-                'rootid'     : self.rootid,
-                'proj'       : self.proj,
-                'caption'    : caption,
-              }
-            }
-            dbw.insert_dict(d)
-          except:
-            self.log(f'WARN[page_do_imgs] Image.open exception: {url}')
-            raise
-
+          }
+          dbw.insert_dict(d)
 
         ipath_uri = Path(ipath).as_uri()
         el_img['src'] = ipath_uri
