@@ -93,13 +93,13 @@ class Pic:
       continue
       
     app.log(f'[page_do_imgs] Image format: {i.format}')
-    iext = app._img_ext(i)
+    pic.ext = app._img_ext(i)
 
     dd = { 
       'url'  : pic.url,
-      'ext'  : iext,
+      'ext'  : pic.ext,
     }
-    if not img_saved:
+    if not pic.img_saved:
       dd.update({ 'opts' : 'new' })
 
     pic.idata = app._img_data(dd)
@@ -108,13 +108,13 @@ class Pic:
     pic.inum  = idata.get('inum','')
     pic.ipath = idata.get('path','')
 
-    app.log(f'[page_do_imgs] Local path: {idata.get("path","")}')
-    if os.path.isfile(ipath):
-      app.log(f'WARN[page_do_imgs] image file already exists: {img}')
+    app.log(f'[page_do_imgs] Local path: {pic.idata.get("path","")}')
+    if os.path.isfile(pic.ipath):
+      app.log(f'WARN[page_do_imgs] image file already exists: {pic.img}')
 
     i.save(pic.ipath)
     i.close()
-    app.log(f'[page_do_imgs] Saved image: {img}')
+    app.log(f'[page_do_imgs] Saved image: {pic.img}')
 
     insert =  {
         'url_parent' : app.url,
@@ -123,7 +123,7 @@ class Pic:
         'url'        : pic.url,
         'img'        : pic.img,
         'inum'       : pic.inum,
-        'ext'        : pic.iext,
+        'ext'        : pic.ext,
         'caption'    : pic.caption,
     }
 
@@ -1410,10 +1410,10 @@ This script will parse input URL
         self.pic.url = url
 
         get_img = 1
-        img_saved = self._img_saved(url)
+        self.pic.img_saved = self._img_saved(url)
         if not self._act('get_img'):
           # image saved to fs && db
-          if img_saved:
+          if self.pic.img_saved:
             idata = self._img_data({ 'url' : url })
             ipath = idata.get('path','')
             get_img = 0
