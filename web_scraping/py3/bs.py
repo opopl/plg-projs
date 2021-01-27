@@ -506,11 +506,11 @@ This script will parse input URL
 
   def page_clean_core(self):
     clean = self._clean_core()
-    self.page_clean({ 'clean' : clean})
+    self.page_clean({ 'clean' : clean })
     return self
 
   def page_clean(self,ref={}):
-    site = util.get(self,'site','')
+    site = util.get(self,'site',self.site)
 
     clean = self._clean(site)
     clean = util.get(ref,'clean',clean)
