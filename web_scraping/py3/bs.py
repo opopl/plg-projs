@@ -278,8 +278,14 @@ This script will parse input URL
 
     return self
 
-  def _dir(self, path_obj = '', path_fs = '' ):
+  # self._dir({ obj='out tmpl',fs='' })
+  def _dir(self, ref = {}):
+    path_obj = util.get(ref,'obj','')
+    path_fs  = util.get(ref,'fs','')
+
     dir = util.get(self.dirs,path_obj)
+    
+    path_fs_a = path_fs.split(' ')
 
     return dir
 
