@@ -495,6 +495,11 @@ This script will parse input URL
     return clean
 
   def _sel_keep(self, site=None):
+    if not site:
+      site = self.site
+
+    keep = []
+    keep.extend( util.get(self,[ 'sites', site, 'sel', 'keep' ],[]) )
     return keep
      
   def _sel_clean(self, site=None):
@@ -519,6 +524,9 @@ This script will parse input URL
     clean = util.get(ref,'clean',clean)
 
     for c in clean:
+      if c in self._sel_keep(site):
+        continue
+
       els_clean = self.soup.select(c)
       for el in els_clean:
         el.decompose()
