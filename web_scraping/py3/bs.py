@@ -70,7 +70,6 @@ class Pic:
       shutil.copyfileobj(resp.raw, lf)
 
     ct = resp.headers['content-type']
-    import pdb; pdb.set_trace()
 
     #resp.raw type is urllib3.response.HTTPResponse
 
@@ -114,18 +113,23 @@ class Pic:
     if os.path.isfile(pic.ipath):
       app.log(f'WARN[page_do_imgs] image file already exists: {pic.img}')
 
-    i.save(pic.ipath,save_all=True)
+    a = {}
+    if pic.ext == 'gif':
+      a['save_all'] = True
+
+    i.save(pic.ipath,**a)
     i.close()
+
     app.log(f'[page_do_imgs] Saved image: {pic.img}')
 
     insert =  {
         'url_parent' : app.url,
     }
     for k in util.qw('url img inum ext caption'):
-      insert[k] = getattr(pic,k)
+      insert[k] = getattr(pic,k,None)
 
     for k in util.qw('proj rootid'):
-      insert[k] = getattr(app,k)
+      insert[k] = getattr(app,k,None)
 
     d = {
       'db_file' : app.img_db,
@@ -1393,7 +1397,7 @@ This script will parse input URL
       j+=1
       caption = ''
 
-      self.pic = Pic({ 'app' : self })
+      self.pic = pic = Pic({ 'app' : self })
       #if el_img.has_attr('alt'):
         #caption = el_img['alt']
 
@@ -1423,7 +1427,7 @@ This script will parse input URL
         if get_img:
           self.pic.grab()
 
-        ipath_uri = Path(ipath).as_uri()
+        ipath_uri = Path(pic.ipath).as_uri()
         el_img['src'] = ipath_uri
         
         n = self.soup.new_tag('img')
