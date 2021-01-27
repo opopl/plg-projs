@@ -46,6 +46,96 @@ import Base.DBW as dbw
 import Base.Util as util
 import Base.Const as const
 
+class Pic:
+  url = None
+
+  def __init__(self,args={}):
+    for k, v in args.items():
+      setattr(self, k, v)
+
+  def grab(pic):
+    app = pic.app
+
+    app.log(f"[page_do_imgs] Getting image: \n\t{pic.url}")
+
+    i = None
+    resp = requests.get(pic.url, stream = True)
+    resp.raw.decoded_content = True
+
+    i_tmp = { 
+       'bare' : pic._dir('tmp_img bs_img'),
+       'png'  : pic._dir('tmp_img bs_img.png'),
+    }
+    with open(i_tmp['bare'], 'wb') as lf:
+      shutil.copyfileobj(resp.raw, lf)
+
+    #resp.raw type is urllib3.response.HTTPResponse
+
+    # Image class instance
+    i = None
+    try:
+      i = Image.open(i_tmp['bare'])
+      #i = Image.open(resp.raw)
+    except UnidentifiedImageError:
+      #with open(i_tmp, 'r') as lf:
+        #a = lf.read()
+
+      ct = resp.headers['content-type']
+      if ct in [ 'image/svg+xml' ]:
+        cairosvg.svg2png( 
+          file_obj=open(i_tmp['bare'], "rb"),
+          write_to=i_tmp['png']
+        )
+        i = Image.open(i_tmp['png'])
+      
+    if not i:
+      app.log(f'FAIL[page_do_imgs] no Image.open instance: {url}')
+      continue
+      
+    app.log(f'[page_do_imgs] Image format: {i.format}')
+    iext = app._img_ext(i)
+
+    dd = { 
+      'url'  : pic.url,
+      'ext'  : iext,
+    }
+    if not img_saved:
+      dd.update({ 'opts' : 'new' })
+
+    pic.idata = app._img_data(dd)
+
+    pic.img   = idata.get("img","")
+    pic.inum  = idata.get('inum','')
+    pic.ipath = idata.get('path','')
+
+    app.log(f'[page_do_imgs] Local path: {idata.get("path","")}')
+    if os.path.isfile(ipath):
+      app.log(f'WARN[page_do_imgs] image file already exists: {img}')
+
+    i.save(pic.ipath)
+    i.close()
+    app.log(f'[page_do_imgs] Saved image: {img}')
+
+    insert =  {
+        'url_parent' : app.url,
+        'rootid'     : app.rootid,
+        'proj'       : app.proj,
+        'url'        : pic.url,
+        'img'        : pic.img,
+        'inum'       : pic.inum,
+        'ext'        : pic.iext,
+        'caption'    : pic.caption,
+    }
+
+    d = {
+      'db_file' : app.img_db,
+      'table'   : 'imgs',
+      'insert'  : insert
+    }
+    dbw.insert_dict(d)
+    
+    return pic
+
 class BS:
   # class attributes {
   usage='''
@@ -119,6 +209,9 @@ This script will parse input URL
   # image database
   img_db = None
   img_conn = None
+
+  # current image data
+  pic = Pic()
 
   # rid
   rid = 0
@@ -1298,6 +1391,8 @@ This script will parse input URL
     for el_img in els_img:
       j+=1
       caption = ''
+
+      self.pic = Pic({ 'app' : self })
       #if el_img.has_attr('alt'):
         #caption = el_img['alt']
 
@@ -1312,6 +1407,8 @@ This script will parse input URL
         else:
           url = src
 
+        self.pic.url = url
+
         get_img = 1
         img_saved = self._img_saved(url)
         if not self._act('get_img'):
@@ -1323,81 +1420,7 @@ This script will parse input URL
 
 ###i
         if get_img:
-          self.log(f"[page_do_imgs] Getting image: \n\t{url}")
-
-          i = None
-          resp = requests.get(url, stream = True)
-          resp.raw.decoded_content = True
-
-          i_tmp = { 
-             'bare' : self._dir('tmp_img bs_img'),
-             'png'  : self._dir('tmp_img bs_img.png'),
-          }
-          with open(i_tmp['bare'], 'wb') as lf:
-            shutil.copyfileobj(resp.raw, lf)
-
-          #resp.raw type is urllib3.response.HTTPResponse
-
-          # Image class instance
-          i = None
-          try:
-            i = Image.open(i_tmp['bare'])
-            #i = Image.open(resp.raw)
-          except UnidentifiedImageError:
-            #with open(i_tmp, 'r') as lf:
-              #a = lf.read()
-
-            ct = resp.headers['content-type']
-            if ct in [ 'image/svg+xml' ]:
-              cairosvg.svg2png( 
-                file_obj=open(i_tmp['bare'], "rb"),
-                write_to=i_tmp['png']
-              )
-              i = Image.open(i_tmp['png'])
-            
-          if not i:
-            self.log(f'FAIL[page_do_imgs] no Image.open instance: {url}')
-            continue
-            
-          self.log(f'[page_do_imgs] Image format: {i.format}')
-          iext = self._img_ext(i)
-
-          dd = { 
-            'url'  : url,
-            'ext'  : iext,
-          }
-          if not img_saved:
-            dd.update({ 'opts' : 'new' })
-
-          idata = self._img_data(dd)
-
-          img   = idata.get("img","")
-          inum  = idata.get('inum','')
-          ipath = idata.get('path','')
-
-          self.log(f'[page_do_imgs] Local path: {idata.get("path","")}')
-          if os.path.isfile(ipath):
-            self.log(f'WARN[page_do_imgs] image file already exists: {img}')
-
-          i.save(ipath)
-          i.close()
-          self.log(f'[page_do_imgs] Saved image: {img}')
-
-          d = {
-            'db_file' : self.img_db,
-            'table'   : 'imgs',
-            'insert' : {
-              'url'        : url,
-              'url_parent' : self.url,
-              'img'        : img,
-              'inum'       : inum,
-              'ext'        : iext,
-              'rootid'     : self.rootid,
-              'proj'       : self.proj,
-              'caption'    : caption,
-            }
-          }
-          dbw.insert_dict(d)
+          self.pic.grab()
 
         ipath_uri = Path(ipath).as_uri()
         el_img['src'] = ipath_uri
