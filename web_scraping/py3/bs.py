@@ -488,31 +488,34 @@ This script will parse input URL
     
     return self
 
-  def _clean_core(self):
+  def _sel_clean_core(self):
     clean = []
     clean.extend( util.get(self,'cnf.sel.clean',[]) )
 
     return clean
+
+  def _sel_keep(self, site=None):
+    return keep
      
-  def _clean(self, site=None):
+  def _sel_clean(self, site=None):
     if not site:
       site = self.site
 
     clean = []
-    clean.extend( self._clean_core() )
+    clean.extend( self._sel_clean_core() )
     clean.extend( util.get(self,[ 'sites', site, 'sel', 'clean' ],[]) )
     
     return clean
 
   def page_clean_core(self):
-    clean = self._clean_core()
+    clean = self._sel_clean_core()
     self.page_clean({ 'clean' : clean })
     return self
 
   def page_clean(self,ref={}):
     site = util.get(self,'site',self.site)
 
-    clean = self._clean(site)
+    clean = self._sel_clean(site)
     clean = util.get(ref,'clean',clean)
 
     for c in clean:
@@ -684,6 +687,26 @@ This script will parse input URL
         .page_add()                                     \
 
     return self
+
+  def site_extract(self):
+    
+    hsts = self.hosts
+    try:
+      for pat in hsts.keys():
+        for k in pat.split(','):
+          if self.host.find(k) != -1:
+            self.site = util.get(hsts,[ pat, 'site' ])
+            if self.site:
+              raise StopIteration
+  
+    except StopIteration:
+      pass
+  
+    if not self.site:
+      self.log(f'[WARN] no site for url: {self.url}')
+      raise
+  
+    return self
   
   def parse_url(self,ref={}):
     self.url = ref.get('url','')
@@ -695,22 +718,10 @@ This script will parse input URL
     u = urlparse(self.url)
     self.host = u.netloc.split(':')[0]
     self.base_url = u.scheme + '://' + u.netloc 
-    self.site = util.get(self,[ 'hosts', self.host, 'site' ],'')
 
-    hsts = self.hosts
     try:
-      for pat in hsts.keys():
-        for k in pat.split(','):
-          if self.host.find(k) != -1:
-            self.site = util.get(hsts,[ pat, 'site' ])
-            if self.site:
-              raise StopIteration
-
-    except StopIteration:
-      pass
-
-    if not self.site:
-      self.log(f'[WARN] no site for url: {self.url}')
+      self.site_extract()
+    except:
       return self
 
     self.page = {}
@@ -728,6 +739,8 @@ This script will parse input URL
       if self._site_skip() \
           or self._url_saved_fs(): 
         return self
+
+    self.log(f'[site_extract] site = {self.site}')
 
     self.log('=' * 100)
     self.log(f'[parse_url] start: {self.url}')
