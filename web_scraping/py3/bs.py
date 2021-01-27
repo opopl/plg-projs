@@ -63,8 +63,8 @@ class Pic:
     resp.raw.decoded_content = True
 
     i_tmp = { 
-       'bare' : pic._dir('tmp_img bs_img'),
-       'png'  : pic._dir('tmp_img bs_img.png'),
+       'bare' : app._dir('tmp_img bs_img'),
+       'png'  : app._dir('tmp_img bs_img.png'),
     }
     with open(i_tmp['bare'], 'wb') as lf:
       shutil.copyfileobj(resp.raw, lf)
@@ -89,8 +89,8 @@ class Pic:
         i = Image.open(i_tmp['png'])
       
     if not i:
-      app.log(f'FAIL[page_do_imgs] no Image.open instance: {url}')
-      continue
+      app.log(f'FAIL[page_do_imgs] no Image.open instance: {pic.url}')
+      return pic
       
     app.log(f'[page_do_imgs] Image format: {i.format}')
     pic.ext = app._img_ext(i)
@@ -104,9 +104,9 @@ class Pic:
 
     pic.idata = app._img_data(dd)
 
-    pic.img   = idata.get("img","")
-    pic.inum  = idata.get('inum','')
-    pic.ipath = idata.get('path','')
+    pic.img   = pic.idata.get("img","")
+    pic.inum  = pic.idata.get('inum','')
+    pic.ipath = pic.idata.get('path','')
 
     app.log(f'[page_do_imgs] Local path: {pic.idata.get("path","")}')
     if os.path.isfile(pic.ipath):
