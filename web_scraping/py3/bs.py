@@ -69,6 +69,9 @@ class Pic:
     with open(i_tmp['bare'], 'wb') as lf:
       shutil.copyfileobj(resp.raw, lf)
 
+    ct = resp.headers['content-type']
+    import pdb; pdb.set_trace()
+
     #resp.raw type is urllib3.response.HTTPResponse
 
     # Image class instance
@@ -80,7 +83,6 @@ class Pic:
       #with open(i_tmp, 'r') as lf:
         #a = lf.read()
 
-      ct = resp.headers['content-type']
       if ct in [ 'image/svg+xml' ]:
         cairosvg.svg2png( 
           file_obj=open(i_tmp['bare'], "rb"),
@@ -112,20 +114,18 @@ class Pic:
     if os.path.isfile(pic.ipath):
       app.log(f'WARN[page_do_imgs] image file already exists: {pic.img}')
 
-    i.save(pic.ipath)
+    i.save(pic.ipath,save_all=True)
     i.close()
     app.log(f'[page_do_imgs] Saved image: {pic.img}')
 
     insert =  {
         'url_parent' : app.url,
-        'rootid'     : app.rootid,
-        'proj'       : app.proj,
-        'url'        : pic.url,
-        'img'        : pic.img,
-        'inum'       : pic.inum,
-        'ext'        : pic.ext,
-        'caption'    : pic.caption,
     }
+    for k in util.qw('url img inum ext caption'):
+      insert[k] = getattr(pic,k)
+
+    for k in util.qw('proj rootid'):
+      insert[k] = getattr(app,k)
 
     d = {
       'db_file' : app.img_db,
@@ -1144,6 +1144,7 @@ This script will parse input URL
     map = {
        'JPEG'  : 'jpg',
        'PNG'   : 'png',
+       'GIF'   : 'gif',
     }
     ext = map.get(imgobj.format,'jpg')
     return ext
