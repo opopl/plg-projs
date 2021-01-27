@@ -504,10 +504,17 @@ This script will parse input URL
     
     return clean
 
-  def page_clean(self):
+  def page_clean_base(self):
+    clean = self._clean_base()
+    self.page_clean({ 'clean' : clean})
+    return self
+
+  def page_clean(self,ref={}):
     site = util.get(self,'site','')
 
     clean = self._clean(site)
+    clean = util.get(ref,'clean',clean)
+
     for c in clean:
       els_clean = self.soup.select(c)
       for el in els_clean:
@@ -655,11 +662,13 @@ This script will parse input URL
         .page_save_data({ 'tags' : 'meta,script,img' }) \
         .cmt(''' save image data => img.html''')        \
         .page_save_data_img()                           \
+        .page_clean_base()                              \
+        .page_save({ 'tipe' : 'clean_base'})            \
         .page_clean()                                   \
         .page_unwrap()                                  \
         .page_rm_empty()                                \
         .page_header_insert_url()                       \
-        .page_save_clean()                              \
+        .page_save({ 'tipe' : 'clean'})                 \
         .page_save_data_img({ 'tipe' : 'img_clean' })   \
         .page_do_imgs()                                 \
         .page_replace_links({ 'act' : 'rel_to_remote'}) \
