@@ -22,6 +22,8 @@ from url_normalize import url_normalize
 from copy import copy
 
 from PIL import Image
+from PIL import UnidentifiedImageError
+
 from io import StringIO
 
 #from jinja2 import Template
@@ -368,7 +370,10 @@ This script will parse input URL
     if self.page.get('fetched'):
       return self
 
-    r = requests.get(url)
+    headers = {
+     'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.3'
+    }
+    r = requests.get(url,headers=headers)
 
     encoding = 'utf-8'
     if 'charset' in r.headers.get('content-type', '').lower():
@@ -1267,9 +1272,26 @@ This script will parse input URL
           resp = requests.get(url, stream = True)
           resp.raw.decoded_content = True
 
-          saved = os.path.join(self.img_root,'tmp')
+          #resp = requests.get(url)
 
-          i = Image.open(resp.raw)
+          #resp.raw type is urllib3.response.HTTPResponse
+
+          i_tmp = self._dir('tmp_img bs_img')
+          with open(i_tmp, 'wb') as lf:
+            shutil.copyfileobj(resp.raw, lf)
+
+          # Image class instance
+          i = None
+          try:
+            i = Image.open(i_tmp)
+          except UnidentifiedImageError:
+            with open(i_tmp, 'r') as lf:
+              a = lf.read()
+
+            ct = resp.headers['content-type']
+            if ct in [ 'image/svg+xml' ]:
+              import pdb; pdb.set_trace()
+            raise
             
           if not i:
             self.log(f'FAIL[page_do_imgs] no Image.open instance: {url}')
