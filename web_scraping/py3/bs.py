@@ -626,7 +626,7 @@ This script will parse input URL
 
       els_clean = self.soup.select(c)
       for el in els_clean:
-        import pdb; pdb.set_trace()
+        #import pdb; pdb.set_trace()
         el.decompose()
 
     return self
