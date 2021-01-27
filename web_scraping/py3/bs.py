@@ -499,13 +499,13 @@ This script will parse input URL
       site = self.site
 
     clean = []
-    clean.extend( self._clean_base() )
+    clean.extend( self._clean_core() )
     clean.extend( util.get(self,[ 'sites', site, 'sel', 'clean' ],[]) )
     
     return clean
 
-  def page_clean_base(self):
-    clean = self._clean_base()
+  def page_clean_core(self):
+    clean = self._clean_core()
     self.page_clean({ 'clean' : clean})
     return self
 
@@ -540,7 +540,7 @@ This script will parse input URL
   def page_save(self,ref={}):
     tipe = util.get(ref,'tipe','clean')
 
-    sv = self._sv_ii({ 'tipe' : tipe })
+    sv = self._file_ii({ 'tipe' : tipe })
     if tipe == 'clean':
        self.ii_clean = sv
 
@@ -560,6 +560,7 @@ This script will parse input URL
         'script' : self._file_ii_uri({ 'tipe' : 'script', 'ext' : 'txt' }),
         'clean'  : self._file_ii_uri({ 'tipe' : 'clean' }),
         'cache'  : self._file_ii_uri(),
+        'core'     : self._file_ii_uri({ 'tipe' : 'core' }),
         'img'       : self._file_ii_uri({ 'tipe' : 'img' }),
         'img_clean' : self._file_ii_uri({ 'tipe' : 'img_clean' }),
       },
@@ -662,8 +663,8 @@ This script will parse input URL
         .page_save_data({ 'tags' : 'meta,script,img' }) \
         .cmt(''' save image data => img.html''')        \
         .page_save_data_img()                           \
-        .page_clean_base()                              \
-        .page_save({ 'tipe' : 'clean_base'})            \
+        .page_clean_core()                              \
+        .page_save({ 'tipe' : 'core' })                 \
         .page_clean()                                   \
         .page_unwrap()                                  \
         .page_rm_empty()                                \
@@ -679,7 +680,7 @@ This script will parse input URL
             'tipes' : tipes,                            \
             'act'  : 'remote_to_db',                    \
         })                                              \
-        .page_save_clean()                              \
+        .page_save()                                    \
         .page_add()                                     \
 
     return self
