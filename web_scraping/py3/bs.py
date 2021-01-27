@@ -1412,20 +1412,22 @@ This script will parse input URL
         else:
           url = src
 
-        self.pic.url = url
+        pic.url = url
 
         get_img = 1
-        self.pic.img_saved = self._img_saved(url)
+
+        pic.img_saved = self._img_saved(url)
+
         if not self._act('get_img'):
           # image saved to fs && db
-          if self.pic.img_saved:
-            idata = self._img_data({ 'url' : url })
-            ipath = idata.get('path','')
+          if pic.img_saved:
+            pic.idata = self._img_data({ 'url' : url })
+            pic.ipath = pic.idata.get('path','')
             get_img = 0
 
 ###i
         if get_img:
-          self.pic.grab()
+          pic.grab()
 
         ipath_uri = Path(pic.ipath).as_uri()
         el_img['src'] = ipath_uri
