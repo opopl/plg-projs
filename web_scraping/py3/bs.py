@@ -381,6 +381,8 @@ This script will parse input URL
     self.page['encoding'] = encoding
 
     self.content = r.content
+    bs = BeautifulSoup(self.content,'html5lib')
+    self.content = bs.prettify()
 
     self.page['fetched'] = 1
 
