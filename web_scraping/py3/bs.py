@@ -10,7 +10,7 @@ import re
 
 import sqlite3
 import sqlparse
-
+import cairosvg
 
 import html.parser
 
@@ -241,7 +241,9 @@ This script will parse input URL
 
   def mk_dirs(self):
     for k,v in self.dirs.items():
-      os.makedirs(v,exist_ok=True)
+      #os.makedirs(v,exist_ok=True)
+      #import pdb; pdb.set_trace()
+      Path(v).mkdir(exist_ok=True)
 
     return self
 
@@ -417,10 +419,11 @@ This script will parse input URL
     self.title = self.soup.select_one('head > title').string.strip("\'\"")
 
     h1 = self.soup.select_one('h1')
+    title_h = ''
     if h1:
       s = h1.string
       if s:
-        self.page['title_h'] = s.strip("\'\"")
+        title_h = self.page['title_h'] = s.strip("\'\"")
 
     self.log(f'[load_soup] rid: {self.rid}, title: {self.title}')
     self.log(f'[load_soup] rid: {self.rid}, title_h: {title_h}')
@@ -1219,8 +1222,13 @@ This script will parse input URL
           try:
             i = None
             try:
-              ir = requests.get(url, stream = True).raw
-              i = Image.open(ir)
+              resp = requests.get(url, stream = True)
+              resp.raw.decoded_content = True
+
+              i = Image.open(resp.raw)
+            except UnidentifiedImageError:
+              self.log(f'FAIL[page_do_imgs] UnidentifiedImageError: {url}')
+              raise
             except:
               self.log(f'FAIL[page_do_imgs] Image.open: {url}')
               self.log(f'FAIL[page_do_imgs] Image.open failure: {sys.exc_info()[0]}')
