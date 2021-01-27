@@ -248,6 +248,7 @@ This script will parse input URL
     
     self.parser.add_argument("-u", "--url", help="input URL",default="")
     self.parser.add_argument("-y", "--f_yaml", help="input YAML file",default="")
+    self.parser.add_argument("-z", "--f_zlan", help="input ZLAN file",default="")
     
     self.oa = self.parser.parse_args()
 
@@ -255,8 +256,9 @@ This script will parse input URL
       self.parser.print_help()
       sys.exit()
 
-    self.url    = self.oa.url
-    self.f_yaml = self.oa.f_yaml
+    for k in util.qw('url f_yaml f_zlan'):
+      v  = util.get(self,[ 'oa', k ])
+      setattr(self, k, v)
 
     return self
 
@@ -359,6 +361,17 @@ This script will parse input URL
         return d
 
     return 
+
+###z
+  def load_zlan(self, ref={}):
+    f_zlan = util.get(self,'f_zlan')
+    f_zlan = ref.get('zlan',f_zlan)
+
+    with open(f_zlan,'r') as f:
+      zlines = f.readlines()
+      for zl in zlines:
+
+    return self
 
   def load_yaml(self, f_yaml=None):
     if not f_yaml:
@@ -1478,6 +1491,7 @@ This script will parse input URL
       .init_tmpl()        \
       .mk_dirs()          \
       .load_yaml()        \
+      .load_zlan()        \
       .fill_vars()        \
       .parse()            \
       .render_page_list() \
