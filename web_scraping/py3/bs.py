@@ -487,14 +487,20 @@ This script will parse input URL
     self.log(f'[load_soup] rid: {self.rid}, title_h: {title_h}')
     
     return self
+
+  def _clean_base(self):
+    clean = []
+    clean.extend( util.get(self,'cnf.sel.clean',[]) )
+
+    return clean
      
   def _clean(self, site=None):
     if not site:
       site = self.site
 
     clean = []
+    clean.extend( self._clean_base() )
     clean.extend( util.get(self,[ 'sites', site, 'sel', 'clean' ],[]) )
-    clean.extend( util.get(self,'cnf.sel.clean',[]) )
     
     return clean
 
