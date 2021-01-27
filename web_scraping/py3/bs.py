@@ -1272,25 +1272,25 @@ This script will parse input URL
           resp = requests.get(url, stream = True)
           resp.raw.decoded_content = True
 
-          #resp = requests.get(url)
-
           #resp.raw type is urllib3.response.HTTPResponse
-
-          i_tmp = self._dir('tmp_img bs_img')
-          with open(i_tmp, 'wb') as lf:
-            shutil.copyfileobj(resp.raw, lf)
 
           # Image class instance
           i = None
           try:
-            i = Image.open(i_tmp)
+            #i = Image.open(i_tmp)
+            i = Image.open(resp.raw)
           except UnidentifiedImageError:
-            with open(i_tmp, 'r') as lf:
-              a = lf.read()
+            i_tmp = self._dir('tmp_img bs_img')
+            with open(i_tmp, 'wb') as lf:
+              shutil.copyfileobj(resp.raw, lf)
+
+            #with open(i_tmp, 'r') as lf:
+              #a = lf.read()
 
             ct = resp.headers['content-type']
             if ct in [ 'image/svg+xml' ]:
-              import pdb; pdb.set_trace()
+              #import pdb; pdb.set_trace()
+              cairosvg.svg2png(url=i_tmp)
             raise
             
           if not i:
@@ -1316,9 +1316,9 @@ This script will parse input URL
           self.log(f'[page_do_imgs] Local path: {idata.get("path","")}')
           if os.path.isfile(ipath):
             self.log(f'WARN[page_do_imgs] image file already exists: {img}')
-          else:
-            i.save(ipath)
-            self.log(f'[page_do_imgs] Saved image: {img}')
+
+          i.save(ipath)
+          self.log(f'[page_do_imgs] Saved image: {img}')
 
           d = {
             'db_file' : self.img_db,
