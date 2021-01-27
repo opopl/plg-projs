@@ -235,6 +235,7 @@ This script will parse input URL
       stem = pp.stem
       self.dirs['out'] = os.path.join(dir,'out',stem)
     
+    import pdb; pdb.set_trace()
     self.dirs.update({ 
       'html'       : self._dir({ 'obj' : 'out' , 'fs' : 'html'}),
       'tex_out'    : self._dir({ 'obj' : 'out' , 'fs' : 'tex'}),
@@ -286,7 +287,9 @@ This script will parse input URL
   # self._dir('img_root','tmp')
   def _dir(self, arg = {}, *args):
 
-    dir = None
+    dir      = None
+    path_fs  = None
+    path_obj = None
 
     if type(arg) is dict:
       path_obj = util.get(arg,'obj','')
@@ -303,8 +306,16 @@ This script will parse input URL
     if dir:
       a = [ dir ]
       if path_fs:
-        a.extend(path_fs.split(' '))
-        Path(*a)
+        ax = None
+        if type(path_fs) is str:
+          ax = path_fs.split(' ')
+        elif type(path_fs) is list:
+          ax = path_fs
+
+        if ax:
+          a.extend(ax)
+          dir = str(Path(*a))
+
     
     return dir
 
