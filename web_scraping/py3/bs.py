@@ -682,20 +682,30 @@ This script will parse input URL
     return self
 
   def page_add(self):
-    self.page.set({
-      'uri' : { 
+    uri_dict = {
         'base'   : self.base_url,
         'remote' : self.page.url,
         'meta'   : self._file_rid_uri({ 'tipe' : 'meta', 'ext'   : 'txt' }),
         'script' : self._file_rid_uri({ 'tipe' : 'script', 'ext' : 'txt' }),
-        'clean'  : self._file_rid_uri({ 'tipe' : 'clean' }),
-        'cache'  : self._file_rid_uri(),
-        'core'     : self._file_rid_uri({ 'tipe' : 'core' }),
-        'img'       : self._file_rid_uri({ 'tipe' : 'img' }),
-        'img_clean' : self._file_rid_uri({ 'tipe' : 'img_clean' }),
-      },
+    }
+
+    tipe_map = { 
+      'html' : util.qw('cache core clean img img_clean dbrid'),
+      'txt'  : util.qw('meta script'),
+    }
+
+    for ext in tipe_map.keys():
+      tipes = tipe_map.get(ext,[])
+      for tipe in tipes:
+        uri_dict.update({ 
+          'ext'  : ext,
+          'tipe' : self._file_rid_uri({ 'tipe' : tipe }),
+        })
+
+    self.page.set({
       'title' : self.title,
       'rid'   : self.rid,
+      'uri'   : uri_dict
     })
 
     if self.page.len():

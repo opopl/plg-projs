@@ -9,7 +9,9 @@
       <tbody>
         {% for page in pages %}
             <tr> 
-						 	<td>{{ page.rid }}</td>
+              <td>
+                <a target="_blank" href="{{ page.uri.dbrid }}" > {{ page.rid }} </a>
+              </td>
               <td>
                 <a target="_blank" href="{{ page.uri.base }}" > {{ page.uri.base }} </a>
               </td> 
@@ -21,7 +23,7 @@
               <td><a target="_blank" href="{{ page.uri.script}}" > script </a></td> 
               <td><a target="_blank" href="{{ page.uri.img}}" > img </a></td> 
               <td><a target="_blank" href="{{ page.uri.img_clean}}" > img_clean </a></td> 
-							<td> {{ page.date }} </td> 
+              <td> {{ page.date }} </td> 
               <td> <b> {{ page.title }} </b> </td> 
             </tr>
         {% endfor %}
