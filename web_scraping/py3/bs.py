@@ -1126,6 +1126,7 @@ This script will parse input URL
 
   def _act(self,key=None):
     acts = self.page.get('acts',[])
+    import pdb; pdb.set_trace()
     if key in acts:
       return 1
     return 0

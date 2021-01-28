@@ -19,7 +19,7 @@ class CoreClass:
     for k, v in ref.items():
       setattr(self, k, v)
 
-  def _get(self, path, default=None):
+  def get(self, path, default=None):
     val = util.get(self,path,default)
   
-    return self
+    return val
