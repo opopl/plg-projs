@@ -99,9 +99,11 @@ class mixLogger:
     return self
 
 class Page(CoreClass):
-  url = None
-  site = None
-  rid = None
+  baseurl = None
+  host    = None
+  rid     = None
+  site    = None
+  url     = None
   pass
 
 class Pic(CoreClass):
@@ -695,7 +697,7 @@ This script will parse input URL
 
   def page_add(self):
     uri_dict = {
-        'base'   : self.base_url,
+        'base'   : self.page.baseurl,
         'remote' : self.page.url,
     }
 
@@ -840,7 +842,7 @@ This script will parse input URL
     try:
       for pat in hsts.keys():
         for k in pat.split(','):
-          if self.host.find(k) != -1:
+          if self.page.host.find(k) != -1:
             site = util.get(hsts,[ pat, 'site' ]) 
             if site:
               self.page.set({ 'site' : site })
@@ -865,8 +867,8 @@ This script will parse input URL
     self.page = Page({ 'url' : url, 'ii' : ii })
 
     u = urlparse(self.page.url)
-    self.host = u.netloc.split(':')[0]
-    self.base_url = u.scheme + '://' + u.netloc 
+    self.page.host = u.netloc.split(':')[0]
+    self.page.baseurl = u.scheme + '://' + u.netloc 
 
     try:
       self.site_extract()
@@ -1016,7 +1018,7 @@ This script will parse input URL
           if act == 'rel_to_remote':
             u = urlparse(href)
             if not u.netloc:
-              href = util.url_join(self.base_url,href)
+              href = util.url_join(self.page.baseurl,href)
               next['href'] = href
             next['target'] = '_blank'
           elif act == 'remote_to_db':
@@ -1400,7 +1402,7 @@ This script will parse input URL
       for k in [ 'data-src', 'src' ]:
         if el.has_attr(k):
            img_remote_rel = el[k] 
-           img_remote = util.url_join(self.base_url, img_remote_rel)
+           img_remote = util.url_join(self.page.baseurl, img_remote_rel)
            img_local = self._img_local_uri(img_remote)
   
            itm['uri'][k] = img_remote_rel
@@ -1432,7 +1434,7 @@ This script will parse input URL
     t = self.template_env.get_template("img.t.html")
     h = t.render(
       data=data,
-      baseurl=self.base_url
+      baseurl=self.page.baseurl
     )
 
     soup = BeautifulSoup(h,'html5lib')
@@ -1446,10 +1448,10 @@ This script will parse input URL
     if self._act('no_img'):
      return self
 
-    site     = util.get(self,'site','')
-    host     = util.get(self,'host','')
-    base_url = util.get(self,'base_url','')
-    ii       = util.get(self,'ii','')
+    host    = self.page.host
+
+    baseurl = self.page.baseurl
+    site    = self.page.site
 
     img_dir = self._dir_ii_img()
 
@@ -1469,7 +1471,7 @@ This script will parse input URL
         u = urlparse(src)
 
         if not u.netloc:
-          url = util.url_join(base_url,src)
+          url = util.url_join(baseurl,src)
           rel_src = src
         else:
           url = src
