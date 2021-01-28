@@ -647,7 +647,6 @@ This script will parse input URL
 
       els_clean = self.soup.select(c)
       for el in els_clean:
-        #import pdb; pdb.set_trace()
         el.decompose()
 
     return self
@@ -682,7 +681,7 @@ This script will parse input URL
     return self
 
   def page_add(self):
-    self.page.update({
+    self.page.set({
       'uri' : { 
         'base'   : self.base_url,
         'remote' : self.url,
@@ -698,8 +697,8 @@ This script will parse input URL
       'rid'   : self.rid,
     })
 
-    if len(self.page):
-      self.page.acts.append(self.page)
+    if self.page.len():
+      self.pages.append(self.page)
 
     return self
 
@@ -1471,12 +1470,12 @@ This script will parse input URL
   def render_page_list(self):
 
     t = self.template_env.get_template("list.t.html")
-    h = t.render(pages=self.page.acts)
+    h = t.render(pages=self.pages)
 
     h_file = self._dir('html list.html')
 
     with open(h_file, 'w') as f:
-        f.write(h)
+      f.write(h)
 
     h_uri = Path(h_file).as_uri()
     self.log(f'[BS] list: {h_uri}')

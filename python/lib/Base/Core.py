@@ -23,3 +23,6 @@ class CoreClass:
     val = util.get(self,path,default)
   
     return val
+
+  def len(self):
+    return len(self.__dict__)
