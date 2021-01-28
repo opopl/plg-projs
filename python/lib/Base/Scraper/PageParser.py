@@ -28,7 +28,7 @@ class RootPageParser(CoreClass):
     return self
 
   def get_author(self,ref={}):
-    site = self.app.site
+    site = self.app.page.site
 
     sel = ref.get('sel','')
     auth_sel = util.get( self.app, [ 'sites', site, 'sel', 'author' ] )

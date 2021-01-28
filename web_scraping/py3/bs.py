@@ -231,9 +231,6 @@ This script will parse input URL
   # input YAML file
   f_yaml = None
 
-  # input URL
-  url = None
-
   # output directory
   out_dir = None
 
@@ -252,9 +249,6 @@ This script will parse input URL
   # soups
   soups = {}
 
-  # current site
-  site = None
-
   # site-specific data
   sites = {}
 
@@ -269,9 +263,6 @@ This script will parse input URL
 
   # list of databases
   dbfile = dbFile()
-
-  # rid
-  rid = 0
 
   # end: attributes }
 
@@ -1498,7 +1489,6 @@ This script will parse input URL
 
 ###i
         if get_img:
-          import pdb; pdb.set_trace()
           pic.grab()
 
         ipath_uri = Path(pic.ipath).as_uri()
