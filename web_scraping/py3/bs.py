@@ -46,17 +46,13 @@ import Base.DBW as dbw
 import Base.Util as util
 import Base.Const as const
 
-class Page:
-  def __init__(self,args={}):
-    for k, v in args.items():
-      setattr(self, k, v)
+from Base.Core import CoreClass
 
-class Pic:
+class Page(CoreClass):
+  pass
+
+class Pic(CoreClass):
   url = None
-
-  def __init__(self,args={}):
-    for k, v in args.items():
-      setattr(self, k, v)
 
   def grab(pic):
     app = pic.app
@@ -145,7 +141,7 @@ class Pic:
     
     return pic
 
-class BS:
+class BS(CoreClass):
   # class attributes {
   usage='''
 This script will parse input URL
@@ -857,13 +853,16 @@ This script will parse input URL
 
     acts = ref.get('acts')
     if acts:
+      acts_a = []
       if type(acts) is list:
-        self.page['acts'] = acts
-        setattr(self.page, 'acts', acts)
+        acts_a = acts
       elif type(acts) is str:
-        setattr(self.page, 'acts', acts.split(','))
+        acts_a = acts.split(',')
 
-    setattr(self.page, 'tags', ref.get('tags') )
+      if acts_a:
+        self.page.set({ 'acts' :  acts_a })
+
+    self.page.set({ 'tags' : ref.get('tags') })
 
     if (not ref.get('redo',0)):
       if self._site_skip() \
