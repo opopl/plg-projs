@@ -52,7 +52,53 @@ class dbFile(CoreClass):
   images = None
   pages = None
 
-class Page(CoreClass):
+class mixLogger:
+
+  def log(self,msg=[]):
+    if type(msg) is list:
+      for m in msg:
+        self.log(m)
+      return self
+  
+    if not type(msg) is str:
+      return self
+      
+    print(msg)
+    self.log_db(msg)
+    
+    return self
+
+  def log_db(self,msg=[]):
+    if type(msg) is list:
+      for m in msg:
+        self.log(m)
+      return self
+  
+    if not type(msg) is str:
+      return self
+
+    db_file = self.dbfile.pages
+    conn = sqlite3.connect(db_file)
+    c = conn.cursor()
+  
+    insert = {
+        'msg'   : msg,
+        'rid'   : self.rid,
+        'url'   : self.page.url,
+        'site'  : self.site,
+        'time'  : util.now()
+    }
+  
+    d = {
+       'db_file' : self.dbfile.pages,
+       'table'   : 'log',
+       'insert'  : insert,
+    }
+    dbw.insert_dict(d)
+
+    return self
+
+class Page(CoreClass,mixLogger):
   url = None
   pass
 
@@ -550,37 +596,9 @@ This script will parse input URL
 
     return self
 
-  def log(self,msg=[]):
-    if type(msg) is list:
-      for m in msg:
-        self.log(m)
-      return self
-  
-    if not type(msg) is str:
-      return self
-      
-    print(msg)
-  
-    db_file = self.dbfile.pages
-    conn = sqlite3.connect(db_file)
-    c = conn.cursor()
-  
-    insert = {
-        'msg'   : msg,
-        'rid'   : self.rid,
-        'url'   : self.page.url,
-        'site'  : self.site,
-        'time'  : util.now()
-    }
-  
-    d = {
-       'db_file' : self.dbfile.pages,
-       'table'   : 'log',
-       'insert'  : insert,
-    }
-    dbw.insert_dict(d)
-    
-    return self
+
+
+
 
   def load_soup(self,ref={}):
     url = ref.get('url',self.page.url)
