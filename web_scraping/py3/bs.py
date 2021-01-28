@@ -98,7 +98,7 @@ class mixLogger:
 
     return self
 
-class Page(CoreClass,mixLogger):
+class Page(CoreClass):
   url = None
   pass
 
@@ -192,7 +192,7 @@ class Pic(CoreClass):
     
     return pic
 
-class BS(CoreClass):
+class BS(CoreClass,mixLogger):
   # class attributes {
   usage='''
 This script will parse input URL
@@ -647,6 +647,7 @@ This script will parse input URL
   def _sel_clean(self, site=None):
     if not site:
       site = self.site
+    import pdb; pdb.set_trace()
 
     clean = []
     clean.extend( self._sel_clean_core() )
