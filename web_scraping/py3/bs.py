@@ -1336,9 +1336,11 @@ This script will parse input URL
     p = [ self.page.url ]
     rw = dbw.sql_fetchone(q,p,{ 'db_file' : self.url_db })
     row = dbw.rw2dict(rw)
+    cols = list(row.keys())
+    cols.sort()
 
     t = self.template_env.get_template("dbrid.t.html")
-    h = t.render(row=row)
+    h = t.render(row=row,cols=cols)
 
     with open(file, 'w') as f:
       f.write(h)

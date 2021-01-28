@@ -10,7 +10,8 @@
       </thead>
       <tbody>
         <tr> 
-        {% for k, v in row.items() %}
+        {% for k in cols %}
+         {% set v = row.get(k) %}
            <td>{{ k }}</td>
            <td>{{ v }}</td>
         </tr>
