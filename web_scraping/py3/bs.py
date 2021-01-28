@@ -100,6 +100,8 @@ class mixLogger:
 
 class Page(CoreClass):
   url = None
+  site = None
+  rid = None
   pass
 
 class Pic(CoreClass):
@@ -852,8 +854,9 @@ This script will parse input URL
       for pat in hsts.keys():
         for k in pat.split(','):
           if self.host.find(k) != -1:
-            self.page.site = util.get(hsts,[ pat, 'site' ])
-            if self.page.site:
+            site = util.get(hsts,[ pat, 'site' ]) 
+            if site:
+              self.page.set({ 'site' : site })
               raise StopIteration
   
     except StopIteration:
