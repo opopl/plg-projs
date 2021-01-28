@@ -38,8 +38,8 @@ class RootPageParser(CoreClass):
     if type(auth_sel) is dict:
 
       auth_obj = Author({ 
-        'spage' : self, 
-        'app'   : self.app 
+        'page_parser' : self,
+        'app'         : self.app
       })
 
       d = {}

@@ -21,14 +21,14 @@ class Author(CoreClass):
   last_name         = None
 
   # SitePage instance
-  spage = None
+  page_parser = None
 
   # app instance
   app = None
 
   def parse(self,ref={}):
-    spage = self.spage
-    app   = self.app
+    page_parser = self.page_parser
+    app         = self.app
 
     auth_bare = ref.get('str','')
     auth_url  = ref.get('url','')
@@ -47,7 +47,7 @@ class Author(CoreClass):
       auth_id = f'{last_name}_{first_name}'.lower()
       auth_id = cyrtranslit.to_latin(auth_id,'ru')
 
-      auth_db = spage.app._db_get_auth({ 'auth_id' : auth_id })
+      auth_db = app._db_get_auth({ 'auth_id' : auth_id })
       if not auth_db:
         auth_name = f'{last_name}, {first_name}'
       else:
@@ -66,7 +66,7 @@ class Author(CoreClass):
 
       if not auth_db:
         d = {
-          'db_file' : spage.app.url_db,
+          'db_file' : app.dbfile.pages,
           'table'   : 'authors',
           'insert'  : auth,
         }
