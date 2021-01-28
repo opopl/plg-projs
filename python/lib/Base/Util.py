@@ -19,6 +19,10 @@ def url_parse(url):
 
   return u
 
+def strip(s):
+  s = s.strip("\'\"\n\t ")
+  return s
+
 def obj_methods(obj):
   methods = [m for m in dir(obj) if callable(getattr(obj, m)) ]
   return methods

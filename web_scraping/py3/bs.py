@@ -48,6 +48,10 @@ import Base.Const as const
 
 from Base.Core import CoreClass
 
+class dbFile(CoreClass):
+  images = None
+  pages = None
+
 class Page(CoreClass):
   url = None
   pass
@@ -219,12 +223,11 @@ This script will parse input URL
   # current image data
   pic = Pic()
 
+  # list of databases
+  dbfile = dbFile()
+
   # rid
   rid = 0
-
-  # url database
-  url_db = None
-  url_conn = None
 
   # end: attributes }
 
@@ -238,11 +241,11 @@ This script will parse input URL
     for k in util.qw('img_root html_root'):
       self.dirs[k] = util.get(self,k) 
 
-    if (not self.img_db) and self.img_root:
-      self.img_db = os.path.join(self.img_root,'img.db')
+    if (not self.dbfile.images) and self.img_root:
+      self.dbfile.images = os.path.join(self.img_root,'img.db')
 
-    if (not self.url_db) and self.html_root:
-      self.url_db = os.path.join(self.html_root,'h.db')
+    if (not self.dbfile.pages) and self.html_root:
+      self.dbfile.pages = os.path.join(self.html_root,'h.db')
 
 
   def get_opt(self):
@@ -319,7 +322,7 @@ This script will parse input URL
         '''
     dbw.sql_do({ 
       'sql'     : sql,
-      'db_file' : self.url_db
+      'db_file' : self.dbfile.pages
     })
 
     return self
@@ -558,7 +561,7 @@ This script will parse input URL
       
     print(msg)
   
-    db_file = self.url_db
+    db_file = self.dbfile.pages
     conn = sqlite3.connect(db_file)
     c = conn.cursor()
   
@@ -571,7 +574,7 @@ This script will parse input URL
     }
   
     d = {
-       'db_file' : self.url_db,
+       'db_file' : self.dbfile.pages,
        'table'   : 'log',
        'insert'  : insert,
     }
@@ -592,7 +595,9 @@ This script will parse input URL
 
     self.soup = BeautifulSoup(self.content,'html5lib',from_encoding=self.page.get('encoding'))
 
-    self.title = self.soup.select_one('head > title').string.strip("\'\"\n\t ")
+    t = self.soup.select_one('head > title').string
+    t = util.strip(t)
+    self.page.title = t
 
     h1 = self.soup.select_one('h1')
     title_h = ''
@@ -602,7 +607,7 @@ This script will parse input URL
         title_h =  s.strip("\'\"\n\t ")
         self.page.set({ 'title_h' : title_h })
 
-    self.log(f'[load_soup] rid: {self.rid}, title: {self.title}')
+    self.log(f'[load_soup] rid: {self.rid}, title: {self.page.title}')
     self.log(f'[load_soup] rid: {self.rid}, title_h: {title_h}')
     
     return self
@@ -700,7 +705,6 @@ This script will parse input URL
         })
 
     self.page.set({
-      'title' : self.title,
       'rid'   : self.rid,
       'uri'   : uri_dict
     })
@@ -897,8 +901,8 @@ This script will parse input URL
     if util.obj_has_method(p, 'generate_ii'):
       p.generate_ii()
     else:
-      if self.title:
-        tt = self.title
+      if self.page.title:
+        tt = self.page.title
         tt = re.sub(r'\s', '_', tt)
         ttl = cyrtranslit.to_latin(tt,'ru').lower()
         ttl = re.sub(r'[\W\']+', '', ttl)
@@ -1026,7 +1030,7 @@ This script will parse input URL
     return self
 
   def _rid_free(self):
-    db_file = self.url_db
+    db_file = self.dbfile.pages
     conn = sqlite3.connect(db_file)
     c = conn.cursor()
 
@@ -1051,7 +1055,7 @@ This script will parse input URL
 
     auth = None
 
-    db_file = self.url_db
+    db_file = self.dbfile.pages
     conn = sqlite3.connect(db_file)
     conn.row_factory = sqlite3.Row
     c = conn.cursor()
@@ -1073,9 +1077,9 @@ This script will parse input URL
   #   load_soup
   def db_save_url(self, ref={}):
     url   = ref.get('url', self.page.url)
-    title = ref.get('title', self.title)
+    title = ref.get('title', self.page.title)
 
-    db_file = self.url_db
+    db_file = self.dbfile.pages
     conn = sqlite3.connect(db_file)
     c = conn.cursor()
 
@@ -1098,7 +1102,7 @@ This script will parse input URL
       insert.update({ k : self.page.get(k) })
 
     d = {
-      'db_file' : self.url_db,
+      'db_file' : self.dbfile.pages,
       'table'   : 'urls',
       'insert'  : insert,
     }
@@ -1165,7 +1169,7 @@ This script will parse input URL
     return 0
 
   def _rid_url(self,url=None):
-    db_file = self.url_db
+    db_file = self.dbfile.pages
     conn = sqlite3.connect(db_file)
     c = conn.cursor()
 
@@ -1215,7 +1219,7 @@ This script will parse input URL
 
     pattern = f'{date}.site.{site}{a_fs}.'
 
-    db_file = self.url_db
+    db_file = self.dbfile.pages
     conn = sqlite3.connect(db_file)
     #conn.row_factory = sqlite3.Row
     c = conn.cursor()
@@ -1238,10 +1242,10 @@ This script will parse input URL
     return ii_num
 
   def _img_local_uri(self, url):
-    if not ( self.img_db and os.path.isfile(self.img_db) ):
+    if not ( self.dbfile.images and os.path.isfile(self.dbfile.images) ):
       pass
     else:
-      conn = sqlite3.connect(self.img_db)
+      conn = sqlite3.connect(self.dbfile.images)
       c = conn.cursor()
 
       c.execute('''SELECT img FROM imgs WHERE url = ?''',[ url ])
@@ -1261,12 +1265,12 @@ This script will parse input URL
     opts_s = ref.get('opts','')
     opts   = opts_s.split(',')
 
-    if not ( self.img_db and os.path.isfile(self.img_db) ):
+    if not ( self.dbfile.images and os.path.isfile(self.dbfile.images) ):
       return 
 
     d = None
 
-    conn = sqlite3.connect(self.img_db)
+    conn = sqlite3.connect(self.dbfile.images)
     c = conn.cursor()
 
     img = None
@@ -1302,10 +1306,10 @@ This script will parse input URL
 
   def _img_saved(self,url):
     ok = 0
-    if not ( self.img_db and os.path.isfile(self.img_db) ):
+    if not ( self.dbfile.images and os.path.isfile(self.dbfile.images) ):
       pass
     else:
-      conn = sqlite3.connect(self.img_db)
+      conn = sqlite3.connect(self.dbfile.images)
       c = conn.cursor()
 
       c.execute('''SELECT img FROM imgs WHERE url = ?''',[ url ])
@@ -1334,7 +1338,7 @@ This script will parse input URL
 
     q = '''SELECT * FROM urls WHERE remote = ? '''
     p = [ self.page.url ]
-    rw = dbw.sql_fetchone(q,p,{ 'db_file' : self.url_db })
+    rw = dbw.sql_fetchone(q,p,{ 'db_file' : self.dbfile.pages })
     row = dbw.rw2dict(rw)
     cols = list(row.keys())
     cols.sort()

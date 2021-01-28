@@ -68,6 +68,7 @@ class RootPageParser(CoreClass):
 
               d_parse.update({ 'str' : auth_bare })
 
+      import pdb; pdb.set_trace()
       auth_obj.parse(d_parse)
 
     return self
