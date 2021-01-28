@@ -1096,29 +1096,24 @@ This script will parse input URL
 
   # called by
   #   load_soup
-  def db_save_url(self, ref={}):
-    url   = ref.get('url', self.page.url)
-    title = ref.get('title', self.page.title)
+  def db_save_url(self):
 
     db_file = self.dbfile.pages
     conn = sqlite3.connect(db_file)
     c = conn.cursor()
 
     self.page.rid = self._rid_free()
-    if self._url_saved_db(url):
+    if self._url_saved_db():
       self.page.rid = self._rid_url()
       if not self._act('db_update'):
         return self
 
     insert = {
-        'remote' : url,
-        'rid'    : self.page.rid,
-        'ii'     : self.page.ii,
-        'site'   : self.page.site,
-        'title'  : title,
+      'remote' : self.page.url,
     }
 
     kk = '''date title_h tags encoding author_id author_id_first ii_num ii_full'''
+    kk = kk + ''' rid ii site title'''
     for k in kk.split(' '):
       insert.update({ k : self.page.get(k) })
 
