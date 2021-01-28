@@ -16,15 +16,13 @@ import Base.Const as const
 
 from Base.Scraper.Author import Author
 
-class SitePage:
+from Base.Core import CoreClass
+
+class RootPageParser(CoreClass):
 
   soup        = None
   app         = None
   date_format = ''
-
-  def __init__(self,args={}):
-    for k, v in args.items():
-      setattr(self, k, v)
 
   def get_date(self,ref={}):
     return self

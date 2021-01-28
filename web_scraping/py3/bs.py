@@ -206,7 +206,7 @@ This script will parse input URL
   sites = {}
 
   # Page class instance from loaded site module
-  page_obj_site = None
+  page_parser = None
 
   # tex lines
   tex_lines = []
@@ -502,7 +502,7 @@ This script will parse input URL
 
     self.page_save_cache()
 
-    self.page.set('fetched',  1)
+    self.page.set({ 'fetched' : 1 })
 
     return self
 
@@ -597,7 +597,8 @@ This script will parse input URL
     if h1:
       s = h1.string
       if s:
-        title_h = self.page['title_h'] = s.strip("\'\"\n\t ")
+        title_h =  s.strip("\'\"\n\t ")
+        self.page.set({ 'title_h' : title_h })
 
     self.log(f'[load_soup] rid: {self.rid}, title: {self.title}')
     self.log(f'[load_soup] rid: {self.rid}, title_h: {title_h}')
@@ -762,7 +763,7 @@ This script will parse input URL
 
     if m:
       self.log(f'[in_load_site_module] loaded module for site: {site}' )
-      p = self.page_obj_site = m.Page({ 
+      p = self.page_parser = m.PageParser({ 
         'soup' : self.soup,
         'app'  : self,
       })
@@ -879,7 +880,7 @@ This script will parse input URL
     return self
 
   def page_ii_from_title(self,ref={}):
-    p = self.page_obj_site
+    p = self.page_parser
 
     if self.ii:
       return self
@@ -901,7 +902,7 @@ This script will parse input URL
     return self
 
   def page_get_author(self,ref={}):
-    p = self.page_obj_site
+    p = self.page_parser
     if not p:
       return self
 
@@ -915,7 +916,7 @@ This script will parse input URL
     return self
 
   def page_get_date(self,ref={}):
-    p = self.page_obj_site
+    p = self.page_parser
     if not p:
       return self
 
@@ -1126,7 +1127,6 @@ This script will parse input URL
 
   def _act(self,key=None):
     acts = self.page.get('acts',[])
-    import pdb; pdb.set_trace()
     if key in acts:
       return 1
     return 0
