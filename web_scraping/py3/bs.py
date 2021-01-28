@@ -482,9 +482,10 @@ This script will parse input URL
     if self.page.get('fetched'):
       return self
 
-    headers = {
-     'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.3'
-    }
+    headers = {}
+    #headers = {
+     #'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.3'
+    #}
     r = requests.get(url,headers=headers)
 
     encoding = 'utf-8'
@@ -497,7 +498,7 @@ This script will parse input URL
     self.page.encoding = encoding
 
     self.content = r.content
-    bs = BeautifulSoup(self.content,'html5lib')
+    bs = BeautifulSoup(self.content,'html5lib',from_encoding=encoding)
     self.content = bs.prettify()
 
     self.page_save_cache()
@@ -898,7 +899,7 @@ This script will parse input URL
     return self
 
   def page_get_ii_full(self,ref={}):
-    self.page['ii_full'] = self._ii_full()
+    self.page.set({ 'ii_full' : self._ii_full() })
     return self
 
   def page_get_author(self,ref={}):
@@ -911,7 +912,7 @@ This script will parse input URL
     aid = self.page.get('author_id','')
     f = aid.split(',')
     if f and len(f):
-      self.page['author_id_first'] = f[0]
+       self.page.set({ 'author_id_first' : f[0] })
 
     return self
 
@@ -1182,7 +1183,8 @@ This script will parse input URL
     date = self.page.get('date')
     site = self.site
 
-    self.page['ii_num'] = ii_num = self._ii_num()
+    ii_num = self._ii_num()
+    self.page.set({ 'ii_num' : ii_num })
 
     a_f = self.page.get('author_id_first')
     a_fs = f'.{a_f}' if a_f else ''
