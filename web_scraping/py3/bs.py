@@ -85,7 +85,7 @@ class mixLogger:
         'msg'   : msg,
         'rid'   : self.rid,
         'url'   : self.page.url,
-        'site'  : self.site,
+        'site'  : self.page.site,
         'time'  : util.now()
     }
   
@@ -638,7 +638,7 @@ This script will parse input URL
 
   def _sel_keep(self, site=None):
     if not site:
-      site = self.site
+      site = self.page.site
 
     keep = []
     keep.extend( util.get(self,[ 'sites', site, 'sel', 'keep' ],[]) )
@@ -646,8 +646,7 @@ This script will parse input URL
      
   def _sel_clean(self, site=None):
     if not site:
-      site = self.site
-    import pdb; pdb.set_trace()
+      site = self.page.site
 
     clean = []
     clean.extend( self._sel_clean_core() )
@@ -661,7 +660,7 @@ This script will parse input URL
     return self
 
   def page_clean(self,ref={}):
-    site = util.get(self,'site',self.site)
+    site = util.get(self,'site',self.page.site)
 
     clean = self._sel_clean(site)
     clean = util.get(ref,'clean',clean)
@@ -764,7 +763,7 @@ This script will parse input URL
     return self
 
   def in_load_site_yaml(self,ref={}):
-    site = ref.get('site',self.site)
+    site = ref.get('site',self.page.site)
 
     [ lib, mod ] = self._site_libdir(site)
     site_yaml = os.path.join(lib,mod + '.yaml')
@@ -779,7 +778,7 @@ This script will parse input URL
     return self
 
   def in_load_site_module(self,ref={}):
-    site = ref.get('site',self.site)
+    site = ref.get('site',self.page.site)
 
     [ lib, mod ] = self._site_libdir(site)
 
@@ -853,14 +852,14 @@ This script will parse input URL
       for pat in hsts.keys():
         for k in pat.split(','):
           if self.host.find(k) != -1:
-            self.site = util.get(hsts,[ pat, 'site' ])
-            if self.site:
+            self.page.site = util.get(hsts,[ pat, 'site' ])
+            if self.page.site:
               raise StopIteration
   
     except StopIteration:
       pass
   
-    if not self.site:
+    if not self.page.site:
       self.log(f'[WARN] no site for url: {self.page.url}')
       raise
   
@@ -902,7 +901,7 @@ This script will parse input URL
           or self._url_saved_fs(): 
         return self
 
-    self.log(f'[site_extract] site = {self.site}')
+    self.log(f'[site_extract] site = {self.page.site}')
 
     self.log('=' * 100)
     self.log(f'[parse_url] start: {self.page.url}')
@@ -1112,7 +1111,7 @@ This script will parse input URL
         'remote' : url,
         'rid'    : self.rid,
         'ii'     : self.page.ii,
-        'site'   : self.site,
+        'site'   : self.page.site,
         'title'  : title,
     }
 
@@ -1132,7 +1131,7 @@ This script will parse input URL
 
   def _site_libdir(self,site=None):
     if not site:
-      site = self.site
+      site = self.page.site
 
     a = [ self.in_dir, 'sites' ]
     a.extend(site.split('.'))
@@ -1144,7 +1143,7 @@ This script will parse input URL
 
   def _site_skip(self,site=None):
     if not site:
-      site = self.site
+      site = self.page.site
 
     inc = self.list_hosts_inc
 
@@ -1212,7 +1211,7 @@ This script will parse input URL
      
   def _ii_full(self):
     date = self.page.get('date')
-    site = self.site
+    site = self.page.site
 
     ii_num = self._ii_num()
     self.page.set({ 'ii_num' : ii_num })
@@ -1231,7 +1230,7 @@ This script will parse input URL
       return ii_num
 
     date = self.page.get('date')
-    site = self.site
+    site = self.page.site
 
     a_f = self.page.get('author_id_first')
     a_fs = f'.{a_f}' if a_f else ''
