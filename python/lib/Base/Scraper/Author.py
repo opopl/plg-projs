@@ -75,4 +75,7 @@ class Author(CoreClass):
     author_id = ','.join(auth_ids)
     if author_id:
       app.page.set({ 'author_id' : author_id })
+      app.log('[Author] author_id = {author_id}')
+
+
     return self

@@ -62,13 +62,13 @@ class RootPageParser(CoreClass):
 
               d_parse.update({ 'url' : auth_url })
           elif k == 'name':
-            auth_bare = e.string
+            s = e.string
+            auth_bare = util.strip(s)
             if auth_bare:
               print(f'[PageParser] found author name: {auth_bare}')
 
               d_parse.update({ 'str' : auth_bare })
 
-      import pdb; pdb.set_trace()
       auth_obj.parse(d_parse)
 
     return self

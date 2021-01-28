@@ -604,7 +604,7 @@ This script will parse input URL
     if h1:
       s = h1.string
       if s:
-        title_h =  s.strip("\'\"\n\t ")
+        title_h =  util.strip(s)
         self.page.set({ 'title_h' : title_h })
 
     self.log(f'[load_soup] rid: {self.rid}, title: {self.page.title}')
