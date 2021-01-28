@@ -83,7 +83,7 @@ class mixLogger:
   
     insert = {
         'msg'   : msg,
-        'rid'   : self.rid,
+        'rid'   : self.page.rid,
         'url'   : self.page.url,
         'site'  : self.page.site,
         'time'  : util.now()
@@ -487,7 +487,7 @@ This script will parse input URL
     return dir
 
   def _dir_ii(self,ref={}):
-    rid = ref.get('rid',self.rid)
+    rid = ref.get('rid',self.page.rid)
 
     dir = os.path.join(self.html_root,'bs',str(rid))
 
@@ -507,7 +507,7 @@ This script will parse input URL
   def _file_rid(self,ref={}):
     tipe = ref.get('tipe','cache')
     ext  = ref.get('ext','html')
-    rid  = ref.get('rid',self.rid)
+    rid  = ref.get('rid',self.page.rid)
 
     ii_file = os.path.join(self._dir_ii({ 'rid' : rid }),f'{tipe}.{ext}')
     return ii_file
@@ -606,9 +606,9 @@ This script will parse input URL
     url = ref.get('url',self.page.url)
     ii  = ref.get('ii',self.page.ii)
 
-    self.rid = self._rid_url(url)
-    if not self.rid:
-      self.rid = self._rid_free()
+    self.page.rid = self._rid_url(url)
+    if not self.page.rid:
+      self.page.rid = self._rid_free()
 
     self.ii_cache = self._file_rid()
     self.url_load_content()
@@ -627,8 +627,8 @@ This script will parse input URL
         title_h =  util.strip(s)
         self.page.set({ 'title_h' : title_h })
 
-    self.log(f'[load_soup] rid: {self.rid}, title: {self.page.title}')
-    self.log(f'[load_soup] rid: {self.rid}, title_h: {title_h}')
+    self.log(f'[load_soup] rid: {self.page.rid}, title: {self.page.title}')
+    self.log(f'[load_soup] rid: {self.page.rid}, title_h: {title_h}')
     
     return self
 
@@ -725,7 +725,7 @@ This script will parse input URL
         })
 
     self.page.set({
-      'rid'   : self.rid,
+      'rid'   : self.page.rid,
       'uri'   : uri_dict
     })
 
@@ -1104,15 +1104,15 @@ This script will parse input URL
     conn = sqlite3.connect(db_file)
     c = conn.cursor()
 
-    self.rid = self._rid_free()
+    self.page.rid = self._rid_free()
     if self._url_saved_db(url):
-      self.rid = self._rid_url()
+      self.page.rid = self._rid_url()
       if not self._act('db_update'):
         return self
 
     insert = {
         'remote' : url,
-        'rid'    : self.rid,
+        'rid'    : self.page.rid,
         'ii'     : self.page.ii,
         'site'   : self.page.site,
         'title'  : title,
@@ -1128,7 +1128,7 @@ This script will parse input URL
       'insert'  : insert,
     }
     dbw.insert_dict(d)
-    self.log(f'[db_save_url] url saved with rid {self.rid}')
+    self.log(f'[db_save_url] url saved with rid {self.page.rid}')
 
     return self
 
