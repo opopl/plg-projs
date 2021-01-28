@@ -186,7 +186,7 @@ class Pic(CoreClass):
       insert[k] = getattr(app,k,None)
 
     d = {
-      'db_file' : app.img_db,
+      'db_file' : app.dbfile.images,
       'table'   : 'imgs',
       'insert'  : insert
     }
@@ -263,10 +263,6 @@ This script will parse input URL
 
   # tex lines
   tex_lines = []
-
-  # image database
-  img_db = None
-  img_conn = None
 
   # current image data
   pic = Pic()
@@ -830,11 +826,11 @@ This script will parse input URL
         .page_unwrap()                                  \
         .page_rm_empty()                                \
         .page_header_insert_url()                       \
-        .page_save({ 'tipe' : 'clean'})                 \
+        .page_save()                                    \
         .page_save_data_img({ 'tipe' : 'img_clean' })   \
         .page_do_imgs()                                 \
         .page_replace_links({ 'act' : 'rel_to_remote'}) \
-        .load_soup_file_rid({                            \
+        .load_soup_file_rid({                           \
             'tipes' : tipes                             \
         })                                              \
         .ii_replace_links({                             \
@@ -1502,6 +1498,7 @@ This script will parse input URL
 
 ###i
         if get_img:
+          import pdb; pdb.set_trace()
           pic.grab()
 
         ipath_uri = Path(pic.ipath).as_uri()
