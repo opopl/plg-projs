@@ -448,12 +448,12 @@ This script will parse input URL
       os.makedirs(img_dir,exist_ok=True)
     return img_dir
 
-  def _file_ii_uri(self,ref={}):
-    ii_file = self._file_ii(ref)
+  def _file_rid_uri(self,ref={}):
+    ii_file = self._file_rid(ref)
     uri = Path(ii_file).as_uri()
     return uri
 
-  def _file_ii(self,ref={}):
+  def _file_rid(self,ref={}):
     tipe = ref.get('tipe','cache')
     ext  = ref.get('ext','html')
     rid  = ref.get('rid',self.rid)
@@ -517,7 +517,7 @@ This script will parse input URL
 
     return self
 
-  def load_soup_file_ii(self,ref={}):
+  def load_soup_file_rid(self,ref={}):
     tipe = ref.get('tipe','cache')
     ext  = ref.get('ext','html')
 
@@ -533,12 +533,12 @@ This script will parse input URL
         for tipe in tipes:
           r = copy(ref)
           r['tipe'] = tipe
-          self.load_soup_file_ii(r)
+          self.load_soup_file_rid(r)
         return self
 
-    self.log(f'[load_soup_file_ii] tipe: {tipe}')
+    self.log(f'[load_soup_file_rid] tipe: {tipe}')
 
-    file = self._file_ii({ 'tipe' : tipe, 'ext' : ext })
+    file = self._file_rid({ 'tipe' : tipe, 'ext' : ext })
 
     if os.path.isfile(file):
       with open(file,'r') as f:
@@ -587,7 +587,7 @@ This script will parse input URL
     if not self.rid:
       self.rid = self._rid_free()
 
-    self.ii_cache = self._file_ii()
+    self.ii_cache = self._file_rid()
     self.url_load_content()
 
     self.soup = BeautifulSoup(self.content,'html5lib',from_encoding=self.page.get('encoding'))
@@ -670,7 +670,7 @@ This script will parse input URL
   def page_save(self,ref={}):
     tipe = util.get(ref,'tipe','clean')
 
-    sv = self._file_ii({ 'tipe' : tipe })
+    sv = self._file_rid({ 'tipe' : tipe })
     if tipe == 'clean':
        self.ii_clean = sv
 
@@ -686,13 +686,13 @@ This script will parse input URL
       'uri' : { 
         'base'   : self.base_url,
         'remote' : self.page.url,
-        'meta'   : self._file_ii_uri({ 'tipe' : 'meta', 'ext'   : 'txt' }),
-        'script' : self._file_ii_uri({ 'tipe' : 'script', 'ext' : 'txt' }),
-        'clean'  : self._file_ii_uri({ 'tipe' : 'clean' }),
-        'cache'  : self._file_ii_uri(),
-        'core'     : self._file_ii_uri({ 'tipe' : 'core' }),
-        'img'       : self._file_ii_uri({ 'tipe' : 'img' }),
-        'img_clean' : self._file_ii_uri({ 'tipe' : 'img_clean' }),
+        'meta'   : self._file_rid_uri({ 'tipe' : 'meta', 'ext'   : 'txt' }),
+        'script' : self._file_rid_uri({ 'tipe' : 'script', 'ext' : 'txt' }),
+        'clean'  : self._file_rid_uri({ 'tipe' : 'clean' }),
+        'cache'  : self._file_rid_uri(),
+        'core'     : self._file_rid_uri({ 'tipe' : 'core' }),
+        'img'       : self._file_rid_uri({ 'tipe' : 'img' }),
+        'img_clean' : self._file_rid_uri({ 'tipe' : 'img_clean' }),
       },
       'title' : self.title,
       'rid'   : self.rid,
@@ -803,7 +803,7 @@ This script will parse input URL
         .page_save_data_img({ 'tipe' : 'img_clean' })   \
         .page_do_imgs()                                 \
         .page_replace_links({ 'act' : 'rel_to_remote'}) \
-        .load_soup_file_ii({                            \
+        .load_soup_file_rid({                            \
             'tipes' : tipes                             \
         })                                              \
         .ii_replace_links({                             \
@@ -963,7 +963,7 @@ This script will parse input URL
 
     self.log(f'[ii_replace_links] {tipe}')
 
-    file = self._file_ii({ 
+    file = self._file_rid({ 
       'tipe' : tipe, 
       'ext'  : ext 
     })
@@ -1152,7 +1152,7 @@ This script will parse input URL
     if rid == None:
       return 0
 
-    self.ii_cache = self._file_ii({ 'rid' : rid })
+    self.ii_cache = self._file_rid({ 'rid' : rid })
     if os.path.isfile(self.ii_cache):
       return 1
     return 0
@@ -1321,8 +1321,20 @@ This script will parse input URL
   def do_css(self):
     return self
 
+###db_save
   def page_save_db_record(self,ref={}):
-    file = self._file_ii({ 'tipe' : 'db', 'ext' : 'html' })
+    file = self._file_rid({ 'tipe' : 'db', 'ext' : 'html' })
+
+    q = '''SELECT * FROM urls WHERE remote = ? '''
+    p = [ self.page.url ]
+    rw = dbw.sql_fetchone(q,p,{ 'db_file' : self.url_db })
+    row = dbw.rw2dict(rw)
+
+    t = self.template_env.get_template("dbrid.t.html")
+    h = t.render(row=row)
+
+    with open(file, 'w') as f:
+      f.write(h)
 
     return self
 
@@ -1343,7 +1355,7 @@ This script will parse input URL
 
     els = self.soup.select(tag)
     txt = []
-    data_file = self._file_ii({ 'tipe' : tag, 'ext' : ext })
+    data_file = self._file_rid({ 'tipe' : tag, 'ext' : ext })
     for e in els:
       ms = str(e)
       txt.append(ms)
@@ -1354,7 +1366,7 @@ This script will parse input URL
   def page_save_data_img(self,ref={}):
     tipe = ref.get('tipe','img')
 
-    data_file_img = self._file_ii({ 
+    data_file_img = self._file_rid({ 
       'tipe' : tipe, 
       'ext'  : 'html' 
     })

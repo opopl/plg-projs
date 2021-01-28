@@ -48,6 +48,36 @@ def update_dict(ref):
     conn.commit()
     conn.close()
 
+def rw2dict(rw):
+  d = {}
+  for k in rw.keys():
+    d[k] = rw[k]
+  return d
+
+def sql_fetchone(q, p=[], ref={}):
+  conn     = ref.get('conn')
+  db_file  = ref.get('db_file')
+  db_close = ref.get('db_close')
+
+  if not conn:
+    if db_file:
+      conn = sqlite3.connect(db_file)
+      db_close = 1
+    else:
+      return
+
+  conn.row_factory = sqlite3.Row
+  c = conn.cursor()
+
+  try:
+     c.execute(q,p)
+  except sqlite3.OperationalError as e:
+     print(e)
+  except:
+     print("Errors ", sys.exc_info()[0], " for sqlite query: " + q )
+  rw = c.fetchone()
+  return rw
+
 def sql_fetchall(q,p=[],ref={}):
   conn     = ref.get('conn')
   db_file  = ref.get('db_file')
