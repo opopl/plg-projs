@@ -1330,7 +1330,7 @@ This script will parse input URL
 
 ###db_save
   def page_save_db_record(self,ref={}):
-    file = self._file_rid({ 'tipe' : 'db', 'ext' : 'html' })
+    file = self._file_rid({ 'tipe' : 'dbrid', 'ext' : 'html' })
 
     q = '''SELECT * FROM urls WHERE remote = ? '''
     p = [ self.page.url ]
