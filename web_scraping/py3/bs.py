@@ -685,8 +685,6 @@ This script will parse input URL
     uri_dict = {
         'base'   : self.base_url,
         'remote' : self.page.url,
-        'meta'   : self._file_rid_uri({ 'tipe' : 'meta', 'ext'   : 'txt' }),
-        'script' : self._file_rid_uri({ 'tipe' : 'script', 'ext' : 'txt' }),
     }
 
     tipe_map = { 
@@ -698,8 +696,7 @@ This script will parse input URL
       tipes = tipe_map.get(ext,[])
       for tipe in tipes:
         uri_dict.update({ 
-          'ext'  : ext,
-          'tipe' : self._file_rid_uri({ 'tipe' : tipe }),
+          tipe : self._file_rid_uri({ 'tipe' : tipe, 'ext' : ext }),
         })
 
     self.page.set({
