@@ -1123,6 +1123,7 @@ This script will parse input URL
       'insert'  : insert,
     }
     dbw.insert_dict(d)
+
     self.log(f'[db_save_url] url saved with rid {self.page.rid}')
 
     return self
