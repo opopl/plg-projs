@@ -49,6 +49,7 @@ import Base.Const as const
 from Base.Core import CoreClass
 
 class Page(CoreClass):
+  url = None
   pass
 
 class Pic(CoreClass):
@@ -475,7 +476,7 @@ This script will parse input URL
     return self
 
   def url_fetch(self,ref={}):
-    url = ref.get('url',self.url)
+    url = ref.get('url',self.page.url)
 
     self.log(f'[url_fetch] fetching url: {url}')
 
@@ -564,7 +565,7 @@ This script will parse input URL
     insert = {
         'msg'   : msg,
         'rid'   : self.rid,
-        'url'   : self.url,
+        'url'   : self.page.url,
         'site'  : self.site,
         'time'  : util.now()
     }
@@ -579,7 +580,7 @@ This script will parse input URL
     return self
 
   def load_soup(self,ref={}):
-    url = ref.get('url',self.url)
+    url = ref.get('url',self.page.url)
     ii  = ref.get('ii',self.ii)
 
     self.rid = self._rid_url(url)
@@ -658,9 +659,9 @@ This script will parse input URL
       return self
 
     a = self.soup.new_tag('a', )
-    a['href'] = self.url
+    a['href'] = self.page.url
     a['target'] = '_blank'
-    a.string = self.url
+    a.string = self.page.url
     h.insert_after(a)
     a.wrap(self.soup.new_tag('p'))
 
@@ -684,7 +685,7 @@ This script will parse input URL
     self.page.set({
       'uri' : { 
         'base'   : self.base_url,
-        'remote' : self.url,
+        'remote' : self.page.url,
         'meta'   : self._file_ii_uri({ 'tipe' : 'meta', 'ext'   : 'txt' }),
         'script' : self._file_ii_uri({ 'tipe' : 'script', 'ext' : 'txt' }),
         'clean'  : self._file_ii_uri({ 'tipe' : 'clean' }),
@@ -830,19 +831,21 @@ This script will parse input URL
       pass
   
     if not self.site:
-      self.log(f'[WARN] no site for url: {self.url}')
+      self.log(f'[WARN] no site for url: {self.page.url}')
       raise
   
     return self
   
   def parse_url(self,ref={}):
-    self.url = ref.get('url','')
-    self.ii  = ref.get('ii','')
+    url = ref.get('url','')
 
-    if not self.url or self.url == const.plh:
+    if not url or url == const.plh:
       return self
 
-    u = urlparse(self.url)
+    ii  = ref.get('ii','')
+    self.page = Page({ 'url' : url, 'ii' : ii })
+
+    u = urlparse(self.page.url)
     self.host = u.netloc.split(':')[0]
     self.base_url = u.scheme + '://' + u.netloc 
 
@@ -874,7 +877,7 @@ This script will parse input URL
     self.log(f'[site_extract] site = {self.site}')
 
     self.log('=' * 100)
-    self.log(f'[parse_url] start: {self.url}')
+    self.log(f'[parse_url] start: {self.page.url}')
 
     self.parse_url_run()
 
@@ -1064,7 +1067,7 @@ This script will parse input URL
   # called by
   #   load_soup
   def db_save_url(self, ref={}):
-    url   = ref.get('url', self.url)
+    url   = ref.get('url', self.page.url)
     title = ref.get('title', self.title)
 
     db_file = self.url_db
@@ -1138,13 +1141,13 @@ This script will parse input URL
 
   def _url_saved_db(self,url=None):
     if not url:
-      url = self.url
+      url = self.page.url
     rid = self._rid_url(url)
     return 0 if rid == None else 1
 
   def _url_saved_fs(self,url=None):
     if not url:
-      url = self.url
+      url = self.page.url
 
     rid = self._rid_url(url)
 
@@ -1162,7 +1165,7 @@ This script will parse input URL
     c = conn.cursor()
 
     if not url:
-      url = self.url
+      url = self.page.url
 
     q = '''SELECT rid FROM urls WHERE remote = ?'''
     c.execute(q,[url])
@@ -1217,7 +1220,7 @@ This script will parse input URL
             FROM urls 
                 WHERE ( NOT remote = ? ) AND ii_full LIKE "{pattern}%"
          '''
-    c.execute(q,[ self.url ])    
+    c.execute(q,[ self.page.url ])    
     rw = c.fetchone()
     if rw[0] is not None:
       ii_num = rw[0] + 1
