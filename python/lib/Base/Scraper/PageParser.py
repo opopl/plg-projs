@@ -58,13 +58,13 @@ class RootPageParser(CoreClass):
           if k == 'url':
             if e.has_attr(attr):
               auth_url  = util.url_join(self.app.base_url, e[attr])
-              print(f'[SitePage] found author url: {auth_url}')
+              print(f'[PageParser] found author url: {auth_url}')
 
               d_parse.update({ 'url' : auth_url })
           elif k == 'name':
             auth_bare = e.string
             if auth_bare:
-              print(f'[SitePage] found author name: {auth_bare}')
+              print(f'[PageParser] found author name: {auth_bare}')
 
               d_parse.update({ 'str' : auth_bare })
 

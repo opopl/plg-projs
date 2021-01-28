@@ -810,6 +810,7 @@ This script will parse input URL
             'act'  : 'remote_to_db',                    \
         })                                              \
         .page_save()                                    \
+        .page_save_db_record()                          \
         .page_add()                                     \
 
     return self
@@ -1317,6 +1318,11 @@ This script will parse input URL
     return self
 
   def do_css(self):
+    return self
+
+  def page_save_db_record(self,ref={}):
+    file = self._file_ii({ 'tipe' : 'db', 'ext' : 'html' })
+
     return self
 
   def page_save_data(self,ref={}):

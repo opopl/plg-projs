@@ -14,7 +14,9 @@ import Base.Util as util
 import Base.Const as const
 # ----------------------------
 
-class Author:
+from Base.Core import CoreClass
+
+class Author(CoreClass):
   first_name        = None
   last_name         = None
 
@@ -23,10 +25,6 @@ class Author:
 
   # app instance
   app = None
-
-  def __init__(self,args={}):
-    for k, v in args.items():
-      setattr(self, k, v)
 
   def parse(self,ref={}):
     spage = self.spage
@@ -76,5 +74,5 @@ class Author:
 
     author_id = ','.join(auth_ids)
     if author_id:
-      app.page.update({ 'author_id' : author_id })
+      app.page.set({ 'author_id' : author_id })
     return self
