@@ -581,7 +581,7 @@ This script will parse input URL
 
   def load_soup(self,ref={}):
     url = ref.get('url',self.page.url)
-    ii  = ref.get('ii',self.ii)
+    ii  = ref.get('ii',self.page.ii)
 
     self.rid = self._rid_url(url)
     if not self.rid:
@@ -773,7 +773,7 @@ This script will parse input URL
 
   def update_ii(self):
     self.page_ii_from_title()
-    self.log(f'[load_soup] ii: {self.ii}')
+    self.log(f'[load_soup] ii: {self.page.ii}')
     
     return self
 
@@ -854,8 +854,6 @@ This script will parse input URL
     except:
       return self
 
-    self.page = Page({})
-
     acts = ref.get('acts')
     if acts:
       acts_a = []
@@ -886,7 +884,7 @@ This script will parse input URL
   def page_ii_from_title(self,ref={}):
     p = self.page_parser
 
-    if self.ii:
+    if self.page.ii:
       return self
 
     if util.obj_has_method(p, 'generate_ii'):
@@ -897,7 +895,7 @@ This script will parse input URL
         tt = re.sub(r'\s', '_', tt)
         ttl = cyrtranslit.to_latin(tt,'ru').lower()
         ttl = re.sub(r'[\W\']+', '', ttl)
-        self.ii = ttl
+        self.page.ii = ttl
 
     return self
 
@@ -1083,7 +1081,7 @@ This script will parse input URL
     insert = {
         'remote' : url,
         'rid'    : self.rid,
-        'ii'     : self.ii,
+        'ii'     : self.page.ii,
         'site'   : self.site,
         'title'  : title,
     }
@@ -1192,7 +1190,7 @@ This script will parse input URL
     a_f = self.page.get('author_id_first')
     a_fs = f'.{a_f}' if a_f else ''
 
-    ii_full = f'{date}.site.{site}{a_fs}.{ii_num}.{self.ii}'
+    ii_full = f'{date}.site.{site}{a_fs}.{ii_num}.{self.page.ii}'
 
     return ii_full
 
