@@ -418,13 +418,15 @@ This script will parse input URL
     if not self.urls:
       self.urls = []
 
-    for url in zdata.keys():
+    for k in zdata.keys():
+      if k in [ 'order' ]:
+        continue
+        
+      url = k
       d = zdata.get(url)
-      print(d)
       self.urls.append(d)
 
     import pdb; pdb.set_trace()
-
 
     return self
 
