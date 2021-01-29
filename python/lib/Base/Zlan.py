@@ -1,5 +1,8 @@
 
 import os,sys
+import re
+
+from copy import copy
 
 def add_libs(libs):
   for lib in libs:
@@ -14,77 +17,55 @@ import Base.Const as const
 
 def data(ref={}):
   zfile = util.get(ref,'file')
-  if not file:
-    return {}
+
+  if not (zfile and os.path.isfile(zfile)):
+    return
 
   zdata = {}
-  if not os.path.isfile(zfile):
-    return {}
-
   zorder = []
 
+  dat_file = os.path.join(plg,'projs','data','list','zlan_keys.i.dat')
+  zkeys = util.readarr(dat_file)
+
+  flags = {}
+  d = {}
+
   with open(zfile,'r') as f:
-    lines = f.read()
+    lines = f.readlines()
 
-    flags = {}
-    d = {}
+  save = 0
+  while len(lines):
+    line = lines.pop(0)
+    save = 0
 
-#let zkeys = base#varget('projs_zlan_keys',[])
-    #zkeys =
-    while len(lines):
-      line = lines.pop(0)
-      save = 0
+    if (len(lines) == 0) or (re.match(r'^page', line)):
+      save = 1
 
-      m = re.match('^page', line)
-      
-      #If zero or more characters at the beginning of string match the regular expression pattern, 
-      #return a corresponding match object. 
-      #Return None if the string does not match the pattern; note that this is different from a zero-length match.
-      #https://docs.python.org/3/library/re.html
+    if re.match(r'^\t',line):
+      for k in zkeys:
+        pat = rf'\t{k}\s+(.*)$'
+        p = re.compile(pat)
+        m = re.match(pat, line)
+        if m:
+          v = m.group(1)
+          if v:
+            d.update({ k : v })
+
+    if save:
+      url = copy(d).get('url')
+      if url:
+        del d['url']
+        zorder.append(url)
   
-
-  #while len(lines) 
-    #let line = remove(lines,0)
-    #let save = 0
-
-    if ((line =~ '^page') || !len(lines))
-      let save = 1
-    endif
-
-    if line =~ '^\t'
-      for k in zkeys
-        let pat  = printf('^\t%s\s\+\zs.*\ze$', k)
-        let list = matchlist(line, pat)
-        let v    = get(list,0,'')
-
-        if len(v)
-          call extend(d,{ k : v })
-        endif
-      endfor
-    endif
-
-    if save
-      let url = get(copy(d),'url','')
-      if len(url)
-        unlet d.url
-        call add(zorder,url)
+        dd = copy(d)
   
-        let dd = copy(d)
+        u = util.url_parse(url)
   
-        let struct = base#url#struct(url)
-        let host   = get(struct,'host','')
+        dd['host'] = u['host']
+        zdata[url] = dd
   
-        call extend(dd,{ 'host' : host })
-  
-        call extend(zdata,{ url : dd })
-      endif
-      let d = {}
-    endif
+      d = {}
 
-  endw
-
-  call extend(zdata,{ 'order' : zorder })
+  zdata.update({ 'order' : zorder })
 
   return zdata
-  
-endfunction

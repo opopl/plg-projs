@@ -46,6 +46,8 @@ import Base.DBW as dbw
 import Base.Util as util
 import Base.Const as const
 
+import Base.Zlan as zlan
+
 from Base.Core import CoreClass
 
 class dbFile(CoreClass):
@@ -135,8 +137,6 @@ class Pic(CoreClass):
       i = Image.open(i_tmp['bare'])
       #i = Image.open(resp.raw)
     except UnidentifiedImageError:
-      #with open(i_tmp, 'r') as lf:
-        #a = lf.read()
 
       if ct in [ 'image/svg+xml' ]:
         cairosvg.svg2png( 
@@ -409,10 +409,9 @@ This script will parse input URL
     f_zlan = util.get(self,'f_zlan')
     f_zlan = ref.get('zlan',f_zlan)
 
-    with open(f_zlan,'r') as f:
-      zlines = f.readlines()
-      for zl in zlines:
-        pass
+    zdata = zlan.data({ 'file' : f_zlan })
+
+    import pdb; pdb.set_trace()
 
     return self
 
@@ -866,9 +865,11 @@ This script will parse input URL
     ii  = ref.get('ii','')
     self.page = Page({ 'url' : url, 'ii' : ii })
 
-    u = urlparse(self.page.url)
-    self.page.host = u.netloc.split(':')[0]
-    self.page.baseurl = u.scheme + '://' + u.netloc 
+    d = util.url_parse(self.page.url)
+
+    for k in util.qw('host baseurl'):
+      v = d[k]
+      self.page.set({ k : v })
 
     try:
       self.site_extract()

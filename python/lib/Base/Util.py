@@ -1,7 +1,9 @@
 
-import pathlib
 import os
+import re
+
 from pathlib import Path
+import pathlib
 
 from urllib.parse import urlparse
 from urllib.parse import urljoin
@@ -17,7 +19,21 @@ def mk_parent_dir(file):
 def url_parse(url):
   u = urlparse(url)
 
-  return u
+  d = {}
+  host = u.netloc.split(':')[0]
+  baseurl = u.scheme + '://' + u.netloc
+
+  d = {
+    'scheme'  : u.scheme,
+    'path'    : u.path,
+    'netloc'  : u.netloc,
+    'params'  : u.params,
+    'query'   : u.query,
+    'host'    : host,
+    'baseurl' : baseurl,
+  }
+
+  return d
 
 def strip(s):
   s = s.strip("\'\"\n\t ")
@@ -74,3 +90,28 @@ def get(obj, path, default = None):
           obj = default
           break
     return obj
+
+def uniq(lst=[]):
+    lst = list(set(lst))
+    return lst
+
+def readarr(dat_file, opts={}):
+    splitsep = opts.get('sep', re.compile(r'\s+'))
+
+    vars = []
+    if not (dat_file and os.path.isfile(dat_file)):
+      return []
+
+    with open(dat_file,'r') as f:
+      lines = f.readlines()
+
+    for line in lines:
+      line = line.strip()
+      if re.match(r'^#',line) or (len(line) == 0):
+        continue
+
+      F = re.split(splitsep, line)
+      vars.extend(F)
+      vars = uniq(vars)
+
+    return vars
