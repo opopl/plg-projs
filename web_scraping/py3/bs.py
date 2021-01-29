@@ -266,6 +266,9 @@ This script will parse input URL
   # list of databases
   dbfile = dbFile()
 
+  # list of urls to be fetched and parsed
+  urls = []
+
   # end: attributes }
 
   def __init__(self,args={}):
@@ -410,6 +413,9 @@ This script will parse input URL
     f_zlan = ref.get('zlan',f_zlan)
 
     zdata = zlan.data({ 'file' : f_zlan })
+    for url in zdata.keys():
+      d = zdata.get(url)
+      self.urls.append(d)
 
     import pdb; pdb.set_trace()
 
