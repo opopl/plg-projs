@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import requests
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, Comment
 
 import getopt,argparse
 import sys,os
@@ -316,11 +316,17 @@ This script will parse input URL
 
     return self
 
+###sql
   def init_db_urls(self):
     self.log('[init_db_urls]')
   
     sql = '''
+            -- ALTER TABLE urls ADD COLUMN baseurl TEXT;
+            -- ALTER TABLE urls ADD COLUMN host TEXT;
+
             CREATE TABLE IF NOT EXISTS urls (
+                baseurl TEXT,
+                host TEXT,
                 rid INTEGER UNIQUE,
                 remote TEXT UNIQUE NOT NULL,
                 date TEXT,
@@ -425,8 +431,6 @@ This script will parse input URL
       url = k
       d = zdata.get(url)
       self.urls.append(d)
-
-    import pdb; pdb.set_trace()
 
     return self
 
@@ -664,6 +668,15 @@ This script will parse input URL
     self.page_clean({ 'clean' : clean })
     return self
 
+###rm_cmt
+  def page_rm_comments(self,ref={}):
+    els = self.soup.find_all(text=lambda text:isinstance(text, Comment))
+    for e in els:
+      print(e)
+      if isinstance(e,Comment):
+        e.extract()
+    return self
+
   def page_clean(self,ref={}):
     site = util.get(self,'site',self.page.site)
 
@@ -830,6 +843,7 @@ This script will parse input URL
         .page_clean_core()                              \
         .page_save({ 'tipe' : 'core' })                 \
         .page_clean()                                   \
+        .page_rm_comments()                             \
         .page_unwrap()                                  \
         .page_rm_empty()                                \
         .page_header_insert_url()                       \
