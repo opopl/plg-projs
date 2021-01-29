@@ -659,7 +659,10 @@ This script will parse input URL
 
     clean = []
     clean.extend( self._sel_clean_core() )
-    clean.extend( util.get(self,[ 'sites', site, 'sel', 'clean' ],[]) )
+
+    clean_site = util.get(self,[ 'sites', site, 'sel', 'clean' ],[])
+    if clean_site:
+      clean.extend( clean_site )
     
     return clean
 
@@ -672,7 +675,6 @@ This script will parse input URL
   def page_rm_comments(self,ref={}):
     els = self.soup.find_all(text=lambda text:isinstance(text, Comment))
     for e in els:
-      print(e)
       if isinstance(e,Comment):
         e.extract()
     return self
@@ -841,9 +843,9 @@ This script will parse input URL
         .cmt(''' save image data => img.html''')        \
         .page_save_data_img()                           \
         .page_clean_core()                              \
+        .page_rm_comments()                             \
         .page_save({ 'tipe' : 'core' })                 \
         .page_clean()                                   \
-        .page_rm_comments()                             \
         .page_unwrap()                                  \
         .page_rm_empty()                                \
         .page_header_insert_url()                       \
