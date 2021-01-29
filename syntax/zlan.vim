@@ -1,7 +1,7 @@
 
-if exists("b:projs_current_syntax")
-  finish
-endif
+"if exists("b:projs_current_syntax")
+  "finish
+"endif
 
 "syn keyword	confTodo	contained TODO FIXME XXX
 "" Avoid matching "text#text", used in /etc/disktab and /etc/gettytab

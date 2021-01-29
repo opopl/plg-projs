@@ -30,48 +30,63 @@ def data(ref={}):
   with open(zfile,'r') as f:
     lines = f.readlines()
 
-  at = {
+  # loop variables
+  flg = {
     'page'   : 0,
     'global' : 0,
   }
 
-  d = None
+  d_page = None
+  end = 0 
+
+  shift = '\t'
+  pat = rf'{shift}(?:(\w+))\s+(.*)$'
+  pc = re.compile(pat)
+
   while len(lines):
     line = lines.pop(0)
 
     if re.match(r'^global', line):
-      at = {}
-      at['global'] = 1
+      end = 1
 
-    if (len(lines) == 0) or (re.match(r'^page', line)):
-      at = { 'page' : 1 }
+      flg = { 'global' : 1 }
+
+    if re.match(r'^page', line):
+      end = 1
+      flg = { 'page'   : 1 }
 
     if re.match(r'^\t',line):
-      shift = '\t'
-      pat = rf'{shift}(?:(\w+))\s+(.*)$'
-      p = re.compile(pat)
-      m = re.match(pat, line)
+      if not d_page:
+        d_page = {}
+
+      end = 0
+
+      m = re.match(pc, line)
       if m:
         k = m.group(1)
         v = m.group(2)
         if v:
-          d.update({ k : v })
+          if flg.get('page'):
+            d_page.update({ k : v })
 
       continue
-
-    if at.get('page'):
-      url = copy(d).get('url')
-      if url:
-        dd = copy(d)
-
-        zorder.append(url)
+    
+    if end:
+      if flg.get('page'):
+        if d_page:
+          dd = copy(d_page)
+          url = dd.get('url')
+          if url:
+            zorder.append(url)
+      
+            u = util.url_parse(url)
+      
+            dd['host'] = u['host']
+            zdata[url] = dd
   
-        u = util.url_parse(url)
-  
-        dd['host'] = u['host']
-        zdata[url] = dd
-  
-      d = None
+      d_page = None
+      end = 0
+      continue
 
   zdata.update({ 'order' : zorder })
 

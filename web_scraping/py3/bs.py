@@ -427,6 +427,8 @@ This script will parse input URL
     if not self.urls:
       self.urls = []
 
+    import pdb; pdb.set_trace()
+
     for k in zdata.keys():
       if k in [ 'order' ]:
         continue
