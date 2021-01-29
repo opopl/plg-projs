@@ -43,8 +43,14 @@ def data(ref={}):
   pat = rf'{shift}(?:(\w+))\s+(.*)$'
   pc = re.compile(pat)
 
-  while len(lines):
+  while 1:
+    if len(lines) == 0:
+      break
+
     line = lines.pop(0)
+
+    if len(lines) == 0:
+      end = 1
 
     if re.match(r'^global', line):
       end = 1
@@ -86,7 +92,7 @@ def data(ref={}):
   
       d_page = None
       end = 0
-      continue
+
 
   zdata.update({ 'order' : zorder })
 
