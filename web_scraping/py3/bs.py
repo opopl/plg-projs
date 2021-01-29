@@ -207,6 +207,9 @@ This script will parse input URL
   # data
   data = {}
 
+  # global variables
+  globals = {}
+
   # loaded python modules
   modules = { 
     'sites' : {}
@@ -976,6 +979,8 @@ This script will parse input URL
       return self
 
     p.get_date()
+    if not self.page.date:
+      raise Exception('[page_get_date] no date!')
 
     return self
 

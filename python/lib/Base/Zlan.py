@@ -27,19 +27,24 @@ def data(ref={}):
   dat_file = os.path.join(plg,'projs','data','list','zlan_keys.i.dat')
   zkeys = util.readarr(dat_file)
 
-  flags = {}
-  d = {}
-
   with open(zfile,'r') as f:
     lines = f.readlines()
 
-  save = 0
+  at = {
+    'page'   : 0,
+    'global' : 0,
+  }
+
+  d = None
   while len(lines):
     line = lines.pop(0)
-    save = 0
+
+    if re.match(r'^global', line):
+      at = {}
+      at['global'] = 1
 
     if (len(lines) == 0) or (re.match(r'^page', line)):
-      save = 1
+      at = { 'page' : 1 }
 
     if re.match(r'^\t',line):
       shift = '\t'
@@ -52,7 +57,9 @@ def data(ref={}):
         if v:
           d.update({ k : v })
 
-    if save:
+      continue
+
+    if at.get('page'):
       url = copy(d).get('url')
       if url:
         dd = copy(d)
@@ -64,7 +71,7 @@ def data(ref={}):
         dd['host'] = u['host']
         zdata[url] = dd
   
-      d = {}
+      d = None
 
   zdata.update({ 'order' : zorder })
 
