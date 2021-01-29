@@ -54,10 +54,9 @@ def data(ref={}):
     if save:
       url = copy(d).get('url')
       if url:
-        del d['url']
-        zorder.append(url)
-  
         dd = copy(d)
+
+        zorder.append(url)
   
         u = util.url_parse(url)
   

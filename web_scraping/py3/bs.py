@@ -413,6 +413,8 @@ This script will parse input URL
     f_zlan = ref.get('zlan',f_zlan)
 
     zdata = zlan.data({ 'file' : f_zlan })
+    zorder = zdata.get('order',[])
+
     for url in zdata.keys():
       d = zdata.get(url)
       self.urls.append(d)
