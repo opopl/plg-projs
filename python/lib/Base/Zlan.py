@@ -42,14 +42,15 @@ def data(ref={}):
       save = 1
 
     if re.match(r'^\t',line):
-      for k in zkeys:
-        pat = rf'\t{k}\s+(.*)$'
-        p = re.compile(pat)
-        m = re.match(pat, line)
-        if m:
-          v = m.group(1)
-          if v:
-            d.update({ k : v })
+      shift = '\t'
+      pat = rf'{shift}(?:(\w+))\s+(.*)$'
+      p = re.compile(pat)
+      m = re.match(pat, line)
+      if m:
+        k = m.group(1)
+        v = m.group(2)
+        if v:
+          d.update({ k : v })
 
     if save:
       url = copy(d).get('url')

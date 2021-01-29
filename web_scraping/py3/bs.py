@@ -407,7 +407,7 @@ This script will parse input URL
 
     return 
 
-###z
+###zlan
   def load_zlan(self, ref={}):
     f_zlan = util.get(self,'f_zlan')
     f_zlan = ref.get('zlan',f_zlan)
@@ -415,11 +415,16 @@ This script will parse input URL
     zdata = zlan.data({ 'file' : f_zlan })
     zorder = zdata.get('order',[])
 
+    if not self.urls:
+      self.urls = []
+
     for url in zdata.keys():
       d = zdata.get(url)
+      print(d)
       self.urls.append(d)
 
     import pdb; pdb.set_trace()
+
 
     return self
 
