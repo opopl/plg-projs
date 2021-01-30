@@ -43,8 +43,15 @@ def data(ref={}):
   end = 0 
 
   shift = '\t'
-  pat = rf'{shift}(?:(\w+))\s+(.*)$'
-  pc = re.compile(pat)
+  # str patterns
+  pats = { 
+    'page_var'  : rf'{shift}(?:(\w+))\s+(.*)$',
+  }
+  pc = {}
+  # compiled patterns
+  for k in pats.keys():
+    v = pats[k]
+    pc[k] = re.compile(v)
 
   while 1:
     line = None
@@ -73,20 +80,28 @@ def data(ref={}):
         if re.match(r'^\t',line):
     
           end = 0
+
+          if flg.get('global'):
+            m = re.match(pc['global_var'], line)
+            if m:
+              k = m.group(1)
+              v = m.group(2)
+              if not d_global:
+                d_global = {}
+              d_global.update({ k : v })
     
-          m = re.match(pc, line)
-          if m:
-            k = m.group(1)
-            v = m.group(2)
-            if v:
-              if flg.get('page'):
-                if not d_page:
-                  d_page = {}
-                d_page.update({ k : v })
-              if flg.get('global'):
-                if not d_global:
-                  d_global = {}
-                d_global.update({ k : v })
+          if flg.get('page'):
+            m = re.match(pc['page_var'], line)
+            if m:
+              k = m.group(1)
+              v = m.group(2)
+              if not d_page:
+                d_page = {}
+  
+              if d_global:
+                v = d_global.get(k, v)
+
+              d_page.update({ k : v })
     
           continue
     

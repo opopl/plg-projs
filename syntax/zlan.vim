@@ -16,10 +16,13 @@
 "hi def link confTodo	Todo
 "hi def link confString	String
 "
-syntax region IfOff start=/^off\s*$/ end=/^on\s*$/ keepend
+syntax region IfOff start=/^off\s*$/ end=/^on\s*$/
 highlight link IfOff Comment
 
-syntax keyword zlanKeyword page url title in ii tags redo fail
+syntax keyword zlanKeyword page global
+syntax keyword zlanKeyword url title in ii tags
+syntax keyword zlanKeyword on off
+syntax keyword zlanKeyword redo fail
 
 syn match	zlanComment	"^\s*#.*$"
 
