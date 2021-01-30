@@ -165,7 +165,7 @@ def data(ref={}):
         line_t = m.group(1)
         end = 0
 
-###f_global
+###f_block_global
         if flg.get('block') == 'global':
 
 ###m_global_unset
@@ -194,7 +194,7 @@ def data(ref={}):
                 if len(var_lst):
                   d_global[j].update({ var : var_lst })
     
-###f_page
+###f_block_page
         if flg.get('block') == 'page':
             if not d_page:
               d_page = {}
