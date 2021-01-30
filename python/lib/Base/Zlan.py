@@ -56,22 +56,18 @@ def data(ref={}):
       line = lines.pop(0)
 
     if line:
-      if re.match(r'^off\s*$', line):
-        off = 1
-      if re.match(r'^on\s*$', line):
-        off = 0
-
-      if off:
-        continue
-
-      if re.match(r'^global', line):
+      m = re.match(r'^(\w+)', line):
+      if m:
         end = 1
-  
-        flg = { 'global' : 1 }
-  
-      if re.match(r'^page', line):
-        end = 1
-        flg = { 'page'   : 1 }
+        word = m.group(1)
+        if word == 'off':
+          off = 1
+        elif word == 'on':
+          off = 0
+        elif word == 'global':
+          flg = { 'global' : 1 }
+        elif word == 'page':
+          flg = { 'page'   : 1 }
   
       if re.match(r'^\t',line):
   
