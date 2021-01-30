@@ -451,6 +451,7 @@ This script will parse input URL
       print(f'acts => {acts}')
 
     print(f'zorder => {len(zorder)}')
+    print(f'd_global => {z.d_global}')
     import pdb; pdb.set_trace()
 
     return self
