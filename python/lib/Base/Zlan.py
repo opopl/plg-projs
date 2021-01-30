@@ -67,6 +67,9 @@ class Zlan(CoreClass):
   
     line = self.lines[0]
     while 1:
+      if len(self.lines) == 0:
+        break
+
       self.line = self.lines.pop(0)
   
       if self._is_cmt():
