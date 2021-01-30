@@ -72,9 +72,9 @@ def data(ref={}):
   eof = 0 
 
   shift = '\t'
-  # str patterns
+###pats
   pats = { 
-    'set'      : rf'^set\s+(\w+)\s+(.*)$',
+    'set'      : rf'^set\s+(\w+)(?:\s+(.*)|\s*)$',
     'setlist'  : rf'^setlist\s+(\w+)\s*$',
     'listpush' : rf'^listpush\s+(\w+)\s*$',
     'setdict'  : rf'^setdict\+(\w+)\s*$',
@@ -138,8 +138,9 @@ def data(ref={}):
             if m:
               k = m.group(1)
               v = m.group(2)
-              v = v.strip()
-              d_global['set'].update({ k : v })
+              if v:
+                v = v.strip()
+                d_global['set'].update({ k : v })
 
 ###m_global_list
             for j in util.qw('listpush setlist'):
@@ -147,7 +148,6 @@ def data(ref={}):
               if m:
                 var = m.group(1)
                 var_lst = lst_read(lines)
-                print(var_lst)
   
                 if len(var_lst):
                   d_global[j].update({ var : var_lst })
@@ -180,19 +180,21 @@ def data(ref={}):
     if end:
       if flg.get('page'):
         if d_page:
+          dd = copy(d_page)
+
           for w in d_global['listpush'].keys():
             l_push = d_global['listpush'].get(w,[])
-            w_lst = d_page.get(w,[])
+            w_lst = dd.get(w,[])
             w_lst.extend(l_push)
-            d_page[w] = w_lst
+            dd[w] = w_lst
 
-          dd = copy(d_page)
           if d_global:
             for k, v in d_global.items():
               if k in util.qw('set setlist setdict'):
                 g_set = v
                 for kk in g_set.keys():
-                  dd[kk] = g_set.get(kk)
+                  if not kk in dd:
+                    dd[kk] = g_set.get(kk)
 
           url = dd.get('url')
           if url:
