@@ -37,7 +37,7 @@ def data(ref={}):
   }
 
   d_page = None
-  d_global = None
+  d_global = {}
   off = None
 
   end = 0 
@@ -45,9 +45,11 @@ def data(ref={}):
   shift = '\t'
   # str patterns
   pats = { 
-    'page_var'         : rf'^(?:(\w+))\s+(.*)$',
+    'page_var_str'     : rf'^(?:(\w+))\s+(.*)$',
+    'page_var_list'    : rf'^(\w+)\|list\|\s*$',
+    'page_var_dict'    : rf'^(\w+)\|dict\|\s*$',
     'global_var_set'   : rf'^set\s+(?:(\w+))\s*=\s*(.*)$',
-    'global_var_unset' : rf'^set\s+(?:(\w+))\s*$',
+    'global_var_unset' : rf'^unset\s+(?:(\w+))\s*$',
   }
   pc = {}
   # compiled patterns
@@ -90,20 +92,37 @@ def data(ref={}):
               k = m.group(1)
               v = m.group(2)
               v = v.strip()
-              if not d_global:
-                d_global = {}
               d_global.update({ k : v })
+
             m = re.match(pc['global_var_unset'], line_t)
-    
-          if flg.get('page'):
-            m = re.match(pc['page_var'], line_t)
             if m:
               k = m.group(1)
-              v = m.group(2)
-              if not d_page:
-                d_page = {}
+              if k in d_global:
+                del d_global[k]
+    
+###f_page
+          if flg.get('page'):
+            if not d_page:
+              d_page = {}
 
-              d_page.update({ k : v })
+            m = re.match(pc['page_var_str'], line_t)
+            if m:
+              var = m.group(1)
+              val = m.group(2)
+              d_page.update({ var : val })
+
+            m = re.match(pc['page_var_list'], line_t)
+            if m:
+              var = m.group(1)
+              var_lst = []
+              while 1:
+                line = lines.pop(0)
+                mm = re.match(r'\t\t(\w+)',line)
+                if not mm:
+                  break
+                item = mm.group(1)
+                item = item.strip()
+                var_lst.append(item)
     
           continue
     

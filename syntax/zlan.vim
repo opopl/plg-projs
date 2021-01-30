@@ -19,14 +19,20 @@
 syntax region IfOff start=/^off\s*$/ end=/^on\s*$/
 highlight link IfOff Comment
 
-syntax keyword zlanKeyword page global
+syntax keyword zlanKey page global
+syntax keyword zlanOp set unset
 syntax keyword zlanKeyword url title in ii tags
 "syntax keyword zlanKeyword on off
-syntax keyword zlanKeyword redo fail
+syntax keyword zlanFlag redo fail
+syntax keyword zlanKeyword acts
 
 syn match	zlanComment	"^\s*#.*$"
 
 highlight link zlanKeyword Keyword
+highlight link zlanFlag MoreMsg
+highlight link zlanKey WarningMsg
+highlight link zlanOp Pmenu
+
 highlight def link zlanComment	Comment
 
 let b:projs_current_syntax = "zlan"
