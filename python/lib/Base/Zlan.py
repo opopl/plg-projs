@@ -94,6 +94,12 @@ def data(ref={}):
   while 1:
     #line = None
 
+    if len(lines):
+      line = lines.pop(0)
+    else:
+      eof = 1
+      end = 1
+
     if end:
 ###save_page
       if flg.get('save') == 'page':
@@ -137,13 +143,13 @@ def data(ref={}):
         break
     else:
 ###get_line
-      line = lines.pop(0)
-      if is_cmt(line):
-        print(line)
-        if len(lines) == 0:
-          eof = 1
-          end = 1
-        continue
+      #line = lines.pop(0)
+#      if is_cmt(line):
+        #print(line)
+        #if len(lines) == 0:
+          #eof = 1
+          #end = 1
+        #continue
 
       m = re.match(r'^(\w+)', line)
       if m:
