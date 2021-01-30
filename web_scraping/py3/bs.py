@@ -434,6 +434,13 @@ This script will parse input URL
       url = k
       d = zdata.get(url)
       self.urls.append(d)
+
+    for url in zorder:
+      d = zdata.get(url)
+      tags = d.get('tags','')
+      print(f'{tags}')
+
+    print(f'zorder => {len(zorder)}')
     import pdb; pdb.set_trace()
 
     return self
