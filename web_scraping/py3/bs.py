@@ -319,13 +319,15 @@ This script will parse input URL
 
     return self
 
-###sql
+###db
   def init_db_urls(self):
     self.log('[init_db_urls]')
   
     sql = '''
             -- ALTER TABLE urls ADD COLUMN baseurl TEXT;
             -- ALTER TABLE urls ADD COLUMN host TEXT;
+
+            DROP TABLE IF EXISTS log;
 
             CREATE TABLE IF NOT EXISTS urls (
                 baseurl TEXT,
@@ -358,7 +360,6 @@ This script will parse input URL
                 rids TEXT
             );
 
-            DROP TABLE IF EXISTS log;
 
             CREATE TABLE IF NOT EXISTS log (
                 engine TEXT DEFAULT 'bs',
