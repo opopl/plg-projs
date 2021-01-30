@@ -851,9 +851,17 @@ This script will parse input URL
       'ext'  : 'html' 
     })
 
-    db_file = self.dbfile.pages
-    conn = sqlite3.connect(db_file)
-    c = conn.cursor()
+    q = '''SELECT * FROM log WHERE url = ?'''
+    p = [self.page.url]
+
+    dw = dbw.sql_fetchall(q,p,{ 
+        'db_file' : self.dbfile.pages
+    })
+    if not dw:
+      return self
+
+    rows = dw.get('rows',[])
+    cols = dw.get('cols',[])
 
     return self
 
@@ -1416,12 +1424,12 @@ This script will parse input URL
 
     q = '''SELECT * FROM urls WHERE remote = ? '''
     p = [ self.page.url ]
-    row = dbw.sql_fetchone(q,p,{ 'db_file' : self.dbfile.pages })
-    if not row:
+    dw = dbw.sql_fetchone(q,p,{ 'db_file' : self.dbfile.pages })
+    if not dw:
       return self
 
-    cols = list(row.keys())
-    cols.sort()
+    cols = dw.get('cols',[])
+    row = dw.get('row',{})
 
     t = self.template_env.get_template("dbrid.t.html")
     h = t.render(row=row,cols=cols)

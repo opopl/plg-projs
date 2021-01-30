@@ -76,9 +76,16 @@ def sql_fetchone(q, p=[], ref={}):
   except:
      print("Errors ", sys.exc_info()[0], " for sqlite query: " + q )
   rw = c.fetchone()
-  row = rw2dict(rw) if rw else None
 
-  return row
+  if not rw:
+    return
+
+  row = rw2dict(rw)
+
+  cols = list(row.keys()) 
+  cols.sort()
+
+  return { 'row' : row, 'cols' : cols }
 
 def sql_fetchall(q,p=[],ref={}):
   conn     = ref.get('conn')
