@@ -196,9 +196,7 @@ class Zlan(CoreClass):
     return self
 
   def line_match_block_inner(self):
-    print(self.line)
     m = re.match(r'^\t(.*)$',self.line)
-    print(m)
     if not m:
       return self
 
@@ -273,13 +271,13 @@ class Zlan(CoreClass):
           if self.off:
             continue
 
-          self.pl()
+          #self.pl()
             
           self.line_match_block_inner()
 
-          print(f'd_page => {self.d_page}')
-          print(f'flg => {self.flg}')
-          print(f'off => {self.off}')
+          #print(f'd_page => {self.d_page}')
+          #print(f'flg => {self.flg}')
+          #print(f'off => {self.off}')
 
           if self.end:
             self.process_end()  
