@@ -98,13 +98,13 @@ def data(ref={}):
 ###save_page
       if flg.get('save') == 'page':
         if d_page:
-          dd = copy(d_page)
+          dd = deepcopy(d_page)
 
           if d_global:
             dg = deepcopy(d_global)
             for k, v in dg.items():
               if k in util.qw('set setlist setdict'):
-                g_set = copy(v)
+                g_set = deepcopy(v)
                 for kk in g_set.keys():
                   if not kk in dd:
                     dd[kk] = g_set.get(kk)
@@ -139,6 +139,10 @@ def data(ref={}):
 ###get_line
       line = lines.pop(0)
       if is_cmt(line):
+        print(line)
+        if len(lines) == 0:
+          eof = 1
+          end = 1
         continue
 
       m = re.match(r'^(\w+)', line)
