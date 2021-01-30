@@ -69,7 +69,7 @@ class Zlan(CoreClass):
     while 1:
       self.line = self.lines.pop(0)
   
-      if self._is_cmt(self.line):
+      if self._is_cmt():
         continue
   
       mm = re.match(r'\t\t(\w+)',self.line)
@@ -153,7 +153,7 @@ class Zlan(CoreClass):
     if m:
       k = m.group(1)
       if k in self.d_global:
-        del d_global[k]
+        del self.d_global[k]
   
     m = re.match(self.pc['set'], self.line_t)
     if m:
@@ -214,7 +214,7 @@ class Zlan(CoreClass):
         dd = deepcopy(self.d_page)
     
         if self.d_global:
-          dg = deepcopy(d_global)
+          dg = deepcopy(self.d_global)
           for k, v in dg.items():
             if k in util.qw('set setlist setdict'):
               g_set = deepcopy(v)
