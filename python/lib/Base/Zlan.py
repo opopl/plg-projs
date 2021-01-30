@@ -56,7 +56,13 @@ def data(ref={}):
   }
 
   d_page = None
-  d_global = {}
+  d_global = {
+    'listadd' : {},
+    'listadd' : {},
+    'setlist' : {},
+    'setdict' : {},
+    'set' : {},
+  }
   off = None
 
   end = 0 
@@ -64,12 +70,10 @@ def data(ref={}):
   shift = '\t'
   # str patterns
   pats = { 
-    'page_var_str'     : rf'^set\s+(\w+)\s+(.*)$',
-    'page_var_list'    : rf'^setlist\s+(\w+)\s*$',
-    'page_var_dict'    : rf'^setdict\+(\w+)\s*$',
-    'global_var_set'   : rf'^set\s+(?:(\w+))\s+(.*)$',
-    'global_var_set_list' : rf'^setlist\s+(\w+)\s*$',
-    'global_var_unset' : rf'^unset\s+(?:(\w+))\s*$',
+    'set'     : rf'^set\s+(\w+)\s+(.*)$',
+    'setlist' : rf'^setlist\s+(\w+)\s*$',
+    'setdict' : rf'^setdict\+(\w+)\s*$',
+    'unset'   : rf'^unset\s+(\w+)\s*$',
   }
   pc = {}
   # compiled patterns
@@ -100,46 +104,52 @@ def data(ref={}):
         elif word == 'page':
           flg = { 'page'   : 1 }
   
+###if_on
       if not off:
         m = re.match(r'^\t(.*)$',line)
         if m:
           line_t = m.group(1)
           end = 0
 
+###f_global
           if flg.get('global'):
-            m = re.match(pc['global_var_set'], line_t)
-            if m:
-              k = m.group(1)
-              v = m.group(2)
-              v = v.strip()
-              d_global.update({ k : v })
 
-            m = re.match(pc['global_var_unset'], line_t)
+###m_global_unset
+            m = re.match(pc['unset'], line_t)
             if m:
               k = m.group(1)
               if k in d_global:
                 del d_global[k]
 
-            m = re.match(pc['global_var_set_list'], line_t)
+###m_global_set
+            m = re.match(pc['set'], line_t)
+            if m:
+              k = m.group(1)
+              v = m.group(2)
+              v = v.strip()
+              d_global['set'].update({ k : v })
+
+###m_global_setlist
+            m = re.match(pc['setlist'], line_t)
             if m:
               var = m.group(1)
               var_lst = lst_read(lines)
 
               if len(var_lst):
-                d_global.update({ var : var_lst })
+                d_global['setlist'].update({ var : var_lst })
     
 ###f_page
           if flg.get('page'):
             if not d_page:
               d_page = {}
 
-            m = re.match(pc['page_var_str'], line_t)
+            m = re.match(pc['set'], line_t)
             if m:
               var = m.group(1)
               val = m.group(2)
               d_page.update({ var : val })
 
-            m = re.match(pc['page_var_list'], line_t)
+            m = re.match(pc['setlist'], line_t)
             if m:
               var = m.group(1)
               var_lst = lst_read(lines)
@@ -155,7 +165,11 @@ def data(ref={}):
           dd = copy(d_page)
           if d_global:
             for k, v in d_global.items():
-              dd[k] = v 
+              if k == util.qw('set setlist setdict'):
+                g_set = v
+                for kk in g_set.keys():
+                  dd[kk] = g_set.get(kk)
+
           url = dd.get('url')
           if url:
             zorder.append(url)
