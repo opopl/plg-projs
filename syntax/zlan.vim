@@ -21,7 +21,7 @@ highlight link IfOff Comment
 
 syntax keyword zlanKey page global
 syntax keyword zlanOp set unset
-syntax keyword zlanKeyword url title in ii tags
+syntax keyword zlanKeyword url title in ii tags date
 "syntax keyword zlanKeyword on off
 syntax keyword zlanFlag redo fail
 syntax keyword zlanKeyword acts

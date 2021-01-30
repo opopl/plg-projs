@@ -18,6 +18,22 @@ import Base.Const as const
 def is_cmt(line):
   return re.match(r'^\s*#',line)
 
+def lst_read(lines):
+  lst = []
+  while 1:
+    line = lines.pop(0)
+    if is_cmt(line):
+      continue
+
+    mm = re.match(r'\t\t(\w+)',line)
+    if not mm:
+      break
+    item = mm.group(1)
+    item = item.strip()
+    lst.append(item)
+
+  return lst
+
 def data(ref={}):
   zfile = util.get(ref,'file')
 
@@ -52,6 +68,7 @@ def data(ref={}):
     'page_var_list'    : rf'^(\w+)\|list\|\s*$',
     'page_var_dict'    : rf'^(\w+)\|dict\|\s*$',
     'global_var_set'   : rf'^set\s+(?:(\w+))\s*=\s*(.*)$',
+    'global_var_set_list' : rf'^set\s+(\w+)\|list\|\s*$',
     'global_var_unset' : rf'^unset\s+(?:(\w+))\s*$',
   }
   pc = {}
@@ -102,6 +119,14 @@ def data(ref={}):
               k = m.group(1)
               if k in d_global:
                 del d_global[k]
+
+            m = re.match(pc['global_var_set_list'], line_t)
+            if m:
+              var = m.group(1)
+              var_lst = lst_read(lines)
+
+              if len(var_lst):
+                d_global.update({ var : var_lst })
     
 ###f_page
           if flg.get('page'):
@@ -117,20 +142,10 @@ def data(ref={}):
             m = re.match(pc['page_var_list'], line_t)
             if m:
               var = m.group(1)
-              var_lst = []
-              while 1:
-                line = lines.pop(0)
-                if is_cmt(line):
-                  continue
+              var_lst = lst_read(lines)
 
-                mm = re.match(r'\t\t(\w+)',line)
-                if not mm:
-                  break
-                item = mm.group(1)
-                item = item.strip()
-                var_lst.append(item)
-
-              d_page.update({ var : var_lst })
+              if len(var_lst):
+                d_page.update({ var : var_lst })
     
           continue
     
@@ -156,6 +171,7 @@ def data(ref={}):
     if len(lines) == 0:
       break
 
+  print(d_global)
   zdata.update({ 'order' : zorder })
 
   return zdata
