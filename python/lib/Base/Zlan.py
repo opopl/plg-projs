@@ -121,8 +121,7 @@ class Zlan(CoreClass):
     self                              \
         .read_file({ 'file' : file }) \
         .init_pc()                    \
-        .loop()                    \
-  
+        .loop()                       \
           
     #print(d_global)
     self.data.update({ 'order' : self.order })
