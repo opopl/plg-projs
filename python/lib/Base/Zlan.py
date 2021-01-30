@@ -15,6 +15,9 @@ import Base.DBW as dbw
 import Base.Util as util
 import Base.Const as const
 
+def is_cmt(line):
+  return re.match(r'^\s*#',line)
+
 def data(ref={}):
   zfile = util.get(ref,'file')
 
@@ -117,12 +120,17 @@ def data(ref={}):
               var_lst = []
               while 1:
                 line = lines.pop(0)
+                if is_cmt(line):
+                  continue
+
                 mm = re.match(r'\t\t(\w+)',line)
                 if not mm:
                   break
                 item = mm.group(1)
                 item = item.strip()
                 var_lst.append(item)
+
+              d_page.update({ var : var_lst })
     
           continue
     
