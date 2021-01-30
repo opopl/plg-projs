@@ -21,7 +21,7 @@ highlight link IfOff Comment
 
 syntax keyword zlanKeyword page global
 syntax keyword zlanKeyword url title in ii tags
-syntax keyword zlanKeyword on off
+"syntax keyword zlanKeyword on off
 syntax keyword zlanKeyword redo fail
 
 syn match	zlanComment	"^\s*#.*$"

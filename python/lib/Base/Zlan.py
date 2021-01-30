@@ -45,7 +45,8 @@ def data(ref={}):
   shift = '\t'
   # str patterns
   pats = { 
-    'page_var'  : rf'{shift}(?:(\w+))\s+(.*)$',
+    'page_var'    : rf'^(?:(\w+))\s+(.*)$',
+    'global_var'  : rf'^(?:(\w+))\s+(.*)$',
   }
   pc = {}
   # compiled patterns
@@ -77,12 +78,13 @@ def data(ref={}):
           flg = { 'page'   : 1 }
   
       if not off:
-        if re.match(r'^\t',line):
-    
+        m = re.match(r'^\t(.*)$',line)
+        if m:
+          line_t = m.group(1)
           end = 0
 
           if flg.get('global'):
-            m = re.match(pc['global_var'], line)
+            m = re.match(pc['global_var'], line_t)
             if m:
               k = m.group(1)
               v = m.group(2)
@@ -91,7 +93,7 @@ def data(ref={}):
               d_global.update({ k : v })
     
           if flg.get('page'):
-            m = re.match(pc['page_var'], line)
+            m = re.match(pc['page_var'], line_t)
             if m:
               k = m.group(1)
               v = m.group(2)
