@@ -20,14 +20,19 @@ def is_cmt(line):
 
 def lst_read(lines):
   lst = []
+
+  line = lines[0]
   while 1:
     line = lines.pop(0)
+
     if is_cmt(line):
       continue
 
     mm = re.match(r'\t\t(\w+)',line)
     if not mm:
+      lines.insert(0,line)
       break
+
     item = mm.group(1)
     item = item.strip()
     lst.append(item)
@@ -40,8 +45,6 @@ def data(ref={}):
   if not (zfile and os.path.isfile(zfile)):
     return
 
-  zdata = {}
-  zorder = []
 
   dat_file = os.path.join(plg,'projs','data','list','zlan_keys.i.dat')
   zkeys = util.readarr(dat_file)
@@ -57,8 +60,8 @@ def data(ref={}):
 
   d_page = None
   d_global = {
-    'listadd' : {},
-    'dictadd' : {},
+    'listpush' : {},
+    'dictex' : {},
     'setlist' : {},
     'setdict' : {},
     'set' : {},
@@ -66,16 +69,17 @@ def data(ref={}):
   off = None
 
   end = 0 
+  eof = 0 
 
   shift = '\t'
   # str patterns
   pats = { 
-    'set'     : rf'^set\s+(\w+)\s+(.*)$',
-    'setlist' : rf'^setlist\s+(\w+)\s*$',
-    'listadd' : rf'^listadd\s+(\w+)\s*$',
-    'setdict' : rf'^setdict\+(\w+)\s*$',
-    'dictadd' : rf'^dictadd\+(\w+)\s*$',
-    'unset'   : rf'^unset\s+(\w+)\s*$',
+    'set'      : rf'^set\s+(\w+)\s+(.*)$',
+    'setlist'  : rf'^setlist\s+(\w+)\s*$',
+    'listpush' : rf'^listpush\s+(\w+)\s*$',
+    'setdict'  : rf'^setdict\+(\w+)\s*$',
+    'dictex'   : rf'^dictex\+(\w+)\s*$',
+    'unset'    : rf'^unset\s+(\w+)\s*$',
   }
   pc = {}
   # compiled patterns
@@ -83,14 +87,20 @@ def data(ref={}):
     v = pats[k]
     pc[k] = re.compile(v)
 
+  zdata = {}
+  zorder = []
+
   while 1:
     line = None
+
     if len(lines) == 0:
       end = 1
+      eof = 1
       if off:
         break
     else:
       line = lines.pop(0)
+      #print(str(len(lines)) + ' ' + copy(line).strip('\n'))
 
     if line:
       m = re.match(r'^(\w+)', line)
@@ -104,7 +114,7 @@ def data(ref={}):
         elif word == 'global':
           flg = { 'global' : 1 }
         elif word == 'page':
-          flg = { 'page'   : 1 }
+          flg = { 'page' : 1 }
   
 ###if_on
       if not off:
@@ -131,12 +141,13 @@ def data(ref={}):
               v = v.strip()
               d_global['set'].update({ k : v })
 
-###m_global_setlist
-            for j in util.qw('listadd setlist'):
+###m_global_list
+            for j in util.qw('listpush setlist'):
               m = re.match(pc[j], line_t)
               if m:
                 var = m.group(1)
                 var_lst = lst_read(lines)
+                print(var_lst)
   
                 if len(var_lst):
                   d_global[j].update({ var : var_lst })
@@ -146,12 +157,14 @@ def data(ref={}):
             if not d_page:
               d_page = {}
 
+###m_page_set
             m = re.match(pc['set'], line_t)
             if m:
               var = m.group(1)
               val = m.group(2)
               d_page.update({ var : val })
 
+###m_page_setlist
             m = re.match(pc['setlist'], line_t)
             if m:
               var = m.group(1)
@@ -159,12 +172,20 @@ def data(ref={}):
 
               if len(var_lst):
                 d_page.update({ var : var_lst })
+
+
     
           continue
     
     if end:
       if flg.get('page'):
         if d_page:
+          for w in d_global['listpush'].keys():
+            l_push = d_global['listpush'].get(w,[])
+            w_lst = d_page.get(w,[])
+            w_lst.extend(l_push)
+            d_page[w] = w_lst
+
           dd = copy(d_page)
           if d_global:
             for k, v in d_global.items():
@@ -185,8 +206,8 @@ def data(ref={}):
       d_page = None
       end = 0
 
-    if len(lines) == 0:
-      break
+      if eof:
+        break
 
   print(d_global)
   zdata.update({ 'order' : zorder })
