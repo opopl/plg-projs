@@ -98,19 +98,19 @@ def data(ref={}):
         if d_page:
           dd = copy(d_page)
 
-          for w in d_global['listpush'].keys():
-            l_push = d_global['listpush'].get(w,[])
-            w_lst = dd.get(w,[])
-            w_lst.extend(l_push)
-            dd[w] = w_lst
-
           if d_global:
             for k, v in d_global.items():
               if k in util.qw('set setlist setdict'):
-                g_set = v
+                g_set = copy(v)
                 for kk in g_set.keys():
                   if not kk in dd:
                     dd[kk] = g_set.get(kk)
+
+            for w in d_global['listpush'].keys():
+              l_push = d_global['listpush'].get(w,[])
+              w_lst = dd.get(w,[])
+              w_lst.extend(l_push)
+              dd[w] = w_lst
 
           url = dd.get('url')
           if url:
@@ -157,7 +157,7 @@ def data(ref={}):
       if off:
         continue
 
-      print(str(len(lines)) + ' ' + copy(line).strip('\n'))
+      #print(str(len(lines)) + ' ' + copy(line).strip('\n'))
   
 ###if_on
       m = re.match(r'^\t(.*)$',line)
@@ -215,43 +215,7 @@ def data(ref={}):
               if len(var_lst):
                 d_page.update({ var : var_lst })
     
-          #continue
-    
-#    if end:
-      #if flg.get('page'):
-        #if d_page:
-          #dd = copy(d_page)
-
-          #for w in d_global['listpush'].keys():
-            #l_push = d_global['listpush'].get(w,[])
-            #w_lst = dd.get(w,[])
-            #w_lst.extend(l_push)
-            #dd[w] = w_lst
-
-          #if d_global:
-            #for k, v in d_global.items():
-              #if k in util.qw('set setlist setdict'):
-                #g_set = v
-                #for kk in g_set.keys():
-                  #if not kk in dd:
-                    #dd[kk] = g_set.get(kk)
-
-          #url = dd.get('url')
-          #if url:
-            #zorder.append(url)
-      
-            #u = util.url_parse(url)
-      
-            #dd['host'] = u['host']
-            #zdata[url] = dd
-  
-      #d_page = None
-      #end = 0
-
-      #if eof:
-        #break
-
-  print(d_global)
+  #print(d_global)
   zdata.update({ 'order' : zorder })
 
   return zdata
