@@ -59,7 +59,7 @@ class Zlan(CoreClass):
       'save'   : '',
   }
 
-  def _is_cmt(self,line):
+  def _is_cmt(self):
     return re.match(r'^\s*#',self.line)
 
   def _lst_read(self):
@@ -126,17 +126,95 @@ class Zlan(CoreClass):
   
     return self
 
-   def loop(self):
+  def b_page(self):
+
+    if not self.d_page:
+      self.d_page = {}
   
-     while 1:
+    m = re.match(self.pc['set'], line_t)
+    if m:
+      var = m.group(1)
+      val = m.group(2)
+      self.d_page.update({ var : val })
+  
+    m = re.match(pc['setlist'], line_t)
+    if m:
+      var = m.group(1)
+      var_lst = self._lst_read()
+  
+      if len(var_lst):
+        self.d_page.update({ var : var_lst })
+
+    return self
+
+  def b_global(self):
+
+    m = re.match(self.pc['unset'], self.line_t)
+    if m:
+      k = m.group(1)
+      if k in self.d_global:
+        del d_global[k]
+  
+    m = re.match(pc['set'], self.line_t)
+    if m:
+      k = m.group(1)
+      v = m.group(2)
+      if v:
+        v = v.strip()
+        self.d_global['set'].update({ k : v })
+  
+    for j in util.qw('listpush setlist'):
+      m = re.match(pc[j], self.line_t)
+      if m:
+        var = m.group(1)
+        var_lst = self._lst_read()
+  
+        if len(var_lst):
+          self.d_global[j].update({ var : var_lst })
+
+    return self
+
+  def process_end(self):
+    ###save_page
+    if self.flg.get('save') == 'page':
+      if self.d_page:
+        dd = deepcopy(self.d_page)
+    
+        if self.d_global:
+          dg = deepcopy(d_global)
+          for k, v in dg.items():
+            if k in util.qw('set setlist setdict'):
+              g_set = deepcopy(v)
+              for kk in g_set.keys():
+                  if not kk in dd:
+                    dd[kk] = g_set.get(kk)
+    
+          for w in dg['listpush'].keys():
+            l_push = dg['listpush'].get(w,[])
+            w_lst = dd.get(w,[])
+            w_lst.extend(l_push)
+            dd[w] = w_lst
+    
+        url = dd.get('url')
+        if url:
+          self.order.append(url)
+    
+          u = util.url_parse(url)
+    
+          dd['host'] = u['host']
+          self.data[url] = dd
+    
+    self.d_page = None
+    self.end = 0
+
+    return self
+
+  def loop(self):
+  
+    while 1:
         if len(self.lines):
           self.line = self.lines.pop(0)
     
-    #    if len(lines):
-          #line = lines.pop(0)
-        #else:
-          #eof = 1
-          #end = 1
         if self.d_page:
             print(self.d_page)
   
@@ -144,38 +222,8 @@ class Zlan(CoreClass):
           print(f'end => {self.end}, line => {self.line}')
     
         if self.end:
-    ###save_page
-          if self.flg.get('save') == 'page':
-            if self.d_page:
-              dd = deepcopy(self.d_page)
-    
-              if self.d_global:
-                dg = deepcopy(d_global)
-                for k, v in dg.items():
-                  if k in util.qw('set setlist setdict'):
-                    g_set = deepcopy(v)
-                    for kk in g_set.keys():
-                        if not kk in dd:
-                          dd[kk] = g_set.get(kk)
-    
-                for w in dg['listpush'].keys():
-                  l_push = dg['listpush'].get(w,[])
-                  w_lst = dd.get(w,[])
-                  w_lst.extend(l_push)
-                  dd[w] = w_lst
-    
-              url = dd.get('url')
-              if url:
-                self.order.append(url)
-          
-                u = util.url_parse(url)
-          
-                dd['host'] = u['host']
-                self.data[url] = dd
-      
-          self.d_page = None
-          self.end = 0
-    
+          self.process_end()  
+
           if self.eof:
             break
     
@@ -185,12 +233,7 @@ class Zlan(CoreClass):
           if self.off:
             break
         else:
-    ###get_line
-          if self._is_cmt(self.line):
-            #print(line)
-            #if len(lines) == 0:
-              #eof = 1
-              #end = 1
+          if self._is_cmt():
             continue
     
           m = re.match(r'^(\w+)', self.line)
@@ -210,68 +253,17 @@ class Zlan(CoreClass):
               self.flg = { 'block' : 'page', 'save' : prev }
     
           continue
-          #if off:
-            #continue
-    
-          #print(str(len(lines)) + ' ' + copy(line).strip('\n'))
       
-    ###if_on
           m = re.match(r'^\t(.*)$',self.line)
           if m:
-            line_t = m.group(1)
-            end = 0
+            self.line_t = m.group(1)
+            self.end = 0
     
-    ###f_block_global
             if self.flg.get('block') == 'global':
-    
-    ###m_global_unset
-                m = re.match(pc['unset'], line_t)
-                if m:
-                  k = m.group(1)
-                  if k in self.d_global:
-                    del d_global[k]
-    
-    ###m_global_set
-                m = re.match(pc['set'], line_t)
-                if m:
-                  k = m.group(1)
-                  v = m.group(2)
-                  if v:
-                    v = v.strip()
-                    self.d_global['set'].update({ k : v })
-    
-    ###m_global_list
-                for j in util.qw('listpush setlist'):
-                  m = re.match(pc[j], line_t)
-                  if m:
-                    var = m.group(1)
-                    var_lst = self._lst_read()
-      
-                    if len(var_lst):
-                      self.d_global[j].update({ var : var_lst })
-        
-    ###f_block_page
+              self.b_global()
+            
             if self.flg.get('block') == 'page':
-                if not self.d_page:
-                  self.d_page = {}
-    
-    ###m_page_set
-                m = re.match(self.pc['set'], line_t)
-                if m:
-                  var = m.group(1)
-                  val = m.group(2)
-                  self.d_page.update({ var : val })
-    
-    ###m_page_setlist
-                m = re.match(pc['setlist'], line_t)
-                if m:
-                  var = m.group(1)
-                  var_lst = self._lst_read()
-    
-                  if len(var_lst):
-                    self.d_page.update({ var : var_lst })
-  
-
+              self.b_page()
 
     return self
 
