@@ -15,6 +15,9 @@
 "hi def link confComment	Comment
 "hi def link confTodo	Todo
 "hi def link confString	String
+"
+syntax region IfOff start=/^off\s*$/ end=/^on\s*$/ keepend
+highlight link IfOff Comment
 
 syntax keyword zlanKeyword page url title in ii tags redo fail
 

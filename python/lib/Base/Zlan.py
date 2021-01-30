@@ -56,7 +56,7 @@ def data(ref={}):
       line = lines.pop(0)
 
     if line:
-      m = re.match(r'^(\w+)', line):
+      m = re.match(r'^(\w+)', line)
       if m:
         end = 1
         word = m.group(1)
@@ -69,25 +69,26 @@ def data(ref={}):
         elif word == 'page':
           flg = { 'page'   : 1 }
   
-      if re.match(r'^\t',line):
-  
-        end = 0
-  
-        m = re.match(pc, line)
-        if m:
-          k = m.group(1)
-          v = m.group(2)
-          if v:
-            if flg.get('page'):
-              if not d_page:
-                d_page = {}
-              d_page.update({ k : v })
-            if flg.get('global'):
-              if not d_global:
-                d_global = {}
-              d_global.update({ k : v })
-  
-        continue
+      if not off:
+        if re.match(r'^\t',line):
+    
+          end = 0
+    
+          m = re.match(pc, line)
+          if m:
+            k = m.group(1)
+            v = m.group(2)
+            if v:
+              if flg.get('page'):
+                if not d_page:
+                  d_page = {}
+                d_page.update({ k : v })
+              if flg.get('global'):
+                if not d_global:
+                  d_global = {}
+                d_global.update({ k : v })
+    
+          continue
     
     if end:
       if flg.get('page'):
