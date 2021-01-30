@@ -165,8 +165,9 @@ def data(ref={}):
           dd = copy(d_page)
           if d_global:
             for k, v in d_global.items():
-              if k == util.qw('set setlist setdict'):
+              if k in util.qw('set setlist setdict'):
                 g_set = v
+                print(g_set)
                 for kk in g_set.keys():
                   dd[kk] = g_set.get(kk)
 
@@ -185,6 +186,7 @@ def data(ref={}):
     if len(lines) == 0:
       break
 
+  print(d_global)
   zdata.update({ 'order' : zorder })
 
   return zdata
