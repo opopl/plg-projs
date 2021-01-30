@@ -58,7 +58,7 @@ def data(ref={}):
   d_page = None
   d_global = {
     'listadd' : {},
-    'listadd' : {},
+    'dictadd' : {},
     'setlist' : {},
     'setdict' : {},
     'set' : {},
@@ -72,7 +72,9 @@ def data(ref={}):
   pats = { 
     'set'     : rf'^set\s+(\w+)\s+(.*)$',
     'setlist' : rf'^setlist\s+(\w+)\s*$',
+    'listadd' : rf'^listadd\s+(\w+)\s*$',
     'setdict' : rf'^setdict\+(\w+)\s*$',
+    'dictadd' : rf'^dictadd\+(\w+)\s*$',
     'unset'   : rf'^unset\s+(\w+)\s*$',
   }
   pc = {}
@@ -130,13 +132,14 @@ def data(ref={}):
               d_global['set'].update({ k : v })
 
 ###m_global_setlist
-            m = re.match(pc['setlist'], line_t)
-            if m:
-              var = m.group(1)
-              var_lst = lst_read(lines)
-
-              if len(var_lst):
-                d_global['setlist'].update({ var : var_lst })
+            for j in util.qw('listadd setlist'):
+              m = re.match(pc[j], line_t)
+              if m:
+                var = m.group(1)
+                var_lst = lst_read(lines)
+  
+                if len(var_lst):
+                  d_global[j].update({ var : var_lst })
     
 ###f_page
           if flg.get('page'):
@@ -167,7 +170,6 @@ def data(ref={}):
             for k, v in d_global.items():
               if k in util.qw('set setlist setdict'):
                 g_set = v
-                print(g_set)
                 for kk in g_set.keys():
                   dd[kk] = g_set.get(kk)
 
