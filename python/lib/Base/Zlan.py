@@ -37,6 +37,9 @@ def data(ref={}):
   }
 
   d_page = None
+  d_global = None
+  off = None
+
   end = 0 
 
   shift = '\t'
@@ -47,12 +50,20 @@ def data(ref={}):
     line = None
     if len(lines) == 0:
       end = 1
+      if off:
+        break
     else:
       line = lines.pop(0)
 
-    print(len(zdata))
-
     if line:
+      if re.match(r'^off\s*$', line):
+        off = 1
+      if re.match(r'^on\s*$', line):
+        off = 0
+
+      if off:
+        continue
+
       if re.match(r'^global', line):
         end = 1
   
@@ -63,8 +74,6 @@ def data(ref={}):
         flg = { 'page'   : 1 }
   
       if re.match(r'^\t',line):
-        if not d_page:
-          d_page = {}
   
         end = 0
   
@@ -74,7 +83,13 @@ def data(ref={}):
           v = m.group(2)
           if v:
             if flg.get('page'):
+              if not d_page:
+                d_page = {}
               d_page.update({ k : v })
+            if flg.get('global'):
+              if not d_global:
+                d_global = {}
+              d_global.update({ k : v })
   
         continue
     

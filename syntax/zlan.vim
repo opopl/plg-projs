@@ -16,7 +16,7 @@
 "hi def link confTodo	Todo
 "hi def link confString	String
 
-syntax keyword zlanKeyword page url title in ii tags
+syntax keyword zlanKeyword page url title in ii tags redo fail
 
 syn match	zlanComment	"^\s*#.*$"
 
