@@ -102,16 +102,18 @@ def sql_fetchall(q,p=[],ref={}):
   except:
      print("Errors ", sys.exc_info()[0], " for sqlite query: " + q )
 
-  rws = c.fetchall():
+  rws = c.fetchall()
   if not rws:
     return 
+
+  cols = list(map(lambda x: x[0], c.description))
 
   rows = []
   for rw in rws:
     row = rw2dict(rw)
     rows.append(row)
 
-  return rows
+  return { 'rows' : rows, 'cols' : cols }
 
 def sql_do(ref={}):
   sql      = ref.get('sql','')
