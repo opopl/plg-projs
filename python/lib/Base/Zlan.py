@@ -45,8 +45,9 @@ def data(ref={}):
   shift = '\t'
   # str patterns
   pats = { 
-    'page_var'    : rf'^(?:(\w+))\s+(.*)$',
-    'global_var'  : rf'^(?:(\w+))\s+(.*)$',
+    'page_var'         : rf'^(?:(\w+))\s+(.*)$',
+    'global_var_set'   : rf'^set\s+(?:(\w+))\s*=\s*(.*)$',
+    'global_var_unset' : rf'^set\s+(?:(\w+))\s*$',
   }
   pc = {}
   # compiled patterns
@@ -84,13 +85,15 @@ def data(ref={}):
           end = 0
 
           if flg.get('global'):
-            m = re.match(pc['global_var'], line_t)
+            m = re.match(pc['global_var_set'], line_t)
             if m:
               k = m.group(1)
               v = m.group(2)
+              v = v.strip()
               if not d_global:
                 d_global = {}
               d_global.update({ k : v })
+            m = re.match(pc['global_var_unset'], line_t)
     
           if flg.get('page'):
             m = re.match(pc['page_var'], line_t)
@@ -99,9 +102,6 @@ def data(ref={}):
               v = m.group(2)
               if not d_page:
                 d_page = {}
-  
-              if d_global:
-                v = d_global.get(k, v)
 
               d_page.update({ k : v })
     
@@ -111,6 +111,9 @@ def data(ref={}):
       if flg.get('page'):
         if d_page:
           dd = copy(d_page)
+          if d_global:
+            for k, v in d_global.items():
+              dd[k] = v 
           url = dd.get('url')
           if url:
             zorder.append(url)
