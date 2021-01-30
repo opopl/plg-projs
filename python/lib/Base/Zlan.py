@@ -202,7 +202,7 @@ class Zlan(CoreClass):
     if not m:
       return self
 
-    print('[line_match_block_inner]')
+    #print('[line_match_block_inner]')
 
     self.line_t = m.group(1)
     self.end = 0
@@ -216,8 +216,8 @@ class Zlan(CoreClass):
     return self
   
   def process_end(self):
-    print(f'[process_end]')
-    print(self.d_page)
+    #print(f'[process_end]')
+    #print(self.d_page)
 
     ###save_page
     if self.flg.get('save') == 'page':
@@ -260,7 +260,6 @@ class Zlan(CoreClass):
     return self
 
   def loop(self):
-    print('[loop]')
   
     while 1:
         if len(self.lines):
@@ -273,8 +272,6 @@ class Zlan(CoreClass):
           if self.off:
             continue
 
-          #self.pl()
-            
           self.line_match_block_inner()
 
           #print(f'd_page => {self.d_page}')

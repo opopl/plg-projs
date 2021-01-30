@@ -76,7 +76,9 @@ def sql_fetchone(q, p=[], ref={}):
   except:
      print("Errors ", sys.exc_info()[0], " for sqlite query: " + q )
   rw = c.fetchone()
-  return rw
+  row = rw2dict(rw) if rw else None
+
+  return row
 
 def sql_fetchall(q,p=[],ref={}):
   conn     = ref.get('conn')
@@ -99,7 +101,15 @@ def sql_fetchall(q,p=[],ref={}):
      print(e)
   except:
      print("Errors ", sys.exc_info()[0], " for sqlite query: " + q )
-  rows = c.fetchall()
+
+  rws = c.fetchall():
+  if not rws:
+    return 
+
+  rows = []
+  for rw in rws:
+    row = rw2dict(rw)
+    rows.append(row)
 
   return rows
 

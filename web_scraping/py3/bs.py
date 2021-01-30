@@ -416,6 +416,23 @@ This script will parse input URL
 
     return 
 
+  def dbg_load_zlan(self, ref={}):
+   for url in zorder:
+      d = zdata.get(url)
+      tags = d.get('tags','')
+      redo = d.get('redo','')
+      acts = d.get('acts',[])
+
+      print(f'*'*50)
+      print(f'tags => {tags}')
+      print(f'redo => {redo}')
+      print(f'acts => {acts}')
+
+   print(f'zorder => {len(zorder)}')
+   print(f'd_global => {z.d_global}')
+
+   return self
+
 ###zlan
   def load_zlan(self, ref={}):
     f_zlan = util.get(self,'f_zlan')
@@ -438,21 +455,6 @@ This script will parse input URL
       url = k
       d = zdata.get(url)
       self.urls.append(d)
-
-    for url in zorder:
-      d = zdata.get(url)
-      tags = d.get('tags','')
-      redo = d.get('redo','')
-      acts = d.get('acts',[])
-
-      print(f'*'*50)
-      print(f'tags => {tags}')
-      print(f'redo => {redo}')
-      print(f'acts => {acts}')
-
-    print(f'zorder => {len(zorder)}')
-    print(f'd_global => {z.d_global}')
-    import pdb; pdb.set_trace()
 
     return self
 
@@ -842,6 +844,19 @@ This script will parse input URL
 
     return self
 
+###sl
+  def page_save_log(self):
+    log_file = self._file_rid({ 
+      'tipe' : 'log', 
+      'ext'  : 'html' 
+    })
+
+    db_file = self.dbfile.pages
+    conn = sqlite3.connect(db_file)
+    c = conn.cursor()
+
+    return self
+
   def update_ii(self):
     self.page_ii_from_title()
     self.log(f'[load_soup] ii: {self.page.ii}')
@@ -885,6 +900,7 @@ This script will parse input URL
         .page_save()                                    \
         .page_save_db_record()                          \
         .page_add()                                     \
+        .page_save_log()                                \
 
     return self
 
@@ -1400,8 +1416,10 @@ This script will parse input URL
 
     q = '''SELECT * FROM urls WHERE remote = ? '''
     p = [ self.page.url ]
-    rw = dbw.sql_fetchone(q,p,{ 'db_file' : self.dbfile.pages })
-    row = dbw.rw2dict(rw)
+    row = dbw.sql_fetchone(q,p,{ 'db_file' : self.dbfile.pages })
+    if not row:
+      return self
+
     cols = list(row.keys())
     cols.sort()
 
