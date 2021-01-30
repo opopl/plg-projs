@@ -64,11 +64,11 @@ def data(ref={}):
   shift = '\t'
   # str patterns
   pats = { 
-    'page_var_str'     : rf'^(?:(\w+))\s+(.*)$',
-    'page_var_list'    : rf'^(\w+)\|list\|\s*$',
-    'page_var_dict'    : rf'^(\w+)\|dict\|\s*$',
-    'global_var_set'   : rf'^set\s+(?:(\w+))\s*=\s*(.*)$',
-    'global_var_set_list' : rf'^set\s+(\w+)\|list\|\s*$',
+    'page_var_str'     : rf'^set\s+(\w+)\s+(.*)$',
+    'page_var_list'    : rf'^setlist\s+(\w+)\s*$',
+    'page_var_dict'    : rf'^setdict\+(\w+)\s*$',
+    'global_var_set'   : rf'^set\s+(?:(\w+))\s+(.*)$',
+    'global_var_set_list' : rf'^setlist\s+(\w+)\s*$',
     'global_var_unset' : rf'^unset\s+(?:(\w+))\s*$',
   }
   pc = {}
@@ -171,7 +171,6 @@ def data(ref={}):
     if len(lines) == 0:
       break
 
-  print(d_global)
   zdata.update({ 'order' : zorder })
 
   return zdata

@@ -20,7 +20,7 @@ syntax region IfOff start=/^off\s*$/ end=/^on\s*$/
 highlight link IfOff Comment
 
 syntax keyword zlanKey page global
-syntax keyword zlanOp set unset
+syntax keyword zlanOp set unset setlist setdict
 syntax keyword zlanKeyword url title in ii tags date
 "syntax keyword zlanKeyword on off
 syntax keyword zlanFlag redo fail
