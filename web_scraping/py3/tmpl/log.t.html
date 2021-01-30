@@ -5,26 +5,16 @@
   <body>
     <table border="1">
       <thead>
+         {% for col in cols %}
+           <th> {{ col }} </th>
+         {% endfor %}
       </thead>
       <tbody>
-        {% for row in log_rows %}
+        {% for row in rows %}
             <tr> 
-              <td>
-                <a target="_blank" href="{{ page.uri.dbrid }}" > {{ page.rid }} </a>
-              </td>
-              <td>
-                <a target="_blank" href="{{ page.uri.base }}" > {{ page.uri.base }} </a>
-              </td> 
-              <td><a target="_blank" href="{{ page.uri.remote }}" > Remote </a></td> 
-              <td><a target="_blank" href="{{ page.uri.cache}}" > Cache </a></td> 
-              <td><a target="_blank" href="{{ page.uri.core }}" > Core </a></td> 
-              <td><a target="_blank" href="{{ page.uri.clean }}" > Clean </a></td> 
-              <td><a target="_blank" href="{{ page.uri.meta}}" > meta </a></td> 
-              <td><a target="_blank" href="{{ page.uri.script}}" > script </a></td> 
-              <td><a target="_blank" href="{{ page.uri.img}}" > img </a></td> 
-              <td><a target="_blank" href="{{ page.uri.img_clean}}" > img_clean </a></td> 
-              <td> {{ page.date }} </td> 
-              <td> <b> {{ page.title }} </b> </td> 
+              {% for col in cols %}
+                <td> {{ row.get(col) }}</td>
+              {% endfor %}
             </tr>
         {% endfor %}
       </tbody>

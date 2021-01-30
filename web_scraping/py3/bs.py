@@ -755,7 +755,7 @@ This script will parse input URL
     }
 
     tipe_map = { 
-      'html' : util.qw('cache core clean img img_clean dbrid'),
+      'html' : util.qw('log cache core clean img img_clean dbrid'),
       'txt'  : util.qw('meta script'),
     }
 
@@ -862,6 +862,12 @@ This script will parse input URL
 
     rows = dw.get('rows',[])
     cols = dw.get('cols',[])
+
+    t = self.template_env.get_template("log.t.html")
+    h = t.render(rows=rows,cols=cols)
+
+    with open(log_file, 'w') as f:
+      f.write(h)
 
     return self
 
