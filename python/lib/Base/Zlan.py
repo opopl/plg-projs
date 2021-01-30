@@ -196,9 +196,13 @@ class Zlan(CoreClass):
     return self
 
   def line_match_block_inner(self):
+    print(self.line)
     m = re.match(r'^\t(.*)$',self.line)
+    print(m)
     if not m:
       return self
+
+    print('[line_match_block_inner]')
 
     self.line_t = m.group(1)
     self.end = 0
@@ -210,17 +214,11 @@ class Zlan(CoreClass):
       self.b_page()
 
     return self
-
-  def process_line(self):
-
-
-    self                        \
-      .line_match_block_word()  \
-      .line_match_block_inner() \
-
-    return self
-
+  
   def process_end(self):
+    print(f'[process_end]')
+    print(self.d_page)
+
     ###save_page
     if self.flg.get('save') == 'page':
       if self.d_page:
@@ -255,30 +253,42 @@ class Zlan(CoreClass):
 
     return self
 
+  def pl(self):
+    l = self.line
+    print(f'line => {l}')
+    print(f'is_end => {self.end}')
+    return self
+
   def loop(self):
+    print('[loop]')
   
     while 1:
         if len(self.lines):
           self.line = self.lines.pop(0)
 
-          if len(self.lines) == 0:
-            self.end = 1
-      
           if self._is_cmt():
             continue
 
           self.line_match_block_word()
-          if not self.off:
-            self.line_match_block_inner()
-          else:
+          if self.off:
             continue
+
+          self.pl()
+            
+          self.line_match_block_inner()
+
+          print(f'd_page => {self.d_page}')
+          print(f'flg => {self.flg}')
+          print(f'off => {self.off}')
 
           if self.end:
             self.process_end()  
+            self.end = 0
 
           continue
 
         self.process_end()  
+
         break
 
     return self
