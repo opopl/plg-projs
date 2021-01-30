@@ -46,7 +46,7 @@ import Base.DBW as dbw
 import Base.Util as util
 import Base.Const as const
 
-import Base.Zlan as zlan
+from Base.Zlan import Zlan
 
 from Base.Core import CoreClass
 
@@ -421,8 +421,12 @@ This script will parse input URL
     f_zlan = util.get(self,'f_zlan')
     f_zlan = ref.get('zlan',f_zlan)
 
-    zdata = zlan.data({ 'file' : f_zlan })
-    zorder = zdata.get('order',[])
+    z = Zlan({})
+
+    z.get_data({ 'file' : f_zlan })
+
+    zdata = z.data
+    zorder = z.order
 
     if not self.urls:
       self.urls = []

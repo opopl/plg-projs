@@ -23,8 +23,8 @@ class Zlan(CoreClass):
   lines = []
   line = None
 
-  zdata = {}
-  zorder = []
+  data = {}
+  order = []
 
   off = None
   
@@ -34,6 +34,7 @@ class Zlan(CoreClass):
   shift = '\t'
 
   d_page = None
+  d_global = None
 
   d_global = {
       'listpush' : {},
@@ -61,19 +62,19 @@ class Zlan(CoreClass):
   def _is_cmt(self,line):
     return re.match(r'^\s*#',line)
 
-  def _lst_read(self,lines):
+  def _lst_read(self):
     lst = []
   
-    line = lines[0]
+    line = self.lines[0]
     while 1:
-      line = lines.pop(0)
+      self.line = self.lines.pop(0)
   
-      if self._is_cmt(line):
+      if self._is_cmt(self.line):
         continue
   
-      mm = re.match(r'\t\t(\w+)',line)
+      mm = re.match(r'\t\t(\w+)',self.line)
       if not mm:
-        lines.insert(0,line)
+        self.lines.insert(0,self.line)
         break
   
       item = mm.group(1)
@@ -83,16 +84,16 @@ class Zlan(CoreClass):
     return lst
 
   def read_file(self,ref={}):
-    zfile = self.zfile
-    zfile = util.get(ref,'file',zfile)
+    file = self.file
+    file = util.get(ref,'file',file)
 
-    if not (zfile and os.path.isfile(zfile)):
+    if not (file and os.path.isfile(file)):
       return
   
     dat_file = os.path.join(plg,'projs','data','list','zlan_keys.i.dat')
-    self.zkeys = util.readarr(dat_file)
+    self.keys = util.readarr(dat_file)
   
-    with open(zfile,'r') as f:
+    with open(file,'r') as f:
       self.lines = f.readlines()
 
     return self
@@ -101,16 +102,22 @@ class Zlan(CoreClass):
     self.pc = {}
     # compiled patterns
     for k in self.pats.keys():
-      v = pats[k]
+      v = self.pats[k]
       self.pc[k] = re.compile(v)
 
     return self
   
-  def _data(self,ref={}):
+  def get_data(self,ref={}):
+    file = util.get(ref,'file')
+    if file:
+      self.file = file
+    else:
+      file = self.file
   
     # loop variables
-    self                \
-        .init_pc()      \
+    self                              \
+        .read_file({ 'file' : file }) \
+        .init_pc()                    \
   
     while 1:
       if len(self.lines):
@@ -121,25 +128,26 @@ class Zlan(CoreClass):
       #else:
         #eof = 1
         #end = 1
-      if d_page:
-          print(d_page)
-      if line:
-        print(f'end => {end}, line => {line}')
+      if self.d_page:
+          print(self.d_page)
+
+      if self.line:
+        print(f'end => {self.end}, line => {self.line}')
   
-      if end:
+      if self.end:
   ###save_page
         if self.flg.get('save') == 'page':
           if self.d_page:
             dd = deepcopy(self.d_page)
   
-            if d_global:
+            if self.d_global:
               dg = deepcopy(d_global)
               for k, v in dg.items():
                 if k in util.qw('set setlist setdict'):
                   g_set = deepcopy(v)
                   for kk in g_set.keys():
                       if not kk in dd:
-                      dd[kk] = g_set.get(kk)
+                        dd[kk] = g_set.get(kk)
   
               for w in dg['listpush'].keys():
                 l_push = dg['listpush'].get(w,[])
@@ -149,48 +157,48 @@ class Zlan(CoreClass):
   
             url = dd.get('url')
             if url:
-              zorder.append(url)
+              self.order.append(url)
         
               u = util.url_parse(url)
         
               dd['host'] = u['host']
-              zdata[url] = dd
+              self.data[url] = dd
     
-        d_page = None
-        end = 0
+        self.d_page = None
+        self.end = 0
   
-        if eof:
+        if self.eof:
           break
   
-      if len(lines) == 0:
-        end = 1
-        eof = 1
-        if off:
+      if len(self.lines) == 0:
+        self.end = 1
+        self.eof = 1
+        if self.off:
           break
       else:
   ###get_line
-        if is_cmt(line):
+        if is_cmt(self.line):
           #print(line)
           #if len(lines) == 0:
             #eof = 1
             #end = 1
           continue
   
-        m = re.match(r'^(\w+)', line)
+        m = re.match(r'^(\w+)', self.line)
         if m:
-          end = 1
+          self.end = 1
           word = m.group(1)
-          prev = flg.get('block')
+          prev = self.flg.get('block')
   
           if word == 'off':
-            off = 1
+            self.off = 1
           elif word == 'on':
-            off = 0
+            self.off = 0
           elif word == 'global':
-            flg = { 'block' : 'global', 'save' : prev }
+            self.flg = { 'block' : 'global', 'save' : prev }
   
           elif word == 'page':
-            flg = { 'block' : 'page', 'save' : prev }
+            self.flg = { 'block' : 'page', 'save' : prev }
   
         continue
         #if off:
@@ -199,19 +207,19 @@ class Zlan(CoreClass):
         #print(str(len(lines)) + ' ' + copy(line).strip('\n'))
     
   ###if_on
-        m = re.match(r'^\t(.*)$',line)
+        m = re.match(r'^\t(.*)$',self.line)
         if m:
           line_t = m.group(1)
           end = 0
   
   ###f_block_global
-          if flg.get('block') == 'global':
+          if self.flg.get('block') == 'global':
   
   ###m_global_unset
               m = re.match(pc['unset'], line_t)
               if m:
                 k = m.group(1)
-                if k in d_global:
+                if k in self.d_global:
                   del d_global[k]
   
   ###m_global_set
@@ -221,40 +229,40 @@ class Zlan(CoreClass):
                 v = m.group(2)
                 if v:
                   v = v.strip()
-                  d_global['set'].update({ k : v })
+                  self.d_global['set'].update({ k : v })
   
   ###m_global_list
               for j in util.qw('listpush setlist'):
                 m = re.match(pc[j], line_t)
                 if m:
                   var = m.group(1)
-                  var_lst = self._lst_read(lines)
+                  var_lst = self._lst_read()
     
                   if len(var_lst):
-                    d_global[j].update({ var : var_lst })
+                    self.d_global[j].update({ var : var_lst })
       
   ###f_block_page
-          if flg.get('block') == 'page':
-              if not d_page:
-                d_page = {}
+          if self.flg.get('block') == 'page':
+              if not self.d_page:
+                self.d_page = {}
   
   ###m_page_set
-              m = re.match(pc['set'], line_t)
+              m = re.match(self.pc['set'], line_t)
               if m:
                 var = m.group(1)
                 val = m.group(2)
-                d_page.update({ var : val })
+                self.d_page.update({ var : val })
   
   ###m_page_setlist
               m = re.match(pc['setlist'], line_t)
               if m:
                 var = m.group(1)
-                var_lst = self._lst_read(lines)
+                var_lst = self._lst_read()
   
                 if len(var_lst):
-                  d_page.update({ var : var_lst })
+                  self.d_page.update({ var : var_lst })
       
     #print(d_global)
-    zdata.update({ 'order' : zorder })
+    self.data.update({ 'order' : self.order })
   
-    return zdata
+    return self
