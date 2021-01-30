@@ -174,6 +174,43 @@ class Zlan(CoreClass):
 
     return self
 
+  def line_match_block_word(self):
+    m = re.match(r'^(\w+)', self.line)
+    if not m:
+      return self
+
+    self.end = 1
+    word = m.group(1)
+    prev = self.flg.get('block')
+ 
+    if word == 'off':
+      self.off = 1
+    elif word == 'on':
+      self.off = 0
+    elif word == 'global':
+      self.flg = { 'block' : 'global', 'save' : prev }
+ 
+    elif word == 'page':
+      self.flg = { 'block' : 'page', 'save' : prev }
+ 
+    return self
+
+  def line_match_block_inner(self):
+    m = re.match(r'^\t(.*)$',self.line)
+    if not m:
+      return self
+
+    self.line_t = m.group(1)
+    self.end = 0
+ 
+    if self.flg.get('block') == 'global':
+      self.b_global()
+    
+    if self.flg.get('block') == 'page':
+      self.b_page()
+
+    return self
+
   def process_line(self):
 
     if len(self.lines) == 0:
@@ -182,34 +219,9 @@ class Zlan(CoreClass):
     if self._is_cmt():
       return self
 
-    m = re.match(r'^(\w+)', self.line)
-    if m:
-      self.end = 1
-      word = m.group(1)
-      prev = self.flg.get('block')
-   
-      if word == 'off':
-        self.off = 1
-      elif word == 'on':
-        self.off = 0
-      elif word == 'global':
-        self.flg = { 'block' : 'global', 'save' : prev }
-   
-      elif word == 'page':
-        self.flg = { 'block' : 'page', 'save' : prev }
-   
-        return self
-   
-    m = re.match(r'^\t(.*)$',self.line)
-    if m:
-      self.line_t = m.group(1)
-      self.end = 0
-   
-      if self.flg.get('block') == 'global':
-        self.b_global()
-      
-      if self.flg.get('block') == 'page':
-        self.b_page()
+    self                        \
+      .line_match_block_word()  \
+      .line_match_block_inner() \
 
     return self
 
