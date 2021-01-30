@@ -142,17 +142,17 @@ def data(ref={}):
       if m:
         end = 1
         word = m.group(1)
-        block = flg.get('block')
+        prev = flg.get('block')
 
         if word == 'off':
           off = 1
         elif word == 'on':
           off = 0
         elif word == 'global':
-          flg = { 'block' : 'global', 'save' : block }
+          flg = { 'block' : 'global', 'save' : prev }
 
         elif word == 'page':
-          flg = { 'block' : 'page', 'save' : block }
+          flg = { 'block' : 'page', 'save' : prev }
 
       if off:
         continue
@@ -166,7 +166,7 @@ def data(ref={}):
         end = 0
 
 ###f_global
-        if flg.get('global'):
+        if flg.get('block') == 'global':
 
 ###m_global_unset
             m = re.match(pc['unset'], line_t)
@@ -195,7 +195,7 @@ def data(ref={}):
                   d_global[j].update({ var : var_lst })
     
 ###f_page
-        if flg.get('page'):
+        if flg.get('block') == 'page':
             if not d_page:
               d_page = {}
 
