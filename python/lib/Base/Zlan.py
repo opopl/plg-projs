@@ -44,38 +44,39 @@ def data(ref={}):
   pc = re.compile(pat)
 
   while 1:
-    if len(lines) == 0:
-      break
-
-    line = lines.pop(0)
-
+    line = None
     if len(lines) == 0:
       end = 1
+    else:
+      line = lines.pop(0)
 
-    if re.match(r'^global', line):
-      end = 1
+    print(len(zdata))
 
-      flg = { 'global' : 1 }
-
-    if re.match(r'^page', line):
-      end = 1
-      flg = { 'page'   : 1 }
-
-    if re.match(r'^\t',line):
-      if not d_page:
-        d_page = {}
-
-      end = 0
-
-      m = re.match(pc, line)
-      if m:
-        k = m.group(1)
-        v = m.group(2)
-        if v:
-          if flg.get('page'):
-            d_page.update({ k : v })
-
-      continue
+    if line:
+      if re.match(r'^global', line):
+        end = 1
+  
+        flg = { 'global' : 1 }
+  
+      if re.match(r'^page', line):
+        end = 1
+        flg = { 'page'   : 1 }
+  
+      if re.match(r'^\t',line):
+        if not d_page:
+          d_page = {}
+  
+        end = 0
+  
+        m = re.match(pc, line)
+        if m:
+          k = m.group(1)
+          v = m.group(2)
+          if v:
+            if flg.get('page'):
+              d_page.update({ k : v })
+  
+        continue
     
     if end:
       if flg.get('page'):
@@ -93,6 +94,8 @@ def data(ref={}):
       d_page = None
       end = 0
 
+    if len(lines) == 0:
+      break
 
   zdata.update({ 'order' : zorder })
 
