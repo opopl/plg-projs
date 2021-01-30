@@ -131,13 +131,13 @@ class Zlan(CoreClass):
     if not self.d_page:
       self.d_page = {}
   
-    m = re.match(self.pc['set'], line_t)
+    m = re.match(self.pc['set'], self.line_t)
     if m:
       var = m.group(1)
       val = m.group(2)
       self.d_page.update({ var : val })
   
-    m = re.match(pc['setlist'], line_t)
+    m = re.match(self.pc['setlist'], self.line_t)
     if m:
       var = m.group(1)
       var_lst = self._lst_read()
@@ -155,7 +155,7 @@ class Zlan(CoreClass):
       if k in self.d_global:
         del d_global[k]
   
-    m = re.match(pc['set'], self.line_t)
+    m = re.match(self.pc['set'], self.line_t)
     if m:
       k = m.group(1)
       v = m.group(2)
@@ -164,13 +164,46 @@ class Zlan(CoreClass):
         self.d_global['set'].update({ k : v })
   
     for j in util.qw('listpush setlist'):
-      m = re.match(pc[j], self.line_t)
+      m = re.match(self.pc[j], self.line_t)
       if m:
         var = m.group(1)
         var_lst = self._lst_read()
   
         if len(var_lst):
           self.d_global[j].update({ var : var_lst })
+
+    return self
+
+  def process_line(self):
+
+    m = re.match(r'^(\w+)', self.line)
+    if m:
+      self.end = 1
+      word = m.group(1)
+      prev = self.flg.get('block')
+   
+      if word == 'off':
+        self.off = 1
+      elif word == 'on':
+        self.off = 0
+      elif word == 'global':
+        self.flg = { 'block' : 'global', 'save' : prev }
+   
+      elif word == 'page':
+        self.flg = { 'block' : 'page', 'save' : prev }
+   
+        return self
+   
+    m = re.match(r'^\t(.*)$',self.line)
+    if m:
+      self.line_t = m.group(1)
+      self.end = 0
+   
+      if self.flg.get('block') == 'global':
+        self.b_global()
+      
+      if self.flg.get('block') == 'page':
+        self.b_page()
 
     return self
 
@@ -235,35 +268,8 @@ class Zlan(CoreClass):
         else:
           if self._is_cmt():
             continue
-    
-          m = re.match(r'^(\w+)', self.line)
-          if m:
-            self.end = 1
-            word = m.group(1)
-            prev = self.flg.get('block')
-    
-            if word == 'off':
-              self.off = 1
-            elif word == 'on':
-              self.off = 0
-            elif word == 'global':
-              self.flg = { 'block' : 'global', 'save' : prev }
-    
-            elif word == 'page':
-              self.flg = { 'block' : 'page', 'save' : prev }
-    
-          continue
-      
-          m = re.match(r'^\t(.*)$',self.line)
-          if m:
-            self.line_t = m.group(1)
-            self.end = 0
-    
-            if self.flg.get('block') == 'global':
-              self.b_global()
-            
-            if self.flg.get('block') == 'page':
-              self.b_page()
+
+          self.process_line()
 
     return self
 
