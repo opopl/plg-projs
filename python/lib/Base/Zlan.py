@@ -60,7 +60,7 @@ class Zlan(CoreClass):
   }
 
   def _is_cmt(self,line):
-    return re.match(r'^\s*#',line)
+    return re.match(r'^\s*#',self.line)
 
   def _lst_read(self):
     lst = []
@@ -118,151 +118,160 @@ class Zlan(CoreClass):
     self                              \
         .read_file({ 'file' : file }) \
         .init_pc()                    \
+        .loop()                    \
   
-    while 1:
-      if len(self.lines):
-        self.line = self.lines.pop(0)
+          
+    #print(d_global)
+    self.data.update({ 'order' : self.order })
   
-  #    if len(lines):
-        #line = lines.pop(0)
-      #else:
-        #eof = 1
-        #end = 1
-      if self.d_page:
-          print(self.d_page)
+    return self
 
-      if self.line:
-        print(f'end => {self.end}, line => {self.line}')
+   def loop(self):
   
-      if self.end:
-  ###save_page
-        if self.flg.get('save') == 'page':
-          if self.d_page:
-            dd = deepcopy(self.d_page)
-  
-            if self.d_global:
-              dg = deepcopy(d_global)
-              for k, v in dg.items():
-                if k in util.qw('set setlist setdict'):
-                  g_set = deepcopy(v)
-                  for kk in g_set.keys():
-                      if not kk in dd:
-                        dd[kk] = g_set.get(kk)
-  
-              for w in dg['listpush'].keys():
-                l_push = dg['listpush'].get(w,[])
-                w_lst = dd.get(w,[])
-                w_lst.extend(l_push)
-                dd[w] = w_lst
-  
-            url = dd.get('url')
-            if url:
-              self.order.append(url)
-        
-              u = util.url_parse(url)
-        
-              dd['host'] = u['host']
-              self.data[url] = dd
+     while 1:
+        if len(self.lines):
+          self.line = self.lines.pop(0)
     
-        self.d_page = None
-        self.end = 0
+    #    if len(lines):
+          #line = lines.pop(0)
+        #else:
+          #eof = 1
+          #end = 1
+        if self.d_page:
+            print(self.d_page)
   
-        if self.eof:
-          break
-  
-      if len(self.lines) == 0:
-        self.end = 1
-        self.eof = 1
-        if self.off:
-          break
-      else:
-  ###get_line
-        if is_cmt(self.line):
-          #print(line)
-          #if len(lines) == 0:
-            #eof = 1
-            #end = 1
-          continue
-  
-        m = re.match(r'^(\w+)', self.line)
-        if m:
+        if self.line:
+          print(f'end => {self.end}, line => {self.line}')
+    
+        if self.end:
+    ###save_page
+          if self.flg.get('save') == 'page':
+            if self.d_page:
+              dd = deepcopy(self.d_page)
+    
+              if self.d_global:
+                dg = deepcopy(d_global)
+                for k, v in dg.items():
+                  if k in util.qw('set setlist setdict'):
+                    g_set = deepcopy(v)
+                    for kk in g_set.keys():
+                        if not kk in dd:
+                          dd[kk] = g_set.get(kk)
+    
+                for w in dg['listpush'].keys():
+                  l_push = dg['listpush'].get(w,[])
+                  w_lst = dd.get(w,[])
+                  w_lst.extend(l_push)
+                  dd[w] = w_lst
+    
+              url = dd.get('url')
+              if url:
+                self.order.append(url)
+          
+                u = util.url_parse(url)
+          
+                dd['host'] = u['host']
+                self.data[url] = dd
+      
+          self.d_page = None
+          self.end = 0
+    
+          if self.eof:
+            break
+    
+        if len(self.lines) == 0:
           self.end = 1
-          word = m.group(1)
-          prev = self.flg.get('block')
-  
-          if word == 'off':
-            self.off = 1
-          elif word == 'on':
-            self.off = 0
-          elif word == 'global':
-            self.flg = { 'block' : 'global', 'save' : prev }
-  
-          elif word == 'page':
-            self.flg = { 'block' : 'page', 'save' : prev }
-  
-        continue
-        #if off:
-          #continue
-  
-        #print(str(len(lines)) + ' ' + copy(line).strip('\n'))
+          self.eof = 1
+          if self.off:
+            break
+        else:
+    ###get_line
+          if self._is_cmt(self.line):
+            #print(line)
+            #if len(lines) == 0:
+              #eof = 1
+              #end = 1
+            continue
     
-  ###if_on
-        m = re.match(r'^\t(.*)$',self.line)
-        if m:
-          line_t = m.group(1)
-          end = 0
-  
-  ###f_block_global
-          if self.flg.get('block') == 'global':
-  
-  ###m_global_unset
-              m = re.match(pc['unset'], line_t)
-              if m:
-                k = m.group(1)
-                if k in self.d_global:
-                  del d_global[k]
-  
-  ###m_global_set
-              m = re.match(pc['set'], line_t)
-              if m:
-                k = m.group(1)
-                v = m.group(2)
-                if v:
-                  v = v.strip()
-                  self.d_global['set'].update({ k : v })
-  
-  ###m_global_list
-              for j in util.qw('listpush setlist'):
-                m = re.match(pc[j], line_t)
+          m = re.match(r'^(\w+)', self.line)
+          if m:
+            self.end = 1
+            word = m.group(1)
+            prev = self.flg.get('block')
+    
+            if word == 'off':
+              self.off = 1
+            elif word == 'on':
+              self.off = 0
+            elif word == 'global':
+              self.flg = { 'block' : 'global', 'save' : prev }
+    
+            elif word == 'page':
+              self.flg = { 'block' : 'page', 'save' : prev }
+    
+          continue
+          #if off:
+            #continue
+    
+          #print(str(len(lines)) + ' ' + copy(line).strip('\n'))
+      
+    ###if_on
+          m = re.match(r'^\t(.*)$',self.line)
+          if m:
+            line_t = m.group(1)
+            end = 0
+    
+    ###f_block_global
+            if self.flg.get('block') == 'global':
+    
+    ###m_global_unset
+                m = re.match(pc['unset'], line_t)
+                if m:
+                  k = m.group(1)
+                  if k in self.d_global:
+                    del d_global[k]
+    
+    ###m_global_set
+                m = re.match(pc['set'], line_t)
+                if m:
+                  k = m.group(1)
+                  v = m.group(2)
+                  if v:
+                    v = v.strip()
+                    self.d_global['set'].update({ k : v })
+    
+    ###m_global_list
+                for j in util.qw('listpush setlist'):
+                  m = re.match(pc[j], line_t)
+                  if m:
+                    var = m.group(1)
+                    var_lst = self._lst_read()
+      
+                    if len(var_lst):
+                      self.d_global[j].update({ var : var_lst })
+        
+    ###f_block_page
+            if self.flg.get('block') == 'page':
+                if not self.d_page:
+                  self.d_page = {}
+    
+    ###m_page_set
+                m = re.match(self.pc['set'], line_t)
+                if m:
+                  var = m.group(1)
+                  val = m.group(2)
+                  self.d_page.update({ var : val })
+    
+    ###m_page_setlist
+                m = re.match(pc['setlist'], line_t)
                 if m:
                   var = m.group(1)
                   var_lst = self._lst_read()
     
                   if len(var_lst):
-                    self.d_global[j].update({ var : var_lst })
-      
-  ###f_block_page
-          if self.flg.get('block') == 'page':
-              if not self.d_page:
-                self.d_page = {}
+                    self.d_page.update({ var : var_lst })
   
-  ###m_page_set
-              m = re.match(self.pc['set'], line_t)
-              if m:
-                var = m.group(1)
-                val = m.group(2)
-                self.d_page.update({ var : val })
-  
-  ###m_page_setlist
-              m = re.match(pc['setlist'], line_t)
-              if m:
-                var = m.group(1)
-                var_lst = self._lst_read()
-  
-                if len(var_lst):
-                  self.d_page.update({ var : var_lst })
-      
-    #print(d_global)
-    self.data.update({ 'order' : self.order })
-  
+
+
     return self
+
