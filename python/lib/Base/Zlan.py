@@ -3,6 +3,7 @@ import os,sys
 import re
 
 from copy import copy
+from copy import deepcopy
 
 def add_libs(libs):
   for lib in libs:
@@ -91,23 +92,25 @@ def data(ref={}):
   zorder = []
 
   while 1:
-    line = None
+    #line = None
 
     if end:
+###save_page
       if flg.get('save') == 'page':
         if d_page:
           dd = copy(d_page)
 
           if d_global:
-            for k, v in d_global.items():
+            dg = deepcopy(d_global)
+            for k, v in dg.items():
               if k in util.qw('set setlist setdict'):
                 g_set = copy(v)
                 for kk in g_set.keys():
                   if not kk in dd:
                     dd[kk] = g_set.get(kk)
 
-            for w in d_global['listpush'].keys():
-              l_push = d_global['listpush'].get(w,[])
+            for w in dg['listpush'].keys():
+              l_push = dg['listpush'].get(w,[])
               w_lst = dd.get(w,[])
               w_lst.extend(l_push)
               dd[w] = w_lst
