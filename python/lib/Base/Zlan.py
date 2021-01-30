@@ -176,6 +176,12 @@ class Zlan(CoreClass):
 
   def process_line(self):
 
+    if len(self.lines) == 0:
+      self.end = 1
+
+    if self._is_cmt():
+      return self
+
     m = re.match(r'^(\w+)', self.line)
     if m:
       self.end = 1
@@ -247,29 +253,17 @@ class Zlan(CoreClass):
     while 1:
         if len(self.lines):
           self.line = self.lines.pop(0)
-    
-        if self.d_page:
-            print(self.d_page)
-  
-        if self.line:
-          print(f'end => {self.end}, line => {self.line}')
-    
+          self.process_line()
+          continue
+
+        self.eof = 1
+
         if self.end:
           self.process_end()  
+          self.end = 0
+          continue
 
-          if self.eof:
-            break
-    
-        if len(self.lines) == 0:
-          self.end = 1
-          self.eof = 1
-          if self.off:
-            break
-        else:
-          if self._is_cmt():
-            continue
-
-          self.process_line()
+        if self.eof:
+          break
 
     return self
-

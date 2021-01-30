@@ -439,16 +439,16 @@ This script will parse input URL
       d = zdata.get(url)
       self.urls.append(d)
 
-    for url in zorder:
-      d = zdata.get(url)
-      tags = d.get('tags','')
-      redo = d.get('redo','')
-      acts = d.get('acts',[])
+#    for url in zorder:
+      #d = zdata.get(url)
+      #tags = d.get('tags','')
+      #redo = d.get('redo','')
+      #acts = d.get('acts',[])
 
-      print(f'*'*50)
-      print(f'tags => {tags}')
-      print(f'redo => {redo}')
-      print(f'acts => {acts}')
+      #print(f'*'*50)
+      #print(f'tags => {tags}')
+      #print(f'redo => {redo}')
+      #print(f'acts => {acts}')
 
     print(f'zorder => {len(zorder)}')
     import pdb; pdb.set_trace()
