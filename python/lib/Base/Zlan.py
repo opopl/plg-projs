@@ -213,11 +213,6 @@ class Zlan(CoreClass):
 
   def process_line(self):
 
-    if len(self.lines) == 0:
-      self.end = 1
-
-    if self._is_cmt():
-      return self
 
     self                        \
       .line_match_block_word()  \
@@ -265,17 +260,25 @@ class Zlan(CoreClass):
     while 1:
         if len(self.lines):
           self.line = self.lines.pop(0)
-          self.process_line()
+
+          if len(self.lines) == 0:
+            self.end = 1
+      
+          if self._is_cmt():
+            continue
+
+          self.line_match_block_word()
+          if not self.off:
+            self.line_match_block_inner()
+          else:
+            continue
+
+          if self.end:
+            self.process_end()  
+
           continue
 
-        self.eof = 1
-
-        if self.end:
-          self.process_end()  
-          self.end = 0
-          continue
-
-        if self.eof:
-          break
+        self.process_end()  
+        break
 
     return self
