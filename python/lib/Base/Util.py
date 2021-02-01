@@ -1,6 +1,7 @@
 
 import os
 import re
+import sys
 
 from pathlib import Path
 import pathlib
@@ -94,6 +95,11 @@ def get(obj, path, default = None):
 def uniq(lst=[]):
     lst = list(set(lst))
     return lst
+
+def add_libs(libs):
+  for lib in libs:
+    if not lib in sys.path:
+      sys.path.append(lib)
 
 def readarr(dat_file, opts={}):
     splitsep = opts.get('sep', re.compile(r'\s+'))

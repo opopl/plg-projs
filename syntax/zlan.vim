@@ -24,9 +24,10 @@ syntax keyword zlanOp listpush dictex
 
 syntax keyword zlanKey page global
 syntax keyword zlanKeyword url title in ii tags date
-"syntax keyword zlanKeyword on off
+syntax keyword zlanKeyword on eof
+syntax keyword zlanEof eof
 syntax keyword zlanFlag redo fail
-syntax keyword zlanKeyword acts
+syntax keyword zlanKeyword acts 
 
 syn match	zlanComment	"^\s*#.*$"
 
@@ -34,6 +35,7 @@ highlight link zlanKeyword Keyword
 highlight link zlanFlag MoreMsg
 highlight link zlanKey WarningMsg
 highlight link zlanOp Pmenu
+highlight link zlanEof Visual
 
 highlight def link zlanComment	Comment
 
