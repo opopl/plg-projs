@@ -24,7 +24,10 @@ class Zlan(CoreClass):
   line = None
 
   data = {}
-  order = []
+  order = {
+    'all' : [],
+    'on' : [],
+  }
 
   off = None
   
@@ -251,7 +254,9 @@ class Zlan(CoreClass):
     
         url = dd.get('url')
         if url:
-          self.order.append(url)
+          if not dd.get('off'):
+            self.order['on'].append(url)
+          self.order['all'].append(url)
     
           u = util.url_parse(url)
     

@@ -448,7 +448,10 @@ This script will parse input URL
         
       url = k
       d = zdata.get(url)
-      self.urls.append(d)
+      if not d.get('off'):
+        self.urls.append(d)
+
+    import pdb; pdb.set_trace()
 
     return self
 

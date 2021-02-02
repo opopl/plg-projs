@@ -17,7 +17,12 @@ function! projs#zlan#zo#add ()
   let rootid = projs#rootid()
   let proj   = projs#proj#name()
 
-  let zdata = projs#zlan#data()
+  let zdata      = projs#zlan#data()
+
+  let zorder     = get(zdata,'order',{})
+  let zorder_on  = get(zorder,'on',[])
+  let zorder_all = get(zorder,'all',[])
+
   let l = keys(zdata)
 
   let prefix = printf('[ rootid: %s, proj: %s ]',rootid, proj)

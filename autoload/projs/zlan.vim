@@ -1,6 +1,9 @@
 
-function! projs#zlan#data ()
+function! projs#zlan#data (...)
+  let ref = get(a:000,0,{})
+
   let zfile = projs#sec#file('_zlan_')
+  let zfile = get(ref,'zfile',zfile)
 
   let zdata = {}
   let zorder = []
@@ -21,4 +24,26 @@ eof
   let zdata = py3eval('zdata')
   return zdata
 
+endfunction
+
+function! projs#zlan#has (...)
+  let ref = get(a:000,0,{})
+
+  let zfile = projs#sec#file('_zlan_')
+  let zfile = get(ref,'zfile',zfile)
+
+  let url = get(ref,'url','')
+
+  let zdata = projs#zlan#data({ 
+    \ 'zfile' : zfile 
+    \ })
+
+  let zorder     = get(zdata,'order',{})
+  let zorder_all = get(zorder,'all',[])
+
+  if base#inlist(url,zorder_all)
+    return 1
+  endif
+
+  return 
 endfunction
