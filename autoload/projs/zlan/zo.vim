@@ -42,12 +42,13 @@ function! projs#zlan#zo#add ()
 
       if k == 'url'
         let url = get(d,k,'')
+        echo url
         let cnt = 1
 
         if !len(url)
           let msg_head = "Non-zero URL required\n"
 
-        elseif projs#zlan#has({ 'url' : d[k] })
+        elseif projs#zlan#has({ 'url' : url })
           let msg_head = "URL in ZLAN\n"
 
         else
