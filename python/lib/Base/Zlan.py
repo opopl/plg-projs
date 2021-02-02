@@ -5,13 +5,6 @@ import re
 from copy import copy
 from copy import deepcopy
 
-def add_libs(libs):
-  for lib in libs:
-    if not lib in sys.path:
-      sys.path.append(lib)
-
-plg = os.environ.get('PLG')
-add_libs([ os.path.join(plg,'projs','python','lib') ])
 import Base.DBW as dbw
 import Base.Util as util
 import Base.Const as const
@@ -104,6 +97,7 @@ class Zlan(CoreClass):
     if not (file and os.path.isfile(file)):
       return
   
+    plg = os.environ.get('PLG','')
     dat_file = os.path.join(plg,'projs','data','list','zlan_keys.i.dat')
     self.keys = util.readarr(dat_file)
   
