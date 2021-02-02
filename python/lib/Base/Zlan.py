@@ -119,18 +119,19 @@ class Zlan(CoreClass):
     return self
 
   def save(self,ref={}):
-    data = util.get(ref,'data',self.data)
-    d_i  = util.get(ref,'d_i')
+    zdata = util.get(ref,'zdata',self.data)
+    d_i   = util.get(ref,'d_i')
+    zfile = util.get(ref,'file')
 
     if not 'lines_main' in data:
-      data['lines_main'] = []
+      zdata['lines_main'] = []
 
     if d_i == None:
       return self
     if not type(d_i) is dict:
       return self
 
-    data['lines_main'].append('page')
+    zdata['lines_main'].append('page')
     keys = d_i.keys()
     if not 'url' in keys:
       return self
@@ -143,7 +144,7 @@ class Zlan(CoreClass):
       if v == None:
         continue
 
-      data['lines_main'].append('\tset {k} {v}')
+      zdata['lines_main'].append('\tset {k} {v}')
 
     return self
   
