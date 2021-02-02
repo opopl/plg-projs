@@ -922,6 +922,8 @@ This script will parse input URL
             'tipes' : tipes,                            \
             'act'  : 'remote_to_db',                    \
         })                                              \
+        .ii_insert_js({                                 \
+        })                                              \
         .page_save()                                    \
         .page_save_db_record()                          \
         .page_add()                                     \
@@ -1058,6 +1060,28 @@ This script will parse input URL
         j = el.find('img')
         if not j:
           el.decompose()
+    return self
+
+  def ii_insert_js(self,ref={}):
+    tipe = ref.get('tipe','cache')
+    ext  = ref.get('ext','html')
+
+    tipes_in = ref.get('tipes')
+    if tipes_in:
+      tipes    = tipes_in
+      if type(tipes_in) is str:
+        tipes = tipes_in.split(',') 
+  
+      if len(tipes):
+        del ref['tipes']
+        for tipe in tipes:
+          r = copy(ref)
+          r['tipe'] = tipe
+          self.ii_insert_js(r)
+        return self
+
+    self.log(f'[ii_insert_js] {tipe}')
+
     return self
 
   def ii_replace_links(self,ref={}):
@@ -1540,7 +1564,7 @@ This script will parse input URL
     h = soup.prettify()
 
     with open(data_file_img, 'w') as f:
-        f.write(h)
+      f.write(h)
     return self
 
   def page_do_imgs(self):
