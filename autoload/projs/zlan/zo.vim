@@ -67,6 +67,8 @@ function! projs#zlan#zo#add ()
 
   "unlet d.url
   let url = get(copy(d),'url','')
+  
+  echo zdata
 
   call projs#zlan#save({ 
     \ 'zdata' : zdata,
