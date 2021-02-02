@@ -907,10 +907,11 @@ This script will parse input URL
             'tipes' : tipes,                            \
             'act'  : 'remote_to_db',                    \
         })                                              \
-        .ii_insert_js_css({                             \
-        })                                              \
         .page_save()                                    \
         .page_save_db_record()                          \
+        .ii_insert_js_css({                             \
+            'tipes' : util.qw('core clean'),            \
+        })                                              \
         .page_add()                                     \
         .page_save_log()                                \
 
@@ -1047,6 +1048,7 @@ This script will parse input URL
           el.decompose()
     return self
 
+###js
   def ii_insert_js_css(self,ref={}):
     tipe = ref.get('tipe','cache')
     ext  = ref.get('ext','html')
@@ -1067,19 +1069,28 @@ This script will parse input URL
 
     self.log(f'[ii_insert_js_css] {tipe}')
 
+    svf = self._file_rid({ 'tipe' : tipe, 'ext' : ext })
     self.load_soup_file_rid({                           \
         'tipe' : tipe,
         'ext'  : ext,
     })
-    ii_soup = self.soups[sv]
+    ii_soup = self.soups[svf]
     body = ii_soup.body
     script = ii_soup.new_tag('script')
     script['src'] = Path(self.Bin,'ii.js').as_uri()
     body.append(script)
 
+    style = ii_soup.new_tag('style')
+    style.string = '''
+        body {
+          width: 200px;
+        }
+    '''
+    ii_soup.head.append(style)
+
     #import pdb; pdb.set_trace()
 
-    with open(sv, 'w') as f:
+    with open(svf, 'w') as f:
       f.write(ii_soup.prettify())
 
     return self
