@@ -754,6 +754,9 @@ This script will parse input URL
 
     import pdb; pdb.set_trace()
 
+    with open(sv, 'w') as f:
+      f.write(ii_soup.prettify())
+
     return self
 
   def page_add(self):
