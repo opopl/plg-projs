@@ -7,7 +7,7 @@ function! projs#zlan#save (...)
   let zfile = get(ref,'zfile',zfile)
 
   let zdata = get(ref,'zdata',{})
-
+  let d_i   = get(ref,'d_i',{})
 
 python3 << eof
 import vim
@@ -15,10 +15,12 @@ from Base.Zlan import Zlan
 
 zfile = vim.eval('zfile')
 zdata = vim.eval('zdata')
+d_i   = vim.eval('d_i')
 
 Zlan().save({ 
   'zdata' : zdata,
   'zfile' : zfile,
+  'd_i'   : d_i,
 })
   
 eof
