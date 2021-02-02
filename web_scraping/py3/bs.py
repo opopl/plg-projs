@@ -749,10 +749,10 @@ This script will parse input URL
     ii_soup = self.soups[sv]
     body = ii_soup.body
     script = ii_soup.new_tag('script')
-    script['src'] = '../ii.js'
+    script['src'] = Path(self.Bin,'ii.js').as_uri()
     body.append(script)
 
-    import pdb; pdb.set_trace()
+    #import pdb; pdb.set_trace()
 
     with open(sv, 'w') as f:
       f.write(ii_soup.prettify())
