@@ -17,6 +17,8 @@ function! projs#zlan#zo#add ()
   let rootid = projs#rootid()
   let proj   = projs#proj#name()
 
+  let zfile = projs#sec#file('_zlan_')
+
   let zdata      = projs#zlan#data()
 
   let zorder     = get(zdata,'order',{})
@@ -42,7 +44,6 @@ function! projs#zlan#zo#add ()
 
       if k == 'url'
         let url = get(d,k,'')
-        echo url
         let cnt = 1
 
         if !len(url)
@@ -70,21 +71,10 @@ function! projs#zlan#zo#add ()
   call projs#zlan#save({ 
     \ 'zdata' : zdata,
     \ 'zfile' : zfile,
+    \ 'd_i'   : d,
     \ })
-  "call projs#zlan#save({ 'zdata' : zdata })
-
-  let d_lines = []
-  call add(d_lines,'page')
-
-"  let struct = base#url#struct(url)
-  "let host   = get(struct,'host','')
-
-  "call extend(d,{ 'host' : host })
-
-  "call extend(zdata,{ url : d })
-  "let zorder = get(zdata,'order',[])
-  "call add(zorder,url)
-
+  "
   "call base#rdw_printf(['added ZLAN entry ' ],'MoreMsg')
+
   
 endfunction

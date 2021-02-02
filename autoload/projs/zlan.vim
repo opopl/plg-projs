@@ -1,6 +1,27 @@
 
 
 function! projs#zlan#save (...)
+  let ref = get(a:000,0,{})
+
+  let zfile = projs#sec#file('_zlan_')
+  let zfile = get(ref,'zfile',zfile)
+
+  let zdata = get(ref,'zdata',{})
+
+
+python3 << eof
+import vim
+from Base.Zlan import Zlan
+
+zfile = vim.eval('zfile')
+zdata = vim.eval('zdata')
+
+Zlan().save({ 
+  'zdata' : zdata,
+  'zfile' : zfile,
+})
+  
+eof
 endf
 
 function! projs#zlan#data (...)

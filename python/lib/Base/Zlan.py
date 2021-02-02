@@ -13,11 +13,11 @@ from Base.Core import CoreClass
 
 class Zlan(CoreClass):
 
-  lines = []
-  line = None
-
   def __init__(self,args={}):
     super().__init__(args)
+
+    lines = []
+    line = None
 
     self.data = {
       'order'      : [],
@@ -150,6 +150,9 @@ class Zlan(CoreClass):
     zlines = []
     zlines.extend(zdata['lines_main'])
     zlines.extend(zdata['lines_eof'])
+
+    with open(zfile, 'w') as f:
+      f.write(zlines)
 
     return self
   
