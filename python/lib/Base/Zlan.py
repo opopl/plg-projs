@@ -120,9 +120,30 @@ class Zlan(CoreClass):
 
   def save(self,ref={}):
     data = util.get(ref,'data',self.data)
-    d_i  = util.get(ref,'input')
+    d_i  = util.get(ref,'d_i')
 
-    if d_i:
+    if not 'lines_main' in data:
+      data['lines_main'] = []
+
+    if d_i == None:
+      return self
+    if not type(d_i) is dict:
+      return self
+
+    data['lines_main'].append('page')
+    keys = d_i.keys()
+    if not 'url' in keys:
+      return self
+
+    keys.remove('url')
+    keys.insert(0,'url')
+
+    for k in keys:
+      v = d_i.get('k')
+      if v == None:
+        continue
+
+      data['lines_main'].append('\tset {k} {v}')
 
     return self
   
