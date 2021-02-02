@@ -561,9 +561,9 @@ This script will parse input URL
       return self
 
     headers = {}
-    #headers = {
-     #'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.3'
-    #}
+    headers = {
+     'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.3'
+    }
     r = requests.get(url,headers=headers)
 
     encoding = 'utf-8'
