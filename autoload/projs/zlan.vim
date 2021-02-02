@@ -27,10 +27,10 @@ eof
 endfunction
 
 function! projs#zlan#count (...)
-  let k = get(a:000,0,'all')
+  let ref = get(a:000,0,{})
 
   let zfile = projs#sec#file('_zlan_')
-  "let zfile = get(ref,'zfile',zfile)
+  let zfile = get(ref,'zfile',zfile)
 
   let zdata = projs#zlan#data({ 
     \ 'zfile' : zfile 
