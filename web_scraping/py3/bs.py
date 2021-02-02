@@ -731,6 +731,7 @@ This script will parse input URL
 
   def page_save(self,ref={}):
     tipe = util.get(ref,'tipe','clean')
+    ext  = util.get(ref,'ext','html')
 
     sv = self._file_rid({ 'tipe' : tipe })
     if tipe == 'clean':
@@ -740,6 +741,18 @@ This script will parse input URL
 
     with open(sv, 'w') as f:
       f.write(self.soup.prettify())
+
+    self.load_soup_file_rid({                           \
+        'tipe' : tipe,
+        'ext'  : ext,
+    })
+    ii_soup = self.soups[sv]
+    body = ii_soup.body
+    script = ii_soup.new_tag('script')
+    script['src'] = '../ii.js'
+    body.append(script)
+
+    import pdb; pdb.set_trace()
 
     return self
 
@@ -827,7 +840,7 @@ This script will parse input URL
       return self
 
     # module name
-    add_libs(libs)
+    util.add_libs(libs)
     m = self.modules['sites'][site] = __import__(mod)
 
     if m:
