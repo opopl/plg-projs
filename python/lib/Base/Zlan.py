@@ -123,8 +123,9 @@ class Zlan(CoreClass):
     d_i   = util.get(ref,'d_i')
     zfile = util.get(ref,'file')
 
-    if not 'lines_main' in data:
-      zdata['lines_main'] = []
+    for j in util.qw('lines_main lines_eof'):
+      if not j in data:
+        zdata[j] = []
 
     if d_i == None:
       return self
@@ -144,7 +145,11 @@ class Zlan(CoreClass):
       if v == None:
         continue
 
-      zdata['lines_main'].append('\tset {k} {v}')
+      zdata['lines_main'].append(f'\tset {k} {v}')
+
+    zlines = []
+    zlines.extend(zdata['lines_main'])
+    zlines.extend(zdata['lines_eof'])
 
     return self
   
