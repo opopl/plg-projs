@@ -78,6 +78,7 @@ class Zlan(CoreClass):
         break
 
       self.line = self.lines.pop(0)
+      self.add_main()
   
       if self._is_cmt():
         continue
@@ -85,6 +86,7 @@ class Zlan(CoreClass):
       mm = re.match(r'\t\t(\w+)',self.line)
       if not mm:
         self.lines.insert(0,self.line)
+        self.data['lines_main'].pop()
         break
   
       item = mm.group(1)
@@ -144,7 +146,7 @@ class Zlan(CoreClass):
       return self
 
     for k in keys:
-      v = d_i.get('k')
+      v = d_i.get(k)
       if v == None:
         continue
 
@@ -154,8 +156,9 @@ class Zlan(CoreClass):
     zlines.extend(zdata['lines_main'])
     zlines.extend(zdata['lines_eof'])
 
+    ztext = "\n".join(zlines) + "\n"
     with open(zfile, 'w') as f:
-      f.writelines(zlines)
+      f.write(ztext)
 
     return self
   
@@ -333,7 +336,7 @@ class Zlan(CoreClass):
   
     while 1:
         if len(self.lines):
-          self.line = self.lines.pop(0)
+          self.line = self.lines.pop(0).strip("\n")
 
           if self.eof:
             self.add_eof()
