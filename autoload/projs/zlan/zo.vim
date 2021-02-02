@@ -75,8 +75,8 @@ function! projs#zlan#zo#add ()
     \ 'zfile' : zfile,
     \ 'd_i'   : d,
     \ })
-  "
-  "call base#rdw_printf(['added ZLAN entry ' ],'MoreMsg')
+	let cnt = projs#zlan#count()
+  call base#rdw_printf(['[zlan] added entry; on: %s, all: %s ', cnt.on, cnt.all ],'MoreMsg')
 
   
 endfunction

@@ -24,9 +24,6 @@ d_i   = vim.eval('d_i')
 len_main = len(zdata['lines_main'])
 len_eof = len(zdata['lines_eof'])
 
-print(f'len_main => {len_main}')
-print(f'len_eof => {len_eof}')
-
 Zlan().save({ 
   'zdata' : zdata,
   'zfile' : zfile,
