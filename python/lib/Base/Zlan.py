@@ -59,6 +59,9 @@ class Zlan(CoreClass):
       'save'   : '',
   }
 
+  def _is_eof(self):
+    return re.match(r'^eof\s*$',self.line)
+
   def _is_cmt(self):
     return re.match(r'^\s*#',self.line)
 
@@ -132,6 +135,8 @@ class Zlan(CoreClass):
 
     if not self.d_page:
       self.d_page = {}
+      if self.off:
+       self.d_page['off'] = 1
   
     m = re.match(self.pc['set'], self.line_t)
     if m:
@@ -187,8 +192,13 @@ class Zlan(CoreClass):
  
     if word == 'off':
       self.off = 1
+
+    if word == 'eof':
+      self.eof = 1
+
     elif word == 'on':
       self.off = 0
+
     elif word == 'global':
       self.flg = { 'block' : 'global', 'save' : prev }
  
@@ -265,12 +275,15 @@ class Zlan(CoreClass):
         if len(self.lines):
           self.line = self.lines.pop(0)
 
+          if self.eof:
+            break
+
           if self._is_cmt():
             continue
 
           self.line_match_block_word()
-          if self.off:
-            continue
+          #if self.off:
+            #continue
 
           self.line_match_block_inner()
 
