@@ -443,15 +443,13 @@ This script will parse input URL
       self.urls = []
 
     for k in zdata.keys():
-      if k in [ 'order' ]:
+      if k in util.qw('order lines_main lines_eof'):
         continue
         
       url = k
       d = zdata.get(url)
       if not d.get('off'):
         self.urls.append(d)
-
-    import pdb; pdb.set_trace()
 
     return self
 

@@ -281,6 +281,16 @@ class Zlan(CoreClass):
     print(f'is_end => {self.end}')
     return self
 
+  def add_eof(self):
+    self.data['lines_eof'].append(self.line)
+
+    return self
+
+  def add_main(self):
+    self.data['lines_main'].append(self.line)
+
+    return self
+
   def loop(self):
   
     while 1:
@@ -288,17 +298,16 @@ class Zlan(CoreClass):
           self.line = self.lines.pop(0)
 
           if self.eof:
-            self.data['lines_eof'].append(self.line)
-            break
-
-          self.data['lines_main'].append(self.line)
-
-          if self._is_cmt():
+            self.add_eof()
             continue
 
           self.line_match_block_word()
-          #if self.off:
-            #continue
+
+          if self.eof:
+            self.add_eof()
+            continue
+
+          self.add_main()
 
           self.line_match_block_inner()
 
