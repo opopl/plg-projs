@@ -1118,6 +1118,7 @@ This script will parse input URL
       })
       with open(file, 'w') as f:
         f.write(soup.prettify())
+
     return self
 
   def page_replace_links(self,ref={}):
