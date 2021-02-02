@@ -47,10 +47,10 @@ function! projs#zlan#zo#add ()
         let cnt = 1
 
         if !len(url)
-          let msg_head = "Non-zero URL required\n"
+          let msg_head = "\nNon-zero URL required\n"
 
         elseif projs#zlan#has({ 'url' : url })
-          let msg_head = "URL in ZLAN\n"
+          let msg_head = "\nURL in ZLAN\n"
 
         else
           let cnt = 0
