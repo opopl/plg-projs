@@ -1,4 +1,8 @@
 
+
+function! projs#zlan#save (...)
+endf
+
 function! projs#zlan#data (...)
   let ref = get(a:000,0,{})
 

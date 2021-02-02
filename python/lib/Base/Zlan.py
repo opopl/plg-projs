@@ -16,49 +16,52 @@ class Zlan(CoreClass):
   lines = []
   line = None
 
-  data = {
-    'order'      : [],
-    'lines_main' : [],
-    'lines_eof'  : [],
-  }
+  def __init__(self,args={}):
+    super().__init__(args)
 
-  order = {
-    'all' : [],
-    'on' : [],
-  }
-
-  off = None
+    self.data = {
+      'order'      : [],
+      'lines_main' : [],
+      'lines_eof'  : [],
+    }
   
-  end = 0 
-  eof = 0 
+    self.order = {
+      'all' : [],
+      'on' : [],
+    }
+
+    self.off = None
+    
+    self.end = 0 
+    self.eof = 0 
+    
+    self.shift = '\t'
   
-  shift = '\t'
+    self.d_page = None
+    self.d_global = None
+  
+    self.d_global = {
+        'listpush' : {},
+        'dictex' : {},
+        'setlist' : {},
+        'setdict' : {},
+        'set' : {},
+    }
+  
+    self.pats = { 
+      'set'      : rf'^set\s+(\w+)(?:\s+(.*)|\s*)$',
+      'setlist'  : rf'^setlist\s+(\w+)\s*$',
+      'listpush' : rf'^listpush\s+(\w+)\s*$',
+      'setdict'  : rf'^setdict\+(\w+)\s*$',
+      'dictex'   : rf'^dictex\+(\w+)\s*$',
+      'unset'    : rf'^unset\s+(\w+)\s*$',
+    }
 
-  d_page = None
-  d_global = None
+    self.flg = {
+        'block'   : '',
+        'save'   : '',
+    }
 
-  d_global = {
-      'listpush' : {},
-      'dictex' : {},
-      'setlist' : {},
-      'setdict' : {},
-      'set' : {},
-  }
-
-  pats = { 
-    'set'      : rf'^set\s+(\w+)(?:\s+(.*)|\s*)$',
-    'setlist'  : rf'^setlist\s+(\w+)\s*$',
-    'listpush' : rf'^listpush\s+(\w+)\s*$',
-    'setdict'  : rf'^setdict\+(\w+)\s*$',
-    'dictex'   : rf'^dictex\+(\w+)\s*$',
-    'unset'    : rf'^unset\s+(\w+)\s*$',
-  }
-
-
-  flg = {
-      'block'   : '',
-      'save'   : '',
-  }
 
   def _is_eof(self):
     return re.match(r'^eof\s*$',self.line)
@@ -112,6 +115,14 @@ class Zlan(CoreClass):
     for k in self.pats.keys():
       v = self.pats[k]
       self.pc[k] = re.compile(v)
+
+    return self
+
+  def save(self,ref={}):
+    data = util.get(ref,'data',self.data)
+    d_i  = util.get(ref,'input')
+
+    if d_i:
 
     return self
   

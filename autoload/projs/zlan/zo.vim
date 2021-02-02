@@ -64,8 +64,17 @@ function! projs#zlan#zo#add ()
     endw
   endfor
 
+  "unlet d.url
   let url = get(copy(d),'url','')
-  unlet d.url
+
+  call projs#zlan#save({ 
+    \ 'zdata' : zdata,
+    \ 'zfile' : zfile,
+    \ })
+  "call projs#zlan#save({ 'zdata' : zdata })
+
+  let d_lines = []
+  call add(d_lines,'page')
 
 "  let struct = base#url#struct(url)
   "let host   = get(struct,'host','')
@@ -76,7 +85,6 @@ function! projs#zlan#zo#add ()
   "let zorder = get(zdata,'order',[])
   "call add(zorder,url)
 
-  "call projs#zlan#save({ 'zdata' : zdata })
   "call base#rdw_printf(['added ZLAN entry ' ],'MoreMsg')
   
 endfunction
