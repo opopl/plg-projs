@@ -1083,7 +1083,7 @@ This script will parse input URL
     style = ii_soup.new_tag('style')
     style.string = '''
         body {
-          width: 200px;
+          width: 700px;
         }
     '''
     ii_soup.head.append(style)

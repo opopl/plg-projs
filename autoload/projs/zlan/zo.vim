@@ -66,16 +66,16 @@ function! projs#zlan#zo#add ()
   let url = get(copy(d),'url','')
   unlet d.url
 
-  let struct = base#url#struct(url)
-  let host   = get(struct,'host','')
+"  let struct = base#url#struct(url)
+  "let host   = get(struct,'host','')
 
-  call extend(d,{ 'host' : host })
+  "call extend(d,{ 'host' : host })
 
-  call extend(zdata,{ url : d })
-  let zorder = get(zdata,'order',[])
-  call add(zorder,url)
+  "call extend(zdata,{ url : d })
+  "let zorder = get(zdata,'order',[])
+  "call add(zorder,url)
 
-  call projs#zlan#save({ 'zdata' : zdata })
-  call base#rdw_printf(['added ZLAN entry ' ],'MoreMsg')
+  "call projs#zlan#save({ 'zdata' : zdata })
+  "call base#rdw_printf(['added ZLAN entry ' ],'MoreMsg')
   
 endfunction
