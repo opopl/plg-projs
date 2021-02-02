@@ -77,7 +77,7 @@ class Zlan(CoreClass):
       if len(self.lines) == 0:
         break
 
-      self.line = self.lines.pop(0)
+      self.line = self.lines.pop(0).strip("\n")
       self.add_main()
   
       if self._is_cmt():
