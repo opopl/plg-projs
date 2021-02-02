@@ -124,7 +124,7 @@ class Zlan(CoreClass):
     zfile = util.get(ref,'file')
 
     for j in util.qw('lines_main lines_eof'):
-      if not j in data:
+      if not j in zdata:
         zdata[j] = []
 
     if d_i == None:
@@ -133,12 +133,15 @@ class Zlan(CoreClass):
       return self
 
     zdata['lines_main'].append('page')
-    keys = d_i.keys()
+
+    keys = [ 'url' ]
+    for k in d_i.keys():
+      if k == 'url':
+        continue
+      keys.append(k)
+
     if not 'url' in keys:
       return self
-
-    keys.remove('url')
-    keys.insert(0,'url')
 
     for k in keys:
       v = d_i.get('k')

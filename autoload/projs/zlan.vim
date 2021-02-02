@@ -1,4 +1,8 @@
 
+if 0
+  called by
+    projs#zlan#zo#add
+endif
 
 function! projs#zlan#save (...)
   let ref = get(a:000,0,{})
