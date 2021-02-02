@@ -121,7 +121,7 @@ class Zlan(CoreClass):
   def save(self,ref={}):
     zdata = util.get(ref,'zdata',self.data)
     d_i   = util.get(ref,'d_i')
-    zfile = util.get(ref,'file')
+    zfile = util.get(ref,'zfile')
 
     for j in util.qw('lines_main lines_eof'):
       if not j in zdata:
@@ -155,7 +155,7 @@ class Zlan(CoreClass):
     zlines.extend(zdata['lines_eof'])
 
     with open(zfile, 'w') as f:
-      f.write(zlines)
+      f.writelines(zlines)
 
     return self
   
