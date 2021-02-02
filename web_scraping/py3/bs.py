@@ -742,21 +742,6 @@ This script will parse input URL
     with open(sv, 'w') as f:
       f.write(self.soup.prettify())
 
-    self.load_soup_file_rid({                           \
-        'tipe' : tipe,
-        'ext'  : ext,
-    })
-    ii_soup = self.soups[sv]
-    body = ii_soup.body
-    script = ii_soup.new_tag('script')
-    script['src'] = Path(self.Bin,'ii.js').as_uri()
-    body.append(script)
-
-    #import pdb; pdb.set_trace()
-
-    with open(sv, 'w') as f:
-      f.write(ii_soup.prettify())
-
     return self
 
   def page_add(self):
@@ -922,7 +907,7 @@ This script will parse input URL
             'tipes' : tipes,                            \
             'act'  : 'remote_to_db',                    \
         })                                              \
-        .ii_insert_js({                                 \
+        .ii_insert_js_css({                             \
         })                                              \
         .page_save()                                    \
         .page_save_db_record()                          \
@@ -1062,7 +1047,7 @@ This script will parse input URL
           el.decompose()
     return self
 
-  def ii_insert_js(self,ref={}):
+  def ii_insert_js_css(self,ref={}):
     tipe = ref.get('tipe','cache')
     ext  = ref.get('ext','html')
 
@@ -1077,10 +1062,25 @@ This script will parse input URL
         for tipe in tipes:
           r = copy(ref)
           r['tipe'] = tipe
-          self.ii_insert_js(r)
+          self.ii_insert_js_css(r)
         return self
 
-    self.log(f'[ii_insert_js] {tipe}')
+    self.log(f'[ii_insert_js_css] {tipe}')
+
+    self.load_soup_file_rid({                           \
+        'tipe' : tipe,
+        'ext'  : ext,
+    })
+    ii_soup = self.soups[sv]
+    body = ii_soup.body
+    script = ii_soup.new_tag('script')
+    script['src'] = Path(self.Bin,'ii.js').as_uri()
+    body.append(script)
+
+    #import pdb; pdb.set_trace()
+
+    with open(sv, 'w') as f:
+      f.write(ii_soup.prettify())
 
     return self
 
