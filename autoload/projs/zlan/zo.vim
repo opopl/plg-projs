@@ -68,15 +68,14 @@ function! projs#zlan#zo#add ()
   "unlet d.url
   let url = get(copy(d),'url','')
   
-  echo d
-
   call projs#zlan#save({ 
     \ 'zdata' : zdata,
     \ 'zfile' : zfile,
     \ 'd_i'   : d,
     \ })
 	let cnt = projs#zlan#count()
-  call base#rdw_printf(['[zlan] added entry; on: %s, all: %s ', cnt.on, cnt.all ],'MoreMsg')
-
+  call base#rdw_printf([
+		\	'[rootid: %s, proj: %s] added ZLAN entry; on: %s, all: %s ', 
+		\	rootid, proj, cnt.on, cnt.all ],'MoreMsg')
   
 endfunction
