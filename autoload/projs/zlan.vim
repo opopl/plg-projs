@@ -26,6 +26,27 @@ eof
 
 endfunction
 
+function! projs#zlan#count (...)
+  let k = get(a:000,0,'all')
+
+  let zfile = projs#sec#file('_zlan_')
+  "let zfile = get(ref,'zfile',zfile)
+
+  let zdata = projs#zlan#data({ 
+    \ 'zfile' : zfile 
+    \ })
+
+  let zorder = get(zdata,'order',{})
+  let cnt = {}
+  for k in base#qw('all on')
+    let lst = get(zorder,k,[])
+    call extend(cnt,{ k : len(lst) })
+  endfor
+
+  return cnt
+
+endfunction
+
 function! projs#zlan#has (...)
   let ref = get(a:000,0,{})
 
