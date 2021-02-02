@@ -41,11 +41,16 @@ function! projs#zlan#zo#add ()
       let msg_head = ''
 
       if k == 'url'
+        let url = get(d,k,'')
         let cnt = 1
-        if !len(d[k])
+
+        if !len(url)
           let msg_head = "Non-zero URL required\n"
 
-        elseif projs#zlan#has({ 'url' : url })
+        elseif projs#zlan#has({ 'url' : d[k] })
+          let msg_head = "URL in ZLAN\n"
+
+        else
           let cnt = 0
         endif
 

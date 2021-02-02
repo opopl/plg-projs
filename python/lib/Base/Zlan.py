@@ -23,7 +23,12 @@ class Zlan(CoreClass):
   lines = []
   line = None
 
-  data = {}
+  data = {
+    'order'      : [],
+    'lines_main' : [],
+    'lines_eof'  : [],
+  }
+
   order = {
     'all' : [],
     'on' : [],
@@ -130,7 +135,9 @@ class Zlan(CoreClass):
         .loop()                       \
           
     #print(d_global)
-    self.data.update({ 'order' : self.order })
+    self.data.update({ 
+      'order' : self.order 
+    })
   
     return self
 
@@ -281,7 +288,10 @@ class Zlan(CoreClass):
           self.line = self.lines.pop(0)
 
           if self.eof:
+            self.data['lines_eof'].append(self.line)
             break
+
+          self.data['lines_main'].append(self.line)
 
           if self._is_cmt():
             continue
