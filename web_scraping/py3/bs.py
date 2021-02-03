@@ -217,6 +217,9 @@ This script will parse input URL
   # directories
   dirs = {}
 
+  # files
+  files = {}
+
   # code, e.g. html, tex
   code = {
     'tex' : None,
@@ -370,12 +373,28 @@ This script will parse input URL
 
     return self
 
+  def init_npm(self):
+
+    return self
+
+  def init_files(self):
+    self.files.update({ 
+        'package_json' : self._dir('html','package.json')
+    })
+
+    return self
+
   def init_dirs(self):
-    self.Script = os.path.realpath(__file__)
-    self.Bin = str(Path(self.Script).parent)
+    self.files.update({
+        'script' : os.path.realpath(__file__),
+    })
+
+    self.dirs.update({
+        'bin' : str(Path(self.files['script']).parent),
+    })
     
-    self.dirs['tmpl'] = os.path.join(self.Bin,'tmpl')
-    self.log(f'[BS] Script location: {self.Script}')
+    self.dirs['tmpl'] = os.path.join(self.dirs['bin'],'tmpl')
+    self.log(f'[BS] Script location: {self.files["script"]}')
     self.log(f'[BS] Template directory: {self.dirs["tmpl"]}')
 
     if self.f_yaml:
@@ -471,6 +490,11 @@ This script will parse input URL
           setattr(self, k, d)
 
     return self
+
+  def _file(self, id):
+
+    f = util.get(self,[ 'files' , id ])
+    return f
 
   # self._dir({ obj = 'out.tmpl', fs = '' })
   # self._dir('out.tmpl')
@@ -877,6 +901,8 @@ This script will parse input URL
   def parse_url_run(self,ref={}):
     tipes = util.qw('img img_clean')
 
+    import pdb; pdb.set_trace()
+
     self                                                \
         .load_soup()                                    \
         .in_load_site_module()                          \
@@ -1077,7 +1103,7 @@ This script will parse input URL
     ii_soup = self.soups[svf]
     body = ii_soup.body
     script = ii_soup.new_tag('script')
-    script['src'] = Path(self.Bin,'ii.js').as_uri()
+    script['src'] = Path(self._dir('bin'),'ii.js').as_uri()
     body.append(script)
 
     style = ii_soup.new_tag('style')
@@ -1608,7 +1634,6 @@ This script will parse input URL
           rel_src = src
         else:
           url = u['url']
-          import pdb; pdb.set_trace()
 
         pic.url = url
 
@@ -1671,6 +1696,8 @@ This script will parse input URL
     self                  \
       .get_opt()          \
       .init_dirs()        \
+      .init_files()       \
+      .init_npm()         \
       .init_db_urls()     \
       .init_tmpl()        \
       .mk_dirs()          \
