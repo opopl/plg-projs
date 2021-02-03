@@ -381,6 +381,7 @@ This script will parse input URL
     self.files.update({ 
         'package_json' : self._dir('html','package.json')
     })
+    import pdb; pdb.set_trace()
 
     return self
 
@@ -900,8 +901,6 @@ This script will parse input URL
 ###pu
   def parse_url_run(self,ref={}):
     tipes = util.qw('img img_clean')
-
-    import pdb; pdb.set_trace()
 
     self                                                \
         .load_soup()                                    \
