@@ -1602,15 +1602,13 @@ This script will parse input URL
         src = el_img['src']
         rel_src = None
         u = util.url_parse(src)
-        import pdb; pdb.set_trace()
 
         if not u['netloc']:
           url = util.url_join(baseurl,src)
           rel_src = src
         else:
-          print(u['netloc'])
-          print(u.scheme)
-          url = src
+          url = u['url']
+          import pdb; pdb.set_trace()
 
         pic.url = url
 

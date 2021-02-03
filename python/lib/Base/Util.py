@@ -22,19 +22,27 @@ def url_parse(url):
 
   d = {}
   host = u.netloc.split(':')[0]
-  baseurl = u.scheme + '://' + u.netloc
+
+  scheme = u.scheme 
+  if not u.scheme:
+    scheme = 'http'
+    m = re.match(r'^[/]+(.*)$', url)
+    if m:
+      url = m.group(1)
+    url = scheme + '://' + url
+
+  baseurl = scheme + '://' + u.netloc
 
   d = {
-    'scheme'  : u.scheme,
+    'scheme'  : scheme,
     'path'    : u.path,
     'netloc'  : u.netloc,
     'params'  : u.params,
     'query'   : u.query,
     'host'    : host,
     'baseurl' : baseurl,
+    'url'     : url,
   }
-  if not d['scheme']:
-    d['scheme'] = 'http'
 
   return d
 
