@@ -1088,8 +1088,6 @@ This script will parse input URL
     '''
     ii_soup.head.append(style)
 
-    #import pdb; pdb.set_trace()
-
     with open(svf, 'w') as f:
       f.write(ii_soup.prettify())
 
@@ -1603,12 +1601,15 @@ This script will parse input URL
       if el_img.has_attr('src'):
         src = el_img['src']
         rel_src = None
-        u = urlparse(src)
+        u = util.url_parse(src)
+        import pdb; pdb.set_trace()
 
-        if not u.netloc:
+        if not u['netloc']:
           url = util.url_join(baseurl,src)
           rel_src = src
         else:
+          print(u['netloc'])
+          print(u.scheme)
           url = src
 
         pic.url = url

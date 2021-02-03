@@ -33,6 +33,8 @@ def url_parse(url):
     'host'    : host,
     'baseurl' : baseurl,
   }
+  if not d['scheme']:
+    d['scheme'] = 'http'
 
   return d
 
