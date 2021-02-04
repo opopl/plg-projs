@@ -866,13 +866,19 @@ This script will parse input URL
     if not os.path.isdir(lib):
       Path(lib).mkdir(exist_ok=True)
 
+    if not os.path.isfile(mod_yaml):
+      site_yml = self._dir('bin','yml _site.yaml')
+      yml = self._yaml_data(site_yml)
+      with open(mod_yaml, 'w') as f:
+          f.write(yml)
+
     in_dir = self._dir('in_sites')
-    for p in site.split('.'):
+    for piece in site.split('.'):
       init_py = os.path.join(in_dir,'__init__.py')
       if not os.path.isfile(init_py):
          Path(init_py).touch()
 
-      in_dir = os.path.join(in_dir,p)
+      in_dir = os.path.join(in_dir,piece)
     import pdb; pdb.set_trace()
 
     if not os.path.isfile(mod_py):
