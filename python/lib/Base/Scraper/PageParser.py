@@ -3,6 +3,8 @@
 import os,sys,re
 import cyrtranslit
 
+import datetime
+
 import Base.DBW as dbw
 import Base.Util as util
 import Base.Const as const
@@ -44,8 +46,11 @@ class RootPageParser(CoreClass):
     c = bs.select_one('meta[itemprop="datePublished"]')
     if c:
       date_s = c['content']
-      pass
-    import pdb; pdb.set_trace()
+      s = date_s.split('T')[0]
+      f = "%Y-%m-%d"
+      d = datetime.datetime.strptime(s,f)
+      date = d.strftime('%d_%m_%Y')
+      self.app.page.set({ 'date' : date })
 
     return self
 
