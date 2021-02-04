@@ -22,6 +22,14 @@ class RootPageParser(CoreClass):
   date_format = ''
   meta = None
 
+  def __init__(self,ref={}):
+    super().__init__(ref)
+
+    self.auth_obj = Author({ 
+      'page_parser' : self,
+      'app'         : self.app
+    })
+
   def generate_ii(self,ref={}):
     app = self.app
     if app.page.title:
@@ -95,8 +103,13 @@ class RootPageParser(CoreClass):
         if c:
           v = c['content']
           d_parse.update({ k : v })
-          #auth_obj.parse(d_parse)
-    import pdb; pdb.set_trace()
+
+      auth_bare = util.get(d_parse,'str')
+      if auth_bare:
+        print(f'[PageParser] found author name: {auth_bare}')
+        break
+
+    self.auth_obj.parse(d_parse)
 
     return self
 
@@ -114,17 +127,12 @@ class RootPageParser(CoreClass):
     site = self.app.page.site
 
     sel = ref.get('sel','')
+
     auth_sel = util.get( self.app, [ 'sites', site, 'sel', 'author' ] )
     if not auth_sel:
       return self
 
     if type(auth_sel) is dict:
-
-      auth_obj = Author({ 
-        'page_parser' : self,
-        'app'         : self.app
-      })
-
       d = {}
 
       d_parse = {}
@@ -152,7 +160,7 @@ class RootPageParser(CoreClass):
 
               d_parse.update({ 'str' : auth_bare })
 
-      auth_obj.parse(d_parse)
+      self.auth_obj.parse(d_parse)
 
     return self
 

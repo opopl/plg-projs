@@ -29,9 +29,12 @@ def url_parse(url):
     m = re.match(r'^[/]+(.*)$', url)
     if m:
       url = m.group(1)
-    url = scheme + '://' + url
+    if u.netloc:
+      url = scheme + '://' + url
 
-  baseurl = scheme + '://' + u.netloc
+  baseurl = ''
+  if scheme and u.netloc:
+    baseurl = scheme + '://' + u.netloc
 
   d = {
     'scheme'  : scheme,

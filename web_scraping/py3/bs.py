@@ -1677,7 +1677,11 @@ This script will parse input URL
         #caption = el_img['alt']
 
       if el_img.has_attr('src'):
-        src = el_img['src']
+        src = el_img['src'].strip()
+
+        if src == '#':
+          continue
+
         rel_src = None
         u = util.url_parse(src)
 
@@ -1688,6 +1692,7 @@ This script will parse input URL
           url = u['url']
 
         pic.url = url
+        self.log(f'Found image url: {url}')
 
         get_img = 1
 
