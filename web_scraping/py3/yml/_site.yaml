@@ -1,0 +1,13 @@
+
+sel:
+  clean:
+  author: 
+    { 
+      'url' : {
+          'css' : '.b-topic__content__author a', 
+          'attr' : 'href' 
+      },
+      'name' : {
+          'css' : '.b-topic__content__author .name'
+      }
+    }
