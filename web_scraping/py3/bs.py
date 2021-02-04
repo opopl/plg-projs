@@ -951,6 +951,9 @@ This script will parse input URL
 
     self                                                \
         .load_soup()                                    \
+        .page_save_data({                               \
+            'tipes' : 'meta,script,img,link'            \
+        })                                              \
         .in_load_site_module()                          \
         .update_ii()                                    \
         .in_load_site_yaml()                            \
@@ -958,7 +961,6 @@ This script will parse input URL
         .page_get_author()                              \
         .page_get_ii_full()                             \
         .db_save_url()                                  \
-        .page_save_data({ 'tags' : 'meta,script,img' }) \
         .cmt(''' save image data => img.html''')        \
         .page_save_data_img()                           \
         .page_clean_core()                              \
@@ -1571,21 +1573,21 @@ This script will parse input URL
   def page_save_data(self,ref={}):
     ext  = ref.get('ext','txt')
 
-    tag  = ref.get('tag',None)
-    tags = ref.get('tags',[])
+    tipe  = ref.get('tipe',None)
+    tipes = ref.get('tipes',[])
 
-    tags_a = tags
-    if type(tags) is str:
-      tags_a = tags.split(',')
-    for tag in tags_a:
-      self.page_save_data({ 'tag' : tag, 'ext' : ext })
+    tipes_a = tipes
+    if type(tipes) is str:
+      tipes_a = tipes.split(',')
+    for tipe in tipes_a:
+      self.page_save_data({ 'tipe' : tipe, 'ext' : ext })
 
-    if not tag:
+    if not tipe:
       return self
 
-    els = self.soup.select(tag)
+    els = self.soup.select(tipe)
     txt = []
-    data_file = self._file_rid({ 'tipe' : tag, 'ext' : ext })
+    data_file = self._file_rid({ 'tipe' : tipe, 'ext' : ext })
     for e in els:
       ms = str(e)
       txt.append(ms)
