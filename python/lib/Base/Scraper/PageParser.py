@@ -1,6 +1,7 @@
 
 # ----------------------------
 import os,sys
+import cyrtranslit
 
 import Base.DBW as dbw
 import Base.Util as util
@@ -19,6 +20,13 @@ class RootPageParser(CoreClass):
 
   def generate_ii(self,ref={}):
     app = self.app
+    if app.page.title:
+      tt = app.page.title
+      tt = re.sub(r'\s', '_', tt)
+      ttl = cyrtranslit.to_latin(tt,'ru').lower()
+      ttl = re.sub(r'[\W\']+', '', ttl)
+      app.page.ii = ttl
+
     return self
 
   def get_date(self,ref={}):
