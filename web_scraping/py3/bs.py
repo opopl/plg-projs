@@ -945,15 +945,22 @@ This script will parse input URL
     
     return self
 
+  def page_save_data_txt(self):
+    tipes = 'meta,script,img,link,head'
+
+    self.page_save_data({ \
+      'tipes' :  tipes    \
+    })                    \
+
+    return self
+
 ###pu
   def parse_url_run(self,ref={}):
     tipes = util.qw('img img_clean')
 
     self                                                \
         .load_soup()                                    \
-        .page_save_data({                               \
-            'tipes' : 'meta,script,img,link'            \
-        })                                              \
+        .page_save_data_txt()                           \
         .in_load_site_module()                          \
         .update_ii()                                    \
         .in_load_site_yaml()                            \
