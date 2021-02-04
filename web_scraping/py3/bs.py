@@ -26,6 +26,8 @@ from PIL import UnidentifiedImageError
 
 from io import StringIO
 
+from npm.bindings import npm_run
+
 #from jinja2 import Template
 
 import jinja2
@@ -377,6 +379,7 @@ This script will parse input URL
   def init_npm(self):
     f = self._file('package_json')
     if not os.path.isfile(f):
+      os.chdir(self._dir('html'))
       pass
 
     return self
@@ -405,7 +408,12 @@ This script will parse input URL
       pp = Path(self.f_yaml).resolve()
       dir = str(pp.parent)
       stem = pp.stem
-      self.dirs['out'] = os.path.join(dir,'out',stem)
+
+      self.dirs.update({
+          'out'      : os.path.join(dir,'out',stem),
+          'in'       : os.path.join(dir,'in'),
+          'in_sites' : os.path.join(dir,'in','sites'),
+      })
     
     self.dirs.update({ 
       'html'       : self._dir('out' , 'html'),
@@ -845,14 +853,29 @@ This script will parse input URL
     self.log(f'[in_load_site_yaml] loaded YAML for site: {site}' )
     return self
 
+###im
   def in_load_site_module(self,ref={}):
     site = ref.get('site',self.page.site)
 
     [ lib, mod ] = self._site_libdir(site)
 
     libs = [ lib ]
-    mod_file = os.path.join(lib,mod + '.py')
-    if not os.path.isfile(mod_file):
+    mod_py = os.path.join(lib,mod + '.py')
+    mod_yaml = os.path.join(lib,mod + '.yaml')
+
+    if not os.path.isdir(lib):
+      Path(lib).mkdir(exist_ok=True)
+
+    in_dir = self._dir('in_sites')
+    for p in site.split('.'):
+      init_py = os.path.join(in_dir,'__init__.py')
+      if not os.path.isfile(init_py):
+         Path(init_py).touch()
+
+      in_dir = os.path.join(in_dir,p)
+    import pdb; pdb.set_trace()
+
+    if not os.path.isfile(mod_py):
       return self
 
     # module name
