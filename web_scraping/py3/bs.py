@@ -1096,6 +1096,8 @@ This script will parse input URL
     if not util.get(self,'page.date'):
       raise Exception('[page_get_date] no date!')
 
+    self.log(f'[page_get_date] got date: {self.page.date}')
+
     return self
 
   def page_rm_empty(self):

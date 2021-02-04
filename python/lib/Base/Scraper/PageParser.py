@@ -34,6 +34,8 @@ class RootPageParser(CoreClass):
     return self
 
   def import_meta(self):
+    app = self.app
+
     meta_txt = app._file_rid({ 'tipe' : 'meta', 'ext' : 'txt' })
     with open(meta_txt,'r') as f:
       meta_cnt = f.read()
