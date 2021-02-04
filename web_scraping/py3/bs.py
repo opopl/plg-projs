@@ -870,6 +870,7 @@ This script will parse input URL
       site_yml = self._dir('bin','yml _site.yaml')
       with open(site_yml,'r') as f:
         yml = f.read()
+        import pdb; pdb.set_trace()
         with open(mod_yaml, 'w') as f:
             f.write(yml)
 
