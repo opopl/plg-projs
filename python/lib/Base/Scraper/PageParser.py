@@ -45,6 +45,12 @@ class RootPageParser(CoreClass):
     return self
 
   def get_date(self,ref={}):
+
+    self.get_date_meta(ref)
+
+    return self
+
+  def get_date_meta(self,ref={}):
     app = self.app
     page = app.page
 
@@ -66,9 +72,45 @@ class RootPageParser(CoreClass):
     return self
 
   def get_author_meta(self,ref={}):
+    app = self.app
+    page = app.page
+
+    rid = page.rid
+      
+    if not self.meta:
+      self.import_meta()
+
+    sels = [
+      { 
+        'str' :  'meta[name="author"]',
+        'url' :  'meta[property="article:author"]',
+      }
+    ]
+
+    d_parse = {}
+
+    for itm in sels:
+      for k, sel in itm.items():
+        c = self.meta.select_one(sel)
+        if c:
+          v = c['content']
+          d_parse.update({ k : v })
+          #auth_obj.parse(d_parse)
+    import pdb; pdb.set_trace()
+
     return self
 
   def get_author(self,ref={}):
+    app = self.app
+
+    self.get_author_meta(ref)
+
+    if not util.get(app, 'page.author_id'):
+      self.get_author_html(ref)
+
+    return self
+
+  def get_author_html(self,ref={}):
     site = self.app.page.site
 
     sel = ref.get('sel','')
