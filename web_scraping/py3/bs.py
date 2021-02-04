@@ -870,9 +870,15 @@ This script will parse input URL
       site_yml = self._dir('bin','yml _site.yaml')
       with open(site_yml,'r') as f:
         yml = f.read()
-        import pdb; pdb.set_trace()
         with open(mod_yaml, 'w') as f:
             f.write(yml)
+
+    if not os.path.isfile(mod_py):
+      site_py = self._dir('bin','py _site_pageparser.py')
+      with open(site_py,'r') as f:
+        py = f.read()
+        with open(mod_py, 'w') as f:
+            f.write(py)
 
     in_dir = self._dir('in_sites')
     pieces = site.split('.')

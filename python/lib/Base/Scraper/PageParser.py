@@ -17,6 +17,10 @@ class RootPageParser(CoreClass):
   app         = None
   date_format = ''
 
+  def generate_ii(self,ref={}):
+    app = self.app
+    return self
+
   def get_date(self,ref={}):
     return self
 
