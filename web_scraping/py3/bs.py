@@ -890,8 +890,6 @@ This script will parse input URL
 
       in_dir = os.path.join(in_dir,piece)
 
-    import pdb; pdb.set_trace()
-
     if not os.path.isfile(mod_py):
       return self
 
@@ -1095,7 +1093,7 @@ This script will parse input URL
       return self
 
     p.get_date()
-    if not self.page.date:
+    if not util.get(self,'page.date'):
       raise Exception('[page_get_date] no date!')
 
     return self

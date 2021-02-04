@@ -30,7 +30,7 @@ class RootPageParser(CoreClass):
     sel = ref.get('sel','')
     auth_sel = util.get( self.app, [ 'sites', site, 'sel', 'author' ] )
     if not auth_sel:
-     return self
+      return self
 
     if type(auth_sel) is dict:
 
