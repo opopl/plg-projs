@@ -20,6 +20,7 @@ class RootPageParser(CoreClass):
   soup        = None
   app         = None
   date_format = ''
+  meta = None
 
   def generate_ii(self,ref={}):
     app = self.app
@@ -32,18 +33,26 @@ class RootPageParser(CoreClass):
 
     return self
 
+  def import_meta(self):
+    meta_txt = app._file_rid({ 'tipe' : 'meta', 'ext' : 'txt' })
+    with open(meta_txt,'r') as f:
+      meta_cnt = f.read()
+
+    self.meta = BeautifulSoup(meta_cnt,'html5lib')
+
+    return self
+
   def get_date(self,ref={}):
     app = self.app
     page = app.page
 
     rid = page.rid
-
-    meta_file = app._file_rid({ 'tipe' : 'meta', 'ext' : 'txt' })
-    with open(meta_file,'r') as f:
-      meta = f.read()
       
-    bs = BeautifulSoup(meta,'html5lib')
-    c = bs.select_one('meta[itemprop="datePublished"]')
+    if not self.meta:
+      self.import_meta()
+
+    c = self.meta.select_one('meta[itemprop="datePublished"]')
+
     if c:
       date_s = c['content']
       s = date_s.split('T')[0]
@@ -52,6 +61,9 @@ class RootPageParser(CoreClass):
       date = d.strftime('%d_%m_%Y')
       self.app.page.set({ 'date' : date })
 
+    return self
+
+  def get_author_meta(self,ref={}):
     return self
 
   def get_author(self,ref={}):
