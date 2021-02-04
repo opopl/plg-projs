@@ -51,6 +51,12 @@ class dbFile(CoreClass):
 
 class mixLogger:
 
+  def die(self,msg=''):
+    self.log_db(msg)
+    raise Exception(msg)    
+
+    return self
+
   def log(self,msg=[]):
     if type(msg) is list:
       for m in msg:
@@ -999,8 +1005,7 @@ This script will parse input URL
       pass
   
     if not self.page.site:
-      self.log(f'[WARN] no site for url: {self.page.url}')
-      raise
+      self.die(f'[WARN] no site for url: {self.page.url}')
   
     return self
   
@@ -1081,6 +1086,11 @@ This script will parse input URL
     p.get_author()
 
     aid = self.page.get('author_id','')
+    if not aid:
+      self.die(f'[page_get_author] no author!')
+
+    self.log(f'[page_get_author] got author(s): {aid}')
+
     f = aid.split(',')
     if f and len(f):
        self.page.set({ 'author_id_first' : f[0] })
@@ -1094,7 +1104,7 @@ This script will parse input URL
 
     p.get_date()
     if not util.get(self,'page.date'):
-      raise Exception('[page_get_date] no date!')
+      self.die(f'[page_get_date] no date!')
 
     self.log(f'[page_get_date] got date: {self.page.date}')
 
