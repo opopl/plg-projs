@@ -1,12 +1,13 @@
 
 # ----------------------------
-import os,sys
+import os,sys,re
 import cyrtranslit
 
 import Base.DBW as dbw
 import Base.Util as util
 import Base.Const as const
 # ----------------------------
+from bs4 import BeautifulSoup, Comment
 
 from Base.Scraper.Author import Author
 
@@ -30,6 +31,22 @@ class RootPageParser(CoreClass):
     return self
 
   def get_date(self,ref={}):
+    app = self.app
+    page = app.page
+
+    rid = page.rid
+
+    meta_file = app._file_rid({ 'tipe' : 'meta', 'ext' : 'txt' })
+    with open(meta_file,'r') as f:
+      meta = f.read()
+      
+    bs = BeautifulSoup(meta,'html5lib')
+    c = bs.select_one('meta[itemprop="datePublished"]')
+    if c:
+      date_s = c['content']
+      pass
+    import pdb; pdb.set_trace()
+
     return self
 
   def get_author(self,ref={}):
