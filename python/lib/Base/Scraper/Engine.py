@@ -317,6 +317,7 @@ This script will parse input URL
     return self
 
   def init_tmpl(self):
+    import pdb; pdb.set_trace()
     self.template_loader = jinja2.FileSystemLoader(searchpath=self._dir('tmpl'))
     env  = jinja2.Environment(loader=self.template_loader)
     env.globals['url_join'] = util.url_join
@@ -408,7 +409,7 @@ This script will parse input URL
 
     if not self._dir('bin'):
       self.dirs.update({
-          'bin' : str(Path(self.files['script']).parent),
+          'bin' : str(Path(self._file('script')).parent),
       })
     
     if not util.get(self,'dirs.tmpl'):

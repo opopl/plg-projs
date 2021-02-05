@@ -146,7 +146,6 @@ class RootPageParser(CoreClass):
         print(f'[PageParser] found author name: {auth_bare}')
         break
 
-    import pdb; pdb.set_trace()
     self.auth_obj.parse(d_parse)
 
     return self
