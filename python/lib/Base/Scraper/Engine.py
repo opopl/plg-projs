@@ -12,6 +12,7 @@ import sqlparse
 import cairosvg
 
 import html.parser
+import html
 
 from pathlib import Path
 from urllib.parse import urlparse
@@ -1294,13 +1295,27 @@ This script will parse input URL
     right = ii_soup.new_tag('div')
     right['class'] = 'flex-right'
 
+    code  = ii_soup.new_tag('div')
+    code['class'] = 'code'
+
+    pre = ii_soup.new_tag('pre')
+    code.append(pre)
+
+    code_str = html.escape(str(ii_soup.html))
+    code_str = str(ii_soup.prettify())
+
+    pre.string = code_str
+
     container.append(left)
     container.append(right)
 
     for c in body.findChildren(True):
       left.append(c)
 
+    right.append(code)
+
     body.append(container)
+    import pdb; pdb.set_trace()
 
 ###css
 #    style = ii_soup.new_tag('style')

@@ -1,6 +1,6 @@
 
 body {
-  width: 700px;
+  /*width: 700px;*/
 }
 
 .flex-container {
@@ -9,11 +9,11 @@ body {
 }
 
 .flex-left {
-    width: 75%;
+    width: 50%;
     height: 100vh;
 }
 
 .flex-right {
-    width: 25%;
+    width: 50%;
 }
 
