@@ -310,7 +310,7 @@ This script will parse input URL
 
     for k in util.qw('f_yaml f_zlan'):
       v  = util.get(self,[ 'oa', k ])
-      m = re.match(r'^f_(\w+)', k)
+      m = re.match(r'^f_(\w+)$', k)
       if m:
         ftype = m.group(1)
         self.files.update({ ftype : v })
@@ -401,13 +401,13 @@ This script will parse input URL
     return self
 
   def init_dirs(self):
-    if not util.get(self,'files.script'):
+    if not self._file('script'):
       self.files.update({
           'script' : os.path.realpath(__file__),
       })
     self.log(f'[BS] Script location: {self._file("script")}')
 
-    if not util.get(self,'dirs.bin'):
+    if not self._dir('bin'):
       self.dirs.update({
           'bin' : str(Path(self.files['script']).parent),
       })
@@ -417,8 +417,9 @@ This script will parse input URL
     self.log(f'[BS] Template directory: {self._dir("tmpl")}')
 
     f_yaml = self._file('yaml')
-    if self.f_yaml:
-      pp = Path(self.f_yaml).resolve()
+
+    if f_yaml:
+      pp = Path(f_yaml).resolve()
       dir = str(pp.parent)
       stem = pp.stem
 
@@ -445,7 +446,7 @@ This script will parse input URL
 
   def _yaml_data(self, f_yaml=None):
     if not f_yaml:
-      f_yaml = self.f_yaml
+      f_yaml = self._file('yaml')
 
     if f_yaml and os.path.isfile(f_yaml):
       with open(f_yaml) as f:
@@ -473,7 +474,7 @@ This script will parse input URL
 
 ###zlan
   def load_zlan(self, ref={}):
-    f_zlan = util.get(self,'f_zlan')
+    f_zlan = util.get(self,'files.zlan')
     f_zlan = ref.get('zlan',f_zlan)
 
     z = Zlan({})
@@ -499,7 +500,7 @@ This script will parse input URL
 
   def load_yaml(self, f_yaml=None):
     if not f_yaml:
-      f_yaml = self.f_yaml
+      f_yaml = self._file('yaml')
 
     if f_yaml and os.path.isfile(f_yaml):
       with open(f_yaml) as f:
@@ -1782,7 +1783,7 @@ This script will parse input URL
 
   def init(self):
 
-    self
+    self                  \
       .init_dirs()        \
       .init_files()       \
       .init_npm()         \
