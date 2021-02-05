@@ -398,17 +398,19 @@ This script will parse input URL
     return self
 
   def init_dirs(self):
-    self.files.update({
-        'script' : os.path.realpath(__file__),
-    })
+    if not util.get(self,'files.script'):
+	    self.files.update({
+	        'script' : os.path.realpath(__file__),
+	    })
 
-    self.dirs.update({
-        'bin' : str(Path(self.files['script']).parent),
-    })
+    if not util.get(self,'dirs.bin'):
+	    self.dirs.update({
+	        'bin' : str(Path(self.files['script']).parent),
+	    })
     
-    self.dirs['tmpl'] = os.path.join(self.dirs['bin'],'tmpl')
-    self.log(f'[BS] Script location: {self.files["script"]}')
-    self.log(f'[BS] Template directory: {self.dirs["tmpl"]}')
+    self.dirs['tmpl'] = os.path.join(self._dir('bin'),'tmpl')
+    self.log(f'[BS] Script location: {self._file("script")}')
+    self.log(f'[BS] Template directory: {self._dir("tmpl")}')
 
     if self.f_yaml:
       pp = Path(self.f_yaml).resolve()
