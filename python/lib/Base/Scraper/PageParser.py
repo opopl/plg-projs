@@ -67,15 +67,35 @@ class RootPageParser(CoreClass):
     if not self.meta:
       self.import_meta()
 
-    c = self.meta.select_one('meta[itemprop="datePublished"]')
+    date = None
 
-    if c:
-      date_s = c['content']
-      s = date_s.split('T')[0]
-      f = "%Y-%m-%d"
-      d = datetime.datetime.strptime(s,f)
-      date = d.strftime('%d_%m_%Y')
-      self.app.page.set({ 'date' : date })
+    sels = app._cnf('PageParser.get_date_meta.sels')
+    for sel in sels:
+      date_s = ''
+
+      find = util.get(sel,'find','')
+      get = util.get(sel,'get','')
+      fmt = util.get(sel,'fmt',"%Y-%m-%d")
+
+      c = self.meta.select_one(find)
+      if not c:
+        continue
+
+      if get and get == 'attr':
+        attr = util.attr(sel,'attr','')
+        if c.has_attr(attr):
+          date_s = c[attr]
+
+      if date_s:
+        s = date_s.split('T')[0]
+        d = datetime.datetime.strptime(s,fmt)
+        date = d.strftime('%d_%m_%Y')
+      
+      if date:
+        self.app.page.set({ 'date' : date })
+        break
+
+    import pdb; pdb.set_trace()
 
     return self
 

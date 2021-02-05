@@ -1391,8 +1391,11 @@ This script will parse input URL
       return 1
     return 0
 
-  def _cnf(self,key=None):
-    val = util.get(self, [ 'cnf', key  ],0)
+  def _cnf(self,key=None,default=None):
+    if not key:
+      return util.get(self,'cnf')
+
+    val = util.get(self, f'cnf.{key}', default)
     return val
 
   def _url_saved_db(self,url=None):
