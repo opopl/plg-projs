@@ -2,3 +2,18 @@
 body {
   width: 700px;
 }
+
+.flex-container {
+    display: flex;
+    flex-direction: row;
+}
+
+.flex-left {
+    width: 75%;
+    height: 100vh;
+}
+
+.flex-right {
+    width: 25%;
+}
+
