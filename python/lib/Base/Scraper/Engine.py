@@ -408,7 +408,7 @@ This script will parse input URL
         shutil.copy(w_vcs, w_prod)
 
     if not self._file_exist('bundle_js')  \
-      or self._file_mtime_gt('main_js.vcs','bundle_js'):
+      or self._file_mtime_gt('main_js.prod','bundle_js'):
         old = os.getcwd()
         cmd = 'build'
         try:
