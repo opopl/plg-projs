@@ -407,7 +407,9 @@ This script will parse input URL
         os.makedirs(pp,exist_ok=True)
         shutil.copy(w_vcs, w_prod)
 
-    if not self._file_exist('bundle_js'):
+    if not self._file_exist('bundle_js') or
+        self._file_mtime_gt('main_js.vcs','bundle_js'):
+      os.stat()
       old = os.getcwd()
       cmd = 'build'
       try:
@@ -555,6 +557,19 @@ This script will parse input URL
           setattr(self, k, d)
 
     return self
+
+# True if left.mtime > right.mtime, i.e. 'left' is more recent that 'right'
+  def _file_mtime_gt(self, left, right):
+    return ( self._file_mtime(left) > self._file_mtime(right) )
+
+  def _file_mtime(self, id):
+    f = self._file(id)
+
+    if not self._file_exist(f):
+      return 0 
+
+    mt = os.stat(f).st_mtime
+    return mt
 
   def _file_exist(self, id):
     f = self._file(id)
