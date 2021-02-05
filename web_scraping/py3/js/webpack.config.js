@@ -1,7 +1,8 @@
+
 var path = require('path');
 
 module.exports = {
-    entry: path.resolve(__dirname) + '/js/src/main.js',
+    entry: path.resolve(__dirname) + '/js/src/app.js',
     output: {
         path: path.resolve(__dirname) + '/js/dist',
         filename: 'bundle.js',
@@ -17,7 +18,7 @@ module.exports = {
           ],
         },
         {
-          test: /\.ttf$/,
+          test: /\.(svg|gif|png|eot|woff|ttf)$/,
           use: [
             'url-loader',
           ],

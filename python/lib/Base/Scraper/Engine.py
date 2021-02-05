@@ -395,7 +395,7 @@ This script will parse input URL
     os.makedirs(self._dir('html','js dist'), exist_ok=True)
 
     wp_run = 0
-    for k in util.qw('webpack_config_js main_js'):
+    for k in util.qw('webpack_config_js main_js app_js'):
       w_vcs   = self._file(f'{k}.vcs')
       w_prod  = self._file(f'{k}.prod')
   
@@ -409,9 +409,6 @@ This script will parse input URL
         pp = Path(w_prod).parent.as_posix()
         os.makedirs(pp,exist_ok=True)
         shutil.copy(w_vcs, w_prod)
-
-    #if not self._file_exist('bundle_js')  \
-      #or self._file_mtime_gt('main_js.prod','bundle_js'):
 
     if wp_run:
         old = os.getcwd()
@@ -436,9 +433,13 @@ This script will parse input URL
         'webpack_config_js.prod' : self._dir('html','webpack.config.js'),
     })
 
+    for js in util.qw('main app'):
+      self.files.update({ 
+          f'{js}_js.vcs'  : self._dir('bin',f'js src {js}.js'),
+          f'{js}_js.prod' : self._dir('html',f'js src {js}.js'),
+      })
+
     self.files.update({ 
-        'main_js.vcs'  : self._dir('bin','js src main.js'),
-        'main_js.prod' : self._dir('html','js src main.js'),
         'bundle_js'    : self._dir('html','js dist bundle.js'),
     })
 
@@ -1277,13 +1278,14 @@ This script will parse input URL
 
     body.append(script)
 
-    style = ii_soup.new_tag('style')
-    style.string = '''
-        body {
-          width: 700px;
-        }
-    '''
-    ii_soup.head.append(style)
+###css
+#    style = ii_soup.new_tag('style')
+    #style.string = '''
+        #body {
+          #width: 700px;
+        #}
+    #'''
+    #ii_soup.head.append(style)
 
     with open(svf, 'w') as f:
       f.write(ii_soup.prettify())

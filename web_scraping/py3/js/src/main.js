@@ -1,11 +1,11 @@
 
-window.$ = require('jquery');
 
 $(function(){
 
   var form = document.createElement("form"); 
   form.setAttribute("method", "post"); 
   
+
   var inp_xpath = document.createElement('input');
   
   inp_xpath.value = '//head';
