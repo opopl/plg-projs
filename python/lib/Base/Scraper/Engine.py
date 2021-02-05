@@ -31,6 +31,7 @@ from npm.bindings import npm_run
 
 import jinja2
 import shutil
+import filecmp
 
 import cyrtranslit
 
@@ -390,11 +391,21 @@ This script will parse input URL
       os.chdir(self._dir('html'))
       pass
 
+    w_dest = self._file('webpack_config_js.dest')
+    w_src = self._file('webpack_config_js.src')
+
+    cp = not os.path.isfile(w_dest)
+    cp = cp or not file.cmp(w_dest,w_src)
+    if cp: 
+      shutil.copy(w_dest, w_src)
+
     return self
 
   def init_files(self):
     self.files.update({ 
-        'package_json' : self._dir('html','package.json')
+        'package_json'           : self._dir('html','package.json'),
+        'webpack_config_js.src'  : self._dir('bin','js webpack.config.js'),
+        'webpack_config_js.dest' : self._dir('html','webpack.config.js'),
     })
 
     return self
@@ -589,9 +600,11 @@ This script will parse input URL
 
   def _need_skip(self,ref={}):
 
-    ok = 1 if not ref.get('redo',0) \
-      and ( self._site_skip() or self._url_saved_fs() )  \
-      else 0
+    #ok = 1 if not ref.get('redo',0) \
+      #and ( self._site_skip() or self._url_saved_fs() )  \
+      #else 0
+    ok = 1 and not ref.get('redo',0)
+    ok = ok and ( self._site_skip() or self._url_saved_fs() )
 
     return ok
 
