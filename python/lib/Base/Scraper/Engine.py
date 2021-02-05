@@ -391,21 +391,34 @@ This script will parse input URL
       os.chdir(self._dir('html'))
       pass
 
-    w_dest = self._file('webpack_config_js.dest')
-    w_src  = self._file('webpack_config_js.src')
+    Path(self._dir('html','js dist')).mkdir(exist_ok=True)
 
-    cp = not os.path.isfile(w_dest)
-    cp = cp or not filecmp.cmp(w_dest,w_src)
-    if cp: 
-      shutil.copy(w_src, w_dest)
+    for k in util.qw('webpack_config_js main_js'):
+      w_vcs   = self._file(f'{k}.vcs')
+      w_prod  = self._file(f'{k}.prod')
+  
+      cp = 1
+      if os.path.isfile(w_prod):
+        cp = cp and not filecmp.cmp(w_prod,w_vcs)
+
+      import pdb; pdb.set_trace()
+      if cp: 
+        Path(w_prod).parent.mkdir(exist_ok=True)
+        shutil.copy(w_vcs, w_prod)
+
 
     return self
 
   def init_files(self):
     self.files.update({ 
         'package_json'           : self._dir('html','package.json'),
-        'webpack_config_js.src'  : self._dir('bin','js webpack.config.js'),
-        'webpack_config_js.dest' : self._dir('html','webpack.config.js'),
+        'webpack_config_js.vcs'  : self._dir('bin','js webpack.config.js'),
+        'webpack_config_js.prod' : self._dir('html','webpack.config.js'),
+    })
+
+    self.files.update({ 
+        'main_js.vcs'  : self._dir('bin','js src main.js'),
+        'main_js.prod' : self._dir('html','js src main.js'),
     })
 
     return self
