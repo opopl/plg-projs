@@ -603,15 +603,18 @@ This script will parse input URL
     #ok = 1 if not ref.get('redo',0) \
       #and ( self._site_skip() or self._url_saved_fs() )  \
       #else 0
-    ok = 1 and not ref.get('redo',0)
+    ok = not ref.get('redo',0)
     ok = ok and ( self._site_skip() or self._url_saved_fs() )
 
     return ok
 
   def _need_load_cache(self):
-    ok = 1 if not self._act('fetch')  \
-      and self.page.mode == 'saved' \
-      and os.path.isfile(self.ii_cache) else 0
+    #ok = 1 if not self._act('fetch')  \
+      #and self.page.mode == 'saved' \
+      #and os.path.isfile(self.ii_cache) else 0
+    ok = not self._act('fetch')
+    ok = ok and self.page.mode == 'saved'
+    ok = ok and os.path.isfile(self.ii_cache)
 
     return ok
 
