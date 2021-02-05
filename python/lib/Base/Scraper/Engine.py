@@ -395,7 +395,7 @@ This script will parse input URL
     os.makedirs(self._dir('html','js dist'), exist_ok=True)
 
     wp_run = 0
-    for k in util.qw('webpack_config_js main_js app_js'):
+    for k in util.qw('webpack_config_js main_js app_js style_css'):
       w_vcs   = self._file(f'{k}.vcs')
       w_prod  = self._file(f'{k}.prod')
   
@@ -433,10 +433,16 @@ This script will parse input URL
         'webpack_config_js.prod' : self._dir('html','webpack.config.js'),
     })
 
+    self.files.update({ 
+        'style_css.vcs'  : self._dir('bin','css style.css'),
+        'style_css.prod' : self._dir('html','css style.css'),
+    })
+
     for js in util.qw('main app'):
+      rel = f'js src {js}.js'
       self.files.update({ 
-          f'{js}_js.vcs'  : self._dir('bin',f'js src {js}.js'),
-          f'{js}_js.prod' : self._dir('html',f'js src {js}.js'),
+          f'{js}_js.vcs'  : self._dir('bin',rel),
+          f'{js}_js.prod' : self._dir('html',rel),
       })
 
     self.files.update({ 
