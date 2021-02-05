@@ -391,7 +391,7 @@ This script will parse input URL
       os.chdir(self._dir('html'))
       pass
 
-    Path(self._dir('html','js dist')).mkdir(exist_ok=True)
+    os.makedirs(self._dir('html','js dist'), exist_ok=True)
 
     for k in util.qw('webpack_config_js main_js'):
       w_vcs   = self._file(f'{k}.vcs')
@@ -401,12 +401,12 @@ This script will parse input URL
       if os.path.isfile(w_prod):
         cp = cp and not filecmp.cmp(w_prod,w_vcs)
 
-      import pdb; pdb.set_trace()
       if cp: 
-        Path(w_prod).parent.mkdir(exist_ok=True)
+        pp = Path(w_prod).parent.as_posix()
+        os.makedirs(pp,exist_ok=True)
         shutil.copy(w_vcs, w_prod)
 
-
+    import pdb; pdb.set_trace()
     return self
 
   def init_files(self):
