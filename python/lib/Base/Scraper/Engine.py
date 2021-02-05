@@ -863,6 +863,19 @@ This script will parse input URL
 
     return self
 
+  def _site_data(self,path=None):
+    d = None
+
+    site = self.page.site
+
+    if not path:
+      return util.get(self,'sites.{site}')
+
+    if type(path) is str:
+      d = util.get(self,'sites.{site}.{path}')
+
+    return d
+
   def in_load_site_yaml(self,ref={}):
     site = ref.get('site',self.page.site)
 

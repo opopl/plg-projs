@@ -73,16 +73,16 @@ class RootPageParser(CoreClass):
     for sel in sels:
       date_s = ''
 
-      find = util.get(sel,'find','')
-      get = util.get(sel,'get','')
-      fmt = util.get(sel,'fmt',"%Y-%m-%d")
+      find = sel.get('find','')
+      get  = sel.get('get','')
+      fmt  = sel.get('fmt',"%Y-%m-%d")
 
       c = self.meta.select_one(find)
       if not c:
         continue
 
       if get and get == 'attr':
-        attr = util.attr(sel,'attr','')
+        attr = sel.get('attr','')
         if c.has_attr(attr):
           date_s = c[attr]
 
@@ -94,8 +94,6 @@ class RootPageParser(CoreClass):
       if date:
         self.app.page.set({ 'date' : date })
         break
-
-    import pdb; pdb.set_trace()
 
     return self
 
@@ -117,18 +115,29 @@ class RootPageParser(CoreClass):
 
     d_parse = {}
 
+    sels = app._cnf('PageParser.get_author_meta.sels')
+
     for itm in sels:
+      d_parse = {}
+
       for k, sel in itm.items():
-        c = self.meta.select_one(sel)
+        find = sel.get('find','')
+        get  = sel.get('get','')
+
+        c = self.meta.select_one(find)
         if c:
-          v = c['content']
-          d_parse.update({ k : v })
+          if get == 'attr':
+            attr = sel.get('attr','')
+            if c.has_attr(attr):
+              v = c[attr]
+              d_parse.update({ k : v })
 
       auth_bare = util.get(d_parse,'str')
       if auth_bare:
         print(f'[PageParser] found author name: {auth_bare}')
         break
 
+    import pdb; pdb.set_trace()
     self.auth_obj.parse(d_parse)
 
     return self
