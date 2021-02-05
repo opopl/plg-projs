@@ -120,12 +120,18 @@ class RootPageParser(CoreClass):
     sels.extend( app._cnf('PageParser.get_author_meta.sels',[]) )
     sels.extend( app._site_data('PageParser.get_author_meta.sels',[]) )
 
+
     for itm in sels:
       d_parse = {}
 
-      for k, sel in itm.items():
+      for k in util.qw('str url'):
+        sel = itm.get(k)
+
         find = sel.get('find','')
         get  = sel.get('get','')
+
+        if not find:
+          continue
 
         c = self.meta.select_one(find)
         if c:

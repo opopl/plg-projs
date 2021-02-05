@@ -980,7 +980,7 @@ This script will parse input URL
     return self
 
   def page_save_data_txt(self):
-    tipes = 'meta,script,img,link,head'
+    tipes = 'meta,script,img,link,head,a'
 
     self.page_save_data({ \
       'tipes' :  tipes    \
