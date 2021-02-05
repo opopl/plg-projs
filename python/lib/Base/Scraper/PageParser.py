@@ -102,6 +102,7 @@ class RootPageParser(CoreClass):
     page = app.page
 
     rid = page.rid
+    site = page.site
       
     if not self.meta:
       self.import_meta()

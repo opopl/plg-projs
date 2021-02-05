@@ -869,10 +869,12 @@ This script will parse input URL
     site = self.page.site
 
     if not path:
-      return util.get(self,'sites.{site}',default)
+      return util.get(self,[ 'sites' , site ],default)
 
+    a = [ 'sites', site ]
     if type(path) is str:
-      d = util.get(self,'sites.{site}.{path}',default)
+      a.extend(path.split('.'))
+      d = util.get(self, a, default)
 
     return d
 
