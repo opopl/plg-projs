@@ -308,9 +308,12 @@ This script will parse input URL
       self.parser.print_help()
       sys.exit()
 
-    for k in util.qw('url f_yaml f_zlan'):
+    for k in util.qw('f_yaml f_zlan'):
       v  = util.get(self,[ 'oa', k ])
-      setattr(self, k, v)
+      m = re.match(r'^f_(\w+)', k)
+      if m:
+        ftype = m.group(1)
+        self.files.update({ ftype : v })
 
     return self
 
@@ -399,19 +402,21 @@ This script will parse input URL
 
   def init_dirs(self):
     if not util.get(self,'files.script'):
-	    self.files.update({
-	        'script' : os.path.realpath(__file__),
-	    })
+      self.files.update({
+          'script' : os.path.realpath(__file__),
+      })
+    self.log(f'[BS] Script location: {self._file("script")}')
 
     if not util.get(self,'dirs.bin'):
-	    self.dirs.update({
-	        'bin' : str(Path(self.files['script']).parent),
-	    })
+      self.dirs.update({
+          'bin' : str(Path(self.files['script']).parent),
+      })
     
-    self.dirs['tmpl'] = os.path.join(self._dir('bin'),'tmpl')
-    self.log(f'[BS] Script location: {self._file("script")}')
+    if not util.get(self,'dirs.tmpl'):
+      self.dirs['tmpl'] = os.path.join(self._dir('bin'),'tmpl')
     self.log(f'[BS] Template directory: {self._dir("tmpl")}')
 
+    f_yaml = self._file('yaml')
     if self.f_yaml:
       pp = Path(self.f_yaml).resolve()
       dir = str(pp.parent)
@@ -1775,10 +1780,9 @@ This script will parse input URL
     
     return self
 
-  def main(self):
+  def init(self):
 
-    self                  \
-      .get_opt()          \
+    self
       .init_dirs()        \
       .init_files()       \
       .init_npm()         \
@@ -1787,6 +1791,14 @@ This script will parse input URL
       .mk_dirs()          \
       .load_yaml()        \
       .load_zlan()        \
+
+    return self
+
+  def main(self):
+
+    self                  \
+      .get_opt()          \
+      .init()             \
       .fill_vars()        \
       .parse()            \
       .render_page_list() \
