@@ -1771,13 +1771,9 @@ This script will parse input URL
 
   def parse(self):
 
-    if not self.url:
-      urls = getattr(self,'urls',[]) 
-      for d in urls:
-        self.parse_url(d)
-
-    else:
-      self.parse_url(self.url)
+    urls = getattr(self,'urls',[]) 
+    for d in urls:
+      self.parse_url(d)
     
     return self
 
