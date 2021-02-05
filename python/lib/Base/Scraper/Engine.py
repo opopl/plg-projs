@@ -407,21 +407,20 @@ This script will parse input URL
         os.makedirs(pp,exist_ok=True)
         shutil.copy(w_vcs, w_prod)
 
-    if not self._file_exist('bundle_js') or
-        self._file_mtime_gt('main_js.vcs','bundle_js'):
-      os.stat()
-      old = os.getcwd()
-      cmd = 'build'
-      try:
-          os.chdir(self._dir('html'))
-          npm_run(cmd)
-      except:
-          self.log(f'[BS][npm_init] failure while npm_run("{cmd}")')
-      finally:
-          os.chdir(old)
-          
-      #os.chdir()
-      pass
+    if not self._file_exist('bundle_js')  \
+      or self._file_mtime_gt('main_js.vcs','bundle_js'):
+        old = os.getcwd()
+        cmd = 'build'
+        try:
+            self.log(f'[BS][npm_init] running npm command: {cmd}')
+
+            os.chdir(self._dir('html'))
+
+            stderr, stdout = npm_run('run',cmd)
+        except:
+            self.log(f'[BS][npm_init] failure while npm_run("{cmd}")')
+        finally:
+            os.chdir(old)
 
     import pdb; pdb.set_trace()
     return self
@@ -565,10 +564,11 @@ This script will parse input URL
   def _file_mtime(self, id):
     f = self._file(id)
 
-    if not self._file_exist(f):
+    if not self._file_exist(id):
       return 0 
 
     mt = os.stat(f).st_mtime
+    mt = int(mt)
     return mt
 
   def _file_exist(self, id):
