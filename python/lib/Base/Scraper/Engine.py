@@ -395,7 +395,7 @@ This script will parse input URL
     w_src = self._file('webpack_config_js.src')
 
     cp = not os.path.isfile(w_dest)
-    cp = cp or not file.cmp(w_dest,w_src)
+    cp = cp or not filecmp.cmp(w_dest,w_src)
     if cp: 
       shutil.copy(w_dest, w_src)
 
