@@ -8,19 +8,20 @@ module.exports = {
         publicPath: '/app/'
     },
     module: {
-      loaders: [
-          {
-                test: /\.js$/,
-                include: path.resolve(__dirname, 'src'),
-                loader: 'babel-loader',
-                query: {
-                    presets: ['react', 'es2015']
-                }
-           },
-           {
-              test: /\.css$/,
-              loader: 'style-loader!css-loader'
-           }
-        ]
+      rules: [
+        {
+          test: /\.css$/,
+          use: [
+            'style-loader',
+            'css-loader',
+          ],
+        },
+        {
+          test: /\.ttf$/,
+          use: [
+            'url-loader',
+          ],
+        },
+      ]
     }
 }
