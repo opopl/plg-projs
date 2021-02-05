@@ -179,7 +179,7 @@ class Pic(CoreClass):
     app.log(f'[page_do_imgs] Saved image: {pic.img}')
 
     insert =  {
-        'url_parent' : app.url,
+        'url_parent' : app.page.url,
     }
     for k in util.qw('url img inum ext caption'):
       insert[k] = getattr(pic,k,None)
