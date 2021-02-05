@@ -422,7 +422,6 @@ This script will parse input URL
         finally:
             os.chdir(old)
 
-    import pdb; pdb.set_trace()
     return self
 
   def init_files(self):
