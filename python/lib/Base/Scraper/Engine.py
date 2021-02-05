@@ -26,6 +26,7 @@ from PIL import UnidentifiedImageError
 from io import StringIO
 
 from npm.bindings import npm_run
+from npm.bindings import npm_install
 
 #from jinja2 import Template
 
@@ -406,6 +407,20 @@ This script will parse input URL
         os.makedirs(pp,exist_ok=True)
         shutil.copy(w_vcs, w_prod)
 
+    if not self._file_exist('bundle_js'):
+      old = os.getcwd()
+      cmd = 'build'
+      try:
+          os.chdir(self._dir('html'))
+          npm_run(cmd)
+      except:
+          self.log(f'[BS][npm_init] failure while npm_run("{cmd}")')
+      finally:
+          os.chdir(old)
+          
+      #os.chdir()
+      pass
+
     import pdb; pdb.set_trace()
     return self
 
@@ -419,6 +434,7 @@ This script will parse input URL
     self.files.update({ 
         'main_js.vcs'  : self._dir('bin','js src main.js'),
         'main_js.prod' : self._dir('html','js src main.js'),
+        'bundle_js'    : self._dir('html','js dist bundle.js'),
     })
 
     return self
@@ -539,6 +555,12 @@ This script will parse input URL
           setattr(self, k, d)
 
     return self
+
+  def _file_exist(self, id):
+    f = self._file(id)
+
+    ok = True if (f and os.path.isfile(f)) else False
+    return ok
 
   def _file(self, id):
 
@@ -1231,7 +1253,9 @@ This script will parse input URL
     ii_soup = self.soups[svf]
     body = ii_soup.body
     script = ii_soup.new_tag('script')
-    script['src'] = Path(self._dir('bin'),'ii.js').as_uri()
+
+    script['src'] = Path(self._file('bundle_js')).as_uri()
+
     body.append(script)
 
     style = ii_soup.new_tag('style')
