@@ -317,7 +317,6 @@ This script will parse input URL
     return self
 
   def init_tmpl(self):
-    import pdb; pdb.set_trace()
     self.template_loader = jinja2.FileSystemLoader(searchpath=self._dir('tmpl'))
     env  = jinja2.Environment(loader=self.template_loader)
     env.globals['url_join'] = util.url_join
