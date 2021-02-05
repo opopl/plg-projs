@@ -863,16 +863,16 @@ This script will parse input URL
 
     return self
 
-  def _site_data(self,path=None):
+  def _site_data(self,path=None,default=None):
     d = None
 
     site = self.page.site
 
     if not path:
-      return util.get(self,'sites.{site}')
+      return util.get(self,'sites.{site}',default)
 
     if type(path) is str:
-      d = util.get(self,'sites.{site}.{path}')
+      d = util.get(self,'sites.{site}.{path}',default)
 
     return d
 

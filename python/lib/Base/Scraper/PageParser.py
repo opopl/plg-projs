@@ -115,7 +115,9 @@ class RootPageParser(CoreClass):
 
     d_parse = {}
 
-    sels = app._cnf('PageParser.get_author_meta.sels')
+    sels = []
+    sels.extend( app._cnf('PageParser.get_author_meta.sels',[]) )
+    sels.extend( app._site_data('PageParser.get_author_meta.sels',[]) )
 
     for itm in sels:
       d_parse = {}
