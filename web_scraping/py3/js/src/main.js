@@ -2,18 +2,82 @@
 
 $(function(){
 
-  var form = document.createElement("form"); 
-  form.setAttribute("method", "post"); 
-  
+/*  var form = document.createElement("form"); */
+  //form.setAttribute("method", "post"); 
 
-  var inp_xpath = document.createElement('input');
+  //var inp_xpath = document.createElement('input');
   
-  inp_xpath.value = '//head';
-  inp_xpath.type = 'text';
+  //inp_xpath.value = '//head';
+  //inp_xpath.type = 'text';
   
-  form.appendChild(inp_xpath);
+  //form.appendChild(inp_xpath);
   
-  document.body.prepend(form);
+  /*document.body.prepend(form);*/
+
+  var left = document.createElement('div');
+  var right = document.createElement('div');
+
+  var container = document.createElement('div');
+  container.className = 'flex-container';
+
+  var left = document.createElement('div');
+  left.className = 'flex-left';
+
+  var right = document.createElement('div');
+  right.className = 'flex-right';
+
+  var code = document.createElement('div');
+  code.className = 'code';
+
+  var pre = document.createElement('pre');
+  $(code).append($(pre));
+
+  $(pre).text($('html').html());
+
+  $(right).append($(code));
+
+  $('body').children().each(function(){
+     $(left).append($(this).clone());
+  });
+
+  $(container).append( $(left) );
+  $(container).append( $(right) );
+
+  $('body').children().remove();
+  $('body').append($(container));
+
+
+/*###flex*/
+    //container = ii_soup.new_tag('div')
+    //container['class'] = 'flex-container'
+
+    //left = ii_soup.new_tag('div')
+    //left['class'] = 'flex-left'
+
+    //right = ii_soup.new_tag('div')
+    //right['class'] = 'flex-right'
+
+    //code  = ii_soup.new_tag('div')
+    //code['class'] = 'code'
+
+    //pre = ii_soup.new_tag('pre')
+    //code.append(pre)
+
+    //code_str = html.escape(str(ii_soup.html))
+    //code_str = str(ii_soup.prettify())
+
+    //pre.string = code_str
+
+    //container.append(left)
+    //container.append(right)
+
+    //for c in body.findChildren(True):
+      //left.append(c)
+
+    //right.append(code)
+
+    //body.append(container)
+    /*import pdb; pdb.set_trace()*/
 
 /*  $("#pickList").pickList();*/
   
