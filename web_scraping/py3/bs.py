@@ -580,15 +580,26 @@ This script will parse input URL
     ii_file = os.path.join(self._dir_ii({ 'rid' : rid }),f'{tipe}.{ext}')
     return ii_file
 
-  def url_load_content(self,ref={}):
-    if not self._act('fetch'):
-      if os.path.isfile(self.ii_cache):
-        with open(self.ii_cache,'r') as f:
-          self.content = f.read()
-          return self
+  def _need_skip(self,ref={}):
 
-      self.url_fetch()
-      return self
+    ok = 1 if not ref.get('redo',0) \
+      and ( self._site_skip() or self._url_saved_fs() )  \
+      else 0
+
+    return ok
+
+  def _need_load_cache(self):
+    ok = 1 if not self._act('fetch')  \
+      and self.page.mode == 'saved' \
+      and os.path.isfile(self.ii_cache) else 0
+
+    return ok
+
+  def url_load_content(self,ref={}):
+    if self._need_load_cache():
+       with open(self.ii_cache,'r') as f:
+           self.content = f.read()
+           return self
 
     self.url_fetch()
 
@@ -666,17 +677,18 @@ This script will parse input URL
 
     return self
 
-
-
-
-
   def load_soup(self,ref={}):
     url = ref.get('url',self.page.url)
     ii  = ref.get('ii',self.page.ii)
 
+    self.page.mode = 'saved'
+
     self.page.rid = self._rid_url(url)
+
+    # page is new
     if not self.page.rid:
-      self.page.rid = self._rid_free()
+      self.page.rid = self._rid_new()
+      self.page.mode = 'new'
 
     self.ii_cache = self._file_rid()
     self.url_load_content()
@@ -1017,6 +1029,23 @@ This script will parse input URL
       self.die(f'[WARN] no site for url: {self.page.url}')
   
     return self
+
+  def page_set_acts(self,ref={}):
+
+    acts = ref.get('acts')
+    if acts:
+      acts_a = []
+      if type(acts) is list:
+        acts_a = acts
+      elif type(acts) is str:
+        acts_a = acts.split(',')
+
+      if acts_a:
+        self.page.set({ 'acts' :  acts_a })
+
+    self.page.set({ 'tags' : ref.get('tags') })
+
+    return self
   
   def parse_url(self,ref={}):
     url = ref.get('url','')
@@ -1038,23 +1067,10 @@ This script will parse input URL
     except:
       return self
 
-    acts = ref.get('acts')
-    if acts:
-      acts_a = []
-      if type(acts) is list:
-        acts_a = acts
-      elif type(acts) is str:
-        acts_a = acts.split(',')
+    self.page_set_acts(ref)
 
-      if acts_a:
-        self.page.set({ 'acts' :  acts_a })
-
-    self.page.set({ 'tags' : ref.get('tags') })
-
-    if (not ref.get('redo',0)):
-      if self._site_skip() \
-          or self._url_saved_fs(): 
-        return self
+    if self._need_skip(ref):
+       return self
 
     self.log(f'[site_extract] site = {self.page.site}')
 
@@ -1257,7 +1273,7 @@ This script will parse input URL
       div.unwrap()
     return self
 
-  def _rid_free(self):
+  def _rid_new(self):
     db_file = self.dbfile.pages
     conn = sqlite3.connect(db_file)
     c = conn.cursor()
@@ -1309,7 +1325,7 @@ This script will parse input URL
     conn = sqlite3.connect(db_file)
     c = conn.cursor()
 
-    self.page.rid = self._rid_free()
+    self.page.rid = self._rid_new()
     if self._url_saved_db():
       self.page.rid = self._rid_url()
       if not self._act('db_update'):

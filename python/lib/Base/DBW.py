@@ -178,11 +178,10 @@ def insert_dict(ref={}):
   quot_s   = ",".join(quot)
   q=''' INSERT OR REPLACE INTO %s (%s) VALUES (%s)''' % (table,fields_s,quot_s)
 
-  c.execute(q,values)
-
   try:
     c.execute(q,values)
   except sqlite3.IntegrityError as e:
+    raise Exception(f'[ERROR] SQlite error, query: {q}, params: {values}')    
     print(e)
 
   if db_close:
