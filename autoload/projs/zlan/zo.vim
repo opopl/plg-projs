@@ -13,9 +13,14 @@ function! projs#zlan#zo#fetch ()
   
 endfunction
 
-function! projs#zlan#zo#add ()
-  let rootid = projs#rootid()
+function! projs#zlan#zo#add (...)
+  let ref = get(a:000,0,{})
+
+  let rootid   = projs#rootid()
+  let rootid_i = get(ref,'rootid','')
+
   let proj   = projs#proj#name()
+  let proj_i = get(ref,'proj','')
 
   let zfile = projs#sec#file('_zlan_')
 
@@ -73,9 +78,9 @@ function! projs#zlan#zo#add ()
     \ 'zfile' : zfile,
     \ 'd_i'   : d,
     \ })
-	let cnt = projs#zlan#count()
+  let cnt = projs#zlan#count()
   call base#rdw_printf([
-		\	'[rootid: %s, proj: %s] added ZLAN entry; on: %s, all: %s ', 
-		\	rootid, proj, cnt.on, cnt.all ],'MoreMsg')
+    \ '[rootid: %s, proj: %s] added ZLAN entry; on: %s, all: %s ', 
+    \ rootid, proj, cnt.on, cnt.all ],'MoreMsg')
   
 endfunction
