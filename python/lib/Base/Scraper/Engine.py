@@ -6,6 +6,7 @@ import getopt,argparse
 import sys,os
 import yaml
 import re
+import json
 
 import sqlite3
 import sqlparse
@@ -1077,6 +1078,26 @@ This script will parse input URL
 
     return self
 
+  def page_load_ld_json(self):
+#    f = self._file_rid({ 
+        #'tipe' : 'script',
+        #'ext'  : 'txt'
+    #})
+    #with open(f,'r') as f:
+      #script = f.read()
+    els_jd = self.soup.find_all("script", {"type":"application/ld+json"})
+
+    j = []
+    for e in els_jd:
+      jj = json.loads(e.string)
+      j.append(jj)
+
+    self.page.set({ 'ld_json' : j })
+
+    import pdb; pdb.set_trace()
+  
+    return self
+
 ###pu
   def parse_url_run(self,ref={}):
     tipes = util.qw('img img_clean')
@@ -1084,6 +1105,7 @@ This script will parse input URL
     self                                                \
         .load_soup()                                    \
         .page_save_data_txt()                           \
+        .page_load_ld_json()                            \
         .in_load_site_module()                          \
         .update_ii()                                    \
         .in_load_site_yaml()                            \
