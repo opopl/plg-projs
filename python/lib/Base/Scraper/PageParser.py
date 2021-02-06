@@ -107,19 +107,11 @@ class RootPageParser(CoreClass):
     if not self.meta:
       self.import_meta()
 
-    sels = [
-      { 
-        'str' :  'meta[name="author"]',
-        'url' :  'meta[property="article:author"]',
-      }
-    ]
-
     d_parse = {}
 
     sels = []
     sels.extend( app._cnf('PageParser.get_author_meta.sels',[]) )
     sels.extend( app._site_data('PageParser.get_author_meta.sels',[]) )
-
 
     for itm in sels:
       d_parse = {}
