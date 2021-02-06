@@ -43,12 +43,12 @@ $(function(){
      $(left).append($(this).clone());
   });
 
-  $(container).append( $(header) );
   $(container).append( $(left) );
   $(container).append( $(right) );
 
   $('body').children().remove();
 
+  $(container).append( $(header) );
   $('body').append($(container));
 
 
