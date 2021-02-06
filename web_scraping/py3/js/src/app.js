@@ -83,6 +83,38 @@ function App(){
       return this;
   };
 
+  this.on_enter_css_delete = function(){
+
+     var $i = $('#inp_css_delete');
+     var $slf = this;
+
+     $i.bind("enterKey",function(e){
+        var css = $(this).val();
+
+        if (!css) {
+          window.location.reload(true);
+          return;
+        }
+
+        $slf.$left.children().remove();
+
+        $slf.$html_clone.find(css).remove();
+
+        this.$html_clone.find('body').children().each(function(){
+           $slf.$left.append($(this).clone());
+        });
+
+     });
+
+     $i.keyup(function(e){
+        if(e.keyCode == 13) {
+            $(this).trigger("enterKey");
+        }
+     });
+
+     return this;
+  };
+
   this.on_enter_css_show = function(){
 
      var $i = $('#inp_css_show');
