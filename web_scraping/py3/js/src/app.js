@@ -74,12 +74,25 @@ function App(){
   };
 
   this.on_enter = function(){
+      this
+        .on_enter_css_delete()
+        ;
+
+      return this;
+  };
+
+  this.on_enter_css_delete = function(){
 
      var $i = $('#inp_css_show');
      var $slf = this;
 
      $i.bind("enterKey",function(e){
         var css = $(this).val();
+
+        if (!css) {
+          window.location.reload(true);
+          return;
+        }
 
         $slf.$left.children().remove();
 
@@ -93,6 +106,7 @@ function App(){
             $(this).trigger("enterKey");
         }
      });
+
      return this;
   };
 
