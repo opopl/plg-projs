@@ -78,6 +78,7 @@ function App(){
   this.on_enter = function(){
       this
         .on_enter_css_show()
+        .on_enter_css_delete()
         ;
 
       return this;
@@ -100,9 +101,11 @@ function App(){
 
         $slf.$html_clone.find(css).remove();
 
-        this.$html_clone.find('body').children().each(function(){
+        $slf.$html_clone.find('body').children().each(function(){
            $slf.$left.append($(this).clone());
         });
+
+        $slf.$right.find('pre').text($slf._code($slf.$html_clone));
 
      });
 
@@ -139,7 +142,8 @@ function App(){
            var _el = $(this);
            $slf.$left.append(_el);
 
-           _txt += $slf._code(_el) + '<br/>\n';
+           _txt += $slf._code(_el) + '\n';
+           //_txt += $slf._code(_el) + '<br/>\n';
            //console.log(_txt);
            //console.log(_el.html());
         });
