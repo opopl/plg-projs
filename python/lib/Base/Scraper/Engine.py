@@ -439,10 +439,7 @@ This script will parse input URL
         'style_css.prod' : self._dir('html','css style.css'),
     })
 
-    js_files = list(Path(self._dir('bin','js src')).glob('*.js'))
-    for js_file in js_files:
-      js = js_file.stem
-      import pdb; pdb.set_trace()
+    for js in self._bin_js_stems():
       rel = f'js src {js}.js'
       self.files.update({ 
           f'{js}_js.vcs'  : self._dir('bin',rel),
@@ -454,6 +451,17 @@ This script will parse input URL
     })
 
     return self
+
+  def _bin_js_stems(self):
+    js_stems = list(map(lambda x: Path(x).stem,self._bin_js_files() ))
+
+    return js_stems
+
+  def _bin_js_files(self):
+    js_files = list(Path(self._dir('bin','js src')).glob('*.js'))
+    js_files = list(map(lambda x: x.as_posix(),js_files))
+
+    return js_files
 
   def init_dirs(self):
     if not self._file('script'):
