@@ -75,10 +75,17 @@ function App(){
 
   this.on_enter = function(){
 
-     var $i = $('#inp_css');
+     var $i = $('#inp_css_show');
+     var $slf = this;
 
      $i.bind("enterKey",function(e){
         var css = $(this).val();
+
+        $slf.$left.children().remove();
+
+        $slf.$html_bare.find(css).each(function(){
+           $slf.$left.append($(this).clone());
+        });
      });
 
      $i.keyup(function(e){
@@ -117,6 +124,7 @@ function App(){
 
     return this;
   };
+
 
   this.set_left = function(ref={}){
 
