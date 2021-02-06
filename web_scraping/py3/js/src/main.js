@@ -48,7 +48,9 @@ $(function(){
 
   $('body').children().remove();
 
-  $(container).append( $(header) );
+  //$(container).append( $(header) );
+
+  $('body').append($(header));
   $('body').append($(container));
 
 
