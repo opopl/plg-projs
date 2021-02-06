@@ -10,8 +10,28 @@ function App(){
 
       this
         .btn_reload()
+        .input_css()
       ;
     
+      return this;
+  };
+
+  this.input_css = function(){
+      var inp = document.createElement('input');
+      inp.type  = 'text';
+      inp.id = 'inp_css';
+      inp.placeholder = 'Enter CSS Selector';
+
+      $(inp)
+        .addClass('block')
+        .css({ 
+           width: '20%',
+           background-color: 'white',
+           font-size: '30px',
+        });
+
+      this.$header.append($(inp));
+
       return this;
   };
 
