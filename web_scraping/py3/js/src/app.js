@@ -1,12 +1,12 @@
 
-(function($) {
-  $.fn.onEnter = function(func) {
-    this.bind('keypress', function(e) {
-      if (e.keyCode == 13) func.apply(this, [e]);    
-    });               
-    return this; 
-  };
-})(jQuery);
+/*(function($) {*/
+  //$.fn.onEnter = function(func) {
+    //this.bind('keypress', function(e) {
+      //if (e.keyCode == 13) func.apply(this, [e]);    
+    //});               
+    //return this; 
+  //};
+/*})(jQuery);*/
 
 function App(){
 
@@ -58,8 +58,19 @@ function App(){
   };
 
   this.on_enter = function(){
-      return this;
 
+     var $i = $('#inp_css');
+
+     $i.bind("enterKey",function(e){
+        var css = $(this).val();
+     });
+
+     $i.keyup(function(e){
+        if(e.keyCode == 13) {
+            $(this).trigger("enterKey");
+        }
+     });
+     return this;
   };
 
 
@@ -71,7 +82,7 @@ function App(){
      return this;
   };
 
-  this.set_right = function(){
+  this.set_right = function(ref={}){
 
     var right = document.createElement('div');
     right.className = 'flex-right';
@@ -91,7 +102,7 @@ function App(){
     return this;
   };
 
-  this.set_left = function(){
+  this.set_left = function(ref={}){
 
     var left = document.createElement('div');
     left.className = 'flex-left';
@@ -130,6 +141,7 @@ function App(){
     this.$html_bare = $('html').clone();
 
     this.$body_clone = $('body').clone();
+
     this.$html_clone = $('html').clone();
     this.$html_clone.find('style,meta').remove();
 
