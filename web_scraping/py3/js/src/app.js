@@ -1,19 +1,28 @@
 
 function App(){
+
+  this.set_header = function(){
+
+      var header = document.createElement('div');
+      header.className = 'flex-header';
+    
+      var btn = document.createElement('input');
+      btn.type  = 'button';
+      btn.value = 'Reload';
+      $(btn).addClass('block').css({ width: '10%' });
+    
+      $(header).append($(btn));
+      this.header = $(header);
+
+      return this;
+  };
+
   this.run = function(){
     var $body_clone = $('body').clone();
     var $html_clone = $('html').clone();
     $html_clone.find('style,meta').remove();
-  
-    var header = document.createElement('div');
-    header.className = 'flex-header';
-  
-    var btn = document.createElement('input');
-    btn.type  = 'button';
-    btn.value = 'Reload';
-    $(btn).addClass('block');
-  
-    $(header).append($(btn));
+
+    this.set_header();
   
     var left = document.createElement('div');
     var right = document.createElement('div');
@@ -23,6 +32,10 @@ function App(){
   
     var left = document.createElement('div');
     left.className = 'flex-left';
+
+    $body_clone.children().each(function(){
+       $(left).append($(this).clone());
+    });
   
     var right = document.createElement('div');
     right.className = 'flex-right';
@@ -37,9 +50,6 @@ function App(){
   
     $(right).append($(code));
   
-    $body_clone.children().each(function(){
-       $(left).append($(this).clone());
-    });
   
     $(container).append( $(left) );
     $(container).append( $(right) );
@@ -48,15 +58,17 @@ function App(){
   
     //$(container).append( $(header) );
   
-    $('body').append($(header));
+    $('body').append(this.header);
     $('body').append($(container));
+
+    return this;
   }
 
 }
 
 $(function(){
-	window.app =  new App();
-	app.run();
+  window.app =  new App();
+  app.run();
 });
 
 
