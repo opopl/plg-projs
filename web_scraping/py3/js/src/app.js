@@ -12,54 +12,79 @@ function App(){
       $(btn).addClass('block').css({ width: '10%' });
     
       $(header).append($(btn));
-      this.header = $(header);
+      this.$header = $(header);
 
       return this;
   };
 
-  this.run = function(){
-    var $body_clone = $('body').clone();
-    var $html_clone = $('html').clone();
-    $html_clone.find('style,meta').remove();
+  this.set_right = function(){
 
-    this.set_header();
-  
-    var left = document.createElement('div');
-    var right = document.createElement('div');
-  
-    var container = document.createElement('div');
-    container.className = 'flex-container';
-  
-    var left = document.createElement('div');
-    left.className = 'flex-left';
-
-    $body_clone.children().each(function(){
-       $(left).append($(this).clone());
-    });
-  
     var right = document.createElement('div');
     right.className = 'flex-right';
-  
+
     var code = document.createElement('div');
     code.className = 'code';
   
     var pre = document.createElement('pre');
     $(code).append($(pre));
   
-    $(pre).text($html_clone.html());
+    $(pre).text(this.$html_clone.html());
   
     $(right).append($(code));
-  
-  
-    $(container).append( $(left) );
-    $(container).append( $(right) );
-  
+
+    this.$right = $(right);
+
+    return this;
+  };
+
+  this.set_left = function(){
+
+    var left = document.createElement('div');
+    left.className = 'flex-left';
+
+    this.$body_clone.children().each(function(){
+       $(left).append($(this).clone());
+    });
+
+    this.$left = $(left);
+
+
+    return this;
+  };
+
+  this.set_container = function(){
+      var container = document.createElement('div');
+      container.className = 'flex-container';
+
+      this.$container = $(container);
+
+      this.$container.append( this.$left );
+      this.$container.append( this.$right );
+
+      return this;
+  };
+
+  this.body_append = function(){
     $('body').children().remove();
   
-    //$(container).append( $(header) );
-  
-    $('body').append(this.header);
-    $('body').append($(container));
+    $('body').append(this.$header);
+    $('body').append(this.$container);
+
+    return this;
+  };
+
+  this.run = function(){
+    this.$body_clone = $('body').clone();
+    this.$html_clone = $('html').clone();
+    this.$html_clone.find('style,meta').remove();
+
+    this
+        .set_header()
+        .set_left()
+        .set_right()
+        .set_container()
+        .body_append()
+     ;
 
     return this;
   }
