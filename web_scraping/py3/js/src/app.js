@@ -5,16 +5,34 @@ function App(){
 
       var header = document.createElement('div');
       header.className = 'flex-header';
+
+      this.$header = $(header);
+
+      this
+        .btn_reload()
+      ;
     
+      return this;
+  };
+
+  this.btn_reload = function(){
       var btn = document.createElement('input');
       btn.type  = 'button';
       btn.value = 'Reload';
+      btn.id = 'btn_reload';
       $(btn).addClass('block').css({ width: '10%' });
     
-      $(header).append($(btn));
-      this.$header = $(header);
+      this.$header.append($(btn));
 
       return this;
+  };
+
+  this.on_click = function(){
+     $('#btn_reload').on('click',function() {
+        window.location.reload(true);
+     });
+
+     return this;
   };
 
   this.set_right = function(){
@@ -47,7 +65,6 @@ function App(){
     });
 
     this.$left = $(left);
-
 
     return this;
   };
@@ -84,6 +101,7 @@ function App(){
         .set_right()
         .set_container()
         .body_append()
+        .on_click()
      ;
 
     return this;
