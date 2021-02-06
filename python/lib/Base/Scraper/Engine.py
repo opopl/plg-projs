@@ -1223,7 +1223,9 @@ This script will parse input URL
 
     aid = self.page.get('author_id','')
     if not aid:
-      self.die(f'[page_get_author] no author!')
+      #self.die(f'[page_get_author] no author!')
+      self.log(f'[page_get_author] no author!')
+      return self
 
     self.log(f'[page_get_author] got author(s): {aid}')
 
