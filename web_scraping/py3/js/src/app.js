@@ -10,25 +10,50 @@ function App(){
 
       this
         .el_btn_reload()
-        .el_input_css()
+        .el_input_css_delete()
+        .el_input_css_show()
       ;
     
       return this;
   };
 
-  this.el_input_css = function(){
+  this.el_input_css_delete = function(){
       var inp = document.createElement('input');
+
       inp.type  = 'text';
-      inp.id = 'inp_css';
+      inp.id = 'inp_css_delete';
       inp.placeholder = 'CSS (Delete)';
 
       $(inp)
         .addClass('block')
         .css({ 
-           width: '10%',
-           'color': 'black',
-           'background-color': 'white',
-           'font-size': '25px',
+           width              : '10%',
+           'color'            : 'white',
+           'background-color' : 'red',
+           'font-size'        : '25px',
+           'justify-content'  : 'space-between',
+        });
+
+      this.$header.append($(inp));
+
+      return this;
+  };
+
+  this.el_input_css_show = function(){
+      var inp = document.createElement('input');
+
+      inp.type  = 'text';
+      inp.id = 'inp_css_show';
+      inp.placeholder = 'CSS (Show)';
+
+      $(inp)
+        .addClass('block')
+        .css({ 
+           width              : '10%',
+           'color'            : 'black',
+           'background-color' : 'white',
+           'font-size'        : '25px',
+           'justify-content'  : 'space-between',
         });
 
       this.$header.append($(inp));
