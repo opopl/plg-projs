@@ -14,8 +14,19 @@ $(function(){
   
   /*document.body.prepend(form);*/
 
+  var $body_clone = $('body').clone();
+  var $html_clone = $('html').clone();
+  $html_clone.find('style,meta').remove();
+
   var header = document.createElement('div');
   header.className = 'flex-header';
+
+  var btn = document.createElement('input');
+  btn.type  = 'button';
+  btn.value = 'Reload';
+  $(btn).addClass('block');
+
+  $(header).append($(btn));
 
   var left = document.createElement('div');
   var right = document.createElement('div');
@@ -35,11 +46,11 @@ $(function(){
   var pre = document.createElement('pre');
   $(code).append($(pre));
 
-  $(pre).text($('html').html());
+  $(pre).text($html_clone.html());
 
   $(right).append($(code));
 
-  $('body').children().each(function(){
+  $body_clone.children().each(function(){
      $(left).append($(this).clone());
   });
 
