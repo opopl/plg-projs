@@ -1,4 +1,13 @@
 
+(function($) {
+  $.fn.onEnter = function(func) {
+    this.bind('keypress', function(e) {
+      if (e.keyCode == 13) func.apply(this, [e]);    
+    });               
+    return this; 
+  };
+})(jQuery);
+
 function App(){
 
   this.set_header = function(){
@@ -25,9 +34,10 @@ function App(){
       $(inp)
         .addClass('block')
         .css({ 
-           width: '20%',
-           background-color: 'white',
-           font-size: '30px',
+           width: '10%',
+           'color': 'black',
+           'background-color': 'white',
+           'font-size': '25px',
         });
 
       this.$header.append($(inp));
@@ -46,6 +56,12 @@ function App(){
 
       return this;
   };
+
+  this.on_enter = function(){
+      return this;
+
+  };
+
 
   this.on_click = function(){
      $('#btn_reload').on('click',function() {
@@ -110,18 +126,36 @@ function App(){
     return this;
   };
 
-  this.run = function(){
+  this.copy_html = function(){
+    this.$html_bare = $('html').clone();
+
     this.$body_clone = $('body').clone();
     this.$html_clone = $('html').clone();
     this.$html_clone.find('style,meta').remove();
 
+    return this;
+  };
+
+  this.events = function(){
+
     this
+        .on_click()
+        .on_enter()
+    ;
+
+    return this;
+  };
+
+  this.run = function(){
+ 
+    this
+        .copy_html()
         .set_header()
         .set_left()
         .set_right()
         .set_container()
         .body_append()
-        .on_click()
+        .events()
      ;
 
     return this;
