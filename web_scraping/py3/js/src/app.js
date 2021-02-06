@@ -98,7 +98,7 @@ function App(){
 
         $slf.$left.children().remove();
 
-        var $found = $slf.$html_bare.find(css);
+        var $found = $slf.$html_clone.find(css).clone();
 
         $slf.$right.find('pre').text('');
 
@@ -107,11 +107,12 @@ function App(){
            var _el = $(this);
            $slf.$left.append(_el);
 
-           _txt += $(_el).wrap($('<div></div>')).parent().html();
+           _txt += $slf._code(_el) + '<br/>\n';
            //console.log(_txt);
            //console.log(_el.html());
         });
 
+        //$slf.$right.find('pre').text( this._code($found) );
         $slf.$right.find('pre').text( _txt );
 
      });
@@ -145,7 +146,7 @@ function App(){
     var pre = document.createElement('pre');
     $(code).append($(pre));
   
-    $(pre).text(this.$html_clone.html());
+    $(pre).text(this._code(this.$html_clone));
   
     $(right).append($(code));
 
@@ -154,6 +155,12 @@ function App(){
     return this;
   };
 
+  this._code = function(el){
+    var html = $(el).wrap('<div/>').parent().html();
+    html = pretty(html);
+
+    return html;
+  };
 
   this.set_left = function(ref={}){
 
