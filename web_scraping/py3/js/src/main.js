@@ -14,6 +14,9 @@ $(function(){
   
   /*document.body.prepend(form);*/
 
+  var header = document.createElement('div');
+  header.className = 'flex-header';
+
   var left = document.createElement('div');
   var right = document.createElement('div');
 
@@ -40,10 +43,12 @@ $(function(){
      $(left).append($(this).clone());
   });
 
+  $(container).append( $(header) );
   $(container).append( $(left) );
   $(container).append( $(right) );
 
   $('body').children().remove();
+
   $('body').append($(container));
 
 
