@@ -5,4 +5,9 @@ require('../../css/style.css');
 // js
 window.$ = require('jquery');
 
-require('./app.js');
+import App from './app.js';
+
+$(function(){
+  window.app =  new App();
+  app.run();
+});
