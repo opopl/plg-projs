@@ -153,10 +153,21 @@ class RootPageParser(CoreClass):
   def get_author(self,ref={}):
     app = self.app
 
-    self.get_author_meta(ref)
+    tries = util.qw('ld_json meta html')
+    while len(tries):
+      tri = tries.pop(0)
 
-    if not util.get(app, 'page.author_id'):
-      self.get_author_html(ref)
+      if tri == 'ld_json':
+        self.get_author_ld_json(ref)
+
+      if tri == 'meta':
+        self.get_author_meta(ref)
+
+      if tri == 'html':
+        self.get_author_html(ref)
+
+    #if util.get(app, 'page.author_id'):
+      #break
 
     return self
 

@@ -1078,14 +1078,9 @@ This script will parse input URL
 
     return self
 
+###ld_json
   def page_load_ld_json(self):
-#    f = self._file_rid({ 
-        #'tipe' : 'script',
-        #'ext'  : 'txt'
-    #})
-    #with open(f,'r') as f:
-      #script = f.read()
-    els_jd = self.soup.find_all("script", {"type":"application/ld+json"})
+    els_jd = self.soup.find_all("script", { "type" : "application/ld+json" })
 
     j = []
     for e in els_jd:
