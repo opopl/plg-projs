@@ -1,4 +1,6 @@
 
+var pretty = require('pretty');
+
 function App(){
 
   this.set_header = function(){
@@ -75,13 +77,13 @@ function App(){
 
   this.on_enter = function(){
       this
-        .on_enter_css_delete()
+        .on_enter_css_show()
         ;
 
       return this;
   };
 
-  this.on_enter_css_delete = function(){
+  this.on_enter_css_show = function(){
 
      var $i = $('#inp_css_show');
      var $slf = this;
@@ -96,9 +98,22 @@ function App(){
 
         $slf.$left.children().remove();
 
-        $slf.$html_bare.find(css).each(function(){
-           $slf.$left.append($(this).clone());
+        var $found = $slf.$html_bare.find(css);
+
+        $slf.$right.find('pre').text('');
+
+        var _txt = '';
+        $found.each(function(){
+           var _el = $(this);
+           $slf.$left.append(_el);
+
+           _txt += $(_el).wrap($('<div></div>')).parent().html();
+           //console.log(_txt);
+           //console.log(_el.html());
         });
+
+        $slf.$right.find('pre').text( _txt );
+
      });
 
      $i.keyup(function(e){
