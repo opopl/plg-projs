@@ -1094,8 +1094,6 @@ This script will parse input URL
 
     self.page.set({ 'ld_json' : j })
 
-    import pdb; pdb.set_trace()
-  
     return self
 
 ###pu
