@@ -9,18 +9,18 @@ function App(){
       this.$header = $(header);
 
       this
-        .btn_reload()
-        .input_css()
+        .el_btn_reload()
+        .el_input_css()
       ;
     
       return this;
   };
 
-  this.input_css = function(){
+  this.el_input_css = function(){
       var inp = document.createElement('input');
       inp.type  = 'text';
       inp.id = 'inp_css';
-      inp.placeholder = 'Enter CSS Selector';
+      inp.placeholder = 'CSS (Delete)';
 
       $(inp)
         .addClass('block')
@@ -36,7 +36,7 @@ function App(){
       return this;
   };
 
-  this.btn_reload = function(){
+  this.el_btn_reload = function(){
       var btn = document.createElement('input');
       btn.type  = 'button';
       btn.value = 'Reload';
