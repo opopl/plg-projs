@@ -1100,6 +1100,7 @@ This script will parse input URL
       try:
         jj = json.loads(e.string)
       except:
+        self.log('WARN[page_load_ld_json] JSON decode errors')
         continue
 
       j.append(jj)
