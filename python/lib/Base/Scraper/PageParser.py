@@ -71,6 +71,25 @@ class RootPageParser(CoreClass):
 
     date = None
 
+    ld_json = util.get(app.page,'ld_json',[])
+
+    fmt = "%Y-%m-%d"
+    sep = "T"
+
+    for ld in ld_json:
+      date_s = ld.get('datePublished')
+      if not date_s:
+        continue
+
+      s = date_s.split(sep)[0]
+      d = datetime.datetime.strptime(s,fmt)
+      date = d.strftime('%d_%m_%Y')
+      if date:
+        app.page.set({ 'date' : date })
+        break
+
+    import pdb; pdb.set_trace()
+
     return self
 
   def get_date_html(self,ref={}):
