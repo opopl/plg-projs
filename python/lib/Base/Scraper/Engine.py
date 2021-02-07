@@ -8,6 +8,8 @@ import yaml
 import re
 import json
 
+import datetime
+
 import sqlite3
 import sqlparse
 import cairosvg
@@ -1272,6 +1274,19 @@ This script will parse input URL
       self.die(f'[page_get_date] no date!')
 
     self.log(f'[page_get_date] got date: {date}')
+
+    fmt = '%d_%m_%Y'
+    d = datetime.datetime.strptime(date,fmt)
+
+    dd = { 
+        'day'   : d.day,
+        'year'  : d.year,
+        'month' : d.month,
+    }
+
+    self.page.set(dd)
+    #date = d.strftime()
+    import pdb; pdb.set_trace()
 
     return self
 
