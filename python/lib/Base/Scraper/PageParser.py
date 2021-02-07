@@ -80,8 +80,6 @@ class RootPageParser(CoreClass):
     sels.extend( app._cnf('PageParser.get_date_html.sels',[]) )
     sels.extend( app._site_data('PageParser.get_date_html.sels',[]) )
 
-    import pdb; pdb.set_trace()
-
     for sel in sels:
       date = self._sel_date(app.soup, sel)
       if date:
