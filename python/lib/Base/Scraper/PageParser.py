@@ -60,6 +60,7 @@ class RootPageParser(CoreClass):
       tri = tries.pop(0)
 
       sub_name = f'get_date_{tri}'
+      app.log(f'[PageParser] call: {sub_name}')
       util.call(self, sub_name, [ ref ])
 
     return self
@@ -73,24 +74,34 @@ class RootPageParser(CoreClass):
     return self
 
   def get_date_html(self,ref={}):
+    app = self.app
 
     sels = []
     sels.extend( app._cnf('PageParser.get_date_html.sels',[]) )
     sels.extend( app._site_data('PageParser.get_date_html.sels',[]) )
 
+    import pdb; pdb.set_trace()
+
+    for sel in sels:
+      date = self._sel_date(app.soup, sel)
+      if date:
+        app.page.set({ 'date' : date })
+        break
+
     return self
 
-  def _sel_date(self,sel={}):
+  def _sel_date(self, soup, sel={}):
     date_s = ''
     date = None
 
     find = sel.get('find','')
     get  = sel.get('get','')
     fmt  = sel.get('fmt',"%Y-%m-%d")
+    sep  = sel.get('split',"T")
 
-    c = self.meta.select_one(find)
+    c = soup.select_one(find)
     if not c:
-      continue
+      return
 
     if get and get == 'attr':
       attr = sel.get('attr','')
@@ -98,7 +109,7 @@ class RootPageParser(CoreClass):
         date_s = c[attr]
 
     if date_s:
-      s = date_s.split('T')[0]
+      s = date_s.split(sep)[0]
       d = datetime.datetime.strptime(s,fmt)
       date = d.strftime('%d_%m_%Y')
 
@@ -117,7 +128,7 @@ class RootPageParser(CoreClass):
 
     sels = app._cnf('PageParser.get_date_meta.sels')
     for sel in sels:
-      date = self._sel_date(sel)
+      date = self._sel_date(self.meta, sel)
       if date:
         self.app.page.set({ 'date' : date })
         break
