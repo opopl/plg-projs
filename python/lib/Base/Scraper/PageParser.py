@@ -53,8 +53,31 @@ class RootPageParser(CoreClass):
     return self
 
   def get_date(self,ref={}):
+    app = self.app
 
-    self.get_date_meta(ref)
+    tries = util.qw('ld_json meta html')
+    while len(tries):
+      tri = tries.pop(0)
+
+      sub = f'get_date_{tri}'
+      
+
+      if tri == 'ld_json':
+        self.get_date_ld_json(ref)
+
+      if tri == 'meta':
+        self.get_date_meta(ref)
+
+      if tri == 'html':
+        self.get_date_html(ref)
+
+    return self
+
+  def get_date_ld_json(self,ref={}):
+    app = self.app
+    page = app.page
+
+    date = None
 
     return self
 
@@ -94,6 +117,14 @@ class RootPageParser(CoreClass):
       if date:
         self.app.page.set({ 'date' : date })
         break
+
+    return self
+
+  def get_author_ld_json(self,ref={}):
+    app = self.app
+    page = app.page
+
+    d_parse = {}
 
     return self
 
