@@ -1470,15 +1470,18 @@ This script will parse input URL
       'remote' : self.page.url,
     }
 
-    #kk = '''date title_h tags encoding author_id author_id_first ii_num ii_full'''
-    #kk = kk + ''' rid ii site title'''
+    cols = dbw._cols({
+        'db_file' : self.dbfile.pages,
+        'table'   : 'urls',
+    })
 
     for k in self.page.__dict__.keys():
-      v = self.page.get(k)
-      if type(v) is str:
-        insert.update({ k : v })
+      if not k in cols:
+        continue
 
-    import pdb; pdb.set_trace()
+      v = self.page.get(k)
+      if type(v) is str or type(v) is int:
+        insert.update({ k : v })
 
     d = {
       'db_file' : self.dbfile.pages,

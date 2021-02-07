@@ -87,6 +87,17 @@ def sql_fetchone(q, p=[], ref={}):
 
   return { 'row' : row, 'cols' : cols }
 
+def _cols(ref={}):
+  table   = ref.get('table','')
+  db_file = ref.get('db_file','')
+
+  q = f'''SELECT * FROM {table} LIMIT 1'''
+
+  d = sql_fetchone(q,[],{ 'db_file' : db_file })
+  cols = d.get('cols',[])
+
+  return cols
+
 def sql_fetchall(q,p=[],ref={}):
   conn     = ref.get('conn')
   db_file  = ref.get('db_file')
