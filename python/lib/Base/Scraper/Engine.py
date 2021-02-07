@@ -345,8 +345,10 @@ This script will parse input URL
             ALTER TABLE urls ADD COLUMN year INTEGER;
 
             DROP TABLE IF EXISTS log;
+            DROP TABLE IF EXISTS data_meta;
 
             CREATE TABLE IF NOT EXISTS data_meta (
+                rid INTEGER UNIQUE,
                 url TEXT UNIQUE NOT NULL,
                 src TEXT,
                 og_url TEXT
@@ -761,7 +763,6 @@ This script will parse input URL
     tipe = ref.get('tipe','cache')
     ext  = ref.get('ext','html')
 
-
     tipes_in = ref.get('tipes')
     if tipes_in:
       tipes    = tipes_in
@@ -776,7 +777,7 @@ This script will parse input URL
           self.load_soup_file_rid(r)
         return self
 
-    self.log(f'[load_soup_file_rid] tipe: {tipe}')
+    self.log(f'[load_soup_file_rid] tipe: {tipe}, ext: {ext}')
 
     file = self._file_rid({ 'tipe' : tipe, 'ext' : ext })
 
@@ -1111,6 +1112,7 @@ This script will parse input URL
     self                                                \
         .load_soup()                                    \
         .page_save_data_txt()                           \
+        .db_save_meta()                                 \
         .page_load_ld_json()                            \
         .in_load_site_module()                          \
         .update_ii()                                    \
@@ -1286,7 +1288,6 @@ This script will parse input URL
 
     self.page.set(dd)
     #date = d.strftime()
-    import pdb; pdb.set_trace()
 
     return self
 
@@ -1476,6 +1477,29 @@ This script will parse input URL
     conn.close()
 
     return auth
+
+  def db_save_meta(self):
+    db_file = self.dbfile.pages
+
+    r = { 'tipe' : 'meta', 'ext' : 'txt' }
+    self.load_soup_file_rid(r)
+    f_meta = self._file_rid(r)
+
+    soup = self.soups[f_meta]
+
+    insert = {
+      'url' : self.page.url,
+      'rid' : self.page.rid,
+    }
+
+    d = {
+      'db_file' : self.dbfile.pages,
+      'table'   : 'data_meta',
+      'insert'  : insert,
+    }
+    dbw.insert_dict(d)
+
+    return self
 
   # called by
   #   load_soup
@@ -1789,6 +1813,7 @@ This script will parse input URL
       txt.append(ms)
     with open(data_file, 'w') as f:
         f.write("\n".join(txt))
+
     return self
 
   def page_save_data_img(self,ref={}):
