@@ -80,7 +80,7 @@ class RootPageParser(CoreClass):
 
     return self
 
-  def _sel_get_date(self,sel={}):
+  def _sel_date(self,sel={}):
     date_s = ''
     date = None
 
@@ -117,8 +117,7 @@ class RootPageParser(CoreClass):
 
     sels = app._cnf('PageParser.get_date_meta.sels')
     for sel in sels:
-
-      
+      date = self._sel_date(sel)
       if date:
         self.app.page.set({ 'date' : date })
         break
