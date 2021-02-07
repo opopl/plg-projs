@@ -345,7 +345,6 @@ This script will parse input URL
             ALTER TABLE urls ADD COLUMN year INTEGER;
 
             DROP TABLE IF EXISTS log;
-            DROP TABLE IF EXISTS data_meta;
 
             CREATE TABLE IF NOT EXISTS data_meta (
                 rid INTEGER UNIQUE,
@@ -1098,7 +1097,11 @@ This script will parse input URL
 
     j = []
     for e in els_jd:
-      jj = json.loads(e.string)
+      try:
+        jj = json.loads(e.string)
+      except:
+        continue
+
       j.append(jj)
 
     self.page.set({ 'ld_json' : j })
@@ -1481,22 +1484,36 @@ This script will parse input URL
   def db_save_meta(self):
     db_file = self.dbfile.pages
 
+    insert = {
+      'url' : self.page.url,
+      'rid' : self.page.rid,
+    }
+
+    self.page.meta = {}
+
     r = { 'tipe' : 'meta', 'ext' : 'txt' }
     self.load_soup_file_rid(r)
     f_meta = self._file_rid(r)
 
     soup = self.soups[f_meta]
 
-    insert = {
-      'url' : self.page.url,
-      'rid' : self.page.rid,
-    }
+    els = soup.find_all(True)
+    for el in els:
+      if el.has_attr('property'):
+        prop = el['property']
+        if prop == 'og:url':
+          og_url = el['content']
+          if og_url:
+            i = { 'og_url' : og_url }
+            self.page.meta.update(i)
+            insert.update(i)
 
     d = {
       'db_file' : self.dbfile.pages,
       'table'   : 'data_meta',
       'insert'  : insert,
     }
+
     dbw.insert_dict(d)
 
     return self
