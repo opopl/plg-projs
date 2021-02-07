@@ -72,6 +72,38 @@ class RootPageParser(CoreClass):
 
     return self
 
+  def get_date_html(self,ref={}):
+
+    sels = []
+    sels.extend( app._cnf('PageParser.get_date_html.sels',[]) )
+    sels.extend( app._site_data('PageParser.get_date_html.sels',[]) )
+
+    return self
+
+  def _sel_get_date(self,sel={}):
+    date_s = ''
+    date = None
+
+    find = sel.get('find','')
+    get  = sel.get('get','')
+    fmt  = sel.get('fmt',"%Y-%m-%d")
+
+    c = self.meta.select_one(find)
+    if not c:
+      continue
+
+    if get and get == 'attr':
+      attr = sel.get('attr','')
+      if c.has_attr(attr):
+        date_s = c[attr]
+
+    if date_s:
+      s = date_s.split('T')[0]
+      d = datetime.datetime.strptime(s,fmt)
+      date = d.strftime('%d_%m_%Y')
+
+    return date
+
   def get_date_meta(self,ref={}):
     app = self.app
     page = app.page
@@ -85,25 +117,7 @@ class RootPageParser(CoreClass):
 
     sels = app._cnf('PageParser.get_date_meta.sels')
     for sel in sels:
-      date_s = ''
 
-      find = sel.get('find','')
-      get  = sel.get('get','')
-      fmt  = sel.get('fmt',"%Y-%m-%d")
-
-      c = self.meta.select_one(find)
-      if not c:
-        continue
-
-      if get and get == 'attr':
-        attr = sel.get('attr','')
-        if c.has_attr(attr):
-          date_s = c[attr]
-
-      if date_s:
-        s = date_s.split('T')[0]
-        d = datetime.datetime.strptime(s,fmt)
-        date = d.strftime('%d_%m_%Y')
       
       if date:
         self.app.page.set({ 'date' : date })
