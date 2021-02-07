@@ -329,6 +329,7 @@ This script will parse input URL
 
     return self
 
+###db
 ###db_init
   def init_db_urls(self):
     self.log('[init_db_urls]')
@@ -337,7 +338,17 @@ This script will parse input URL
             -- ALTER TABLE urls ADD COLUMN baseurl TEXT;
             -- ALTER TABLE urls ADD COLUMN host TEXT;
 
+            ALTER TABLE urls ADD COLUMN day INTEGER;
+            ALTER TABLE urls ADD COLUMN month INTEGER;
+            ALTER TABLE urls ADD COLUMN year INTEGER;
+
             DROP TABLE IF EXISTS log;
+
+            CREATE TABLE IF NOT EXISTS data_meta (
+                url TEXT UNIQUE NOT NULL,
+                src TEXT,
+                og_url TEXT
+            );
 
             CREATE TABLE IF NOT EXISTS urls (
                 baseurl TEXT,
@@ -1256,10 +1267,11 @@ This script will parse input URL
       return self
 
     p.get_date()
-    if not util.get(self,'page.date'):
+    date = util.get(self,'page.date')
+    if not date:
       self.die(f'[page_get_date] no date!')
 
-    self.log(f'[page_get_date] got date: {self.page.date}')
+    self.log(f'[page_get_date] got date: {date}')
 
     return self
 
