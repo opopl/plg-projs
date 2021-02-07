@@ -88,8 +88,6 @@ class RootPageParser(CoreClass):
         app.page.set({ 'date' : date })
         break
 
-    import pdb; pdb.set_trace()
-
     return self
 
   def get_date_html(self,ref={}):

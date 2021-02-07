@@ -329,7 +329,7 @@ This script will parse input URL
 
     return self
 
-###db
+###db_init
   def init_db_urls(self):
     self.log('[init_db_urls]')
   
@@ -1452,6 +1452,8 @@ This script will parse input URL
 
   # called by
   #   load_soup
+
+###db_save
   def db_save_url(self):
 
     db_file = self.dbfile.pages
@@ -1468,10 +1470,15 @@ This script will parse input URL
       'remote' : self.page.url,
     }
 
-    kk = '''date title_h tags encoding author_id author_id_first ii_num ii_full'''
-    kk = kk + ''' rid ii site title'''
-    for k in kk.split(' '):
-      insert.update({ k : self.page.get(k) })
+    #kk = '''date title_h tags encoding author_id author_id_first ii_num ii_full'''
+    #kk = kk + ''' rid ii site title'''
+
+    for k in self.page.__dict__.keys():
+      v = self.page.get(k)
+      if type(v) is str:
+        insert.update({ k : v })
+
+    import pdb; pdb.set_trace()
 
     d = {
       'db_file' : self.dbfile.pages,
