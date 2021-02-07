@@ -59,17 +59,8 @@ class RootPageParser(CoreClass):
     while len(tries):
       tri = tries.pop(0)
 
-      sub = f'get_date_{tri}'
-      
-
-      if tri == 'ld_json':
-        self.get_date_ld_json(ref)
-
-      if tri == 'meta':
-        self.get_date_meta(ref)
-
-      if tri == 'html':
-        self.get_date_html(ref)
+      sub_name = f'get_date_{tri}'
+      util.call(self, sub_name, [ ref ])
 
     return self
 

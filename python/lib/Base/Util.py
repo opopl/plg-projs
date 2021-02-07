@@ -18,10 +18,13 @@ def mk_parent_dir(file):
   os.makedirs(p,exist_ok=True)
 
 def call(obj, sub_name, args = []):
+  res = None
   if sub_name in dir(obj):
     sub = getattr(obj,sub_name)
     if callable(sub):
-      sub(*args)
+      res = sub(*args)
+
+  return res
 
 def url_parse(url):
   u = urlparse(url)
