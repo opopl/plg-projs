@@ -7,7 +7,8 @@ import sys,os
 import yaml
 import re
 import json
-import tabulate
+
+from tabulate import tabulate
 
 import datetime
 
@@ -346,19 +347,17 @@ This script will parse input URL
     if grep:
       found = []
       ln = 1
-      for line in cnt.split('\n'):
+      lines = cnt.split('\n')
+      for line in lines:
         if re.search(rf'{grep}',line):
-          found.append({ ln, line ])
+          found.append([ ln, line ])
         ln += 1
 
       if len(found):
-        t = tabulate(found,headers=['Line Number','Line'])
+        t = tabulate(found,headers = [ 'Line Number', 'Line' ])
         print(t)
 
-
     find = util.get(self,'oa.find')
-
-    import pdb; pdb.set_trace()
 
     exit(0)
 
