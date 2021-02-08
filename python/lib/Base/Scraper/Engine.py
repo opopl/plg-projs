@@ -1344,7 +1344,12 @@ This script will parse input URL
     p.get_date()
     date = util.get(self,'page.date')
     if not date:
-      self.die(f'[page_get_date] no date!')
+      try:
+        self.die(f'[page_get_date] no date!')
+      except:
+        raise Exception
+      finally:
+        self.db_save_url()
 
     self.log(f'[page_get_date] got date: {date}')
 
