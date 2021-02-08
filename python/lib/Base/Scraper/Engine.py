@@ -332,8 +332,24 @@ This script will parse input URL
       return self
 
     fih = os.path.abspath(fih)
-    bs = BeautifulSoup(open(fih),'html5lib')
+    cnt = None
+    with open(fih,'r') as f:
+      cnt = f.read()
+
+    bs = BeautifulSoup(cnt,'html5lib')
     self.soups[fih] = bs
+
+    grep = util.get(self,'oa.grep')
+    if grep:
+      found = []
+      ln = 1
+      for line in cnt.split('\n'):
+        if re.search(rf'{grep}',line):
+          found.append({ 'ln' : ln, 'line' : line })
+        ln += 1
+
+    find = util.get(self,'oa.find')
+
     import pdb; pdb.set_trace()
 
     exit(0)
