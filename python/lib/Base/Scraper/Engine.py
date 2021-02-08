@@ -299,13 +299,15 @@ This script will parse input URL
     if (not self.dbfile.pages) and self.html_root:
       self.dbfile.pages = os.path.join(self.html_root,'h.db')
 
-
   def get_opt(self):
     self.parser = argparse.ArgumentParser(usage=self.usage)
     
     self.parser.add_argument("-u", "--url", help="input URL",default="")
     self.parser.add_argument("-y", "--f_yaml", help="input YAML file",default="")
     self.parser.add_argument("-z", "--f_zlan", help="input ZLAN file",default="")
+
+    self.parser.add_argument("-i", "--i_html", help="input HTML file",default="")
+    self.parser.add_argument("-f", "--find", help="Find elements via XPATH/CSS",default="")
     
     self.oa = self.parser.parse_args()
 
@@ -1121,6 +1123,8 @@ This script will parse input URL
         .in_load_site_module()                          \
         .update_ii()                                    \
         .in_load_site_yaml()                            \
+
+    self                                                \
         .page_get_date()                                \
         .page_get_author()                              \
         .page_get_ii_full()                             \
