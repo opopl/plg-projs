@@ -308,6 +308,7 @@ This script will parse input URL
 
     self.parser.add_argument("-i", "--f_input_html", help="input HTML file",default="")
     self.parser.add_argument("-f", "--find", help="Find elements via XPATH/CSS",default="")
+    self.parser.add_argument("-g", "--grep", help="Grep in input file(s)",default="")
     
     self.oa = self.parser.parse_args()
 
@@ -323,6 +324,19 @@ This script will parse input URL
         self.files.update({ ftype : v })
 
     return self
+
+  def input_html_process(self):
+
+    fih = self.files.get('input_html')
+    if not ( fih and os.path.isfile(fih) ):
+      return self
+
+    fih = os.path.abspath(fih)
+    bs = BeautifulSoup(open(fih),'html5lib')
+    self.soups[fih] = bs
+    import pdb; pdb.set_trace()
+
+    exit(0)
 
   def init_tmpl(self):
     self.template_loader = jinja2.FileSystemLoader(searchpath=self._dir('tmpl'))
@@ -1983,7 +1997,7 @@ This script will parse input URL
 
   def parse(self):
 
-    #i_file = self.
+
 
     urls = getattr(self,'urls',[]) 
     for d in urls:
@@ -2007,11 +2021,12 @@ This script will parse input URL
 
   def main(self):
 
-    self                  \
-      .get_opt()          \
-      .init()             \
-      .fill_vars()        \
-      .parse()            \
-      .render_page_list() \
+    self                    \
+      .get_opt()            \
+      .input_html_process() \
+      .init()               \
+      .fill_vars()          \
+      .parse()              \
+      .render_page_list()   \
 
 
