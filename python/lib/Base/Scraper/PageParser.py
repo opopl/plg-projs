@@ -30,6 +30,9 @@ class RootPageParser(CoreClass):
       'app'         : self.app
     })
 
+  def clean(self,ref={}):
+    return self
+
   def generate_ii(self,ref={}):
     app = self.app
     if app.page.title:

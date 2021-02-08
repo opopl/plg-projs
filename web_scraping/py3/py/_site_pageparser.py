@@ -19,3 +19,11 @@ class PageParser(RootPageParser):
     super().get_date(ref)
 
     return self
+
+  def clean(self,ref={}):
+    super().clean(ref)
+
+    app = self.app
+    soup = app.soup
+
+    return self

@@ -943,6 +943,10 @@ This script will parse input URL
       for el in els_clean:
         el.decompose()
 
+    p = self.page_parser
+    if p:
+      p.clean()
+
     return self
 
   def page_header_insert_url(self):
