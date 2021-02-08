@@ -365,10 +365,16 @@ This script will parse input URL
       for ln in lnums:
         line = lines_dict.get(ln)
         if re.search(rf'{grep}',line):
-          found.append([ ln, line ])
+          for lj in range( ln - scope, ln + scope ):
+            line_j = lines_dict.get(lj)
+            sign = ''
+            if lj == ln:
+              sign = '=>'
+
+            found.append([ lj, sign, line_j ])
 
       if len(found):
-        t = tabulate(found,headers = [ 'Line Number', 'Line' ])
+        t = tabulate(found,headers = [ 'N', 'F', 'L' ])
         print(t)
 
     find = util.get(self,'oa.find')
