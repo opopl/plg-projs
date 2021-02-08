@@ -7,6 +7,7 @@ import sys,os
 import yaml
 import re
 import json
+import tabulate
 
 import datetime
 
@@ -325,6 +326,7 @@ This script will parse input URL
 
     return self
 
+###ih
   def input_html_process(self):
 
     fih = self.files.get('input_html')
@@ -339,14 +341,20 @@ This script will parse input URL
     bs = BeautifulSoup(cnt,'html5lib')
     self.soups[fih] = bs
 
+###grep
     grep = util.get(self,'oa.grep')
     if grep:
       found = []
       ln = 1
       for line in cnt.split('\n'):
         if re.search(rf'{grep}',line):
-          found.append({ 'ln' : ln, 'line' : line })
+          found.append({ ln, line ])
         ln += 1
+
+      if len(found):
+        t = tabulate(found,headers=['Line Number','Line'])
+        print(t)
+
 
     find = util.get(self,'oa.find')
 
