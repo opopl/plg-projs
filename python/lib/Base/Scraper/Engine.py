@@ -1174,9 +1174,18 @@ This script will parse input URL
         self.log('WARN[page_load_ld_json] JSON decode errors')
         continue
 
-      j.append(jj)
+      if type(jj) is dict:
+        j.append(jj)
+      elif type(jj) is list:
+        j.extend(jj)
 
     self.page.set({ 'ld_json' : j })
+
+    if len(j):
+      yy = yaml.dump(j)
+      yfile = self._file_rid({ 'tipe' : 'ld_json', 'ext' : 'yaml' })
+      with open(yfile, 'w') as f:
+        f.write(yy)
 
     return self
 
