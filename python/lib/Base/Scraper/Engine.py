@@ -1548,6 +1548,19 @@ This script will parse input URL
 
     return rid
 
+  def _db_url_itm(self, ref={}):
+    url = ref.get('url')
+
+    if not url:
+      url = self.page.url
+
+    q = '''SELECT * FROM pages WHERE url = ?'''
+    dw = dbw.sql_fetchone(q,p,{ 
+        'db_file' : self.dbfile.pages 
+    })
+
+    return dw 
+
   def _db_get_auth(self, ref={}):
     auth_id = ref.get('auth_id')
     if not auth_id:
