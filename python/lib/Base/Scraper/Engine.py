@@ -344,6 +344,12 @@ This script will parse input URL
     bs = BeautifulSoup(cnt,'html5lib')
     self.soups[fih] = bs
 
+###find
+    find  = util.get(self,'oa.find')
+    if find:
+      els = bs.select(find)
+      print(els)
+
 ###grep
     grep  = util.get(self,'oa.grep')
     scope = util.get(self,'oa.gs',10)
