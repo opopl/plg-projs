@@ -281,7 +281,7 @@ This script will parse input URL
   dbfile = dbFile()
 
   # list of urls to be fetched and parsed
-  urls = []
+  urldata = []
 
   # end: attributes }
 
@@ -404,17 +404,10 @@ This script will parse input URL
 
 ###db
 ###db_init
-  def init_db_urls(self):
-    self.log('[init_db_urls]')
+  def init_db_pages(self):
+    self.log('[init_db_pages]')
   
     sql = '''
-            -- ALTER TABLE urls ADD COLUMN baseurl TEXT;
-            -- ALTER TABLE urls ADD COLUMN host TEXT;
-
-            ALTER TABLE urls ADD COLUMN day INTEGER;
-            ALTER TABLE urls ADD COLUMN month INTEGER;
-            ALTER TABLE urls ADD COLUMN year INTEGER;
-            ALTER TABLE urls ADD COLUMN ok INTEGER;
 
             DROP TABLE IF EXISTS log;
 
@@ -635,8 +628,8 @@ This script will parse input URL
     zdata = z.data
     zorder = z.order
 
-    if not self.urls:
-      self.urls = []
+    if not self.urldata:
+      self.urldata = []
 
     for k in zdata.keys():
       if k in util.qw('order lines_main lines_eof'):
@@ -645,7 +638,7 @@ This script will parse input URL
       url = k
       d = zdata.get(url)
       if not d.get('off'):
-        self.urls.append(d)
+        self.urldata.append(d)
 
     return self
 
@@ -990,7 +983,7 @@ This script will parse input URL
   def page_add(self):
     uri_dict = {
         'base'   : self.page.baseurl,
-        'remote' : self.page.url,
+        'url' : self.page.url,
     }
 
     tipe_map = { 
@@ -1532,7 +1525,7 @@ This script will parse input URL
     conn = sqlite3.connect(db_file)
     c = conn.cursor()
 
-    q = '''SELECT MAX(rid) FROM urls'''
+    q = '''SELECT MAX(rid) FROM pages'''
     c.execute(q)
     rw = c.fetchone()
     rid = rw[0]
@@ -1630,14 +1623,14 @@ This script will parse input URL
           return self
 
     insert = {
-      'remote' : self.page.url,
+      'url' : self.page.url,
     }
     insert.update(ins)
     self.page.set(ins)
 
     cols = dbw._cols({
         'db_file' : self.dbfile.pages,
-        'table'   : 'urls',
+        'table'   : 'pages',
     })
 
     for k in self.page.__dict__.keys():
@@ -1650,7 +1643,7 @@ This script will parse input URL
 
     d = {
       'db_file' : self.dbfile.pages,
-      'table'   : 'urls',
+      'table'   : 'pages',
       'insert'  : insert,
     }
     dbw.insert_dict(d)
@@ -1727,7 +1720,7 @@ This script will parse input URL
     if not url:
       url = self.page.url
 
-    q = '''SELECT rid FROM urls WHERE remote = ?'''
+    q = '''SELECT rid FROM pages WHERE url = ?'''
     c.execute(q,[url])
     rw = c.fetchone()
 
@@ -1777,8 +1770,8 @@ This script will parse input URL
 
     q = f'''SELECT 
                 MAX(ii_num) 
-            FROM urls 
-                WHERE ( NOT remote = ? ) AND ii_full LIKE "{pattern}%"
+            FROM pages 
+                WHERE ( NOT url = ? ) AND ii_full LIKE "{pattern}%"
          '''
     c.execute(q,[ self.page.url ])    
     rw = c.fetchone()
@@ -1887,7 +1880,7 @@ This script will parse input URL
   def page_save_db_record(self,ref={}):
     file = self._file_rid({ 'tipe' : 'dbrid', 'ext' : 'html' })
 
-    q = '''SELECT * FROM urls WHERE remote = ? '''
+    q = '''SELECT * FROM pages WHERE url = ? '''
     p = [ self.page.url ]
     dw = dbw.sql_fetchone(q,p,{ 'db_file' : self.dbfile.pages })
     if not dw:
@@ -2075,8 +2068,8 @@ This script will parse input URL
 
   def parse(self):
 
-    urls = getattr(self,'urls',[]) 
-    for d in urls:
+    urldata = getattr(self,'urldata',[]) 
+    for d in urldata:
       self.parse_url(d)
     
     return self
@@ -2087,7 +2080,7 @@ This script will parse input URL
       .init_dirs()        \
       .init_files()       \
       .init_npm()         \
-      .init_db_urls()     \
+      .init_db_pages()    \
       .init_tmpl()        \
       .mk_dirs()          \
       .load_yaml()        \
