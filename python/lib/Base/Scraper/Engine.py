@@ -408,6 +408,7 @@ This script will parse input URL
             ALTER TABLE urls ADD COLUMN day INTEGER;
             ALTER TABLE urls ADD COLUMN month INTEGER;
             ALTER TABLE urls ADD COLUMN year INTEGER;
+            ALTER TABLE urls ADD COLUMN ok INTEGER;
 
             DROP TABLE IF EXISTS log;
 
@@ -434,7 +435,8 @@ This script will parse input URL
                 author_id_first TEXT,
                 author TEXT,
                 tags TEXT,
-                encoding TEXT
+                encoding TEXT,
+                ok INTEGER
             );
 
             CREATE TABLE IF NOT EXISTS authors (
@@ -992,7 +994,6 @@ This script will parse input URL
         })
 
     self.page.set({
-      'rid'   : self.page.rid,
       'uri'   : uri_dict
     })
 
@@ -1266,7 +1267,11 @@ This script will parse input URL
       return self
 
     ii  = ref.get('ii','')
-    self.page = Page({ 'url' : url, 'ii' : ii })
+    self.page = Page({ 
+        'url' : url,
+        'ii'  : ii,
+        'ok'  : 1,
+    })
 
     d = util.url_parse(self.page.url)
 
@@ -1345,11 +1350,11 @@ This script will parse input URL
     date = util.get(self,'page.date')
     if not date:
       try:
-        self.die(f'[page_get_date] no date!')
-      except:
         raise Exception
+      except:
+        self.die(f'[page_get_date] no date!')
       finally:
-        self.db_save_url()
+        self.db_save_url({ 'ok' : 0 })
 
     self.log(f'[page_get_date] got date: {date}')
 
@@ -1595,21 +1600,27 @@ This script will parse input URL
   #   load_soup
 
 ###db_save
-  def db_save_url(self):
+  def db_save_url(self,ins = {}):
 
     db_file = self.dbfile.pages
     conn = sqlite3.connect(db_file)
     c = conn.cursor()
 
-    self.page.rid = self._rid_new()
-    if self._url_saved_db():
-      self.page.rid = self._rid_url()
-      if not self._act('db_update'):
-        return self
+    rid = self._rid_url()
+    if not rid:
+      rid = self._rid_new()
+
+    self.page.rid = rid 
+
+    if not len(ins):
+      if self._url_saved_db():
+        if not self._act('db_update'):
+          return self
 
     insert = {
       'remote' : self.page.url,
     }
+    insert.update(ins)
 
     cols = dbw._cols({
         'db_file' : self.dbfile.pages,
