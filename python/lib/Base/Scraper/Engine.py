@@ -365,16 +365,22 @@ This script will parse input URL
       for ln in lnums:
         line = lines_dict.get(ln)
         if re.search(rf'{grep}',line):
+          found.append([ ln, line ])
+
+          found_j = []
           for lj in range( ln - scope, ln + scope ):
             line_j = lines_dict.get(lj)
             sign = ''
             if lj == ln:
               sign = '=>'
 
-            found.append([ lj, sign, line_j ])
+            found_j.append([ lj, sign, line_j ])
+
+          t = tabulate(found_j,headers = util.qw('N F L'))
+          print(t)
 
       if len(found):
-        t = tabulate(found,headers = [ 'N', 'F', 'L' ])
+        t = tabulate(found,headers = util.qw('N L'))
         print(t)
 
     find = util.get(self,'oa.find')
@@ -2039,8 +2045,6 @@ This script will parse input URL
     return self
 
   def parse(self):
-
-
 
     urls = getattr(self,'urls',[]) 
     for d in urls:
