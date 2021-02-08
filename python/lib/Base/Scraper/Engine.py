@@ -306,7 +306,7 @@ This script will parse input URL
     self.parser.add_argument("-y", "--f_yaml", help="input YAML file",default="")
     self.parser.add_argument("-z", "--f_zlan", help="input ZLAN file",default="")
 
-    self.parser.add_argument("-i", "--i_html", help="input HTML file",default="")
+    self.parser.add_argument("-i", "--f_input_html", help="input HTML file",default="")
     self.parser.add_argument("-f", "--find", help="Find elements via XPATH/CSS",default="")
     
     self.oa = self.parser.parse_args()
@@ -315,7 +315,7 @@ This script will parse input URL
       self.parser.print_help()
       sys.exit()
 
-    for k in util.qw('f_yaml f_zlan'):
+    for k in util.qw('f_yaml f_zlan f_input_html'):
       v  = util.get(self,[ 'oa', k ])
       m = re.match(r'^f_(\w+)$', k)
       if m:
@@ -1982,6 +1982,8 @@ This script will parse input URL
     return self
 
   def parse(self):
+
+    #i_file = self.
 
     urls = getattr(self,'urls',[]) 
     for d in urls:
