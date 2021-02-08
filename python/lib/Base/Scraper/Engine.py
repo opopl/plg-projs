@@ -425,11 +425,11 @@ This script will parse input URL
                 og_url TEXT
             );
 
-            CREATE TABLE IF NOT EXISTS urls (
+            CREATE TABLE IF NOT EXISTS pages (
                 baseurl TEXT,
                 host TEXT,
                 rid INTEGER UNIQUE,
-                remote TEXT UNIQUE NOT NULL,
+                url TEXT UNIQUE NOT NULL,
                 date TEXT,
                 title TEXT,
                 title_h TEXT,
@@ -1633,6 +1633,7 @@ This script will parse input URL
       'remote' : self.page.url,
     }
     insert.update(ins)
+    self.page.set(ins)
 
     cols = dbw._cols({
         'db_file' : self.dbfile.pages,
