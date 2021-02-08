@@ -310,7 +310,9 @@ This script will parse input URL
 
     self.parser.add_argument("-i", "--f_input_html", help="input HTML file",default="")
     self.parser.add_argument("-f", "--find", help="Find elements via XPATH/CSS",default="")
+
     self.parser.add_argument("-g", "--grep", help="Grep in input file(s)",default="")
+    self.parser.add_argument("--gs", help="Grep scope",default=10)
     
     self.oa = self.parser.parse_args()
 
@@ -343,15 +345,27 @@ This script will parse input URL
     self.soups[fih] = bs
 
 ###grep
-    grep = util.get(self,'oa.grep')
+    grep  = util.get(self,'oa.grep')
+    scope = util.get(self,'oa.gs',10)
+
     if grep:
       found = []
-      ln = 1
+
       lines = cnt.split('\n')
+      lines_dict = {}
+
+      lnums = []
+      ln = 1
       for line in lines:
+        lnums.append(ln)
+
+        lines_dict[ln] = line
+        ln += 1
+
+      for ln in lnums:
+        line = lines_dict.get(ln)
         if re.search(rf'{grep}',line):
           found.append([ ln, line ])
-        ln += 1
 
       if len(found):
         t = tabulate(found,headers = [ 'Line Number', 'Line' ])
