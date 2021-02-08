@@ -1548,7 +1548,7 @@ This script will parse input URL
 
     return rid
 
-  def _db_url_itm(self, ref={}):
+  def _db_urlpage(self, ref={}):
     url = ref.get('url')
 
     if not url:
