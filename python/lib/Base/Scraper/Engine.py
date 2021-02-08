@@ -899,6 +899,8 @@ This script will parse input URL
     clean = []
     clean.extend( util.get(self,'cnf.sel.clean',[]) )
 
+    keep = self._sel_keep()
+
     return clean
 
   def _sel_keep(self, site=None):
