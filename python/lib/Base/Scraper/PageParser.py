@@ -25,10 +25,24 @@ class RootPageParser(CoreClass):
   def __init__(self,ref={}):
     super().__init__(ref)
 
+    app = self.app
+
     self.auth_obj = Author({ 
       'page_parser' : self,
       'app'         : self.app
     })
+
+    self.url = app.page.url
+    self.og_url = util.get(self.app,'page.meta.og_url')
+    if self.og_url:
+      self.url = self.og_url
+
+    self.url_struct = u = util.url_parse(self.url)
+    self.url_path = path = u['path']
+
+    parts = path.split('/')
+    f = filter(lambda x: len(x) > 0, path.split('/') )
+    self.url_parts = list(f)
 
   def clean(self,ref={}):
     return self
