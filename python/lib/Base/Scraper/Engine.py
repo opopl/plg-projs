@@ -757,7 +757,14 @@ This script will parse input URL
     #ok = 1 if not ref.get('redo',0) \
       #and ( self._site_skip() or self._url_saved_fs() )  \
       #else 0
-    ok = not ref.get('redo',0)
+    dw = self._db_urlpage()
+    ok_db = dw.get('row',{}).get('ok')
+
+    ok = 1
+    if not ( ok_db == None ):
+      ok = ok_db
+
+    ok = ok and not ref.get('redo',0)
     ok = ok and ( self._site_skip() or self._url_saved_fs() )
 
     return ok
