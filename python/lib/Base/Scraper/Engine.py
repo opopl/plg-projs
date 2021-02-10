@@ -11,6 +11,7 @@ import json
 from tabulate import tabulate
 
 import datetime
+#from cdata.core import any2utf8
 
 import sqlite3
 import sqlparse
@@ -1190,32 +1191,25 @@ This script will parse input URL
 
           ln = e_data.pop(0).strip()
 
-          if re.match(r'^/\*<![CDATA[\*/$',ln):
+          if re.match(r'^/\*<!\[CDATA\[\*/$',ln):
             continue
-          if re.match(r'^/\*]]>\*/$',ln):
+          if re.match(r'^/\*\]\]>\*/$',ln):
             continue
           
           e_data_new.append(ln)
 
         e_new = '\n'.join(e_data_new)
 
-        soup_e = BeautifulSoup(e_new,'html.parser')
-        for es in soup_e.findAll(text=True):
-          ss = es.string
-          if not ss:
-            continue
-
-          #ss = re.sub(r'^\s*\*/(.*)\*/\s*$', '\1', ss)
-          #m = re.match(r'',ss)
-          #if m:
-            #<++>
-
-          jj = None
+        jj = None
           try:
-            jj = json.loads(ss)
+            ss = str(ss)
+            ss = ss.replace('\r\n', '')
+            ss = rf'{ss}'
+            #ss = self.html_parser.unescape(ss)
+            jj = json.loads(ss,strict=False)
           except:
             import pdb; pdb.set_trace()
-            #raise
+            raise
 
           if jj:
             if type(jj) is dict:
