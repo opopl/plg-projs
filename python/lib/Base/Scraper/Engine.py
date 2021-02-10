@@ -16,6 +16,9 @@ import sqlite3
 import sqlparse
 import cairosvg
 
+from rdflib import Graph, plugin
+from rdflib.serializer import Serializer
+
 import html.parser
 import html
 
@@ -1178,15 +1181,59 @@ This script will parse input URL
     j = []
     for e in els_jd:
       try:
-        jj = json.loads(e.string)
+        e_data = e.string.split('\n')
+        e_data_new = []
+
+        iln = 0
+        while len(e_data):
+          iln += 1
+
+          ln = e_data.pop(0).strip()
+
+          if re.match(r'^/\*<![CDATA[\*/$',ln):
+            continue
+          if re.match(r'^/\*]]>\*/$',ln):
+            continue
+          
+          e_data_new.append(ln)
+
+        e_new = '\n'.join(e_data_new)
+
+        soup_e = BeautifulSoup(e_new,'html.parser')
+        for es in soup_e.findAll(text=True):
+          ss = es.string
+          if not ss:
+            continue
+
+          #ss = re.sub(r'^\s*\*/(.*)\*/\s*$', '\1', ss)
+          #m = re.match(r'',ss)
+          #if m:
+            #<++>
+
+          jj = None
+          try:
+            jj = json.loads(ss)
+          except:
+            import pdb; pdb.set_trace()
+            #raise
+
+          if jj:
+            if type(jj) is dict:
+              j.append(jj)
+            elif type(jj) is list:
+              j.extend(jj)
+        #g = Graph().parse(data=jj)
       except:
-        self.log('WARN[page_load_ld_json] JSON decode errors')
+        #self.log('WARN[page_load_ld_json] JSON decode errors')
+        #self.log(e.string)
+        #import pdb; pdb.set_trace()
+        raise
         continue
 
-      if type(jj) is dict:
-        j.append(jj)
-      elif type(jj) is list:
-        j.extend(jj)
+      #if type(jj) is dict:
+        #j.append(jj)
+      #elif type(jj) is list:
+        #j.extend(jj)
 
     self.page.set({ 'ld_json' : j })
 
@@ -1377,7 +1424,7 @@ This script will parse input URL
       except:
         self.die(f'[page_get_date] no date!')
       finally:
-        self.db_save_url({ 'ok' : 0 })
+        self.on_fail()
 
     self.log(f'[page_get_date] got date: {date}')
 
@@ -1392,6 +1439,23 @@ This script will parse input URL
 
     self.page.set(dd)
     #date = d.strftime()
+
+    return self
+
+  def page2yaml(self):
+
+    dy = yaml.dump(self.page.__dict__)
+    yfile = self._file_rid({ 'tipe' : 'page', 'ext' : 'yaml' })
+    with open(yfile, 'w') as f:
+      f.write(dy)
+
+    return self
+
+  def on_fail(self):
+
+    self                           \
+        .db_save_url({ 'ok' : 0 }) \
+        .page2yaml()               \
 
     return self
 

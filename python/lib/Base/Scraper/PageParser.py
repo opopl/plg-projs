@@ -41,7 +41,7 @@ class RootPageParser(CoreClass):
     self.url_path = path = u['path']
 
     parts = path.split('/')
-    f = filter(lambda x: len(x) > 0, path.split('/') )
+    f = filter(lambda x: len(x) > 0, parts )
     self.url_parts = list(f)
 
   def clean(self,ref={}):
