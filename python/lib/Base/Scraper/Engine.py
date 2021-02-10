@@ -756,24 +756,27 @@ This script will parse input URL
     ii_file = os.path.join(self._dir_ii({ 'rid' : rid }),f'{tipe}.{ext}')
     return ii_file
 
-  def _need_skip(self,ref={}):
+  def _need_process(self,ref={}):
 
-    #ok = 1 if not ref.get('redo',0) \
-      #and ( self._site_skip() or self._url_saved_fs() )  \
-      #else 0
     dw = self._db_urlpage()
-    ok = 1
+    need = 1
 
     if dw:
       ok_db = dw.get('row',{}).get('ok')
 
       if not ( ok_db == None ):
-        ok = ok_db
+        if not ok_db:
+          return 1
 
-    ok = ok and not ref.get('redo',0)
-    ok = ok and ( self._site_skip() or self._url_saved_fs() )
+      date_db = dw.get('row',{}).get('date')
+      if not date_db:
+        return 1
 
-    return ok
+    need = need and ref.get('redo',0)
+    need = need and not self._site_skip()
+    need = need and not self._url_saved_fs() 
+
+    return need
 
   def _need_load_cache(self):
     #ok = 1 if not self._act('fetch')  \
@@ -1348,7 +1351,7 @@ This script will parse input URL
 
     self.page_set_acts(ref)
 
-    if self._need_skip(ref):
+    if not self._need_process(ref):
        return self
 
     self.log(f'[site_extract] site = {self.page.site}')
