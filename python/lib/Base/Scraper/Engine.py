@@ -80,10 +80,10 @@ class mixLogger:
     print(msg)
     self.log_db(msg)
 
-    f_log = self._file('log'):
+    f_log = self._file('log')
     if f_log:
       with open(f_log, 'a') as f:
-        f.write(msg)
+        f.write(msg + '\n')
     
     return self
 
@@ -519,9 +519,12 @@ This script will parse input URL
 
   def init_files(self):
 
+    f_log = self._dir('out','log.txt')
     self.files.update({ 
-        'log' : self._dir('bin_yaml','log.txt'),
+        'log' : f_log,
     })
+    if os.path.isfile(f_log):
+      Path(f_log).unlink()
 
     self.files.update({ 
         'package_json'           : self._dir('html','package.json'),
