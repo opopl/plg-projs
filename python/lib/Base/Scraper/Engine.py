@@ -79,6 +79,11 @@ class mixLogger:
       
     print(msg)
     self.log_db(msg)
+
+    f_log = self._file('log'):
+    if f_log:
+      with open(f_log, 'a') as f:
+        f.write(msg)
     
     return self
 
@@ -513,6 +518,11 @@ This script will parse input URL
     return self
 
   def init_files(self):
+
+    self.files.update({ 
+        'log' : self._dir('bin_yaml','log.txt'),
+    })
+
     self.files.update({ 
         'package_json'           : self._dir('html','package.json'),
         'webpack_config_js.vcs'  : self._dir('bin','js webpack.config.js'),
