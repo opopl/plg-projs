@@ -1185,10 +1185,7 @@ This script will parse input URL
         e_data = e.string.split('\n')
         e_data_new = []
 
-        iln = 0
         while len(e_data):
-          iln += 1
-
           ln = e_data.pop(0).strip()
 
           if re.match(r'^/\*<!\[CDATA\[\*/$',ln):
@@ -1199,23 +1196,24 @@ This script will parse input URL
           e_data_new.append(ln)
 
         e_new = '\n'.join(e_data_new)
+        ss = e_new
 
         jj = None
-          try:
-            ss = str(ss)
-            ss = ss.replace('\r\n', '')
-            ss = rf'{ss}'
-            #ss = self.html_parser.unescape(ss)
-            jj = json.loads(ss,strict=False)
-          except:
-            import pdb; pdb.set_trace()
-            raise
+        try:
+          ss = str(ss)
+          ss = ss.replace('\r\n', '')
+          ss = rf'{ss}'
+          #ss = self.html_parser.unescape(ss)
+          jj = json.loads(ss,strict=False)
+        except:
+          import pdb; pdb.set_trace()
+          raise
 
-          if jj:
-            if type(jj) is dict:
-              j.append(jj)
-            elif type(jj) is list:
-              j.extend(jj)
+        if jj:
+          if type(jj) is dict:
+            j.append(jj)
+          elif type(jj) is list:
+            j.extend(jj)
         #g = Graph().parse(data=jj)
       except:
         #self.log('WARN[page_load_ld_json] JSON decode errors')
