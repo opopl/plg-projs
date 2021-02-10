@@ -761,6 +761,9 @@ This script will parse input URL
     dw = self._db_urlpage()
     need = 1
 
+    if self._site_skip():
+      return 0
+
     if dw:
       ok_db = dw.get('row',{}).get('ok')
 
@@ -772,8 +775,9 @@ This script will parse input URL
       if not date_db:
         return 1
 
-    need = need and ref.get('redo',0)
-    need = need and not self._site_skip()
+    if ref.get('redo',0):
+      return 1
+
     need = need and not self._url_saved_fs() 
 
     return need
