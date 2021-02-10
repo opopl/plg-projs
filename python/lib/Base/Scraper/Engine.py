@@ -572,6 +572,10 @@ This script will parse input URL
       stem = pp.stem
 
       self.dirs.update({
+          'bin_yaml'      : dir,
+      })
+
+      self.dirs.update({
           'out'      : os.path.join(dir,'out',stem),
           'in'       : os.path.join(dir,'in'),
           'in_sites' : os.path.join(dir,'in','sites'),
@@ -1244,7 +1248,7 @@ This script will parse input URL
 
     return self
 
-###pu
+###pur
   def parse_url_run(self,ref={}):
     tipes = util.qw('img img_clean')
 
@@ -1329,6 +1333,7 @@ This script will parse input URL
 
     return self
   
+###pu
   def parse_url(self,ref={}):
     url = ref.get('url','')
 
@@ -1423,7 +1428,7 @@ This script will parse input URL
       try:
         raise Exception
       except:
-        self.die(f'[page_get_date] no date!')
+        self.die(f'ERROR[page_get_date] NO DATE: {self.page.url}')
       finally:
         self.on_fail()
 
