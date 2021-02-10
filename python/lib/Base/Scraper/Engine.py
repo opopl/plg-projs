@@ -63,12 +63,12 @@ class dbFile(CoreClass):
 class mixLogger:
 
   def die(self,msg=''):
-    self.log_db(msg)
+    self.log(msg)
     raise Exception(msg)    
 
     return self
 
-  def log(self,msg=[]):
+  def log(self,msg=[],opts={}):
     if type(msg) is list:
       for m in msg:
         self.log(m)
@@ -80,10 +80,11 @@ class mixLogger:
     print(msg)
     self.log_db(msg)
 
-    f_log = self._file('log')
-    if f_log:
-      with open(f_log, 'a') as f:
-        f.write(msg + '\n')
+    for lid in util.qw('log log_short'):
+      f_log = self._file(lid)
+      if f_log:
+        with open(f_log, 'a') as f:
+          f.write(msg + '\n')
     
     return self
 
@@ -519,12 +520,15 @@ This script will parse input URL
 
   def init_files(self):
 
-    f_log = self._dir('out','log.txt')
-    self.files.update({ 
-        'log' : f_log,
-    })
-    if os.path.isfile(f_log):
-      Path(f_log).unlink()
+    for lid in util.qw('log log_short'):
+      f_log = self._dir('out',f'{lid}.txt')
+
+      self.files.update({ 
+          lid : f_log,
+      })
+
+      if os.path.isfile(f_log):
+        Path(f_log).unlink()
 
     self.files.update({ 
         'package_json'           : self._dir('html','package.json'),
