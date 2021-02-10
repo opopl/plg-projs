@@ -1335,6 +1335,8 @@ This script will parse input URL
     if not url or url == const.plh:
       return self
 
+    url = url.strip()
+
     ii  = ref.get('ii','')
     self.page = Page({ 
         'url' : url,
