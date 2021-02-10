@@ -80,7 +80,10 @@ class mixLogger:
     print(msg)
     self.log_db(msg)
 
-    for lid in util.qw('log log_short'):
+    log_ids = util.qw('log')
+    log_ids = opts.get('log_ids',log_ids) 
+
+    for lid in log_ids:
       f_log = self._file(lid)
       if f_log:
         with open(f_log, 'a') as f:
