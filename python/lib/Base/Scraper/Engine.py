@@ -64,6 +64,7 @@ class mixLogger:
 
   def die(self,msg=''):
     self.log(msg)
+
     raise Exception(msg)    
 
     return self
@@ -145,7 +146,12 @@ class Pic(CoreClass):
     app.log(f"[page_do_imgs] Getting image: \n\t{pic.url}")
 
     i = None
-    resp = requests.get(pic.url, stream = True)
+    try:
+      resp = requests.get(pic.url, stream = True)
+    except:
+      app.on_fail()
+      self.die(f'ERROR[Pic][grab] {pic.url}')
+
     resp.raw.decoded_content = True
 
     i_tmp = { 
@@ -154,6 +160,17 @@ class Pic(CoreClass):
     }
     with open(i_tmp['bare'], 'wb') as lf:
       shutil.copyfileobj(resp.raw, lf)
+
+    f = i_tmp['bare']
+    if (not os.path.isfile(f)) or os.stat(f).st_size == 0:
+      app.log(f'FAIL[page_do_imgs] empty file: {pic.url}')
+      self.on_fail()
+      return self
+
+    f_size = os.stat(f).st_size
+    app.log(f'[page_do_imgs] image file size: {f_size}')
+
+###ilocal
 
     ct = resp.headers['content-type']
 
@@ -175,6 +192,7 @@ class Pic(CoreClass):
       
     if not i:
       app.log(f'FAIL[page_do_imgs] no Image.open instance: {pic.url}')
+      self.on_fail()
       return pic
       
     app.log(f'[page_do_imgs] Image format: {i.format}')
