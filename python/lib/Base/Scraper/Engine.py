@@ -69,7 +69,7 @@ class mixLogger:
     return self
 
   def log_short(self,msg=[]):
-    self.log(msg,{ 'log_ids' : [ 'log_short' ])
+    self.log(msg,{ 'log_ids' : 'log_short' })
     return self
 
   def log(self,msg=[],opts={}):
@@ -85,7 +85,9 @@ class mixLogger:
     self.log_db(msg)
 
     log_ids = util.qw('log')
-    log_ids = opts.get('log_ids',log_ids) 
+    log_ids_in = opts.get('log_ids',log_ids) 
+    if type(log_ids_in) is str:
+      log_ids = util.qw(log_ids_in)
 
     for lid in log_ids:
       f_log = self._file(lid)
