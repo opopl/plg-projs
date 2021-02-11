@@ -865,7 +865,11 @@ This script will parse input URL
     headers = {
      'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.3'
     }
-    r = requests.get(url,headers=headers)
+
+    try:
+      r = requests.get(url,headers=headers)
+    except:
+      self.die(f'ERROR[url_fetch] url: {url}')
 
     encoding = 'utf-8'
 
