@@ -8,6 +8,14 @@ class CoreClass:
     for k, v in args.items():
       setattr(self, k, v)
 
+  def listadd(self, path = None, items = []):
+    lst = util.get(self,path,[])
+    lst.extend(items)
+
+    setattr(self, path, lst)
+
+    return self
+
   def set(self, ref = {}):
     for k, v in ref.items():
       setattr(self, k, v)

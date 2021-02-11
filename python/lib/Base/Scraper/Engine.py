@@ -529,7 +529,7 @@ This script will parse input URL
 
   def init_files(self):
 
-    for lid in util.qw('log log_short'):
+    for lid in util.qw('log log_short log_need'):
       f_log = self._dir('out',f'{lid}.txt')
 
       self.files.update({ 
@@ -789,9 +789,12 @@ This script will parse input URL
   def _need_process(self,ref={}):
 
     dw  = self._db_urlpage()
-    dwr = dw.get('row',{}) if dw else None
+    dwr = dw.get('row',{}) if dw else {}
 
     need = 1
+
+    ok_db = None
+    date_db = None
 
     while 1:
       if self._site_skip():
@@ -806,18 +809,23 @@ This script will parse input URL
         ok_db = dwr.get('ok')
   
         if not ( ok_db == None ):
-          if not ok_db:
+          if ok_db == 0:
              need = 1
+             self.page.set({ 'db_update' : 1 })
              break
     
         date_db = dwr.get('date')
         if not date_db:
           need = 1
+          self.page.set({ 'db_update' : 1 })
           break
 
       need = need and not self._url_saved_fs() 
 
       break
+
+    if need:
+      self.log(f'date_db: {date_db}, ok_db: {ok_db}, url: {self.page.url}', { 'log_ids' : 'log_need' })
 
     self.log_short(f'rid: {self.page.rid}, need: {need}, url: {self.page.url}')
 
