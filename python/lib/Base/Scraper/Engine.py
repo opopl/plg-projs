@@ -1472,27 +1472,28 @@ This script will parse input URL
 
     p.get_date()
     date = util.get(self,'page.date')
+
     if not date:
-      try:
-        raise Exception
-      except:
-        import pdb; pdb.set_trace()
-        self.die(f'ERROR[page_get_date] NO DATE: {self.page.url}')
-      finally:
-        self.on_fail()
+      if not self._opt('no_date'):
+        try:
+          raise Exception
+        except:
+          self.die(f'ERROR[page_get_date] NO DATE: {self.page.url}')
+        finally:
+          self.on_fail()
+    else:
+      self.log(f'[page_get_date] got date: {date}')
 
-    self.log(f'[page_get_date] got date: {date}')
-
-    fmt = '%d_%m_%Y'
-    d = datetime.datetime.strptime(date,fmt)
-
-    dd = { 
-        'day'   : d.day,
-        'year'  : d.year,
-        'month' : d.month,
-    }
-
-    self.page.set(dd)
+      fmt = '%d_%m_%Y'
+      d = datetime.datetime.strptime(date,fmt)
+  
+      dd = { 
+          'day'   : d.day,
+          'year'  : d.year,
+          'month' : d.month,
+      }
+  
+      self.page.set(dd)
     #date = d.strftime()
 
     return self
