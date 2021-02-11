@@ -1363,18 +1363,19 @@ This script will parse input URL
   
     return self
 
-  def page_set_acts(self,ref={}):
+  def page_set_lst(self,ref={}):
 
-    acts = ref.get('acts')
-    if acts:
-      acts_a = []
-      if type(acts) is list:
-        acts_a = acts
-      elif type(acts) is str:
-        acts_a = acts.split(',')
-
-      if acts_a:
-        self.page.set({ 'acts' :  acts_a })
+    for id in util.qw('acts opts')
+      lst = ref.get(id)
+      if lst:
+        lst_a = []
+        if type(lst) is list:
+          lst_a = lst
+        elif type(lst) is str:
+          lst_a = lst.split(',')
+  
+        if lst_a:
+          self.page.set({ id :  lst_a })
 
     self.page.set({ 'tags' : ref.get('tags') })
 
@@ -1407,7 +1408,7 @@ This script will parse input URL
     except:
       return self
 
-    self.page_set_acts(ref)
+    self.page_set_lst(ref)
 
     if not self._need_process(ref):
       return self
@@ -1475,6 +1476,7 @@ This script will parse input URL
       try:
         raise Exception
       except:
+        import pdb; pdb.set_trace()
         self.die(f'ERROR[page_get_date] NO DATE: {self.page.url}')
       finally:
         self.on_fail()
