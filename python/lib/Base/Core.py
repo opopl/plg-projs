@@ -10,6 +10,10 @@ class CoreClass:
 
   def listadd(self, path = None, items = []):
     lst = util.get(self,path,[])
+
+    if type(items) is str:
+      items = util.qw(items)
+
     lst.extend(items)
 
     setattr(self, path, lst)

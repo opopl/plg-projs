@@ -81,13 +81,14 @@ class mixLogger:
     if not type(msg) is str:
       return self
       
-    print(msg)
     self.log_db(msg)
 
     log_ids = util.qw('log')
     log_ids_in = opts.get('log_ids',log_ids) 
     if type(log_ids_in) is str:
       log_ids = util.qw(log_ids_in)
+
+    print(msg)
 
     for lid in log_ids:
       f_log = self._file(lid)
@@ -791,18 +792,18 @@ This script will parse input URL
     dw  = self._db_urlpage()
     dwr = dw.get('row',{}) if dw else {}
 
-    need = 1
+    need = True
 
     ok_db = None
     date_db = None
 
     while 1:
       if self._site_skip():
-        need = 0
+        need = False
         break
   
       if ref.get('redo',0):
-        need = 1
+        need = True
         break
   
       if dwr:
@@ -810,22 +811,22 @@ This script will parse input URL
   
         if not ( ok_db == None ):
           if ok_db == 0:
-             need = 1
-             self.page.set({ 'db_update' : 1 })
+             need = True
+             self.page.listadd('acts','db_update')
              break
     
         date_db = dwr.get('date')
         if not date_db:
-          need = 1
-          self.page.set({ 'db_update' : 1 })
+          need = True
+          self.page.listadd('acts','db_update')
           break
 
       need = need and not self._url_saved_fs() 
 
       break
 
-    if need:
-      self.log(f'date_db: {date_db}, ok_db: {ok_db}, url: {self.page.url}', { 'log_ids' : 'log_need' })
+    #if need:
+      #self.log(f'date_db: {date_db}, ok_db: {ok_db}, url: {self.page.url}', { 'log_ids' : 'log_need' })
 
     self.log_short(f'rid: {self.page.rid}, need: {need}, url: {self.page.url}')
 
