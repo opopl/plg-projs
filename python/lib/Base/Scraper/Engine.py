@@ -150,7 +150,7 @@ class Pic(CoreClass):
       resp = requests.get(pic.url, stream = True)
     except:
       app.on_fail()
-      self.die(f'ERROR[Pic][grab] {pic.url}')
+      app.die(f'ERROR[Pic][grab] {pic.url}')
 
     resp.raw.decoded_content = True
 
