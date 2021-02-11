@@ -68,6 +68,10 @@ class mixLogger:
 
     return self
 
+  def log_short(self,msg=[]):
+    self.log(msg,{ 'log_ids' : [ 'log_short' ])
+    return self
+
   def log(self,msg=[],opts={}):
     if type(msg) is list:
       for m in msg:
