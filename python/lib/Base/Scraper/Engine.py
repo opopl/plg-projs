@@ -1365,7 +1365,7 @@ This script will parse input URL
 
   def page_set_lst(self,ref={}):
 
-    for id in util.qw('acts opts')
+    for id in util.qw('acts opts'):
       lst = ref.get(id)
       if lst:
         lst_a = []
