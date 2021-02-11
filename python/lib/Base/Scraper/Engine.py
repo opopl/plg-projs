@@ -815,11 +815,12 @@ This script will parse input URL
              self.page.listadd('acts','db_update')
              break
     
-        date_db = dwr.get('date')
-        if not date_db:
-          need = True
-          self.page.listadd('acts','db_update')
-          break
+        if not self._opt('no_date'):
+          date_db = dwr.get('date')
+          if not date_db:
+            need = True
+            self.page.listadd('acts','db_update')
+            break
 
       need = need and not self._url_saved_fs() 
 
@@ -1824,6 +1825,12 @@ This script will parse input URL
   def _skip(self,key=None):
     skip = self.page.get('skip',[])
     if key in skip:
+      return 1
+    return 0
+
+  def _opt(self,key=None):
+    opts = self.page.get('opts',[])
+    if key in opts:
       return 1
     return 0
 
