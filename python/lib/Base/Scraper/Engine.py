@@ -828,7 +828,7 @@ This script will parse input URL
     #if need:
       #self.log(f'date_db: {date_db}, ok_db: {ok_db}, url: {self.page.url}', { 'log_ids' : 'log_need' })
 
-    self.log_short(f'rid: {self.page.rid}, need: {need}, url: {self.page.url}')
+    #self.log_short(f'rid: {self.page.rid}, need: {need}, url: {self.page.url}')
 
     return need
 
