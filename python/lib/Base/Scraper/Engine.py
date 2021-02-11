@@ -788,27 +788,38 @@ This script will parse input URL
 
   def _need_process(self,ref={}):
 
-    dw = self._db_urlpage()
+    dw  = self._db_urlpage()
+    dwr = dw.get('row',{}) if dw else None
+
     need = 1
 
-    if self._site_skip():
-      return 0
+    while 1:
+      if self._site_skip():
+        need = 0
+        break
+  
+      if ref.get('redo',0):
+        need = 1
+        break
+  
+      if dwr:
+        ok_db = dwr.get('ok')
+  
+        if not ( ok_db == None ):
+          if not ok_db:
+             need = 1
+             break
+    
+        date_db = dwr.get('date')
+        if not date_db:
+          need = 1
+          break
 
-    if ref.get('redo',0):
-      return 1
+      need = need and not self._url_saved_fs() 
 
-    if dw:
-      ok_db = dw.get('row',{}).get('ok')
+      break
 
-      if not ( ok_db == None ):
-        if not ok_db:
-          return 1
-
-      date_db = dw.get('row',{}).get('date')
-      if not date_db:
-        return 1
-
-    need = need and not self._url_saved_fs() 
+    self.log_short(f'rid: {self.page.rid}, need: {need}, url: {self.page.url}')
 
     return need
 
@@ -1389,7 +1400,7 @@ This script will parse input URL
     self.page_set_acts(ref)
 
     if not self._need_process(ref):
-       return self
+      return self
 
     self.log(f'[site_extract] site = {self.page.site}')
 
