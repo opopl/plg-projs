@@ -1478,7 +1478,7 @@ This script will parse input URL
         try:
           raise Exception
         except:
-          self.die(f'ERROR[page_get_date] NO DATE: {self.page.url}')
+          self.die(f'ERROR[page_get_date] NO DATE: rid: {self.page.rid}, url: {self.page.url}')
         finally:
           self.on_fail()
     else:

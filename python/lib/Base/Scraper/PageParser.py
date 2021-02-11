@@ -38,18 +38,18 @@ class RootPageParser(CoreClass):
       'грудня'    : '12',
     },
     'rus' : {
-	    'января'   : '01',
-	    'февраля'  : '02',
-	    'марта'    : '03',
-	    'апреля'   : '04',
-	    'мая'      : '05',
-	    'июня'     : '06',
-	    'июля'     : '07',
-	    'августа'  : '08',
-	    'сентября' : '09',
-	    'октября'  : '10',
-	    'ноября'   : '11',
-	    'декабря'  : '12',
+      'января'   : '01',
+      'февраля'  : '02',
+      'марта'    : '03',
+      'апреля'   : '04',
+      'мая'      : '05',
+      'июня'     : '06',
+      'июля'     : '07',
+      'августа'  : '08',
+      'сентября' : '09',
+      'октября'  : '10',
+      'ноября'   : '11',
+      'декабря'  : '12',
     }
   }
 
@@ -77,6 +77,19 @@ class RootPageParser(CoreClass):
 
   def clean(self,ref={}):
     return self
+
+  def _el_date_parts(self, el):
+
+    txt = el.get_text()
+    txt_n = txt.split('\n')
+    txt_n = list(map(lambda x: x.strip(),txt_n))
+    txt_n = list(filter(lambda x: len(x) > 0,txt_n))
+    txt = ''.join(txt_n)
+    txt = txt.split(',')[0]
+
+    sa = txt.split()
+
+    return sa
 
   def generate_ii(self,ref={}):
     app = self.app
