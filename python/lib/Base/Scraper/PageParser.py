@@ -78,14 +78,18 @@ class RootPageParser(CoreClass):
   def clean(self,ref={}):
     return self
 
-  def _el_date_parts(self, el):
+  def _el_date_parts(self, el, opts = {}):
+
+    sa = []
+
+    sep = opts.get('sep',const.comma)
 
     txt = el.get_text()
     txt_n = txt.split('\n')
     txt_n = list(map(lambda x: x.strip(),txt_n))
     txt_n = list(filter(lambda x: len(x) > 0,txt_n))
     txt = ''.join(txt_n)
-    txt = txt.split(',')[0]
+    txt = txt.split(sep)[0]
 
     sa = txt.split()
 
@@ -115,6 +119,10 @@ class RootPageParser(CoreClass):
 
   def get_date(self,ref={}):
     app = self.app
+
+    sels = []
+    sels.extend( app._cnf('PageParser.get_date.sels',[]) )
+    sels.extend( app._site_data('PageParser.get_date.sels',[]) )
 
     tries = util.qw('ld_json meta html')
     while len(tries):

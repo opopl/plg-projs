@@ -186,14 +186,16 @@ class Pic(CoreClass):
 
       if ct in [ 'image/svg+xml' ]:
         cairosvg.svg2png( 
-          file_obj=open(i_tmp['bare'], "rb"),
-          write_to=i_tmp['png']
+          file_obj = open(i_tmp['bare'], "rb"),
+          write_to = i_tmp['png']
         )
         i = Image.open(i_tmp['png'])
       
     if not i:
-      app.log(f'FAIL[page_do_imgs] no Image.open instance: {pic.url}')
-      self.on_fail()
+      app                                                             \
+        .log(f'FAIL[page_do_imgs] no Image.open instance: {pic.url}') \
+        .on_fail()                                                    \
+
       return pic
       
     app.log(f'[page_do_imgs] Image format: {i.format}')
@@ -1681,11 +1683,14 @@ This script will parse input URL
     return self
 
   def page_unwrap(self):
+    self.log(f'[page_unwrap] start')
+
     while 1:
       div = self.soup.select_one('div')
       if not div:
         break
       div.unwrap()
+
     return self
 
   def _rid_new(self):

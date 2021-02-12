@@ -228,6 +228,7 @@ function App(){
     $('body').children().remove();
   
     $('body').append(this.$header);
+    $('body').append(this.$pane_links);
     $('body').append(this.$container);
 
     return this;
