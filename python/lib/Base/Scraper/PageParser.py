@@ -202,7 +202,10 @@ class RootPageParser(CoreClass):
 
     date = None
 
-    sels = app._cnf('PageParser.get_date_meta.sels')
+    sels = []
+    sels.extend( app._cnf('PageParser.get_date_meta.sels',[]) )
+    sels.extend( app._site_data('PageParser.get_date_html.sels',[]) )
+
     for sel in sels:
       date = self._sel_date(self.meta, sel)
       if date:
