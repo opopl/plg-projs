@@ -65,6 +65,8 @@ class mixLogger:
   def die(self,msg=''):
     self.log(msg)
 
+    self.on_fail()
+
     raise Exception(msg)    
 
     return self
@@ -149,7 +151,6 @@ class Pic(CoreClass):
     try:
       resp = requests.get(pic.url, stream = True)
     except:
-      app.on_fail()
       app.die(f'ERROR[Pic][grab] {pic.url}')
 
     resp.raw.decoded_content = True
@@ -448,6 +449,7 @@ This script will parse input URL
     sql = '''
 
             DROP TABLE IF EXISTS log;
+            DROP TABLE IF EXISTS tags;
 
             CREATE TABLE IF NOT EXISTS data_meta (
                 rid INTEGER UNIQUE,
@@ -476,13 +478,19 @@ This script will parse input URL
                 ok INTEGER
             );
 
+            CREATE TABLE IF NOT EXISTS page_tags (
+                url TEXT,
+                rid TEXT,
+                tag TEXT
+            );
+
             CREATE TABLE IF NOT EXISTS authors (
                 id TEXT NOT NULL UNIQUE,
                 url TEXT,
                 name TEXT
             );
 
-            CREATE TABLE IF NOT EXISTS tags (
+            CREATE TABLE IF NOT EXISTS tag_stats (
                 tag TEXT NOT NULL UNIQUE,
                 rank INTEGER,
                 rids TEXT
