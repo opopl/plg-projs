@@ -1420,19 +1420,20 @@ This script will parse input URL
     if not url or url == const.plh:
       return self
 
-    url = url.strip()
-
-    ii  = ref.get('ii','')
     self.page = Page({ 
-        'url' : url,
-        'ii'  : ii,
-        'ok'  : 1,
+        'ok'   : 1,
     })
+
+    for k in util.qw('url date tags ii'):
+      v = ref.get(k,'')
+      v = v.strip()
+      self.page.set({ k : v })
 
     d = util.url_parse(self.page.url)
 
     for k in util.qw('host baseurl'):
       v = d[k]
+      v = v.strip()
       self.page.set({ k : v })
 
     try:

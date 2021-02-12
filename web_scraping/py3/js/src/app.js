@@ -14,7 +14,7 @@ function App(){
         .el_btn_reload()
         .el_input_css_delete()
         .el_input_css_show()
-        .el_input_css_unwrap()
+        //.el_input_css_unwrap()
       ;
     
       return this;
@@ -120,7 +120,6 @@ function App(){
   };
 
   this.on_enter_css_unwrap = function(){
-
      return this;
   };
 
@@ -218,21 +217,21 @@ function App(){
     return this;
   };
 
-  this.set_pane_links = function(){
-      var pane = document.createElement('div');
-      pane.className = 'flex-header';
+/*  this.set_pane_links = function(){*/
+      //var pane = document.createElement('div');
+      //pane.className = 'flex-header';
 
-      var a = document.createElement('a');
-      a.href  = '../core.html';
-      a.textContent = 'CORE';
-      $(a).addClass('block').css({ width: '10%' });
+      //var a = document.createElement('a');
+      //a.href  = '../core.html';
+      //a.textContent = 'CORE';
+      //$(a).addClass('block').css({ width: '10%' });
     
-      $(pane).append($(a));
+      //$(pane).append($(a));
 
-      this.$pane_links = $(pane);
+      //this.$pane_links = $(pane);
 
-    return this;
-  };
+    //return this;
+  /*};*/
 
   this.set_container = function(){
       var container = document.createElement('div');
@@ -285,7 +284,6 @@ function App(){
         .set_left()
         .set_right()
         .set_container()
-        .set_pane_links()
         .body_append()
         .events()
      ;
