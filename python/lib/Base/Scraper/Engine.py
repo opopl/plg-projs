@@ -392,6 +392,7 @@ This script will parse input URL
 ###grep
     grep  = util.get(self,'oa.grep')
     scope = util.get(self,'oa.gs',10)
+    scope = int(scope)
 
     if grep:
       found = []
@@ -644,8 +645,7 @@ This script will parse input URL
 
   def mk_dirs(self):
     for k,v in self.dirs.items():
-      #os.makedirs(v,exist_ok=True)
-      Path(v).mkdir(exist_ok=True)
+      os.makedirs(v, exist_ok=True)
 
     return self
 
@@ -1179,7 +1179,7 @@ This script will parse input URL
     mod_yaml = os.path.join(lib,mod + '.yaml')
 
     if not os.path.isdir(lib):
-      Path(lib).mkdir(exist_ok=True)
+      os.makedirs(lib,exist_ok=True)
 
     if not os.path.isfile(mod_yaml):
       site_yml = self._dir('bin','yml _site.yaml')
