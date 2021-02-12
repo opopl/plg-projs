@@ -27,6 +27,33 @@ class PageParser(RootPageParser):
 
     return self
 
+  def get_date_html(self,ref={}):
+    super().get_date_html(ref)
+
+    app = self.app
+    if app.page.get('date'):
+      return self
+
+    return self
+
+  def get_date_ld_json(self,ref={}):
+    super().get_date_ld_json(ref)
+
+    app = self.app
+    if app.page.get('date'):
+      return self
+
+    return self
+
+  def get_date_meta(self,ref={}):
+    super().get_date_meta(ref)
+
+    app = self.app
+    if app.page.get('date'):
+      return self
+
+    return self
+
   def clean(self,ref={}):
     super().clean(ref)
 

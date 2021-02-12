@@ -187,10 +187,14 @@ class RootPageParser(CoreClass):
     if not c:
       return
 
-    if get and get == 'attr':
-      attr = sel.get('attr','')
-      if c.has_attr(attr):
-        date_s = c[attr]
+    if get
+      if get == 'attr':
+        attr = sel.get('attr','')
+        if c.has_attr(attr):
+          date_s = c[attr]
+
+      if get == 'text':
+        txt = c.get_text()
 
     if date_s:
       s = date_s.split(sep)[0]
