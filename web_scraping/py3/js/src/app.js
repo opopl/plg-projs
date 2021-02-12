@@ -14,6 +14,7 @@ function App(){
         .el_btn_reload()
         .el_input_css_delete()
         .el_input_css_show()
+        .el_input_css_unwrap()
       ;
     
       return this;
@@ -114,6 +115,11 @@ function App(){
             $(this).trigger("enterKey");
         }
      });
+
+     return this;
+  };
+
+  this.on_enter_css_unwrap = function(){
 
      return this;
   };
