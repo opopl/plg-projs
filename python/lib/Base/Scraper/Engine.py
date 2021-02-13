@@ -1151,10 +1151,10 @@ This script will parse input URL
     return self
 
   def fill_vars(self):
-    self.fill_list_hosts()
+    self.fill_list_sites()
     return self
 
-  def fill_list_hosts(self):
+  def fill_list_sites(self):
 
     hosts = util.get(self,'hosts',[])
 
@@ -1163,22 +1163,22 @@ This script will parse input URL
     l = util.uniq(l)
     l.sort()
 
-    self.list_hosts = l
+    self.list_sites = l
 
     inc = util.get(self,'include.sites',[])
     exc = util.get(self,'exclude.sites',[])
 
     if len(exc) == 0:
-      inc = self.list_hosts
+      inc = self.list_sites
 
     for lst in [ inc, exc ]:
       for i in lst:
         if i == '_all_':
-          lst.extend(self.list_hosts)
+          lst.extend(self.list_sites)
           lst.remove('_all_')
 
-    self.list_hosts_inc = inc
-    self.list_hosts_exc = exc
+    self.list_sites_inc = inc
+    self.list_sites_exc = exc
 
     return self
 
@@ -1886,7 +1886,7 @@ This script will parse input URL
     if not site:
       site = self.page.site
 
-    inc = self.list_hosts_inc
+    inc = self.list_sites_inc
 
     skip = 0 if site in inc else 1
     return skip
