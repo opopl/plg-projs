@@ -1138,6 +1138,9 @@ This script will parse input URL
     l = [ hosts.get(x).get('site','') for x in hosts.keys() ]
     l = list(set(l))
     l = list(filter(lambda x: len(x) > 0,l))
+    l = sort(l)
+    l = util.uniq(l)
+
     self.list_hosts = l
 
     inc = util.get(self,'include.sites',[])
@@ -1453,6 +1456,7 @@ This script will parse input URL
       v = v.strip()
       self.page.set({ k : v })
 
+    import pdb; pdb.set_trace()
     try:
       self.site_extract()
     except:

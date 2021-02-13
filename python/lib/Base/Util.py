@@ -27,7 +27,7 @@ def call(obj, sub_name, args = []):
   return res
 
 def keys(dict={}):
-  return dict.keys().__repr__
+  return list(dict.keys())
 
 def url_parse(url):
   u = urlparse(url)
