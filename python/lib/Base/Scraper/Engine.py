@@ -641,21 +641,7 @@ This script will parse input URL
 
     return ext_files
 
-  def init_dirs(self):
-    if not self._file('script'):
-      self.files.update({
-          'script' : os.path.realpath(__file__),
-      })
-    self.log(f'[BS] Script location: {self._file("script")}')
-
-    if not self._dir('bin'):
-      self.dirs.update({
-          'bin' : str(Path(self._file('script')).parent),
-      })
-    
-    if not util.get(self,'dirs.tmpl'):
-      self.dirs['tmpl'] = os.path.join(self._dir('bin'),'tmpl')
-    self.log(f'[BS] Template directory: {self._dir("tmpl")}')
+  def init_dirs_f_yaml(self):
 
     f_yaml = self._file('yaml')
 
@@ -673,6 +659,26 @@ This script will parse input URL
           'in'       : os.path.join(dir,'in'),
           'in_sites' : os.path.join(dir,'in','sites'),
       })
+
+    return self
+
+  def init_dirs(self):
+    if not self._file('script'):
+      self.files.update({
+          'script' : os.path.realpath(__file__),
+      })
+    self.log(f'[BS] Script location: {self._file("script")}')
+
+    if not self._dir('bin'):
+      self.dirs.update({
+          'bin' : str(Path(self._file('script')).parent),
+      })
+    
+    if not util.get(self,'dirs.tmpl'):
+      self.dirs['tmpl'] = os.path.join(self._dir('bin'),'tmpl')
+    self.log(f'[BS] Template directory: {self._dir("tmpl")}')
+
+    self.init_dirs_f_yaml()
     
     self.dirs.update({ 
       'html'       : self._dir('out' , 'html'),
