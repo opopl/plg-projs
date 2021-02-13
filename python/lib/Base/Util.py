@@ -117,6 +117,22 @@ def get(obj, path, default = None):
           break
     return obj
 
+def type(x):
+    type = None
+
+    if type(x) is str:
+      type = 'str'
+    elif type(x) is int:
+      type = 'int'
+    elif type(x) is list:
+      type = 'list'
+    elif type(x) is dict:
+      type = 'list'
+    elif type(x) is object:
+      type = 'object'
+
+    return type
+
 def uniq(lst=[]):
     lst = list(set(lst))
     return lst

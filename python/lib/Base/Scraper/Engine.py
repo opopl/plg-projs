@@ -367,11 +367,6 @@ This script will parse input URL
       self.parser.print_help()
       sys.exit()
 
-    pfield = util.get(self,'oa.print','')
-    if pfield:
-      val = util.get(self,pfield,None)
-      print(val)
-      exit(0)
 
     for k in util.qw('f_yaml f_zlan f_input_html'):
       v  = util.get(self,[ 'oa', k ])
@@ -381,6 +376,18 @@ This script will parse input URL
         self.files.update({ ftype : v })
 
     return self
+
+  def print_field(self):
+
+    pfield = util.get(self,'oa.print','')
+    if pfield:
+      val = util.get(self,pfield,None)
+      val_type = util.type(val)
+      print(f'print_field {pfield} {val_type}')
+      if val_type is list:
+        for a in val:
+          print(a)
+      sys.exit()
 
 ###ih
   def input_html_process(self):
@@ -709,6 +716,9 @@ This script will parse input URL
   def load_zlan(self, ref={}):
     f_zlan = util.get(self,'files.zlan')
     f_zlan = ref.get('zlan',f_zlan)
+
+    if not f_zlan:
+      return self
 
     z = Zlan({})
 
@@ -2305,7 +2315,7 @@ This script will parse input URL
       .input_html_process() \
       .init()               \
       .fill_vars()          \
+      .print_field()        \
       .parse()              \
       .render_page_list()   \
-
 
