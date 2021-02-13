@@ -645,24 +645,26 @@ This script will parse input URL
 
     f_yaml = self._file('yaml')
 
-    if f_yaml:
-      pp = Path(f_yaml).resolve()
-      dir = str(pp.parent)
-      stem = pp.stem
+    if not f_yaml:
+      return self
 
-      self.dirs.update({
-          'bin_yaml'      : dir,
-      })
+    pp = Path(f_yaml).resolve()
+    dir = str(pp.parent)
+    stem = pp.stem
 
-      self.dirs.update({
-          'out'      : os.path.join(dir,'out',stem),
-          'in'       : os.path.join(dir,'in'),
-          'in_sites' : os.path.join(dir,'in','sites'),
-      })
+    self.dirs.update({
+        'bin_yaml'      : dir,
+    })
+
+    self.dirs.update({
+        'out'      : os.path.join(dir,'out',stem),
+        'in'       : os.path.join(dir,'in'),
+        'in_sites' : os.path.join(dir,'in','sites'),
+    })
 
     return self
 
-  def init_dirs(self):
+  def init_df_script_bin(self):
     if not self._file('script'):
       self.files.update({
           'script' : os.path.realpath(__file__),
@@ -673,6 +675,11 @@ This script will parse input URL
       self.dirs.update({
           'bin' : str(Path(self._file('script')).parent),
       })
+
+    return self
+
+  def init_dirs(self):
+    self.init_df_script_bin()
     
     if not util.get(self,'dirs.tmpl'):
       self.dirs['tmpl'] = os.path.join(self._dir('bin'),'tmpl')
