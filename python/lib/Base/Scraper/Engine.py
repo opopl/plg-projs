@@ -526,7 +526,7 @@ This script will parse input URL
     os.makedirs(self._dir('html','js dist'), exist_ok=True)
 
     wp_run = 0
-    for k in util.qw('webpack_config_js entry_js app_js style_css'):
+    for k in util.qw('webpack_config_js entry_js app_js util_js style_css'):
       w_vcs   = self._file(f'{k}.vcs')
       w_prod  = self._file(f'{k}.prod')
   
@@ -1597,17 +1597,6 @@ This script will parse input URL
     script['src'] = Path(self._file('bundle_js')).as_uri()
 
     body.append(script)
-
-
-
-###css
-#    style = ii_soup.new_tag('style')
-    #style.string = '''
-        #body {
-          #width: 700px;
-        #}
-    #'''
-    #ii_soup.head.append(style)
 
     with open(svf, 'w') as f:
       f.write(ii_soup.prettify())

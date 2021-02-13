@@ -61,3 +61,12 @@ class PageParser(RootPageParser):
     soup = app.soup
 
     return self
+
+  # import date from input string
+  def _date_from_txt(self, txt=None):
+    date = super()._date_from_txt(txt)
+    if date:
+      return date
+
+    #date = None
+    return date

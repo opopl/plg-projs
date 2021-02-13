@@ -167,14 +167,22 @@ class RootPageParser(CoreClass):
     sels.extend( app._site_data('PageParser.get_date_html.sels',[]) )
 
     for sel in sels:
-      date = self._sel_date(app.soup, sel)
+      date = self._date_from_sel(app.soup, sel)
       if date:
         app.page.set({ 'date' : date })
         break
 
     return self
 
+  def _date_from_txt(self, txt=None):
+    date = None
+    return date
+
   def _sel_date(self, soup, sel={}):
+    date = self._date_from_sel(soup,sel)
+    return date
+
+  def _date_from_sel(self, soup, sel={}):
     date_s = ''
     date = None
 
@@ -219,7 +227,7 @@ class RootPageParser(CoreClass):
     sels.extend( app._site_data('PageParser.get_date_html.sels',[]) )
 
     for sel in sels:
-      date = self._sel_date(self.meta, sel)
+      date = self._date_from_sel(self.meta, sel)
       if date:
         self.app.page.set({ 'date' : date })
         break
