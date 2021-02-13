@@ -60,7 +60,6 @@ function! projs#bs#cmd#site_view ()
     endif
   endw
 
-  call base#rdw(printf('selected: %s',site_j))
 
   let stem = remove(pieces,-1)
   let site_dir = base#qw#catpath('p_sr','scrape bs in sites ' . join(pieces, ' '))
@@ -72,10 +71,14 @@ function! projs#bs#cmd#site_view ()
     \  "subdirs" : 1,
     \  "pat"     : '^' . stem,
     \  })
+
+  call chdir(site_dir)
   call base#fileopen({ 
     \  'files'    : ff,
     \  'load_buf' : 1,
     \  })
+
+  call base#rdw(printf('SITE: %s',site_j))
 
 endfunction
 
