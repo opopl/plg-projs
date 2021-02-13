@@ -324,6 +324,10 @@ This script will parse input URL
   # list of urls to be fetched and parsed
   urldata = []
 
+  bin_subpaths = {
+    'js' : 'src',
+  }
+
   # end: attributes }
 
   def __init__(self,args={}):
@@ -530,8 +534,10 @@ This script will parse input URL
     kk = util.qw('webpack_config_js')
 
     for ext in util.qw('js css'):
-	    ext_stems = self._bin_ext_stems(ext)
-	    kk.extend( list(map(lambda x: f'{x}_{ext}',ext_stems)) )
+      subpath = self.bin_subpaths.get(ext,'')
+
+      ext_stems = self._bin_ext_stems(ext,subpath)
+      kk.extend( list(map(lambda x: f'{x}_{ext}',ext_stems)) )
 
     import pdb; pdb.set_trace()
 
@@ -584,18 +590,16 @@ This script will parse input URL
         'webpack_config_js.prod' : self._dir('html','webpack.config.js'),
     })
 
-    self.files.update({ 
-        'style_css.vcs'  : self._dir('bin','css style.css'),
-        'style_css.prod' : self._dir('html','css style.css'),
-    })
+    for ext in util.qw('css js'):
+      subpath = self.bin_subpaths.get(ext,'')
 
-    for js in self._bin_ext_stems('js'):
-      rel = f'js src {js}.js'
-      self.files.update({ 
-          f'{js}_js.vcs'  : self._dir('bin',rel),
-          f'{js}_js.prod' : self._dir('html',rel),
-      })
-
+      for stem in self._bin_ext_stems(ext,subpath):
+        rel = f'{ext} {subpath} {stem}.{ext}'
+        self.files.update({ 
+            f'{stem}_{ext}.vcs'  : self._dir('bin',rel),
+            f'{stem}_{ext}.prod' : self._dir('html',rel),
+        })
+  
     self.files.update({ 
         'bundle_js'    : self._dir('html','js dist bundle.js'),
     })
@@ -611,14 +615,14 @@ This script will parse input URL
 
     return ext_stems
 
-  def _bin_ext_files(self,ext=None):
+  def _bin_ext_files(self,ext=None,subpath=''):
     if not ext:
      return []
 
-    ext_files = list(Path(self._dir('bin',f'{ext} src')).glob(f'*.{ext}'))
+    ext_files = list(Path(self._dir('bin',f'{ext} {subpath}')).glob(f'*.{ext}'))
     ext_files = list(map(lambda x: x.as_posix(),ext_files))
 
-    return css_files
+    return ext_files
 
   def init_dirs(self):
     if not self._file('script'):
