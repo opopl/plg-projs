@@ -43,11 +43,11 @@ function! projs#bs#cmd#site_view ()
 
         if type == 'list'
           if len(field)
-"            try
-              "call add(field_values[field],line)
-            "catch 
-              "echo 'a'
-            "endtry
+            if !has_key(field_values,field)
+              echo line
+              break
+              "call add(field_values[field],'2')
+            endif
           endif
         endif
 
