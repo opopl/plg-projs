@@ -358,12 +358,20 @@ This script will parse input URL
 
     self.parser.add_argument("-g", "--grep", help="Grep in input file(s)",default="")
     self.parser.add_argument("--gs", help="Grep scope",default=10)
+
+    self.parser.add_argument("-p", "--print", help="Print field value and exit",default="")
     
     self.oa = self.parser.parse_args()
 
     if len(sys.argv) == 1:
       self.parser.print_help()
       sys.exit()
+
+    pfield = util.get(self,'oa.print','')
+    if pfield:
+      val = util.get(self,pfield,None)
+      print(val)
+      exit(0)
 
     for k in util.qw('f_yaml f_zlan f_input_html'):
       v  = util.get(self,[ 'oa', k ])
@@ -1137,10 +1145,9 @@ This script will parse input URL
     hosts = util.get(self,'hosts',[])
 
     l = [ hosts.get(x).get('site','') for x in hosts.keys() ]
-    l = list(set(l))
     l = list(filter(lambda x: len(x) > 0,l))
     l = util.uniq(l)
-    l = sort(l)
+    l.sort()
 
     self.list_hosts = l
 
@@ -1158,7 +1165,6 @@ This script will parse input URL
 
     self.list_hosts_inc = inc
     self.list_hosts_exc = exc
-
 
     return self
 
@@ -1457,7 +1463,6 @@ This script will parse input URL
       v = v.strip()
       self.page.set({ k : v })
 
-    import pdb; pdb.set_trace()
     try:
       self.site_extract()
     except:
