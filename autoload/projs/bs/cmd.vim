@@ -21,10 +21,10 @@ function! projs#bs#cmd#site_view ()
     return 
   endif
 
-  let choices = {}
-  let choice = ''
-
   while 1
+
+    let choice = ''
+    let choices = {}
     for site in sites
       let choice = matchstr(site, '^\zs\w\+\ze\.' )
       call extend(choices,{ choice : 1 })
@@ -34,12 +34,18 @@ function! projs#bs#cmd#site_view ()
     let piece = input('site: ','','custom,base#complete#this')
 
     call filter(sites,printf('v:val =~ "^%s"',piece))
+
+    let n = []
     for site in sites
-      call substitute(site,printf('^%s\.', piece),'','g')
+      let site = substitute(site,printf('^%s\.', piece),'','g')
+      call add(n,site)
     endfor
+    let sites = n
     echo sites
 
-    break
+    if !len(sites)
+      break
+    endif
   endw
 
   echo choices
