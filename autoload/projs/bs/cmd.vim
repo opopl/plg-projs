@@ -21,22 +21,24 @@ function! projs#bs#cmd#site_view ()
       let out = readfile(a:temp_file)
 
       let type = ''
+      let field = ''
+
       let field_values = {}
 
       for line in out
-        let list = matchlist(line, '^print_field\s\+\(\w\+\)\s\(\w\+\)\s*$' )
+        if !len(type)
+          let list = matchlist(line, '^print_field\s\+\(\w\+\)\s\(\w\+\)\s*$' )
 
-        if !len(list)
-          if type == 'list'
-            call add(field_values[field],line)
+          if len(list)
+            let field = get(list,1,'')
+            let type  = get(list,2,'')
+
+            if type == 'list'
+              call extend(field_values,{ field : [] })
+            endif
           endif
-        endif
 
-        let field = get(list,1,'')
-        let type  = get(list,2,'')
-
-        if type == 'list'
-          call extend(field_values,{ field : [] })
+          continue
         endif
 
       endfor
