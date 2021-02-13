@@ -21,14 +21,16 @@ function! projs#bs#cmd#site_view ()
     return 
   endif
 
+  let pat = '^\zs\w\+\ze\(\..*\|\)$'
   let msg = []
+
   while 1
     echo sites
 
     let choice = ''
     let choices = {}
     for site in sites
-      let choice = matchstr(site, '^\zs\w\+\ze\(\..*\|\)$' )
+      let choice = matchstr(site, pat )
       call extend(choices,{ choice : 1 })
     endfor
 
