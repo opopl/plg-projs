@@ -12,6 +12,7 @@ function! projs#bs#cmd#site_view ()
   let env = {
     \ 'cmd' : cmd,
     \ }
+
   function env.get(temp_file) dict
     let temp_file = a:temp_file
     let code      = self.return_code
@@ -19,14 +20,28 @@ function! projs#bs#cmd#site_view ()
     if filereadable(a:temp_file)
       let out = readfile(a:temp_file)
 
-      let is_list = 0
+      let type = ''
+      let field_values = {}
+
       for line in out
         let list = matchlist(line, '^print_field\s\+\(\w\+\)\s\(\w\+\)\s*$' )
-        if len(list) != 3
-          
-          echo list
+
+        if !len(list)
+          if type == 'list'
+            call add(field_values[field],line)
+          endif
         endif
+
+        let field = get(list,1,'')
+        let type  = get(list,2,'')
+
+        if type == 'list'
+          call extend(field_values,{ field : [] })
+        endif
+
       endfor
+
+      echo field_values
       "call base#buf#open_split({ 'lines' : out })
     endif
   endfunction
