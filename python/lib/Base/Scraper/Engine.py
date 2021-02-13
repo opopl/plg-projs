@@ -539,8 +539,6 @@ This script will parse input URL
       ext_stems = self._bin_ext_stems(ext,subpath)
       kk.extend( list(map(lambda x: f'{x}_{ext}',ext_stems)) )
 
-    import pdb; pdb.set_trace()
-
     for k in kk:
       w_vcs   = self._file(f'{k}.vcs')
       w_prod  = self._file(f'{k}.prod')
@@ -607,11 +605,11 @@ This script will parse input URL
     return self
 
 
-  def _bin_ext_stems(self,ext=None):
+  def _bin_ext_stems(self,ext=None,subpath=None):
     if not ext:
      return []
 
-    ext_stems = list(map(lambda x: Path(x).stem,self._bin_ext_files(ext) ))
+    ext_stems = list(map(lambda x: Path(x).stem,self._bin_ext_files(ext,subpath) ))
 
     return ext_stems
 
@@ -1328,7 +1326,6 @@ This script will parse input URL
       except:
         #self.log('WARN[page_load_ld_json] JSON decode errors')
         #self.log(e.string)
-        #import pdb; pdb.set_trace()
         raise
         continue
 

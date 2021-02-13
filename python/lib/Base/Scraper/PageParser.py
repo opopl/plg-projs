@@ -195,7 +195,7 @@ class RootPageParser(CoreClass):
     if not c:
       return
 
-    if get
+    if get:
       if get == 'attr':
         attr = sel.get('attr','')
         if c.has_attr(attr):
