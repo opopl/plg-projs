@@ -526,7 +526,16 @@ This script will parse input URL
     os.makedirs(self._dir('html','js dist'), exist_ok=True)
 
     wp_run = 0
-    for k in util.qw('webpack_config_js entry_js app_js util_js style_css'):
+
+    kk = util.qw('webpack_config_js')
+
+    for ext in util.qw('js css'):
+	    ext_stems = self._bin_ext_stems(ext)
+	    kk.extend( list(map(lambda x: f'{x}_{ext}',ext_stems)) )
+
+    import pdb; pdb.set_trace()
+
+    for k in kk:
       w_vcs   = self._file(f'{k}.vcs')
       w_prod  = self._file(f'{k}.prod')
   
@@ -580,7 +589,7 @@ This script will parse input URL
         'style_css.prod' : self._dir('html','css style.css'),
     })
 
-    for js in self._bin_js_stems():
+    for js in self._bin_ext_stems('js'):
       rel = f'js src {js}.js'
       self.files.update({ 
           f'{js}_js.vcs'  : self._dir('bin',rel),
@@ -593,16 +602,23 @@ This script will parse input URL
 
     return self
 
-  def _bin_js_stems(self):
-    js_stems = list(map(lambda x: Path(x).stem,self._bin_js_files() ))
 
-    return js_stems
+  def _bin_ext_stems(self,ext=None):
+    if not ext:
+     return []
 
-  def _bin_js_files(self):
-    js_files = list(Path(self._dir('bin','js src')).glob('*.js'))
-    js_files = list(map(lambda x: x.as_posix(),js_files))
+    ext_stems = list(map(lambda x: Path(x).stem,self._bin_ext_files(ext) ))
 
-    return js_files
+    return ext_stems
+
+  def _bin_ext_files(self,ext=None):
+    if not ext:
+     return []
+
+    ext_files = list(Path(self._dir('bin',f'{ext} src')).glob(f'*.{ext}'))
+    ext_files = list(map(lambda x: x.as_posix(),ext_files))
+
+    return css_files
 
   def init_dirs(self):
     if not self._file('script'):
