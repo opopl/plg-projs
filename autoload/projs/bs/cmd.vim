@@ -4,6 +4,10 @@ function! projs#bs#cmd#run ()
 endfunction
 
 function! projs#bs#cmd#site_view ()
+
+endfunction
+
+function! projs#bs#cmd#init ()
   let bs_dir = base#qw#catpath('p_sr','scrape bs')
 
   call chdir(bs_dir)
