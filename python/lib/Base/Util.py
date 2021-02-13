@@ -118,20 +118,20 @@ def get(obj, path, default = None):
     return obj
 
 def var_type(x):
-    type = None
+    typ = None
 
     if type(x) is str:
-      type = 'str'
+      typ = 'str'
     elif type(x) is int:
-      type = 'int'
+      typ = 'int'
     elif type(x) is list:
-      type = 'list'
+      typ = 'list'
     elif type(x) is dict:
-      type = 'list'
+      typ = 'list'
     elif type(x) is object:
-      type = 'object'
+      typ = 'object'
 
-    return type
+    return typ
 
 def uniq(lst=[]):
     lst = list(set(lst))

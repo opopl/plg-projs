@@ -384,7 +384,7 @@ This script will parse input URL
       val = util.get(self,pfield,None)
       if val != None:
         import pdb; pdb.set_trace()
-        val_type = util.type(val)
+        val_type = util.var_type(val)
         print(f'print_field {pfield} {val_type}')
         if val_type == 'list':
           for a in val:
