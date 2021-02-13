@@ -41,8 +41,19 @@ function! projs#bs#cmd#site_view ()
           continue
         endif
 
+        if type == 'list'
+          if len(field)
+"            try
+              "call add(field_values[field],line)
+            "catch 
+              "echo 'a'
+            "endtry
+          endif
+        endif
+
       endfor
 
+      call add(field_values[field],'2')
       echo field_values
       "call base#buf#open_split({ 'lines' : out })
     endif
