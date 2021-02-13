@@ -1135,11 +1135,12 @@ This script will parse input URL
   def fill_list_hosts(self):
 
     hosts = util.get(self,'hosts',[])
+
     l = [ hosts.get(x).get('site','') for x in hosts.keys() ]
     l = list(set(l))
     l = list(filter(lambda x: len(x) > 0,l))
-    l = sort(l)
     l = util.uniq(l)
+    l = sort(l)
 
     self.list_hosts = l
 
