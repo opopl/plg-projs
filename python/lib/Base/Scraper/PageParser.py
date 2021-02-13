@@ -17,10 +17,12 @@ from Base.Core import CoreClass
 
 class RootPageParser(CoreClass):
 
-  soup        = None
-  app         = None
-  date_format = ''
+  soup = None
+  app  = None
   meta = None
+
+  date_format = ''
+  date_bare   = ''
 
   month_map_genitive = {
     'ukr' : {
@@ -78,6 +80,14 @@ class RootPageParser(CoreClass):
   def clean(self,ref={}):
     return self
 
+  def _txt_strip(self, txt='', opts = {}):
+    txt_n = txt.split('\n')
+    txt_n = list(map(lambda x: x.strip(),txt_n))
+    txt_n = list(filter(lambda x: len(x) > 0,txt_n))
+    txt = ''.join(txt_n)
+
+    return txt
+
   def _txt_split(self, txt='', opts = {}):
     sep = opts.get('sep',const.comma)
 
@@ -85,7 +95,9 @@ class RootPageParser(CoreClass):
     txt_n = list(map(lambda x: x.strip(),txt_n))
     txt_n = list(filter(lambda x: len(x) > 0,txt_n))
     txt = ''.join(txt_n)
-    txt = txt.split(sep)[0]
+
+    if sep:
+      txt = txt.split(sep)[0]
 
     sa = txt.split()
 
@@ -159,11 +171,11 @@ class RootPageParser(CoreClass):
     sep = "T"
 
     for ld in ld_json:
-      date_s = ld.get('datePublished')
-      if not date_s:
+      self.date_bare = ld.get('datePublished')
+      if not self.date_bare:
         continue
 
-      s = date_s.split(sep)[0]
+      s = self.date_bare.split(sep)[0]
       d = datetime.datetime.strptime(s,fmt)
       date = d.strftime('%d_%m_%Y')
       if date:
@@ -197,7 +209,6 @@ class RootPageParser(CoreClass):
     return date
 
   def _date_from_sel(self, soup, sel={}):
-    date_s = ''
     date = None
 
     find = sel.get('find','')
@@ -213,16 +224,20 @@ class RootPageParser(CoreClass):
       if get == 'attr':
         attr = sel.get('attr','')
         if c.has_attr(attr):
-          date_s = c[attr]
+          self.date_bare = c[attr]
 
       if get == 'text':
         txt = c.get_text()
-        import pdb; pdb.set_trace()
+        txt = self._txt_strip(txt)
+        self.date_bare = txt
 
-    if date_s:
-      s = date_s.split(sep)[0]
-      d = datetime.datetime.strptime(s,fmt)
-      date = d.strftime('%d_%m_%Y')
+    if self.date_bare:
+      try:
+        s = self.date_bare.split(sep)[0]
+        d = datetime.datetime.strptime(s,fmt)
+        date = d.strftime('%d_%m_%Y')
+      except:
+        pass
 
     return date
 
