@@ -3,7 +3,28 @@ function! projs#bs#cmd#run ()
   
 endfunction
 
+"""bs_site_view
 function! projs#bs#cmd#site_view ()
+  let bs_data = base#varget('projs_bs_data',{})
+  let bs_data = bs_data
+
+  if !len(bs_data)
+    call base#rdwe('No BS data! aborting')
+    return 
+  endif
+
+  let sites = get(bs_data,'sites',[])
+  if !len(sites)
+    call base#rdwe('No SITES! aborting')
+    return 
+  endif
+
+  let choices = {}
+  for site in copy(sites)
+    let choice = matchstr(site, '^\zs\w\+\ze\.' )
+    call extend(choices,{ choice : 1 })
+
+  endfor
 
 endfunction
 
@@ -52,7 +73,9 @@ function! projs#bs#cmd#init ()
 
     endfor
 
-    call base#varset('projs_bs_sites',sites)
+    let data = base#varget('projs_bs_data',{})
+    call extend(data,{ 'sites' : sites })
+    call base#varset('projs_bs_data',data)
   endfunction
   
   call asc#run({ 
