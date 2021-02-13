@@ -27,8 +27,6 @@ function! projs#bs#cmd#site_view ()
   let site_j = ''
 
   while 1
-    echo sites
-
     let choice = ''
     let choices = {}
     for site in sites
@@ -38,12 +36,13 @@ function! projs#bs#cmd#site_view ()
 
     call base#varset('this',keys(choices))
 
-    let site_j = join(pieces, ".")
+    let msg_s = len(pieces) ?  "\n" . site_j . "\n" : ''
+    let msg_i = printf('%s site: ',msg_s)
 
-    let msg_s = len(msg) ?  "\n" . site_j . "\n" : ''
-    let piece = input(printf('%s site: ',msg_s),'','custom,base#complete#this')
+    let piece = base#input_we(msg_i,'',{ 'complete' : 'custom,base#complete#this' })
 
     call add(pieces, piece)
+    let site_j = join(pieces, ".")
 
     call filter(sites,printf('v:val =~ "^%s"',piece))
 
@@ -61,7 +60,22 @@ function! projs#bs#cmd#site_view ()
     endif
   endw
 
-  echo choices
+  call base#rdw(printf('selected: %s',site_j))
+
+  let stem = remove(pieces,-1)
+  let site_dir = base#qw#catpath('p_sr','scrape bs in sites ' . join(pieces, ' '))
+  let ff = base#find({ 
+    \  "dirs"    : [site_dir],
+    \  "exts"    : base#qw('py yaml'),
+    \  "cwd"     : 1,
+    \  "relpath" : 0,
+    \  "subdirs" : 1,
+    \  "pat"     : '^' . stem,
+    \  })
+  call base#fileopen({ 
+    \  'files'    : ff,
+    \  'load_buf' : 1,
+    \  })
 
 endfunction
 
