@@ -5,9 +5,8 @@ endfunction
 
 function! projs#bs#cmd#site_view ()
   let bs_dir = base#qw#catpath('p_sr','scrape bs')
-  echo bs_dir
 
-  call base#cd(bs_dir)
+  call chdir(bs_dir)
   let cmd = 'bs.py -p list_sites -y mix.yaml'
   
   let env = {
@@ -19,7 +18,16 @@ function! projs#bs#cmd#site_view ()
   
     if filereadable(a:temp_file)
       let out = readfile(a:temp_file)
-      call base#buf#open_split({ 'lines' : out })
+
+      let is_list = 0
+      for line in out
+        let list = matchlist(line, '^print_field\s\+\(\w\+\)\s\(\w\+\)\s*$' )
+        if len(list) != 3
+          
+          echo list
+        endif
+      endfor
+      "call base#buf#open_split({ 'lines' : out })
     endif
   endfunction
   
