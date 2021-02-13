@@ -248,7 +248,10 @@ class Pic(CoreClass):
 class BS(CoreClass,mixLogger):
   # class attributes {
   usage='''
-This script will parse input URL
+  PURPOSE
+        This script will parse input URL
+  EXAMPLES
+        bs.py -y mix.yaml -p list_sites
 '''
 
   html_parser = html.parser.HTMLParser()

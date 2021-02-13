@@ -4,12 +4,29 @@ function! projs#bs#cmd#run ()
 endfunction
 
 function! projs#bs#cmd#site_view ()
-	let bs_dir = base#qw#catpath('p_sr','scrape bs')
-	echo bs_dir
+  let bs_dir = base#qw#catpath('p_sr','scrape bs')
+  echo bs_dir
 
-	call base#cd(bs_dir)
-	let cmd = 'bs.py -p list_sites -y mix.yaml'
-	
+  call base#cd(bs_dir)
+  let cmd = 'bs.py -p list_sites -y mix.yaml'
+  
+  let env = {
+    \ 'cmd' : cmd,
+    \ }
+  function env.get(temp_file) dict
+    let temp_file = a:temp_file
+    let code      = self.return_code
+  
+    if filereadable(a:temp_file)
+      let out = readfile(a:temp_file)
+      call base#buf#open_split({ 'lines' : out })
+    endif
+  endfunction
+  
+  call asc#run({ 
+    \ 'cmd' : cmd, 
+    \ 'Fn'  : asc#tab_restore(env) 
+    \ })
 
 "python3 << eof
 "import vim
