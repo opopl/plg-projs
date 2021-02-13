@@ -382,12 +382,14 @@ This script will parse input URL
     pfield = util.get(self,'oa.print','')
     if pfield:
       val = util.get(self,pfield,None)
-      val_type = util.type(val)
-      print(f'print_field {pfield} {val_type}')
-      if val_type is list:
-        for a in val:
-          print(a)
-      sys.exit()
+      if val != None:
+        import pdb; pdb.set_trace()
+        val_type = util.type(val)
+        print(f'print_field {pfield} {val_type}')
+        if val_type == 'list':
+          for a in val:
+            print(a)
+        sys.exit()
 
 ###ih
   def input_html_process(self):

@@ -117,7 +117,7 @@ def get(obj, path, default = None):
           break
     return obj
 
-def type(x):
+def var_type(x):
     type = None
 
     if type(x) is str:
