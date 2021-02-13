@@ -20,11 +20,14 @@ function! projs#bs#cmd#site_view ()
   endif
 
   let choices = {}
+  let choice = ''
+
   for site in copy(sites)
     let choice = matchstr(site, '^\zs\w\+\ze\.' )
     call extend(choices,{ choice : 1 })
-
   endfor
+
+  echo choices
 
 endfunction
 
