@@ -78,6 +78,19 @@ class RootPageParser(CoreClass):
   def clean(self,ref={}):
     return self
 
+  def _txt_split(self, txt='', opts = {}):
+    sep = opts.get('sep',const.comma)
+
+    txt_n = txt.split('\n')
+    txt_n = list(map(lambda x: x.strip(),txt_n))
+    txt_n = list(filter(lambda x: len(x) > 0,txt_n))
+    txt = ''.join(txt_n)
+    txt = txt.split(sep)[0]
+
+    sa = txt.split()
+
+    return sa
+
   def _el_date_parts(self, el, opts = {}):
 
     sa = []
@@ -176,6 +189,7 @@ class RootPageParser(CoreClass):
 
   def _date_from_txt(self, txt=None):
     date = None
+
     return date
 
   def _sel_date(self, soup, sel={}):
@@ -203,6 +217,7 @@ class RootPageParser(CoreClass):
 
       if get == 'text':
         txt = c.get_text()
+        import pdb; pdb.set_trace()
 
     if date_s:
       s = date_s.split(sep)[0]
