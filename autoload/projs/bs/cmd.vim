@@ -14,6 +14,8 @@ function! projs#bs#cmd#site_view ()
   endif
 
   let sites = get(bs_data,'sites',[])
+  let sites = copy(sites)
+
   if !len(sites)
     call base#rdwe('No SITES! aborting')
     return 
@@ -22,10 +24,23 @@ function! projs#bs#cmd#site_view ()
   let choices = {}
   let choice = ''
 
-  for site in copy(sites)
-    let choice = matchstr(site, '^\zs\w\+\ze\.' )
-    call extend(choices,{ choice : 1 })
-  endfor
+  while 1
+    for site in sites
+      let choice = matchstr(site, '^\zs\w\+\ze\.' )
+      call extend(choices,{ choice : 1 })
+    endfor
+
+    call base#varset('this',keys(choices))
+    let piece = input('site: ','','custom,base#complete#this')
+
+    call filter(sites,printf('v:val =~ "^%s"',piece))
+    for site in sites
+      call substitute(site,printf('^%s\.', piece),'','g')
+    endfor
+    echo sites
+
+    break
+  endw
 
   echo choices
 
