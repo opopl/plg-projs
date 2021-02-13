@@ -199,8 +199,28 @@ class RootPageParser(CoreClass):
 
     return self
 
-  def _date_from_txt(self, txt=None):
+  def _date_dmy(self,day,month,year):
+
+    fmt = '%d_%m_%Y'
+    date = '_'.join([day,month,year])
+    dt = datetime.datetime.strptime(date,fmt)
+    date = dt.strftime(fmt)
+
+    return date
+
+  def _date_from_bare(self,sel = {}):
     date = None
+
+    fmt  = sel.get('fmt',"%Y-%m-%d")
+    sep  = sel.get('split',"T")
+
+    if self.date_bare:
+      try:
+        s = self.date_bare.split(sep)[0]
+        d = datetime.datetime.strptime(s,fmt)
+        date = d.strftime('%d_%m_%Y')
+      except:
+        pass
 
     return date
 
@@ -232,12 +252,7 @@ class RootPageParser(CoreClass):
         self.date_bare = txt
 
     if self.date_bare:
-      try:
-        s = self.date_bare.split(sep)[0]
-        d = datetime.datetime.strptime(s,fmt)
-        date = d.strftime('%d_%m_%Y')
-      except:
-        pass
+      date = self._date_from_bare(sel)
 
     return date
 

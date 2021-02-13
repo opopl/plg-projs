@@ -1395,6 +1395,7 @@ This script will parse input URL
   def site_extract(self):
     
     hsts = self.hosts
+    import pdb; pdb.set_trace()
     try:
       for pat in hsts.keys():
         for k in pat.split(','):
