@@ -22,7 +22,9 @@ function! projs#bs#cmd#site_view ()
   endif
 
   let pat = '^\zs\w\+\ze\(\..*\|\)$'
-  let msg = []
+  let pieces = []
+
+  let site_j = ''
 
   while 1
     echo sites
@@ -35,17 +37,22 @@ function! projs#bs#cmd#site_view ()
     endfor
 
     call base#varset('this',keys(choices))
-    let msg_s = len(msg) ?  "\n" . join(msg, ".") . "\n" : ''
+
+    let site_j = join(pieces, ".")
+
+    let msg_s = len(msg) ?  "\n" . site_j . "\n" : ''
     let piece = input(printf('%s site: ',msg_s),'','custom,base#complete#this')
 
-    call add(msg, piece)
+    call add(pieces, piece)
 
     call filter(sites,printf('v:val =~ "^%s"',piece))
 
     let n = []
     for site in sites
-      let site = substitute(site,printf('^%s\.', piece),'','g')
-      call add(n,site)
+      let site = substitute(site,printf('^%s[\.]*', piece),'','g')
+      if len(site)
+        call add(n,site)
+      endif
     endfor
     let sites = n
 
