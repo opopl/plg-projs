@@ -150,6 +150,7 @@ class Pic(CoreClass):
 
     i = None
     try:
+      u = util.url_parse(pic.url)
       resp = requests.get(pic.url, stream = True)
     except:
       app.die(f'ERROR[Pic][grab] {pic.url}')

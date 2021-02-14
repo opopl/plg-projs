@@ -64,8 +64,8 @@ class PageParser(RootPageParser):
     return self
 
   # import date from input string
-  def _date_from_txt(self, txt=None):
-    date = super()._date_from_txt(txt)
+  def _date_from_bare(self, txt=None):
+    date = super()._date_from_bare(txt)
     if date:
       return date
 

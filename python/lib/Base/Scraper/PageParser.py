@@ -239,6 +239,9 @@ class RootPageParser(CoreClass):
     fmt  = sel.get('fmt',"%Y-%m-%d")
     sep  = sel.get('split',"T")
 
+    if not find:
+      return 
+
     c = soup.select_one(find)
     if not c:
       return

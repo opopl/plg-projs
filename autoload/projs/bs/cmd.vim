@@ -30,6 +30,24 @@ function! projs#bs#cmd#site_view ()
 
 endfunction
 
+function! projs#bs#cmd#yaml_site_load ()
+
+endfunction
+
+function! projs#bs#cmd#query ()
+
+endfunction
+
+function! projs#bs#cmd#info ()
+  let info = [ 'BS INFO', ' ' ]
+
+  let site = projs#bs#site()
+  call add(info,printf('site: %s',site))
+
+  call base#buf#open_split({ 'lines' : info })
+
+endfunction
+
 function! projs#bs#cmd#init ()
   let bs_dir = base#qw#catpath('p_sr','scrape bs')
 
