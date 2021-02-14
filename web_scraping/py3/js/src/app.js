@@ -22,16 +22,11 @@ function App(){
       return this;
   };
 
-  this._input = function(ref={}){
+  this.$$input = function(ref={}){
 
       var id  = util.get(ref,'id');
       var plc = util.get(ref,'plc');
-      var css = util.get(ref,{});
-
-      console.log(JSON.stringify(ref));
-      console.log(JSON.stringify({ id : id, plc : plc }));
-      console.log(JSON.stringify(util));
-      console.log(JSON.stringify(pretty));
+      var css = util.get(ref,'css',{});
 
       var inp = document.createElement('input');
 
@@ -45,44 +40,43 @@ function App(){
         .css({ 
            width              : '10%',
            'color'            : 'white',
-           'background-color' : 'red',
+           'background-color' : 'white',
            'font-size'        : '25px',
            'justify-content'  : 'space-between',
+           ...css
         });
 
-      return inp;
+      return $(inp);
   };
 
   this.el_input_css_delete = function(){
 
-      var inp = this._input({
-        'id'  : 'inp_css_delete',
-        'plc' : 'CSS (Del)',
+      var $inp = this.$$input({
+        id  : 'inp_css_delete',
+        plc : 'CSS (Del)',
+        css : {
+          'background-color' : 'red',
+          'color'            : 'white',
+        }
       });
 
-      this.$header.append($(inp));
+      this.$header.append($inp);
 
       return this;
   };
 
   this.el_input_css_show = function(){
-      var inp = document.createElement('input');
 
-      inp.type  = 'text';
-      inp.id = 'inp_css_show';
-      inp.placeholder = 'CSS (Show)';
+      var $inp = this.$$input({
+        id  : 'inp_css_show',
+        plc : 'CSS (Show)',
+        css : {
+          'background-color' : 'blue',
+          'color'            : 'white',
+        }
+      });
 
-      $(inp)
-        .addClass('block')
-        .css({ 
-           width              : '10%',
-           'color'            : 'black',
-           'background-color' : 'white',
-           'font-size'        : '25px',
-           'justify-content'  : 'space-between',
-        });
-
-      this.$header.append($(inp));
+      this.$header.append($inp);
 
       return this;
   };
