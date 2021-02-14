@@ -12,13 +12,33 @@ function App(){
 
       this.$header = $(header);
 
-      this
-        .el_btn_reload()
-        .el_input_css_delete()
-        .el_input_css_show()
-        //.el_input_css_unwrap()
-      ;
-    
+      var els = [
+        this.$$btn({
+          value : 'Reload',
+          id    : 'btn_reload',
+        }),
+        this.$$input({
+          id  : 'inp_css_delete',
+          plc : 'CSS (Del)',
+          css : {
+            'background-color' : 'red',
+            'color'            : 'white',
+          }
+        }),
+        this.$$input({
+          id  : 'inp_css_show',
+          plc : 'CSS (Show)',
+          css : {
+            'background-color' : 'blue',
+            'color'            : 'white',
+          }
+        })
+      ];
+
+      //for (var el in els) {
+        //this.$header.append(el);
+      //};
+
       return this;
   };
 
@@ -78,50 +98,6 @@ function App(){
         });
 
       return $(inp);
-  };
-
-  this.el_input_css_delete = function(){
-
-      var $inp = this.$$input({
-        id  : 'inp_css_delete',
-        plc : 'CSS (Del)',
-        css : {
-          'background-color' : 'red',
-          'color'            : 'white',
-        }
-      });
-
-      this.$header.append($inp);
-
-      return this;
-  };
-
-  this.el_input_css_show = function(){
-
-      var $inp = this.$$input({
-        id  : 'inp_css_show',
-        plc : 'CSS (Show)',
-        css : {
-          'background-color' : 'blue',
-          'color'            : 'white',
-        }
-      });
-
-      this.$header.append($inp);
-
-      return this;
-  };
-
-  this.el_btn_reload = function(){
-    
-      var $btn = this.$$btn({
-        value : 'Reload',
-        id    : 'btn_reload',
-      });
-
-      this.$header.append($btn);
-
-      return this;
   };
 
   this.on_enter = function(){
