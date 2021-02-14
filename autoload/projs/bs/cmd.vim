@@ -45,14 +45,16 @@ function! projs#bs#cmd#query ()
     \  "SQLITE query: ",  
     \  ]
   let msg = join(msg_a,"\n")
-  let q =  base#input_hist(msg,'',{ 'hist_name' : 'bs_sql' })
+  let q =  base#input_hist(msg,'','projs_bs_sql')
   let p = []
 
-  let [ rows_h, cols ] = pymy#sqlite#query({
+  "let [ rows_h, cols ] = pymy#sqlite#query({
+  let lines = pymy#sqlite#query_screen({
     \  'dbfile' : db_file,
     \  'p'      : p,
     \  'q'      : q,
     \  })
+  call base#buf#open_split({ 'lines' : lines })
 
 endfunction
 
