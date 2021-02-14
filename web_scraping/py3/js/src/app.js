@@ -22,6 +22,37 @@ function App(){
       return this;
   };
 
+  this.set_pane = function(){
+
+      var pane = document.createElement('div');
+      pane.className = 'flex-header';
+
+      this.$pane = $(pane);
+
+      this.$pane.css({ background : 'green' });
+
+      return this;
+  };
+
+  this.$$btn = function(ref={}){
+      var value = util.get(ref,'value','');
+      var id    = util.get(ref,'id','');
+      var css   = util.get(ref,'css',{});
+
+      var btn = document.createElement('input');
+      btn.type  = 'button';
+
+      if (id) { btn.id = id; }
+      if (value) { btn.value = value; }
+
+      $(btn).addClass('block').css({ 
+        width: '10%',
+        ...css
+      });
+
+      return $(btn);
+  };
+
   this.$$input = function(ref={}){
 
       var id  = util.get(ref,'id');
@@ -82,13 +113,13 @@ function App(){
   };
 
   this.el_btn_reload = function(){
-      var btn = document.createElement('input');
-      btn.type  = 'button';
-      btn.value = 'Reload';
-      btn.id = 'btn_reload';
-      $(btn).addClass('block').css({ width: '10%' });
     
-      this.$header.append($(btn));
+      var $btn = this.$$btn({
+        value : 'Reload',
+        id    : 'btn_reload',
+      });
+
+      this.$header.append($btn);
 
       return this;
   };
@@ -266,7 +297,7 @@ function App(){
     $('body').children().remove();
   
     $('body').append(this.$header);
-    //$('body').append(this.$pane_links);
+    $('body').append(this.$pane);
     $('body').append(this.$container);
 
     return this;
