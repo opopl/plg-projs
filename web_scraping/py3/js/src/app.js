@@ -1,6 +1,6 @@
 
 var pretty = require('pretty');
-//var util = require('./util.js');
+var util = require('./util.js');
 //
 
 function App(){
@@ -22,17 +22,23 @@ function App(){
       return this;
   };
 
-  this._header_input = function(ref={}){
+  this._input = function(ref={}){
 
-      return this;
-  };
+      var id  = util.get(ref,'id');
+      var plc = util.get(ref,'plc');
+      var css = util.get(ref,{});
 
-  this.el_input_css_delete = function(){
+      console.log(JSON.stringify(ref));
+      console.log(JSON.stringify({ id : id, plc : plc }));
+      console.log(JSON.stringify(util));
+      console.log(JSON.stringify(pretty));
+
       var inp = document.createElement('input');
 
       inp.type  = 'text';
-      inp.id = 'inp_css_delete';
-      inp.placeholder = 'CSS (Delete)';
+
+      if (id) { inp.id = id; }
+      if (plc) { inp.placeholder = plc; }
 
       $(inp)
         .addClass('block')
@@ -43,6 +49,16 @@ function App(){
            'font-size'        : '25px',
            'justify-content'  : 'space-between',
         });
+
+      return inp;
+  };
+
+  this.el_input_css_delete = function(){
+
+      var inp = this._input({
+        'id'  : 'inp_css_delete',
+        'plc' : 'CSS (Del)',
+      });
 
       this.$header.append($(inp));
 

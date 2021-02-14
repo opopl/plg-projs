@@ -583,6 +583,7 @@ class BS(CoreClass,mixLogger):
         pp = Path(w_prod).parent.as_posix()
         os.makedirs(pp,exist_ok=True)
         shutil.copy(w_vcs, w_prod)
+        #import pdb; pdb.set_trace()
 
     if wp_run:
         old = os.getcwd()
@@ -593,6 +594,10 @@ class BS(CoreClass,mixLogger):
             os.chdir(self._dir('html'))
 
             stderr, stdout = npm_run('run',cmd)
+
+            if len(stderr):
+              print(stderr)
+              raise
         except:
             self.log(f'[BS][npm_init] failure while npm_run("{cmd}")')
         finally:
@@ -1458,6 +1463,7 @@ class BS(CoreClass,mixLogger):
         })                                              \
         .page_add()                                     \
         .page_save_log()                                \
+        .page2yaml()                                    \
         .db_ok()                                        \
 
     return self
