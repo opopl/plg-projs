@@ -88,6 +88,11 @@ class RootPageParser(CoreClass):
 
     return txt
 
+  def _txt_split_n_trim(self, txt=''):
+    lines = txt.split('\n')
+
+    return lines
+
   def _txt_split(self, txt='', opts = {}):
     sep = opts.get('sep',const.comma)
 
