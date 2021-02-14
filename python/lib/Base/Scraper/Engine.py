@@ -50,7 +50,7 @@ import os,sys
 
 import Base.DBW as dbw
 import Base.Util as util
-import Base.Txt as txt
+import Base.String as string
 import Base.Const as const
 
 from Base.Zlan import Zlan
