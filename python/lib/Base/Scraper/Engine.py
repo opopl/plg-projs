@@ -2298,6 +2298,9 @@ class BS(CoreClass,mixLogger):
       rel_src = None
       u = util.url_parse(src)
 
+      if not u['path']:
+        continue
+
       if not u['netloc']:
         url = util.url_join(baseurl,src)
         rel_src = src

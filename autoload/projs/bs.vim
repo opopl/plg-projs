@@ -161,6 +161,7 @@ function! projs#bs#load_site_files (...)
     \  'files'    : ff,
     \  'load_buf' : 1,
     \  'Fc'       : Fc,
+    \  'action'   : 'vsplit',
     \  })
 
   call base#rdw(printf('SITE: %s',site))
