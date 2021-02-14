@@ -1862,8 +1862,8 @@ class BS(CoreClass,mixLogger):
 
   def db_ok(self):
 
-    dbw.update({
-      'db_file'  : self.dbfiles.pages,
+    dbw.update_dict({
+      'db_file'  : self.dbfile.pages,
       'table'    : 'pages',
       'where'    : { 'url' : self.page.url },
       'update'   :  { 'ok' : 1 },
