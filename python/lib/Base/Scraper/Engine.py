@@ -172,11 +172,16 @@ class Pic(CoreClass):
       return self
 
     f_size = os.stat(f).st_size
+    ct = resp.headers['content-type']
+
     app.log(f'[page_do_imgs] image file size: {f_size}')
+    app.log(f'[page_do_imgs] content-type: {ct}')
+
+    m = re.match(r'^text/html',ct)
+    if m:
+      continue
 
 ###ilocal
-
-    ct = resp.headers['content-type']
 
     #resp.raw type is urllib3.response.HTTPResponse
 
