@@ -205,7 +205,6 @@ function App(){
      return this;
   };
 
-
   this.on_click = function(){
      $('#btn_reload').on('click',function() {
         window.location.reload(true);
