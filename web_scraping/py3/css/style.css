@@ -42,7 +42,7 @@ body {
     /*top: -200px;*/
     width: 50%;
     height: 600px;
-    margin-top: 100px;
+    /*margin-top: 100px;*/
     border: 2px solid red;
     /*overflow: scroll;*/
     /*height: 50%;*/
@@ -55,7 +55,7 @@ body {
 .flex-right {
     width: 50%;
     height: 600px;
-    margin-top: 100px;
+    /*margin-top: 100px;*/
     overflow-y: scroll;
     /*overflow-x: scroll;*/
 }

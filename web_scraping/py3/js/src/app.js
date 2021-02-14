@@ -7,10 +7,11 @@ function App(){
 
   this.set_header = function(){
 
-      var header = document.createElement('div');
-      header.className = 'flex-header';
+      //var header = document.createElement('div');
+      //header.className = 'flex-header';
+      //this.$header = $(header);
 
-      this.$header = $(header);
+      this.$header = $('<div/>').addClass('flex-header');
 
       var els = [
         this.$$btn({
@@ -44,12 +45,25 @@ function App(){
 
   this.set_pane = function(){
 
-      var pane = document.createElement('div');
-      pane.className = 'flex-header';
-
-      this.$pane = $(pane);
+      this.$pane = $('<div/>').addClass('flex-header');
 
       this.$pane.css({ background : 'green' });
+
+      var els = [];
+
+      var links = [ 'core', 'clean' ];
+      for(let link of links ){
+         els.push(
+		        this.$$btn({
+		          value : link,
+		          id    : 'btn_' + link,
+		        })
+         );
+      }
+
+      for (let el of els) {
+        this.$pane.append(el);
+      };
 
       return this;
   };
@@ -305,6 +319,7 @@ function App(){
     this
         .copy_html()
         .set_header()
+        .set_pane()
         .set_left()
         .set_right()
         .set_container()
