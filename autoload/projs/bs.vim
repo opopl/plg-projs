@@ -106,6 +106,16 @@ function! projs#bs#select_site (...)
 
 endfunction
 
+function! projs#bs#db_file (...)
+  let bs_data = projs#bs#data()
+
+  let db_file = base#qw#catpath('html_root','h.db')
+  let db_file = get(bs_data,'db_file',db_file)
+
+  return db_file
+
+endfunction
+
 if 0
   called by
     projs#bs#cmd#site_view

@@ -34,7 +34,25 @@ function! projs#bs#cmd#yaml_site_load ()
 
 endfunction
 
+"""bs_query
 function! projs#bs#cmd#query ()
+
+  let db_file = projs#bs#db_file()
+
+  let msg_a = [
+    \  printf("db_file: %s", db_file),  
+    \  " ",  
+    \  "SQLITE query: ",  
+    \  ]
+  let msg = join(msg_a,"\n")
+  let q =  base#input_hist(msg,'',{ 'hist_name' : 'bs_sql' })
+  let p = []
+
+  let [ rows_h, cols ] = pymy#sqlite#query({
+    \  'dbfile' : db_file,
+    \  'p'      : p,
+    \  'q'      : q,
+    \  })
 
 endfunction
 
