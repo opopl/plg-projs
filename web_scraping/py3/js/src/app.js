@@ -35,9 +35,9 @@ function App(){
         })
       ];
 
-      //for (var el in els) {
-        //this.$header.append(el);
-      //};
+      for (let el of els) {
+        this.$header.append(el);
+      };
 
       return this;
   };
