@@ -80,6 +80,9 @@ function! projs#bs#cmd#site_view ()
 
   call base#rdw(printf('SITE: %s',site_j))
 
+  call extend(bs_data,{ 'site' : site_j })
+  call base#varset('projs_bs_data',bs_data)
+
 endfunction
 
 function! projs#bs#cmd#init ()
