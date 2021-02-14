@@ -179,7 +179,7 @@ class Pic(CoreClass):
 
     m = re.match(r'^text/html',ct)
     if m:
-      continue
+      return pic
 
 ###ilocal
 
@@ -2287,48 +2287,54 @@ class BS(CoreClass,mixLogger):
       #if el_img.has_attr('alt'):
         #caption = el_img['alt']
 
-      if el_img.has_attr('src'):
-        src = el_img['src'].strip()
+      if not el_img.has_attr('src'):
+        continue
 
-        if src == '#':
-          continue
+      src = el_img['src'].strip()
 
-        rel_src = None
-        u = util.url_parse(src)
+      if src == '#':
+        continue
 
-        if not u['netloc']:
-          url = util.url_join(baseurl,src)
-          rel_src = src
-        else:
-          url = u['url']
+      rel_src = None
+      u = util.url_parse(src)
 
-        pic.url = url
-        self.log(f'Found image url: {url}')
+      if not u['netloc']:
+        url = util.url_join(baseurl,src)
+        rel_src = src
+      else:
+        url = u['url']
 
-        get_img = 1
+      pic.url = url
+      self.log(f'Found image url: {url}')
 
-        pic.img_saved = self._img_saved(url)
+      get_img = 1
 
-        if not self._act('get_img'):
-          # image saved to fs && db
-          if pic.img_saved:
-            pic.idata = self._img_data({ 'url' : url })
-            pic.ipath = pic.idata.get('path','')
-            get_img = 0
+      pic.img_saved = self._img_saved(url)
+
+      if not self._act('get_img'):
+        # image saved to fs && db
+        if pic.img_saved:
+          pic.idata = self._img_data({ 'url' : url })
+          pic.ipath = pic.idata.get('path','')
+          get_img = 0
 
 ###i
-        if get_img:
-          pic.grab()
+      if get_img:
+        pic.grab()
 
-        ipath_uri = Path(pic.ipath).as_uri()
-        el_img['src'] = ipath_uri
-        
-        n = self.soup.new_tag('img')
-        n['src'] = ipath_uri
-        n['rel-src'] = rel_src
-        n['width'] = 500
-        el_img.wrap(self.soup.new_tag('p'))
-        el_img.replace_with(n)
+      ipath = util.get(pic,'ipath')
+      if not ipath:
+        continue
+
+      ipath_uri = Path(ipath).as_uri()
+      el_img['src'] = ipath_uri
+      
+      n = self.soup.new_tag('img')
+      n['src'] = ipath_uri
+      n['rel-src'] = rel_src
+      n['width'] = 500
+      el_img.wrap(self.soup.new_tag('p'))
+      el_img.replace_with(n)
 
     return self
 
