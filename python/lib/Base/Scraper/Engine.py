@@ -63,10 +63,11 @@ class dbFile(CoreClass):
 
 class mixLogger:
 
-  def die(self,msg=''):
+  def die(self,msg='',opts = {}):
     self.log(msg)
 
-    self.on_fail()
+    if opts.get('on_fail',1):
+      self.on_fail()
 
     raise Exception(msg)    
 
@@ -1083,7 +1084,6 @@ class BS(CoreClass,mixLogger):
       site = self.page.site
 
     only = []
-    only.extend( self._sel_only_core() )
 
     only_site = util.get(self,[ 'sites', site, 'sel', 'only' ],[])
     if only_site:
@@ -1105,8 +1105,11 @@ class BS(CoreClass,mixLogger):
     return self
 
   def page_only(self,ref={}):
+    site = util.get(self,'site',self.page.site)
+
     only = self._sel_only(site)
     only = util.get(ref,'only',only)
+
     return self
 
   def page_clean(self,ref={}):
@@ -1335,7 +1338,7 @@ class BS(CoreClass,mixLogger):
     return self
 
   def page_save_data_txt(self):
-    tipes = 'meta,script,img,link,head,a'
+    tipes = 'meta,script,img,link,head,a,article'
 
     self.page_save_data({ \
       'tipes' :  tipes    \
@@ -1450,6 +1453,7 @@ class BS(CoreClass,mixLogger):
         })                                              \
         .page_add()                                     \
         .page_save_log()                                \
+        .db_ok()                                        \
 
     return self
 
@@ -1469,7 +1473,7 @@ class BS(CoreClass,mixLogger):
       pass
   
     if not self.page.site:
-      self.die(f'[WARN] no site for url: {self.page.url}')
+      self.die(f'[WARN] no site for url: {self.page.url}', { 'on_fail' : 0 })
   
     return self
 
@@ -1499,7 +1503,7 @@ class BS(CoreClass,mixLogger):
       return self
 
     self.page = Page({ 
-        'ok'   : 1,
+        'ok' : 0,
     })
 
     for k in util.qw('url date tags ii'):
@@ -1853,6 +1857,16 @@ class BS(CoreClass,mixLogger):
     }
 
     dbw.insert_dict(d)
+
+    return self
+
+  def db_ok(self):
+
+    dbw.update({
+      'table'  : 'pages',
+      'where'  : { 'url' : self.page.url },
+      'update' : { 'ok' : 1 },
+    })
 
     return self
 
