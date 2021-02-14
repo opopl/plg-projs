@@ -3,14 +3,9 @@ import os
 import re
 import sys
 
-from pathlib import Path
-import pathlib
+def split_n_trim(txt=''):
+  txt_n = txt.split('\n')
+  txt_n = list(map(lambda x: x.strip(),txt_n))
+  txt_n = list(filter(lambda x: len(x) > 0,txt_n))
 
-from urllib.parse import urlparse
-from urllib.parse import urljoin
-
-from url_normalize import url_normalize
-import datetime
-import shutil
-
-
+  return txt_n

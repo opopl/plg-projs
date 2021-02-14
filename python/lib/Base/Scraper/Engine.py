@@ -1569,7 +1569,7 @@ class BS(CoreClass,mixLogger):
         try:
           raise Exception
         except:
-          self.die(f'ERROR[page_get_date] NO DATE: rid: {self.page.rid}, url: {self.page.url}')
+          self.die(f'ERROR[page_get_date] NO DATE: rid: {self.page.rid}, site: {self.page.site}, url: {self.page.url}')
         finally:
           self.on_fail()
     else:
