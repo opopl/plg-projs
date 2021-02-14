@@ -140,6 +140,8 @@ function! projs#bs#load_site_files (...)
   let s:obj = {  }
   function! s:obj.init (...) dict
     let b:projs_bs_data = projs#bs#data()
+
+    StatusLine projs_bs
   endfunction
   
   let Fc = s:obj.init
