@@ -70,7 +70,9 @@ function! projs#bs#cmd#info ()
   let site = projs#bs#site()
   call add(info,printf('site: %s',site))
 
-  call base#buf#open_split({ 'lines' : info })
+  call base#buf#open_split({ 
+    \ 'lines' : info 
+    \ })
 
 endfunction
 
