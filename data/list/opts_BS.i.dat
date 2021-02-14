@@ -4,4 +4,5 @@ init
 yaml_site_load
 py_site_load
 info
-query
+db_query
+db_page_act

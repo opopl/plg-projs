@@ -34,8 +34,8 @@ function! projs#bs#cmd#yaml_site_load ()
 
 endfunction
 
-"""bs_query
-function! projs#bs#cmd#query ()
+"""bs_db_query
+function! projs#bs#cmd#db_query ()
 
   let db_file = projs#bs#db_file()
 
@@ -48,13 +48,19 @@ function! projs#bs#cmd#query ()
   let q =  base#input_hist(msg,'','projs_bs_sql')
   let p = []
 
-  "let [ rows_h, cols ] = pymy#sqlite#query({
   let lines = pymy#sqlite#query_screen({
     \  'dbfile' : db_file,
     \  'p'      : p,
     \  'q'      : q,
     \  })
-  call base#buf#open_split({ 'lines' : lines })
+
+  call base#buf#open_split({ 
+        \ 'lines' : lines 
+        \ })
+
+endfunction
+
+function! projs#bs#cmd#db_page_act ()
 
 endfunction
 

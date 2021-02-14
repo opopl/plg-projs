@@ -1078,6 +1078,19 @@ class BS(CoreClass,mixLogger):
     
     return clean
 
+  def _sel_only(self, site=None):
+    if not site:
+      site = self.page.site
+
+    only = []
+    only.extend( self._sel_only_core() )
+
+    only_site = util.get(self,[ 'sites', site, 'sel', 'only' ],[])
+    if only_site:
+      only.extend( only_site )
+    
+    return only
+
   def page_clean_core(self):
     clean = self._sel_clean_core()
     self.page_clean({ 'clean' : clean })
@@ -1089,6 +1102,11 @@ class BS(CoreClass,mixLogger):
     for e in els:
       if isinstance(e,Comment):
         e.extract()
+    return self
+
+  def page_only(self,ref={}):
+    only = self._sel_only(site)
+    only = util.get(ref,'only',only)
     return self
 
   def page_clean(self,ref={}):
@@ -1410,6 +1428,7 @@ class BS(CoreClass,mixLogger):
         .page_rm_comments()                             \
         .page_save({ 'tipe' : 'core' })                 \
         .page_clean()                                   \
+        .page_only()                                    \
         .page_unwrap()                                  \
         .page_rm_empty()                                \
         .page_header_insert_url()                       \
