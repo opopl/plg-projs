@@ -1433,50 +1433,52 @@ class BS(CoreClass,mixLogger):
   def parse_url_run(self,ref={}):
     tipes = util.qw('img img_clean')
 
-    self                                                \
-        .load_soup()                                    \
-        .page_save_data_txt()                           \
-        .db_save_meta()                                 \
-        .page_load_ld_json()                            \
-        .in_load_site_module()                          \
-        .update_ii()                                    \
-        .in_load_site_yaml()                            \
+    self                                              \
+        .load_soup()                                  \
+        .page_save_data_txt()                         \
+        .db_save_meta()                               \
+        .page_load_ld_json()                          \
+        .in_load_site_module()                        \
+        .update_ii()                                  \
+        .in_load_site_yaml()                          \
 
-    self                                                \
-        .page_get_date()                                \
-        .page_get_author()                              \
-        .page_get_ii_full()                             \
-        .db_save_url()                                  \
-        .cmt(''' save image data => img.html''')        \
-        .page_save_data_img()                           \
-        .page_clean_core()                              \
-        .page_rm_comments()                             \
-        .page_save({ 'tipe' : 'core' })                 \
-        .page_clean()                                   \
-        .page_only()                                    \
-        .page_unwrap()                                  \
-        .page_rm_empty()                                \
-        .page_header_insert_url()                       \
-        .page_save()                                    \
-        .page_save_data_img({ 'tipe' : 'img_clean' })   \
-        .page_do_imgs()                                 \
-        .page_replace_links({ 'act' : 'rel_to_remote'}) \
-        .load_soup_file_rid({                           \
-            'tipes' : tipes                             \
-        })                                              \
-        .ii_replace_links({                             \
-            'tipes' : tipes,                            \
-            'act'  : 'remote_to_db',                    \
-        })                                              \
-        .page_save()                                    \
-        .page_save_db_record()                          \
-        .ii_insert_js_css({                             \
-            'tipes' : util.qw('core clean'),            \
-        })                                              \
-        .page_add()                                     \
-        .page_save_log()                                \
-        .page2yaml()                                    \
-        .db_ok()                                        \
+    self                                              \
+        .page_get_date()                              \
+        .page_get_author()                            \
+        .page_get_ii_full()                           \
+        .db_save_url()                                \
+        .cmt(''' save image data => img.html''')      \
+        .page_save_data_img()                         \
+        .page_clean_core()                            \
+        .page_rm_comments()                           \
+        .page_save({ 'tipe' : 'core' })               \
+        .page_clean()                                 \
+        .page_only()                                  \
+        .page_unwrap()                                \
+        .page_rm_empty()                              \
+        .page_header_insert_url()                     \
+        .page_save()                                  \
+        .page_save_data_img({ 'tipe' : 'img_clean' }) \
+        .page_do_imgs()                               \
+        .page_replace_links({                         \
+            'act' : 'rel_to_remote'                   \
+        })                                            \
+        .load_soup_file_rid({                         \
+            'tipes' : tipes                           \
+        })                                            \
+        .ii_replace_links({                           \
+            'tipes' : tipes,                          \
+            'act'  : 'remote_to_db',                  \
+        })                                            \
+        .page_save()                                  \
+        .page_save_db_record()                        \
+        .ii_insert_js_css({                           \
+            'tipes' : util.qw('core clean'),          \
+        })                                            \
+        .page_add()                                   \
+        .page_save_log()                              \
+        .page2yaml()                                  \
+        .db_ok()                                      \
 
     return self
 
@@ -1715,6 +1717,8 @@ class BS(CoreClass,mixLogger):
     ext  = ref.get('ext','html')
     act  = ref.get('act','rel_to_remote')
 
+    rid = self.page.rid
+
     tipes_in = ref.get('tipes')
     if tipes_in:
       tipes    = tipes_in
@@ -1729,7 +1733,7 @@ class BS(CoreClass,mixLogger):
           self.ii_replace_links(r)
         return self
 
-    self.log(f'[ii_replace_links] {tipe}')
+    self.log(f'[{rid}][ii_replace_links] {tipe}')
 
     file = self._file_rid({ 
       'tipe' : tipe, 

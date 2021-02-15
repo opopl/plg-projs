@@ -126,7 +126,7 @@ function App(){
   };
 
   this.$$select = function(ref={}){
-      var slc = $('<select/>');
+      var $slc = $('<select/>');
 
       return $slc;
   };
