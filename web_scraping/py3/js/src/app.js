@@ -54,11 +54,12 @@ function App(){
       var tipes = [ 'core', 'clean' ];
 
       for(let tipe of tipes ){
-         let href = '../' + tipe + '.html';
+         let href = tipe + '.html';
 
          els.push(
             this.$$a_href({
               href : href,
+              txt  : tipe,
               id    : 'href_' + tipe,
             })
          );
@@ -98,7 +99,7 @@ function App(){
 
       var $a = $('<a/>');
 
-      if (txt) { $a.val(txt); }
+      if (txt) { $a.text(txt); }
       if (href) { $a.attr({ href : href }); }
 
       $a.addClass('block').css({ 
