@@ -147,14 +147,16 @@ class Pic(CoreClass):
   def grab(pic):
     app = pic.app
 
-    app.log(f"[page_do_imgs] Getting image: \n\t{pic.url}")
+    rid = app.page.rid
+
+    app.log(f"[{rid}][Pic.grab] Getting image: \n\t{pic.url}")
 
     i = None
     try:
       u = util.url_parse(pic.url)
       resp = requests.get(pic.url, stream = True)
     except:
-      app.die(f'ERROR[Pic][grab] {pic.url}')
+      app.die(f'ERROR[{rid}][Pic.grab] {pic.url}')
 
     resp.raw.decoded_content = True
 
@@ -167,15 +169,15 @@ class Pic(CoreClass):
 
     f = i_tmp['bare']
     if (not os.path.isfile(f)) or os.stat(f).st_size == 0:
-      app.log(f'FAIL[page_do_imgs] empty file: {pic.url}')
+      app.log(f'FAIL[{rid}][Pic.grab] empty file: {pic.url}')
       self.on_fail()
       return self
 
     f_size = os.stat(f).st_size
     ct = resp.headers['content-type']
 
-    app.log(f'[page_do_imgs] image file size: {f_size}')
-    app.log(f'[page_do_imgs] content-type: {ct}')
+    app.log(f'[{rid}][Pic.grab] image file size: {f_size}')
+    app.log(f'[{rid}][Pic.grab] content-type: {ct}')
 
     m = re.match(r'^text/html',ct)
     if m:
@@ -201,12 +203,12 @@ class Pic(CoreClass):
       
     if not i:
       app                                                             \
-        .log(f'FAIL[page_do_imgs] no Image.open instance: {pic.url}') \
+        .log(f'FAIL[{rid}][Pic.grab] no Image.open instance: {pic.url}') \
         .on_fail()                                                    \
 
       return pic
       
-    app.log(f'[page_do_imgs] Image format: {i.format}')
+    app.log(f'[{rid}][Pic.grab] Image format: {i.format}')
     pic.ext = app._img_ext(i)
 
     dd = { 
@@ -222,9 +224,9 @@ class Pic(CoreClass):
     pic.inum  = pic.idata.get('inum','')
     pic.ipath = pic.idata.get('path','')
 
-    app.log(f'[page_do_imgs] Local path: {pic.idata.get("path","")}')
+    app.log(f'[{rid}][Pic.grab] Local path: {pic.idata.get("path","")}')
     if os.path.isfile(pic.ipath):
-      app.log(f'WARN[page_do_imgs] image file already exists: {pic.img}')
+      app.log(f'WARN[{rid}][Pic.grab] image file already exists: {pic.img}')
 
     a = {}
     if pic.ext == 'gif':
@@ -233,7 +235,7 @@ class Pic(CoreClass):
     i.save(pic.ipath,**a)
     i.close()
 
-    app.log(f'[page_do_imgs] Saved image: {pic.img}')
+    app.log(f'[{rid}][Pic.grab] Saved image: {pic.img}')
 
     insert =  {
         'url_parent' : app.page.url,
@@ -2326,7 +2328,7 @@ class BS(CoreClass,mixLogger):
         url = u['url']
 
       pic.url = url
-      self.log(f'Found image url: {url}')
+      self.log(f'[page_do_imgs] Found image url: {url}')
 
       get_img = 1
 
