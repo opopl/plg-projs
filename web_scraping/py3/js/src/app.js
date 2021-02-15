@@ -54,10 +54,10 @@ function App(){
       var links = [ 'core', 'clean' ];
       for(let link of links ){
          els.push(
-		        this.$$btn({
-		          value : link,
-		          id    : 'btn_' + link,
-		        })
+            this.$$btn({
+              value : link,
+              id    : 'btn_' + link,
+            })
          );
       }
 
@@ -85,6 +85,25 @@ function App(){
       });
 
       return $(btn);
+  };
+
+  this.$$a_href = function(ref={}){
+
+      var href  = util.get(ref,'href','');
+      var txt   = util.get(ref,'txt','');
+      var css   = util.get(ref,'css',{});
+
+      var $a = $('<a/>');
+
+      if (txt) { $a.val(txt); }
+      if (href) { $a.attr({ href : href }); }
+
+      $a.addClass('block').css({ 
+        width: '10%',
+        ...css
+      });
+
+      return $a;
   };
 
   this.$$input = function(ref={}){
