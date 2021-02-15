@@ -1628,6 +1628,8 @@ class BS(CoreClass,mixLogger):
 
     dy = yaml.dump(self.page.__dict__)
     yfile = self._file_rid({ 'tipe' : 'page', 'ext' : 'yaml' })
+    util.mk_dirname(yfile)
+
     with open(yfile, 'w') as f:
       f.write(dy)
 

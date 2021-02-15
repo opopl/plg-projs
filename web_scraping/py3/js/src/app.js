@@ -354,6 +354,8 @@ function App(){
 
 }
 
-export default App;
+//eof
+//export default App;
 
+module.exports = { App }
 

@@ -26,6 +26,9 @@ def call(obj, sub_name, args = []):
 
   return res
 
+def mk_dirname(file):
+  os.makedirs(Path(file).parent.as_posix(),exist_ok=True)
+
 def keys(dict={}):
   return list(dict.keys())
 
