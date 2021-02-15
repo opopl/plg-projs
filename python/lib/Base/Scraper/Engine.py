@@ -574,7 +574,6 @@ class BS(CoreClass,mixLogger):
       subpath = self.bin_subpaths.get(ext,'')
 
       ext_stems = self._bin_ext_stems(ext,subpath)
-      import pdb; pdb.set_trace()
       kk.extend( list(map(lambda x: f'{x}_{ext}',ext_stems)) )
 
     for k in kk:

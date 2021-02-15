@@ -1,6 +1,6 @@
 
 var pretty = require('pretty');
-var util = require('./util.js');
+var util = require('./util.mjs');
 //
 
 function App(){
@@ -357,5 +357,6 @@ function App(){
 //eof
 //export default App;
 
-module.exports = { App }
+//module.exports = { App }
+export default App
 
