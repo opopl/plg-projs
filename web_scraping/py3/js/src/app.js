@@ -125,6 +125,12 @@ function App(){
       return $a;
   };
 
+  this.$$select = function(ref={}){
+      var slc = $('<select/>');
+
+      return $slc;
+  };
+
   this.$$input = function(ref={}){
 
       var id  = util.get(ref,'id');
