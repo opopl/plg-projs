@@ -1431,7 +1431,7 @@ class BS(CoreClass,mixLogger):
 
 ###pur
   def parse_url_run(self,ref={}):
-    tipes = util.qw('img img_clean')
+    tipes_img = util.qw('img img_clean')
 
     self                                              \
         .load_soup()                                  \
@@ -1463,11 +1463,12 @@ class BS(CoreClass,mixLogger):
         .page_replace_links({                         \
             'act' : 'rel_to_remote'                   \
         })                                            \
+        .page_store_links()                           \
         .load_soup_file_rid({                         \
-            'tipes' : tipes                           \
+            'tipes' : tipes_img                       \
         })                                            \
         .ii_replace_links({                           \
-            'tipes' : tipes,                          \
+            'tipes' : tipes_img,                      \
             'act'  : 'remote_to_db',                  \
         })                                            \
         .page_save()                                  \
@@ -1748,6 +1749,11 @@ class BS(CoreClass,mixLogger):
       })
       with open(file, 'w') as f:
         f.write(soup.prettify())
+
+    return self
+
+  def page_store_links(self,ref={}):
+    soup = ref.get('soup',self.soup)
 
     return self
 
@@ -2384,7 +2390,8 @@ class BS(CoreClass,mixLogger):
   def parse(self):
 
     urldata = getattr(self,'urldata',[]) 
-    for d in urldata:
+    while len(urldata):
+      d = urldata.pop(0)
       self.parse_url(d)
     
     return self
