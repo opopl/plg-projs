@@ -267,6 +267,12 @@ class BS(CoreClass,mixLogger):
   # data
   data = {}
 
+  ext_dir_pieces = {
+     'mjs' : 'js'
+  }
+
+  asset_exts = util.qw('mjs css')
+
   # global variables
   globals = {}
 
@@ -564,10 +570,11 @@ class BS(CoreClass,mixLogger):
 
     kk = util.qw('webpack_config_js')
 
-    for ext in util.qw('js mjs css'):
+    for ext in self.asset_exts:
       subpath = self.bin_subpaths.get(ext,'')
 
       ext_stems = self._bin_ext_stems(ext,subpath)
+      import pdb; pdb.set_trace()
       kk.extend( list(map(lambda x: f'{x}_{ext}',ext_stems)) )
 
     for k in kk:
@@ -584,7 +591,6 @@ class BS(CoreClass,mixLogger):
         pp = Path(w_prod).parent.as_posix()
         os.makedirs(pp,exist_ok=True)
         shutil.copy(w_vcs, w_prod)
-        #import pdb; pdb.set_trace()
 
     if wp_run:
         old = os.getcwd()
@@ -624,11 +630,7 @@ class BS(CoreClass,mixLogger):
         'webpack_config_js.prod' : self._dir('html','webpack.config.js'),
     })
 
-    self.ext_dir_pieces = {
-       'mjs' : 'js'
-    }
-
-    for ext in util.qw('css mjs js'):
+    for ext in self.asset_exts:
       subpath = self.bin_subpaths.get(ext,'')
 
       ext_dir = self.ext_dir_pieces.get(ext,ext)
@@ -660,7 +662,9 @@ class BS(CoreClass,mixLogger):
     if not ext:
      return []
 
-    ext_files = list(Path(self._dir('bin',f'{ext} {subpath}')).glob(f'*.{ext}'))
+    ext_dir = self.ext_dir_pieces.get(ext,ext)
+
+    ext_files = list(Path(self._dir('bin',f'{ext_dir} {subpath}')).glob(f'*.{ext}'))
     ext_files = list(map(lambda x: x.as_posix(),ext_files))
 
     return ext_files
@@ -1395,7 +1399,6 @@ class BS(CoreClass,mixLogger):
           #ss = self.html_parser.unescape(ss)
           jj = json.loads(ss,strict=False)
         except:
-          import pdb; pdb.set_trace()
           raise
 
         if jj:
