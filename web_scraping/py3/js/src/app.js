@@ -51,12 +51,15 @@ function App(){
 
       var els = [];
 
-      var links = [ 'core', 'clean' ];
-      for(let link of links ){
+      var tipes = [ 'core', 'clean' ];
+
+      for(let tipe of tipes ){
+         let href = '../' + tipe + '.html';
+
          els.push(
-            this.$$btn({
-              value : link,
-              id    : 'btn_' + link,
+            this.$$a_href({
+              href : href,
+              id    : 'href_' + tipe,
             })
          );
       }
