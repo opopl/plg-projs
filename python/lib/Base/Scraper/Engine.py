@@ -337,6 +337,7 @@ class BS(CoreClass,mixLogger):
 
   bin_subpaths = {
     'js' : 'src',
+    'mjs' : 'src',
   }
 
   # end: attributes }
@@ -563,7 +564,7 @@ class BS(CoreClass,mixLogger):
 
     kk = util.qw('webpack_config_js')
 
-    for ext in util.qw('js css'):
+    for ext in util.qw('js mjs css'):
       subpath = self.bin_subpaths.get(ext,'')
 
       ext_stems = self._bin_ext_stems(ext,subpath)
@@ -623,11 +624,18 @@ class BS(CoreClass,mixLogger):
         'webpack_config_js.prod' : self._dir('html','webpack.config.js'),
     })
 
-    for ext in util.qw('css js'):
+    self.ext_dir_pieces = {
+       'mjs' : 'js'
+    }
+
+    for ext in util.qw('css mjs js'):
       subpath = self.bin_subpaths.get(ext,'')
 
+      ext_dir = self.ext_dir_pieces.get(ext,ext)
+
       for stem in self._bin_ext_stems(ext,subpath):
-        rel = f'{ext} {subpath} {stem}.{ext}'
+
+        rel = f'{ext_dir} {subpath} {stem}.{ext}'
         self.files.update({ 
             f'{stem}_{ext}.vcs'  : self._dir('bin',rel),
             f'{stem}_{ext}.prod' : self._dir('html',rel),
