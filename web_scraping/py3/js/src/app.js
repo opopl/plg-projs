@@ -60,10 +60,25 @@ function App(){
             this.$$a_href({
               href : href,
               txt  : tipe,
-              id    : 'href_' + tipe,
-            })
+              id   : 'href_' + tipe,
+              css  : {
+                width : '5%'
+              }
+            }),
          );
       }
+
+      els.push(
+            this.$$input({
+              plc  : 'RID',
+              id   : 'inp_rid',
+              css  : {
+                width : '5%',
+                'background-color' : 'white',
+                'color'            : 'black',
+              }
+            }),
+      );
 
       for (let el of els) {
         this.$pane.append(el);
@@ -138,9 +153,15 @@ function App(){
   };
 
   this.on_enter = function(){
+      //this
+        //.on_enter_css_show()
+        //.on_enter_css_delete()
+        //;
+
       this
-        .on_enter_css_show()
-        .on_enter_css_delete()
+        .register_on_enter('#inp_css_show',this.func_enter_css_show())
+        .register_on_enter('#inp_css_delete',this.func_enter_css_delete())
+        .register_on_enter('#inp_rid',this.func_enter_rid())
         ;
 
       return this;
@@ -151,7 +172,51 @@ function App(){
      var $i = $('#inp_css_delete');
      var $slf = this;
 
-     $i.bind("enterKey",function(e){
+     $i.bind("enterKey",);
+
+     $i.keyup(function(e){
+        if(e.keyCode == 13) {
+            $(this).trigger("enterKey");
+        }
+     });
+
+     return this;
+  };
+
+  this.on_enter_css_unwrap = function(){
+     return this;
+  };
+
+  this.register_on_enter = function(sel,func){
+
+     var $i = $(sel);
+
+     $i.bind("enterKey",func);
+
+     $i.keyup(function(e){
+        if(e.keyCode == 13) {
+            $(this).trigger("enterKey");
+        }
+     });
+
+     return this;
+  };
+
+  this.func_enter_rid = function(){
+
+     return function(e){
+        var rid = $(this).val();
+
+        window.location = "../" + rid + "/clean.html";
+     };
+
+     return this;
+  };
+
+  this.func_enter_css_delete = function(){
+     var $slf = this;
+
+     return function(e){
         var css = $(this).val();
 
         if (!css) {
@@ -169,27 +234,15 @@ function App(){
 
         $slf.$right.find('pre').text($slf._code($slf.$html_clone));
 
-     });
-
-     $i.keyup(function(e){
-        if(e.keyCode == 13) {
-            $(this).trigger("enterKey");
-        }
-     });
+     };
 
      return this;
   };
 
-  this.on_enter_css_unwrap = function(){
-     return this;
-  };
-
-  this.on_enter_css_show = function(){
-
-     var $i = $('#inp_css_show');
+  this.func_enter_css_show = function(){
      var $slf = this;
 
-     $i.bind("enterKey",function(e){
+     return function(e){
         var css = $(this).val();
 
         if (!css) {
@@ -209,21 +262,11 @@ function App(){
            $slf.$left.append(_el);
 
            _txt += $slf._code(_el) + '\n';
-           //_txt += $slf._code(_el) + '<br/>\n';
-           //console.log(_txt);
-           //console.log(_el.html());
         });
 
-        //$slf.$right.find('pre').text( this._code($found) );
         $slf.$right.find('pre').text( _txt );
 
-     });
-
-     $i.keyup(function(e){
-        if(e.keyCode == 13) {
-            $(this).trigger("enterKey");
-        }
-     });
+     };
 
      return this;
   };
@@ -337,7 +380,7 @@ function App(){
   };
 
   this.run = function(){
-		console.log('[App] start run');
+    console.log('[App] start run');
  
     this
         .copy_html()

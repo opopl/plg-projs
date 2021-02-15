@@ -2291,6 +2291,7 @@ class BS(CoreClass,mixLogger):
      return self
 
     host    = self.page.host
+    rid     = self.page.rid
 
     baseurl = self.page.baseurl
     site    = self.page.site
@@ -2328,7 +2329,7 @@ class BS(CoreClass,mixLogger):
         url = u['url']
 
       pic.url = url
-      self.log(f'[page_do_imgs] Found image url: {url}')
+      self.log(f'[{rid}][page_do_imgs] Found image url: {url}')
 
       get_img = 1
 
