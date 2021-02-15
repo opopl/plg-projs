@@ -271,7 +271,7 @@ class BS(CoreClass,mixLogger):
      'mjs' : 'js'
   }
 
-  asset_exts = util.qw('mjs css')
+  asset_exts = util.qw('js css')
 
   # global variables
   globals = {}

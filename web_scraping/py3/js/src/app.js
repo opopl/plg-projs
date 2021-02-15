@@ -337,6 +337,7 @@ function App(){
   };
 
   this.run = function(){
+		console.log('[App] start run');
  
     this
         .copy_html()
@@ -355,8 +356,6 @@ function App(){
 }
 
 //eof
-//export default App;
-
-//module.exports = { App }
-export default App
+module.exports = { App }
+//export default App
 
