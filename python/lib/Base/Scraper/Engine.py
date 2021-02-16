@@ -1755,6 +1755,17 @@ class BS(CoreClass,mixLogger):
   def page_store_links(self,ref={}):
     soup = ref.get('soup',self.soup)
 
+    links = []
+    els = soup.select('a')
+    for el in els:
+      txt = el.get_text()
+      txt = string.strip_nq(txt)
+      if el.has_attr('href'):
+        href = el['href']
+        links.append({ 'txt' : txt, 'href' : href })
+
+    import pdb; pdb.set_trace()
+
     return self
 
   def page_replace_links(self,ref={}):
