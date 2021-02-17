@@ -1472,7 +1472,6 @@ class BS(CoreClass,mixLogger):
             'act'  : 'remote_to_db',                  \
         })                                            \
         .page_save()                                  \
-        .page_save_db_record()                        \
         .ii_insert_js_css({                           \
             'tipes' : util.qw('core clean'),          \
         })                                            \
@@ -1480,6 +1479,7 @@ class BS(CoreClass,mixLogger):
         .page_save_log()                              \
         .page2yaml()                                  \
         .db_ok()                                      \
+        .page_save_db_record()                        \
 
     return self
 
@@ -1759,12 +1759,13 @@ class BS(CoreClass,mixLogger):
     els = soup.select('a')
     for el in els:
       txt = el.get_text()
-      txt = string.strip_nq(txt)
+      txt = string.strip_n(txt)
       if el.has_attr('href'):
         href = el['href']
         links.append({ 'txt' : txt, 'href' : href })
 
-    import pdb; pdb.set_trace()
+    self.page.set({ 'links' : links })
+    #import pdb; pdb.set_trace()
 
     return self
 
@@ -1785,8 +1786,8 @@ class BS(CoreClass,mixLogger):
           href = next['href']
 
           if act == 'rel_to_remote':
-            u = urlparse(href)
-            if not u.netloc:
+            u = util.url_parse(href)
+            if not u['netloc']:
               href = util.url_join(self.page.baseurl,href)
               next['href'] = href
             next['target'] = '_blank'

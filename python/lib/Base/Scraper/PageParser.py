@@ -373,11 +373,13 @@ class RootPageParser(CoreClass):
 
       d_parse = {}
       for k in util.qw('url name'):
-        d  = auth_sel.get(k)
-        css  = d.get('css')
-        attr = d.get('attr')
+        d    = auth_sel.get(k)
 
-        els = self.soup.select(css)
+        find = d.get('find','')
+        get  = d.get('get','')
+        attr = d.get('attr','')
+
+        els = self.soup.select(find)
   
         for e in els:
           auth = None
