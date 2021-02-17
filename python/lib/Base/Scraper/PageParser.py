@@ -187,14 +187,22 @@ class RootPageParser(CoreClass):
 
     return self
 
+  def _sels(self,key=''):
+    if not key:
+      return []
+
+    sels = []
+    sels.extend( app._cnf(f'PageParser.{key}.sels',[]) )
+    sels.extend( app._site_data(f'PageParser.{key}.sels',[]) )
+
+    return sels
+
   def get_date_html(self,ref={}):
     app = self.app
 
-    sels = []
-    sels.extend( app._cnf('PageParser.get_date_html.sels',[]) )
-    sels.extend( app._site_data('PageParser.get_date_html.sels',[]) )
+    sels = self._sels('get_date_html')
 
-    for sel in sels:
+    for sel in :
       date = self._date_from_sel(app.soup, sel)
       if date:
         app.page.set({ 'date' : date })
