@@ -190,6 +190,8 @@ class RootPageParser(CoreClass):
     return self
 
   def _sels(self,key=''):
+    app = self.app
+
     if not key:
       return []
 
