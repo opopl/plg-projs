@@ -33,7 +33,23 @@ function App(){
             'background-color' : 'blue',
             'color'            : 'white',
           }
-        })
+        }),
+        this.$$input({
+          id  : 'inp_xpath_delete',
+          plc : 'XPATH (Del)',
+          css : {
+            'background-color' : 'red',
+            'color'            : 'white',
+          }
+        }),
+        this.$$input({
+          id  : 'inp_xpath_show',
+          plc : 'XPATH (Show)',
+          css : {
+            'background-color' : 'blue',
+            'color'            : 'white',
+          }
+        }),
       ];
 
       for (let el of els) {
