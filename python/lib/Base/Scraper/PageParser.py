@@ -25,6 +25,8 @@ class RootPageParser(CoreClass):
   date_format = ''
   date_bare   = ''
 
+  langs = util.qw('ukr rus')
+
   month_map_genitive = {
     'ukr' : {
       'січня'     : '01',
@@ -152,7 +154,7 @@ class RootPageParser(CoreClass):
     sels.extend( app._cnf('PageParser.get_date.sels',[]) )
     sels.extend( app._site_data('PageParser.get_date.sels',[]) )
 
-    tries = util.qw('ld_json meta html')
+    tries = util.qw('ld_json meta html url')
     while len(tries):
       tri = tries.pop(0)
 
@@ -197,12 +199,17 @@ class RootPageParser(CoreClass):
 
     return sels
 
+  def get_date_url(self,ref={}):
+    app = self.app
+
+    return self
+
   def get_date_html(self,ref={}):
     app = self.app
 
     sels = self._sels('get_date_html')
 
-    for sel in :
+    for sel in sels:
       date = self._date_from_sel(app.soup, sel)
       if date:
         app.page.set({ 'date' : date })
