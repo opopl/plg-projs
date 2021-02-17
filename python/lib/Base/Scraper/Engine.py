@@ -1472,12 +1472,12 @@ class BS(CoreClass,mixLogger):
             'act'  : 'remote_to_db',                  \
         })                                            \
         .page_save()                                  \
-        .ii_insert_js_css()                           \
         .page_add()                                   \
         .page_save_log()                              \
         .page2yaml()                                  \
         .db_ok()                                      \
         .page_save_db_record()                        \
+        .ii_insert_js_css()                           \
 
     return self
 
@@ -1680,7 +1680,9 @@ class BS(CoreClass,mixLogger):
     tipes_in = self._cnf('BS.ii_insert_js_css.tipes',[])
     tipes_in = ref.get('tipes',tipes_in)
 
-    if tipe:
+    if not len(tipes_in):
+      if not tipe:
+        return self
       tipes_in = [ tipe ]
 
     if tipes_in:
@@ -1698,16 +1700,17 @@ class BS(CoreClass,mixLogger):
               'tipe' : tipe,
               'ext'  : ext,
           })
-          ii_soup = self.soups[svf]
-          body = ii_soup.body
-          script = ii_soup.new_tag('script')
-      
-          script['src'] = Path(self._file('bundle_js')).as_uri()
-      
-          body.append(script)
-      
-          with open(svf, 'w') as f:
-            f.write(ii_soup.prettify())
+          ii_soup = self.soups.get(svf)
+          if svf:
+            body = ii_soup.body
+            script = ii_soup.new_tag('script')
+          
+            script['src'] = Path(self._file('bundle_js')).as_uri()
+          
+            body.append(script)
+          
+            with open(svf, 'w') as f:
+              f.write(ii_soup.prettify())
 
     return self
 

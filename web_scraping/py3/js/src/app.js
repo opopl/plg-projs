@@ -51,7 +51,7 @@ function App(){
 
       var els = [];
 
-      var tipes = [ 'core', 'clean', 'dbrid', 'img' ];
+      var tipes = 'log core clean dbrid img img_clean'.split(' ');
 
       for(let tipe of tipes ){
          let href = tipe + '.html';
