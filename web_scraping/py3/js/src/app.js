@@ -51,7 +51,7 @@ function App(){
 
       var els = [];
 
-      var tipes = [ 'core', 'clean' ];
+      var tipes = [ 'core', 'clean', 'dbrid', 'img' ];
 
       for(let tipe of tipes ){
          let href = tipe + '.html';
@@ -357,8 +357,8 @@ function App(){
   this.body_append = function(){
     $('body').children().remove();
   
-    $('body').append(this.$header);
     $('body').append(this.$pane);
+    $('body').append(this.$header);
     $('body').append(this.$container);
 
     return this;

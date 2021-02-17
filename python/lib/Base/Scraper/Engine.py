@@ -1472,9 +1472,7 @@ class BS(CoreClass,mixLogger):
             'act'  : 'remote_to_db',                  \
         })                                            \
         .page_save()                                  \
-        .ii_insert_js_css({                           \
-            'tipes' : util.qw('core clean'),          \
-        })                                            \
+        .ii_insert_js_css()                           \
         .page_add()                                   \
         .page_save_log()                              \
         .page2yaml()                                  \
@@ -1679,7 +1677,9 @@ class BS(CoreClass,mixLogger):
     tipe = ref.get('tipe','cache')
     ext  = ref.get('ext','html')
 
-    tipes_in = ref.get('tipes')
+    tipes_in = self._cnf('BS.ii_insert_js_css.tipes',[])
+    tipes_in = ref.get('tipes',tipes_in)
+
     if tipes_in:
       tipes    = tipes_in
       if type(tipes_in) is str:
