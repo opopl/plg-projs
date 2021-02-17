@@ -379,6 +379,9 @@ class RootPageParser(CoreClass):
         get  = d.get('get','')
         attr = d.get('attr','')
 
+        if not find:
+          continue
+
         els = self.soup.select(find)
   
         for e in els:
