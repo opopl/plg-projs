@@ -1680,36 +1680,34 @@ class BS(CoreClass,mixLogger):
     tipes_in = self._cnf('BS.ii_insert_js_css.tipes',[])
     tipes_in = ref.get('tipes',tipes_in)
 
+    if tipe:
+      tipes_in = [ tipe ]
+
     if tipes_in:
       tipes    = tipes_in
       if type(tipes_in) is str:
         tipes = tipes_in.split(',') 
   
       if len(tipes):
-        del ref['tipes']
         for tipe in tipes:
-          r = copy(ref)
-          r['tipe'] = tipe
-          self.ii_insert_js_css(r)
-        return self
 
-    self.log(f'[ii_insert_js_css] {tipe}')
-
-    svf = self._file_rid({ 'tipe' : tipe, 'ext' : ext })
-    self.load_soup_file_rid({                           \
-        'tipe' : tipe,
-        'ext'  : ext,
-    })
-    ii_soup = self.soups[svf]
-    body = ii_soup.body
-    script = ii_soup.new_tag('script')
-
-    script['src'] = Path(self._file('bundle_js')).as_uri()
-
-    body.append(script)
-
-    with open(svf, 'w') as f:
-      f.write(ii_soup.prettify())
+          self.log(f'[ii_insert_js_css] {tipe}')
+      
+          svf = self._file_rid({ 'tipe' : tipe, 'ext' : ext })
+          self.load_soup_file_rid({                           \
+              'tipe' : tipe,
+              'ext'  : ext,
+          })
+          ii_soup = self.soups[svf]
+          body = ii_soup.body
+          script = ii_soup.new_tag('script')
+      
+          script['src'] = Path(self._file('bundle_js')).as_uri()
+      
+          body.append(script)
+      
+          with open(svf, 'w') as f:
+            f.write(ii_soup.prettify())
 
     return self
 
