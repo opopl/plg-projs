@@ -401,12 +401,23 @@ function App(){
     return this;
   };
 
+  this.get_rid = function(){
+
+		var last = path.split('/')[-1];
+		var m = last.match(/(\w+)\.html$/);
+		if (m && m.length > 0) { this.rid = m[1]; }
+
+    return this;
+  };
+
   this.run = function(){
     console.log('[App] start run');
 
-		var _url = new URL(window.location);
- 
+		this.url$ = new URL(window.location);
+		this.url_path = url$.pathname;
+
     this
+        .get_rid()
         .copy_html()
         .set_header()
         .set_pane()
