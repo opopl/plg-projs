@@ -92,7 +92,8 @@ function App(){
                 width : '5%',
                 'background-color' : 'white',
                 'color'            : 'black',
-              }
+              },
+							txt : util.get(this,'rid'),
             }),
       );
 
@@ -151,6 +152,7 @@ function App(){
 
       var id  = util.get(ref,'id');
       var plc = util.get(ref,'plc');
+      var txt = util.get(ref,'txt');
       var css = util.get(ref,'css',{});
 
       var inp = document.createElement('input');
@@ -159,6 +161,7 @@ function App(){
 
       if (id) { inp.id = id; }
       if (plc) { inp.placeholder = plc; }
+      if (txt) { inp.value = txt; }
 
       $(inp)
         .addClass('block')
@@ -401,11 +404,12 @@ function App(){
     return this;
   };
 
-  this.get_rid = function(){
+  this.parse_url = function(){
 
-		var last = path.split('/')[-1];
+		var parts = this.url_path.split('/');
+		var last = parts.pop();
 		var m = last.match(/(\w+)\.html$/);
-		if (m && m.length > 0) { this.rid = m[1]; }
+		if (m) { this.rid = m[1]; }
 
     return this;
   };
@@ -414,10 +418,10 @@ function App(){
     console.log('[App] start run');
 
 		this.url$ = new URL(window.location);
-		this.url_path = url$.pathname;
+		this.url_path = this.url$.pathname;
 
     this
-        .get_rid()
+        .parse_url()
         .copy_html()
         .set_header()
         .set_pane()
