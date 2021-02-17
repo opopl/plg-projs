@@ -403,6 +403,8 @@ function App(){
 
   this.run = function(){
     console.log('[App] start run');
+
+		var _url = new URL(window.location);
  
     this
         .copy_html()
