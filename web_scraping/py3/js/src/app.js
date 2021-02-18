@@ -233,15 +233,15 @@ function App(){
           return;
         }
 
-        $slf.$left.children().remove();
-
         $slf.$html_clone.find(css).remove();
 
-        $slf.$html_clone.find('body').children().each(function(){
-           $slf.$left.append($(this).clone());
-        });
-
+        $slf.update_left();
         $slf.$right.find('pre').text($slf._code($slf.$html_clone));
+
+        //$slf.$left.children().remove();
+        //$slf.$html_clone.find('body').children().each(function(){
+           //$slf.$left.append($(this).clone());
+        //});
 
      };
 
@@ -315,9 +315,30 @@ function App(){
     return html;
   };
 
+  this.update_left = function(ref={}){
+    let html = util.get(ref,'html','');
+
+    if (!html) {
+      let el = this.$html_clone;
+      el = util.get(ref,'el',el);
+  
+      html = this._code(el);
+    }
+
+    let src = 'data:text/html;charset=utf-8,' + html;
+    this.$left.attr({ src : src });
+
+    return this;
+  };
+
   this.set_left = function(ref={}){
 
-    var $slf = this;
+    this.$left = $('<iframe/>');
+    this.$left.addClass('flex-left');
+
+    this.update_left();
+
+    //var $slf = this;
 
 /*    this.$left = $('<div/>');*/
     //this.$left.addClass('flex-left');
@@ -325,13 +346,6 @@ function App(){
     //this.$body_clone.children().each(function(){
        //$slf.$left.append($(this).clone());
     /*});*/
-
-    let html = this._code(this.$html_clone);
-    let src = 'data:text/html;charset=utf-8,' + html;
-
-    this.$left = $('<iframe/>');
-    this.$left.addClass('flex-left');
-    this.$left.attr({ src : src });
 
     return this;
   };

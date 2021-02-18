@@ -1013,6 +1013,8 @@ class BS(CoreClass,mixLogger):
     tipe = ref.get('tipe','cache')
     ext  = ref.get('ext','html')
 
+    rid = self.page.rid
+
     tipes_in = ref.get('tipes')
     if tipes_in:
       tipes    = tipes_in
@@ -1027,7 +1029,7 @@ class BS(CoreClass,mixLogger):
           self.load_soup_file_rid(r)
         return self
 
-    self.log(f'[load_soup_file_rid] tipe: {tipe}, ext: {ext}')
+    self.log(f'[{rid}][load_soup_file_rid] tipe: {tipe}, ext: {ext}')
 
     file = self._file_rid({ 'tipe' : tipe, 'ext' : ext })
 
@@ -1680,6 +1682,8 @@ class BS(CoreClass,mixLogger):
     tipes_in = self._cnf('BS.ii_insert_js_css.tipes',[])
     tipes_in = ref.get('tipes',tipes_in)
 
+    rid = self.page.rid
+
     if not len(tipes_in):
       if not tipe:
         return self
@@ -1695,7 +1699,7 @@ class BS(CoreClass,mixLogger):
 
       for tipe in tipes:
 
-        self.log(f'[ii_insert_js_css] {tipe}')
+        self.log(f'[{rid}][ii_insert_js_css] {tipe}')
       
         svf = self._file_rid({ 'tipe' : tipe, 'ext' : ext })
         self.load_soup_file_rid({                           \
