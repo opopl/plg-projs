@@ -46,6 +46,15 @@ class PageParser(RootPageParser):
 
     return self
 
+  def get_date_url(self,ref={}):
+    super().get_date_url(ref)
+
+    app = self.app
+    if app.page.get('date'):
+      return self
+
+    return self
+
   def get_date_meta(self,ref={}):
     super().get_date_meta(ref)
 

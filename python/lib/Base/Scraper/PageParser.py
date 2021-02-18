@@ -25,6 +25,8 @@ class RootPageParser(CoreClass):
   date_format = ''
   date_bare   = ''
 
+  date_fmt = '%d_%m_%Y'
+
   langs = util.qw('ukr rus')
 
   month_map_genitive = {
