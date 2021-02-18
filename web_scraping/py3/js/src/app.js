@@ -331,21 +331,21 @@ function App(){
       html = this._code(el);
     }
 
-    let doc = this.$left.get(0).contentWindow.document;
-	  doc.open();
-	  doc.write(html);
-	  doc.close();
+    //let doc = this.$left.get(0).contentWindow.document;
+		//doc.open();
+		//doc.write(html);
+		//doc.close();
 
-    //let html = util.encode_html(html);
-    //let src = 'data:text/html;charset=utf-8,' + html;
-    //this.$left.attr({ src : src });
+    html = encodeURIComponent(html);
+    let src = 'data:text/html;charset=utf-8,' + html;
+    this.$left.attr({ src : src });
 
     return this;
   };
 
   this.set_left = function(ref={}){
 
-    this.$left = $('<iframe/>');
+    this.$left = $('<iframe src="about:blank"></iframe>');
     this.$left.addClass('flex-left');
 
     this.update_left();
