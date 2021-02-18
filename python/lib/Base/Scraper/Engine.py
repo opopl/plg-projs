@@ -1424,7 +1424,7 @@ class BS(CoreClass,mixLogger):
     self.page.set({ 'ld_json' : j })
 
     if len(j):
-      yy = yaml.dump(j)
+      yy = yaml.dump(j,allow_unicode=True)
       yfile = self._file_rid({ 'tipe' : 'ld_json', 'ext' : 'yaml' })
       with open(yfile, 'w') as f:
         f.write(yy)
@@ -1641,7 +1641,7 @@ class BS(CoreClass,mixLogger):
 
   def page2yaml(self):
 
-    dy = yaml.dump(self.page.__dict__)
+    dy = yaml.dump(self.page.__dict__, allow_unicode=True)
     yfile = self._file_rid({ 'tipe' : 'page', 'ext' : 'yaml' })
     util.mk_dirname(yfile)
 
