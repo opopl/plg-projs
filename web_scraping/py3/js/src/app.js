@@ -332,9 +332,9 @@ function App(){
     }
 
     //let doc = this.$left.get(0).contentWindow.document;
-		//doc.open();
-		//doc.write(html);
-		//doc.close();
+    //doc.open();
+    //doc.write(html);
+    //doc.close();
 
     html = encodeURIComponent(html);
     let src = 'data:text/html;charset=utf-8,' + html;

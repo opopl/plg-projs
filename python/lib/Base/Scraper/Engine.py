@@ -1764,16 +1764,23 @@ class BS(CoreClass,mixLogger):
   def page_store_links(self,ref={}):
     soup = ref.get('soup',self.soup)
 
-    links = []
+    links_site = []
     els = soup.select('a')
     for el in els:
       txt = el.get_text()
       txt = string.strip_n(txt)
       if el.has_attr('href'):
         href = el['href']
-        links.append({ 'txt' : txt, 'href' : href })
+        u = util.url_parse(href)
+        d_href = { 'txt' : txt, 'href' : href }
+        if u['netloc'] == self.page.host:
+          links_site.append(d_href)
 
-    self.page.set({ 'links' : links })
+    self.page.set({ 
+        'links' : {
+            'site' : links_site 
+        } 
+    })
     #import pdb; pdb.set_trace()
 
     return self
