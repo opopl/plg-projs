@@ -61,6 +61,11 @@ function App(){
       return this;
   };
 
+  this.reload = function(){
+      window.location.reload(false);
+      return this;
+  };
+
   this.set_pane = function(){
 
       this.$pane = $('<div/>').addClass('flex-header');
@@ -229,7 +234,7 @@ function App(){
         var css = $(this).val();
 
         if (!css) {
-          window.location.reload(true);
+          $slf.reload();
           return;
         }
 
@@ -255,7 +260,7 @@ function App(){
         var css = $(this).val();
 
         if (!css) {
-          window.location.reload(true);
+          $slf.reload();
           return;
         }
 
@@ -268,10 +273,12 @@ function App(){
         var _txt = '';
         $found.each(function(){
            var _el = $(this);
-           $slf.$left.append(_el);
+           //$slf.$left.append(_el);
 
            _txt += $slf._code(_el) + '\n';
         });
+
+        $slf.update_left({ html : _txt });
 
         $slf.$right.find('pre').text( _txt );
 
@@ -281,8 +288,9 @@ function App(){
   };
 
   this.on_click = function(){
+     let $slf = this;
      $('#btn_reload').on('click',function() {
-        window.location.reload(true);
+        $slf.reload();
      });
 
      return this;
@@ -316,9 +324,9 @@ function App(){
   };
 
   this.update_left = function(ref={}){
-    let html = util.get(ref,'html','');
+    let html = util.get(ref,'html',null);
 
-    if (!html) {
+    if (html == null) {
       let el = this.$html_clone;
       el = util.get(ref,'el',el);
   
