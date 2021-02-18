@@ -3,7 +3,7 @@
 require('../../css/style.css');
 
 // js
-window.$ = require('jquery');
+//window.$ = require('jquery');
 
 import { App } from './app.js';
 //var app =  require('./app.js');

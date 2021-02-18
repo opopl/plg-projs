@@ -1690,27 +1690,31 @@ class BS(CoreClass,mixLogger):
       if type(tipes_in) is str:
         tipes = tipes_in.split(',') 
   
-      if len(tipes):
-        for tipe in tipes:
+      if not len(tipes):
+        return self
 
-          self.log(f'[ii_insert_js_css] {tipe}')
+      for tipe in tipes:
+
+        self.log(f'[ii_insert_js_css] {tipe}')
       
-          svf = self._file_rid({ 'tipe' : tipe, 'ext' : ext })
-          self.load_soup_file_rid({                           \
-              'tipe' : tipe,
-              'ext'  : ext,
-          })
-          ii_soup = self.soups.get(svf)
-          if svf:
-            body = ii_soup.body
-            script = ii_soup.new_tag('script')
-          
-            script['src'] = Path(self._file('bundle_js')).as_uri()
-          
-            body.append(script)
-          
-            with open(svf, 'w') as f:
-              f.write(ii_soup.prettify())
+        svf = self._file_rid({ 'tipe' : tipe, 'ext' : ext })
+        self.load_soup_file_rid({                           \
+            'tipe' : tipe,
+            'ext'  : ext,
+        })
+        ii_soup = self.soups.get(svf)
+        if not svf:
+          continue
+
+        body = ii_soup.body
+        script = ii_soup.new_tag('script')
+      
+        script['src'] = Path(self._file('bundle_js')).as_uri()
+      
+        body.append(script)
+      
+        with open(svf, 'w') as f:
+          f.write(ii_soup.prettify())
 
     return self
 

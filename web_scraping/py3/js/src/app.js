@@ -2,6 +2,8 @@
 var pretty = require('pretty');
 var util = require('./util.js');
 //
+require('webpack-jquery-ui');
+require('webpack-jquery-ui/css');
 
 function App(){
 
