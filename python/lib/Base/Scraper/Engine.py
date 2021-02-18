@@ -139,6 +139,10 @@ class Page(CoreClass):
   rid     = None
   site    = None
   url     = None
+
+  # depth of link following
+  depth     = 0
+
   pass
 
 class Pic(CoreClass):
@@ -1532,7 +1536,7 @@ class BS(CoreClass,mixLogger):
         'ok' : 0,
     })
 
-    for k in util.qw('url date tags ii'):
+    for k in util.qw('url date tags ii depth'):
       v = ref.get(k,'')
       v = v.strip()
       self.page.set({ k : v })
@@ -1771,6 +1775,9 @@ class BS(CoreClass,mixLogger):
       txt = string.strip_n(txt)
       if el.has_attr('href'):
         href = el['href']
+        if href == self.page.url:
+          continue
+
         u = util.url_parse(href)
         d_href = { 'txt' : txt, 'href' : href }
         if u['netloc'] == self.page.host:
