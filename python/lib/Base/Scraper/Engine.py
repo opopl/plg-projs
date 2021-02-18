@@ -1709,7 +1709,9 @@ class BS(CoreClass,mixLogger):
         body = ii_soup.body
         script = ii_soup.new_tag('script')
       
-        script['src'] = Path(self._file('bundle_js')).as_uri()
+        #script['src'] = Path(self._file('bundle_js')).as_uri()
+        script['src'] = os.path.relpath(self._file('bundle_js'),self._dir_ii())
+        #import pdb; pdb.set_trace()
       
         body.append(script)
       
