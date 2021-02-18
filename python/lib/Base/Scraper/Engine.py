@@ -563,7 +563,7 @@ class BS(CoreClass,mixLogger):
   def init_npm(self):
     f = self._file('package_json')
     if not os.path.isfile(f):
-      os.chdir(self._dir('html'))
+      os.chdir(self.sdir('html'))
       pass
 
     os.makedirs(self._dir('html','js dist'), exist_ok=True)

@@ -1,5 +1,6 @@
 
-var path = require('path');
+const path = require('path');
+const webpack = require('webpack');
 
 module.exports = {
     entry: path.resolve(__dirname) + '/js/src/entry.js',
@@ -23,6 +24,24 @@ module.exports = {
             'url-loader',
           ],
         },
+        {
+          test: /\.(jpe?g|png|gif)$/i,
+          loader: "file-loader",
+          options:{
+            name: '[name].[ext]',
+            outputPath: 'assets/images/'
+            //the images will be emited to dist/assets/images/ folder
+          }
+      }
       ]
-    }
+    },
+    plugins: [
+      /* Use the ProvidePlugin constructor to inject jquery implicit globals */
+      new webpack.ProvidePlugin({
+          $               : "jquery",
+          jQuery          : "jquery",
+          "window.jQuery" : "jquery",
+          "window.$"      : "jquery"
+      })
+    ]
 }
