@@ -72,14 +72,16 @@ function App(){
       for(let tipe of tipes ){
          let href = tipe + '.html';
 
+         let css = { width : '5%' };
+         if (tipe == this.tipe) {
+           css['background-color'] = 'blue';
+         }
          els.push(
             this.$$a_href({
               href : href,
               txt  : tipe,
               id   : 'href_' + tipe,
-              css  : {
-                width : '5%'
-              }
+              css  : css,
             }),
          );
       }
@@ -93,7 +95,7 @@ function App(){
                 'background-color' : 'white',
                 'color'            : 'black',
               },
-							txt : util.get(this,'rid'),
+              txt : util.get(this,'rid'),
             }),
       );
 
@@ -374,11 +376,16 @@ function App(){
   };
 
   this.body_append = function(){
-    $('body').children().remove();
   
-    $('body').append(this.$pane);
-    $('body').append(this.$header);
-    $('body').append(this.$container);
+    if ('core clean'.split(' ').includes(this.tipe)) {
+      $('body').children().remove();
+      $('body').append(this.$pane);
+      $('body').append(this.$header);
+      $('body').append(this.$container);
+      return this;
+    }
+
+    $('body').prepend(this.$pane);
 
     return this;
   };
@@ -406,10 +413,13 @@ function App(){
 
   this.parse_url = function(){
 
-		var parts = this.url_path.split('/');
-		var last = parts.pop();
-		var m = last.match(/(\w+)\.html$/);
-		if (m) { this.rid = m[1]; }
+    var parts = this.url_path.split('/');
+    var last = parts.pop();
+    
+    this.rid = parts.pop();
+
+    var m = last.match(/(\w+)\.html$/);
+    if (m) { this.tipe = m[1]; }
 
     return this;
   };
@@ -417,8 +427,8 @@ function App(){
   this.run = function(){
     console.log('[App] start run');
 
-		this.url$ = new URL(window.location);
-		this.url_path = this.url$.pathname;
+    this.url$ = new URL(window.location);
+    this.url_path = this.url$.pathname;
 
     this
         .parse_url()
