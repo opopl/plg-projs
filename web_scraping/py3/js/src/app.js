@@ -196,26 +196,6 @@ function App(){
       return this;
   };
 
-  this.on_enter_css_delete = function(){
-
-     var $i = $('#inp_css_delete');
-     var $slf = this;
-
-     $i.bind("enterKey",);
-
-     $i.keyup(function(e){
-        if(e.keyCode == 13) {
-            $(this).trigger("enterKey");
-        }
-     });
-
-     return this;
-  };
-
-  this.on_enter_css_unwrap = function(){
-     return this;
-  };
-
   this.register_on_enter = function(sel,func){
 
      var $i = $(sel);
@@ -339,12 +319,19 @@ function App(){
 
     var $slf = this;
 
-    this.$left = $('<div/>');
-    this.$left.addClass('flex-left');
+/*    this.$left = $('<div/>');*/
+    //this.$left.addClass('flex-left');
 
-    this.$body_clone.children().each(function(){
-       $slf.$left.append($(this).clone());
-    });
+    //this.$body_clone.children().each(function(){
+       //$slf.$left.append($(this).clone());
+    /*});*/
+
+    let html = this._code(this.$html_clone);
+    let src = 'data:text/html;charset=utf-8,' + html;
+
+    this.$left = $('<iframe/>');
+    this.$left.addClass('flex-left');
+    this.$left.attr({ src : src });
 
     return this;
   };
