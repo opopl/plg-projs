@@ -2,8 +2,6 @@
 var pretty = require('pretty');
 var util = require('./util.js');
 //
-require('webpack-jquery-ui');
-require('webpack-jquery-ui/css');
 
 function App(){
 
@@ -333,8 +331,14 @@ function App(){
       html = this._code(el);
     }
 
-    let src = 'data:text/html;charset=utf-8,' + html;
-    this.$left.attr({ src : src });
+    let doc = this.$left.get(0).contentWindow.document;
+	  doc.open();
+	  doc.write(html);
+	  doc.close();
+
+    //let html = util.encode_html(html);
+    //let src = 'data:text/html;charset=utf-8,' + html;
+    //this.$left.attr({ src : src });
 
     return this;
   };
