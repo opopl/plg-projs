@@ -337,14 +337,14 @@ function App(){
 
   this.set_left = function(ref={}){
 
-    var left = document.createElement('div');
-    left.className = 'flex-left';
+    var $slf = this;
+
+    this.$left = $('<div/>');
+    this.$left.addClass('flex-left');
 
     this.$body_clone.children().each(function(){
-       $(left).append($(this).clone());
+       $slf.$left.append($(this).clone());
     });
-
-    this.$left = $(left);
 
     return this;
   };
