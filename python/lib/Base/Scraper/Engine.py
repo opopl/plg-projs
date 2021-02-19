@@ -69,6 +69,10 @@ class mixCmdRunner:
 
     for cmd in cmds:
       sub = f'c_{cmd}'
+      if not util.obj_has_method(self,sub):
+        print(f'No method: {sub}')
+        continue
+
       util.call(self, sub)
   
     return self
@@ -425,7 +429,6 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
 
     cmds = cmd_s.split(',')
     self.vars['mixCmdRunner']['cmds'].extend(cmds)
-    import pdb; pdb.set_trace()
 
     return self
 
