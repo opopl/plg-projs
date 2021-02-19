@@ -1691,6 +1691,8 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
 
     self                           \
         .db_save_url({ 'ok' : 0 }) \
+        .page_save_sh()            \
+        .page_save_db_record()     \
         .page2yaml()               \
 
     return self
