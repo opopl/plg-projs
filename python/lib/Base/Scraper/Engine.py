@@ -61,6 +61,18 @@ class dbFile(CoreClass):
   images = None
   pages = None
 
+class mixCmdRunner:
+
+  def do_cmd(self,cmds=None):
+    if not cmds:
+      cmds = util.get(self,'vars.mixCmdRunner.cmds',[])
+
+    for cmd in cmds:
+      sub = f'c_{cmd}'
+      util.call(self, sub)
+  
+    return self
+
 class mixLogger:
 
   def die(self,msg='',opts = {}):
@@ -259,7 +271,7 @@ class Pic(CoreClass):
     
     return pic
 
-class BS(CoreClass,mixLogger):
+class BS(CoreClass,mixLogger,mixCmdRunner):
   # class attributes {
   usage='''
   PURPOSE
@@ -289,6 +301,12 @@ class BS(CoreClass,mixLogger):
 
   # current page's base URL
   base_url = None
+
+  vars = {
+    'mixCmdRunner' : {
+      'cmds' : []
+    }
+  }
 
   # current HTML content
   content = None
@@ -384,6 +402,8 @@ class BS(CoreClass,mixLogger):
     self.parser.add_argument("--gs", help="Grep scope",default=10)
 
     self.parser.add_argument("-p", "--print", help="Print field value and exit",default="")
+
+    self.parser.add_argument("-c", "--cmd", help="Run command(s)")
     
     self.oa = self.parser.parse_args()
 
@@ -391,13 +411,21 @@ class BS(CoreClass,mixLogger):
       self.parser.print_help()
       sys.exit()
 
-
     for k in util.qw('f_yaml f_zlan f_input_html'):
       v  = util.get(self,[ 'oa', k ])
       m = re.match(r'^f_(\w+)$', k)
       if m:
         ftype = m.group(1)
         self.files.update({ ftype : v })
+
+    cmd_s = util.get(self,'oa.cmd')
+    if not cmd_s:
+      print('No command provided!')
+      exit(0)
+
+    cmds = cmd_s.split(',')
+    self.vars['mixCmdRunner']['cmds'].extend(cmds)
+    import pdb; pdb.set_trace()
 
     return self
 
@@ -415,7 +443,7 @@ class BS(CoreClass,mixLogger):
         for a in val:
           print(a)
 
-    sys.exit()
+    sys.exit(0)
 
 ###ih
   def input_html_process(self):
@@ -1930,6 +1958,24 @@ class BS(CoreClass,mixLogger):
 
     return self
 
+  def c_html_parse(self):
+
+    self                    \
+      .input_html_process() \
+
+    return self
+
+  def c_run(self):
+
+    self                    \
+      .init()               \
+      .fill_vars()          \
+      .print_field()        \
+      .parse()              \
+      .render_page_list()   \
+
+    return self
+
   def db_ok(self):
 
     dbw.update_dict({
@@ -2449,10 +2495,6 @@ class BS(CoreClass,mixLogger):
 
     self                    \
       .get_opt()            \
-      .input_html_process() \
-      .init()               \
-      .fill_vars()          \
-      .print_field()        \
-      .parse()              \
-      .render_page_list()   \
+      .do_cmd()             \
+
 
