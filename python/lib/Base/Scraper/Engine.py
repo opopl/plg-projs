@@ -1490,6 +1490,7 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
         .page_rm_comments()                           \
         .page_save({ 'tipe' : 'core' })               \
         .page_clean()                                 \
+        .page_save({ 'tipe' : 'core_clean' })         \
         .page_only()                                  \
         .page_unwrap()                                \
         .page_rm_empty()                              \

@@ -72,7 +72,7 @@ function App(){
 
       var els = [];
 
-      var tipes = 'log core clean dbrid img img_clean'.split(' ');
+      var tipes = 'log core core_clean clean dbrid img img_clean'.split(' ');
 
       for(let tipe of tipes ){
          let href = tipe + '.html';
@@ -392,7 +392,7 @@ function App(){
 
   this.body_append = function(){
   
-    if ('core clean'.split(' ').includes(this.tipe)) {
+    if ('core core_clean clean'.split(' ').includes(this.tipe)) {
       $('body').children().remove();
       $('body').append(this.$pane);
       $('body').append(this.$header);
