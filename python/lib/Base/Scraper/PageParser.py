@@ -27,10 +27,10 @@ class RootPageParser(CoreClass):
 
   date_fmt = '%d_%m_%Y'
 
-  langs = util.qw('ukr rus')
+  langs = util.qw('uk ru')
 
   month_map_genitive = {
-    'ukr' : {
+    'uk' : {
       'січня'     : '01',
       'лютого'    : '02',
       'березня'   : '03',
@@ -44,7 +44,7 @@ class RootPageParser(CoreClass):
       'листопада' : '11',
       'грудня'    : '12',
     },
-    'rus' : {
+    'ru' : {
       'января'   : '01',
       'февраля'  : '02',
       'марта'    : '03',
@@ -84,6 +84,16 @@ class RootPageParser(CoreClass):
 
   def clean(self,ref={}):
     return self
+
+  def _month_by_gen(self, month_gen=''):
+
+    month = None
+    for lang in self.langs:
+      month = self.month_map_genitive.get(lang,{}).get(month_gen,'')
+      if month:
+        break
+
+    return month
 
   def _txt_strip(self, txt='', opts = {}):
     txt_n = txt.split('\n')
@@ -239,11 +249,15 @@ class RootPageParser(CoreClass):
     if not self.date_bare:
       return 
 
-    try:
-      d = datetime.datetime.strptime(self.date_bare,fmt)
-      date = d.strftime('%d_%m_%Y')
-    except:
-      pass
+    tries = util.qw('by_fmt')
+    for tri in tries:
+      if tri == 'by_fmt':
+        try:
+          d = datetime.datetime.strptime(self.date_bare,fmt)
+          date = d.strftime('%d_%m_%Y')
+          break
+        except:
+          continue
 
     return date
 
