@@ -3,7 +3,7 @@ import requests
 from bs4 import BeautifulSoup, Comment
 
 import getopt,argparse
-import sys,os
+import sys,os,stat
 import yaml
 import re
 import json
@@ -1514,6 +1514,7 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
         .page2yaml()                                  \
         .db_ok()                                      \
         .page_save_db_record()                        \
+        .page_save_sh()                               \
         .ii_insert_js_css()                           \
 
     return self
@@ -2269,6 +2270,21 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
     return self
 
   def do_css(self):
+    return self
+
+  def page_save_sh(self,ref={}):
+    file = self._file_rid({ 'tipe' : '_parse_cache', 'ext' : 'sh' })
+    h = '''!#/bin/sh
+
+bs.py -c html_parse -i cache.html $*
+
+    '''
+    with open(file, 'w') as f:
+        f.write(h)
+
+    st = os.stat(file)
+    os.chmod(file,st.st_mode | stat.S_IEXEC)
+
     return self
 
 ###db_save
