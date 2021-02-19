@@ -334,7 +334,7 @@ class RootPageParser(CoreClass):
     for itm in sels:
       d_parse = {}
 
-      for k in util.qw('str url'):
+      for k in util.qw('name url'):
         sel = itm.get(k)
 
         find = sel.get('find','')

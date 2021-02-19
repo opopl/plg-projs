@@ -2274,13 +2274,13 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
 
   def page_save_sh(self,ref={}):
     file = self._file_rid({ 'tipe' : '_parse_cache', 'ext' : 'sh' })
-    h = '''!#/bin/sh
+    h = '''#!/bin/sh
 
 bs.py -c html_parse -i cache.html $*
 
     '''
     with open(file, 'w') as f:
-        f.write(h)
+      f.write(h)
 
     st = os.stat(file)
     os.chmod(file,st.st_mode | stat.S_IEXEC)

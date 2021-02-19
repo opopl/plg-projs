@@ -19,11 +19,14 @@ PageParser:
     sels:
       - { 
           'url' : {
-              'css' : '.b-topic__content__author a', 
+              'find' : '.b-topic__content__author a', 
+              'get' : 'attr',
               'attr' : 'href' 
           },
-          'name' : {
-              'css' : '.b-topic__content__author .name'
+          'str' : {
+              'find' : '.b-topic__content__author .name',
+              'get' : 'attr',
+              'attr' : 'href' 
           }
         }
   get_author_meta:
