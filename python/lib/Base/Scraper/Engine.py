@@ -680,7 +680,8 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
         })
   
     self.files.update({ 
-        'bundle_js'    : self._dir('html','js dist bundle.js'),
+        'bundle_js.dist'    : self._dir('html','js dist bundle.js'),
+        'bundle_js.final'   : self._dir('html_root','bs dist bundle.js'),
     })
 
     return self
@@ -909,7 +910,8 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
   def _dir_ii(self,ref={}):
     rid = ref.get('rid',self.page.rid)
 
-    dir = os.path.join(self.html_root,'bs',str(rid))
+    #dir = os.path.join(self.html_root,'bs',str(rid))
+    dir = self._dir('html_root',f'bs {rid}')
 
     return dir
 
@@ -1752,7 +1754,7 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
         body = ii_soup.body
         script = ii_soup.new_tag('script')
       
-        script['src'] = os.path.relpath(self._file('bundle_js'),self._dir_ii())
+        script['src'] = os.path.relpath(self._file('bundle_js.dist'),self._dir_ii())
       
         body.append(script)
       
