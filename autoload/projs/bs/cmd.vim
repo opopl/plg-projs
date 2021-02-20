@@ -68,7 +68,10 @@ function! projs#bs#cmd#info ()
   let info = [ 'BS INFO', ' ' ]
 
   let site = projs#bs#site()
+  let rid  = projs#bs#rid()
+
   call add(info,printf('site: %s',site))
+  call add(info,printf('rid: %s',rid))
 
   call base#buf#open_split({ 
     \ 'lines' : info 
@@ -77,19 +80,42 @@ function! projs#bs#cmd#info ()
 endfunction
 
 function! projs#bs#cmd#rid_grep ()
-	let rid = input('RID: ','')
+	let rid = projs#bs#rid_select()
 
 	let expr = input('GREP: ','')
-	let cmd = printf('bs.py -c html_parse -i cache.html -g "%s"',expr)
+	let expr = base#input_hist('GREP: ','','hist_bs_grep')
+	let cmd  = printf('bs.py -c html_parse -i cache.html -g "%s"',expr)
+
+	let env = {
+		\ 'cmd' : cmd,
+		\ 'rid' : rid,
+		\	}
+
+	function env.get(temp_file) dict
+		let temp_file = a:temp_file
+		let code      = self.return_code
+	
+		if filereadable(a:temp_file)
+			let out = readfile(a:temp_file)
+			call base#buf#open_split({ 'lines' : out })
+		endif
+	endfunction
+	
+	call asc#run({ 
+		\	'cmd' : cmd, 
+		\	'Fn'  : asc#tab_restore(env) 
+		\	})
 
 endfunction
 
 function! projs#bs#cmd#rid_cd ()
-	let rid = input('RID: ','')
+	let bs_data = base#varget('projs_bs_data',{})
 
-  let h_dir = base#qw#catpath('html_root','bs ' . rid)
+	let rid = projs#bs#rid_select()
 
-	call base#cd(h_dir)
+	let rid_dir = projs#bs#rid_dir(rid)
+
+	call base#cd(rid_dir)
 
 endfunction
 

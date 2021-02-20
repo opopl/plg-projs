@@ -28,6 +28,38 @@ function! projs#bs#cmd (...)
   
 endfunction
 
+function! projs#bs#rid_select ()
+  let rid = input('RID: ',projs#bs#rid())
+  call projs#bs#rid(rid)
+
+  return rid
+
+endfunction
+
+function! projs#bs#rid_dir (...)
+  let rid = get(a:000,0,'')
+
+  let rid_dir = base#qw#catpath('html_root','bs ' . rid)
+
+  return rid_dir
+
+endfunction
+
+function! projs#bs#rid (...)
+  let rid = get(a:000,0,'')
+
+  let bs_data = projs#bs#data()
+  if len(rid)
+    call extend(bs_data,{ 'rid' : rid })
+    call projs#bs#data(bs_data)
+  else
+    let rid = get(bs_data,'rid','')
+  endif
+
+  return rid
+
+endfunction
+
 function! projs#bs#site (...)
   let site = get(a:000,0,'')
 
