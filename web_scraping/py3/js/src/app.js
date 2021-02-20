@@ -452,7 +452,7 @@ function App(){
   };
 
   this.rid_load_yaml = function(){
-		this
+		this.files.yaml = this.dirs.base + '/' + 'page.yaml';
 
     return this;
   };
