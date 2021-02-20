@@ -3,6 +3,11 @@ var pretty = require('pretty');
 var util = require('./util.js');
 //
 
+const fs = require('fs');
+const yaml = require('js-yaml');
+
+
+
 function App(){
 
   this.set_header = function(){
@@ -453,6 +458,15 @@ function App(){
 
   this.rid_load_yaml = function(){
 		this.files.yaml = this.dirs.base + '/' + 'page.yaml';
+
+		try {
+		    let fileContents = fs.readFileSync(this.files.yaml, 'utf8');
+		    let data = yaml.safeLoad(fileContents);
+		
+		    console.log(data);
+		} catch (e) {
+		    console.log(e);
+		}
 
     return this;
   };
