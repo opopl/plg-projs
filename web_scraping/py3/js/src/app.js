@@ -440,13 +440,15 @@ function App(){
 
   this.parse_url = function(){
 
+    console.log('[App] parse_url');
+
     this.url$ = new URL(window.location);
     this.url_path = this.url$.pathname;
 
     var parts = this.url_path.split('/');
     var last = parts.pop();
 
-		this.dirs.base = 'file://' + parts.join('/');
+    this.dirs.base = 'file://' + parts.join('/');
     
     this.rid = parts.pop();
 
@@ -457,30 +459,33 @@ function App(){
   };
 
   this.rid_load_yaml = function(){
-		this.files.yaml = this.dirs.base + '/' + 'page.yaml';
+    console.log('[App] rid_load_yaml');
 
-		try {
-		    let fileContents = fs.readFileSync(this.files.yaml, 'utf8');
-		    let data = yaml.safeLoad(fileContents);
-		
-		    console.log(data);
-		} catch (e) {
-		    console.log(e);
-		}
+    this.files.yaml = this.dirs.base + '/' + 'page.yaml';
+
+    console.log(this.files.yaml);
+
+    try {
+        let fileContents = fs.readFileSync(this.files.yaml, 'utf8');
+        let data = yaml.safeLoad(fileContents);
+    
+        console.log(data);
+    } catch (e) {
+        console.log(e);
+    }
 
     return this;
   };
 
   this.init = function(){
-		this.files = {};
-		this.dirs = {};
+    this.files = {};
+    this.dirs = {};
 
     return this;
   };
 
   this.run = function(){
     console.log('[App] start run');
-
 
     this
         .init()
