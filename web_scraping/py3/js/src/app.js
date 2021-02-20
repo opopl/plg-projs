@@ -9,6 +9,7 @@ const yaml = require('js-yaml');
 function App(){
 
   this.set_header = function(){
+    console.log('[App] set_header');
 
       //var header = document.createElement('div');
       //header.className = 'flex-row';
@@ -87,8 +88,7 @@ function App(){
             this.$$selectmenu({
               id : 'menu_html',
               items : [
-                 $('<a>sdfdsf</a>'),
-                 $('<span>sdfdsf</span>'),
+                 'aa','bb'
               ]
             })
       );
@@ -135,12 +135,16 @@ function App(){
       var items = util.get(ref,'items',[]);
 
       var $slc = $('<select/>');
+      $slc
+       .addClass('block')
+       .css({ width : '200px' });
+
       if (id) { $slc.attr({ id : id }); }
       for (var i = 0; i < items.length; i++) {
          let val = items[i];
          let $opt = $('<option/>');
          $opt.attr({ value : val });
-         $opt.text(val);
+         $opt.val(val);
          $slc.append($opt);
       };
 
@@ -460,6 +464,8 @@ function App(){
   };
 
   this.copy_html = function(){
+    console.log('[App] copy_html');
+
     this.$html_bare = $('html').clone();
 
     this.$body_clone = $('body').clone();
@@ -531,7 +537,6 @@ function App(){
   };
 
   this.run = function(){
-    console.log('[App] start run');
     console.log('[App] start run');
 
     this

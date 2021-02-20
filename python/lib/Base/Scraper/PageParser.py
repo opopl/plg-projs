@@ -409,13 +409,11 @@ class RootPageParser(CoreClass):
     return self
 
   def get_author_html(self,ref={}):
-    site = self.app.page.site
+    app = self.app
+
+    site = app.page.site
 
     sel = ref.get('sel','')
-
-    auth_sel = util.get( self.app, [ 'sites', site, 'sel', 'author' ] )
-    if not auth_sel:
-      return self
 
     sels = []
     sels.extend( app._cnf('PageParser.get_author_html.sels',[]) )
