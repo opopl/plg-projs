@@ -5,19 +5,19 @@ module.exports = {
       var value = (key in obj) ? obj[key] : def;
       return value;
   },
-	encode_html : function(text) {
-	  return $("<textarea/>")
-	    .text(text)
-	    .html();
-	},
-	httpGetAsync : function(theUrl, callback)
-	{
-	    var xmlHttp = new XMLHttpRequest();
-	    xmlHttp.onreadystatechange = function() { 
-	        if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
-	            callback(xmlHttp.responseText);
-	    }
-	    xmlHttp.open("GET", theUrl, true); // true for asynchronous 
-	    xmlHttp.send(null);
-	}
+  encode_html : function(text) {
+    return $("<textarea/>")
+      .text(text)
+      .html();
+  },
+  http_get_async : function(url, callback)
+  {
+      var xml_http = new xmlHttpRequest();
+      xml_http.onreadystatechange = function() { 
+          if (xml_http.readyState == 4 && xml_http.status == 200)
+              callback(xml_http.responseText);
+      }
+      xml_http.open("GET", theUrl, true); // true for asynchronous 
+      xml_http.send(null);
+  }
 };
