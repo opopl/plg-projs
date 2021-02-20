@@ -84,8 +84,12 @@ function App(){
       var tipes = 'log core core_clean clean dbrid img img_clean'.split(' ');
 
       els.push(
-            this.$$menu({
+            this.$$selectmenu({
               id : 'menu_html',
+              items : [
+                 $('<a>sdfdsf</a>'),
+                 $('<span>sdfdsf</span>'),
+              ]
             })
       );
 
@@ -126,12 +130,33 @@ function App(){
       return this;
   };
 
+  this.$$selectmenu = function(ref={}){
+      var id    = util.get(ref,'id','');
+      var items = util.get(ref,'items',[]);
+
+      var $slc = $('<select/>');
+      if (id) { $slc.attr({ id : id }); }
+
+      return $slc;
+  };
+
   this.$$menu = function(ref={}){
       var id    = util.get(ref,'id','');
+      var items = util.get(ref,'items',[]);
 
       var $menu = $('<div/>');
+      if (id) { $menu.attr({ id : id }); }
 
-      return this;
+      for(let item of items){
+         let $li = $('<li/>');
+         $li.append($(item));
+         $menu.append($li);
+      }
+
+      var m = $menu.menu();
+      m.menu('collapseAll');
+
+      return $menu;
   };
 
   this.$$btn = function(ref={}){
@@ -172,11 +197,7 @@ function App(){
       return $a;
   };
 
-  this.$$select = function(ref={}){
-      var $slc = $('<select/>');
 
-      return $slc;
-  };
 
   this.$$input = function(ref={}){
 
