@@ -76,6 +76,13 @@ function! projs#bs#cmd#info ()
 
 endfunction
 
+function! projs#bs#cmd#rid_cd ()
+	let rid = input('RID: ','')
+
+  let h_dir = base#qw#catpath('html_root','bs html ' . rid)
+
+endfunction
+
 function! projs#bs#cmd#init ()
   let bs_dir = base#qw#catpath('p_sr','scrape bs')
 
