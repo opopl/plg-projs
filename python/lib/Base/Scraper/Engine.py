@@ -395,7 +395,6 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
   def get_opt(self):
     self.parser = argparse.ArgumentParser(usage=self.usage)
     
-    self.parser.add_argument("-u", "--url", help="input URL",default="")
     self.parser.add_argument("-y", "--f_yaml", help="input YAML file",default="")
     self.parser.add_argument("-z", "--f_zlan", help="input ZLAN file",default="")
 
@@ -1359,7 +1358,7 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
 
     return self
 
-  def site_prepare_init_py(self,site):
+  def site_prepare_init_py(self,site=None):
     if not site:
       site = self.page.site
 
@@ -2528,5 +2527,4 @@ bs.py -c html_parse -i cache.html $*
     self                    \
       .get_opt()            \
       .do_cmd()             \
-
 
