@@ -8,10 +8,10 @@ function App(){
   this.set_header = function(){
 
       //var header = document.createElement('div');
-      //header.className = 'flex-header';
+      //header.className = 'flex-row';
       //this.$header = $(header);
 
-      this.$header = $('<div/>').addClass('flex-header');
+      this.$header = $('<div/>').addClass('flex-row');
 
       var els = [
         this.$$btn({
@@ -64,10 +64,16 @@ function App(){
       return this;
   };
 
+  this.set_foot = function(){
+      this.$foot = $('<div/>').addClass('flex-row');
+      this.$foot.css({ background : 'green' });
+
+      return this;
+  };
+
   this.set_pane = function(){
 
-      this.$pane = $('<div/>').addClass('flex-header');
-
+      this.$pane = $('<div/>').addClass('flex-row');
       this.$pane.css({ background : 'green' });
 
       var els = [];
@@ -364,7 +370,7 @@ function App(){
 
 /*  this.set_pane_links = function(){*/
       //var pane = document.createElement('div');
-      //pane.className = 'flex-header';
+      //pane.className = 'flex-row';
 
       //var a = document.createElement('a');
       //a.href  = '../core.html';
@@ -397,6 +403,7 @@ function App(){
       $('body').append(this.$pane);
       $('body').append(this.$header);
       $('body').append(this.$container);
+      $('body').append(this.$foot);
       return this;
     }
 
@@ -450,6 +457,7 @@ function App(){
         .copy_html()
         .set_header()
         .set_pane()
+        .set_foot()
         .set_left()
         .set_right()
         .set_container()

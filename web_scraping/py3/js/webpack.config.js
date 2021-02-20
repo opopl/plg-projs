@@ -25,6 +25,10 @@ module.exports = {
           ],
         },
         {
+          test: /\.ya?ml$/,
+          use: 'js-yaml-loader',
+        },
+        {
           test: /\.(jpe?g|png|gif)$/i,
           loader: "file-loader",
           options:{

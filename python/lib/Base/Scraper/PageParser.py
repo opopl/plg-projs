@@ -4,6 +4,7 @@ import os,sys,re
 import cyrtranslit
 
 import datetime
+import dateparser
 
 import Base.DBW as dbw
 import Base.Util as util
@@ -241,7 +242,6 @@ class RootPageParser(CoreClass):
     return date
 
   def _date_from_bare(self,sel = {}):
-    date = None
 
     fmt  = sel.get('fmt',"%Y-%m-%d")
     sep  = sel.get('split',"T")
@@ -249,15 +249,28 @@ class RootPageParser(CoreClass):
     if not self.date_bare:
       return 
 
-    tries = util.qw('by_fmt')
+    tries = util.qw('by_fmt dateparser')
+
+    date = None
+    dt = None
+
     for tri in tries:
       if tri == 'by_fmt':
         try:
-          d = datetime.datetime.strptime(self.date_bare,fmt)
-          date = d.strftime('%d_%m_%Y')
-          break
+          dt = datetime.datetime.strptime(self.date_bare,fmt)
         except:
           continue
+
+      if tri == 'dateparser':
+        try:
+          dt = dateparser.parser(self.date_bare)
+            
+        except:
+          continue
+
+      if dt:
+        date = dt.strftime('%d_%m_%Y')
+        break
 
     return date
 
@@ -404,40 +417,45 @@ class RootPageParser(CoreClass):
     if not auth_sel:
       return self
 
-    if type(auth_sel) is dict:
-      d = {}
+    sels = []
+    sels.extend( app._cnf('PageParser.get_author_html.sels',[]) )
+    sels.extend( app._site_data('PageParser.get_author_html.sels',[]) )
 
-      d_parse = {}
-      for k in util.qw('url name'):
-        d    = auth_sel.get(k)
-
-        find = d.get('find','')
-        get  = d.get('get','')
-        attr = d.get('attr','')
-
-        if not find:
-          continue
-
-        els = self.soup.select(find)
+    for auth_sel in sels:
+      if type(auth_sel) is dict:
+        d = {}
   
-        for e in els:
-          auth = None
+        d_parse = {}
+        for k in util.qw('url name'):
+          d    = auth_sel.get(k)
+  
+          find = d.get('find','')
+          get  = d.get('get','')
+          attr = d.get('attr','')
+  
+          if not find:
+            continue
+  
+          els = self.soup.select(find)
     
-          if k == 'url':
-            if e.has_attr(attr):
-              auth_url  = util.url_join(self.app.base_url, e[attr])
-              print(f'[PageParser] found author url: {auth_url}')
-
-              d_parse.update({ 'url' : auth_url })
-          elif k == 'name':
-            s = e.string
-            auth_bare = util.strip(s)
-            if auth_bare:
-              print(f'[PageParser] found author name: {auth_bare}')
-
-              d_parse.update({ 'str' : auth_bare })
-
-      self.auth_obj.parse(d_parse)
+          for e in els:
+            auth = None
+      
+            if k == 'url':
+              if e.has_attr(attr):
+                auth_url  = util.url_join(self.app.base_url, e[attr])
+                print(f'[PageParser] found author url: {auth_url}')
+  
+                d_parse.update({ 'url' : auth_url })
+            elif k == 'name':
+              s = e.string
+              auth_bare = util.strip(s)
+              if auth_bare:
+                print(f'[PageParser] found author name: {auth_bare}')
+  
+                d_parse.update({ 'str' : auth_bare })
+  
+        self.auth_obj.parse(d_parse)
 
     return self
 
