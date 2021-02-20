@@ -83,6 +83,12 @@ function App(){
 
       var tipes = 'log core core_clean clean dbrid img img_clean'.split(' ');
 
+      els.push(
+            this.$$menu({
+              id : 'menu_html',
+            })
+      );
+
       for(let tipe of tipes ){
          let href = tipe + '.html';
 
@@ -116,6 +122,14 @@ function App(){
       for (let el of els) {
         this.$pane.append(el);
       };
+
+      return this;
+  };
+
+  this.$$menu = function(ref={}){
+      var id    = util.get(ref,'id','');
+
+      var $menu = $('<div/>');
 
       return this;
   };
