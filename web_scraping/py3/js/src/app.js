@@ -435,8 +435,13 @@ function App(){
 
   this.parse_url = function(){
 
+    this.url$ = new URL(window.location);
+    this.url_path = this.url$.pathname;
+
     var parts = this.url_path.split('/');
     var last = parts.pop();
+
+		this.dirs.base = 'file://' + parts.join('/');
     
     this.rid = parts.pop();
 
@@ -446,14 +451,27 @@ function App(){
     return this;
   };
 
+  this.rid_load_yaml = function(){
+		this
+
+    return this;
+  };
+
+  this.init = function(){
+		this.files = {};
+		this.dirs = {};
+
+    return this;
+  };
+
   this.run = function(){
     console.log('[App] start run');
 
-    this.url$ = new URL(window.location);
-    this.url_path = this.url$.pathname;
 
     this
+        .init()
         .parse_url()
+        .rid_load_yaml()
         .copy_html()
         .set_header()
         .set_pane()
