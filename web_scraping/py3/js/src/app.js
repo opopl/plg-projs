@@ -136,6 +136,15 @@ function App(){
 
       var $slc = $('<select/>');
       if (id) { $slc.attr({ id : id }); }
+      for (var i = 0; i < items.length; i++) {
+         let val = items[i];
+         let $opt = $('<option/>');
+         $opt.attr({ value : val });
+         $opt.text(val);
+         $slc.append($opt);
+      };
+
+      $slc.selectmenu();
 
       return $slc;
   };
