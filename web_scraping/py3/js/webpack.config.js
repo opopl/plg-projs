@@ -9,6 +9,7 @@ module.exports = {
         filename: 'bundle.js',
         publicPath: '/app/'
     },
+    //externals: ['fs'],
     module: {
       rules: [
         {

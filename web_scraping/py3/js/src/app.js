@@ -3,10 +3,8 @@ var pretty = require('pretty');
 var util = require('./util.js');
 //
 
-const fs = require('fs');
+//const fs = require('fs-extra');
 const yaml = require('js-yaml');
-
-
 
 function App(){
 
@@ -465,14 +463,14 @@ function App(){
 
     console.log(this.files.yaml);
 
-    try {
-        let fileContents = fs.readFileSync(this.files.yaml, 'utf8');
-        let data = yaml.safeLoad(fileContents);
+/*    try {*/
+        //let fileContents = fs.readFileSync(this.files.yaml, 'utf8');
+        //let data = yaml.safeLoad(fileContents);
     
-        console.log(data);
-    } catch (e) {
-        console.log(e);
-    }
+        //console.log(data);
+    //} catch (e) {
+        //console.log(e);
+    /*}*/
 
     return this;
   };
@@ -485,6 +483,7 @@ function App(){
   };
 
   this.run = function(){
+    console.log('[App] start run');
     console.log('[App] start run');
 
     this
