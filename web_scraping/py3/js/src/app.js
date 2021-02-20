@@ -462,9 +462,10 @@ function App(){
     this.files.yaml = this.dirs.base + '/' + 'page.yaml';
 
     console.log(this.files.yaml);
-    var y = this.files.yaml;
+    //var y = this.files.yaml;
+    var y = 'page.yaml';
 
-    util.http_get_async(y,function(res){ console.log(res); });
+    //util.http_get_async(y,function(res){ console.log(res); });
 
 /*    try {*/
         //let fileContents = fs.readFileSync(this.files.yaml, 'utf8');
