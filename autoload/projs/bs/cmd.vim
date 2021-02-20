@@ -76,10 +76,20 @@ function! projs#bs#cmd#info ()
 
 endfunction
 
+function! projs#bs#cmd#rid_grep ()
+	let rid = input('RID: ','')
+
+	let expr = input('GREP: ','')
+	let cmd = printf('bs.py -c html_parse -i cache.html -g "%s"',expr)
+
+endfunction
+
 function! projs#bs#cmd#rid_cd ()
 	let rid = input('RID: ','')
 
-  let h_dir = base#qw#catpath('html_root','bs html ' . rid)
+  let h_dir = base#qw#catpath('html_root','bs ' . rid)
+
+	call base#cd(h_dir)
 
 endfunction
 
