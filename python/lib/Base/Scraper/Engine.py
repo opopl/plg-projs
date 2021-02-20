@@ -1341,7 +1341,7 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
         with open(mod_py, 'w') as f:
             f.write(py)
 
-    self.site_prepare_py()
+    self.site_prepare_init_py()
 
     if not os.path.isfile(mod_py):
       return self
@@ -1359,9 +1359,9 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
 
     return self
 
-	def site_prepare_py(self,site):
+  def site_prepare_init_py(self,site):
     if not site:
-    site = self.page.site
+      site = self.page.site
 
     inpath = self._dir('in_sites')
     pieces = site.split('.')
