@@ -372,15 +372,16 @@ class RootPageParser(CoreClass):
 
         if get == 'text':
           v = c.get_text()
-          if v:
-            v = string.strip_nq(v)
 
         if v == None:
           continue
 
+        if k == 'name':
+          v = string.strip_nq(v)
+
         if k == 'url':
           url = v 
-          auth_url  = util.url2base(self.app.baseurl, url)
+          auth_url  = util.url2base(app.page.baseurl, url)
           print(f'[PageParser] found author url: {auth_url}')
 
         d_parse.update({ k : v })
@@ -388,9 +389,8 @@ class RootPageParser(CoreClass):
       auth_bare = util.get(d_parse,'name')
       if auth_bare:
         print(f'[PageParser] found author name: {auth_bare}')
+        self.auth_obj.parse(d_parse)
         break
-
-    self.auth_obj.parse(d_parse)
 
     return self
 

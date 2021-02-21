@@ -23,7 +23,7 @@ class Author(CoreClass):
     page_parser = self.page_parser
     app         = self.app
 
-    auth_bare = ref.get('str','')
+    auth_bare = ref.get('name','')
     auth_url  = ref.get('url','')
 
     if not auth_bare:
@@ -49,11 +49,6 @@ class Author(CoreClass):
           auth_url = auth_db.get('url')
 
       auth_ids.append(auth_id)
-
-      if auth_url:
-        u = util.url_parse(auth_url)
-        if not u['netloc']:
-           auth_url = util.url_join(app.page.url, auth_url)
 
       auth = {
         'id'   : auth_id,
