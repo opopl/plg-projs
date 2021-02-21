@@ -83,6 +83,12 @@ def now(fmt='%d-%m-%Y %H:%M:%S'):
   now = datetime.datetime.now().strftime(fmt)
   return now
 
+def url2base(base,url):
+  u = url_parse(url)
+  if not u['netloc']:
+    url = url_join(base,url)
+  return url
+
 def url_join(base,rel):
   url = urljoin(base,rel)
   url = url_normalize(url)

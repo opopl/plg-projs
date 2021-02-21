@@ -358,24 +358,29 @@ class RootPageParser(CoreClass):
           continue
 
         c = self.meta.select_one(find)
-        if c:
-          v = None
-          if get == 'attr':
-            attr = sel.get('attr','')
-            if c.has_attr(attr):
-              v = c[attr]
+        if not c:
+          continue
 
-          if get == 'text':
-            v = c.get_text()
-            v = string.strip_nq(v)
+        v = None
+        if get == 'attr':
+          attr = sel.get('attr','')
+          if c.has_attr(attr):
+            v = c[attr]
 
-          if v != None:
-            if k == 'url':
-               auth_url  = util.url_join(self.app.base_url, v)
-               print(f'[PageParser] found author url: {auth_url}')
+        if get == 'text':
+          v = c.get_text()
+          v = string.strip_nq(v)
 
-            if k == 'name':
-               print(f'[PageParser] found author name: {auth_bare}')
+        if v != None:
+          if k == 'url':
+             url = v 
+             auth_url  = util.url2base(self.app.baseurl, url)
+             print(f'[PageParser] found author url: {auth_url}')
+
+          if k == 'name':
+             print(f'[PageParser] found author name: {auth_bare}')
+
+          d_parse.update({ k : v })
 
       auth_bare = util.get(d_parse,'name')
       if auth_bare:
