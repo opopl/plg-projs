@@ -82,8 +82,8 @@ endfunction
 function! projs#bs#cmd#rid_grep ()
 	let rid = projs#bs#rid_select()
 
-	let expr = input('GREP: ','')
 	let expr = base#input_hist('GREP: ','','hist_bs_grep')
+
 	let cmd  = printf('bs.py -c html_parse -i cache.html -g "%s"',expr)
 
 	let env = {
@@ -102,8 +102,9 @@ function! projs#bs#cmd#rid_grep ()
 	endfunction
 	
 	call asc#run({ 
-		\	'cmd' : cmd, 
-		\	'Fn'  : asc#tab_restore(env) 
+		\	'cmd'  : cmd,
+		\	'path' : projs#bs#rid_dir(rid),
+		\	'Fn'   : asc#tab_restore(env)
 		\	})
 
 endfunction

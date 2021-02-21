@@ -342,21 +342,8 @@ class RootPageParser(CoreClass):
 
     return self
 
-  def get_author_meta(self,ref={}):
-    app = self.app
-    page = app.page
-
-    rid = page.rid
-    site = page.site
-      
-    if not self.meta:
-      self.import_meta()
-
-    d_parse = {}
-
-    sels = []
-    sels.extend( app._cnf('PageParser.get_author_meta.sels',[]) )
-    sels.extend( app._site_data('PageParser.get_author_meta.sels',[]) )
+  def get_author_sels(self,ref={}):
+    sels = util.get(ref,'sels',[])
 
     for itm in sels:
       d_parse = {}
@@ -372,11 +359,18 @@ class RootPageParser(CoreClass):
 
         c = self.meta.select_one(find)
         if c:
+          v = None
           if get == 'attr':
             attr = sel.get('attr','')
             if c.has_attr(attr):
               v = c[attr]
-              d_parse.update({ k : v })
+
+          if get == 'text':
+            v = c.get_text()
+            v = string.strip_nq(v)
+
+          if v != None:
+            d_parse.update({ k : v })
 
       auth_bare = util.get(d_parse,'str')
       if auth_bare:
@@ -385,6 +379,24 @@ class RootPageParser(CoreClass):
 
     self.auth_obj.parse(d_parse)
 
+    return self
+
+  def get_author_meta(self,ref={}):
+    app = self.app
+    page = app.page
+
+    rid = page.rid
+    site = page.site
+      
+    if not self.meta:
+      self.import_meta()
+
+    sels = []
+    sels.extend( app._cnf('PageParser.get_author_meta.sels',[]) )
+    sels.extend( app._site_data('PageParser.get_author_meta.sels',[]) )
+
+    self.get_author_sels({ 'sels' : sels })
+    
     return self
 
   def get_author(self,ref={}):
