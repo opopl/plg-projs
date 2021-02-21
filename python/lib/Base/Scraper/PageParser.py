@@ -370,9 +370,14 @@ class RootPageParser(CoreClass):
             v = string.strip_nq(v)
 
           if v != None:
-            d_parse.update({ k : v })
+            if k == 'url':
+               auth_url  = util.url_join(self.app.base_url, v)
+               print(f'[PageParser] found author url: {auth_url}')
 
-      auth_bare = util.get(d_parse,'str')
+            if k == 'name':
+               print(f'[PageParser] found author name: {auth_bare}')
+
+      auth_bare = util.get(d_parse,'name')
       if auth_bare:
         print(f'[PageParser] found author name: {auth_bare}')
         break
@@ -383,10 +388,6 @@ class RootPageParser(CoreClass):
 
   def get_author_meta(self,ref={}):
     app = self.app
-    page = app.page
-
-    rid = page.rid
-    site = page.site
       
     if not self.meta:
       self.import_meta()
@@ -423,49 +424,11 @@ class RootPageParser(CoreClass):
   def get_author_html(self,ref={}):
     app = self.app
 
-    site = app.page.site
-
-    sel = ref.get('sel','')
-
     sels = []
     sels.extend( app._cnf('PageParser.get_author_html.sels',[]) )
     sels.extend( app._site_data('PageParser.get_author_html.sels',[]) )
 
-    for auth_sel in sels:
-      if type(auth_sel) is dict:
-        d = {}
-  
-        d_parse = {}
-        for k in util.qw('url name'):
-          d    = auth_sel.get(k)
-  
-          find = d.get('find','')
-          get  = d.get('get','')
-          attr = d.get('attr','')
-  
-          if not find:
-            continue
-  
-          els = self.soup.select(find)
-    
-          for e in els:
-            auth = None
-      
-            if k == 'url':
-              if e.has_attr(attr):
-                auth_url  = util.url_join(self.app.base_url, e[attr])
-                print(f'[PageParser] found author url: {auth_url}')
-  
-                d_parse.update({ 'url' : auth_url })
-            elif k == 'name':
-              s = e.string
-              auth_bare = util.strip(s)
-              if auth_bare:
-                print(f'[PageParser] found author name: {auth_bare}')
-  
-                d_parse.update({ 'str' : auth_bare })
-  
-        self.auth_obj.parse(d_parse)
+    self.get_author_sels({ 'sels' : sels })
 
     return self
 
