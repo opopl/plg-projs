@@ -343,7 +343,10 @@ class RootPageParser(CoreClass):
     return self
 
   def get_author_sels(self,ref={}):
+    app = self.app
+
     sels = util.get(ref,'sels',[])
+    soup = util.get(ref,'soup',app.soup)
 
     for itm in sels:
       d_parse = {}
@@ -357,7 +360,7 @@ class RootPageParser(CoreClass):
         if not find:
           continue
 
-        c = self.meta.select_one(find)
+        c = soup.select_one(find)
         if not c:
           continue
 
@@ -380,9 +383,6 @@ class RootPageParser(CoreClass):
           auth_url  = util.url2base(self.app.baseurl, url)
           print(f'[PageParser] found author url: {auth_url}')
 
-        if k == 'name':
-          print(f'[PageParser] found author name: {auth_bare}')
-
         d_parse.update({ k : v })
 
       auth_bare = util.get(d_parse,'name')
@@ -404,7 +404,10 @@ class RootPageParser(CoreClass):
     sels.extend( app._cnf('PageParser.get_author_meta.sels',[]) )
     sels.extend( app._site_data('PageParser.get_author_meta.sels',[]) )
 
-    self.get_author_sels({ 'sels' : sels })
+    self.get_author_sels({ 
+        'sels' : sels,
+        'soup' : self.meta
+    })
     
     return self
 
@@ -436,7 +439,10 @@ class RootPageParser(CoreClass):
     sels.extend( app._cnf('PageParser.get_author_html.sels',[]) )
     sels.extend( app._site_data('PageParser.get_author_html.sels',[]) )
 
-    self.get_author_sels({ 'sels' : sels })
+    self.get_author_sels({ 
+      'sels' : sels,
+      'soup' : app.soup,
+    })
 
     return self
 
