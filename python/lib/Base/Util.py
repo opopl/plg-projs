@@ -115,7 +115,7 @@ def get(obj, path, default = None):
       if isinstance(obj,dict):
         if k in obj:
           obj = obj.get(k)
-          if obj == None:
+          if obj is None:
             obj = default
         else:
           obj = default
@@ -123,7 +123,7 @@ def get(obj, path, default = None):
       elif isinstance(obj,object):
         if hasattr(obj,k):
           obj = getattr(obj, k)
-          if obj == None:
+          if obj is None:
             obj = default
         else:
           obj = default
