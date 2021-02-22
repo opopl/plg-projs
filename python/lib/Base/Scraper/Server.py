@@ -6,17 +6,18 @@ import Base.Util as util
 import Base.String as string
 import Base.Const as const
 
+import json
+
 from Base.Zlan import Zlan
 from Base.Core import CoreClass
 
 import web
 
-
-
 class Srv(CoreClass):
   urls = (
     '/', 'r_html_index',
-    '/pages/(\d+)', 'r_html_page'
+    '/html/pages/(\d+)', 'r_html_page'
+    '/json/pages/(\d+)', 'r_json_page'
   )
 
   def __init__(self,ref={}):
@@ -38,4 +39,10 @@ class r_html_index(Srv):
   
 class r_html_page(Srv):
   def GET(self,rid):
+    page = self.engine._page_from_rid(rid)
+    return rid
+
+class r_json_page(Srv):
+  def GET(self,rid):
+    page = self.engine._page_from_rid(rid)
     return rid
