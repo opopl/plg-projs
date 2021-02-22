@@ -354,8 +354,9 @@ class RootPageParser(CoreClass):
       for k in util.qw('name url'):
         sel = itm.get(k)
 
-        find = sel.get('find','')
-        get  = sel.get('get','')
+        find  = sel.get('find','')
+        get   = sel.get('get','')
+        sep   = sel.get('split','')
 
         if not find:
           continue
@@ -377,6 +378,8 @@ class RootPageParser(CoreClass):
           continue
 
         if k == 'name':
+          if sep:
+            v = v.split(sep)[0]
           v = string.strip_nq(v)
 
         if k == 'url':
