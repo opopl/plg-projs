@@ -109,6 +109,12 @@ function! projs#bs#cmd#rid_grep ()
 
 endfunction
 
+function! projs#bs#cmd#rid_terminal ()
+	call projs#bs#cmd#rid_cd ()
+	terminal
+
+endfunction
+
 function! projs#bs#cmd#rid_cd ()
 	let bs_data = base#varget('projs_bs_data',{})
 
