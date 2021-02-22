@@ -130,7 +130,7 @@ function! projs#bs#cmd#init ()
   let bs_dir = base#qw#catpath('p_sr','scrape bs')
 
   call chdir(bs_dir)
-  let cmd = 'bs.py -c run -p list_sites -y mix.yaml'
+  let cmd = 'bs.py -c print_field -p list_sites -y mix.yaml'
 
   let env = {
     \ 'cmd' : cmd,

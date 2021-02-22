@@ -55,6 +55,7 @@ import Base.Const as const
 
 from Base.Zlan import Zlan
 from Base.Core import CoreClass
+from Base.Scraper.Server import Srv
 
 class dbFile(CoreClass):
   images = None
@@ -443,8 +444,6 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
       if val_type == 'list':
         for a in val:
           print(a)
-
-    sys.exit(0)
 
 ###ih
   def input_html_process(self):
@@ -1977,6 +1976,23 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
 
     self                    \
       .input_html_process() \
+
+    return self
+
+  def c_server(self):
+    self.srv = Srv({ 
+      'engine' : self 
+    })
+
+    self.srv.run()
+
+    return self
+
+  def c_print_field(self):
+    self                    \
+      .init()               \
+      .fill_vars()          \
+      .print_field()        \
 
     return self
 

@@ -11,8 +11,6 @@ from Base.Core import CoreClass
 
 import web
 
-from Base.Scraper.Engine import BS
-
 #r = { 
   #'files' : {
     #'script' : os.path.realpath(__file__)
