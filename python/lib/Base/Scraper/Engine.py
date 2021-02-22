@@ -54,7 +54,6 @@ import Base.String as string
 import Base.Const as const
 
 from Base.Zlan import Zlan
-
 from Base.Core import CoreClass
 
 class dbFile(CoreClass):

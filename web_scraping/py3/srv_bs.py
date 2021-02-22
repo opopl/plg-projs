@@ -3,6 +3,7 @@
 import web
 
 from Base.Scraper.Engine import BS
+from Base.Scraper.Server import Srv
 import os
 
 #r = { 
@@ -15,8 +16,8 @@ r = {}
 #bs = BS(r)
 
 urls = (
-  '/', 'index',
-  '/pages/(\d+)', 'page'
+  '/', 'route_index',
+  '/pages/(\d+)', 'route_page'
 )
 
 class index:
@@ -26,6 +27,7 @@ class index:
 class page:
   def GET(self,rid):
     return rid
+
 
 if __name__ == "__main__":
     app = web.application(urls, globals())
