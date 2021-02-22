@@ -1979,12 +1979,12 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
 
     return self
 
-  def c_server(self):
+  def c_srv_start(self):
     self.srv = Srv({ 
       'engine' : self 
     })
 
-    self.srv.run()
+    self.srv.start()
 
     return self
 
@@ -2134,6 +2134,18 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
     if os.path.isfile(self.ii_cache):
       return 1
     return 0
+
+  def _page_from_rid(self,rid=None):
+    q = '''SELECT * FROM pages WHERE rid = ?'''
+    p = [rid]
+    r = dbw.sql_fetchone(q,p,{ 'db_file' : self.dbfile.pages })
+
+    row  = r.get('row',{})
+    cols = r.get('cols',[])
+
+    page = Page(row) if len(row) else None
+
+    return page
 
   def _rid_url(self,url=None):
     db_file = self.dbfile.pages

@@ -11,35 +11,31 @@ from Base.Core import CoreClass
 
 import web
 
-#r = { 
-  #'files' : {
-    #'script' : os.path.realpath(__file__)
-  #},
-#}
-r = {}
 
-#bs = BS(r)
-
-urls = (
-  '/', 'r_html_index',
-  '/pages/(\d+)', 'r_html_page'
-)
-
-class r_html_index:
-  def GET(self):
-    return "Hello, world!"
-
-class r_html_page:
-  def GET(self,rid):
-    return rid
 
 class Srv(CoreClass):
+  urls = (
+    '/', 'r_html_index',
+    '/pages/(\d+)', 'r_html_page'
+  )
+
   def __init__(self,ref={}):
     super().__init__(ref)
 
-  def run(self):
-
-    self.app = web.application(urls, globals())
-    self.app.run()
+  def start(self):
+    sys.argv = []
+    self.app = web.application(self.urls, globals())
+    try:
+      self.app.run()
+    except: 
+      import pdb; pdb.set_trace()
 
     return self
+
+class r_html_index(Srv):
+  def GET(self):
+    return "Hello, world!"
+  
+class r_html_page(Srv):
+  def GET(self,rid):
+    return rid
