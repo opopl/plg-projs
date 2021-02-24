@@ -3,32 +3,42 @@
 import web
 
 from Base.Scraper.Engine import BS
-from Base.Scraper.Server import Srv
-import os
+import Base.Util as util
 
-#r = { 
-  #'files' : {
-    #'script' : os.path.realpath(__file__)
-  #},
-#}
-r = {}
+import os,sys
 
-#bs = BS(r)
+r = { 
+  'files' : {
+    'script' : os.path.realpath(__file__),
+  },
+  'dirs' : {
+    'bin' : os.path.dirname(__file__),
+  },
+  'vars' : {
+    'mixCmdRunner' : {
+      'cmds' : util.qw('init_bs')
+    }
+  }
+}
+
+ee = BS(r)
+ee.main()
 
 urls = (
-  '/', 'route_index',
-  '/pages/(\d+)', 'route_page'
+  '/', 'r_html_index',
+  '/json/pages/(\d+)', 'r_json_page'
 )
 
-class index:
+class r_html_index:
   def GET(self):
-    return "Hello, world!"
+    return globals()
 
-class page:
+class r_json_page:
   def GET(self,rid):
-    return rid
-
+    page = ee._page_from_rid(rid)
+    return str(self)
 
 if __name__ == "__main__":
-    app = web.application(urls, globals())
-    app.run()
+  sys.argv = [__file__]
+  app = web.application(urls, globals())
+  app.run()

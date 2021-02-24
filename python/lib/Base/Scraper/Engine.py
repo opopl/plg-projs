@@ -57,6 +57,11 @@ from Base.Zlan import Zlan
 from Base.Core import CoreClass
 from Base.Scraper.Server import Srv
 
+from http.server import BaseHTTPRequestHandler, HTTPServer
+import time
+
+
+
 class dbFile(CoreClass):
   images = None
   pages = None
@@ -363,6 +368,8 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
   # current image data
   pic = Pic()
 
+  skip_get_opt = False
+
   # list of databases
   dbfile = dbFile()
 
@@ -393,6 +400,9 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
       self.dbfile.pages = os.path.join(self.html_root,'h.db')
 
   def get_opt(self):
+    if self.skip_get_opt:
+      return self
+
     self.parser = argparse.ArgumentParser(usage=self.usage)
     
     self.parser.add_argument("-y", "--f_yaml", help="input YAML file",default="")
@@ -1980,11 +1990,24 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
     return self
 
   def c_srv_start(self):
-    self.srv = Srv({ 
-      'engine' : self 
-    })
+#    self.srv = Srv({ 
+      #'engine' : self 
+    #})
+    #self.srv.start()
 
-    self.srv.start()
+    hostName = "localhost"
+    serverPort = 8080
+
+    webServer = HTTPServer((hostName, serverPort), Srv)
+    print("Server started http://%s:%s" % (hostName, serverPort))
+
+    try:
+        webServer.serve_forever()
+    except KeyboardInterrupt:
+        pass
+
+    webServer.server_close()
+    print("Server stopped.")
 
     return self
 
@@ -1996,12 +2019,17 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
 
     return self
 
-  def c_run(self):
-
+  def c_init_bs(self):
     self                    \
       .init()               \
       .fill_vars()          \
-      .print_field()        \
+
+    return self
+
+  def c_run(self):
+
+    self                    \
+      .c_init_bs()          \
       .parse()              \
       .render_page_list()   \
 
@@ -2554,4 +2582,20 @@ bs.py -c html_parse -i cache.html $*
     self                    \
       .get_opt()            \
       .do_cmd()             \
+
+    return self
+
+class Srv(BaseHTTPRequestHandler):
+    def do_GET(self):
+        self.send_response(200)
+        self.send_header("Content-type", "text/html")
+        self.end_headers()
+        self.wfile.write(bytes("<html><head><title>https://pythonbasics.org</title></head>", "utf-8"))
+        self.wfile.write(bytes("<p>Request: %s</p>" % self.path, "utf-8"))
+        self.wfile.write(bytes("<body>", "utf-8"))
+        self.wfile.write(bytes("<p>This is an example web server.</p>", "utf-8"))
+        self.wfile.write(bytes("</body></html>", "utf-8"))
+
+#if __name__ == "__main__":        
+
 

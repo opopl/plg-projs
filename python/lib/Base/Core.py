@@ -1,4 +1,6 @@
+
 import os,sys
+import json
 
 import Base.Util as util
 
@@ -7,6 +9,10 @@ class CoreClass:
   def __init__(self,args={}):
     for k, v in args.items():
       setattr(self, k, v)
+
+  def _json(self):
+    jsd = json.dumps(self.__dict__)
+    return jsd
 
   def listadd(self, path = None, items = []):
     lst = util.get(self,path,[])
