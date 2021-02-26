@@ -342,7 +342,13 @@ class RootPageParser(CoreClass):
 
     return self
 
+
   def get_author_sels(self,ref={}):
+    '''
+      input:
+        sels - LIST 
+        soup - BeautifulSoup instance
+    '''
     app = self.app
 
     sels = util.get(ref,'sels',[])

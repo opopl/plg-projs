@@ -205,8 +205,8 @@ class Pic(CoreClass):
     app.log(f'[{rid}][Pic.grab] content-type: {ct}')
 
     m = re.match(r'^text/html',ct)
-    if m:
-      return pic
+    #if m:
+      #return pic
 
 ###ilocal
 
