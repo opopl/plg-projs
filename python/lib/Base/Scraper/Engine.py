@@ -1772,13 +1772,16 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
               href = util.url_join(self.page.baseurl,href)
               next['href'] = href
             next['target'] = '_blank'
+
           elif act == 'remote_to_db':
-            idata = self._img_data({ 'url' : href })
-            if idata:
-              uri_local = idata.get('uri')
-              if uri_local:
-                next['href'] = uri_local
-                next['class'] = 'link uri_local'
+            pic = Pic({ 
+              'app' : self,
+              'url' : href,
+            })
+            uri_local = pic.path_uri 
+            if uri_local:
+              next['href'] = uri_local
+              next['class'] = 'link uri_local'
 
     return self
 
@@ -2174,55 +2177,6 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
         iuri = Path(ipath).as_uri()
       return iuri
 
-  def _img_data(self, ref={}):
-    url    = ref.get('url','')
-    ext    = ref.get('ext','jpg')
-
-    opts_s = ref.get('opts','')
-    opts   = opts_s.split(',')
-
-    if not ( self.dbfile.images and os.path.isfile(self.dbfile.images) ):
-      return 
-
-    d = None
-
-    conn = sqlite3.connect(self.dbfile.images)
-    c = conn.cursor()
-
-    img = None
-    while 1:
-      if 'new' in opts:
-        c.execute('''SELECT MAX(inum) FROM imgs''')
-        rw = c.fetchone()
-        inum = rw[0]
-        inum += 1
-        img = f'{inum}.{ext}'
-        break
-      else:
-        c.execute('''SELECT img, inum FROM imgs WHERE url = ?''',[ url ])
-        rw = c.fetchone()
-  
-        if rw:
-          img = rw[0]
-          inum = rw[1]
-      break
-
-    if img:
-      ipath = os.path.join(self.img_root, img)
-  
-      d = { 
-        'inum'   : inum,
-        'img'    : img,
-        'remote' : url,
-        'path'   : ipath,
-        'uri'    : Path(ipath).as_uri()
-      }
-
-    conn.commit()
-    conn.close()
-
-    return d
-
   def cmt(self,cmt=''):
     pass
     return self
@@ -2390,25 +2344,23 @@ bs.py -c html_parse -i cache.html $*
       if not self._act('get_img'):
         # image saved to fs && db
         if pic.img_saved:
-          pic.data = self._img_data({ 'url' : url })
-          pic.path = pic.data.get('path','')
           get_img = 0
 
 ###i
       if get_img:
         pic.grab()
 
-      ipath = util.get(pic,'path')
-      if not ipath:
+      if not pic.img_saved:
         continue
 
-      ipath_uri = Path(ipath).as_uri()
-      el_img['src'] = ipath_uri
+      el_img['src'] = pic.path_uri
       
       n = self.soup.new_tag('img')
-      n['src'] = ipath_uri
-      n['rel-src'] = rel_src
-      n['width'] = 500
+
+      n['src']     = pic.path_uri
+      n['rel-src'] = pic.url_rel
+      n['width']   = 500
+
       el_img.wrap(self.soup.new_tag('p'))
       el_img.replace_with(n)
 

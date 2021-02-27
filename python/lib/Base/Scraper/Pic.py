@@ -5,6 +5,7 @@ import base64
 import re,os,sys,stat
 
 import cairosvg
+import sqlite3
 
 import shutil
 import requests
@@ -29,10 +30,19 @@ class Pic(CoreClass):
   root   = None
 
   url        = None
+  url_rel    = None
   url_parent = None
   baseurl    = None
 
   data = {}
+
+  # local (saved) path 
+  path     = None
+  path_uri = None
+
+  # short image path within img_root, e.g. 22.jpg
+  img      = None
+  inum     = None
 
   app     = None
 
@@ -48,6 +58,9 @@ class Pic(CoreClass):
         .vars_from_app()        \
         .get_url_from_element() \
         .url_check_saved()      \
+        .get_data()             \
+
+    pass
 
   def vars_from_app(pic):
     app = pic.app
@@ -85,19 +98,15 @@ class Pic(CoreClass):
     if not ( pic.dbfile and os.path.isfile(pic.dbfile) ):
       return pic
     else:
-      conn = sqlite3.connect(pic.dbfile)
-      c = conn.cursor()
+      q = '''SELECT img FROM imgs WHERE url = ?'''
+      r = dbw.sql_fetchone(q,[url],{ 'db_file' : pic.dbfile })
 
-      c.execute('''SELECT img FROM imgs WHERE url = ?''',[ url ])
-      rw = c.fetchone()
-      if rw:
-        img = rw[0]
-        ipath = os.path.join(pic.root, img)
-        if os.path.isfile(ipath):
-          pic.img_saved = True
-
-      conn.commit()
-      conn.close()
+      if r:
+        img = r.get('row',{}).get('img')
+        if img:
+          ipath = os.path.join(pic.root, img)
+          if os.path.isfile(ipath):
+            pic.img_saved = True
 
     return pic
 
@@ -117,15 +126,15 @@ class Pic(CoreClass):
     if src == '#':
       return pic
 
-    rel_src = None
+    pic.url_rel = None
     u = util.url_parse(src)
 
     if not u['path']:
       return pic
 
     if not u['netloc']:
-      pic.url = util.url_join(pic.baseurl,src)
-      rel_src = src
+      pic.url     = util.url_join(pic.baseurl,src)
+      pic.url_rel = src
     else:
       pic.url = u['url']
 
@@ -175,6 +184,8 @@ class Pic(CoreClass):
     for k in util.qw('img inum path'):
       v = pic.data.get(k,'')
       setattr(pic, k, v)
+
+    pic.path_uri = Path(pic.path).as_uri()
 
     app.log(f'[{rid}][Pic.grab] Local path: {pic.data.get("path","")}')
     if os.path.isfile(pic.path):
@@ -275,6 +286,57 @@ class Pic(CoreClass):
 
     return pic
 
+  def get_data(pic,ref={}):
+    opts_s = ref.get('opts','')
+    opts   = opts_s.split(',')
+
+    if not ( pic.dbfile and os.path.isfile(pic.dbfile) ):
+      return 
+
+    url = pic.url
+    if not url:
+      return pic
+
+    d = None
+
+    conn = sqlite3.connect(pic.dbfile)
+    c = conn.cursor()
+
+    img = None
+    while 1:
+      if 'new' in opts:
+        c.execute('''SELECT MAX(inum) FROM imgs''')
+        rw = c.fetchone()
+        inum = rw[0]
+        inum += 1
+        img = f'{inum}.{ext}'
+        break
+      else:
+        c.execute('''SELECT img, inum FROM imgs WHERE url = ?''',[ url ])
+        rw = c.fetchone()
+  
+        if rw:
+          img = rw[0]
+          inum = rw[1]
+      break
+
+    if img:
+      ipath = os.path.join(pic.root, img)
+  
+      d = { 
+        'inum'     : inum,
+        'img'      : img,
+        'path'     : ipath,
+        'path_uri' : Path(ipath).as_uri()
+      }
+      for k, v in d.items():
+        setattr(pic, k, v)
+
+    conn.commit()
+    conn.close()
+
+    return d
+
   def get_ext(pic):
     map = {
        'JPEG'  : 'jpg',
@@ -300,11 +362,12 @@ class Pic(CoreClass):
     if not pic.i:
       return pic
 
-    pic            \
-        .get_ext() \
-        .setup()   \
-        .save2fs() \
-        .db_add()  \
+    pic                    \
+        .get_ext()         \
+        .setup()           \
+        .save2fs()         \
+        .db_add()          \
+        .url_check_saved() \
     
     return pic
 
