@@ -1824,10 +1824,14 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
     q = '''SELECT * FROM pages WHERE url = ?'''
     p = [ url ]
     dw = dbw.sql_fetchone(q,p,{ 
-        'db_file' : self.dbfile.pages 
+      'db_file' : self.dbfile.pages 
     })
 
     return dw 
+
+  def _db_get_pages(self, ref={}):
+
+    return pages
 
   def _db_get_auth(self, ref={}):
     auth_id = ref.get('auth_id')
