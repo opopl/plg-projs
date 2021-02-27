@@ -3,11 +3,16 @@
   <head>
   </head>
   <body>
+    <form action="/html/pages" method="POST">
+          <label for="date">date:</label>
+          <input type="date" name="date" />
+          <input type="submit" value="Go!" name="go"/>
+    </form>
     <table border="1">
       <thead>
-            {% for col in cols %}
-              <th> {{ col }} </th> 
-            {% endfor %}
+        {% for col in cols %}
+           <th> {{ col }} </th> 
+        {% endfor %}
       </thead>
       <tbody>
         {% for page in pages %}

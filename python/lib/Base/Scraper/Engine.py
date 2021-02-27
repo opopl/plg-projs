@@ -211,6 +211,9 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
   # directories
   dirs = {}
 
+  # sqlite table columns, e.g. pages, imgs
+  cols = {}
+
   # files
   files = {}
 
@@ -286,6 +289,11 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
 
     if (not self.dbfile.pages) and self.html_root:
       self.dbfile.pages = os.path.join(self.html_root,'h.db')
+
+    self.cols['pages'] = dbw._cols({
+      'db_file' : self.dbfile.pages,
+      'table'   : 'pages',
+    })
 
   def get_opt(self):
     if self.skip_get_opt:
@@ -1832,10 +1840,14 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
   def _db_get_pages(self, ref={}):
     where = ref.get('where',{})
 
+    db_file = self.dbfile.pages
+
+
+
     q = 'SELECT * FROM pages'
     p = []
     r = dbw.sql_fetchall(q,p,{
-      'db_file' : self.dbfile.pages,
+      'db_file' : db_file,
       'where'   : where,
     })
 

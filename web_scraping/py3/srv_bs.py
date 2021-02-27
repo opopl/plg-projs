@@ -7,6 +7,7 @@ import Base.Util as util
 
 import os,sys
 import json
+import dateparser
 
 global ee
 
@@ -15,19 +16,53 @@ class r_html_index:
     return globals()
 
 class r_html_pages:
-  def GET(self):
-    web.header('Content-Type', 'text/html; charset=utf-8')
+  def h_pages(self,params={}):
 
-    d = web.input()
-    params = dict(d.items())
-    
-    r = ee._db_get_pages({ 'where' : params })
+    cols = ee.cols['pages']
+
+    where = {}
+    for k in cols:
+      v = params.get(k,'')
+      v.strip()
+      if v:
+        where[k] = v
+
+    r = ee._db_get_pages({ 'where' : where })
+
+    if not r:
+      return ''
 
     pages = r.get('pages',[])
     cols  = r.get('cols',[])
 
     t = ee.template_env.get_template("pages.t.html")
     h = t.render(pages=pages,cols=cols)
+
+    return h
+
+  def POST(self):
+    web.header('Content-Type', 'text/html; charset=utf-8')
+
+    d = web.input()
+    params = dict(d.items())
+
+    date = params.get('date','')
+    if date:
+      dt = dateparser.parse(date)
+      date = dt.strftime('%d_%m_%Y')
+      params.update({ 'date' : date })
+
+    h = self.h_pages(params)
+
+    return h
+
+  def GET(self):
+    web.header('Content-Type', 'text/html; charset=utf-8')
+
+    d = web.input()
+    params = dict(d.items())
+
+    h = self.h_pages(params)
 
     return h
 

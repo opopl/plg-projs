@@ -263,7 +263,7 @@ class RootPageParser(CoreClass):
 
       if tri == 'dateparser':
         try:
-          dt = dateparser.parser(self.date_bare)
+          dt = dateparser.parse(self.date_bare)
             
         except:
           continue
