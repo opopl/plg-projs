@@ -19,12 +19,12 @@ PageParser:
     sels:
       - { 
           'url' : {
-              'find' : '<++>', 
+              'find' : '', 
               'get'  : 'attr',
               'attr' : 'href' 
           },
           'name' : {
-              'find' : '<++>',
+              'find' : '',
               'get'  : 'text',
           }
         }

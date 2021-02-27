@@ -39,6 +39,6 @@ class r_json_page:
     return str(self)
 
 if __name__ == "__main__":
-  sys.argv = [__file__]
+  sys.argv = [ __file__ ]
   app = web.application(urls, globals())
   app.run()

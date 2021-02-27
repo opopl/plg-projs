@@ -9,6 +9,9 @@ import re
 import json
 
 from tabulate import tabulate
+from requests_html import HTMLSession
+
+import base64
 
 import datetime
 #from cdata.core import any2utf8
@@ -168,6 +171,8 @@ class Page(CoreClass):
 
 class Pic(CoreClass):
   url = None
+  width = None
+  caption = None
 
   def grab(pic):
     app = pic.app
@@ -176,21 +181,34 @@ class Pic(CoreClass):
 
     app.log(f"[{rid}][Pic.grab] Getting image: \n\t{pic.url}")
 
-    i = None
-    try:
-      u = util.url_parse(pic.url)
-      resp = requests.get(pic.url, stream = True)
-    except:
-      app.die(f'ERROR[{rid}][Pic.grab] {pic.url}')
-
-    resp.raw.decoded_content = True
-
     i_tmp = { 
        'bare' : app._dir('tmp_img bs_img'),
        'png'  : app._dir('tmp_img bs_img.png'),
     }
-    with open(i_tmp['bare'], 'wb') as lf:
-      shutil.copyfileobj(resp.raw, lf)
+
+    i = None
+    resp = None
+    try:
+      u = util.url_parse(pic.url)
+      if u['scheme'] == 'data':
+        data = u['path']
+        m = re.match(r'^image/svg\+xml;base64,(.*)$',u['path'])
+        if m:
+          data = m.group(1)
+          decoded = base64.decodestring(data)
+          import pdb; pdb.set_trace()
+        #with open(i_tmp['bare'], 'wb') as f:
+          #f.write(data)
+      else:
+        resp = requests.get(pic.url, stream = True)
+    except:
+      app.die(f'ERROR[{rid}][Pic.grab] {pic.url}')
+
+    if resp:
+      resp.raw.decoded_content = True
+  
+      with open(i_tmp['bare'], 'wb') as lf:
+        shutil.copyfileobj(resp.raw, lf)
 
     f = i_tmp['bare']
     if (not os.path.isfile(f)) or os.stat(f).st_size == 0:
@@ -1020,10 +1038,29 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
      'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.3'
     }
 
-    try:
-      r = requests.get(url,headers=headers)
-    except:
-      self.die(f'ERROR[url_fetch] url: {url}')
+    tries = util.qw('requests requests_html')
+    tries = util.qw('requests')
+    url_fetch_mode = ref.get('url_fetch_mode','requests')
+
+    ok = 1
+    r = None
+    for tri in tries:
+      if tri == 'requests':
+        try:
+          r = requests.get(url,headers=headers)
+        except:
+          ok = 0
+
+        ok = r.ok
+
+      elif tri == 'requests_html':
+        session = HTMLSession()
+        r = session.get(url)
+
+      if not ok:
+        self.die(f'ERROR[url_fetch] url: {url}')
+      else:
+        break
 
     encoding = 'utf-8'
 
