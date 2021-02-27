@@ -84,8 +84,10 @@ class Pic(CoreClass):
       v = pic.idata.get(k,'')
       setattr(pic, k, v)
 
+    import pdb; pdb.set_trace()
+
     app.log(f'[{rid}][Pic.grab] Local path: {pic.idata.get("path","")}')
-    if os.path.isfile(pic.ipath):
+    if os.path.isfile(pic.path):
       app.log(f'WARN[{rid}][Pic.grab] image file already exists: {pic.img}')
 
     return pic
@@ -124,7 +126,7 @@ class Pic(CoreClass):
       with open(pic.tmp['bare'], 'wb') as lf:
         shutil.copyfileobj(pic.resp.raw, lf)
 
-    pic.has_bare = False
+    pic.bare_size = 0
 
     f = pic.tmp['bare']
     if (not os.path.isfile(f)) or os.stat(f).st_size == 0:
@@ -132,7 +134,6 @@ class Pic(CoreClass):
       app.on_fail()
       return pic
 
-    pic.has_bare = True
     pic.bare_size = os.stat(f).st_size
 
     return pic
@@ -161,12 +162,13 @@ class Pic(CoreClass):
 
   def grab(pic):
     app = pic.app
+    rid = app.page.rid
 
     app.log(f"[{rid}][Pic.grab] Getting image: \n\t{pic.url}")
 
     pic.save2tmp()
 
-    if not pic.has_bare:
+    if not pic.bare_size:
       return pic
 
     if pic.ct:
@@ -194,7 +196,7 @@ class Pic(CoreClass):
     if pic.ext == 'gif':
       a['save_all'] = True
 
-    pic.i.save(pic.ipath,**a)
+    pic.i.save(pic.path,**a)
     pic.i.close()
 
     Path(pic.tmp['bare']).unlink()
