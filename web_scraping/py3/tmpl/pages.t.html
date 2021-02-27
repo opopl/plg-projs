@@ -5,12 +5,24 @@
   <body>
     <table border="1">
       <thead>
+            {% for col in cols %}
+              <th> {{ col }} </th> 
+            {% endfor %}
       </thead>
       <tbody>
         {% for page in pages %}
             <tr> 
             {% for col in cols %}
-              <td> {{ page[col] }} </td> 
+              <td> 
+                {% if col == 'url' %}
+                  <a href="{{ page[col] }}"> Remote </a>
+                {% elif col in [ 'rid' ] %}
+                  {% set rid = page[col] %}
+                  <a href="/json/page/{{ rid }}"> {{ rid }} </a>
+                {% else %}
+                  {{ page[col] }} 
+                {% endif %}
+              </td> 
             {% endfor %}
             </tr>
         {% endfor %}
