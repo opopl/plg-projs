@@ -44,6 +44,52 @@ class Pic(CoreClass):
       'png'  : app._dir('tmp_img bs_img.png'),
     }
 
+  def load(pic):
+
+    pic.i = None
+    try:
+      pic.i = Image.open(pic.tmp['bare'])
+    except UnidentifiedImageError:
+
+      if pic.ct:
+        if pic.ct in [ 'image/svg+xml' ]:
+          cairosvg.svg2png( 
+            file_obj = open(pic.tmp['bare'], "rb"),
+            write_to = pic.tmp['png']
+          )
+          pic.i = Image.open(pic.tmp['png'])
+
+    return pic
+
+  def _has_bare(pic):
+
+
+
+    return pic
+
+  def setup(pic):
+    app = pic.app
+    rid = app.page.rid
+
+    dd = { 
+      'url'  : pic.url,
+      'ext'  : pic.ext,
+    }
+    if not pic.img_saved:
+      dd.update({ 'opts' : 'new' })
+
+    pic.idata = app._img_data(dd)
+
+    for k in util.qw('img inum path'):
+      v = pic.idata.get(k,'')
+      setattr(pic, k, v)
+
+    app.log(f'[{rid}][Pic.grab] Local path: {pic.idata.get("path","")}')
+    if os.path.isfile(pic.ipath):
+      app.log(f'WARN[{rid}][Pic.grab] image file already exists: {pic.img}')
+
+    return pic
+
   def save2tmp(pic):
     app = pic.app
 
@@ -78,6 +124,17 @@ class Pic(CoreClass):
       with open(pic.tmp['bare'], 'wb') as lf:
         shutil.copyfileobj(pic.resp.raw, lf)
 
+    pic.has_bare = False
+
+    f = pic.tmp['bare']
+    if (not os.path.isfile(f)) or os.stat(f).st_size == 0:
+      app.log(f'FAIL[{app.page.rid}][Pic.grab] empty file: {pic.url}')
+      app.on_fail()
+      return pic
+
+    pic.has_bare = True
+    pic.bare_size = os.stat(f).st_size
+
     return pic
 
   def db_add(pic):
@@ -105,74 +162,40 @@ class Pic(CoreClass):
   def grab(pic):
     app = pic.app
 
-    rid = app.page.rid
-
     app.log(f"[{rid}][Pic.grab] Getting image: \n\t{pic.url}")
-
-    i = None
 
     pic.save2tmp()
 
-    f = pic.tmp['bare']
-    if (not os.path.isfile(f)) or os.stat(f).st_size == 0:
-      app.log(f'FAIL[{rid}][Pic.grab] empty file: {pic.url}')
-      self.on_fail()
-      return self
-
-    f_size = os.stat(f).st_size
+    if not pic.has_bare:
+      return pic
 
     if pic.ct:
       m = re.match(r'^text/html',pic.ct)
 
-    app.log(f'[{rid}][Pic.grab] image file size: {f_size}')
-    app.log(f'[{rid}][Pic.grab] content-type: {ct}')
+    app.log(f'[{rid}][Pic.grab] image file size: {pic.bare_size}')
+    app.log(f'[{rid}][Pic.grab] content-type: {pic.ct}')
 
-    i = None
-    try:
-      i = Image.open(pic.tmp['bare'])
-    except UnidentifiedImageError:
-
-      if pic.ct:
-        if pic.ct in [ 'image/svg+xml' ]:
-          cairosvg.svg2png( 
-            file_obj = open(pic.tmp['bare'], "rb"),
-            write_to = pic.tmp['png']
-          )
-          i = Image.open(pic.tmp['png'])
+    pic.load()
       
-    if not i:
+    if not pic.i:
       app                                                                \
         .log(f'FAIL[{rid}][Pic.grab] no Image.open instance: {pic.url}') \
         .on_fail()                                                       \
 
       return pic
       
-    app.log(f'[{rid}][Pic.grab] Image format: {i.format}')
-    pic.ext = app._img_ext(i)
+    app.log(f'[{rid}][Pic.grab] Image format: {pic.i.format}')
 
-    dd = { 
-      'url'  : pic.url,
-      'ext'  : pic.ext,
-    }
-    if not pic.img_saved:
-      dd.update({ 'opts' : 'new' })
+    pic.ext = app._img_ext(pic.i)
 
-    pic.idata = app._img_data(dd)
-
-    for k in util.qw('img inum path'):
-      v = pic.idata.get(k,'')
-      setattr(pic, k, v)
-
-    app.log(f'[{rid}][Pic.grab] Local path: {pic.idata.get("path","")}')
-    if os.path.isfile(pic.ipath):
-      app.log(f'WARN[{rid}][Pic.grab] image file already exists: {pic.img}')
+    pic.setup()
 
     a = {}
     if pic.ext == 'gif':
       a['save_all'] = True
 
-    i.save(pic.ipath,**a)
-    i.close()
+    pic.i.save(pic.ipath,**a)
+    pic.i.close()
 
     Path(pic.tmp['bare']).unlink()
 
