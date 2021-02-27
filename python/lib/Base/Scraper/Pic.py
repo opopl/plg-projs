@@ -39,6 +39,12 @@ class Pic(CoreClass):
     if not app:
       return 
 
+    if not pic.dbfile:
+      pic.dbfile = app.dbfile.images
+
+    pic.url_parent = app.page.url
+    pic.baseurl    = app.page.baseurl
+
     pic.tmp = { 
       'bare' : app._dir('tmp_img bs_img'),
       'png'  : app._dir('tmp_img bs_img.png'),
@@ -53,7 +59,6 @@ class Pic(CoreClass):
     app = pic.app
 
     el = pic.el
-    baseurl = app.page.baseurl
 
     if not el.has_attr('src'):
       continue
@@ -70,7 +75,7 @@ class Pic(CoreClass):
       continue
 
     if not u['netloc']:
-      pic.url = util.url_join(baseurl,src)
+      pic.url = util.url_join(pic.baseurl,src)
       rel_src = src
     else:
       pic.url = u['url']
@@ -212,7 +217,7 @@ class Pic(CoreClass):
       insert[k] = getattr(app,k,None)
 
     d = {
-      'db_file' : app.dbfile.images,
+      'db_file' : pic.dbfile,
       'table'   : 'imgs',
       'insert'  : insert
     }

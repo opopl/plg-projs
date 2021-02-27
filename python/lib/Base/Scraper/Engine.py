@@ -2396,8 +2396,6 @@ bs.py -c html_parse -i cache.html $*
       #if el_img.has_attr('alt'):
         #caption = el_img['alt']
 
-
-
       self.pic = pic = Pic({ 
         'app' : self,
         'el'  : el_img,
