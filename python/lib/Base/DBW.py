@@ -98,10 +98,30 @@ def _cols(ref={}):
 
   return cols
 
-def sql_fetchall(q,p=[],ref={}):
+def cond_where(ref={}):
+  where = ref.get('where',{})
+
+  where_keys    = where.keys()
+  where_values  = list( map(lambda k: where.get(k,''), where_keys) )
+
+  values = []
+  values.extend(where_values)
+
+  cond  = ' AND '.join(list( map(lambda k: ' %s = ?' % k , where_keys ) ))
+
+  r = { 'cond' : cond, 'values' : values }
+
+  return r
+
+def sql_fetchall(q, p=[], ref={}):
   conn     = ref.get('conn')
   db_file  = ref.get('db_file')
   db_close = ref.get('db_close')
+
+  where = ref.get('where',{})
+
+  r = cond_where({ 'where' : where })
+  cond = r.get('cond')
 
   if not conn:
     if db_file:
