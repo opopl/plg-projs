@@ -14,6 +14,19 @@ class r_html_index:
   def GET(self):
     return globals()
 
+class r_html_pages:
+  def GET(self):
+    web.header('Content-Type', 'text/html; charset=utf-8')
+
+    d = web.input()
+    params = dict(d.items())
+    pages = ee._db_get_pages({ 'where' : params })
+
+    t = ee.template_env.get_template("list.t.html")
+    h = t.render(pages=pages)
+
+    return h
+
 class r_json_pages:
   def POST(self):
     d = web.data()
@@ -24,14 +37,17 @@ class r_json_pages:
     web.header('Content-Type', 'application/json; charset=utf-8')
 
     d = web.input()
-    print(d)
-    print(dir(d))
-    import pdb; pdb.set_trace()
+    params = dict(d.items())
+    pages = ee._db_get_pages({ 'where' : params })
 
-    #t = self.template_env.get_template("list.t.html")
-    #h = t.render(pages=self.pages)
+    r  = { 
+      'pages' : pages,
+      'count' : len(pages),
+    }
 
-    return json.dumps(d)
+    j = json.dumps(r, ensure_ascii=False)
+
+    return j
 
 class r_json_page:
   def GET(self,rid):
@@ -55,8 +71,11 @@ if __name__ == "__main__":
   
   urls = (
     '/',                'r_html_index',
+
     '/json/page/(\d+)', 'r_json_page',
     '/json/pages',      'r_json_pages',
+
+    '/html/pages',      'r_html_pages',
   )
 
   sys.argv = [ __file__ ]
