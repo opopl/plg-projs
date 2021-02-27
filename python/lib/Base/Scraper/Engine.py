@@ -170,9 +170,17 @@ class Page(CoreClass):
   pass
 
 class Pic(CoreClass):
-  url = None
-  width = None
+  url     = None
+  width   = None
   caption = None
+  dbfile  = None
+
+  idata = {}
+
+  app     = None
+
+  def db_insert(pic):
+    return pic
 
   def grab(pic):
     app = pic.app
@@ -195,7 +203,7 @@ class Pic(CoreClass):
         m = re.match(r'^image/svg\+xml;base64,(.*)$',u['path'])
         if m:
           data = m.group(1)
-          decoded = base64.decodestring(data)
+          decoded = base64.decodestring(bytes(data))
           import pdb; pdb.set_trace()
         #with open(i_tmp['bare'], 'wb') as f:
           #f.write(data)
@@ -281,7 +289,7 @@ class Pic(CoreClass):
     app.log(f'[{rid}][Pic.grab] Saved image: {pic.img}')
 
     insert =  {
-        'url_parent' : app.page.url,
+      'url_parent' : app.page.url,
     }
     for k in util.qw('url img inum ext caption'):
       insert[k] = getattr(pic,k,None)
