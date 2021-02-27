@@ -179,7 +179,7 @@ class Pic(CoreClass):
     if not pic.img_saved:
       dd.update({ 'opts' : 'new' })
 
-    pic.data = app._img_data(dd)
+    pic.get_data(dd)
 
     for k in util.qw('img inum path'):
       v = pic.data.get(k,'')
@@ -289,6 +289,8 @@ class Pic(CoreClass):
   def get_data(pic,ref={}):
     opts_s = ref.get('opts','')
     opts   = opts_s.split(',')
+
+    ext    = ref.get('ext','jpg')
 
     if not ( pic.dbfile and os.path.isfile(pic.dbfile) ):
       return 
