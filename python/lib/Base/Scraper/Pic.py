@@ -27,7 +27,7 @@ class Pic(CoreClass):
   caption = None
   dbfile  = None
 
-  idata = {}
+  data = {}
 
   app     = None
 
@@ -61,12 +61,6 @@ class Pic(CoreClass):
 
     return pic
 
-  def _has_bare(pic):
-
-
-
-    return pic
-
   def setup(pic):
     app = pic.app
     rid = app.page.rid
@@ -78,15 +72,15 @@ class Pic(CoreClass):
     if not pic.img_saved:
       dd.update({ 'opts' : 'new' })
 
-    pic.idata = app._img_data(dd)
+    pic.data = app._img_data(dd)
 
     for k in util.qw('img inum path'):
-      v = pic.idata.get(k,'')
+      v = pic.data.get(k,'')
       setattr(pic, k, v)
 
     import pdb; pdb.set_trace()
 
-    app.log(f'[{rid}][Pic.grab] Local path: {pic.idata.get("path","")}')
+    app.log(f'[{rid}][Pic.grab] Local path: {pic.data.get("path","")}')
     if os.path.isfile(pic.path):
       app.log(f'WARN[{rid}][Pic.grab] image file already exists: {pic.img}')
 

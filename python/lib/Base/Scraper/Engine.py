@@ -2428,8 +2428,8 @@ bs.py -c html_parse -i cache.html $*
       if not self._act('get_img'):
         # image saved to fs && db
         if pic.img_saved:
-          pic.idata = self._img_data({ 'url' : url })
-          pic.path = pic.idata.get('path','')
+          pic.data = self._img_data({ 'url' : url })
+          pic.path = pic.data.get('path','')
           get_img = 0
 
 ###i
