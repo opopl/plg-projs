@@ -95,6 +95,23 @@ class Pic(CoreClass):
 
     return pic
 
+  def save2fs(pic):
+    app = pic.app
+    rid = app.page.rid
+
+    a = {}
+    if pic.ext == 'gif':
+      a['save_all'] = True
+
+    pic.i.save(pic.path,**a)
+    pic.i.close()
+
+    Path(pic.tmp['bare']).unlink()
+
+    app.log(f'[{rid}][Pic.grab] Saved image: {pic.img}')
+
+    return pic
+
   def save2tmp(pic):
     app = pic.app
     rid = app.page.rid
@@ -166,8 +183,18 @@ class Pic(CoreClass):
       'table'   : 'imgs',
       'insert'  : insert
     }
+
     dbw.insert_dict(d)
 
+    return pic
+
+  def get_ext(pic):
+    map = {
+       'JPEG'  : 'jpg',
+       'PNG'   : 'png',
+       'GIF'   : 'gif',
+    }
+    pic.ext = map.get(pic.i.format,'jpg')
     return pic
 
   def grab(pic):
@@ -186,22 +213,11 @@ class Pic(CoreClass):
     if not pic.i:
       return pic
 
-    pic.ext = app._img_ext(pic.i)
-
-    pic.setup()
-
-    a = {}
-    if pic.ext == 'gif':
-      a['save_all'] = True
-
-    pic.i.save(pic.path,**a)
-    pic.i.close()
-
-    Path(pic.tmp['bare']).unlink()
-
-    app.log(f'[{rid}][Pic.grab] Saved image: {pic.img}')
-
-    pic.db_add()
+    pic            \
+        .get_ext() \
+        .setup()   \
+        .save2fs() \
+        .db_add()  \
     
     return pic
 

@@ -2393,7 +2393,6 @@ bs.py -c html_parse -i cache.html $*
       j+=1
       caption = ''
 
-      self.pic = pic = Pic({ 'app' : self })
       #if el_img.has_attr('alt'):
         #caption = el_img['alt']
 
@@ -2417,7 +2416,11 @@ bs.py -c html_parse -i cache.html $*
       else:
         url = u['url']
 
-      pic.url = url
+      self.pic = pic = Pic({ 
+        'app' : self,
+        'url' : url,
+      })
+
       self.log(f'[{rid}][page_do_imgs] Found image url: {url}')
 
       get_img = 1
