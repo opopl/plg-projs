@@ -16,12 +16,22 @@ class r_html_index:
 
 class r_json_pages:
   def POST(self):
+    d = web.data()
     web.header('Content-Type', 'application/json; charset=utf-8')
     return ''
 
   def GET(self):
     web.header('Content-Type', 'application/json; charset=utf-8')
-    return ''
+
+    d = web.input()
+    print(d)
+    print(dir(d))
+    import pdb; pdb.set_trace()
+
+    #t = self.template_env.get_template("list.t.html")
+    #h = t.render(pages=self.pages)
+
+    return json.dumps(d)
 
 class r_json_page:
   def GET(self,rid):
