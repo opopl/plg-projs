@@ -36,10 +36,49 @@ class Pic(CoreClass):
 
     app = pic.app
 
+    if not app:
+      return 
+
     pic.tmp = { 
-       'bare' : app._dir('tmp_img bs_img'),
-       'png'  : app._dir('tmp_img bs_img.png'),
+      'bare' : app._dir('tmp_img bs_img'),
+      'png'  : app._dir('tmp_img bs_img.png'),
     }
+
+  def save2tmp(pic):
+    app = pic.app
+
+    resp = None
+    try:
+      u = util.url_parse(pic.url)
+      if u['scheme'] == 'data':
+        data = u['path']
+        m = re.match(r'^image/svg\+xml;base64,(.*)$',u['path'])
+
+        decoded = None
+        if m:
+          data = m.group(1)
+          try:
+            decoded = base64.decodestring(bytes(data,encoding='utf-8'))
+          except:
+            app.die(f'ERROR[{rid}] base64 decoding error')
+          import pdb; pdb.set_trace()
+
+        if decoded:
+          with open(pic.tmp['bare'], 'wb') as f:
+            f.write(decoded)
+      else:
+        pic.resp = requests.get(pic.url, stream = True)
+    except:
+      app.die(f'ERROR[{rid}][Pic.grab] {pic.url}')
+
+    if pic.resp:
+      pic.resp.raw.decoded_content = True
+      pic.ct = pic.resp.headers['content-type']
+  
+      with open(pic.tmp['bare'], 'wb') as lf:
+        shutil.copyfileobj(pic.resp.raw, lf)
+
+    return pic
 
   def db_add(pic):
     app = pic.app
@@ -71,35 +110,8 @@ class Pic(CoreClass):
     app.log(f"[{rid}][Pic.grab] Getting image: \n\t{pic.url}")
 
     i = None
-    resp = None
-    try:
-      u = util.url_parse(pic.url)
-      if u['scheme'] == 'data':
-        data = u['path']
-        m = re.match(r'^image/svg\+xml;base64,(.*)$',u['path'])
 
-        decoded = None
-        if m:
-          data = m.group(1)
-          try:
-            decoded = base64.decodestring(bytes(data,encoding='utf-8'))
-          except:
-            app.die(f'ERROR[{rid}] base64 decoding error')
-          import pdb; pdb.set_trace()
-
-        if decoded:
-          with open(pic.tmp['bare'], 'wb') as f:
-            f.write(decoded)
-      else:
-        resp = requests.get(pic.url, stream = True)
-    except:
-      app.die(f'ERROR[{rid}][Pic.grab] {pic.url}')
-
-    if resp:
-      resp.raw.decoded_content = True
-  
-      with open(pic.tmp['bare'], 'wb') as lf:
-        shutil.copyfileobj(resp.raw, lf)
+    pic.save2tmp()
 
     f = pic.tmp['bare']
     if (not os.path.isfile(f)) or os.stat(f).st_size == 0:
@@ -108,24 +120,25 @@ class Pic(CoreClass):
       return self
 
     f_size = os.stat(f).st_size
-    ct = resp.headers['content-type']
+
+    if pic.ct:
+      m = re.match(r'^text/html',pic.ct)
 
     app.log(f'[{rid}][Pic.grab] image file size: {f_size}')
     app.log(f'[{rid}][Pic.grab] content-type: {ct}')
-
-    m = re.match(r'^text/html',ct)
 
     i = None
     try:
       i = Image.open(pic.tmp['bare'])
     except UnidentifiedImageError:
 
-      if ct in [ 'image/svg+xml' ]:
-        cairosvg.svg2png( 
-          file_obj = open(pic.tmp['bare'], "rb"),
-          write_to = pic.tmp['png']
-        )
-        i = Image.open(pic.tmp['png'])
+      if pic.ct:
+        if pic.ct in [ 'image/svg+xml' ]:
+          cairosvg.svg2png( 
+            file_obj = open(pic.tmp['bare'], "rb"),
+            write_to = pic.tmp['png']
+          )
+          i = Image.open(pic.tmp['png'])
       
     if not i:
       app                                                                \
