@@ -115,13 +115,19 @@ def cond_where(ref={}):
 
 def sql_fetchall(q, p=[], ref={}):
   conn     = ref.get('conn')
-  db_file  = ref.get('db_file')
   db_close = ref.get('db_close')
+
+  db_file  = ref.get('db_file')
 
   where = ref.get('where',{})
 
-  r = cond_where({ 'where' : where })
-  cond = r.get('cond')
+  r      = cond_where({ 'where' : where })
+  cond   = r.get('cond')
+  values = r.get('values')
+
+  if cond:
+    q += ' WHERE ' + cond
+    p.extend(values)
 
   if not conn:
     if db_file:

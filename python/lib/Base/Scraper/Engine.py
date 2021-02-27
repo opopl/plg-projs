@@ -1830,6 +1830,16 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
     return dw 
 
   def _db_get_pages(self, ref={}):
+    where = ref.get('where',{})
+
+    q = 'SELECT * FROM pages'
+    p = []
+    r = dbw.sql_fetchall(q,p,{
+      'db_file' : self.dbfile.pages,
+      'where'   : where,
+    })
+
+    pages = r.get('rows',[])
 
     return pages
 
