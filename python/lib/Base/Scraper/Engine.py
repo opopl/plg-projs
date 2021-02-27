@@ -2396,32 +2396,17 @@ bs.py -c html_parse -i cache.html $*
       #if el_img.has_attr('alt'):
         #caption = el_img['alt']
 
-      if not el_img.has_attr('src'):
-        continue
 
-      src = el_img['src'].strip()
-
-      if src == '#':
-        continue
-
-      rel_src = None
-      u = util.url_parse(src)
-
-      if not u['path']:
-        continue
-
-      if not u['netloc']:
-        url = util.url_join(baseurl,src)
-        rel_src = src
-      else:
-        url = u['url']
 
       self.pic = pic = Pic({ 
         'app' : self,
-        'url' : url,
+        'el'  : el_img,
       })
 
-      self.log(f'[{rid}][page_do_imgs] Found image url: {url}')
+      if not pic.url:
+        continue
+
+      self.log(f'[{rid}][page_do_imgs] Found image url: {pic.url}')
 
       get_img = 1
 

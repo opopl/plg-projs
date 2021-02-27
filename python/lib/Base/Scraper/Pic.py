@@ -44,6 +44,39 @@ class Pic(CoreClass):
       'png'  : app._dir('tmp_img bs_img.png'),
     }
 
+    pic.get_url_from_element()
+
+  def get_url_from_element(pic):
+    if not pic.el:
+      return pic
+
+    app = pic.app
+
+    el = pic.el
+    baseurl = app.page.baseurl
+
+    if not el.has_attr('src'):
+      continue
+
+    src = el['src'].strip()
+
+    if src == '#':
+      return pic
+
+    rel_src = None
+    u = util.url_parse(src)
+
+    if not u['path']:
+      continue
+
+    if not u['netloc']:
+      pic.url = util.url_join(baseurl,src)
+      rel_src = src
+    else:
+      pic.url = u['url']
+
+    return pic
+
   def load(pic):
     app = pic.app
     rid = app.page.rid
