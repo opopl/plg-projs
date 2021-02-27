@@ -47,21 +47,21 @@ class Pic(CoreClass):
   def save2tmp(pic):
     app = pic.app
 
-    resp = None
+    pic.resp = None
     try:
       u = util.url_parse(pic.url)
       if u['scheme'] == 'data':
         data = u['path']
-        m = re.match(r'^image/svg\+xml;base64,(.*)$',u['path'])
+        m = re.match(r'^(image/svg\+xml);base64,(.*)$',u['path'])
 
         decoded = None
         if m:
-          data = m.group(1)
+          pic.ct = m.group(1)
+          data = m.group(2)
           try:
             decoded = base64.decodestring(bytes(data,encoding='utf-8'))
           except:
             app.die(f'ERROR[{rid}] base64 decoding error')
-          import pdb; pdb.set_trace()
 
         if decoded:
           with open(pic.tmp['bare'], 'wb') as f:
@@ -160,7 +160,7 @@ class Pic(CoreClass):
     pic.idata = app._img_data(dd)
 
     for k in util.qw('img inum path'):
-      v = pic.idata(get,'')
+      v = pic.idata.get(k,'')
       setattr(pic, k, v)
 
     app.log(f'[{rid}][Pic.grab] Local path: {pic.idata.get("path","")}')
