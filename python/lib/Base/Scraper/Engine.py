@@ -1840,8 +1840,15 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
     })
 
     pages = r.get('rows',[])
+    cols  = r.get('cols',[])
 
-    return pages
+    r = { 
+       'pages' : pages,
+       'cols'  : cols,
+       'count' : len(pages),
+    }
+
+    return r
 
   def _db_get_auth(self, ref={}):
     auth_id = ref.get('auth_id')

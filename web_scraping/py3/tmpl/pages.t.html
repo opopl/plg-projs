@@ -1,0 +1,20 @@
+<!doctype html>
+<html>
+  <head>
+  </head>
+  <body>
+    <table border="1">
+      <thead>
+      </thead>
+      <tbody>
+        {% for page in pages %}
+            <tr> 
+            {% for col in cols %}
+              <td> {{ page[col] }} </td> 
+            {% endfor %}
+            </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </body>
+</html>

@@ -20,10 +20,14 @@ class r_html_pages:
 
     d = web.input()
     params = dict(d.items())
-    pages = ee._db_get_pages({ 'where' : params })
+    
+    r = ee._db_get_pages({ 'where' : params })
 
-    t = ee.template_env.get_template("list.t.html")
-    h = t.render(pages=pages)
+    pages = r.get('pages',[])
+    cols  = r.get('cols',[])
+
+    t = ee.template_env.get_template("pages.t.html")
+    h = t.render(pages=pages,cols=cols)
 
     return h
 
@@ -38,12 +42,8 @@ class r_json_pages:
 
     d = web.input()
     params = dict(d.items())
-    pages = ee._db_get_pages({ 'where' : params })
 
-    r  = { 
-      'pages' : pages,
-      'count' : len(pages),
-    }
+    r = ee._db_get_pages({ 'where' : params })
 
     j = json.dumps(r, ensure_ascii=False)
 
