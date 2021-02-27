@@ -11,7 +11,6 @@ import json
 from tabulate import tabulate
 from requests_html import HTMLSession
 
-import base64
 
 import datetime
 #from cdata.core import any2utf8
@@ -26,7 +25,9 @@ from rdflib.serializer import Serializer
 import html.parser
 import html
 
+import base64
 from pathlib import Path
+
 from urllib.parse import urlparse
 from urllib.parse import urljoin
 
@@ -59,10 +60,10 @@ import Base.Const as const
 from Base.Zlan import Zlan
 from Base.Core import CoreClass
 from Base.Scraper.Server import Srv
+from Base.Scraper.Pic import Pic
 
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import time
-
 
 
 class dbFile(CoreClass):
@@ -169,142 +170,6 @@ class Page(CoreClass):
 
   pass
 
-class Pic(CoreClass):
-  url     = None
-  width   = None
-  caption = None
-  dbfile  = None
-
-  idata = {}
-
-  app     = None
-
-  def db_insert(pic):
-    return pic
-
-  def grab(pic):
-    app = pic.app
-
-    rid = app.page.rid
-
-    app.log(f"[{rid}][Pic.grab] Getting image: \n\t{pic.url}")
-
-    i_tmp = { 
-       'bare' : app._dir('tmp_img bs_img'),
-       'png'  : app._dir('tmp_img bs_img.png'),
-    }
-
-    i = None
-    resp = None
-    try:
-      u = util.url_parse(pic.url)
-      if u['scheme'] == 'data':
-        data = u['path']
-        m = re.match(r'^image/svg\+xml;base64,(.*)$',u['path'])
-        if m:
-          data = m.group(1)
-          decoded = base64.decodestring(bytes(data))
-          import pdb; pdb.set_trace()
-        #with open(i_tmp['bare'], 'wb') as f:
-          #f.write(data)
-      else:
-        resp = requests.get(pic.url, stream = True)
-    except:
-      app.die(f'ERROR[{rid}][Pic.grab] {pic.url}')
-
-    if resp:
-      resp.raw.decoded_content = True
-  
-      with open(i_tmp['bare'], 'wb') as lf:
-        shutil.copyfileobj(resp.raw, lf)
-
-    f = i_tmp['bare']
-    if (not os.path.isfile(f)) or os.stat(f).st_size == 0:
-      app.log(f'FAIL[{rid}][Pic.grab] empty file: {pic.url}')
-      self.on_fail()
-      return self
-
-    f_size = os.stat(f).st_size
-    ct = resp.headers['content-type']
-
-    app.log(f'[{rid}][Pic.grab] image file size: {f_size}')
-    app.log(f'[{rid}][Pic.grab] content-type: {ct}')
-
-    m = re.match(r'^text/html',ct)
-    #if m:
-      #return pic
-
-###ilocal
-
-    #resp.raw type is urllib3.response.HTTPResponse
-
-    # Image class instance
-    i = None
-    try:
-      i = Image.open(i_tmp['bare'])
-      #i = Image.open(resp.raw)
-    except UnidentifiedImageError:
-
-      if ct in [ 'image/svg+xml' ]:
-        cairosvg.svg2png( 
-          file_obj = open(i_tmp['bare'], "rb"),
-          write_to = i_tmp['png']
-        )
-        i = Image.open(i_tmp['png'])
-      
-    if not i:
-      app                                                             \
-        .log(f'FAIL[{rid}][Pic.grab] no Image.open instance: {pic.url}') \
-        .on_fail()                                                    \
-
-      return pic
-      
-    app.log(f'[{rid}][Pic.grab] Image format: {i.format}')
-    pic.ext = app._img_ext(i)
-
-    dd = { 
-      'url'  : pic.url,
-      'ext'  : pic.ext,
-    }
-    if not pic.img_saved:
-      dd.update({ 'opts' : 'new' })
-
-    pic.idata = app._img_data(dd)
-
-    pic.img   = pic.idata.get("img","")
-    pic.inum  = pic.idata.get('inum','')
-    pic.ipath = pic.idata.get('path','')
-
-    app.log(f'[{rid}][Pic.grab] Local path: {pic.idata.get("path","")}')
-    if os.path.isfile(pic.ipath):
-      app.log(f'WARN[{rid}][Pic.grab] image file already exists: {pic.img}')
-
-    a = {}
-    if pic.ext == 'gif':
-      a['save_all'] = True
-
-    i.save(pic.ipath,**a)
-    i.close()
-
-    app.log(f'[{rid}][Pic.grab] Saved image: {pic.img}')
-
-    insert =  {
-      'url_parent' : app.page.url,
-    }
-    for k in util.qw('url img inum ext caption'):
-      insert[k] = getattr(pic,k,None)
-
-    for k in util.qw('proj rootid'):
-      insert[k] = getattr(app,k,None)
-
-    d = {
-      'db_file' : app.dbfile.images,
-      'table'   : 'imgs',
-      'insert'  : insert
-    }
-    dbw.insert_dict(d)
-    
-    return pic
 
 class BS(CoreClass,mixLogger,mixCmdRunner):
   # class attributes {
@@ -2353,6 +2218,9 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
         'path'   : ipath,
         'uri'    : Path(ipath).as_uri()
       }
+
+    conn.commit()
+    conn.close()
 
     return d
 
