@@ -45,6 +45,8 @@ class Pic(CoreClass):
     }
 
   def load(pic):
+    app = pic.app
+    rid = app.page.rid
 
     pic.i = None
     try:
@@ -58,6 +60,15 @@ class Pic(CoreClass):
             write_to = pic.tmp['png']
           )
           pic.i = Image.open(pic.tmp['png'])
+
+    if not pic.i:
+      app                                                                \
+        .log(f'FAIL[{rid}][Pic.grab] no Image.open instance: {pic.url}') \
+        .on_fail()                                                       \
+
+      return pic
+
+    app.log(f'[{rid}][Pic.grab] Image format: {pic.i.format}')
 
     return pic
 
@@ -78,8 +89,6 @@ class Pic(CoreClass):
       v = pic.data.get(k,'')
       setattr(pic, k, v)
 
-    import pdb; pdb.set_trace()
-
     app.log(f'[{rid}][Pic.grab] Local path: {pic.data.get("path","")}')
     if os.path.isfile(pic.path):
       app.log(f'WARN[{rid}][Pic.grab] image file already exists: {pic.img}')
@@ -88,6 +97,7 @@ class Pic(CoreClass):
 
   def save2tmp(pic):
     app = pic.app
+    rid = app.page.rid
 
     pic.resp = None
     try:
@@ -130,6 +140,12 @@ class Pic(CoreClass):
 
     pic.bare_size = os.stat(f).st_size
 
+    if pic.ct:
+      m = re.match(r'^text/html',pic.ct)
+
+    app.log(f'[{rid}][Pic.grab] image file size: {pic.bare_size}')
+    app.log(f'[{rid}][Pic.grab] content-type: {pic.ct}')
+
     return pic
 
   def db_add(pic):
@@ -165,22 +181,10 @@ class Pic(CoreClass):
     if not pic.bare_size:
       return pic
 
-    if pic.ct:
-      m = re.match(r'^text/html',pic.ct)
-
-    app.log(f'[{rid}][Pic.grab] image file size: {pic.bare_size}')
-    app.log(f'[{rid}][Pic.grab] content-type: {pic.ct}')
-
     pic.load()
-      
+    
     if not pic.i:
-      app                                                                \
-        .log(f'FAIL[{rid}][Pic.grab] no Image.open instance: {pic.url}') \
-        .on_fail()                                                       \
-
       return pic
-      
-    app.log(f'[{rid}][Pic.grab] Image format: {pic.i.format}')
 
     pic.ext = app._img_ext(pic.i)
 
