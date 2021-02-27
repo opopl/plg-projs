@@ -1,7 +1,13 @@
 
 
 import base64
-import re
+
+import re,os,sys,stat
+
+import cairosvg
+
+import shutil
+import requests
 
 from pathlib import Path
 
@@ -10,6 +16,10 @@ import Base.Util as util
 import Base.String as string
 import Base.Const as const
 
+from Base.Core import CoreClass
+
+from PIL import Image
+from PIL import UnidentifiedImageError
 
 class Pic(CoreClass):
   url     = None
@@ -21,8 +31,15 @@ class Pic(CoreClass):
 
   app     = None
 
-  def __init__(self,ref={}):
+  def __init__(pic,ref={}):
     super().__init__(ref)
+
+    app = pic.app
+
+    pic.tmp = { 
+       'bare' : app._dir('tmp_img bs_img'),
+       'png'  : app._dir('tmp_img bs_img.png'),
+    }
 
   def db_add(pic):
     app = pic.app
@@ -53,11 +70,6 @@ class Pic(CoreClass):
 
     app.log(f"[{rid}][Pic.grab] Getting image: \n\t{pic.url}")
 
-    i_tmp = { 
-       'bare' : app._dir('tmp_img bs_img'),
-       'png'  : app._dir('tmp_img bs_img.png'),
-    }
-
     i = None
     resp = None
     try:
@@ -76,7 +88,7 @@ class Pic(CoreClass):
           import pdb; pdb.set_trace()
 
         if decoded:
-          with open(i_tmp['bare'], 'wb') as f:
+          with open(pic.tmp['bare'], 'wb') as f:
             f.write(decoded)
       else:
         resp = requests.get(pic.url, stream = True)
@@ -86,10 +98,10 @@ class Pic(CoreClass):
     if resp:
       resp.raw.decoded_content = True
   
-      with open(i_tmp['bare'], 'wb') as lf:
+      with open(pic.tmp['bare'], 'wb') as lf:
         shutil.copyfileobj(resp.raw, lf)
 
-    f = i_tmp['bare']
+    f = pic.tmp['bare']
     if (not os.path.isfile(f)) or os.stat(f).st_size == 0:
       app.log(f'FAIL[{rid}][Pic.grab] empty file: {pic.url}')
       self.on_fail()
@@ -105,15 +117,15 @@ class Pic(CoreClass):
 
     i = None
     try:
-      i = Image.open(i_tmp['bare'])
+      i = Image.open(pic.tmp['bare'])
     except UnidentifiedImageError:
 
       if ct in [ 'image/svg+xml' ]:
         cairosvg.svg2png( 
-          file_obj = open(i_tmp['bare'], "rb"),
-          write_to = i_tmp['png']
+          file_obj = open(pic.tmp['bare'], "rb"),
+          write_to = pic.tmp['png']
         )
-        i = Image.open(i_tmp['png'])
+        i = Image.open(pic.tmp['png'])
       
     if not i:
       app                                                                \
@@ -149,7 +161,7 @@ class Pic(CoreClass):
     i.save(pic.ipath,**a)
     i.close()
 
-    Path(i_tmp['bare']).unlink()
+    Path(pic.tmp['bare']).unlink()
 
     app.log(f'[{rid}][Pic.grab] Saved image: {pic.img}')
 

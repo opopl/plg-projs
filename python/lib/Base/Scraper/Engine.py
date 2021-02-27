@@ -17,7 +17,6 @@ import datetime
 
 import sqlite3
 import sqlparse
-import cairosvg
 
 from rdflib import Graph, plugin
 from rdflib.serializer import Serializer
@@ -34,8 +33,6 @@ from urllib.parse import urljoin
 from url_normalize import url_normalize
 from copy import copy
 
-from PIL import Image
-from PIL import UnidentifiedImageError
 
 from io import StringIO
 
@@ -2167,6 +2164,9 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
 
       c.execute('''SELECT img FROM imgs WHERE url = ?''',[ url ])
       rw = c.fetchone()
+
+      conn.commit()
+      conn.close()
 
       img = rw[0] if rw else None
       iuri = None
