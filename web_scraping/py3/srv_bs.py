@@ -8,14 +8,26 @@ import Base.Util as util
 import os,sys
 import json
 
+global ee
+
 class r_html_index:
   def GET(self):
     return globals()
 
+class r_json_pages:
+  def POST(self):
+    web.header('Content-Type', 'application/json; charset=utf-8')
+    return ''
+
+  def GET(self):
+    web.header('Content-Type', 'application/json; charset=utf-8')
+    return ''
+
 class r_json_page:
   def GET(self,rid):
     page = ee._page_from_rid(rid)
-    j = json.dumps(page.__dict__)
+    web.header('Content-Type', 'application/json; charset=utf-8')
+    j = json.dumps(page.__dict__, ensure_ascii=False)
     return j
 
 if __name__ == "__main__":
@@ -25,11 +37,6 @@ if __name__ == "__main__":
     },
     'dirs' : {
       'bin' : os.path.dirname(__file__),
-    },
-    'vars' : {
-      'mixCmdRunner' : {
-        'cmds' : util.qw('init_bs')
-      }
     }
   }
   
@@ -37,8 +44,9 @@ if __name__ == "__main__":
   ee.main()
   
   urls = (
-    '/', 'r_html_index',
-    '/json/pages/(\d+)', 'r_json_page'
+    '/',                'r_html_index',
+    '/json/page/(\d+)', 'r_json_page',
+    '/json/pages',      'r_json_pages',
   )
 
   sys.argv = [ __file__ ]
