@@ -1904,18 +1904,18 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
     #})
     #self.srv.start()
 
-    hostName = "localhost"
-    serverPort = 8080
+    host_name = "localhost"
+    server_port = 8080
 
-    webServer = HTTPServer((hostName, serverPort), Srv)
-    print("Server started http://%s:%s" % (hostName, serverPort))
+    web_srv = HTTPServer((host_name, server_port), Srv)
+    print("Server started http://%s:%s" % (host_name, server_port))
 
     try:
-        webServer.serve_forever()
+        web_srv.serve_forever()
     except KeyboardInterrupt:
         pass
 
-    webServer.server_close()
+    web_srv.server_close()
     print("Server stopped.")
 
     return self
@@ -2411,18 +2411,5 @@ bs.py -c html_parse -i cache.html $*
       .do_cmd()             \
 
     return self
-
-class Srv(BaseHTTPRequestHandler):
-    def do_GET(self):
-        self.send_response(200)
-        self.send_header("Content-type", "text/html")
-        self.end_headers()
-        self.wfile.write(bytes("<html><head><title>https://pythonbasics.org</title></head>", "utf-8"))
-        self.wfile.write(bytes("<p>Request: %s</p>" % self.path, "utf-8"))
-        self.wfile.write(bytes("<body>", "utf-8"))
-        self.wfile.write(bytes("<p>This is an example web server.</p>", "utf-8"))
-        self.wfile.write(bytes("</body></html>", "utf-8"))
-
-#if __name__ == "__main__":        
 
 

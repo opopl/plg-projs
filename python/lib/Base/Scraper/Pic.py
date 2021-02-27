@@ -36,6 +36,9 @@ class Pic(CoreClass):
 
   data = {}
 
+  # BS element 
+  el = None
+
   # local (saved) path 
   path     = None
   path_uri = None
@@ -181,11 +184,6 @@ class Pic(CoreClass):
 
     pic.get_data(dd)
 
-    for k in util.qw('img inum path'):
-      v = pic.data.get(k,'')
-      setattr(pic, k, v)
-
-    pic.path_uri = Path(pic.path).as_uri()
 
     app.log(f'[{rid}][Pic.grab] Local path: {pic.data.get("path","")}')
     if os.path.isfile(pic.path):
