@@ -2223,27 +2223,6 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
 
     return d
 
-  def _img_saved(self,url):
-    ok = 0
-    if not ( self.dbfile.images and os.path.isfile(self.dbfile.images) ):
-      pass
-    else:
-      conn = sqlite3.connect(self.dbfile.images)
-      c = conn.cursor()
-
-      c.execute('''SELECT img FROM imgs WHERE url = ?''',[ url ])
-      rw = c.fetchone()
-      if rw:
-        img = rw[0]
-        ipath = os.path.join(self.img_root, img)
-        if os.path.isfile(ipath):
-          ok = 1
-
-      conn.commit()
-      conn.close()
-
-    return ok
-
   def cmt(self,cmt=''):
     pass
     return self
@@ -2407,8 +2386,6 @@ bs.py -c html_parse -i cache.html $*
       self.log(f'[{rid}][page_do_imgs] Found image url: {pic.url}')
 
       get_img = 1
-
-      pic.img_saved = self._img_saved(url)
 
       if not self._act('get_img'):
         # image saved to fs && db

@@ -22,10 +22,15 @@ from PIL import Image
 from PIL import UnidentifiedImageError
 
 class Pic(CoreClass):
-  url     = None
   width   = None
   caption = None
-  dbfile  = None
+
+  dbfile = None
+  root   = None
+
+  url        = None
+  url_parent = None
+  baseurl    = None
 
   data = {}
 
@@ -39,18 +44,62 @@ class Pic(CoreClass):
     if not app:
       return 
 
+    pic                         \
+        .vars_from_app()        \
+        .get_url_from_element() \
+        .url_check_saved()      \
+
+  def vars_from_app(pic):
+    app = pic.app
+
+    if not app:
+      return pic
+
     if not pic.dbfile:
       pic.dbfile = app.dbfile.images
 
-    pic.url_parent = app.page.url
-    pic.baseurl    = app.page.baseurl
+    if not pic.root:
+      pic.root = app.img_root
+
+    if not pic.url_parent:
+      pic.url_parent = app.page.url
+
+    if not pic.baseurl:
+      pic.baseurl    = app.page.baseurl
 
     pic.tmp = { 
       'bare' : app._dir('tmp_img bs_img'),
       'png'  : app._dir('tmp_img bs_img.png'),
     }
 
-    pic.get_url_from_element()
+    return pic
+
+  def url_check_saved(pic):
+    pic.img_saved = False
+
+    url = pic.url
+
+    if not url:
+      return pic
+
+    if not ( pic.dbfile and os.path.isfile(pic.dbfile) ):
+      return pic
+    else:
+      conn = sqlite3.connect(pic.dbfile)
+      c = conn.cursor()
+
+      c.execute('''SELECT img FROM imgs WHERE url = ?''',[ url ])
+      rw = c.fetchone()
+      if rw:
+        img = rw[0]
+        ipath = os.path.join(pic.root, img)
+        if os.path.isfile(ipath):
+          pic.img_saved = True
+
+      conn.commit()
+      conn.close()
+
+    return pic
 
   def get_url_from_element(pic):
     if not pic.el:
@@ -61,7 +110,7 @@ class Pic(CoreClass):
     el = pic.el
 
     if not el.has_attr('src'):
-      continue
+      return pic
 
     src = el['src'].strip()
 
@@ -72,7 +121,7 @@ class Pic(CoreClass):
     u = util.url_parse(src)
 
     if not u['path']:
-      continue
+      return pic
 
     if not u['netloc']:
       pic.url = util.url_join(pic.baseurl,src)
