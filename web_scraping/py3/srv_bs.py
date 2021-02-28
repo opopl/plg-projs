@@ -11,9 +11,22 @@ import dateparser
 
 global ee
 
+class r_js_bundle:
+  def GET(self):
+    file = ee._file('bundle_js.dist')
+    with open(file,'r') as f:
+      js = f.read()
+
+    web.header('Content-Type', 'application/javascript; charset=utf-8')
+    return js
+
 class r_html_index:
   def GET(self):
     return globals()
+
+class r_html_page_rid_tipe:
+  def GET(self,rid,tipe):
+    file = ee._file('bundle_js.dist')
 
 class r_html_pages:
   def h_pages(self,params={}):
@@ -111,6 +124,9 @@ if __name__ == "__main__":
     '/json/pages',      'r_json_pages',
 
     '/html/pages',      'r_html_pages',
+    '/html/page/(\d+)/(\w+)', 'r_html_page_rid_tipe',
+
+    '/js/bundle',       'r_js_bundle',
   )
 
   sys.argv = [ __file__ ]
