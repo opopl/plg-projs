@@ -26,18 +26,21 @@ class r_html_index:
 
 class r_html_page_rid_tipe:
   def GET(self,rid,tipe):
-    rid_html = ee._file_rid({ 
+    file_html = ee._file_rid({ 
       'rid'  : rid, 
       'tipe' : tipe, 
       'ext'  : 'html', 
     })
 
-    h = ''
-    web.header('Content-Type', 'text/html; charset=utf-8')
-
+    src = ''
     if os.path.isfile(rid_html):
       with open(rid_html,'r') as f:
-        h = f.read()
+        src = f.read()
+
+    t = ee.template_env.get_template("page.t.html")
+    h = t.render(src=src,tipe=tipe,rid=rid)
+
+    web.header('Content-Type', 'text/html; charset=utf-8')
 
     return h
 
