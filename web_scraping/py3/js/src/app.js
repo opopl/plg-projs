@@ -83,7 +83,7 @@ function App(){
 
       var els = [];
 
-      var tipes = 'log core core_clean clean dbrid img img_clean'.split(' ');
+      var tipes = 'log cache core core_clean clean dbrid img img_clean'.split(' ');
 
       els.push(
             this.$$selectmenu({
@@ -143,9 +143,11 @@ function App(){
       if (id) { $slc.attr({ id : id }); }
       for (var i = 0; i < items.length; i++) {
          let val = items[i];
+
          let $opt = $('<option/>');
          $opt.attr({ value : val });
          $opt.val(val);
+
          $slc.append($opt);
       };
 
