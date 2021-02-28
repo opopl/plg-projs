@@ -138,7 +138,11 @@ function App(){
       var $slc = $('<select/>');
       $slc
        .addClass('block')
-       .css({ width : '200px' });
+       .css({ 
+           width              : '200px',
+           'background-color' : 'white',
+           'color'            : 'black',
+       });
 
       if (id) { $slc.attr({ id : id }); }
       for (var i = 0; i < items.length; i++) {
@@ -151,7 +155,7 @@ function App(){
          $slc.append($opt);
       };
 
-      $slc.selectmenu();
+      //$slc.selectmenu();
 
       return $slc;
   };
