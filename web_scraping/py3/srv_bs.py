@@ -26,7 +26,20 @@ class r_html_index:
 
 class r_html_page_rid_tipe:
   def GET(self,rid,tipe):
-    file = ee._file('bundle_js.dist')
+    rid_html = ee._file_rid({ 
+      'rid'  : rid, 
+      'tipe' : tipe, 
+      'ext'  : 'html', 
+    })
+
+    h = ''
+    web.header('Content-Type', 'text/html; charset=utf-8')
+
+    if os.path.isfile(rid_html):
+      with open(rid_html,'r') as f:
+        h = f.read()
+
+    return h
 
 class r_html_pages:
   def h_pages(self,params={}):
@@ -118,15 +131,15 @@ if __name__ == "__main__":
   ee.main()
   
   urls = (
-    '/',                'r_html_index',
+    '/'                      , 'r_html_index'         ,
 
-    '/json/page/(\d+)', 'r_json_page',
-    '/json/pages',      'r_json_pages',
+    '/json/page/(\d+)'       , 'r_json_page'          ,
+    '/json/pages'            , 'r_json_pages'         ,
 
-    '/html/pages',      'r_html_pages',
-    '/html/page/(\d+)/(\w+)', 'r_html_page_rid_tipe',
+    '/html/pages'            , 'r_html_pages'         ,
+    '/html/page/(\d+)/(\w+)' , 'r_html_page_rid_tipe' ,
 
-    '/js/bundle',       'r_js_bundle',
+    '/js/bundle'             , 'r_js_bundle'          ,
   )
 
   sys.argv = [ __file__ ]
