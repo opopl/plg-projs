@@ -27,7 +27,7 @@
                   <a href="{{ page[col] }}"> Remote </a>
                 {% elif col in [ 'rid' ] %}
                   {% set rid = page[col] %}
-                  <a href="/json/page/{{ rid }}"> {{ rid }} </a>
+                  <a href="/html/page/{{ rid }}/clean"> {{ rid }} </a>
                 {% else %}
                   {{ page[col] }} 
                 {% endif %}
