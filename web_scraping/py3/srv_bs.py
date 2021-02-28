@@ -8,6 +8,7 @@ import Base.Util as util
 import os,sys
 import json
 import dateparser
+import urllib.parse
 
 global ee
 
@@ -24,6 +25,10 @@ class r_html_index:
   def GET(self):
     return globals()
 
+class r_html_page_rid:
+  def GET(self,rid):
+    raise web.seeother(f'/html/page/{rid}/clean')
+
 class r_html_page_rid_tipe:
   def GET(self,rid,tipe):
     file_html = ee._file_rid({ 
@@ -33,9 +38,12 @@ class r_html_page_rid_tipe:
     })
 
     src = ''
-    if os.path.isfile(rid_html):
-      with open(rid_html,'r') as f:
+    if os.path.isfile(file_html):
+      with open(file_html,'r') as f:
         src = f.read()
+
+    #html = encodeURIComponent(html);
+    src = urllib.parse.quote(src,safe='')
 
     t = ee.template_env.get_template("page.t.html")
     h = t.render(src=src,tipe=tipe,rid=rid)
@@ -141,6 +149,7 @@ if __name__ == "__main__":
 
     '/html/pages'            , 'r_html_pages'         ,
     '/html/page/(\d+)/(\w+)' , 'r_html_page_rid_tipe' ,
+    '/html/page/(\d+)'       , 'r_html_page_rid' ,
 
     '/js/bundle'             , 'r_js_bundle'          ,
   )

@@ -95,7 +95,7 @@ function App(){
       );
 
       for(let tipe of tipes ){
-         let href = tipe + '.html';
+         let href = '/html/page/' + this.rid + '/' + tipe;
 
          let css = { width : '5%' };
          if (tipe == this.tipe) {
@@ -277,7 +277,7 @@ function App(){
      return function(e){
         var rid = $(this).val();
 
-        window.location = "../" + rid + "/clean.html";
+        window.location = "/html/page/" + rid + "/clean";
      };
 
      return this;
@@ -450,16 +450,17 @@ function App(){
 
   this.body_append = function(){
   
-    if ('core core_clean clean'.split(' ').includes(this.tipe)) {
-      $('body').children().remove();
-      $('body').append(this.$pane);
-      $('body').append(this.$header);
-      $('body').append(this.$container);
-      $('body').append(this.$foot);
-      return this;
-    }
+    //if ('core core_clean clean'.split(' ').includes(this.tipe)) {
+      //$('body').children().remove();
+      //$('body').append(this.$pane);
+      //$('body').append(this.$header);
+      //$('body').append(this.$container);
+      //$('body').append(this.$foot);
+      //return this;
+    /*}*/
 
     $('body').prepend(this.$pane);
+    $('body').append(this.$foot);
 
     return this;
   };
@@ -497,11 +498,11 @@ function App(){
     var parts = this.url_path.split('/');
     var last = parts.pop();
 
-    this.dirs.base = 'file://' + parts.join('/');
+    this.dirs.base = parts.join('/');
     
     this.rid = parts.pop();
 
-    var m = last.match(/(\w+)\.html$/);
+    var m = last.match(/(\w+)$/);
     if (m) { this.tipe = m[1]; }
 
     return this;
