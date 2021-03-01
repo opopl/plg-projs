@@ -63,6 +63,7 @@ class Pic(CoreClass):
     pic                    \
         .vars_from_app()   \
         .el_process()      \
+        .get_caption()     \
         .url_check_saved() \
         .get_data()        \
 
@@ -114,6 +115,10 @@ class Pic(CoreClass):
           if os.path.isfile(ipath):
             pic.img_saved = True
 
+    return pic
+
+  def get_caption(pic):
+    pic.caption = pic.alt or None
     return pic
 
   def el_process(pic):
@@ -268,6 +273,16 @@ class Pic(CoreClass):
 
     return pic
 
+  def _url(pic):
+
+    url = None
+    if pic.url:
+      url = pic.url
+
+    elif pic.inum:
+
+    return url
+
   def db_add(pic):
     app = pic.app
 
@@ -306,9 +321,6 @@ class Pic(CoreClass):
 
     d = None
 
-    conn = sqlite3.connect(pic.dbfile)
-    c = conn.cursor()
-
     img = None
     while 1:
       if 'new' in opts:
@@ -319,12 +331,23 @@ class Pic(CoreClass):
         img = f'{inum}.{ext}'
         break
       else:
-        c.execute('''SELECT img, inum FROM imgs WHERE url = ?''',[ url ])
-        rw = c.fetchone()
+        q = None
+        if pic.url:
+          q = '''SELECT * FROM imgs WHERE url = ?'''
+          p = [ pic.url ]
+
+        elif pic.inum:
+          q = '''SELECT * FROM imgs WHERE inum = ?'''
+          p = [ pic.inum ]
+
+        if q:
+          r = dbw.sql_fetchone(q,p,{ 'db_file' : pic.dbfile })
   
-        if rw:
-          img = rw[0]
-          inum = rw[1]
+          if r:
+            rw = r.get('row',{})
+
+            img = rw['img']
+            inum = rw['inum']
       break
 
     if img:
@@ -339,9 +362,6 @@ class Pic(CoreClass):
       }
       for k, v in d.items():
         setattr(pic, k, v)
-
-    conn.commit()
-    conn.close()
 
     return d
 
