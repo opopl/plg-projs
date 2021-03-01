@@ -361,6 +361,8 @@ class Pic(CoreClass):
             pic.url = rw['url']
       break
 
+    import pdb; pdb.set_trace()
+
     if not img:
       return pic
 
@@ -382,7 +384,7 @@ class Pic(CoreClass):
   def get_ct(pic):
 
     for k in pic.map_ext_ct.keys():
-      v = ct_map.get(k)
+      v = pic.map_ext_ct.get(k)
       if re.match(rf'{k}',pic.ext):
         pic.ct = v
 
@@ -398,7 +400,8 @@ class Pic(CoreClass):
     if pic.i:
       pic.ext = map.get(pic.i.format,'jpg')
     elif pic.path:
-      pic.ext = Path(pic.path).suffix
+      sf = Path(pic.path).suffix
+      pic.ext = re.sub(r'\.(\w+)$', r'\1', sf)
 
     pic.get_ct()
 

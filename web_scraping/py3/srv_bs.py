@@ -65,6 +65,7 @@ class r_img_inum:
     iraw = ''
     if os.path.isfile(path):
       ct = pic.ct
+      web.header('Content-Type', ct)
       with open(path,'rb') as f:
         iraw = f.read()
 
