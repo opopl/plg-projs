@@ -65,6 +65,9 @@ class Pic(CoreClass):
   # image server path
   path_uri_srv = None
 
+  # opened Image instance, see grab() => load() => Image.open call
+  i = None
+
   # short image path within img_root, e.g. 22.jpg
   img      = None
   inum     = None
