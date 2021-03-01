@@ -61,8 +61,14 @@ class r_img_inum:
       'inum' : inum,
     })
     path = pic.path or ''
-    #return iraw
-    return path
+
+    iraw = ''
+    if os.path.isfile(path):
+      #ext = 
+      with open(path,'rb') as f:
+        iraw = f.read()
+
+    return iraw
 
 class r_html_pages:
   def h_pages(self,params={}):
