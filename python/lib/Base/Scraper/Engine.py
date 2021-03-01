@@ -1448,7 +1448,6 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
         .db_ok()                                      \
         .page_save_db_record()                        \
         .page_save_sh()                               \
-        .ii_insert_js_css()                           \
 
     return self
 
@@ -1684,12 +1683,11 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
         body = ii_soup.body
         script = ii_soup.new_tag('script')
       
-        script['src'] = os.path.relpath(self._file('bundle_js.dist'),self._dir_ii())
+        #script['src'] = os.path.relpath(self._file('bundle_js.dist'),self._dir_ii())
+        #body.append(script)
       
-        body.append(script)
-      
-        with open(svf, 'w') as f:
-          f.write(ii_soup.prettify())
+        #with open(svf, 'w') as f:
+          #f.write(ii_soup.prettify())
 
     return self
 

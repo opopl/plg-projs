@@ -23,7 +23,7 @@ class r_js_bundle:
 
 class r_html_index:
   def GET(self):
-    return globals()
+    raise web.seeother(f'/html/pages')
 
 class r_html_page_rid:
   def GET(self,rid):
@@ -147,7 +147,7 @@ if __name__ == "__main__":
     '/json/page/(\d+)'       , 'r_json_page'          ,
     '/json/pages'            , 'r_json_pages'         ,
 
-    '/html/pages'            , 'r_html_pages'         ,
+    '/html/pages(?:/|)'       , 'r_html_pages'         ,
     '/html/page/(\d+)/(\w+)' , 'r_html_page_rid_tipe' ,
     '/html/page/(\d+)'       , 'r_html_page_rid' ,
 
