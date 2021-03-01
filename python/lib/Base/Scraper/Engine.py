@@ -2388,7 +2388,7 @@ bs.py -c html_parse -i cache.html $*
 
       n['src']     = pic.path_uri_srv
       n['rel-src'] = pic.url_rel
-      n['width']   = 500
+      n['width']   = pic.width or 500
 
       el_img.wrap(self.soup.new_tag('p'))
       el_img.replace_with(n)

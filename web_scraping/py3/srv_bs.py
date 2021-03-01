@@ -3,6 +3,8 @@
 import web
 
 from Base.Scraper.Engine import BS
+from Base.Scraper.Pic import Pic
+
 import Base.Util as util
 
 import os,sys
@@ -52,8 +54,12 @@ class r_html_page_rid_tipe:
 
     return h
 
-class r_img_id:
-  def GET(self,id):
+class r_img_inum:
+  def GET(self,inum):
+    pic = Pic({ 
+      'app'  : ee,
+      'inum' : inum,
+    })
     return iraw
 
 class r_html_pages:
@@ -153,9 +159,9 @@ if __name__ == "__main__":
 
     '/html/pages(?:/|)'      , 'r_html_pages'         ,
     '/html/page/(\d+)/(\w+)' , 'r_html_page_rid_tipe' ,
-    '/html/page/(\d+)'       , 'r_html_page_rid' ,
+    '/html/page/(\d+)'       , 'r_html_page_rid'      ,
 
-    '/img/(\d+)'             , 'r_img_id' ,
+    '/img/(\d+)'             , 'r_img_inum'           ,
 
     '/js/bundle'             , 'r_js_bundle'          ,
   )

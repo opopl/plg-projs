@@ -60,11 +60,11 @@ class Pic(CoreClass):
     if not app:
       return 
 
-    pic                         \
-        .vars_from_app()        \
-        .get_url_from_element() \
-        .url_check_saved()      \
-        .get_data()             \
+    pic                    \
+        .vars_from_app()   \
+        .el_process()      \
+        .url_check_saved() \
+        .get_data()        \
 
     pass
 
@@ -116,7 +116,7 @@ class Pic(CoreClass):
 
     return pic
 
-  def get_url_from_element(pic):
+  def el_process(pic):
     if not pic.el:
       return pic
 
@@ -126,6 +126,11 @@ class Pic(CoreClass):
 
     if not el.has_attr('src'):
       return pic
+
+    for a in util.qw('width alt'):
+      if el.has_attr(a):
+        v = el[a]
+        setattr(pic, a, v)
 
     src = el['src'].strip()
 
@@ -187,8 +192,7 @@ class Pic(CoreClass):
 
     pic.get_data(dd)
 
-
-    app.log(f'[{rid}][Pic.grab] Local path: {pic.data.get("path","")}')
+    app.log(f'[{rid}][Pic.grab] Local path: {pic.path}')
     if os.path.isfile(pic.path):
       app.log(f'WARN[{rid}][Pic.grab] image file already exists: {pic.img}')
 
