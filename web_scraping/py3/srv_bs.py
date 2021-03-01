@@ -52,6 +52,10 @@ class r_html_page_rid_tipe:
 
     return h
 
+class r_img_id:
+  def GET(self,id):
+    return iraw
+
 class r_html_pages:
   def h_pages(self,params={}):
 
@@ -147,9 +151,11 @@ if __name__ == "__main__":
     '/json/page/(\d+)'       , 'r_json_page'          ,
     '/json/pages'            , 'r_json_pages'         ,
 
-    '/html/pages(?:/|)'       , 'r_html_pages'         ,
+    '/html/pages(?:/|)'      , 'r_html_pages'         ,
     '/html/page/(\d+)/(\w+)' , 'r_html_page_rid_tipe' ,
     '/html/page/(\d+)'       , 'r_html_page_rid' ,
+
+    '/img/(\d+)'             , 'r_img_id' ,
 
     '/js/bundle'             , 'r_js_bundle'          ,
   )

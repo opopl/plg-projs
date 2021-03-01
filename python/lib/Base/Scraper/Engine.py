@@ -1784,7 +1784,7 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
               'app' : self,
               'url' : href,
             })
-            uri_local = pic.path_uri 
+            uri_local = pic.path_uri_srv
             if uri_local:
               next['href'] = uri_local
               next['class'] = 'link uri_local'
@@ -2382,11 +2382,11 @@ bs.py -c html_parse -i cache.html $*
       if not pic.img_saved:
         continue
 
-      el_img['src'] = pic.path_uri
+      el_img['src'] = pic.path_uri_srv
       
       n = self.soup.new_tag('img')
 
-      n['src']     = pic.path_uri
+      n['src']     = pic.path_uri_srv
       n['rel-src'] = pic.url_rel
       n['width']   = 500
 

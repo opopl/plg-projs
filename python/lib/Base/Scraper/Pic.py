@@ -43,6 +43,9 @@ class Pic(CoreClass):
   path     = None
   path_uri = None
 
+  # image server path
+  path_uri_srv = None
+
   # short image path within img_root, e.g. 22.jpg
   img      = None
   inum     = None
@@ -324,10 +327,11 @@ class Pic(CoreClass):
       ipath = os.path.join(pic.root, img)
   
       d = { 
-        'inum'     : inum,
-        'img'      : img,
-        'path'     : ipath,
-        'path_uri' : Path(ipath).as_uri()
+        'inum'         : inum                 ,
+        'img'          : img                  ,
+        'path'         : ipath                ,
+        'path_uri'     : Path(ipath).as_uri() ,
+        'path_uri_srv' : f'/img/{inum}'       ,
       }
       for k, v in d.items():
         setattr(pic, k, v)
