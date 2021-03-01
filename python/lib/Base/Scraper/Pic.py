@@ -65,7 +65,7 @@ class Pic(CoreClass):
         .el_process()      \
         .get_caption()     \
         .url_check_saved() \
-        .get_data()        \
+        .fill_data()        \
 
     pass
 
@@ -195,7 +195,7 @@ class Pic(CoreClass):
     if not pic.img_saved:
       dd.update({ 'opts' : 'new' })
 
-    pic.get_data(dd)
+    pic.fill_data(dd)
 
     app.log(f'[{rid}][Pic.grab] Local path: {pic.path}')
     if os.path.isfile(pic.path):
@@ -306,7 +306,7 @@ class Pic(CoreClass):
 
     return pic
 
-  def get_data(pic,ref={}):
+  def fill_data(pic,ref={}):
     opts_s = ref.get('opts','')
     opts   = opts_s.split(',')
 
@@ -314,10 +314,6 @@ class Pic(CoreClass):
 
     if not ( pic.dbfile and os.path.isfile(pic.dbfile) ):
       return 
-
-    url = pic.url
-    if not url:
-      return pic
 
     d = None
 
@@ -348,6 +344,8 @@ class Pic(CoreClass):
 
             img = rw['img']
             inum = rw['inum']
+
+            pic.url = rw['url']
       break
 
     if img:
@@ -360,10 +358,11 @@ class Pic(CoreClass):
         'path_uri'     : Path(ipath).as_uri() ,
         'path_uri_srv' : f'/img/{inum}'       ,
       }
+
       for k, v in d.items():
         setattr(pic, k, v)
 
-    return d
+    return pic
 
   def get_ext(pic):
     map = {
