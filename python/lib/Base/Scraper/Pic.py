@@ -26,7 +26,13 @@ class Pic(CoreClass):
   width   = None
   caption = None
 
+  # copied from 'alt' attribute
+  alt     = None
+
+  # sqlite imgs database file
   dbfile = None
+
+  # directory with images
   root   = None
 
   url        = None
@@ -273,16 +279,6 @@ class Pic(CoreClass):
 
     return pic
 
-  def _url(pic):
-
-    url = None
-    if pic.url:
-      url = pic.url
-
-    elif pic.inum:
-
-    return url
-
   def db_add(pic):
     app = pic.app
 
@@ -320,9 +316,9 @@ class Pic(CoreClass):
     img = None
     while 1:
       if 'new' in opts:
-        c.execute('''SELECT MAX(inum) FROM imgs''')
-        rw = c.fetchone()
-        inum = rw[0]
+        q = '''SELECT MAX(inum) FROM imgs'''
+        r = dbw.sql_fetchone(q,[],{ 'db_file' : pic.dbfile })
+        inum = list(r.get('row',{}).values())[0]
         inum += 1
         img = f'{inum}.{ext}'
         break
