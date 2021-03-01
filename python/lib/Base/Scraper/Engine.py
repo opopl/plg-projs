@@ -1840,8 +1840,6 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
 
     db_file = self.dbfile.pages
 
-
-
     q = 'SELECT * FROM pages'
     p = []
     r = dbw.sql_fetchall(q,p,{
@@ -1851,11 +1849,11 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
 
     pages = r.get('rows',[])
     cols  = r.get('cols',[])
-
+    
     r = { 
-       'pages' : pages,
-       'cols'  : cols,
-       'count' : len(pages),
+      'pages' : pages,
+      'cols'  : cols,
+      'count' : len(pages),
     }
 
     return r

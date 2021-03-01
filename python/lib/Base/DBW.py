@@ -134,7 +134,7 @@ def sql_fetchall(q, p=[], ref={}):
       conn = sqlite3.connect(db_file)
       db_close = 1
     else:
-      return
+      return { 'err' : 'no db_file' }
 
   conn.row_factory = sqlite3.Row
   c = conn.cursor()
@@ -148,7 +148,7 @@ def sql_fetchall(q, p=[], ref={}):
 
   rws = c.fetchall()
   if not rws:
-    return 
+    return { 'err' : 'zero result' }
 
   cols = list(map(lambda x: x[0], c.description))
 
