@@ -361,8 +361,6 @@ class Pic(CoreClass):
             pic.url = rw['url']
       break
 
-    import pdb; pdb.set_trace()
-
     if not img:
       return pic
 
@@ -382,6 +380,8 @@ class Pic(CoreClass):
     return pic
 
   def get_ct(pic):
+    if not pic.ext:
+      return pic
 
     for k in pic.map_ext_ct.keys():
       v = pic.map_ext_ct.get(k)
