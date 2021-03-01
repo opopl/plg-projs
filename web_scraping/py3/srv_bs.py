@@ -32,7 +32,7 @@ class r_html_page_rid:
     raise web.seeother(f'/html/page/{rid}/clean')
 
 class r_html_page_rid_tipe:
-  def GET(self,rid,tipe):
+  def GET(self,rid,tipe,suffix=''):
     file_html = ee._file_rid({ 
       'rid'  : rid, 
       'tipe' : tipe, 
@@ -44,13 +44,17 @@ class r_html_page_rid_tipe:
       with open(file_html,'r') as f:
         src = f.read()
 
-    #html = encodeURIComponent(html);
-    src = urllib.parse.quote(src,safe='')
-
-    t = ee.template_env.get_template("page.t.html")
-    h = t.render(src=src,tipe=tipe,rid=rid)
-
     web.header('Content-Type', 'text/html; charset=utf-8')
+
+    if not suffix:
+      src_q = urllib.parse.quote(src,safe='')
+      t = ee.template_env.get_template("page.t.html")
+      h = t.render(src=src_q,tipe=tipe,rid=rid)
+
+    elif suffix == 'src':
+      h = src
+
+    #html = encodeURIComponent(html);
 
     return h
 
@@ -167,8 +171,11 @@ if __name__ == "__main__":
     '/json/pages'            , 'r_json_pages'         ,
 
     '/html/pages(?:/|)'      , 'r_html_pages'         ,
-    '/html/page/(\d+)/(\w+)' , 'r_html_page_rid_tipe' ,
+
+    '/html/page/(\d+)/(\w+)(?:/(\w*)|)' , 'r_html_page_rid_tipe' ,
+
     '/html/page/(\d+)'       , 'r_html_page_rid'      ,
+
 
     '/img/(\d+)'             , 'r_img_inum'           ,
 
