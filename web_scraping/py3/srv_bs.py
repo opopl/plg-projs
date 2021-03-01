@@ -60,7 +60,9 @@ class r_img_inum:
       'app'  : ee,
       'inum' : inum,
     })
-    return iraw
+    path = pic.path or ''
+    #return iraw
+    return path
 
 class r_html_pages:
   def h_pages(self,params={}):
