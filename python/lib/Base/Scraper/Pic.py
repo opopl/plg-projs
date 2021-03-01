@@ -42,8 +42,21 @@ class Pic(CoreClass):
 
   data = {}
 
+  # image's content-type header
+  ct = None
+
+  # image's extension
+  ext = None
+
   # BS element 
   el = None
+
+  # ext => content-type
+  map_ext_ct = {
+   'jpe?g' : 'image/jpeg',
+   'gif'   : 'image/gif',
+   'png'   : 'image/png',
+  }
 
   # local (saved) path 
   path     = None
@@ -71,7 +84,8 @@ class Pic(CoreClass):
         .el_process()      \
         .get_caption()     \
         .url_check_saved() \
-        .fill_data()        \
+        .fill_data()       \
+        .get_ext()         \
 
     pass
 
@@ -344,19 +358,30 @@ class Pic(CoreClass):
             pic.url = rw['url']
       break
 
-    if img:
-      ipath = os.path.join(pic.root, img)
-  
-      d = { 
-        'inum'         : inum                 ,
-        'img'          : img                  ,
-        'path'         : ipath                ,
-        'path_uri'     : Path(ipath).as_uri() ,
-        'path_uri_srv' : f'/img/{inum}'       ,
-      }
+    if not img:
+      return pic
 
-      for k, v in d.items():
-        setattr(pic, k, v)
+    ipath = os.path.join(pic.root, img)
+
+    d = { 
+      'inum'         : inum                 ,
+      'img'          : img                  ,
+      'path'         : ipath                ,
+      'path_uri'     : Path(ipath).as_uri() ,
+      'path_uri_srv' : f'/img/{inum}'       ,
+    }
+
+    for k, v in d.items():
+      setattr(pic, k, v)
+
+    return pic
+
+  def get_ct(pic):
+
+    for k in pic.map_ext_ct.keys():
+      v = ct_map.get(k)
+      if re.match(rf'{k}',pic.ext):
+        pic.ct = v
 
     return pic
 
@@ -366,7 +391,14 @@ class Pic(CoreClass):
        'PNG'   : 'png',
        'GIF'   : 'gif',
     }
-    pic.ext = map.get(pic.i.format,'jpg')
+
+    if pic.i:
+      pic.ext = map.get(pic.i.format,'jpg')
+    elif pic.path:
+      pic.ext = Path(pic.path).suffix
+
+    pic.get_ct()
+
     return pic
 
   def grab(pic):

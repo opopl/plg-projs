@@ -64,7 +64,7 @@ class r_img_inum:
 
     iraw = ''
     if os.path.isfile(path):
-      #ext = 
+      ct = pic.ct
       with open(path,'rb') as f:
         iraw = f.read()
 
