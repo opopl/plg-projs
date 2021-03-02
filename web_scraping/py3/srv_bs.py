@@ -47,9 +47,10 @@ class r_html_page_rid_tipe:
     web.header('Content-Type', 'text/html; charset=utf-8')
 
     if not suffix:
-      src_q = urllib.parse.quote(src,safe='')
+      #data:text/html;charset=utf-8,{{ src }}
+      #src_q = urllib.parse.quote(src,safe='')
       t = ee.template_env.get_template("page.t.html")
-      h = t.render(src=src_q,tipe=tipe,rid=rid)
+      h = t.render(src=f'/html/page/{rid}/{tipe}/src',tipe=tipe,rid=rid)
 
     elif suffix == 'src':
       h = src
