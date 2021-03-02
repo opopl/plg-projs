@@ -86,11 +86,12 @@ function App(){
       var tipes = 'log cache core core_clean clean dbrid img img_clean'.split(' ');
 
       els.push(
-            this.$$selectmenu({
+            this.$$select({
               id : 'menu_html',
-              items : [
-                 'aa','bb'
-              ]
+              css : {
+                width : '50px',
+              },
+              items : tipes,
             })
       );
 
@@ -131,17 +132,19 @@ function App(){
       return this;
   };
 
-  this.$$selectmenu = function(ref={}){
+  this.$$select = function(ref={}){
       var id    = util.get(ref,'id','');
       var items = util.get(ref,'items',[]);
+      var css   = util.get(ref,'css',{});
 
       var $slc = $('<select/>');
       $slc
        .addClass('block')
        .css({ 
-           width              : '200px',
+           width              : '100px',
            'background-color' : 'white',
            'color'            : 'black',
+           ...css
        });
 
       if (id) { $slc.attr({ id : id }); }
@@ -149,13 +152,10 @@ function App(){
          let val = items[i];
 
          let $opt = $('<option/>');
-         $opt.attr({ value : val });
-         $opt.val(val);
+         $opt.text(val);
 
          $slc.append($opt);
       };
-
-      //$slc.selectmenu();
 
       return $slc;
   };
@@ -467,6 +467,16 @@ function App(){
 
     $('body').prepend(this.$pane);
     $('body').append(this.$foot);
+
+/*    $('body').append(*/
+            //this.$$select({
+              //id : 'menu_html',
+              //items : [
+                 //'aa','bb'
+              //]
+            //})
+    /*);*/
+    $('#menu_html').selectmenu();
 
     return this;
   };
