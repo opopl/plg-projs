@@ -75,12 +75,9 @@ class r_html_page_rid_tipe:
         'src_code' : src_code,
     }
 
-  def POST(self,rid,tipe,suffix=''):
-    d = web.input()
-    params = dict(d.items())
-
-  def GET(self,rid,tipe,suffix=''):
-    web.header('Content-Type', 'text/html; charset=utf-8')
+  def req(self,ref={}):
+    rid  = util.get(ref,'rid','')
+    tipe = util.get(ref,'tipe','')
 
     d = web.input()
     params = dict(d.items())
@@ -94,8 +91,19 @@ class r_html_page_rid_tipe:
         'xpath' : xpath,
         'css'   : css,
     })
-    src_html = r.get('src_html','')
+
+    return r
+
+  def POST(self,rid,tipe,suffix=''):
+    d = web.input()
+    params = dict(d.items())
+
+  def GET(self,rid,tipe,suffix=''):
+    web.header('Content-Type', 'text/html; charset=utf-8')
+
+    r = self.req({ 'rid' : rid, 'tipe' : tipe })
     src_code = r.get('src_code','')
+    src_html = r.get('src_html','')
 
     h = None
     if not suffix:
