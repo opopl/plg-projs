@@ -99,13 +99,14 @@ class r_html_page_rid_tipe:
     params = dict(d.items())
 
   def GET(self,rid,tipe,suffix=''):
-    web.header('Content-Type', 'text/html; charset=utf-8')
 
     r = self.req({ 'rid' : rid, 'tipe' : tipe })
     src_code = r.get('src_code','')
     src_html = r.get('src_html','')
 
     h = None
+
+    ct = 'text/html; charset=utf-8'
     if not suffix:
       src_uri = f'/html/page/{rid}/{tipe}/src'
 
@@ -125,6 +126,9 @@ class r_html_page_rid_tipe:
 
     elif suffix == 'code':
       h = src_code
+      ct = 'text/plain; charset=utf-8'
+
+    web.header('Content-Type', ct)
 
     return h 
 
