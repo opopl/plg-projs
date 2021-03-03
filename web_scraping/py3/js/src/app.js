@@ -377,12 +377,10 @@ function App(){
     return this;
   };
 
-
-
   this.body_append = function(){
   
-    $('body').prepend(this.$pane);
     $('body').prepend(this.$header);
+    $('body').prepend(this.$pane);
     $('body').append(this.$foot);
 
     var $slf = this;
@@ -457,9 +455,6 @@ function App(){
         .set_header()
         .set_pane()
         .set_foot()
-        .set_left()
-        .set_right()
-        .set_container()
         .body_append()
         .events()
      ;
