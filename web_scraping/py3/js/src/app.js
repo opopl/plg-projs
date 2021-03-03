@@ -405,17 +405,6 @@ function App(){
     return this;
   };
 
-  this.copy_html = function(){
-    console.log('[App] copy_html');
-
-		//var fr = $('#page_src_frame').get(0).contentWindow.document;
-		//var html = fr.html.documentElement;
-
-		//$('#page_src_ta').val(html);
-
-    return this;
-  };
-
   this.events = function(){
 
     this
@@ -455,7 +444,6 @@ function App(){
     this
         .init()
         .parse_url()
-        .copy_html()
         .set_header()
         .set_pane()
         .set_foot()

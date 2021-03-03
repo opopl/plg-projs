@@ -95,8 +95,6 @@ class r_html_page_rid_tipe:
     return r
 
   def POST(self,rid,tipe,suffix=''):
-    d = web.input()
-    params = dict(d.items())
 
     r = self.req({ 'rid' : rid, 'tipe' : tipe })
     src_code = r.get('src_code','')
