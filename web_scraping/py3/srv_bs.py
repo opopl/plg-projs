@@ -88,12 +88,14 @@ class r_html_page_rid_tipe:
     xpath = params.get('xpath','')
     css   = params.get('css','')
 
-    src_code = self.get_html({ 
+    r = self.get_html({ 
         'rid'   : rid,
         'tipe'  : tipe,
         'xpath' : xpath,
         'css'   : css,
     })
+    src_html = r.get('src_html','')
+    src_code = r.get('src_code','')
 
     h = None
     if not suffix:
@@ -109,7 +111,11 @@ class r_html_page_rid_tipe:
           tipe=tipe,
           rid=rid
       )
-    else:
+
+    elif suffix == 'src':
+      h = src_html
+
+    elif suffix == 'code':
       h = src_code
 
     return h 
