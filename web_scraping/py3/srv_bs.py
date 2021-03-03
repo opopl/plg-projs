@@ -98,6 +98,23 @@ class r_html_page_rid_tipe:
     d = web.input()
     params = dict(d.items())
 
+    r = self.req({ 'rid' : rid, 'tipe' : tipe })
+    src_code = r.get('src_code','')
+    src_html = r.get('src_html','')
+
+    h = None
+    ct = 'text/html; charset=utf-8'
+    if suffix == 'src':
+      h = src_html
+
+    elif suffix == 'code':
+      h = src_code
+      ct = 'text/plain; charset=utf-8'
+
+    web.header('Content-Type', ct)
+
+    return h
+
   def GET(self,rid,tipe,suffix=''):
 
     r = self.req({ 'rid' : rid, 'tipe' : tipe })
