@@ -83,34 +83,18 @@ function App(){
 
       var els = [];
 
-      var tipes = 'log cache core core_clean clean dbrid img img_clean'.split(' ');
+      var tipes = 'log dbrid cache core core_clean clean img img_clean'.split(' ');
 
       els.push(
             this.$$select({
-              id : 'menu_html',
+              id : 'menu_tipes',
               css : {
                 width : '50px',
               },
-              items : tipes,
+              items    : tipes,
+              selected : this.tipe,
             })
       );
-
-      for(let tipe of tipes ){
-         let href = '/html/page/' + this.rid + '/' + tipe;
-
-         let css = { width : '5%' };
-         if (tipe == this.tipe) {
-           css['background-color'] = 'blue';
-         }
-         els.push(
-            this.$$a_href({
-              href : href,
-              txt  : tipe,
-              id   : 'href_' + tipe,
-              css  : css,
-            }),
-         );
-      }
 
       els.push(
             this.$$input({
@@ -137,6 +121,8 @@ function App(){
       var items = util.get(ref,'items',[]);
       var css   = util.get(ref,'css',{});
 
+      var selected   = util.get(ref,'selected','');
+
       var $slc = $('<select/>');
       $slc
        .addClass('block')
@@ -153,6 +139,10 @@ function App(){
 
          let $opt = $('<option/>');
          $opt.text(val);
+
+         if (selected == val) {
+           $opt.attr({ selected : 1 });
+         }
 
          $slc.append($opt);
       };
@@ -280,10 +270,11 @@ function App(){
 
   this.func_enter_rid = function(){
 
+     var $slf = this;
      return function(e){
-        var rid = $(this).val();
+        $slf.rid = $(this).val();
 
-        window.location = "/html/page/" + rid + "/clean";
+        window.location = "/html/page/" + $slf.rid + "/" + $slf.tipe;
      };
 
      return this;
@@ -414,33 +405,8 @@ function App(){
 
     this.update_left();
 
-    //var $slf = this;
-
-/*    this.$left = $('<div/>');*/
-    //this.$left.addClass('flex-left');
-
-    //this.$body_clone.children().each(function(){
-       //$slf.$left.append($(this).clone());
-    /*});*/
-
     return this;
   };
-
-/*  this.set_pane_links = function(){*/
-      //var pane = document.createElement('div');
-      //pane.className = 'flex-row';
-
-      //var a = document.createElement('a');
-      //a.href  = '../core.html';
-      //a.textContent = 'CORE';
-      //$(a).addClass('block').css({ width: '10%' });
-    
-      //$(pane).append($(a));
-
-      //this.$pane_links = $(pane);
-
-    //return this;
-  /*};*/
 
   this.set_container = function(){
       var container = document.createElement('div');
@@ -468,15 +434,18 @@ function App(){
     $('body').prepend(this.$pane);
     $('body').append(this.$foot);
 
-/*    $('body').append(*/
-            //this.$$select({
-              //id : 'menu_html',
-              //items : [
-                 //'aa','bb'
-              //]
-            //})
-    /*);*/
-    $('#menu_html').selectmenu();
+    var $slf = this;
+    this.jquery_ui_selectmenu({ 
+        id : '#menu_tipes',
+        cb : {
+          selectmenuchange : function(){
+            $slf.tipe = $(this).val();
+            let href = '/html/page/' + $slf.rid + '/' + $slf.tipe;
+
+            window.location = href;
+          }
+        }
+    });
 
     return this;
   };
@@ -511,38 +480,11 @@ function App(){
     this.url$ = new URL(window.location);
     this.url_path = this.url$.pathname;
 
-    var parts = this.url_path.split('/');
-    var last = parts.pop();
-
-    this.dirs.base = parts.join('/');
-    
-    this.rid = parts.pop();
-
-    var m = last.match(/(\w+)$/);
-    if (m) { this.tipe = m[1]; }
-
-    return this;
-  };
-
-  this.rid_load_yaml = function(){
-    console.log('[App] rid_load_yaml');
-
-    this.files.yaml = this.dirs.base + '/' + 'page.yaml';
-
-    console.log(this.files.yaml);
-    //var y = this.files.yaml;
-    var y = 'page.yaml';
-
-    //util.http_get_async(y,function(res){ console.log(res); });
-
-/*    try {*/
-        //let fileContents = fs.readFileSync(this.files.yaml, 'utf8');
-        //let data = yaml.safeLoad(fileContents);
-    
-        //console.log(data);
-    //} catch (e) {
-        //console.log(e);
-    /*}*/
+    var m = this.url_path.match(/\/html\/page\/(\d+)\/(\w+)/);
+    if (m) { 
+      this.rid  = m[1]; 
+      this.tipe = m[2]; 
+    }
 
     return this;
   };
@@ -560,7 +502,6 @@ function App(){
     this
         .init()
         .parse_url()
-        .rid_load_yaml()
         .copy_html()
         .set_header()
         .set_pane()
@@ -574,6 +515,27 @@ function App(){
 
     return this;
   }
+
+  this.jquery_ui_selectmenu = function(ref={}){
+    var id    = util.get(ref,'id','');
+    var cb    = util.get(ref,'cb',{});
+    var $el   = util.get(ref,'el','');
+
+    if (id) { $el = $(id) }
+
+    if (!$el) { return this }
+
+    $el.selectmenu();
+
+    for(var key of util.keys(cb)) {
+      var f_cb = util.get(cb,key);
+      if (!f_cb) { continue }
+
+      $el.on(key,f_cb);
+    }
+
+    return this;
+  };
 
 }
 

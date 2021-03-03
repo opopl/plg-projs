@@ -1,5 +1,6 @@
 # ----------------------------
 import os,sys
+import re
 import cyrtranslit
 
 import Base.DBW as dbw
@@ -28,6 +29,8 @@ class Author(CoreClass):
 
     if not auth_bare:
       return self
+
+    auth_bare = re.sub(r'[,]*', r'', auth_bare)
 
     auth_ids = []
     auth_list = []

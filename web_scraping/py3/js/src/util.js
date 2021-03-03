@@ -5,6 +5,15 @@ module.exports = {
       var value = (key in obj) ? obj[key] : def;
       return value;
   },
+  keys : function(dict={}){
+		var keys = [];
+		for (var k in dict){
+			if (dict.hasOwnProperty(k)) {
+				keys.push(k);
+			}
+		}
+		return keys;
+	},
   encode_html : function(text) {
     return $("<textarea/>")
       .text(text)
