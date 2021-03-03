@@ -2,6 +2,8 @@
 
 import web
 
+from bs4 import BeautifulSoup, Comment
+
 from Base.Scraper.Engine import BS
 from Base.Scraper.Pic import Pic
 
@@ -50,20 +52,47 @@ class r_html_page_rid_tipe:
       with open(file_html,'r') as f:
         src_code = f.read()
 
+    src_html = src_code
+
+    if css or xpath:
+      bs = BeautifulSoup(src_code,'html5lib')
+      if css:
+        els = bs.select(css)
+        txt = []
+        for el in els:
+          txt.append(str(el))
+
+        src_code = '\n'.join(txt)
+        src_html = '<br>\n'.join(txt)
+
     #html = encodeURIComponent(html);
 
-    return src_code
+    return { 
+        # iframe
+        'src_html' : src_html,
 
-  def POST(self):
+        # textarea
+        'src_code' : src_code,
+    }
+
+  def POST(self,rid,tipe,suffix=''):
     d = web.input()
     params = dict(d.items())
 
   def GET(self,rid,tipe,suffix=''):
     web.header('Content-Type', 'text/html; charset=utf-8')
 
+    d = web.input()
+    params = dict(d.items())
+
+    xpath = params.get('xpath','')
+    css   = params.get('css','')
+
     src_code = self.get_html({ 
-        'rid'  : rid,
-        'tipe' : tipe
+        'rid'   : rid,
+        'tipe'  : tipe,
+        'xpath' : xpath,
+        'css'   : css,
     })
 
     h = None
