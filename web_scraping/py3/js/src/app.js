@@ -377,12 +377,7 @@ function App(){
     return this;
   };
 
-  this.body_append = function(){
-  
-    $('body').prepend(this.$header);
-    $('body').prepend(this.$pane);
-    $('body').append(this.$foot);
-
+  this.set_menu_tipes = function(){
     var $slf = this;
     this.jquery_ui_selectmenu({ 
         id : '#menu_tipes',
@@ -399,15 +394,24 @@ function App(){
     return this;
   };
 
+  this.body_append = function(){
+  
+    $('body').prepend(this.$header);
+    $('body').prepend(this.$pane);
+    $('body').append(this.$foot);
+
+		this.set_menu_tipes();
+
+    return this;
+  };
+
   this.copy_html = function(){
     console.log('[App] copy_html');
 
-    this.$html_bare = $('html').clone();
+		//var fr = $('#page_src_frame').get(0).contentWindow.document;
+		//var html = fr.html.documentElement;
 
-    this.$body_clone = $('body').clone();
-
-    this.$html_clone = $('html').clone();
-    this.$html_clone.find('style,meta').remove();
+		//$('#page_src_ta').val(html);
 
     return this;
   };
