@@ -6,7 +6,6 @@ var util = require('./util.js');
 //const fs = require('fs-extra');
 const yaml = require('js-yaml');
 
-
 function App(){
 
   this.set_header = function(){
@@ -349,26 +348,6 @@ function App(){
      return this;
   };
 
-  this.set_right = function(ref={}){
-
-    var right = document.createElement('div');
-    right.className = 'flex-right';
-
-    var code = document.createElement('div');
-    code.className = 'code';
-  
-    var pre = document.createElement('pre');
-    $(code).append($(pre));
-  
-    $(pre).text(this._code(this.$html_clone));
-  
-    $(right).append($(code));
-
-    this.$right = $(right);
-
-    return this;
-  };
-
   this._code = function(el){
     var html = $(el).wrap('<div/>').parent().html();
     html = pretty(html);
@@ -398,40 +377,12 @@ function App(){
     return this;
   };
 
-  this.set_left = function(ref={}){
 
-    this.$left = $('<iframe src="about:blank"></iframe>');
-    this.$left.addClass('flex-left');
-
-    this.update_left();
-
-    return this;
-  };
-
-  this.set_container = function(){
-      var container = document.createElement('div');
-      container.className = 'flex-container';
-
-      this.$container = $(container);
-
-      this.$container.append( this.$left );
-      this.$container.append( this.$right );
-
-      return this;
-  };
 
   this.body_append = function(){
   
-    //if ('core core_clean clean'.split(' ').includes(this.tipe)) {
-      //$('body').children().remove();
-      //$('body').append(this.$pane);
-      //$('body').append(this.$header);
-      //$('body').append(this.$container);
-      //$('body').append(this.$foot);
-      //return this;
-    /*}*/
-
     $('body').prepend(this.$pane);
+    $('body').prepend(this.$header);
     $('body').append(this.$foot);
 
     var $slf = this;
