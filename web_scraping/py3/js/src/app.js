@@ -116,13 +116,19 @@ function App(){
                 'background-color' : 'white',
                 'color'            : 'black',
               },
-              txt : util.get(this,'rid'),
+              txt : this.rid,
             }),
+      );
+
+      els.push(
+        $('<input type="text" id="inp_page_date">')
       );
 
       for (let el of els) {
         this.$pane.append(el);
       };
+
+      $('#inp_page_date').datepicker();
 
       return this;
   };
