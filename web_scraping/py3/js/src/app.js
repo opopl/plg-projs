@@ -66,8 +66,8 @@ function App(){
   this.reload = function(){
       window.location.reload(false);
 
-			var src = '/html/page/' + this.rid + '/' + this.tipe + '/src';
-			$('#page_src_frame').attr({ src : src });
+      var src = '/html/page/' + this.rid + '/' + this.tipe + '/src';
+      $('#page_src_frame').attr({ src : src });
       return this;
   };
 
@@ -312,11 +312,11 @@ function App(){
           return;
         }
 
-				var url = '/html/page/' + $slf.rid + '/' + $slf.tipe + '/src';
-    		var css_e = encodeURIComponent(css);
-				url += '?css=' + css_e;
+        var url = '/html/page/' + $slf.rid + '/' + $slf.tipe + '/src';
+        var css_e = encodeURIComponent(css);
+        url += '?css=' + css_e;
 
-				$('#page_src_frame').attr({ 'src' : url });
+        $('#page_src_frame').attr({ 'src' : url });
 
      };
 
@@ -383,7 +383,7 @@ function App(){
     $('body').prepend(this.$header);
     $('body').prepend(this.$pane);
 
-		this.set_menu_tipes();
+    this.set_menu_tipes();
 
     return this;
   };
@@ -405,7 +405,7 @@ function App(){
     this.url$     = new URL(window.location);
     this.url_path = this.url$.pathname;
 
-		var $slf = this;
+    var $slf = this;
 
     var m = this.url_path.match(/\/html\/page\/(\d+)\/(\w+)/);
     if (m) { 
@@ -413,16 +413,16 @@ function App(){
       this.tipe = m[2]; 
     }
 
-		var r = $.ajax({
-			url : '/json/page/' + this.rid,
-			method : 'GET',
-			data : {},
-			dataType : 'json'
-		});
+    var r = $.ajax({
+      url : '/json/page/' + this.rid,
+      method : 'GET',
+      data : {},
+      dataType : 'json'
+    });
 
-		r.done(function(data){
-			$slf.page = data;
-		});
+    r.done(function(data){
+      $slf.page = data;
+    });
 
     return this;
   };
