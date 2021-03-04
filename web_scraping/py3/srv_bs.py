@@ -133,7 +133,10 @@ class r_html_page_rid_tipe:
           src_uri=src_uri,
           src_code=src_code,
           tipe=tipe,
-          rid=rid
+          rid=rid,
+          iframe = { 
+            'sandbox' : 'allow-scripts allow-top-navigation allow-same-origin'
+          }
       )
 
     elif suffix == 'src':

@@ -65,13 +65,9 @@ function App(){
 
   this.reload = function(){
       window.location.reload(false);
-      return this;
-  };
 
-  this.set_foot = function(){
-      this.$foot = $('<div/>').addClass('flex-row');
-      this.$foot.css({ background : 'green' });
-
+			var src = ;
+			$('#page_src_frame').attr({ src : src });
       return this;
   };
 
@@ -316,23 +312,11 @@ function App(){
           return;
         }
 
-        $slf.$left.children().remove();
+				var url = '/html/page/' + $slf.rid + '/' + $slf.tipe + '/src';
+    		var css_e = encodeURIComponent(css);
+				url += '?css=' + css_e;
 
-        var $found = $slf.$html_clone.find(css).clone();
-
-        $slf.$right.find('pre').text('');
-
-        var _txt = '';
-        $found.each(function(){
-           var _el = $(this);
-           //$slf.$left.append(_el);
-
-           _txt += $slf._code(_el) + '\n';
-        });
-
-        $slf.update_left({ html : _txt });
-
-        $slf.$right.find('pre').text( _txt );
+				$('#page_src_frame').attr({ 'src' : url });
 
      };
 
@@ -398,7 +382,6 @@ function App(){
   
     $('body').prepend(this.$header);
     $('body').prepend(this.$pane);
-    $('body').append(this.$foot);
 
 		this.set_menu_tipes();
 
@@ -419,8 +402,10 @@ function App(){
 
     console.log('[App] parse_url');
 
-    this.url$ = new URL(window.location);
+    this.url$     = new URL(window.location);
     this.url_path = this.url$.pathname;
+
+		var $slf = this;
 
     var m = this.url_path.match(/\/html\/page\/(\d+)\/(\w+)/);
     if (m) { 
@@ -428,12 +413,24 @@ function App(){
       this.tipe = m[2]; 
     }
 
+		var r = $.ajax({
+			url : '/json/page/' + this.rid,
+			method : 'GET',
+			data : {},
+			dataType : 'json'
+		});
+
+		r.done(function(data){
+			$slf.page = data;
+		});
+
     return this;
   };
 
   this.init = function(){
     this.files = {};
     this.dirs = {};
+    this.page = {};
 
     return this;
   };
@@ -446,7 +443,6 @@ function App(){
         .parse_url()
         .set_header()
         .set_pane()
-        .set_foot()
         .body_append()
         .events()
      ;

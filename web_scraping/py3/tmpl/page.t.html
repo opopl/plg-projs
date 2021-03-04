@@ -13,10 +13,14 @@
           <input type="submit" value="go!" />
     </form>
 
-    <div class='flex-container'>
-      <iframe sandbox="allow-scripts" class="flex-left" id="page_src_frame" src="{{ src_uri }}"></iframe>
+    <div id="container" class='flex-container'>
+			<iframe sandbox="{{ iframe.sandbox }}" class="flex-left" id="page_src_frame" src="{{ src_uri }}"></iframe>
 			<textarea id="page_src_ta" class='flex-right'>{{ src_code }} </textarea>
     </div>
+
+		<div id="footer" class="flex-row">
+			
+		</div>
 
     <script src="/js/bundle" ></script>
   </body>
