@@ -64,10 +64,22 @@ function App(){
   };
 
   this.reload = function(){
-      window.location.reload(false);
+      var url = '/html/page/' + this.rid + '/' + this.tipe;
+      var url_src  = url + '/src';
+      var url_code = url + '/code';
 
-      var src = '/html/page/' + this.rid + '/' + this.tipe + '/src';
-      $('#page_src_frame').attr({ src : src });
+      var $fr = $('#page_src_frame');
+      $fr.attr({ src : url_src });
+      $fr.get(0).contentDocument.location.reload(true);
+
+      var $ta = $('#page_src_ta');
+
+      $.get(url_code,{}, function(data,status){
+        $ta.text(data);
+      });
+
+      //window.location.reload(false);
+      window.location.reload(true);
       return this;
   };
 
