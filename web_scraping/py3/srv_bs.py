@@ -15,6 +15,8 @@ import json
 import dateparser
 import urllib.parse
 
+import lxml
+
 from html import escape
 
 global ee
@@ -44,6 +46,8 @@ class r_html_page_rid_tipe:
     css    = util.get(ref,'css','')
     xpath  = util.get(ref,'xpath','')
 
+    act    = util.get(ref,'act','display')
+
     file_html = ee._file_rid({ 
       'rid'  : rid, 
       'tipe' : tipe, 
@@ -61,12 +65,40 @@ class r_html_page_rid_tipe:
       bs = BeautifulSoup(src_code,'html5lib')
       if css:
         els = bs.select(css)
-        txt = []
-        for el in els:
-          txt.append(str(el))
+        if els:
+          if act == 'display':
+            txt = []
+            for el in els:
+              txt.append(str(el))
+       
+            src_code = '\n'.join(txt)
+            src_html = '<br>\n'.join(txt)
+    
+          elif act == 'remove':
+            for el in els:
+              el.decompose()
+    
+            src_code = str(bs)
+            src_html = src_code
 
-        src_code = '\n'.join(txt)
-        src_html = '<br>\n'.join(txt)
+      elif xpath:
+        tree =  lxml.html.fromstring(str(bs.html))
+        found = tree.xpath(xpath)
+
+        if act == 'display':
+          txt = []
+          for el in found:
+            s = lxml.html.tostring(el)
+            s = s.decode('utf-8')
+            txt.append(s)
+
+          src_code = '\n'.join(txt)
+          src_html = '<br>\n'.join(txt)
+
+        if act == 'remove':
+          for el in found:
+            el.getparent().remove(el)
+
 
     #html = encodeURIComponent(html);
 
@@ -85,15 +117,11 @@ class r_html_page_rid_tipe:
     d = web.input()
     params = dict(d.items())
 
-    xpath = params.get('xpath','')
-    css   = params.get('css','')
+    rr = { 'rid' : rid, 'tipe' : tipe }
+    for k in util.qw('xpath css act'):
+      rr[k] = params.get(k,'')
 
-    r = self.get_html({ 
-        'rid'   : rid,
-        'tipe'  : tipe,
-        'xpath' : xpath,
-        'css'   : css,
-    })
+    r = self.get_html(rr)
 
     return r
 

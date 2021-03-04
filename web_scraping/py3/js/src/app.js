@@ -81,9 +81,9 @@ function App(){
 
       $.get(r.url_code,{}, function(data,status){
         $ta.text(data);
+        window.location.reload(true);
       });
 
-      //window.location.reload(false);
       return this;
   };
 
@@ -261,8 +261,20 @@ function App(){
         //;
 
       this
-        .register_on_enter('#inp_css_show',this.func_enter_css_show())
-        .register_on_enter('#inp_css_delete',this.func_enter_css_delete())
+        .register_on_enter('#inp_css_show',this.func_enter_sel({ 
+           'type' : 'css' 
+        }))
+        .register_on_enter('#inp_css_delete',this.func_enter_sel({ 
+           'type' : 'css',
+           'act'  : 'remove'
+        }))
+        .register_on_enter('#inp_xpath_show',this.func_enter_sel({ 
+           'type' : 'xpath' 
+        }))
+        .register_on_enter('#inp_xpath_delete',this.func_enter_sel({ 
+           'type' : 'xpath',
+           'act'  : 'remove'
+        }))
         .register_on_enter('#inp_rid',this.func_enter_rid())
         ;
 
@@ -296,46 +308,25 @@ function App(){
      return this;
   };
 
-  this.func_enter_css_delete = function(){
+  this.func_enter_sel = function(ref={}){
      var $slf = this;
 
-     return function(e){
-        var css = $(this).val();
+     var type = util.get(ref,'type','css');
+     var act  = util.get(ref,'act','display');
 
-        if (!css) {
+     return function(e){
+        var sel = $(this).val();
+
+        if (!sel) {
           $slf.reload();
           return;
         }
 
-        $slf.$html_clone.find(css).remove();
+        var rr = { act : act };
+        rr[type] = sel;
 
-        $slf.update_left();
-        $slf.$right.find('pre').text($slf._code($slf.$html_clone));
+        var r = $slf._url(rr);
 
-        //$slf.$left.children().remove();
-        //$slf.$html_clone.find('body').children().each(function(){
-           //$slf.$left.append($(this).clone());
-        //});
-
-     };
-
-     return this;
-  };
-
-  this.func_enter_css_show = function(){
-     var $slf = this;
-
-     return function(e){
-        var css = $(this).val();
-
-        if (!css) {
-          $slf.reload();
-          return;
-        }
-
-        var r = $slf._url({ css : css });
-
-        console.log(r);
         $('#ifr_page_src').attr({ src : r.url_src });
 
         var $ta = $('#ta_page_src');
@@ -359,8 +350,10 @@ function App(){
   };
 
   this._url = function(ref={}){
-     var css = util.get(ref,'css','')
      var act = util.get(ref,'act','display')
+
+     var css   = util.get(ref,'css','')
+     var xpath = util.get(ref,'xpath','')
 
      var url = '/html/page/' + this.rid + '/' + this.tipe;
 
@@ -371,6 +364,11 @@ function App(){
        var css_e = encodeURIComponent(css);
        url_src += '?act=' + act + '&css=' + css_e;
        url_code += '?act=' + act + '&css=' + css_e;
+     }
+     if (xpath) {
+       var xpath_e = encodeURIComponent(xpath);
+       url_src += '?act=' + act + '&xpath=' + xpath_e;
+       url_code += '?act=' + act + '&xpath=' + xpath_e;
      }
 
      return {
@@ -437,7 +435,7 @@ function App(){
            width : 'auto',
         })
         .datepicker({
-		       dateFormat: "dd_mm_yy",
+           dateFormat: "dd_mm_yy",
         });
 
     return this;
