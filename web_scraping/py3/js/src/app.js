@@ -64,22 +64,26 @@ function App(){
   };
 
   this.reload = function(){
-      var url = '/html/page/' + this.rid + '/' + this.tipe;
-      var url_src  = url + '/src';
-      var url_code = url + '/code';
+
+      var r = this._url();
+      console.log(r);
 
       var $fr = $('#page_src_frame');
-      $fr.attr({ src : url_src });
-      $fr.get(0).contentDocument.location.reload(true);
+      $fr.attr({ src : r.url_src });
+
+      try{
+        $fr.get(0).contentDocument.location.reload(true);
+      }catch(e){
+        console.log(e);
+      }
 
       var $ta = $('#page_src_ta');
 
-      $.get(url_code,{}, function(data,status){
+      $.get(r.url_code,{}, function(data,status){
         $ta.text(data);
       });
 
-      //window.location.reload(false);
-      window.location.reload(true);
+      window.location.reload(false);
       return this;
   };
 
@@ -324,11 +328,16 @@ function App(){
           return;
         }
 
-        var url = '/html/page/' + $slf.rid + '/' + $slf.tipe + '/src';
-        var css_e = encodeURIComponent(css);
-        url += '?css=' + css_e;
+        var r = $slf._url({ css : css });
 
-        $('#page_src_frame').attr({ 'src' : url });
+        console.log(r);
+        $('#page_src_frame').attr({ src : r.url_src });
+
+        var $ta = $('#page_src_ta');
+  
+        $.get(r.url_code,{}, function(data,status){
+          $ta.text(data);
+        });
 
      };
 
@@ -342,6 +351,28 @@ function App(){
      });
 
      return this;
+  };
+
+  this._url = function(ref={}){
+     var css = util.get(ref,'css','')
+     var act = util.get(ref,'act','show')
+
+     var url = '/html/page/' + this.rid + '/' + this.tipe;
+
+     var url_src  =  url + '/src';
+     var url_code =  url + '/code';
+
+     if (css) {
+       var css_e = encodeURIComponent(css);
+       url_src += '?act=' + act + '&css=' + css_e;
+       url_code += '?act=' + act + '&css=' + css_e;
+     }
+
+     return {
+       'url'      : url,
+       'url_code' : url_code,
+       'url_src'  : url_src,
+     };
   };
 
   this._code = function(el){
