@@ -121,14 +121,13 @@ function App(){
       );
 
       els.push(
-        $('<input type="text" id="inp_page_date">')
+        $('<input type="text" id="inp_page_date" />')
       );
 
       for (let el of els) {
         this.$pane.append(el);
       };
 
-      $('#inp_page_date').datepicker();
 
       return this;
   };
@@ -410,7 +409,7 @@ function App(){
     return this;
   };
 
-  this.set_menus = function(){
+  this.set_ui = function(){
     var $slf = this;
     this.jquery_ui_selectmenu({ 
         id : '#menu_tipes',
@@ -428,6 +427,18 @@ function App(){
                   .selectmenu({ 'width' : 'auto'})
                   .selectmenu('menuWidget')
           ;
+
+    var date = this.page.date;
+    $('#inp_page_date')
+        .val(date)
+        .addClass('block')
+        .css({ 
+           color : 'black', 
+           width : 'auto',
+        })
+        .datepicker({
+		       dateFormat: "dd_mm_yy",
+        });
 
     return this;
   };
@@ -470,7 +481,8 @@ function App(){
       url : '/json/page/' + this.rid,
       method : 'GET',
       data : {},
-      dataType : 'json'
+      dataType : 'json',
+      async: false,
     });
 
     r.done(function(data){
@@ -506,7 +518,7 @@ function App(){
         .set_header()
         .set_pane()
         .body_append()
-        .set_menus()
+        .set_ui()
         .set_css()
         .events()
      ;
