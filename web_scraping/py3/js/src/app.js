@@ -355,7 +355,7 @@ function App(){
 
   this._url = function(ref={}){
      var css = util.get(ref,'css','')
-     var act = util.get(ref,'act','show')
+     var act = util.get(ref,'act','display')
 
      var url = '/html/page/' + this.rid + '/' + this.tipe;
 
