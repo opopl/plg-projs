@@ -168,11 +168,14 @@ class Page(CoreClass):
   def __init__(page,ref={}):
     super().__init__(ref)
 
-  def data(page):
+  def dict(page):
     data = {}
     for k in dir(page):
+      if k in [ '__dict__', '__module__' ]:
+        continue
+
       v = getattr(page,k)
-      if type(k) in [ dict,list,str,int ]:
+      if type(v) in [ dict,list,str,int ]:
         data.update({ k : v })
 
     return data
@@ -2124,7 +2127,10 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
     row  = r.get('row',{})
     cols = r.get('cols',[])
 
-    page = Page(row) if len(row) else None
+    page = None
+    if len(row):
+      page = Page(row) 
+      page.app = self
 
     return page
 

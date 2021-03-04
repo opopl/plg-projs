@@ -5,6 +5,7 @@ import web
 from bs4 import BeautifulSoup, Comment
 
 from Base.Scraper.Engine import BS
+from Base.Scraper.Engine import Page
 from Base.Scraper.Pic import Pic
 
 import Base.Util as util
@@ -121,6 +122,8 @@ class r_html_page_rid_tipe:
 
     h = None
 
+    page = ee._page_from_rid(rid)
+
     ct = 'text/html; charset=utf-8'
     if not suffix:
       src_uri = f'/html/page/{rid}/{tipe}/src'
@@ -130,6 +133,7 @@ class r_html_page_rid_tipe:
 
       t = ee.template_env.get_template("page.t.html")
       h = t.render(
+          page=page.dict(),
           src_uri=src_uri,
           src_code=src_code,
           tipe=tipe,
@@ -240,7 +244,8 @@ class r_json_page:
   def GET(self,rid):
     page = ee._page_from_rid(rid)
     web.header('Content-Type', 'application/json; charset=utf-8')
-    j = json.dumps(page.__dict__, ensure_ascii=False)
+    #j = json.dumps(page.__dict__, ensure_ascii=False)
+    j = json.dumps(page.dict(), ensure_ascii=False)
     return j
 
 if __name__ == "__main__":
