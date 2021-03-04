@@ -139,7 +139,7 @@ class r_html_page_rid_tipe:
           tipe=tipe,
           rid=rid,
           iframe = { 
-            'sandbox' : 'allow-scripts'
+            'sandbox' : ''
           }
       )
 
