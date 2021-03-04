@@ -66,7 +66,7 @@ function App(){
   this.reload = function(){
       window.location.reload(false);
 
-			var src = ;
+			var src = '/html/page/' + this.rid + '/' + this.tipe + '/src';
 			$('#page_src_frame').attr({ src : src });
       return this;
   };

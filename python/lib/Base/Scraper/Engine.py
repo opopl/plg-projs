@@ -156,12 +156,27 @@ class mixLogger:
     return self
 
 class Page(CoreClass):
+
+  app     = None
   baseurl = None
   host    = None
   rid     = None
   site    = None
   url     = None
+  url_srv = None
 
+  def __init__(page,ref={}):
+    super().__init__(ref)
+
+  def data(page):
+    data = {}
+    for k in dir(page):
+      v = getattr(page,k)
+      if type(k) in [ dict,list,str,int ]:
+        data.update({ k : v })
+
+    return data
+      
   # depth of link following
   depth     = 0
 

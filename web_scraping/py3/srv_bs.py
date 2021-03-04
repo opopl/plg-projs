@@ -135,7 +135,7 @@ class r_html_page_rid_tipe:
           tipe=tipe,
           rid=rid,
           iframe = { 
-            'sandbox' : 'allow-scripts allow-top-navigation allow-same-origin'
+            'sandbox' : 'allow-scripts allow-top-navigation'
           }
       )
 
