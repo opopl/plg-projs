@@ -68,7 +68,7 @@ function App(){
       var r = this._url();
       console.log(r);
 
-      var $fr = $('#page_src_frame');
+      var $fr = $('#ifr_page_src');
       $fr.attr({ src : r.url_src });
 
       try{
@@ -77,7 +77,7 @@ function App(){
         console.log(e);
       }
 
-      var $ta = $('#page_src_ta');
+      var $ta = $('#ta_page_src');
 
       $.get(r.url_code,{}, function(data,status){
         $ta.text(data);
@@ -331,9 +331,9 @@ function App(){
         var r = $slf._url({ css : css });
 
         console.log(r);
-        $('#page_src_frame').attr({ src : r.url_src });
+        $('#ifr_page_src').attr({ src : r.url_src });
 
-        var $ta = $('#page_src_ta');
+        var $ta = $('#ta_page_src');
   
         $.get(r.url_code,{}, function(data,status){
           $ta.text(data);
@@ -478,6 +478,15 @@ function App(){
     return this;
   };
 
+  this.set_css = function(){
+    $('#input_page_url').css({ 
+      'text-align' : 'left',
+      'width' : '100%',
+    });
+
+    return this;
+  };
+
   this.run = function(){
     console.log('[App] start run');
 
@@ -487,6 +496,7 @@ function App(){
         .set_header()
         .set_pane()
         .body_append()
+        .set_css()
         .events()
      ;
 

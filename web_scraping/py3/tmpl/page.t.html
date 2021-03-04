@@ -14,13 +14,16 @@
     </form>
 
     <div id="container" class='flex-container'>
-			<iframe sandbox="{{ iframe.sandbox }}" class="flex-left" id="page_src_frame" src="{{ src_uri }}"></iframe>
-			<textarea id="page_src_ta" class='flex-right' value="{{ src_code }}"> </textarea>
+      <iframe sandbox="{{ iframe.sandbox }}" class="flex-left" id="ifr_page_src" src="{{ src_uri }}"></iframe>
+			<textarea id="ta_page_src" class='flex-right'> {{ src_code }} </textarea>
     </div>
 
-		<div id="footer" class="flex-row">
-			<!--<input type="text" id="page_url" value="{{ page.url }}" />-->
-		</div>
+    <div id="footer" class="flex-row">
+			<select id="select_footer">
+				<option selected>url</option>
+			</select>
+			<input type="text" class="block" id="input_page_url" value="{{ page.url }}" />
+    </div>
 
     <script src="/js/bundle" ></script>
   </body>

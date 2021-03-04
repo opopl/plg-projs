@@ -15,6 +15,8 @@ import json
 import dateparser
 import urllib.parse
 
+from html import escape
+
 global ee
 
 class r_js_bundle:
@@ -131,15 +133,17 @@ class r_html_page_rid_tipe:
       #data:text/html;charset=utf-8,{{ src }}
       #src_code = urllib.parse.quote(src_code,safe='')
 
+      src_code_e = escape(src_code)
+
       t = ee.template_env.get_template("page.t.html")
       h = t.render(
           page=page.dict(),
           src_uri=src_uri,
-          src_code=src_code,
+          src_code=src_code_e,
           tipe=tipe,
           rid=rid,
           iframe = { 
-            'sandbox' : ''
+            'sandbox' : 'allow-same-origin'
           }
       )
 
