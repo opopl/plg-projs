@@ -95,6 +95,10 @@ class r_html_page_rid_tipe:
           src_code = '\n'.join(txt)
           src_html = '<br>\n'.join(txt)
 
+          #ss = BeautifulSoup(src_code, convertEntities=BeautifulSoup.HTML_ENTITIES)
+          ss = BeautifulSoup(src_code)
+          src_code = str(ss)
+
         if act == 'remove':
           for el in found:
             el.getparent().remove(el)
