@@ -83,7 +83,7 @@ function App(){
         $ta.text(data);
       });
 
-      window.location.reload(false);
+      //window.location.reload(false);
       return this;
   };
 
