@@ -404,7 +404,7 @@ function App(){
     return this;
   };
 
-  this.set_menu_tipes = function(){
+  this.set_menus = function(){
     var $slf = this;
     this.jquery_ui_selectmenu({ 
         id : '#menu_tipes',
@@ -418,6 +418,11 @@ function App(){
         }
     });
 
+    $('#select_footer')
+                  .selectmenu({ 'width' : 'auto'})
+                  .selectmenu('menuWidget')
+          ;
+
     return this;
   };
 
@@ -426,7 +431,6 @@ function App(){
     $('body').prepend(this.$header);
     $('body').prepend(this.$pane);
 
-    this.set_menu_tipes();
 
     return this;
   };
@@ -496,6 +500,7 @@ function App(){
         .set_header()
         .set_pane()
         .body_append()
+        .set_menus()
         .set_css()
         .events()
      ;
@@ -512,7 +517,7 @@ function App(){
 
     if (!$el) { return this }
 
-    $el.selectmenu();
+    $el.selectmenu({ width : 'auto' });
 
     for(var key of util.keys(cb)) {
       var f_cb = util.get(cb,key);

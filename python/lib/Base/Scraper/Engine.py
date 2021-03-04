@@ -1109,8 +1109,19 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
   def page_only(self,ref={}):
     site = util.get(self,'site',self.page.site)
 
+    # list
     only = self._sel_only(site)
     only = util.get(ref,'only',only)
+
+    for css in only:
+      els = copy(self.soup.select(css))
+      if els and len(els): 
+        children = self.soup.body.findChildren(True,recursive=False)
+        for el in els:
+          self.soup.body.append(el)
+
+        for child in children:
+          child.decompose()
 
     return self
 
