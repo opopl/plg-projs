@@ -96,8 +96,9 @@ class r_html_page_rid_tipe:
           src_html = '<br>\n'.join(txt)
 
           #ss = BeautifulSoup(src_code, convertEntities=BeautifulSoup.HTML_ENTITIES)
-          ss = BeautifulSoup(src_code)
-          src_code = str(ss)
+          #ss = BeautifulSoup(src_code)
+          #src_code = str(ss)
+          src_code = ee.html_parser.unescape(src_code)
 
         if act == 'remove':
           for el in found:
