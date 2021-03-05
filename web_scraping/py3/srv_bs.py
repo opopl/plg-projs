@@ -285,6 +285,9 @@ class r_json_page:
     j = json.dumps(page.dict(), ensure_ascii=False)
     return j
 
+class r_add_page:
+  def POST(self):
+
 if __name__ == "__main__":
   r = { 
     'files' : {
@@ -310,6 +313,7 @@ if __name__ == "__main__":
 
     '/html/page/(\d+)'       , 'r_html_page_rid'      ,
 
+    '/add/page'              , 'r_add_page'           ,
 
     '/img/(\d+)'             , 'r_img_inum'           ,
 

@@ -1175,6 +1175,13 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
 
     return self
 
+  def import(self,ref={}):
+    urldata = util.get(ref,'urldata',[])
+
+    self.parse(urldata)
+
+    return self
+
   def page_add(self):
     uri_dict = {
         'base'   : self.page.baseurl,
@@ -2442,9 +2449,9 @@ bs.py -c html_parse -i cache.html $*
 
     return self
 
-  def parse(self):
+  def parse(self,urldata=[]):
 
-    urldata = getattr(self,'urldata',[]) 
+    urldata = getattr(self,'urldata',urldata) 
     while len(urldata):
       d = urldata.pop(0)
       self.parse_url(d)
