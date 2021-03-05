@@ -218,6 +218,7 @@ class Pic(CoreClass):
     if not pic.img_saved:
       dd.update({ 'opts' : 'new' })
 
+    # fill pic.* attributes ( inum, path, ... ) from db calls
     pic.fill_data(dd)
 
     app.log(f'[{rid}][Pic.grab] Local path: {pic.path}')
@@ -390,6 +391,16 @@ class Pic(CoreClass):
 
     return pic
 
+  # process pic.i (Image instance)
+  def i_process(pic):
+    pic.width  = pic.i.width
+    pic.height = pic.i.height
+
+    app.log(f"[{rid}][Pic.grab] Width: \n\t{pic.width}")
+    app.log(f"[{rid}][Pic.grab] Height: \n\t{pic.height}")
+
+    return pic
+
   def get_ext(pic):
     map = {
        'JPEG'  : 'jpg',
@@ -403,6 +414,7 @@ class Pic(CoreClass):
       sf = Path(pic.path).suffix
       pic.ext = re.sub(r'\.(\w+)$', r'\1', sf)
 
+    # get image's pic.ct (content-type) from pic.ext (extension)
     pic.get_ct()
 
     return pic
@@ -418,12 +430,14 @@ class Pic(CoreClass):
     if not pic.bare_size:
       return pic
 
+    # pic.i = Image.open(...)
     pic.load()
     
     if not pic.i:
       return pic
 
     pic                    \
+        .i_process()       \
         .get_ext()         \
         .setup()           \
         .save2fs()         \
