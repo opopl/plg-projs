@@ -421,10 +421,19 @@ function App(){
         }
     });
 
-    $('#select_footer')
-                  .selectmenu({ 'width' : 'auto'})
-                  .selectmenu('menuWidget')
-          ;
+    this.jquery_ui_selectmenu({ 
+        id : '#select_footer',
+        cb : {
+          selectmenuchange : function(){
+            var opt = $(this).val();
+            if (opt == 'url') {}
+            else if (opt == 'url') {
+            }
+          }
+        }
+    });
+
+
 
     var date = this.page.date;
     $('#inp_page_date')
@@ -499,9 +508,9 @@ function App(){
   };
 
   this.set_css = function(){
-    $('#input_page_url').css({ 
+    $('#opt_page_url').css({ 
       'text-align' : 'left',
-      'width' : '100%',
+      'width'      : '100%',
     });
 
     return this;
