@@ -1175,7 +1175,7 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
 
     return self
 
-  def import(self,ref={}):
+  def import_data(self,ref={}):
     urldata = util.get(ref,'urldata',[])
 
     self.parse(urldata)
