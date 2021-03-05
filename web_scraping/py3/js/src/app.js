@@ -88,6 +88,7 @@ function App(){
   };
 
   this.set_pane = function(){
+      console.log('[App] set pane');
 
       this.$pane = $('<div/>').addClass('flex-row');
       this.$pane.css({ background : 'green' });
@@ -322,6 +323,8 @@ function App(){
           return;
         }
 
+        $slf.rnt[type][act].push(sel);
+
         var rr = { act : act };
         rr[type] = sel;
 
@@ -422,7 +425,10 @@ function App(){
     });
 
     this.jquery_ui_selectmenu({ 
-        id : '#select_footer',
+        id : '#select_control',
+        opts : {
+          style : 'popup'
+        },
         cb : {
           selectmenuchange : function(){
             var opt = $(this).val();
@@ -432,7 +438,6 @@ function App(){
           }
         }
     });
-
 
 
     var date = this.page.date;
@@ -470,7 +475,6 @@ function App(){
   };
 
   this.parse_url = function(){
-
     console.log('[App] parse_url');
 
     this.url$     = new URL(window.location);
@@ -499,10 +503,28 @@ function App(){
     return this;
   };
 
+  this.rnt_reset = function(){
+    this.rnt = {
+       xpath : {
+         remove : [],
+         display : [],
+       },
+       css : {
+         remove : [],
+         display : [],
+       }
+    };
+    return this;
+  };
+
   this.init = function(){
+    console.log('[App] init');
+
     this.files = {};
     this.dirs = {};
     this.page = {};
+
+    this.rnt_reset();
 
     return this;
   };
@@ -534,15 +556,22 @@ function App(){
   }
 
   this.jquery_ui_selectmenu = function(ref={}){
-    var id    = util.get(ref,'id','');
-    var cb    = util.get(ref,'cb',{});
-    var $el   = util.get(ref,'el','');
+    var id   = util.get(ref,'id','');
+    var cb   = util.get(ref,'cb',{});
+
+    var opts = util.get(ref,'opts',{});
+
+    var $el  = util.get(ref,'el','');
 
     if (id) { $el = $(id) }
 
     if (!$el) { return this }
 
-    $el.selectmenu({ width : 'auto' });
+    $el.selectmenu({ 
+       width : 'auto', 
+       ...opts 
+    });
+    console.log(opts);
 
     for(var key of util.keys(cb)) {
       var f_cb = util.get(cb,key);

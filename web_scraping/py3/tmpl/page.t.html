@@ -13,18 +13,19 @@
           <input type="submit" value="go!" />
     </form>
 
-    <div id="container" class='flex-container'>
-      <iframe sandbox="{{ iframe.sandbox }}" class="flex-left" id="ifr_page_src" src="{{ src_uri }}"></iframe>
-      <textarea id="ta_page_src" class='flex-right'> {{ src_code }} </textarea>
-    </div>
-
-    <div id="footer" class="flex-row">
-      <select id="select_footer">
+    <div id="pane_control" class="flex-row">
+      <select id="select_control">
         <option selected>url</option>
         <option>title</option>
+        <option>title_h</option>
         <option>tags</option>
       </select>
       <input type="text" class="block" id="opt_page_url" value="{{ page.url }}" />
+    </div>
+
+    <div id="container" class='flex-container'>
+      <iframe sandbox="{{ iframe.sandbox }}" class="flex-left" id="ifr_page_src" src="{{ src_uri }}"></iframe>
+      <textarea id="ta_page_src" class='flex-right'> {{ src_code }} </textarea>
     </div>
 
     <script src="/js/bundle" ></script>
