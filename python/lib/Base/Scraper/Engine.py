@@ -1112,16 +1112,18 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
     # list
     only = self._sel_only(site)
     only = util.get(ref,'only',only)
+    if not (only and len(only)):
+      return self
 
+    children = self.soup.body.findChildren(True,recursive=False)
     for css in only:
       els = copy(self.soup.select(css))
       if els and len(els): 
-        children = self.soup.body.findChildren(True,recursive=False)
         for el in els:
           self.soup.body.append(el)
 
-        for child in children:
-          child.decompose()
+    for child in children:
+       child.decompose()
 
     return self
 
