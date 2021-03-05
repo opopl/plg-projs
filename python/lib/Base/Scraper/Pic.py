@@ -393,11 +393,14 @@ class Pic(CoreClass):
 
   # process pic.i (Image instance)
   def i_process(pic):
+    app = pic.app
+    rid = app.page.rid
+
     pic.width  = pic.i.width
     pic.height = pic.i.height
 
-    app.log(f"[{rid}][Pic.grab] Width: \n\t{pic.width}")
-    app.log(f"[{rid}][Pic.grab] Height: \n\t{pic.height}")
+    app.log(f"[{rid}][Pic.grab] Width: {pic.width}")
+    app.log(f"[{rid}][Pic.grab] Height: {pic.height}")
 
     return pic
 
