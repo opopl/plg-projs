@@ -155,7 +155,7 @@ class Pic(CoreClass):
     if not el.has_attr('src'):
       return pic
 
-    for a in util.qw('width alt'):
+    for a in util.qw('width height alt'):
       if el.has_attr(a):
         v = el[a]
         setattr(pic, a, v)
@@ -401,6 +401,7 @@ class Pic(CoreClass):
 
     app.log(f"[{rid}][Pic.grab] Width: {pic.width}")
     app.log(f"[{rid}][Pic.grab] Height: {pic.height}")
+    app.log(f"[{rid}][Pic.grab] Caption: {pic.caption}")
 
     return pic
 
