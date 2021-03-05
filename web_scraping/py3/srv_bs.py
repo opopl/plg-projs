@@ -286,7 +286,13 @@ class r_json_page:
     return j
 
 class r_add_page:
+  def GET(self):
+    d = web.input()
+    params = dict(d.items())
+
   def POST(self):
+    d = web.input()
+    params = dict(d.items())
 
 if __name__ == "__main__":
   r = { 
