@@ -448,6 +448,35 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
 
     return self
 
+  def init_db_images(self):
+    self.log('[init_db_images]')
+
+    sql = '''
+        CREATE TABLE IF NOT EXISTS imgs (
+                caption TEXT,
+                ext TEXT,
+                height integer, 
+                img TEXT,
+                inum INTEGER,
+                name TEXT,
+                proj TEXT,
+                rootid TEXT,
+                sec TEXT,
+                tags TEXT,
+                type TEXT, 
+                url TEXT UNIQUE,
+                url_parent text, 
+                width integer
+        )
+    '''
+
+    dbw.sql_do({ 
+      'sql'     : sql,
+      'db_file' : self.dbfile.images
+    })
+
+    return self
+
 ###db
 ###db_init
   def init_db_pages(self):
@@ -2563,6 +2592,7 @@ bs.py -c html_parse -i cache.html $*
       .init_files()       \
       .init_npm()         \
       .init_db_pages()    \
+      .init_db_imgs()     \
       .init_tmpl()        \
       .mk_dirs()          \
       .load_yaml()        \
