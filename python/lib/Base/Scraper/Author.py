@@ -43,6 +43,8 @@ class Author(CoreClass):
       auth_id = f'{last_name}_{first_name}'.lower()
       auth_id = cyrtranslit.to_latin(auth_id,'ru')
 
+      auth_id = re.sub(r'[\W]*', r'', auth_id)
+
       auth_db = app._db_get_auth({ 'auth_id' : auth_id })
       if not auth_db:
         auth_name = f'{last_name}, {first_name}'

@@ -471,10 +471,11 @@ function App(){
           data    : { id : id },
           url     : '/json/authors',
           success : function(data){
-             var a_list = data.get('authors',[]);
+             var a_list = util.get(data,'authors',[]);
+             console.log(data);
              if (a_list.length) {
                var a = a_list[0];
-               author = a.get('name','');
+               author = util.get(a,'name','');
              }
           },
           error   : function(data){},

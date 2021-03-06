@@ -222,7 +222,7 @@ class r_json_page:
     page = car._page_from_rid(rid)
     web.header('Content-Type', 'application/json; charset=utf-8')
     #j = json.dumps(page.__dict__, ensure_ascii=False)
-    j = json.dumps(page.dict(), ensure_ascii=False)
+    j = json.dumps(page.dict(), ensure_ascii=False, indent=4)
     return j
 
 class r_add_page:
