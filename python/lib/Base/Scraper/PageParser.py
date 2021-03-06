@@ -286,6 +286,8 @@ class RootPageParser(CoreClass):
     fmt  = sel.get('fmt',"%Y-%m-%d")
     sep  = sel.get('split',"T")
 
+    split_index  = sel.get('split_index',0)
+
     if not find:
       return 
 
@@ -305,7 +307,7 @@ class RootPageParser(CoreClass):
         self.date_bare = txt
 
     if self.date_bare:
-      s = self.date_bare.split(sep)[0]
+      s = self.date_bare.split(sep)[split_index]
       self.date_bare = s
       date = self._date_from_bare(sel)
 
