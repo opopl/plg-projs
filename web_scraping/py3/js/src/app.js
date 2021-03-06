@@ -133,7 +133,15 @@ function App(){
               'background-color' : 'gray',
               width : '5%'
            }
-        })
+        }),
+       this.$$btn({
+           id : 'btn_json',
+           value : 'JSON',
+           css : {
+              'background-color' : 'yellow',
+              width : '5%'
+           }
+        }),
       );
 
       els.push(
@@ -366,6 +374,10 @@ function App(){
 
      $('#btn_last').on('click',function() {
         window.location = '/html/page/last';
+     });
+
+     $('#btn_json').on('click',function() {
+        $('#ifr_page_src').attr({ src : '/json/page/' + $slf.rid });
      });
 
      return this;
