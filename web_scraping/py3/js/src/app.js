@@ -2,6 +2,10 @@
 var pretty = require('pretty');
 var util = require('./util.js');
 //
+//
+
+require('../../css/aria-dropdown.css');
+require('./aria-dropdown.js');
 
 //const fs = require('fs-extra');
 const yaml = require('js-yaml');
@@ -455,6 +459,11 @@ function App(){
     this
       .set_ui_select()
       .opt_page_show();
+
+    //$('#opt_page_img').find('*').addClass('block');
+
+    $('#opt_page_img').ariaDropdown();
+
 
     if('log dbrid img img_clean'.split(' ').includes(this.tipe)){
       $('#ta_page_src').hide();

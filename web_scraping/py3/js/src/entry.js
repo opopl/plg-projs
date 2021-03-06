@@ -7,6 +7,7 @@ require('../../css/style.css');
 require('webpack-jquery-ui');
 require('webpack-jquery-ui/css');
 
+
 import { App } from './app.js';
 //var app =  require('./app.js');
 
