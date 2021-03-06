@@ -167,6 +167,8 @@ class Page(CoreClass):
   url     = None
   url_srv = None
 
+  imgs    = []
+
   ii_full = None
   tags    = None
 
@@ -1607,7 +1609,7 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
         .page_get_date()                              \
         .page_get_author()                            \
         .page_get_ii_full()                           \
-        .db_save_url()                                \
+        .db_save_page()                                \
         .cmt(''' save image data => img.html''')      \
         .page_save_data_img()                         \
         .page_clean_core()                            \
@@ -1813,7 +1815,7 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
   def on_fail(self):
 
     self                           \
-        .db_save_url({ 'ok' : 0 }) \
+        .db_save_page({ 'ok' : 0 }) \
         .page_save_sh()            \
         .page_save_db_record()     \
         .page2yaml()               \
@@ -2180,7 +2182,7 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
   #   load_soup
 
 ###db_save
-  def db_save_url(self,ins = {}):
+  def db_save_page(self,ins = {}):
 
     db_file = self.dbfile.pages
     conn = sqlite3.connect(db_file)
@@ -2223,7 +2225,7 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
     }
     dbw.insert_dict(d)
 
-    self.log(f'[db_save_url] url saved with rid {self.page.rid}')
+    self.log(f'[db_save_page] url saved with rid {self.page.rid}')
 
     return self
 
