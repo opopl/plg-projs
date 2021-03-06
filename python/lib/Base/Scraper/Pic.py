@@ -160,6 +160,8 @@ class Pic(CoreClass):
     for a in util.qw('width height alt'):
       if el.has_attr(a):
         v = el[a]
+        if a in util.qw('width height'):
+          v = int(v)
         setattr(pic, a, v)
 
     src = el['src'].strip()

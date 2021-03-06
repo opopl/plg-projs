@@ -95,7 +95,7 @@ function App(){
 
       var els = [];
 
-      var tipes = 'log dbrid cache core core_clean clean img img_clean'.split(' ');
+      var tipes = 'log dbrid img img_clean cache core core_clean clean'.split(' ');
 
       els.push(
             this.$$select({

@@ -2552,7 +2552,7 @@ bs.py -c html_parse -i cache.html $*
 
       w_max = 500
       w = pic.width or w_max
-      n['width']   = min(w,w_max)
+      n['width']   = min(int(w),w_max)
 
       if pic.caption:
         n['alt'] = pic.caption
