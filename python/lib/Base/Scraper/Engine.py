@@ -2046,6 +2046,29 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
 
     return last
 
+  def _db_get_authors(self, ref={}):
+    where = ref.get('where',{})
+
+    db_file = self.dbfile.pages
+
+    q = 'SELECT * FROM authors'
+    p = []
+    r = dbw.sql_fetchall(q,p,{
+      'db_file' : db_file,
+      'where'   : where,
+    })
+
+    authors = r.get('rows',[])
+    cols    = r.get('cols',[])
+
+    r = { 
+      'authors' : authors,
+      'cols'    : cols,
+      'count'   : len(pages),
+    }
+
+    return r
+
   def _db_get_pages(self, ref={}):
     where = ref.get('where',{})
 
