@@ -24,6 +24,8 @@ from rdflib.serializer import Serializer
 import html.parser
 import html
 
+import lxml
+
 import base64
 from pathlib import Path
 
@@ -164,6 +166,9 @@ class Page(CoreClass):
   site    = None
   url     = None
   url_srv = None
+
+  ii_full = None
+  tags    = None
 
   def __init__(page,ref={}):
     super().__init__(ref)
@@ -1130,6 +1135,87 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
          child.decompose()
 
     return self
+
+  def get_html(self,ref={}):
+    rid  = util.get(ref,'rid','')
+    tipe = util.get(ref,'tipe','')
+
+    css    = util.get(ref,'css','')
+    xpath  = util.get(ref,'xpath','')
+
+    act    = util.get(ref,'act','display')
+
+    file_html = self._file_rid({ 
+      'rid'  : rid, 
+      'tipe' : tipe, 
+      'ext'  : 'html', 
+    })
+
+    src_code = ''
+    if os.path.isfile(file_html):
+      with open(file_html,'r') as f:
+        src_code = f.read()
+
+    src_html = src_code
+
+    if css or xpath:
+      bs = BeautifulSoup(src_code,'html5lib')
+      if css:
+        els = bs.select(css)
+        if not els:
+          return { 'src_code' : '', 'src_html' : ''}
+
+        if act == 'display':
+          txt = []
+          for el in els:
+            txt.append(str(el))
+     
+          src_code = '\n'.join(txt)
+          src_html = '<br>\n'.join(txt)
+  
+        elif act == 'remove':
+          for el in els:
+            el.decompose()
+  
+          src_code = str(bs)
+          src_html = src_code
+
+      elif xpath:
+        tree =  lxml.html.fromstring(str(bs.html))
+        found = tree.xpath(xpath)
+
+        if not found:
+          return { 'src_code' : '', 'src_html' : ''}
+
+        if act == 'display':
+          txt = []
+          for el in found:
+            s = lxml.html.tostring(el)
+            s = s.decode('utf-8')
+            txt.append(s)
+
+          src_code = '\n'.join(txt)
+          src_html = '<br>\n'.join(txt)
+
+          #ss = BeautifulSoup(src_code, convertEntities=BeautifulSoup.HTML_ENTITIES)
+          #ss = BeautifulSoup(src_code)
+          #src_code = str(ss)
+          src_code = self.html_parser.unescape(src_code)
+
+        if act == 'remove':
+          for el in found:
+            el.getparent().remove(el)
+
+    #html = encodeURIComponent(html);
+
+    return { 
+        # iframe
+        'src_html' : src_html,
+
+        # textarea
+        'src_code' : src_code,
+    }
+
 
   def page_clean(self,ref={}):
     site = util.get(self,'site',self.page.site)

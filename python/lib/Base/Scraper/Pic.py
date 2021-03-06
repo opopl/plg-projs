@@ -304,11 +304,16 @@ class Pic(CoreClass):
       'url_parent' : app.page.url,
     }
 
-    for k in util.qw('url img inum ext caption'):
+    for k in util.qw('url img inum ext caption width height'):
       insert[k] = getattr(pic,k,None)
 
     for k in util.qw('proj rootid'):
       insert[k] = getattr(app,k,None)
+
+    insert.update({ 
+      'tags' : app.page.tags,
+      'sec'  : app.page.ii_full,
+    })
 
     d = {
       'db_file' : pic.dbfile,

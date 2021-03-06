@@ -19,11 +19,11 @@ import lxml
 
 from html import escape
 
-global ee
+global car
 
 class r_js_bundle:
   def GET(self):
-    file = ee._file('bundle_js.dist')
+    file = car._file('bundle_js.dist')
     with open(file,'r') as f:
       js = f.read()
 
@@ -39,82 +39,6 @@ class r_html_page_rid:
     raise web.seeother(f'/html/page/{rid}/clean')
 
 class r_html_page_rid_tipe:
-  def get_html(self,ref={}):
-    rid  = util.get(ref,'rid','')
-    tipe = util.get(ref,'tipe','')
-
-    css    = util.get(ref,'css','')
-    xpath  = util.get(ref,'xpath','')
-
-    act    = util.get(ref,'act','display')
-
-    file_html = ee._file_rid({ 
-      'rid'  : rid, 
-      'tipe' : tipe, 
-      'ext'  : 'html', 
-    })
-
-    src_code = ''
-    if os.path.isfile(file_html):
-      with open(file_html,'r') as f:
-        src_code = f.read()
-
-    src_html = src_code
-
-    if css or xpath:
-      bs = BeautifulSoup(src_code,'html5lib')
-      if css:
-        els = bs.select(css)
-        if els:
-          if act == 'display':
-            txt = []
-            for el in els:
-              txt.append(str(el))
-       
-            src_code = '\n'.join(txt)
-            src_html = '<br>\n'.join(txt)
-    
-          elif act == 'remove':
-            for el in els:
-              el.decompose()
-    
-            src_code = str(bs)
-            src_html = src_code
-
-      elif xpath:
-        tree =  lxml.html.fromstring(str(bs.html))
-        found = tree.xpath(xpath)
-
-        if act == 'display':
-          txt = []
-          for el in found:
-            s = lxml.html.tostring(el)
-            s = s.decode('utf-8')
-            txt.append(s)
-
-          src_code = '\n'.join(txt)
-          src_html = '<br>\n'.join(txt)
-
-          #ss = BeautifulSoup(src_code, convertEntities=BeautifulSoup.HTML_ENTITIES)
-          #ss = BeautifulSoup(src_code)
-          #src_code = str(ss)
-          src_code = ee.html_parser.unescape(src_code)
-
-        if act == 'remove':
-          for el in found:
-            el.getparent().remove(el)
-
-
-    #html = encodeURIComponent(html);
-
-    return { 
-        # iframe
-        'src_html' : src_html,
-
-        # textarea
-        'src_code' : src_code,
-    }
-
   def req(self,ref={}):
     rid  = util.get(ref,'rid','')
     tipe = util.get(ref,'tipe','')
@@ -126,7 +50,7 @@ class r_html_page_rid_tipe:
     for k in util.qw('xpath css act'):
       rr[k] = params.get(k,'')
 
-    r = self.get_html(rr)
+    r = car.get_html(rr)
 
     return r
 
@@ -157,7 +81,7 @@ class r_html_page_rid_tipe:
 
     h = None
 
-    page = ee._page_from_rid(rid)
+    page = car._page_from_rid(rid)
 
     ct = 'text/html; charset=utf-8'
     if not suffix:
@@ -168,7 +92,7 @@ class r_html_page_rid_tipe:
 
       src_code_e = escape(src_code)
 
-      t = ee.template_env.get_template("page.t.html")
+      t = car.template_env.get_template("page.t.html")
       h = t.render(
           page=page.dict(),
           src_uri=src_uri,
@@ -194,7 +118,7 @@ class r_html_page_rid_tipe:
 class r_img_inum:
   def GET(self,inum):
     pic = Pic({ 
-      'app'  : ee,
+      'app'  : car,
       'inum' : inum,
     })
     path = pic.path or ''
@@ -211,7 +135,7 @@ class r_img_inum:
 class r_html_pages:
   def h_pages(self,params={}):
 
-    cols = ee.cols['pages']
+    cols = car.cols['pages']
 
     where = {}
     for k in cols:
@@ -220,7 +144,7 @@ class r_html_pages:
       if v:
         where[k] = v
 
-    r = ee._db_get_pages({ 'where' : where })
+    r = car._db_get_pages({ 'where' : where })
 
     if not r:
       return ''
@@ -228,7 +152,7 @@ class r_html_pages:
     pages = r.get('pages',[])
     cols  = r.get('cols',[])
 
-    t = ee.template_env.get_template("pages.t.html")
+    t = car.template_env.get_template("pages.t.html")
     h = t.render(pages=pages,cols=cols)
 
     return h
@@ -271,7 +195,7 @@ class r_json_pages:
     d = web.input()
     params = dict(d.items())
 
-    r = ee._db_get_pages({ 'where' : params })
+    r = car._db_get_pages({ 'where' : params })
 
     j = json.dumps(r, ensure_ascii=False)
 
@@ -279,7 +203,7 @@ class r_json_pages:
 
 class r_json_page:
   def GET(self,rid):
-    page = ee._page_from_rid(rid)
+    page = car._page_from_rid(rid)
     web.header('Content-Type', 'application/json; charset=utf-8')
     #j = json.dumps(page.__dict__, ensure_ascii=False)
     j = json.dumps(page.dict(), ensure_ascii=False)
@@ -304,9 +228,10 @@ if __name__ == "__main__":
     }
   }
   
-  ee = BS(r)
-  ee.main()
+  car = BS(r)
+  car.main()
   
+###urls
   urls = (
     '/'                      , 'r_html_index'         ,
 
