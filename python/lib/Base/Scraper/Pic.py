@@ -47,6 +47,8 @@ class Pic(CoreClass):
   # image's content-type header
   ct = None
 
+  src_attrs = util.qw('src data-src')
+
   # image's extension
   ext = None
 
@@ -180,7 +182,7 @@ class Pic(CoreClass):
     el = pic.el
 
     ok = 0
-    for k in util.qw('src data-src'):
+    for k in pic.src_attrs:
       if el.has_attr(k):
         ok = 1
         break
@@ -201,9 +203,14 @@ class Pic(CoreClass):
         if v:
           setattr(pic, a, v)
 
-    src = el['src'].strip()
+    for k in pic.src_attrs:
+      if el.has_attr(k):
+        src = el[k]
+        src = src.strip()
+        if not src:
+          continue
 
-    if src == '#':
+    if (not src) or (src == '#'):
       return pic
 
     pic.url_rel = None
@@ -481,6 +488,7 @@ class Pic(CoreClass):
 
     app.log(f"[{rid}][Pic.grab] Getting image: \n\t{pic.url}")
 
+    # parse url, fetch url, save to tmp file
     pic.save2tmp()
 
     if not pic.bare_size:
