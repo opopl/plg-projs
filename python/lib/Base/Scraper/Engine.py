@@ -1128,6 +1128,10 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
     clean.extend( util.get(self,'cnf.sel.clean',[]) )
 
     keep = self._sel_keep()
+    for k in keep:
+      while k in clean:
+        clean.remove(k)
+    import pdb; pdb.set_trace()
 
     return clean
 
@@ -1823,6 +1827,7 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
     return self
 
   def page_rm_empty(self):
+
     all = self.soup.find_all(True)
     while 1:
       if not len(all):
@@ -2547,7 +2552,8 @@ bs.py -c html_parse -i cache.html $*
     img_dir = self._dir_ii_img()
 
     j = 0
-    els_img = self.soup.find_all("img")
+    els_img = self.soup.select("img")
+    #import pdb; pdb.set_trace()
     for el_img in els_img:
       j+=1
       caption = ''
