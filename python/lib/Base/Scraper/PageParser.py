@@ -307,7 +307,12 @@ class RootPageParser(CoreClass):
         self.date_bare = txt
 
     if self.date_bare:
-      s = self.date_bare.split(sep)[split_index]
+      spl = self.date_bare.split(sep)
+      s = ''
+      if len(spl) >= split_index + 1:
+        s = spl[split_index]
+      else:
+        s = spl[0]
       self.date_bare = s
       date = self._date_from_bare(sel)
 
