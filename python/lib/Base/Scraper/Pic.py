@@ -10,6 +10,8 @@ import sqlite3
 import shutil
 import requests
 
+import hashlib
+
 from pathlib import Path
 
 import Base.DBW as dbw

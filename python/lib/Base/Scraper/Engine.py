@@ -466,7 +466,8 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
                 type TEXT, 
                 url TEXT UNIQUE,
                 url_parent text, 
-                width integer
+                width integer,
+                md5 TEXT UNIQUE
         )
     '''
 
@@ -2592,7 +2593,7 @@ bs.py -c html_parse -i cache.html $*
       .init_files()       \
       .init_npm()         \
       .init_db_pages()    \
-      .init_db_imgs()     \
+      .init_db_images()   \
       .init_tmpl()        \
       .mk_dirs()          \
       .load_yaml()        \
