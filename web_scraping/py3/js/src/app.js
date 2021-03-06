@@ -410,6 +410,15 @@ function App(){
     return this;
   };
 
+  this.opt_page_show = function(opt='url'){ 
+
+		$('#control_items').children().hide();
+		var id = '#opt_page_' + opt;
+		$(id).show();
+
+    return this;
+  };
+
   this.set_ui = function(){
     var $slf = this;
     this.jquery_ui_selectmenu({ 
@@ -432,9 +441,9 @@ function App(){
         cb : {
           selectmenuchange : function(){
             var opt = $(this).val();
-            if (opt == 'url') {}
-            else if (opt == 'url') {
-            }
+
+            $slf.opt_page_show(opt);
+
           }
         }
     });
