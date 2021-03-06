@@ -126,6 +126,13 @@ function App(){
       );
 
       els.push(
+        this.$$btn({
+           id : 'btn_last',
+           value : 'Last',
+        })
+      );
+
+      els.push(
         $('<input type="text" id="inp_page_date" />')
       );
 
