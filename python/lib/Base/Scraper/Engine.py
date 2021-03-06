@@ -2519,7 +2519,13 @@ bs.py -c html_parse -i cache.html $*
 
       n['src']     = pic.path_uri_srv
       n['rel-src'] = pic.url_rel
-      n['width']   = pic.width or 500
+
+      w_max = 500
+      w = pic.width or w_max
+      n['width']   = min(w,w_max)
+
+      if pic.caption:
+        n['alt'] = pic.caption
 
       el_img.wrap(self.soup.new_tag('p'))
       el_img.replace_with(n)
