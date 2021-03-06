@@ -179,7 +179,13 @@ class Pic(CoreClass):
 
     el = pic.el
 
-    if not el.has_attr('src'):
+    ok = 0
+    for k in util.qw('src data-src'):
+      if el.has_attr(k):
+        ok = 1
+        break
+
+    if not ok:
       return pic
 
     for a in util.qw('width height alt'):
