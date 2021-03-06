@@ -2064,7 +2064,7 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
     r = { 
       'authors' : authors,
       'cols'    : cols,
-      'count'   : len(pages),
+      'count'   : len(authors),
     }
 
     return r
