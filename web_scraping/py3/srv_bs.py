@@ -189,7 +189,7 @@ class r_html_pages:
     return h
 
 class r_json_authors:
-  def GET(self):
+  def POST(self):
     web.header('Content-Type', 'application/json; charset=utf-8')
 
     d = web.input()

@@ -463,14 +463,32 @@ function App(){
 
     var author_ids = this.page.author_id.split(',');
     for (var i = 0; i < author_ids.length; i++) {
-      var author_id = author_ids[i];
+      var id = author_ids[i];
+
+      var author='';
+      var jx = $.ajax({
+          method  : 'POST',
+          data    : { id : id },
+          url     : '/json/authors',
+          success : function(data){
+             var a_list = data.get('authors',[]);
+             if (a_list.length) {
+               var a = a_list[0];
+               author = a.get('name','');
+             }
+          },
+          error   : function(data){},
+          async   : false
+      });
+      
       var $btn = this.$$btn({
-         id : 'btn_author_' + author_id,
-         value : author_id,
+         id : 'btn_author_' + id,
+         value : author,
          css : {
            width : 'auto'
          }
       });
+
       $('#opt_page_author').append($btn);
     };
 
