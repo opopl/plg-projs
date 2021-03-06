@@ -94,6 +94,31 @@ class Pic(CoreClass):
 
     pass
 
+  def el_replace(pic):
+    if not pic.el:
+      return pic
+
+    app = pic.app
+
+    pic.el['src'] = pic.path_uri_srv
+    
+    n = app.soup.new_tag('img')
+
+    n['src']     = pic.path_uri_srv
+    n['rel-src'] = pic.url_rel
+
+    w_max = 500
+    w = pic.width or w_max
+    n['width']   = min(w,w_max)
+
+    if pic.caption:
+      n['alt'] = pic.caption
+
+    pic.el.wrap(app.soup.new_tag('p'))
+    pic.el.replace_with(n)
+
+    return pic
+
   def vars_from_app(pic):
     app = pic.app
 
@@ -251,6 +276,12 @@ class Pic(CoreClass):
     Path(pic.tmp['bare']).unlink()
 
     app.log(f'[{rid}][Pic.grab] Saved image: {pic.img}')
+
+    return pic
+
+  def save2page(pic):
+    app = pic.app
+    page = app.page
 
     return pic
 

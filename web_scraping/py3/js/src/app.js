@@ -508,6 +508,26 @@ function App(){
     return this;
   };
 
+  this.ajax_page = function(){
+    console.log('[App] ajax_page');
+
+    var $slf = this;
+
+    var r = $.ajax({
+      url : '/json/page/' + this.rid,
+      method : 'GET',
+      data : {},
+      dataType : 'json',
+      async: false,
+    });
+
+    r.done(function(data){
+      $slf.page = data;
+    });
+
+    return this;
+  };
+
   this.parse_url = function(){
     console.log('[App] parse_url');
 
@@ -521,18 +541,6 @@ function App(){
       this.rid  = m[1]; 
       this.tipe = m[2]; 
     }
-
-    var r = $.ajax({
-      url : '/json/page/' + this.rid,
-      method : 'GET',
-      data : {},
-      dataType : 'json',
-      async: false,
-    });
-
-    r.done(function(data){
-      $slf.page = data;
-    });
 
     return this;
   };
@@ -585,6 +593,7 @@ function App(){
     this
         .init()
         .parse_url()
+        .ajax_page()
         .set_header()
         .set_pane()
         .body_append()

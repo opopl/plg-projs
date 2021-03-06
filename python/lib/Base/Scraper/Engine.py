@@ -1131,7 +1131,6 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
     for k in keep:
       while k in clean:
         clean.remove(k)
-    import pdb; pdb.set_trace()
 
     return clean
 
@@ -1613,7 +1612,7 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
         .page_get_date()                              \
         .page_get_author()                            \
         .page_get_ii_full()                           \
-        .db_save_page()                                \
+        .db_save_page()                               \
         .cmt(''' save image data => img.html''')      \
         .page_save_data_img()                         \
         .page_clean_core()                            \
@@ -1827,6 +1826,7 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
     return self
 
   def page_rm_empty(self):
+    skip_empty = util.qw('img br')
 
     all = self.soup.find_all(True)
     while 1:
@@ -1834,7 +1834,7 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
         break
 
       el = all.pop(0)
-      if el.name == 'img':
+      if el.name in skip_empty:
         continue
 
       if len(el.get_text(strip=True)) == 0:
@@ -2585,22 +2585,9 @@ bs.py -c html_parse -i cache.html $*
       if not pic.img_saved:
         continue
 
-      el_img['src'] = pic.path_uri_srv
-      
-      n = self.soup.new_tag('img')
-
-      n['src']     = pic.path_uri_srv
-      n['rel-src'] = pic.url_rel
-
-      w_max = 500
-      w = pic.width or w_max
-      n['width']   = min(w,w_max)
-
-      if pic.caption:
-        n['alt'] = pic.caption
-
-      el_img.wrap(self.soup.new_tag('p'))
-      el_img.replace_with(n)
+      pic             \
+        .el_replace() \
+        .save2page()  \
 
     return self
 
