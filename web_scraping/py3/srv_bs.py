@@ -34,6 +34,11 @@ class r_html_index:
   def GET(self):
     raise web.seeother(f'/html/pages')
 
+class r_html_page_last:
+  def GET(self):
+    rid = car._rid_last()
+    raise web.seeother(f'/html/page/{rid}/clean')
+
 class r_html_page_rid:
   def GET(self,rid):
     raise web.seeother(f'/html/page/{rid}/clean')
@@ -243,6 +248,7 @@ if __name__ == "__main__":
     '/html/page/(\d+)/(\w+)(?:/(\w*)|)' , 'r_html_page_rid_tipe' ,
 
     '/html/page/(\d+)'       , 'r_html_page_rid'      ,
+    '/html/page/last'        , 'r_html_page_last'      ,
 
     '/add/page'              , 'r_add_page'           ,
 

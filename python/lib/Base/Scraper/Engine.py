@@ -2034,6 +2034,18 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
 
     return dw 
 
+  def _rid_last(self, ref={}):
+    db_file = self.dbfile.pages
+
+    q = 'SELECT MAX(rid) FROM pages'
+    p = []
+    lst = dbw.sql_fetchone_list(q,p,{
+      'db_file' : db_file,
+    })
+    last = lst.pop(0)
+
+    return last
+
   def _db_get_pages(self, ref={}):
     where = ref.get('where',{})
 

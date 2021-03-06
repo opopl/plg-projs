@@ -129,6 +129,10 @@ function App(){
         this.$$btn({
            id : 'btn_last',
            value : 'Last',
+           css : {
+              'background-color' : 'gray',
+              width : '5%'
+           }
         })
       );
 
@@ -358,6 +362,10 @@ function App(){
      let $slf = this;
      $('#btn_reload').on('click',function() {
         $slf.reload();
+     });
+
+     $('#btn_last').on('click',function() {
+        window.location = '/html/page/last';
      });
 
      return this;
