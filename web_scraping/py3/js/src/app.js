@@ -138,7 +138,7 @@ function App(){
            id : 'btn_json',
            value : 'JSON',
            css : {
-              'background-color' : 'yellow',
+              'background-color' : 'blue',
               width : '5%'
            }
         }),
@@ -441,6 +441,29 @@ function App(){
     return this;
   };
 
+  this.opt_page_init = function(){ 
+
+    //$('#opt_page_img').find('*').addClass('block');
+    $('#opt_page_img').find('button,li').addClass('block');
+
+    $('#opt_page_img').ariaDropdown();
+
+    var tags = this.page.tags.split(',');
+    for (var i = 0; i < tags.length; i++) {
+      var tag = tags[i];
+      var $btn = this.$$btn({
+         id : 'btn_tag_' + tag,
+         value : tag,
+         css : {
+           width : 'auto'
+         }
+      });
+      $('#opt_page_tags').append($btn);
+    };
+
+    return this;
+  };
+
   this.opt_page_show = function(opt='url'){ 
 
     $('#control_items').children().hide();
@@ -485,12 +508,10 @@ function App(){
 
     this
       .set_ui_select()
+      .opt_page_init()
       .opt_page_show();
 
-    //$('#opt_page_img').find('*').addClass('block');
-    $('#opt_page_img').find('button,li').addClass('block');
 
-    $('#opt_page_img').ariaDropdown();
 
 
     if('log dbrid img img_clean'.split(' ').includes(this.tipe)){
