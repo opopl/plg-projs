@@ -557,20 +557,38 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
   def init_npm(self):
     f = self._file('package_json.prod')
     if not os.path.isfile(f):
-      os.chdir(self.sdir('html'))
-      pass
+      os.chdir(self._dir('html'))
 
     os.makedirs(self._dir('html','js dist'), exist_ok=True)
 
     self.wp_run = False
 
-    self                       \
-        .init_npm_copy_files() \
-        .init_npm_run()        \
+    self                        \
+        .init_npm_cp_vcs_prod() \
+        .init_npm_cp_prod_vcs() \
+        .init_npm_run()         \
 
     return self
 
-  def init_npm_copy_files(self):
+  # prod => vcs
+  def init_npm_cp_prod_vcs(self):
+    kk = util.qw('package_json')
+
+    for k in kk:
+      w_vcs   = self._file(f'{k}.vcs')
+      w_prod  = self._file(f'{k}.prod')
+
+      cp = 1
+      if os.path.isfile(w_prod):
+        cp = cp and not filecmp.cmp(w_prod,w_vcs)
+
+        if cp: 
+          shutil.copy(w_prod, w_vcs)
+
+    return self
+
+  # vcs => prod
+  def init_npm_cp_vcs_prod(self):
     kk = util.qw('webpack_config_js')
 
     for ext in self.asset_exts:
@@ -633,7 +651,7 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
 
     self.files.update({ 
         'package_json.prod'      : self._dir('html','package.json'),
-        'package_json.vcs'      : self._dir('bin','js package.json'),
+        'package_json.vcs'       : self._dir('bin','js package.json'),
         'webpack_config_js.vcs'  : self._dir('bin','js webpack.config.js'),
         'webpack_config_js.prod' : self._dir('html','webpack.config.js'),
     })
