@@ -461,6 +461,7 @@ function App(){
       .opt_page_show();
 
     //$('#opt_page_img').find('*').addClass('block');
+    $('#opt_page_img').find('button,li').addClass('block');
 
     $('#opt_page_img').ariaDropdown();
 
