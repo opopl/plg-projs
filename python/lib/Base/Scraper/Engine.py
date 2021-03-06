@@ -93,10 +93,7 @@ class mixLogger:
     if opts.get('on_fail',1):
       self.on_fail()
 
-    try:
-      raise Exception(msg)    
-    except:
-      import pdb; pdb.set_trace()
+    raise Exception(msg)    
 
     return self
 
