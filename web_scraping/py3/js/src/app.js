@@ -461,6 +461,19 @@ function App(){
       $('#opt_page_tags').append($btn);
     };
 
+    var author_ids = this.page.author_id.split(',');
+    for (var i = 0; i < author_ids.length; i++) {
+      var author_id = author_ids[i];
+      var $btn = this.$$btn({
+         id : 'btn_author_' + author_id,
+         value : author_id,
+         css : {
+           width : 'auto'
+         }
+      });
+      $('#opt_page_author').append($btn);
+    };
+
     return this;
   };
 
