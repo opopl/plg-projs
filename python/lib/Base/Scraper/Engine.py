@@ -167,7 +167,7 @@ class Page(CoreClass):
   url     = None
   url_srv = None
 
-  imgs    = []
+  pics    = []
 
   ii_full = None
   tags    = None
