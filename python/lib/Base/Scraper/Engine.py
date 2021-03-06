@@ -231,6 +231,9 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
   # current HTML content
   content = None
 
+  # need to run npm? see init_npm(), init_npm_run()
+  wp_run = None
+
   # directories
   dirs = {}
 
@@ -552,15 +555,22 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
 
 ###npm
   def init_npm(self):
-    f = self._file('package_json')
+    f = self._file('package_json.prod')
     if not os.path.isfile(f):
       os.chdir(self.sdir('html'))
       pass
 
     os.makedirs(self._dir('html','js dist'), exist_ok=True)
 
-    wp_run = 0
+    self.wp_run = False
 
+    self                       \
+        .init_npm_copy_files() \
+        .init_npm_run()        \
+
+    return self
+
+  def init_npm_copy_files(self):
     kk = util.qw('webpack_config_js')
 
     for ext in self.asset_exts:
@@ -578,29 +588,34 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
         cp = cp and not filecmp.cmp(w_prod,w_vcs)
 
       if cp: 
-        wp_run = 1
+        self.wp_run = True
 
         pp = Path(w_prod).parent.as_posix()
         os.makedirs(pp,exist_ok=True)
         shutil.copy(w_vcs, w_prod)
 
-    if wp_run:
-        old = os.getcwd()
-        cmd = 'build'
-        try:
-            self.log(f'[BS][npm_init] running npm command: {cmd}')
+    return self
 
-            os.chdir(self._dir('html'))
+  def init_npm_run(self):
+    if not self.wp_run:
+      return self
 
-            stderr, stdout = npm_run('run',cmd)
+    old = os.getcwd()
+    cmd = 'build'
+    try:
+        self.log(f'[BS][npm_init] running npm command: {cmd}')
 
-            if len(stderr):
-              print(stderr)
-              raise
-        except:
-            self.log(f'[BS][npm_init] failure while npm_run("{cmd}")')
-        finally:
-            os.chdir(old)
+        os.chdir(self._dir('html'))
+
+        stderr, stdout = npm_run('run',cmd)
+
+        if len(stderr):
+          print(stderr)
+          raise
+    except:
+        self.log(f'[BS][npm_init] failure while npm_run("{cmd}")')
+    finally:
+        os.chdir(old)
 
     return self
 
@@ -617,7 +632,8 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
         Path(f_log).unlink()
 
     self.files.update({ 
-        'package_json'           : self._dir('html','package.json'),
+        'package_json.prod'      : self._dir('html','package.json'),
+        'package_json.vcs'      : self._dir('bin','js package.json'),
         'webpack_config_js.vcs'  : self._dir('bin','js webpack.config.js'),
         'webpack_config_js.prod' : self._dir('html','webpack.config.js'),
     })
@@ -2552,7 +2568,7 @@ bs.py -c html_parse -i cache.html $*
 
       w_max = 500
       w = pic.width or w_max
-      n['width']   = min(int(w),w_max)
+      n['width']   = min(w,w_max)
 
       if pic.caption:
         n['alt'] = pic.caption

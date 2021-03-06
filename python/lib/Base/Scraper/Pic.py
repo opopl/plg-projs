@@ -161,8 +161,14 @@ class Pic(CoreClass):
       if el.has_attr(a):
         v = el[a]
         if a in util.qw('width height'):
-          v = int(v)
-        setattr(pic, a, v)
+          m = re.match(r'^(\d+)$',v)
+          if m:
+            v = int(v)
+          else:
+            v = None
+
+        if v:
+          setattr(pic, a, v)
 
     src = el['src'].strip()
 
