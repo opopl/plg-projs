@@ -2227,6 +2227,7 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
   #   load_soup
 
 ###db_save
+# page => pages table 
   def db_save_page(self,ins = {}):
 
     db_file = self.dbfile.pages
@@ -2267,6 +2268,16 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
       'db_file' : self.dbfile.pages,
       'table'   : 'pages',
       'insert'  : insert,
+    }
+    dbw.insert_dict(d)
+
+    tags = self.page.tags
+    if tags:
+      tags_a = tags.split(',')
+    d = {
+      'db_file' : self.dbfile.pages,
+      'table'   : 'page_tags',
+      'insert'  : ins_tags,
     }
     dbw.insert_dict(d)
 

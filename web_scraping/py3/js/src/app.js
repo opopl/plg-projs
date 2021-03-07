@@ -337,7 +337,10 @@ function App(){
         var url = $(this).val();
 
         if (url != $slf.page.url) {
-          $('#ifr_page_src').attr({ src : url });
+          $('#ifr_page_src')
+                .removeAttr('sandbox')
+                .attr({ src : url })
+
         }
         //window.location = "/html/page/" + $slf.rid + "/" + $slf.tipe;
      };

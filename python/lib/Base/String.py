@@ -5,7 +5,10 @@ import sys
 
 import Base.Const as const
 
-def split_n_trim(txt=''):
+def split_trim_uniq(txt='',**kwargs):
+  pass
+
+def split_n_trim(txt='',sep='\n'):
   txt_n = txt.split('\n')
   txt_n = list(map(lambda x: x.strip(),txt_n))
   txt_n = list(filter(lambda x: len(x) > 0,txt_n))
