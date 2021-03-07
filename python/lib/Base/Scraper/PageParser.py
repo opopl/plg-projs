@@ -254,8 +254,6 @@ class RootPageParser(CoreClass):
     date = None
     dt = None
 
-    print(self.date_bare)
-
     for tri in tries:
       if tri == 'by_fmt':
         try:
@@ -285,9 +283,9 @@ class RootPageParser(CoreClass):
     find = sel.get('find','')
     get  = sel.get('get','')
     fmt  = sel.get('fmt',"%Y-%m-%d")
-    sep  = sel.get('split','')
 
-    split_index  = sel.get('split_index',0)
+    sep         = sel.get('split','')
+    split_index = sel.get('split_index',0)
 
     if not find:
       return 
