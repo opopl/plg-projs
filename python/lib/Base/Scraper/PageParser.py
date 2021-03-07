@@ -254,6 +254,8 @@ class RootPageParser(CoreClass):
     date = None
     dt = None
 
+    print(self.date_bare)
+
     for tri in tries:
       if tri == 'by_fmt':
         try:
@@ -322,7 +324,8 @@ class RootPageParser(CoreClass):
   
           if txt:
             self.date_bare = txt
-            break
+            date = self._date_from_bare(sel)
+            return date
   
     if self.date_bare:
       spl = self.date_bare.split(sep)
