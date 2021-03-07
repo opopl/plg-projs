@@ -60,6 +60,7 @@ def sql_fetchlist(q, p=[], ref={}):
   rows = r.get('rows',[])
   cols = r.get('cols',[])
 
+
   lst = []
   for rh in rows:
     for col in cols:
@@ -134,7 +135,7 @@ def cond_where(ref={}):
 
   cond_a = []
   for k in where_keys:
-    v = where.get('k','')
+    v = where.get(k,'')
 
     cond_k = ''
     if type(v) in [ int, str ]:
