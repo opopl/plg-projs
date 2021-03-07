@@ -142,6 +142,15 @@ function App(){
               width : '5%'
            }
         }),
+       this.$$btn({
+           id : 'btn_add',
+           value : 'Add',
+           css : {
+              'background-color' : 'orange',
+              'color'            : 'black',
+              width              : '5%'
+           }
+        }),
       );
 
       els.push(
@@ -374,6 +383,10 @@ function App(){
 
      $('#btn_last').on('click',function() {
         window.location = '/html/page/last';
+     });
+
+     $('#btn_add').on('click',function() {
+        window.location = '/add/page';
      });
 
      $('#btn_json').on('click',function() {

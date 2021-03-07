@@ -2069,6 +2069,11 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
 
     return r
 
+  def _render(self, tmpl=''):
+    t = self.template_env.get_template(tmpl)
+    h = t.render()
+    return h
+
   def _db_get_pages(self, ref={}):
     where = ref.get('where',{})
 

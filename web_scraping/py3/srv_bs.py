@@ -217,6 +217,10 @@ class r_json_pages:
     j = json.dumps(r, ensure_ascii=False)
     return j
 
+class r_json_page_add:
+  def GET(self):
+    pass
+
 class r_json_page:
   def GET(self,rid):
     page = car._page_from_rid(rid)
@@ -225,10 +229,15 @@ class r_json_page:
     j = json.dumps(page.dict(), ensure_ascii=False, indent=4)
     return j
 
-class r_add_page:
+class r_html_page_add:
   def GET(self):
     d = web.input()
     params = dict(d.items())
+
+    t = car.template_env.get_template("add.t.html")
+    h = t.render()
+
+    return h
 
   def POST(self):
     d = web.input()
@@ -252,6 +261,7 @@ if __name__ == "__main__":
     '/'                      , 'r_html_index'         ,
 
     '/json/page/(\d+)'       , 'r_json_page'          ,
+    '/json/page/add'         , 'r_json_page_add'      ,
     '/json/pages'            , 'r_json_pages'         ,
 
     '/json/authors'          , 'r_json_authors'         ,
@@ -262,6 +272,7 @@ if __name__ == "__main__":
 
     '/html/page/(\d+)'       , 'r_html_page_rid'      ,
     '/html/page/last'        , 'r_html_page_last'      ,
+    '/html/page/add'         , 'r_html_page_add'      ,
 
     '/add/page'              , 'r_add_page'           ,
 
