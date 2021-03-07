@@ -2274,12 +2274,18 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
     tags = self.page.tags
     if tags:
       tags_a = tags.split(',')
-    d = {
-      'db_file' : self.dbfile.pages,
-      'table'   : 'page_tags',
-      'insert'  : ins_tags,
-    }
-    dbw.insert_dict(d)
+      for tag in tags_a:
+        ins_tags = {
+          'rid' : self.page.rid,
+          'url' : self.page.url,
+          'tag' : tag,
+        }
+        d = {
+          'db_file' : self.dbfile.pages,
+          'table'   : 'page_tags',
+          'insert'  : ins_tags,
+        }
+        dbw.insert_dict(d)
 
     self.log(f'[db_save_page] url saved with rid {self.page.rid}')
 
