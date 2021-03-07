@@ -234,8 +234,7 @@ class r_html_page_add:
     d = web.input()
     params = dict(d.items())
 
-    t = car.template_env.get_template("add.t.html")
-    h = t.render()
+    h = car._render("add.t.html")
 
     return h
 
