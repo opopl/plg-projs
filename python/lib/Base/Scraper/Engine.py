@@ -200,6 +200,7 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
         This script will parse input URL
   EXAMPLES
         bs.py -y mix.yaml -p list_sites
+        bs.py -c db_fill_tags
 '''
 
   html_parser = html.parser.HTMLParser()
@@ -492,6 +493,7 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
 
             DROP TABLE IF EXISTS log;
             DROP TABLE IF EXISTS tags;
+            -- DROP TABLE IF EXISTS page_tags;
 
             CREATE TABLE IF NOT EXISTS data_meta (
                 rid INTEGER UNIQUE,
@@ -523,7 +525,10 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
             CREATE TABLE IF NOT EXISTS page_tags (
                 url TEXT,
                 rid TEXT,
-                tag TEXT
+                tag TEXT,
+                FOREIGN KEY (url) REFERENCES pages(url)
+                    ON UPDATE CASCADE
+                    ON DELETE CASCADE
             );
 
             CREATE TABLE IF NOT EXISTS authors (
@@ -2074,6 +2079,21 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
     h = t.render()
     return h
 
+  def _db_tag_urls(self, ref={}):
+    tags = ref.get('tags','')
+    tags_a = tags.split(',')
+
+    db_file = self.dbfile.pages
+
+    q = 'SELECT url FROM page_tags'
+
+    urls = dbw.sql_fetchlist(q,[],{
+      'db_file' : db_file,
+      'where'   : { 'tag' : tags_a },
+    })
+
+    return urls
+
   def _db_get_pages(self, ref={}):
     where = ref.get('where',{})
 
@@ -2081,6 +2101,11 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
 
     q = 'SELECT * FROM pages'
     p = []
+
+    if 'tags' in where.keys():
+      tags = where.get('tags','')
+      urls = self._db_tag_urls({ 'tags' : tags })
+
     r = dbw.sql_fetchall(q,p,{
       'db_file' : db_file,
       'where'   : where,
@@ -2243,13 +2268,15 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
     url  = ref.get('url',self.page.url)
     rid  = ref.get('rid',self.page.rid)
 
+    db_file = self.dbfile.pages
+
     if not tags:
       return self
 
     tags_db = dbw.sql_fetchlist(
        'SELECT tag FROM page_tags where url = ?',
        [url],
-       { 'db_file' : self.dbfile.pages }
+       { 'db_file' : db_file }
     )
 
     tags_a = tags.split(',')
@@ -2264,7 +2291,7 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
         'tag' : tag,
       }
       d = {
-        'db_file' : self.dbfile.pages,
+        'db_file' : db_file,
         'table'   : 'page_tags',
         'insert'  : ins_tags,
       }

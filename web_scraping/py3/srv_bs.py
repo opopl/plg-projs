@@ -263,7 +263,7 @@ if __name__ == "__main__":
     '/json/page/add'         , 'r_json_page_add'      ,
     '/json/pages'            , 'r_json_pages'         ,
 
-    '/json/authors'          , 'r_json_authors'         ,
+    '/json/authors'          , 'r_json_authors'       ,
 
     '/html/pages(?:/|)'      , 'r_html_pages'         ,
 
