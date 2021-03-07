@@ -2163,6 +2163,15 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
   def c_db_fill_tags(self):
     db_file = self.dbfile.pages
 
+    r = dbw.sql_fetchall(
+        'SELECT rid,url,tags FROM pages',[],
+        { 'db_file' : db_file }
+    )
+    rows = r.get('rows',[])
+
+    for rh in rows:
+      self.db_save_tags(rh)
+
     return self
 
   def c_html_parse(self):
@@ -2261,11 +2270,12 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
       }
       dbw.insert_dict(d)
 
-
     return self
 
 ###db_save
-# page => pages table 
+# self.page => pages table 
+# self.page.tags => page_tags table
+#   see: db_save_tags()
   def db_save_page(self,ins = {}):
 
     db_file = self.dbfile.pages
