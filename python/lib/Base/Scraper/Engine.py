@@ -2105,7 +2105,10 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
     if 'tags' in where.keys():
       tags = where.get('tags','')
       urls = self._db_tag_urls({ 'tags' : tags })
-      import pdb; pdb.set_trace()
+      if not where.get('url'):
+        where['url'] = urls
+
+      del where['tags']
 
     r = dbw.sql_fetchall(q,p,{
       'db_file' : db_file,
