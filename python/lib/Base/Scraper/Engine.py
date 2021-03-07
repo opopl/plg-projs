@@ -524,7 +524,7 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
 
             CREATE TABLE IF NOT EXISTS page_tags (
                 url TEXT,
-                rid TEXT,
+                rid INTEGER,
                 tag TEXT,
                 FOREIGN KEY (url) REFERENCES pages(url)
                     ON UPDATE CASCADE
