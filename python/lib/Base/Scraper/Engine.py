@@ -2149,6 +2149,8 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
           continue
 
         pages.append(rh)
+    else:
+      pages = rows
     
     r = { 
       'pages' : pages,
@@ -2232,6 +2234,17 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
 
     for rh in rows:
       self.db_save_tags(rh)
+
+    tag_list = dbw.sql_fetchlist(
+      'SELECT DISTINCT tag FROM page_tags',[],
+      { 'db_file' : db_file }
+    )
+
+    for tag in tag_list:
+      rids = dbw.sql_fetchlist(
+        'SELECT rid FROM page_tags WHERE tag = ?',[tag],
+        { 'db_file' : db_file }
+      )
 
     return self
 

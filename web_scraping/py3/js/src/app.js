@@ -127,6 +127,24 @@ function App(){
 
       els.push(
         this.$$btn({
+           id : 'btn_prev',
+           value : 'Prev',
+           css : {
+              'background-color' : 'gray',
+              'color' : 'yellow',
+              width : '5%'
+           }
+        }),
+        this.$$btn({
+           id : 'btn_next',
+           value : 'Next',
+           css : {
+              'background-color' : 'gray',
+              'color' : 'yellow',
+              width : '5%'
+           }
+        }),
+        this.$$btn({
            id : 'btn_last',
            value : 'Last',
            css : {
@@ -404,6 +422,16 @@ function App(){
         window.location = '/html/page/last';
      });
 
+     $('#btn_prev').on('click',function() {
+        $slf.rid = Number($slf.rid) - 1;
+        window.location = '/html/page/' + $slf.rid;
+     });
+
+     $('#btn_next').on('click',function() {
+        $slf.rid = Number($slf.rid) + 1;
+        window.location = '/html/page/' + $slf.rid;
+     });
+
      $('#btn_add').on('click',function() {
         window.location = '/html/page/add';
      });
@@ -477,8 +505,21 @@ function App(){
 
     //$('#opt_page_img').find('*').addClass('block');
     $('#opt_page_img').find('button,li').addClass('block');
-
     $('#opt_page_img').ariaDropdown();
+
+    $('#opt_page_new').find('*').addClass('block').hide();
+
+    $('#opt_page_new').find('*').hide();
+
+    $('#lab_new_url').css({ 
+        width              : 'auto',
+        color              : 'black',
+        'background-color' : 'white',
+    });
+    $('#input_new_url').css({ 
+        width        : '100%',
+        'text-align' : 'left',
+    });
 
     var tags_s = util.get(this.page,'tags','');
     var tags = tags_s.split(',');
