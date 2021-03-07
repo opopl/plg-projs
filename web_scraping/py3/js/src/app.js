@@ -309,6 +309,7 @@ function App(){
            'act'  : 'remove'
         }))
         .register_on_enter('#inp_rid',this.func_enter_rid())
+        .register_on_enter('#opt_page_url',this.func_enter_url())
         ;
 
       return this;
@@ -329,9 +330,24 @@ function App(){
      return this;
   };
 
-  this.func_enter_rid = function(){
-
+  this.func_enter_url = function(){
      var $slf = this;
+
+     return function(e){
+        var url = $(this).val();
+
+        if (url != $slf.page.url) {
+          $('#ifr_page_src').attr({ src : url });
+        }
+        //window.location = "/html/page/" + $slf.rid + "/" + $slf.tipe;
+     };
+
+     return this;
+  };
+
+  this.func_enter_rid = function(){
+     var $slf = this;
+
      return function(e){
         $slf.rid = $(this).val();
 
