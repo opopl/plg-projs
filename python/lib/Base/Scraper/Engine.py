@@ -2275,12 +2275,16 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
     if tags:
       tags_db = dbw.sql_fetchlist(
          'SELECT tag FROM page_tags where url = ?',
-         [self.page.url]
+         [self.page.url],
+         { 'db_file' : self.dbfile.pages }
       )
 
       tags_a = tags.split(',')
 
       for tag in tags_a:
+        if tag in tags_db:
+          continue
+
         ins_tags = {
           'rid' : self.page.rid,
           'url' : self.page.url,
