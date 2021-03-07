@@ -291,39 +291,42 @@ class RootPageParser(CoreClass):
     if not find:
       return 
 
-    c = soup.select_one(find)
-    if not c:
+    els = soup.select(find)
+    if not els:
       return
 
-    if get:
-      if get == 'attr':
-        attr = sel.get('attr','')
-        if c.has_attr(attr):
-          self.date_bare = c[attr]
-
-      if get == 'text':
-        txt = c.get_text()
-        if util.get(sel,'text.strip_n',1):
-          txt = string.strip_n(txt)
-
-        lopt = util.get(sel,'text.lines',{})
-        if len(lopt):
-          found = 0
-          lines = txt.split("\n")
-          txt = None
-          re_match = util.get(lopt,'re_match','')
-          for line in lines:
-            m = re.match(rf'{re_match}',line)
-            if m:
-              txt = m.group(1)
-              found = 1
-              break
-
-        import pdb; pdb.set_trace()
-
-        if txt:
-          self.date_bare = txt
-
+    for c in els:
+      if get:
+        if get == 'attr':
+          attr = sel.get('attr','')
+          if c.has_attr(attr):
+            self.date_bare = c[attr]
+            break
+  
+        if get == 'text':
+          txt = c.get_text()
+          if util.get(sel,'text.strip_n',1):
+            txt = string.strip_n(txt)
+  
+          lopt = util.get(sel,'text.lines',{})
+          if len(lopt):
+            found = 0
+            lines = txt.split("\n")
+            txt = None
+            re_match = util.get(lopt,'re_match','')
+            for line in lines:
+              m = re.match(rf'{re_match}',line)
+              if m:
+                txt = m.group(1)
+                found = 1
+                break
+  
+          import pdb; pdb.set_trace()
+  
+          if txt:
+            self.date_bare = txt
+            break
+  
     if self.date_bare:
       spl = self.date_bare.split(sep)
       s = ''
@@ -331,7 +334,7 @@ class RootPageParser(CoreClass):
         s = spl[split_index]
       else:
         s = spl[0]
-
+  
       self.date_bare = s
       date = self._date_from_bare(sel)
 
