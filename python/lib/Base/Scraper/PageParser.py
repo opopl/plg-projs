@@ -303,8 +303,26 @@ class RootPageParser(CoreClass):
 
       if get == 'text':
         txt = c.get_text()
-        txt = self._txt_strip(txt)
-        self.date_bare = txt
+        if util.get(sel,'text.strip_n',1):
+          txt = string.strip_n(txt)
+
+        lopt = util.get(sel,'text.lines',{})
+        if len(lopt):
+          found = 0
+          lines = txt.split("\n")
+          txt = None
+          re_match = util.get(lopt,'re_match','')
+          for line in lines:
+            m = re.match(rf'{re_match}',line)
+            if m:
+              txt = m.group(1)
+              found = 1
+              break
+
+        import pdb; pdb.set_trace()
+
+        if txt:
+          self.date_bare = txt
 
     if self.date_bare:
       spl = self.date_bare.split(sep)
@@ -313,6 +331,7 @@ class RootPageParser(CoreClass):
         s = spl[split_index]
       else:
         s = spl[0]
+
       self.date_bare = s
       date = self._date_from_bare(sel)
 
