@@ -448,7 +448,8 @@ function App(){
 
     $('#opt_page_img').ariaDropdown();
 
-    var tags = this.page.tags.split(',');
+    var tags_s = util.get(this.page,'tags','');
+    var tags = tags_s.split(',');
     for (var i = 0; i < tags.length; i++) {
       var tag = tags[i];
       var $btn = this.$$btn({
@@ -461,7 +462,7 @@ function App(){
       $('#opt_page_tags').append($btn);
     };
 
-    var author_ids = this.page.author_id.split(',');
+    var author_ids = util.get(this.page,'author_id','').split(',');
     for (var i = 0; i < author_ids.length; i++) {
       var id = author_ids[i];
 
