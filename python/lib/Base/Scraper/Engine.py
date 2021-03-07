@@ -2087,17 +2087,24 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
 
     q = 'SELECT url FROM page_tags'
 
-    urls_a = []
+    urls_a = None
+
     while tags_a:
       tag = tags_a.pop(0)
-      urls = dbw.sql_fetchlist(q,[],{
+
+      urls_db = dbw.sql_fetchlist(q,[],{
         'db_file' : db_file,
         'where'   : { 
           'tag' : tag,
-          'url' : urls_a,
         }
       })
-      urls_a.extend(urls)
+
+      urls_f = []
+      for url in urls_db:
+        if urls_a and (url in urls_a):
+          urls_f.append(url)
+
+      urls_a = urls_f
 
     return urls
 
@@ -2109,6 +2116,7 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
     q = 'SELECT * FROM pages'
     p = []
 
+    urls = []
     if 'tags' in where.keys():
       tags = where.get('tags','')
       urls = self._db_tag_urls({ 'tags' : tags })
@@ -2124,12 +2132,13 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
     cols = r.get('cols',[])
 
     pages = []
-    for rh in rows:
-      url = rh.get('url','')
-      if not url in urls:
-        continue
+    if len(urls):
+      for rh in rows:
+        url = rh.get('url','')
+        if not url in urls:
+          continue
 
-      pages.append(rh)
+        pages.append(rh)
     
     r = { 
       'pages' : pages,
