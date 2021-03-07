@@ -321,8 +321,6 @@ class RootPageParser(CoreClass):
                 found = 1
                 break
   
-          import pdb; pdb.set_trace()
-  
           if txt:
             self.date_bare = txt
             break
