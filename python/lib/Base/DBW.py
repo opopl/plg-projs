@@ -129,13 +129,30 @@ def _cols(ref={}):
 def cond_where(ref={}):
   where = ref.get('where',{})
 
-  where_keys    = where.keys()
-  where_values  = list( map(lambda k: where.get(k,''), where_keys) )
+  where_keys    = list(where.keys())
+  where_values  = [] 
+
+  cond_a = []
+  for k in where_keys:
+    v = where.get('k','')
+
+    cond_k = ''
+    if type(v) in [ int, str ]:
+      where_values.append(v)
+      cond_k = f' {k} = ? '
+
+    elif type(v) in [ list ]:
+      where_values.extend(v)
+
+      cond_k = ' OR '.join(list(map(lambda x: f' {k} = ? ', v)))
+      cond_k = f'( {cond_k} )'
+
+    cond_a.append(cond_k)
 
   values = []
   values.extend(where_values)
 
-  cond  = ' AND '.join(list( map(lambda k: ' %s = ?' % k , where_keys ) ))
+  cond  = ' AND '.join(cond_a)
 
   r = { 'cond' : cond, 'values' : values }
 
