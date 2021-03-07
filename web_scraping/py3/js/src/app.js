@@ -386,7 +386,7 @@ function App(){
      });
 
      $('#btn_add').on('click',function() {
-        window.location = '/add/page';
+        window.location = '/html/page/add';
      });
 
      $('#btn_json').on('click',function() {
