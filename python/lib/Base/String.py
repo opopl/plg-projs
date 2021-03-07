@@ -5,8 +5,12 @@ import sys
 
 import Base.Const as const
 
-def split_trim_uniq(txt='',**kwargs):
-  pass
+def explode(txt='',**kwargs):
+  sep = kwargs.get('sep','\n')
+
+  txt_a = txt.split(sep)
+
+  return txt_a
 
 def split_n_trim(txt='',sep='\n'):
   txt_n = txt.split('\n')

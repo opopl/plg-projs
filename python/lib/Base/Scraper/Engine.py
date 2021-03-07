@@ -2159,6 +2159,11 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
 
     return self
 
+  def c_db_fill_tags(self):
+    db_file = self.dbfile.pages
+
+    return self
+
   def c_html_parse(self):
 
     self                    \
