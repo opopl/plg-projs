@@ -2273,7 +2273,13 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
 
     tags = self.page.tags
     if tags:
+      tags_db = dbw.sql_fetchlist(
+         'SELECT tag FROM page_tags where url = ?',
+         [self.page.url]
+      )
+
       tags_a = tags.split(',')
+
       for tag in tags_a:
         ins_tags = {
           'rid' : self.page.rid,

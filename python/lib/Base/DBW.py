@@ -54,6 +54,20 @@ def rw2dict(rw):
     d[k] = rw[k]
   return d
 
+def sql_fetchlist(q, p=[], ref={}):
+  r = sql_fetchall(q,p,ref)
+
+  rows = r.get('rows',[])
+  cols = r.get('cols',[])
+
+  lst = []
+  for rh in rows:
+    for col in cols:
+      v = rh.get(col)
+      lst.append(v)
+
+  return lst
+
 def sql_fetchone_list(q, p=[], ref={}):
   r = sql_fetchone(q,p,ref)
   if not r:
