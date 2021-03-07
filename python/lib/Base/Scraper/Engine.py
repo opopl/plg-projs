@@ -2080,7 +2080,7 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
     return h
 
   def _db_tag_urls(self, ref={}):
-    tags = ref.get('tags','')
+    tags   = ref.get('tags','')
     tags_a = tags.split(',')
 
     db_file = self.dbfile.pages
