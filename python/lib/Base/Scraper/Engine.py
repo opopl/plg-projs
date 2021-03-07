@@ -2159,6 +2159,7 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
 
     return self
 
+  # update 'page_tags' table from the 'pages' table
   def c_db_fill_tags(self):
     db_file = self.dbfile.pages
 
@@ -2228,8 +2229,40 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
 
     return self
 
-  # called by
-  #   load_soup
+  def db_save_tags(self,ref = {}):
+    tags = ref.get('tags',self.page.tags)
+    url  = ref.get('url',self.page.url)
+    rid  = ref.get('rid',self.page.rid)
+
+    if not tags:
+      return self
+
+    tags_db = dbw.sql_fetchlist(
+       'SELECT tag FROM page_tags where url = ?',
+       [url],
+       { 'db_file' : self.dbfile.pages }
+    )
+
+    tags_a = tags.split(',')
+
+    for tag in tags_a:
+      if tag in tags_db:
+        continue
+
+      ins_tags = {
+        'rid' : rid,
+        'url' : url,
+        'tag' : tag,
+      }
+      d = {
+        'db_file' : self.dbfile.pages,
+        'table'   : 'page_tags',
+        'insert'  : ins_tags,
+      }
+      dbw.insert_dict(d)
+
+
+    return self
 
 ###db_save
 # page => pages table 
@@ -2276,32 +2309,8 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
     }
     dbw.insert_dict(d)
 
-    tags = self.page.tags
-    if tags:
-      tags_db = dbw.sql_fetchlist(
-         'SELECT tag FROM page_tags where url = ?',
-         [self.page.url],
-         { 'db_file' : self.dbfile.pages }
-      )
-
-      tags_a = tags.split(',')
-
-      for tag in tags_a:
-        if tag in tags_db:
-          continue
-
-        ins_tags = {
-          'rid' : self.page.rid,
-          'url' : self.page.url,
-          'tag' : tag,
-        }
-        d = {
-          'db_file' : self.dbfile.pages,
-          'table'   : 'page_tags',
-          'insert'  : ins_tags,
-        }
-        dbw.insert_dict(d)
-
+    self.db_save_tags()
+    
     self.log(f'[db_save_page] url saved with rid {self.page.rid}')
 
     return self
