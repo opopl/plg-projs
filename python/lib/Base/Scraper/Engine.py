@@ -2101,12 +2101,22 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
 
       urls_f = []
       for url in urls_db:
-        if urls_a and (url in urls_a):
+        ok = 1
+        while 1:
+          if urls_a == None:
+            break
+
+          if not (url in urls_a):
+            ok = 0
+
+          break
+        
+        if ok:
           urls_f.append(url)
 
       urls_a = urls_f
 
-    return urls
+    return urls_a
 
   def _db_get_pages(self, ref={}):
     where = ref.get('where',{})
