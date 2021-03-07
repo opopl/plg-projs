@@ -143,12 +143,14 @@ def cond_where(ref={}):
       cond_k = f' {k} = ? '
 
     elif type(v) in [ list ]:
-      where_values.extend(v)
+      if len(v):
+        where_values.extend(v)
+  
+        cond_k = ' OR '.join(list(map(lambda x: f' {k} = ? ', v)))
+        cond_k = f'( {cond_k} )'
 
-      cond_k = ' OR '.join(list(map(lambda x: f' {k} = ? ', v)))
-      cond_k = f'( {cond_k} )'
-
-    cond_a.append(cond_k)
+    if cond_k:
+      cond_a.append(cond_k)
 
   values = []
   values.extend(where_values)
