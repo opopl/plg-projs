@@ -607,7 +607,15 @@ function App(){
        return this;
     }
 
+    this.ui_restore();
+
+    return this;
+  };
+
+  this.ui_restore = function(){ 
+
     $('#ifr_page_src, #ta_page_src').show();
+    $('.hide').hide();
 
     return this;
   };
