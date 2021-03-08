@@ -2308,11 +2308,12 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
 
     return self
 
-  def c_run(self):
+  def c_run(self,ref={}):
+    urldata = util.get(ref,'urldata',[])
 
     self                    \
       .c_init_bs()          \
-      .parse()              \
+      .parse(urldata)       \
       .render_page_list()   \
 
     return self
