@@ -49,9 +49,8 @@ function! projs#zlan#zo#add (...)
         "let cmpl = 'custom,base#complete#this'
       endif
 
-      let d[k] = input(msg_head . msg,'',cmpl)
+      let d[k] = input(msg_head . msg,'')
       let msg_head = ''
-
 
       if k == 'url'
         let url = get(d,k,'')
