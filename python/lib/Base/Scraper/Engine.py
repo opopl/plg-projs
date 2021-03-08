@@ -2310,10 +2310,12 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
 
   def c_run(self,ref={}):
     urldata = util.get(ref,'urldata',[])
+    if len(urldata):
+      self.urldata = urldata
 
     self                    \
       .c_init_bs()          \
-      .parse(urldata)       \
+      .parse()              \
       .render_page_list()   \
 
     return self
