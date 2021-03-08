@@ -229,17 +229,22 @@ class r_json_cmd:
   def req(self,cmd):
     sub = f'c_{cmd}'
 
+    web.header('Content-Type', 'application/json; charset=utf-8')
+
     d = web.input()
     params = dict(d.items())
     args = [ params ]
 
     ok = 1
-    try:
-      r = util.call(car,sub,args)
-    except:
-      ok = 0
+    r = util.call(car,sub,args)
+#    try:
+      #r = util.call(car,sub,args)
+    #except:
+      #ok = 0
 
-    return { 'ok' : ok, 'cmd' : cmd }
+    r = { 'ok' : ok, 'cmd' : cmd }
+    j = json.dumps(r, ensure_ascii=False, indent=4)
+    return j
 
 class r_json_page_add:
   def GET(self):

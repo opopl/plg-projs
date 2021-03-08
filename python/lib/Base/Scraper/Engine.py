@@ -2238,15 +2238,29 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
       self.db_save_tags(rh)
 
     tag_list = dbw.sql_fetchlist(
-      'SELECT DISTINCT tag FROM page_tags',[],
+      'SELECT DISTINCT tag FROM page_tags ORDER BY tag ASC',[],
       { 'db_file' : db_file }
     )
 
     for tag in tag_list:
       rids = dbw.sql_fetchlist(
-        'SELECT rid FROM page_tags WHERE tag = ?',[tag],
+        '''SELECT 
+             DISTINCT CAST(rid AS TEXT) 
+           FROM 
+             page_tags 
+           WHERE tag = ? ORDER BY rid ASC''',[ tag ],
         { 'db_file' : db_file }
       )
+      rids_j = ','.join(rids)
+      dbw.insert_dict({ 
+        'db_file' : db_file,
+        'table'   : 'tag_stats',
+        'insert'  : { 
+          'rids' : rids_j,
+          'tag'  : tag,
+          'rank' : len(rids),
+        }
+      })
 
     return self
 

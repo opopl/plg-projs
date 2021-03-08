@@ -15,8 +15,6 @@
 
     {% include 'pane_control.t.html' %}
 
-
-
     <div id="container" class='flex-container'>
       <iframe sandbox="{{ iframe.sandbox }}" class="flex-left" id="ifr_page_src" src="{{ src_uri }}"></iframe>
       <textarea id="ta_page_src" class='flex-right'> {{ src_code }} </textarea>
