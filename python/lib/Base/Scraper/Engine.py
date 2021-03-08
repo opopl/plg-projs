@@ -2329,6 +2329,10 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
     return self
 
   def db_save_tags(self,ref = {}):
+    rid = self.page.rid
+
+    self.log(f'[{rid}][db_save_tags] saved tags')
+
     tags = ref.get('tags',self.page.tags)
     url  = ref.get('url',self.page.url)
     rid  = ref.get('rid',self.page.rid)
