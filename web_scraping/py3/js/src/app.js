@@ -315,8 +315,12 @@ function App(){
            method  : 'POST',
            data    : d,
            url     : '/json/page/add',
-           success : function(data){},
-           error   : function(data){},
+           success : function(data){
+             console.log(data);
+           },
+           error   : function(data){
+             console.log(data);
+           },
         });
         
         event.preventDefault();

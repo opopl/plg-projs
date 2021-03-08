@@ -2828,7 +2828,9 @@ bs.py -c html_parse -i cache.html $*
 
   def parse(self,urldata=[]):
 
-    urldata = getattr(self,'urldata',urldata) 
+    if not len(urldata):
+      urldata = getattr(self,'urldata',[]) 
+
     while len(urldata):
       d = urldata.pop(0)
       self.parse_url(d)

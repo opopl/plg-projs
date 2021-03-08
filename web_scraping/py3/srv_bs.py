@@ -254,6 +254,19 @@ class r_json_page_add:
     params = dict(d.items())
 
     ok = 1
+
+    url = params.get('url','')
+    if not url:
+      ok = 0
+      r = { 'ok' : ok, 'err' : 'Empty URL' }
+      j = json.dumps(r, ensure_ascii=False, indent=4)
+      web.ctx.status = '300 Empty URL'
+      return j
+
+    urldata = [ params ] 
+
+    car.parse(urldata)
+
     r = { 'ok' : ok, 'url' : url }
     j = json.dumps(r, ensure_ascii=False, indent=4)
     return j
