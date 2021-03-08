@@ -1,6 +1,7 @@
 
 // css
 require('../../css/style.css');
+require('../../css/form.css');
 
 // js
 //window.$ = require('jquery');

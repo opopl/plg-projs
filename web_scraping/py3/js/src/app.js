@@ -601,6 +601,14 @@ function App(){
     var id = '#opt_page_' + opt;
     $(id).show();
 
+    if (id == '#opt_page_new') {
+       $('#ifr_page_src, #ta_page_src').hide();
+       $('#form_new').show();
+       return this;
+    }
+
+    $('#ifr_page_src, #ta_page_src').show();
+
     return this;
   };
 
@@ -635,15 +643,19 @@ function App(){
     return this;
   };
 
+  this.set_ui_visible = function(){
+    $('.hide').hide();
+
+    return this;
+  };
+
   this.set_ui = function(){
 
     this
       .set_ui_select()
+      .set_ui_visible()
       .opt_page_init()
       .opt_page_show();
-
-
-
 
     if('log dbrid img img_clean'.split(' ').includes(this.tipe)){
       $('#ta_page_src').hide();
