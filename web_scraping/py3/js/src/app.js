@@ -353,13 +353,38 @@ function App(){
 
      return function(e){
         var url = $(this).val();
+        var id = $(this).attr('id');
 
         if (url != $slf.page.url) {
-          $('#ifr_page_src')
-                .removeAttr('sandbox')
-                .attr({ src : url })
+          $slf.urlget = { url : url };
+          if (id == 'opt_page_url') {
+            $(this).hide();
 
+            var els = [
+              { 
+                 el : $('<label for="give_tags" >Tags:</label>'), 
+                 css : { width : 'auto' } 
+              },
+              { 
+                 el : $('<input id="opt_page_give_tags" />'), 
+                 css : { width : '20%' } 
+              },
+            ];
+
+            for (var i = 0; i < els.length; i++) {
+              var itm = els[i];
+
+              var $el = util.get(itm,'el');
+              var css = util.get(itm,'css',{});
+
+              $el.addClass('block').css(css);
+
+              $(this).parent().append($el);
+            };
+          }
         }
+
+        return 1;
         //window.location = "/html/page/" + $slf.rid + "/" + $slf.tipe;
      };
 
