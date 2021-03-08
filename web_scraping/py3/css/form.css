@@ -32,7 +32,7 @@
   display: flex;
   flex-wrap: wrap;
   /*center,start,end,stretch*/
-  align-items: stretch;
+  align-items: center;
   justify-content: start; 
 }
 

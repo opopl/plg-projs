@@ -1217,7 +1217,15 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
 
     found = 0
     for css in only:
-      els = copy(self.soup.select(css))
+      if type(css) in [ str ]:
+        els = copy(self.soup.select(css))
+      elif type(css) in [ list ]:
+        s = css[0]
+        index = css[1]
+        css = s
+        els = copy(self.soup.select(css))
+        els = [ els[index] ]
+
       if els and len(els): 
         found = 1
         for el in els:
