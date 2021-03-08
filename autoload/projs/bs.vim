@@ -74,6 +74,14 @@ function! projs#bs#site (...)
   return site
 endfunction
 
+function! projs#bs#tag_list (...)
+  let tag_list = pymy#sqlite#query_as_list({
+    \ })
+
+  return tag_list
+
+endfunction
+
 function! projs#bs#data (...)
   let ref = get(a:000,0,{})
 

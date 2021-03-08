@@ -44,8 +44,14 @@ function! projs#zlan#zo#add (...)
     let msg_head = ''
 
     while keep
-      let d[k] = input(msg_head . msg,'')
+      let cmpl = ''
+      if k == 'tags'
+        "let cmpl = 'custom,base#complete#this'
+      endif
+
+      let d[k] = input(msg_head . msg,'',cmpl)
       let msg_head = ''
+
 
       if k == 'url'
         let url = get(d,k,'')
