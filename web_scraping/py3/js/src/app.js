@@ -305,6 +305,15 @@ function App(){
       return $(inp);
   };
 
+  this.on_form_submit = function(){
+      $( "#div_form_new form" ).submit(function( event ) {
+        alert( "Handler for .submit() called." );
+        event.preventDefault();
+      });
+
+      return this;
+  };
+
   this.on_enter = function(){
       //this
         //.on_enter_css_show()
@@ -603,7 +612,7 @@ function App(){
 
     if (id == '#opt_page_new') {
        $('#ifr_page_src, #ta_page_src').hide();
-       $('#form_new').show();
+       $('#div_form_new').show();
        return this;
     }
 
@@ -702,6 +711,7 @@ function App(){
     this
         .on_click()
         .on_enter()
+        .on_form_submit()
     ;
 
     return this;
@@ -782,6 +792,7 @@ function App(){
         });
     };
 
+    $('#div_form_new form').find('*').addClass('block');
 
     return this;
   };
