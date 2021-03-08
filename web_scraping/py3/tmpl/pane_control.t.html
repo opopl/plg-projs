@@ -22,8 +22,8 @@
         <input type="text" class="block" id="opt_page_new" value="{{ page.url }}"  />
 
         <input type="text" class="block" id="opt_page_url" value="{{ page.url }}"  />
-        <input type="text" class="block" id="opt_page_title" value="{{ page.title }}"  />
-        <input type="text" class="block" id="opt_page_title_h" value="{{ page.title_h }}"  />
+        <input type="text" class="block" id="opt_page_title" value="{{ page.title|e }}"  />
+        <input type="text" class="block" id="opt_page_title_h" value="{{ page.title_h|e }}"  />
 
         <div id="opt_page_tags" class='flex-row'> </div>
         <div id="opt_page_author" class='flex-row'> </div>

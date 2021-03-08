@@ -7,7 +7,7 @@
 /*}*/
 
 .container-form {
-  width: 80%;
+  width: 100%;
   max-width: 1200px;
   margin: 0 auto;
 }
@@ -31,7 +31,9 @@
 .flex-inner {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
+  /*center,start,end,stretch*/
+  align-items: stretch;
+  justify-content: start; 
 }
 
 .flex-inner {
@@ -84,5 +86,5 @@
 }
 
 .flex-inner li {
-  width: 100px;
+  width: 300px;
 }

@@ -172,6 +172,9 @@ class Page(CoreClass):
   ii_full = None
   tags    = None
 
+  author_id       = None
+  author_id_first = None
+
   def __init__(page,ref={}):
     super().__init__(ref)
 
@@ -494,6 +497,7 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
             DROP TABLE IF EXISTS log;
             DROP TABLE IF EXISTS tags;
             -- DROP TABLE IF EXISTS page_tags;
+            -- DROP TABLE IF EXISTS page_authors;
 
             CREATE TABLE IF NOT EXISTS data_meta (
                 rid INTEGER UNIQUE,
@@ -527,6 +531,21 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
                 rid INTEGER,
                 tag TEXT,
                 FOREIGN KEY (url) REFERENCES pages(url)
+                    ON UPDATE CASCADE
+                    ON DELETE CASCADE,
+                FOREIGN KEY (rid) REFERENCES pages(rid)
+                    ON UPDATE CASCADE
+                    ON DELETE CASCADE
+            );
+
+            CREATE TABLE IF NOT EXISTS page_authors (
+                url TEXT,
+                rid INTEGER,
+                id TEXT,
+                FOREIGN KEY (url) REFERENCES pages(url)
+                    ON UPDATE CASCADE
+                    ON DELETE CASCADE,
+                FOREIGN KEY (rid) REFERENCES pages(rid)
                     ON UPDATE CASCADE
                     ON DELETE CASCADE
             );
@@ -2326,15 +2345,26 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
       'db_file'  : self.dbfile.pages,
       'table'    : 'pages',
       'where'    : { 'url' : self.page.url },
-      'update'   :  { 'ok' : 1 },
+      'update'   : { 'ok' : 1 },
     })
+
+    return self
+
+  def db_save_author(self,ref = {}):
+    rid = self.page.rid
+
+    db_file = self.dbfile.pages
+
+    ids = ref.get('author_id',self.page.author_id)
+    if not ids:
+      return self
 
     return self
 
   def db_save_tags(self,ref = {}):
     rid = self.page.rid
 
-    self.log(f'[{rid}][db_save_tags] saved tags')
+    self.log(f'[{rid}][db_save_tags] saving tags')
 
     tags = ref.get('tags',self.page.tags)
     url  = ref.get('url',self.page.url)
@@ -2378,8 +2408,6 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
   def db_save_page(self,ins = {}):
 
     db_file = self.dbfile.pages
-    conn = sqlite3.connect(db_file)
-    c = conn.cursor()
 
     rid = self._rid_url()
     if not rid:
@@ -2418,7 +2446,9 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
     }
     dbw.insert_dict(d)
 
-    self.db_save_tags()
+    self                  \
+        .db_save_tags()   \
+        .db_save_author() \
     
     self.log(f'[db_save_page] url saved with rid {self.page.rid}')
 

@@ -247,8 +247,24 @@ class r_json_cmd:
     return j
 
 class r_json_page_add:
+  def req(self):
+
+    web.header('Content-Type', 'application/json; charset=utf-8')
+    d = web.input()
+    params = dict(d.items())
+
+    ok = 1
+    r = { 'ok' : ok, 'url' : url }
+    j = json.dumps(r, ensure_ascii=False, indent=4)
+    return j
+
   def GET(self):
-    pass
+    j = self.req()
+    return j
+
+  def POST(self):
+    j = self.req()
+    return j
 
 class r_json_page:
   def GET(self,rid):

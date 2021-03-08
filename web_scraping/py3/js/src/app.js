@@ -306,8 +306,19 @@ function App(){
   };
 
   this.on_form_submit = function(){
-      $( "#div_form_new form" ).submit(function( event ) {
-        alert( "Handler for .submit() called." );
+      var $f = $( "#div_form_new form" );
+      
+      $f.submit(function( event ) {
+        //alert( $f.find('') );
+        var d = $f.serialize();
+        var jx = $.ajax({
+           method  : 'POST',
+           data    : d,
+           url     : '/json/page/add',
+           success : function(data){},
+           error   : function(data){},
+        });
+        
         event.preventDefault();
       });
 
@@ -792,7 +803,7 @@ function App(){
         });
     };
 
-    $('#div_form_new form').find('*').addClass('block');
+    $('#div_form_new input').addClass('block');
 
     return this;
   };
