@@ -217,6 +217,30 @@ class r_json_pages:
     j = json.dumps(r, ensure_ascii=False)
     return j
 
+class r_json_cmd:
+  def GET(self,cmd):
+    r = self.req(cmd)
+    return r
+
+  def POST(self,cmd):
+    r = self.req(cmd)
+    return r
+
+  def req(self,cmd):
+    sub = f'c_{cmd}'
+
+    d = web.input()
+    params = dict(d.items())
+    args = [ params ]
+
+    ok = 1
+    try:
+      r = util.call(car,sub,args)
+    except:
+      ok = 0
+
+    return { 'ok' : ok, 'cmd' : cmd }
+
 class r_json_page_add:
   def GET(self):
     pass
@@ -264,6 +288,8 @@ if __name__ == "__main__":
     '/json/pages'            , 'r_json_pages'         ,
 
     '/json/authors'          , 'r_json_authors'       ,
+
+    '/json/cmd/(\w+)'        , 'r_json_cmd'           ,
 
     '/html/pages(?:/|)'      , 'r_html_pages'         ,
 

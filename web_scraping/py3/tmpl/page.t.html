@@ -13,51 +13,9 @@
           <input type="submit" value="go!" />
     </form>
 
-    <div id="pane_control" class="flex-row">
-      <select id="select_control">
-        <option>new</option>
-        <option selected>url</option>
-        <option>title</option>
-        <option>title_h</option>
-        <option>tags</option>
-        <option>author</option>
-        <option>img</option>
-      </select>
+    {% include 'pane_control.t.html' %}
 
-      <div id="control_items" class="flex-row">
-        <div id="opt_page_new" class='flex-row'> 
-          <label id="lab_new_url" for="new_url">URL:</label>
-          <input type="text" name="new_url" id="input_new_url"  />
 
-          <label id="lab_new_tags" for="new_tags">Tags:</label>
-          <input type="text" name="new_tags" id="input_new_tags"  />
-        </div>
-
-        <input type="text" class="block" id="opt_page_new" value="{{ page.url }}"  />
-
-        <input type="text" class="block" id="opt_page_url" value="{{ page.url }}"  />
-        <input type="text" class="block" id="opt_page_title" value="{{ page.title }}"  />
-        <input type="text" class="block" id="opt_page_title_h" value="{{ page.title_h }}"  />
-
-        <div id="opt_page_tags" class='flex-row'> </div>
-        <div id="opt_page_author" class='flex-row'> </div>
-
-        <div class="dropdown" id="opt_page_img">
-          <button type="button" class="dropdown__btn">Dropdown</button>
-          <div class="dropdown__menu">
-            <ul>
-              <li>Link 1</li>
-              <li>Link 2</li>
-              <li>Link 3</li>
-              <li>Link 4</li>
-              <li>Link 5</li>
-            </ul>
-            <button type="button" class="dropdown__dismiss-btn">Close dropdown</button>
-          </div>
-        </div>
-      </div>
-
-    </div>
 
     <div id="container" class='flex-container'>
       <iframe sandbox="{{ iframe.sandbox }}" class="flex-left" id="ifr_page_src" src="{{ src_uri }}"></iframe>

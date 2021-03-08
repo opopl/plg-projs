@@ -2223,7 +2223,9 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
     return self
 
   # update 'page_tags' table from the 'pages' table
-  def c_db_fill_tags(self):
+  def c_db_fill_tags(self,ref={}):
+    self.log(f'[c_db_fill_tags] processing tags...')
+
     db_file = self.dbfile.pages
 
     r = dbw.sql_fetchall(
