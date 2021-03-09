@@ -370,7 +370,7 @@ class RootPageParser(CoreClass):
 
     return self
 
-  def gah_process_name_url(self,itm={}):
+  def gah_process_nu(self,itm={}):
     app  = self.app
     soup = util.get(ref,'soup',app.soup)
 
@@ -413,7 +413,7 @@ class RootPageParser(CoreClass):
         auth_url  = util.url2base(app.page.baseurl, url)
         print(f'[PageParser] found author url: {auth_url}')
   
-      d_parse.update({ k : v })
+      self.d_parse.update({ k : v })
     return self
 
   def get_author_sels(self,ref={}):
@@ -428,14 +428,14 @@ class RootPageParser(CoreClass):
     sels = util.get(ref,'sels',[])
 
     for itm in sels:
-      d_parse = {}
+      self.d_parse = {}
 
-      self.gah_process_name_url(itm)
+      self.gah_process_nu(itm)
 
-      auth_bare = util.get(d_parse,'name')
+      auth_bare = util.get(self.d_parse,'name')
       if auth_bare:
         print(f'[PageParser] found author name: {auth_bare}')
-        self.auth_obj.parse(d_parse)
+        self.auth_obj.parse(self.d_parse)
         break
 
     return self
