@@ -48,23 +48,33 @@ function! projs#zlan#zo#add (...)
     let msg_head = ''
 
     while keep
+      let cnt = 0
+      let msg_head = ''
+
       let cmpl = ''
       call base#varset('this',[])
-
       if k == 'tags'
         call base#varset('this',tag_list)
       endif
 
       let d[k] = input(msg_head . msg,'','custom,base#complete#this')
-      let msg_head = ''
 
       if k == 'tags'
         let tags_s = get(d,k,'')
+
+        " finish
         if tags_s =~ '\.\s*$'
           let d[k] = join(tags_selected, ',')
           break
+
+        " skip and continue
+        elseif tags_s =~ ';\s*$'
+          let cnt = 1
+
+        " add and continue
         else
           call extend(tags_selected,split(tags_s,','))
+          let msg_head .= '\n' . join(tags_selected, ',')
           let cnt = 1
         endif
 
@@ -82,9 +92,10 @@ function! projs#zlan#zo#add (...)
           let cnt = 0
         endif
 
-        if cnt 
-          continue
-        endif
+      endif
+
+      if cnt 
+        continue
       endif
 
       break
