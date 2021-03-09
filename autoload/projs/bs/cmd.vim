@@ -1,4 +1,9 @@
 
+function! projs#bs#cmd#add ()
+	call projs#zlan#zo#add()
+	call projs#bs#cmd#run()
+endf
+
 function! projs#bs#cmd#run ()
   let bs_dir = base#qw#catpath('p_sr','scrape bs')
 
