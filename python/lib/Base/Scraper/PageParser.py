@@ -379,17 +379,25 @@ class RootPageParser(CoreClass):
     if not len(search):
       return self
 
-    rex  = util.get(search,'re','')
-    if rex:
-      rexc = re.compile(fr'{rex}')
-
-    css  = util.get(search,'css','')
+    css    = util.get(search,'css','')
+    r_text = util.get(search,'text')
     if css:
       els = soup.select(css)
       for el in els:
-        txt = el.get_text()
-        import pdb; pdb.set_trace()
-
+        if r_text:
+          txt = el.get_text()
+          if type(r_text) in [dict]:
+            r_lines = util.get(r_text,'lines')
+            if r_lines:
+              lines = string.split_n_trim(txt)
+              if type(r_lines) in [dict]:
+                rex  = util.get(r_lines,'re','')
+                if rex:
+                  rexc = re.compile(fr'{rex}')
+                for line in lines:
+                  m = re.match(rexc,line)
+                  if m:
+                    import pdb; pdb.set_trace()
 
     return self
 
