@@ -39,6 +39,8 @@ function! projs#zlan#zo#add (...)
   let tag_list = projs#bs#tag_list()
 
   let d = {}
+
+  let tags_selected = []
   for k in keys
 
     let keep = 1
@@ -59,8 +61,12 @@ function! projs#zlan#zo#add (...)
       if k == 'tags'
         let tags_s = get(d,k,'')
         if tags_s =~ '\.\s*$'
+          let d[k] = join(tags_selected, ',')
+          break
+        else
+          call extend(tags_selected,split(tags_s,','))
+          let cnt = 1
         endif
-        let s = matchstr(tags_s, '^\s*\zs\w\+\ze\s*$' )
 
       elseif k == 'url'
         let url = get(d,k,'')
