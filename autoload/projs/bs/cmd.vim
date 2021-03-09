@@ -4,7 +4,7 @@ function! projs#bs#cmd#add ()
 	call projs#bs#cmd#run()
 endf
 
-function! projs#bs#cmd#run ()
+function! projs#bs#cmd#x ()
   let bs_dir = base#qw#catpath('p_sr','scrape bs')
 
   call chdir(bs_dir)
