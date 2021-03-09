@@ -11,6 +11,26 @@ function! projs#bs#cmd#run ()
 	let zfile = base#qw#catpath(rootid,proj . '.zlan')
 
   let cmd = printf('bs.py -c run -y %s -z %s',yfile,zfile)
+	
+	let env = {
+		\ 'cmd'    : cmd,
+		\ 'proj'   : proj,
+		\ 'rootid' : rootid,
+		\	}
+	function env.get(temp_file) dict
+		let temp_file = a:temp_file
+		let code      = self.return_code
+	
+		if filereadable(a:temp_file)
+			let out = readfile(a:temp_file)
+			call base#buf#open_split({ 'lines' : out })
+		endif
+	endfunction
+	
+	call asc#run({ 
+		\	'cmd' : cmd, 
+		\	'Fn'  : asc#tab_restore(env) 
+		\	})
   
 endfunction
 
