@@ -562,7 +562,6 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
                 rids TEXT
             );
 
-
             CREATE TABLE IF NOT EXISTS log (
                 engine TEXT DEFAULT 'bs',
                 rid INTEGER,

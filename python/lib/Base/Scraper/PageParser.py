@@ -370,6 +370,51 @@ class RootPageParser(CoreClass):
 
     return self
 
+  def gah_process_name_url(self,itm={}):
+    app  = self.app
+    soup = util.get(ref,'soup',app.soup)
+
+    for k in util.qw('name url'):
+      sel = itm.get(k)
+  
+      if not sel:
+        continue
+  
+      find  = sel.get('find','')
+      get   = sel.get('get','')
+      sep   = sel.get('split','')
+  
+      if not find:
+        continue
+  
+      c = soup.select_one(find)
+      if not c:
+        continue
+  
+      v = None
+      if get == 'attr':
+        attr = sel.get('attr','')
+        if c.has_attr(attr):
+          v = c[attr]
+  
+      if get == 'text':
+        v = c.get_text()
+  
+      if v == None:
+        continue
+  
+      if k == 'name':
+        if sep:
+          v = v.split(sep)[0]
+        v = string.strip_nq(v)
+  
+      if k == 'url':
+        url = v 
+        auth_url  = util.url2base(app.page.baseurl, url)
+        print(f'[PageParser] found author url: {auth_url}')
+  
+      d_parse.update({ k : v })
+    return self
 
   def get_author_sels(self,ref={}):
     '''
@@ -378,53 +423,14 @@ class RootPageParser(CoreClass):
         soup - BeautifulSoup instance
     '''
     app = self.app
+    soup = util.get(ref,'soup',app.soup)
 
     sels = util.get(ref,'sels',[])
-    soup = util.get(ref,'soup',app.soup)
 
     for itm in sels:
       d_parse = {}
 
-      for k in util.qw('name url'):
-        sel = itm.get(k)
-
-        if not sel:
-          continue
-
-        find  = sel.get('find','')
-        get   = sel.get('get','')
-        sep   = sel.get('split','')
-
-        if not find:
-          continue
-
-        c = soup.select_one(find)
-        if not c:
-          continue
-
-        v = None
-        if get == 'attr':
-          attr = sel.get('attr','')
-          if c.has_attr(attr):
-            v = c[attr]
-
-        if get == 'text':
-          v = c.get_text()
-
-        if v == None:
-          continue
-
-        if k == 'name':
-          if sep:
-            v = v.split(sep)[0]
-          v = string.strip_nq(v)
-
-        if k == 'url':
-          url = v 
-          auth_url  = util.url2base(app.page.baseurl, url)
-          print(f'[PageParser] found author url: {auth_url}')
-
-        d_parse.update({ k : v })
+      self.gah_process_name_url(itm)
 
       auth_bare = util.get(d_parse,'name')
       if auth_bare:
