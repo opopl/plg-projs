@@ -49,7 +49,6 @@ function! projs#zlan#zo#add (...)
 
     while keep
       let cnt = 0
-      let msg_head = ''
 
       let cmpl = ''
       call base#varset('this',[])
@@ -74,7 +73,7 @@ function! projs#zlan#zo#add (...)
         " add and continue
         else
           call extend(tags_selected,split(tags_s,','))
-          let msg_head .= '\n' . join(tags_selected, ',')
+          let msg_head = "\n" . join(tags_selected, ',') . "\n"
           let cnt = 1
         endif
 

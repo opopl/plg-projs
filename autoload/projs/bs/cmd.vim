@@ -1,5 +1,16 @@
 
 function! projs#bs#cmd#run ()
+  let bs_dir = base#qw#catpath('p_sr','scrape bs')
+
+  call chdir(bs_dir)
+
+	let rootid = projs#rootid()
+	let proj = projs#proj#name()
+
+	let yfile = 'mix.yaml'
+	let zfile = base#qw#catpath(rootid,proj . '.zlan')
+
+  let cmd = printf('bs.py -c run -y %s -z %s',yfile,zfile)
   
 endfunction
 
