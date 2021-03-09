@@ -370,9 +370,33 @@ class RootPageParser(CoreClass):
 
     return self
 
-  def gah_process_nu(self,itm={}):
+  def gah_process_search(self,ref={}):
     app  = self.app
     soup = util.get(ref,'soup',app.soup)
+    itm  = util.get(ref,'itm',{})
+
+    search  = util.get(itm,'search',{})
+    if not len(search):
+      return self
+
+    rex  = util.get(search,'re','')
+    if rex:
+      rexc = re.compile(fr'{rex}')
+
+    css  = util.get(search,'css','')
+    if css:
+      els = soup.select(css)
+      for el in els:
+        txt = el.get_text()
+        import pdb; pdb.set_trace()
+
+
+    return self
+
+  def gah_process_nu(self,ref={}):
+    app  = self.app
+    soup = util.get(ref,'soup',app.soup)
+    itm  = util.get(ref,'itm',{})
 
     for k in util.qw('name url'):
       sel = itm.get(k)
@@ -414,6 +438,7 @@ class RootPageParser(CoreClass):
         print(f'[PageParser] found author url: {auth_url}')
   
       self.d_parse.update({ k : v })
+
     return self
 
   def get_author_sels(self,ref={}):
@@ -430,7 +455,10 @@ class RootPageParser(CoreClass):
     for itm in sels:
       self.d_parse = {}
 
-      self.gah_process_nu(itm)
+      r = { 'itm' : itm, 'soup' : soup }
+      self                     \
+        .gah_process_nu(r)     \
+        .gah_process_search(r) \
 
       auth_bare = util.get(self.d_parse,'name')
       if auth_bare:
