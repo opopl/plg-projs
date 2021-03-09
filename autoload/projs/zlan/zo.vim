@@ -35,6 +35,8 @@ function! projs#zlan#zo#add (...)
   let prefix = printf('[ rootid: %s, proj: %s ]',rootid, proj)
 
   let keys = base#varget('projs_zlan_keys',[])
+  
+  let tag_list = projs#bs#tag_list()
 
   let d = {}
   for k in keys
@@ -45,14 +47,22 @@ function! projs#zlan#zo#add (...)
 
     while keep
       let cmpl = ''
+      call base#varset('this',[])
+
       if k == 'tags'
-        "let cmpl = 'custom,base#complete#this'
+        call base#varset('this',tag_list)
       endif
 
-      let d[k] = input(msg_head . msg,'')
+      let d[k] = input(msg_head . msg,'','custom,base#complete#this')
       let msg_head = ''
 
-      if k == 'url'
+      if k == 'tags'
+        let tags_s = get(d,k,'')
+        if tags_s =~ '\.\s*$'
+        endif
+        let s = matchstr(tags_s, '^\s*\zs\w\+\ze\s*$' )
+
+      elseif k == 'url'
         let url = get(d,k,'')
         let cnt = 1
 
