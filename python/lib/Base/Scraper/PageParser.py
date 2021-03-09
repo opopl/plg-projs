@@ -391,13 +391,19 @@ class RootPageParser(CoreClass):
             if r_lines:
               lines = string.split_n_trim(txt)
               if type(r_lines) in [dict]:
-                rex  = util.get(r_lines,'re','')
-                if rex:
-                  rexc = re.compile(fr'{rex}')
+                r_match  = util.get(r_lines,'match')
+                if r_match and type(r_match) in [dict]:
+                  pat  = util.get(r_match,'pat')
+                  patc = re.compile(rf'{pat}')
+                  index_name  = util.get(r_match,'name',1)
+
                 for line in lines:
-                  m = re.match(rexc,line)
-                  if m:
-                    import pdb; pdb.set_trace()
+                  if patc:
+                    m = re.match(patc,line)
+                    if m:
+                      name = m.group(index_name)
+                      if name:
+                        self.d_parse.update({ 'name' : name})
 
     return self
 
