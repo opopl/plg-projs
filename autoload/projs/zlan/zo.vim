@@ -45,7 +45,19 @@ function! projs#zlan#zo#add (...)
 
     let keep = 1
     let msg = printf('%s %s: ',prefix,k)
+
+    let msg_tags_del = 'delete: '
+
     let msg_head = ''
+    let msg_head_base = ''
+
+    if k == 'tags'
+      let msg_head_base .= "\n" . 'Commands:' 
+      let msg_head_base .= "\n" . '  ; - skip'
+      let msg_head_base .= "\n" . '  . - finish'
+      let msg_head_base .= "\n" . '  , - delete selected'
+      let msg_head_base .= "\n" 
+    endif
 
     while keep
       let cnt = 0
@@ -70,10 +82,30 @@ function! projs#zlan#zo#add (...)
         elseif tags_s =~ ';\s*$'
           let cnt = 1
 
+        " delete selected and continue
+        elseif tags_s =~ ',\s*$'
+          call base#varset('this',tags_selected)
+          let tags_del = input(msg_head . msg_tags_del,'','custom,base#complete#this')
+          let tags_del_a = split(tags_del,',')
+          let n = []
+          for tag in tags_selected
+            if !base#inlist(tag,tags_del_a)
+              call add(n,tag)
+            endif
+          endfor
+          let tags_selected = n
+
+          let cnt = 1
+
         " add and continue
         else
-          call extend(tags_selected,split(tags_s,','))
-          let msg_head = "\n" . join(tags_selected, ',') . "\n"
+          let tags_a = split(tags_s,',')
+          for tag in tags_a
+            if !base#inlist(tag,tags_selected)
+              call add(tags_selected,tag)
+            endif
+          endfor
+          let msg_head = msg_head_base . "\n" . join(tags_selected, ',') . "\n"
           let cnt = 1
         endif
 
