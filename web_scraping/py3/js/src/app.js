@@ -100,6 +100,7 @@ function App(){
       var els = [];
 
       var tipes = 'log dbrid img img_clean cache core core_clean clean'.split(' ');
+      var tipes_txt = 'head meta link script'.split(' ');
 
       els.push(
             this.$$select({
@@ -109,7 +110,15 @@ function App(){
               },
               items    : tipes,
               selected : this.tipe,
-            })
+            }),
+            this.$$select({
+              id : 'menu_tipes_txt',
+              css : {
+                width : '50px',
+              },
+              items    : tipes_txt,
+              selected : this.tipe,
+            }),
       );
 
       els.push(
@@ -646,6 +655,18 @@ function App(){
 
   this.set_ui_select = function(){
     var $slf = this;
+
+    this.jquery_ui_selectmenu({ 
+        id : '#menu_tipes_txt',
+        cb : {
+          selectmenuchange : function(){
+            $slf.tipe = $(this).val();
+            let href = '/html/page/' + $slf.rid + '/' + $slf.tipe;
+
+            window.location = href;
+          }
+        }
+    });
 
     this.jquery_ui_selectmenu({ 
         id : '#menu_tipes',
