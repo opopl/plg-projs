@@ -111,14 +111,6 @@ function App(){
               items    : tipes,
               selected : this.tipe,
             }),
-            this.$$select({
-              id : 'menu_tipes_txt',
-              css : {
-                width : '50px',
-              },
-              items    : tipes_txt,
-              selected : this.tipe,
-            }),
       );
 
       els.push(
@@ -131,6 +123,14 @@ function App(){
                 'color'            : 'black',
               },
               txt : this.rid,
+            }),
+            this.$$select({
+              id : 'menu_tipes_txt',
+              css : {
+                width : '50px',
+              },
+              items    : tipes_txt,
+              selected : this.tipe,
             }),
       );
 
@@ -706,6 +706,14 @@ function App(){
       $('#ifr_page_src').hide();
     }
 
+    if('log dbrid img img_clean'.split(' ').includes(this.tipe)){
+      $('#ta_page_src').hide();
+      $('#ifr_page_src')
+          .css({ width : '100%' })
+          .removeAttr('sandbox')
+          ;
+    }
+
     return this;
   };
 
@@ -717,13 +725,7 @@ function App(){
       .opt_page_init()
       .opt_page_show();
 
-    if('log dbrid img img_clean'.split(' ').includes(this.tipe)){
-      $('#ta_page_src').hide();
-      $('#ifr_page_src')
-          .css({ width : '100%' })
-          .removeAttr('sandbox')
-          ;
-    }
+
 
     var date = this.page.date;
     $('#inp_page_date')

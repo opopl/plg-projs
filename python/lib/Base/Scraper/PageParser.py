@@ -366,14 +366,18 @@ class RootPageParser(CoreClass):
     app = self.app
     page = app.page
 
-    d_parse = {}
+    d_parse_author = {}
 
     return self
 
-  def gah_process_search(self,ref={}):
+  def itm_process_search(self,ref={}):
     app  = self.app
     soup = util.get(ref,'soup',app.soup)
     itm  = util.get(ref,'itm',{})
+
+    # modes: 
+    #   author, date
+    mode  = util.get(ref,'mode','')
 
     search  = util.get(itm,'search',{})
     if not len(search):
@@ -401,9 +405,10 @@ class RootPageParser(CoreClass):
                   if patc:
                     m = re.match(patc,line)
                     if m:
-                      name = m.group(index_name)
-                      if name:
-                        self.d_parse.update({ 'name' : name})
+                      if mode == 'author':
+                        name = m.group(index_name)
+                        if name:
+                          self.d_parse_author.update({ 'name' : name})
 
     return self
 
@@ -451,7 +456,7 @@ class RootPageParser(CoreClass):
         auth_url  = util.url2base(app.page.baseurl, url)
         print(f'[PageParser] found author url: {auth_url}')
   
-      self.d_parse.update({ k : v })
+      self.d_parse_author.update({ k : v })
 
     return self
 
@@ -467,17 +472,21 @@ class RootPageParser(CoreClass):
     sels = util.get(ref,'sels',[])
 
     for itm in sels:
-      self.d_parse = {}
+      self.d_parse_author = {}
 
-      r = { 'itm' : itm, 'soup' : soup }
+      r = { 
+        'itm'  : itm,
+        'soup' : soup,
+        'mode' : 'author',
+      }
       self                     \
         .gah_process_nu(r)     \
-        .gah_process_search(r) \
+        .itm_process_search(r) \
 
-      auth_bare = util.get(self.d_parse,'name')
+      auth_bare = util.get(self.d_parse_author,'name')
       if auth_bare:
         print(f'[PageParser] found author name: {auth_bare}')
-        self.auth_obj.parse(self.d_parse)
+        self.auth_obj.parse(self.d_parse_author)
         break
 
     return self
