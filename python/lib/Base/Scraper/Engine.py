@@ -1239,7 +1239,7 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
   def get_html(self,ref={}):
     rid  = util.get(ref,'rid','')
     tipe = util.get(ref,'tipe','')
-    ext  = util.get(ref,'tipe','html')
+    ext  = util.get(ref,'ext','html')
 
     css    = util.get(ref,'css','')
     xpath  = util.get(ref,'xpath','')

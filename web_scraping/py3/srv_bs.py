@@ -51,7 +51,15 @@ class r_html_page_rid_tipe:
     d = web.input()
     params = dict(d.items())
 
-    rr = { 'rid' : rid, 'tipe' : tipe }
+    ext = 'html'
+    if tipe in util.qw('script head link meta'):
+      ext = 'txt'
+
+    rr = { 
+      'rid'  : rid,
+      'tipe' : tipe,
+      'ext'  : ext,
+    }
     for k in util.qw('xpath css act'):
       rr[k] = params.get(k,'')
 

@@ -699,6 +699,11 @@ function App(){
   this.set_ui_visible = function(){
     $('.hide').hide();
 
+    if('script head meta link'.split(' ').includes(this.tipe)){
+      $('#ta_page_src').show();
+      $('#ifr_page_src').hide();
+    }
+
     return this;
   };
 
