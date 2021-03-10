@@ -224,6 +224,7 @@ class RootPageParser(CoreClass):
 
     sels = self._sels('get_date_html')
 
+    import pdb; pdb.set_trace()
     for sel in sels:
       date = self._date_from_sel(app.soup, sel)
       if date:
@@ -283,6 +284,13 @@ class RootPageParser(CoreClass):
     find = sel.get('find','')
     get  = sel.get('get','')
     fmt  = sel.get('fmt',"%Y-%m-%d")
+
+    search = sel.get('search','')
+    if search:
+      r = {
+        'mode' : 'date',
+      }
+      self.itm_process_search(r)
 
     sep         = sel.get('split','')
     split_index = sel.get('split_index',0)
@@ -374,6 +382,8 @@ class RootPageParser(CoreClass):
     app  = self.app
     soup = util.get(ref,'soup',app.soup)
     itm  = util.get(ref,'itm',{})
+
+    app.log('[PageParser] itm_process_search')
 
     # modes: 
     #   author, date

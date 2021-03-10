@@ -1849,11 +1849,12 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
 
   def on_fail(self):
 
-    self                           \
+    self                            \
         .db_save_page({ 'ok' : 0 }) \
-        .page_save_sh()            \
-        .page_save_db_record()     \
-        .page2yaml()               \
+        .page_save_sh()             \
+        .page_save_db_record()      \
+        .page_save_log()            \
+        .page2yaml()                \
 
     return self
 
