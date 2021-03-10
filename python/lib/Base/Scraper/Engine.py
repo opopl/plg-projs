@@ -1239,6 +1239,7 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
   def get_html(self,ref={}):
     rid  = util.get(ref,'rid','')
     tipe = util.get(ref,'tipe','')
+    ext  = util.get(ref,'tipe','html')
 
     css    = util.get(ref,'css','')
     xpath  = util.get(ref,'xpath','')
@@ -1248,7 +1249,7 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
     file_html = self._file_rid({ 
       'rid'  : rid, 
       'tipe' : tipe, 
-      'ext'  : 'html', 
+      'ext'  : ext, 
     })
 
     src_code = ''
