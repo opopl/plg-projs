@@ -24,7 +24,12 @@ class RootPageParser(CoreClass):
   meta = None
 
   date_format = ''
+
+  # 'bare' date string to be parsed
   date_bare   = ''
+
+  # final date string
+  date   = '' 
 
   date_fmt = '%d_%m_%Y'
 
@@ -295,6 +300,9 @@ class RootPageParser(CoreClass):
         'soup' : soup,
       }
       self.itm_process_search(r)
+      if self.date:
+        date = self.date
+        return date
 
     sep         = sel.get('split','')
     split_index = sel.get('split_index',0)
@@ -387,11 +395,11 @@ class RootPageParser(CoreClass):
     soup = util.get(ref,'soup',app.soup)
     itm  = util.get(ref,'itm',{})
 
-    app.log('[PageParser] itm_process_search')
-
     # modes: 
     #   author, date
     mode  = util.get(ref,'mode','')
+
+    app.log(f'[PageParser] itm_process_search, mode: {mode}')
 
     search  = util.get(itm,'search',{})
     if not len(search):
@@ -402,15 +410,29 @@ class RootPageParser(CoreClass):
 
     r_text = util.get(search,'text')
     if css:
-      els = soup.select(css)
+      els = []
+      if type(css) in [str]:
+        els = soup.select(css)
+      elif type(css) in [list]:
+        css_a = css
+        for css in css_a:
+          els_f = soup.select(css)
+          els.extend(els_f)
+
+      if not len(els):
+        return self
+
       if css_index:
         els_n = []
         indices = css_index.split(',')
         for ind in indices:
           if ind == 'last':
-            ind = -1
+            ind = len(els)-1
           else:
             ind = int(ind)
+
+          if ind > len(els)-1:
+            continue
 
           el = els[ind]
           els_n.append(el)
@@ -435,14 +457,30 @@ class RootPageParser(CoreClass):
                   if patc:
                     m = re.match(patc,line)
                     if m:
+                      matched = m.group(0)
                       if mode == 'author':
                         name = m.group(index_name)
                         if name:
                           self.d_parse_author.update({ 'name' : name})
 
                       elif mode == 'date':
-                        import pdb; pdb.set_trace()
-                        pass
+                        r_split_found = util.get(r_match,'split_found')
+                        if r_split_found and type(r_split_found) in [dict]:
+                          sep     = util.get(r_split_found,'sep','')
+                          try_all = util.get(r_split_found,'try_all','')
+
+                          if sep:
+                            matched_items = matched.split(sep)
+                            if try_all:
+                              for split_item in matched_items:
+                                dt = None
+                                try:
+                                  dt = dateparser.parse(split_item)
+                                  if dt:
+                                    self.date = dt.strftime('%d_%m_%Y')
+                                except:
+                                  pass  
+                                
 
     return self
 
