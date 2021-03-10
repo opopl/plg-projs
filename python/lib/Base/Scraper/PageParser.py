@@ -224,7 +224,6 @@ class RootPageParser(CoreClass):
 
     sels = self._sels('get_date_html')
 
-    import pdb; pdb.set_trace()
     for sel in sels:
       date = self._date_from_sel(app.soup, sel)
       if date:
@@ -281,6 +280,9 @@ class RootPageParser(CoreClass):
   def _date_from_sel(self, soup, sel={}):
     date = None
 
+    app = self.app
+    soup = app.soup
+
     find = sel.get('find','')
     get  = sel.get('get','')
     fmt  = sel.get('fmt',"%Y-%m-%d")
@@ -289,6 +291,8 @@ class RootPageParser(CoreClass):
     if search:
       r = {
         'mode' : 'date',
+        'itm'  : sel,
+        'soup' : soup,
       }
       self.itm_process_search(r)
 
@@ -393,10 +397,26 @@ class RootPageParser(CoreClass):
     if not len(search):
       return self
 
-    css    = util.get(search,'css','')
+    css       = util.get(search,'css','')
+    css_index = util.get(search,'css_index','')
+
     r_text = util.get(search,'text')
     if css:
       els = soup.select(css)
+      if css_index:
+        els_n = []
+        indices = css_index.split(',')
+        for ind in indices:
+          if ind == 'last':
+            ind = -1
+          else:
+            ind = int(ind)
+
+          el = els[ind]
+          els_n.append(el)
+
+        els = els_n
+
       for el in els:
         if r_text:
           txt = el.get_text()
@@ -419,6 +439,10 @@ class RootPageParser(CoreClass):
                         name = m.group(index_name)
                         if name:
                           self.d_parse_author.update({ 'name' : name})
+
+                      elif mode == 'date':
+                        import pdb; pdb.set_trace()
+                        pass
 
     return self
 
