@@ -650,6 +650,8 @@ function App(){
     $('#ifr_page_src, #ta_page_src').show();
     $('.hide').hide();
 
+    this.set_ui_visible();
+
     return this;
   };
 
