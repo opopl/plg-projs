@@ -449,17 +449,10 @@ function App(){
      return this;
   };
 
-  this.on_click = function(){
+  this.on_click_tags = function(){
      let $slf = this;
-     $('#btn_reload').on('click',function() {
-        $slf.reload();
-     });
 
-		 this
-				.on_click_tags();
-		 this.on_click_t();
-
-     $('#opt_page_tags input[type="button"]').on('click',function() {
+		 $('#opt_page_tags input[type="button"]').on('click',function() {
 			 var tag = $(this).val();
 
 			 var tags_s = tag;	
@@ -467,6 +460,87 @@ function App(){
 			 var jx = $.ajax({
 			 	method  : 'GET',
 			 	data    : { tags : tags_s },
+			 	url     : '/json/pages',
+			 	success : function(data){
+		      $('#ta_page_src, #ifr_page_src').hide();
+
+					$slf.pages = util.get(data,'pages',[]);
+
+					$slf.list_pages();
+		 		},
+			 	error   : function(data){},
+			 });
+     });
+
+     return this;
+  };
+
+  this.list_pages = function(){
+     let $slf = this;
+
+		 var cols_t = [
+						{ 
+							data : 'rid',
+							render : function (data, type, row){
+								var rid = data;
+								if (type == 'display') {
+									var $d = $('<div><a></a></div>');
+									var href = $slf._href_rid(rid);
+									$d.find('a').attr({ href : href }).text(rid);
+									return $d.html();
+								}
+								return rid;
+							}
+						},
+						{ 
+							data : 'date' 
+						},
+						{ data : 'title' },
+			];
+
+			var id = 'tb_list_pages';
+			$('#tb_div').remove();
+
+			var $tb_div = $('<div/>');
+			$tb_div
+				.attr({ id : 'tb_div' })
+				.addClass('dohide')
+				;
+
+			var $tb = $('<table/>');
+			$tb.append($('thead'));
+			$tb.append($('tbody'));
+			$tb.append($('tfoot'));
+			$tb.attr({ 
+					id   : id,
+					tags : tags_s,
+					width : '100%',
+					border : 1,
+			});
+			$tb_div.append($tb);
+			$('#container').append($tb_div);
+
+			$tb.dataTable({ 
+					data    : $slf.pages,
+					columns : cols_t,
+					paging  : true,
+				  buttons: [
+    			  'copy', 'excel', 'pdf'
+    			]
+			});
+
+     return this;
+  };
+
+  this.on_click_author = function(){
+     let $slf = this;
+
+		 $('#opt_page_author input[type="button"]').on('click',function() {
+			 var auth_id = $(this).attr('auth_id');
+
+			 var jx = $.ajax({
+			 	method  : 'GET',
+			 	data    : { author_id : auth_id },
 			 	url     : '/json/pages',
 			 	success : function(data){
 		      $('#ta_page_src, #ifr_page_src').hide();
@@ -492,7 +566,7 @@ function App(){
 						{ data : 'title' },
 					];
 
-					var id = 'tb_list_pages_tags';
+					var id = 'tb_list_pages';
 					$('#tb_div').remove();
 
 					var $tb_div = $('<div/>');
@@ -527,6 +601,22 @@ function App(){
 			 });
      });
 
+
+     return this;
+  };
+
+  this.on_click = function(){
+     let $slf = this;
+     $('#btn_reload').on('click',function() {
+        $slf.reload();
+     });
+
+		 this
+				.on_click_tags()
+		 		.on_click_author()
+				;
+
+     
      $('#btn_last').on('click',function() {
         window.location = '/html/page/last';
      });
