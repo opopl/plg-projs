@@ -6,6 +6,7 @@ import cyrtranslit
 import Base.DBW as dbw
 import Base.Util as util
 import Base.Const as const
+import Base.String as string
 # ----------------------------
 
 from Base.Core import CoreClass
@@ -30,9 +31,17 @@ class Author(CoreClass):
     if not auth_bare:
       return self
 
+    if auth_url:
+      auth_url  = util.url2base(app.page.baseurl, auth_url)
+      print(f'[PageParser] found author url: {auth_url}')
+
+    print(f'[PageParser] found author bare: {auth_bare}')
+
     auth_bare = re.sub(r'[,]*', r'', auth_bare)
 
-    auth_ids = []
+    author_id = app.page.get('author_id','')
+    auth_ids  = string.split_n_trim(author_id, ',')
+
     auth_list = []
 
     aa = auth_bare.split(' ')

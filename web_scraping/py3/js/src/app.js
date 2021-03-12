@@ -5,7 +5,11 @@ var util = require('./util.js');
 //
 
 require('../../css/aria-dropdown.css');
+require('../../css/jquery.dataTables.css');
+
 require('./aria-dropdown.js');
+
+require( 'datatables.net' );
 
 //const fs = require('fs-extra');
 const yaml = require('js-yaml');
@@ -249,6 +253,7 @@ function App(){
       var value = util.get(ref,'value','');
       var id    = util.get(ref,'id','');
       var css   = util.get(ref,'css',{});
+      var attr  = util.get(ref,'attr',{});
 
       var btn = document.createElement('input');
       btn.type  = 'button';
@@ -260,6 +265,7 @@ function App(){
         width: '10%',
         ...css
       });
+			$(btn).attr(attr);
 
       return $(btn);
   };
@@ -388,34 +394,7 @@ function App(){
         var url = $(this).val();
         var id = $(this).attr('id');
 
-        if (url != $slf.page.url) {
-          $slf.urlget = { url : url };
-          if (id == 'opt_page_url') {
-            $(this).hide();
-
-            var els = [
-              { 
-                 el : $('<label for="give_tags" >Tags:</label>'), 
-                 css : { width : 'auto' } 
-              },
-              { 
-                 el : $('<input id="opt_page_give_tags" />'), 
-                 css : { width : '20%' } 
-              },
-            ];
-
-            for (var i = 0; i < els.length; i++) {
-              var itm = els[i];
-
-              var $el = util.get(itm,'el');
-              var css = util.get(itm,'css',{});
-
-              $el.addClass('block').css(css);
-
-              $(this).parent().append($el);
-            };
-          }
-        }
+        var win = window.open(url, "_blank");
 
         return 1;
         //window.location = "/html/page/" + $slf.rid + "/" + $slf.tipe;
@@ -476,6 +455,78 @@ function App(){
         $slf.reload();
      });
 
+		 this
+				.on_click_tags();
+		 this.on_click_t();
+
+     $('#opt_page_tags input[type="button"]').on('click',function() {
+			 var tag = $(this).val();
+
+			 var tags_s = tag;	
+
+			 var jx = $.ajax({
+			 	method  : 'GET',
+			 	data    : { tags : tags_s },
+			 	url     : '/json/pages',
+			 	success : function(data){
+		      $('#ta_page_src, #ifr_page_src').hide();
+
+					$slf.pages = util.get(data,'pages',[]);
+					var cols_t = [
+						{ 
+							data : 'rid',
+							render : function (data, type, row){
+								var rid = data;
+								if (type == 'display') {
+									var $d = $('<div><a></a></div>');
+									var href = $slf._href_rid(rid);
+									$d.find('a').attr({ href : href }).text(rid);
+									return $d.html();
+								}
+								return rid;
+							}
+						},
+						{ 
+							data : 'date' 
+						},
+						{ data : 'title' },
+					];
+
+					var id = 'tb_list_pages_tags';
+					$('#tb_div').remove();
+
+					var $tb_div = $('<div/>');
+					$tb_div
+						.attr({ id : 'tb_div' })
+						.addClass('dohide')
+						;
+
+					var $tb = $('<table/>');
+					$tb.append($('thead'));
+					$tb.append($('tbody'));
+					$tb.append($('tfoot'));
+					$tb.attr({ 
+							id   : id,
+							tags : tags_s,
+							width : '100%',
+							border : 1,
+					});
+					$tb_div.append($tb);
+					$('#container').append($tb_div);
+
+					$tb.dataTable({ 
+							data    : $slf.pages,
+							columns : cols_t,
+							paging  : true,
+						  buttons: [
+      				  'copy', 'excel', 'pdf'
+    					]
+					});
+				},
+			 	error   : function(data){},
+			 });
+     });
+
      $('#btn_last').on('click',function() {
         window.location = '/html/page/last';
      });
@@ -529,6 +580,10 @@ function App(){
        'url_src'  : url_src,
      };
   };
+
+  this._href_rid = function(rid,tipe='clean'){
+		return '/html/page/' + rid + '/' + tipe;
+	};
 
   this._code = function(el){
     var html = $(el).wrap('<div/>').parent().html();
@@ -595,12 +650,12 @@ function App(){
 
     var author_ids = util.get(this.page,'author_id','').split(',');
     for (var i = 0; i < author_ids.length; i++) {
-      var id = author_ids[i];
+      var auth_id = author_ids[i];
 
       var author='';
       var jx = $.ajax({
           method  : 'POST',
-          data    : { id : id },
+          data    : { id : auth_id },
           url     : '/json/authors',
           success : function(data){
              var a_list = util.get(data,'authors',[]);
@@ -615,8 +670,8 @@ function App(){
       });
       
       var $btn = this.$$btn({
-         id : 'btn_author_' + id,
-         value : author,
+				 value : author,
+				 attr : { auth_id : auth_id },
          css : {
            width : 'auto'
          }
@@ -648,7 +703,7 @@ function App(){
   this.ui_restore = function(){ 
 
     $('#ifr_page_src, #ta_page_src').show();
-    $('.hide').hide();
+    $('.dohide').hide();
 
     this.set_ui_visible();
 
@@ -699,7 +754,7 @@ function App(){
   };
 
   this.set_ui_visible = function(){
-    $('.hide').hide();
+    $('.dohide').hide();
 
     if('script head meta link'.split(' ').includes(this.tipe)){
       $('#ta_page_src').show();

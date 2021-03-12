@@ -11,6 +11,11 @@ import json
 from tabulate import tabulate
 from requests_html import HTMLSession
 
+import logging
+from http.client import HTTPConnection  # py3
+
+
+
 
 import datetime
 #from cdata.core import any2utf8
@@ -345,6 +350,7 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
     self.parser.add_argument("-p", "--print", help="Print field value and exit",default="")
 
     self.parser.add_argument("-c", "--cmd", help="Run command(s)")
+    self.parser.add_argument("-l", "--log", help="Enable logging")
     
     self.oa = self.parser.parse_args()
 
@@ -575,6 +581,18 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
       'sql'     : sql,
       'db_file' : self.dbfile.pages
     })
+
+    return self
+
+  def init_logging(self):
+    # log = logging.getLogger('requests.packages.urllib3')  # useless
+    #log = logging.getLogger('urllib3')  # works
+    
+    #log.setLevel(logging.DEBUG)  # needed
+    #fh = logging.FileHandler("requests.log")
+    #log.addHandler(fh)
+    
+    #requests.get('http://httpbin.org/')
 
     return self
 
@@ -817,12 +835,14 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
     if not f_zlan:
       return self
 
-    z = Zlan({})
+    self.zlan = Zlan({})
 
-    z.get_data({ 'file' : f_zlan })
+    self.zlan.get_data({ 
+      'file' : f_zlan 
+    })
 
-    zdata = z.data
-    zorder = z.order
+    zdata  = self.zlan.data
+    zorder = self.zlan.order
 
     if not self.urldata:
       self.urldata = []
@@ -2336,6 +2356,10 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
 
     return self
 
+  def c_zlan_save(self,ref={}):
+
+    return self
+
   def c_run(self,ref={}):
     urldata = util.get(ref,'urldata',[])
     if len(urldata):
@@ -2854,6 +2878,7 @@ bs.py -c html_parse -i cache.html $*
       .init_npm()         \
       .init_db_pages()    \
       .init_db_images()   \
+      .init_logging()     \
       .init_tmpl()        \
       .mk_dirs()          \
       .load_yaml()        \

@@ -399,16 +399,18 @@ class RootPageParser(CoreClass):
     #   author, date
     mode  = util.get(ref,'mode','')
 
-    app.log(f'[PageParser] itm_process_search, mode: {mode}')
-
     search  = util.get(itm,'search',{})
     if not len(search):
       return self
+
+    app.log(f'[PageParser] itm_process_search, mode: {mode}')
 
     css       = util.get(search,'css','')
     css_index = util.get(search,'css_index','')
 
     r_text = util.get(search,'text')
+    r_map  = util.get(search,'map')
+
     if css:
       els = []
       if type(css) in [str]:
@@ -440,8 +442,36 @@ class RootPageParser(CoreClass):
         els = els_n
 
       for el in els:
+        txt = el.get_text()
+
+        if mode == 'author':
+          txt = string.strip_n(txt)
+          if r_map:
+            if type(r_map) in [dict]:
+              d_parse = {}
+  
+              for k in util.qw('url name'):
+                v = r_map.get(k)
+                if not v:
+                  continue
+                
+                if type(v) in [str]:
+                  if v == 'text':
+                    d_parse[k] = txt
+  
+                elif type(v) in [dict]:
+                  get = v.get('get','')
+                  if get == 'text':
+                    d_parse[k] = txt
+                  elif get == 'attr':
+                    attr = v.get('attr','')
+                    if el.has_attr(attr):
+                      d_parse[k] = el[attr]
+  
+            if len(d_parse):
+              self.auth_obj.parse(d_parse)
+  
         if r_text:
-          txt = el.get_text()
           if type(r_text) in [dict]:
             r_lines = util.get(r_text,'lines')
             if r_lines:
@@ -451,6 +481,9 @@ class RootPageParser(CoreClass):
                 if r_match and type(r_match) in [dict]:
                   pat  = util.get(r_match,'pat')
                   patc = re.compile(rf'{pat}')
+
+                  get_first = util.get(r_match,'get_first')
+
                   index_name  = util.get(r_match,'name',1)
 
                 for line in lines:
@@ -461,7 +494,9 @@ class RootPageParser(CoreClass):
                       if mode == 'author':
                         name = m.group(index_name)
                         if name:
-                          self.d_parse_author.update({ 'name' : name})
+                          self.d_parse_author.update({ 'name' : name })
+                          if get_first:
+                            break
 
                       elif mode == 'date':
                         r_split_found = util.get(r_match,'split_found')
@@ -525,8 +560,6 @@ class RootPageParser(CoreClass):
   
       if k == 'url':
         url = v 
-        auth_url  = util.url2base(app.page.baseurl, url)
-        print(f'[PageParser] found author url: {auth_url}')
   
       self.d_parse_author.update({ k : v })
 
@@ -557,7 +590,6 @@ class RootPageParser(CoreClass):
 
       auth_bare = util.get(self.d_parse_author,'name')
       if auth_bare:
-        print(f'[PageParser] found author name: {auth_bare}')
         self.auth_obj.parse(self.d_parse_author)
         break
 
@@ -602,6 +634,11 @@ class RootPageParser(CoreClass):
     return self
 
   def get_author_html(self,ref={}):
+    ''' call tree:
+          get_author_sels
+            gah_process_nu      - process: url name
+            itm_process_search  - process: search
+    '''
     app = self.app
 
     sels = []

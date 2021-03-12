@@ -25,7 +25,10 @@
         <input type="text" class="block" id="opt_page_title" value="{{ page.title|e }}"  />
         <input type="text" class="block" id="opt_page_title_h" value="{{ page.title_h|e }}"  />
 
-        <div id="opt_page_tags" class='flex-row'> </div>
+        <div id="opt_page_tags" class='flex-row'> 
+          <table border="1" id="tb_list_pages_tag">
+          </table>
+        </div>
         <div id="opt_page_author" class='flex-row'> </div>
 
         <div class="dropdown" id="opt_page_img">

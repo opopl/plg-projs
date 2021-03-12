@@ -32,7 +32,8 @@ class r_js_bundle:
 
 class r_html_index:
   def GET(self):
-    raise web.seeother(f'/html/pages')
+    #raise web.seeother(f'/html/pages')
+    raise web.seeother(f'/html/page/last')
 
 class r_html_page_last:
   def GET(self):

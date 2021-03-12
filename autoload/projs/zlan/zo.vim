@@ -94,6 +94,9 @@ function! projs#zlan#zo#add (...)
             endif
           endfor
           let tags_selected = n
+          let msg_head = msg_head_base 
+             \ . "\n" . 'Tags selected:' 
+             \ . "\n" . join(tags_selected, ',') . "\n"
 
           let cnt = 1
 
@@ -105,7 +108,9 @@ function! projs#zlan#zo#add (...)
               call add(tags_selected,tag)
             endif
           endfor
-          let msg_head = msg_head_base . "\n" . join(tags_selected, ',') . "\n"
+          let msg_head = msg_head_base 
+             \ . "\n" . 'Tags selected:' 
+             \ . "\n" . join(tags_selected, ',') . "\n"
           let cnt = 1
         endif
 
