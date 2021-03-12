@@ -513,7 +513,6 @@ function App(){
 			$tb.append($('tfoot'));
 			$tb.attr({ 
 					id   : id,
-					tags : tags_s,
 					width : '100%',
 					border : 1,
 			});
@@ -546,56 +545,7 @@ function App(){
 		      $('#ta_page_src, #ifr_page_src').hide();
 
 					$slf.pages = util.get(data,'pages',[]);
-					var cols_t = [
-						{ 
-							data : 'rid',
-							render : function (data, type, row){
-								var rid = data;
-								if (type == 'display') {
-									var $d = $('<div><a></a></div>');
-									var href = $slf._href_rid(rid);
-									$d.find('a').attr({ href : href }).text(rid);
-									return $d.html();
-								}
-								return rid;
-							}
-						},
-						{ 
-							data : 'date' 
-						},
-						{ data : 'title' },
-					];
-
-					var id = 'tb_list_pages';
-					$('#tb_div').remove();
-
-					var $tb_div = $('<div/>');
-					$tb_div
-						.attr({ id : 'tb_div' })
-						.addClass('dohide')
-						;
-
-					var $tb = $('<table/>');
-					$tb.append($('thead'));
-					$tb.append($('tbody'));
-					$tb.append($('tfoot'));
-					$tb.attr({ 
-							id   : id,
-							tags : tags_s,
-							width : '100%',
-							border : 1,
-					});
-					$tb_div.append($tb);
-					$('#container').append($tb_div);
-
-					$tb.dataTable({ 
-							data    : $slf.pages,
-							columns : cols_t,
-							paging  : true,
-						  buttons: [
-      				  'copy', 'excel', 'pdf'
-    					]
-					});
+					$slf.list_pages();
 				},
 			 	error   : function(data){},
 			 });
