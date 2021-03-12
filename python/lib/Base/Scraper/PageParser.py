@@ -396,7 +396,6 @@ class RootPageParser(CoreClass):
     for sel in sels:
       date = self._date_from_sel(self.meta, sel)
       if date:
-        import pdb; pdb.set_trace()
         self.app.page.set({ 'date' : date })
         break
 

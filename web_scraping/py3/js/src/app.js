@@ -80,7 +80,7 @@ function App(){
       $fr.attr({ src : r.url_src });
 
       try{
-        $fr.get(0).contentDocument.location.reload(true);
+        //$fr.get(0).contentDocument.location.reload(true);
       }catch(e){
         console.log(e);
       }
@@ -184,9 +184,12 @@ function App(){
         }),
       );
 
-      els.push(
-        $('<input type="text" id="inp_page_date" />')
-      );
+      var $date = $('<input type="text" />');
+      $date
+         .attr({ id : 'inp_page_date' })
+         .addClass('bs_date')
+         ;
+      els.push( $date );
 
       for (let el of els) {
         this.$pane.append(el);
@@ -265,7 +268,7 @@ function App(){
         width: '10%',
         ...css
       });
-			$(btn).attr(attr);
+      $(btn).attr(attr);
 
       return $(btn);
   };
@@ -452,24 +455,24 @@ function App(){
   this.on_click_tags = function(){
      let $slf = this;
 
-		 $('#opt_page_tags input[type="button"]').on('click',function() {
-			 var tag = $(this).val();
+     $('#opt_page_tags input[type="button"]').on('click',function() {
+       var tag = $(this).val();
 
-			 var tags_s = tag;	
+       var tags_s = tag;  
 
-			 var jx = $.ajax({
-			 	method  : 'GET',
-			 	data    : { tags : tags_s },
-			 	url     : '/json/pages',
-			 	success : function(data){
-		      $('#ta_page_src, #ifr_page_src').hide();
+       var jx = $.ajax({
+        method  : 'GET',
+        data    : { tags : tags_s },
+        url     : '/json/pages',
+        success : function(data){
+          $('#ta_page_src, #ifr_page_src').hide();
 
-					$slf.pages = util.get(data,'pages',[]);
+          $slf.pages = util.get(data,'pages',[]);
 
-					$slf.list_pages();
-		 		},
-			 	error   : function(data){},
-			 });
+          $slf.list_pages();
+        },
+        error   : function(data){},
+       });
      });
 
      return this;
@@ -478,55 +481,87 @@ function App(){
   this.list_pages = function(){
      let $slf = this;
 
-		 var cols_t = [
-						{ 
-							data : 'rid',
-							render : function (data, type, row){
-								var rid = data;
-								if (type == 'display') {
-									var $d = $('<div><a></a></div>');
-									var href = $slf._href_rid(rid);
-									$d.find('a').attr({ href : href }).text(rid);
-									return $d.html();
-								}
-								return rid;
-							}
-						},
-						{ 
-							data : 'date' 
-						},
-						{ data : 'title' },
-			];
+     var cols_t = [
+            { 
+              data : 'rid',
+              title : 'rid',
+              render : function (data, type, row){
+                var rid = data;
+                if (type == 'display') {
+                  var $d = $('<div><a></a></div>');
+                  var href = $slf._href_rid(rid);
+                  $d.find('a').attr({ href : href }).text(rid);
+                  return $d.html();
+                }
+                return rid;
+              }
+            },
+            { 
+              data : 'date',
+              title : 'date',
+              render : function (data, type, row){
+                var date = data;
+                if (type == 'display') {
+                  var $d = $('<div><input type="text" ></input></div>');
+                  var $inpd = $d.find('input');
 
-			var id = 'tb_list_pages';
-			$('#tb_div').remove();
+                  $inpd
+                      .addClass('bs_date_item')
+                      .attr({ value : date })
+                      ;
+                  var h = $d.html();
+                  return h;
+                }
+                return date;
+              }
+            },
+            { 
+              data  : 'title',
+              title : 'title',
+            },
+      ];
 
-			var $tb_div = $('<div/>');
-			$tb_div
-				.attr({ id : 'tb_div' })
-				.addClass('dohide')
-				;
+      var id = 'tb_list_pages';
+      $('#tb_div').remove();
 
-			var $tb = $('<table/>');
-			$tb.append($('thead'));
-			$tb.append($('tbody'));
-			$tb.append($('tfoot'));
-			$tb.attr({ 
-					id   : id,
-					width : '100%',
-					border : 1,
-			});
-			$tb_div.append($tb);
-			$('#container').append($tb_div);
+      var $tb_div = $('<div/>');
+      $tb_div
+        .attr({ id : 'tb_div' })
+        .addClass('dohide')
+        ;
 
-			$tb.dataTable({ 
-					data    : $slf.pages,
-					columns : cols_t,
-					paging  : true,
-				  buttons: [
-    			  'copy', 'excel', 'pdf'
-    			]
-			});
+      var $tb = $('<table/>');
+      $tb.append($('thead'));
+      $tb.append($('tbody'));
+      $tb.append($('tfoot'));
+      $tb.attr({ 
+          id   : id,
+          width : '100%',
+          border : 1,
+      });
+      $tb_div.append($tb);
+      $('#container').append($tb_div);
+
+      $tb.dataTable({ 
+          data    : $slf.pages,
+          columns : cols_t,
+          paging  : true,
+          buttons: [
+            'copy', 'excel', 'pdf'
+          ],
+          //fixedHeader: {
+            //header: true,
+            //footer: true
+          //}
+      });
+
+      this.set_ui_date({ 
+         el : $('.bs_date_item'),
+         css : {
+            color              : 'white',
+            'background-color' : 'gray',
+         }
+      });
 
      return this;
   };
@@ -534,21 +569,21 @@ function App(){
   this.on_click_author = function(){
      let $slf = this;
 
-		 $('#opt_page_author input[type="button"]').on('click',function() {
-			 var auth_id = $(this).attr('auth_id');
+     $('#opt_page_author input[type="button"]').on('click',function() {
+       var auth_id = $(this).attr('auth_id');
 
-			 var jx = $.ajax({
-			 	method  : 'GET',
-			 	data    : { author_id : auth_id },
-			 	url     : '/json/pages',
-			 	success : function(data){
-		      $('#ta_page_src, #ifr_page_src').hide();
+       var jx = $.ajax({
+        method  : 'GET',
+        data    : { author_id : auth_id },
+        url     : '/json/pages',
+        success : function(data){
+          $('#ta_page_src, #ifr_page_src').hide();
 
-					$slf.pages = util.get(data,'pages',[]);
-					$slf.list_pages();
-				},
-			 	error   : function(data){},
-			 });
+          $slf.pages = util.get(data,'pages',[]);
+          $slf.list_pages();
+        },
+        error   : function(data){},
+       });
      });
 
      return this;
@@ -560,10 +595,10 @@ function App(){
         $slf.reload();
      });
 
-		 this
-				.on_click_tags()
-		 		.on_click_author()
-				;
+     this
+        .on_click_tags()
+        .on_click_author()
+        ;
 
      
      $('#btn_last').on('click',function() {
@@ -621,8 +656,8 @@ function App(){
   };
 
   this._href_rid = function(rid,tipe='clean'){
-		return '/html/page/' + rid + '/' + tipe;
-	};
+    return '/html/page/' + rid + '/' + tipe;
+  };
 
   this._code = function(el){
     var html = $(el).wrap('<div/>').parent().html();
@@ -709,8 +744,8 @@ function App(){
       });
       
       var $btn = this.$$btn({
-				 value : author,
-				 attr : { auth_id : auth_id },
+         value : author,
+         attr : { auth_id : auth_id },
          css : {
            width : 'auto'
          }
@@ -811,23 +846,25 @@ function App(){
     return this;
   };
 
-  this.set_ui = function(){
+  this.set_ui_date = function(ref={}){
+    var date     = util.get(ref, 'date', '');
 
-    this
-      .set_ui_select()
-      .set_ui_visible()
-      .opt_page_init()
-      .opt_page_show();
+    //var $el  = $('#inp_page_date');
+    var $el  = $('.bs_date');
+    var $el  = util.get(ref, 'el', $el);
 
+    var css  = util.get(ref, 'css', {});
 
+    if (date) { 
+       $el.val(date);
+    }
 
-    var date = this.page.date;
-    $('#inp_page_date')
-        .val(date)
+    $el
         .addClass('block')
         .css({ 
            color : 'black', 
            width : 'auto',
+           ...css
         })
         .datepicker({
            dateFormat: "dd_mm_yy",
@@ -836,11 +873,25 @@ function App(){
     return this;
   };
 
+  this.set_ui = function(){
+
+    this
+      .set_ui_select()
+      .set_ui_visible()
+      .set_ui_date({ 
+         date : this.page.date,
+         el : $('#inp_page_date'),
+      })
+      .opt_page_init()
+      .opt_page_show();
+
+    return this;
+  };
+
   this.body_append = function(){
   
     $('body').prepend(this.$header);
     $('body').prepend(this.$pane);
-
 
     return this;
   };
