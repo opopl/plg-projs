@@ -173,6 +173,11 @@ class RootPageParser(CoreClass):
     sels.extend( app._site_data('PageParser.get_date.sels',[]) )
 
     tries = util.qw('ld_json meta html url')
+
+    tries_site = app._site_data('PageParser.get_date.tries.order',[]) 
+    if len(tries_site):
+      tries = tries_site
+
     while len(tries):
       tri = tries.pop(0)
 
@@ -234,6 +239,7 @@ class RootPageParser(CoreClass):
       if date:
         app.page.set({ 'date' : date })
         break
+
 
     return self
 
@@ -310,7 +316,20 @@ class RootPageParser(CoreClass):
     if not find:
       return 
 
-    els = soup.select(find)
+    els = []
+    if type(find) in [str]:
+      els = soup.select(find)
+    elif type(find) in [dict]:
+      css       = find.get('css',[])
+      css_index = find.get('css_index','')
+
+      if type(css) in [str]:
+        els = soup.select(css)
+      elif type(css) in [list]:
+        css_a = css
+        for css in css_a:
+          els.append( soup.select(css) )
+
     if not els:
       return
 
@@ -372,13 +391,15 @@ class RootPageParser(CoreClass):
 
     sels = []
     sels.extend( app._cnf('PageParser.get_date_meta.sels',[]) )
-    sels.extend( app._site_data('PageParser.get_date_html.sels',[]) )
+    sels.extend( app._site_data('PageParser.get_date_meta.sels',[]) )
 
     for sel in sels:
       date = self._date_from_sel(self.meta, sel)
       if date:
+        import pdb; pdb.set_trace()
         self.app.page.set({ 'date' : date })
         break
+
 
     return self
 

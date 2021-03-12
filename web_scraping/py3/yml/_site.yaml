@@ -21,15 +21,16 @@ PageParser:
   get_author_html:
     sels:
       - { 
-          'url' : {
-              'find' : '', 
-              'get'  : 'attr',
-              'attr' : 'href' 
+          'search' : {
+              'css'   : [ ],
+              'map' : {
+                  'name' : 'text',
+                  'url'  : { 
+                    'get' : 'attr',
+                    'attr' : 'href',
+                  }
+              },
           },
-          'name' : {
-              'find' : '',
-              'get'  : 'text',
-          }
         }
   get_author_meta:
   get_author_ld_json:
