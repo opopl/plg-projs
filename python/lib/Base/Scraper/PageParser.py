@@ -399,7 +399,6 @@ class RootPageParser(CoreClass):
         self.app.page.set({ 'date' : date })
         break
 
-
     return self
 
   def get_author_ld_json(self,ref={}):

@@ -2357,6 +2357,7 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
     return self
 
   def c_zlan_save(self,ref={}):
+    self.zlan.save()
 
     return self
 
