@@ -422,13 +422,15 @@ class RootPageParser(CoreClass):
     if not len(search):
       return self
 
+
     app.log(f'[PageParser] itm_process_search, mode: {mode}')
 
     css       = util.get(search,'css','')
     css_index = util.get(search,'css_index','')
 
-    r_text = util.get(search,'text')
-    r_map  = util.get(search,'map')
+    r_text      = util.get(search,'text')
+    r_map       = util.get(search,'map')
+    r_transform = util.get(search,'transform')
 
     if css:
       els = []
@@ -460,12 +462,14 @@ class RootPageParser(CoreClass):
 
         els = els_n
 
+      #import pdb; pdb.set_trace()
+
       for el in els:
         txt = el.get_text()
 
         if mode == 'author':
-          txt = string.strip_n(txt)
           if r_map:
+            txt = string.strip_n(txt)
             if type(r_map) in [dict]:
               d_parse = {}
   
@@ -504,6 +508,7 @@ class RootPageParser(CoreClass):
                   get_first = util.get(r_match,'get_first')
 
                   index_name  = util.get(r_match,'name',1)
+                  sep_split   = util.get(r_match,'split','')
 
                 for line in lines:
                   if patc:
@@ -513,7 +518,11 @@ class RootPageParser(CoreClass):
                       if mode == 'author':
                         name = m.group(index_name)
                         if name:
-                          self.d_parse_author.update({ 'name' : name })
+                          if sep_split:
+                            names = name.split(sep_split)
+                          else:
+                            self.d_parse_author.update({ 'name' : name })
+
                           if get_first:
                             break
 
