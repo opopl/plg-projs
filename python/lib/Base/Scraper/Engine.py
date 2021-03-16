@@ -470,7 +470,7 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
         CREATE TABLE IF NOT EXISTS imgs (
                 caption TEXT,
                 ext TEXT,
-                height integer, 
+                height INTEGER, 
                 img TEXT,
                 inum INTEGER,
                 name TEXT,
@@ -480,8 +480,8 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
                 tags TEXT,
                 type TEXT, 
                 url TEXT UNIQUE,
-                url_parent text, 
-                width integer,
+                url_parent TEXT, 
+                width INTEGER,
                 md5 TEXT UNIQUE
         )
     '''
@@ -501,9 +501,10 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
     sql = '''
 
             DROP TABLE IF EXISTS log;
-            DROP TABLE IF EXISTS tags;
+
+            -- DROP TABLE IF EXISTS page_pics;
             -- DROP TABLE IF EXISTS page_tags;
-            -- DROP TABLE IF EXISTS page_authors;
+            DROP TABLE IF EXISTS page_authors;
 
             CREATE TABLE IF NOT EXISTS data_meta (
                 rid INTEGER UNIQUE,
@@ -532,6 +533,18 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
                 ok INTEGER
             );
 
+            CREATE TABLE IF NOT EXISTS page_pics (
+                rid INTEGER,
+                url TEXT,
+                pic_url TEXT,
+                FOREIGN KEY (rid) REFERENCES pages(rid)
+                    ON UPDATE CASCADE
+                    ON DELETE CASCADE,
+                FOREIGN KEY (url) REFERENCES pages(url)
+                    ON UPDATE CASCADE
+                    ON DELETE CASCADE
+            );
+
             CREATE TABLE IF NOT EXISTS page_tags (
                 url TEXT,
                 rid INTEGER,
@@ -547,11 +560,14 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
             CREATE TABLE IF NOT EXISTS page_authors (
                 url TEXT,
                 rid INTEGER,
-                id TEXT,
+                auth_id TEXT,
                 FOREIGN KEY (url) REFERENCES pages(url)
                     ON UPDATE CASCADE
                     ON DELETE CASCADE,
                 FOREIGN KEY (rid) REFERENCES pages(rid)
+                    ON UPDATE CASCADE
+                    ON DELETE CASCADE,
+                FOREIGN KEY (auth_id) REFERENCES authors(id)
                     ON UPDATE CASCADE
                     ON DELETE CASCADE
             );
@@ -559,7 +575,8 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
             CREATE TABLE IF NOT EXISTS authors (
                 id TEXT NOT NULL UNIQUE,
                 url TEXT,
-                name TEXT
+                name TEXT,
+                description TEXT
             );
 
             CREATE TABLE IF NOT EXISTS tag_stats (
@@ -1149,9 +1166,11 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
 
     self.soup = BeautifulSoup(self.content,'html5lib',from_encoding=self.page.get('encoding'))
 
-    t = self.soup.select_one('head > title').string
-    t = util.strip(t)
-    self.page.title = t
+    el_title = self.soup.select_one('head title')
+    if el_title:
+      t = el_title.get_text()
+      t = util.strip(t)
+      self.page.title = t
 
     h1 = self.soup.select_one('h1')
     title_h = ''
@@ -1160,6 +1179,8 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
       if s:
         title_h =  util.strip(s)
         self.page.set({ 'title_h' : title_h })
+        if not self.page.title:
+          self.page.set({ 'title' : title_h })
 
     self.log(f'[load_soup] rid: {self.page.rid}, title: {self.page.title}')
     self.log(f'[load_soup] rid: {self.page.rid}, title_h: {title_h}')
@@ -2389,9 +2410,24 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
 
     db_file = self.dbfile.pages
 
+    self.log(f'[{rid}][db_save_author] saving authors')
+
     ids = ref.get('author_id',self.page.author_id)
     if not ids:
       return self
+
+    author_id_db = dbw.sql_fetchlist(
+       'SELECT author_id FROM page_authors where url = ?',
+       [url],
+       { 'db_file' : db_file }
+    )
+
+    auth_ids_db = author_id_db.split(',')
+
+    for auth_id in ids:
+      if auth_id in auth_ids_db:
+        continue
+
 
     return self
 
@@ -2553,6 +2589,30 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
     if os.path.isfile(self.ii_cache):
       return 1
     return 0
+
+  def _pics_from_rid(self,rid=None):
+    r = dbw.sql_fetchall(
+      'SELECT * FROM page_pics WHERE rid = ?',
+      [rid],
+      { 'db_file' : self.dbfile.pages }
+    )
+    rows = r.get('rows',[])
+    for row in rows:
+      pic_url = row.get('pic_url','')
+      if not pic_url:
+        continue
+
+      r = dbw.sql_fetchone(
+        'SELECT * FROM imgs WHERE url = ?',
+        [pic_url],
+        { 'db_file' : self.dbfile.images }
+      )
+      row_pic = r.get('row',{})
+      for k in util.qw('caption width height inum ext img'):
+        v = row_pic.get(k,'')
+        row.update({ k : v})
+
+    return rows
 
   def _page_from_rid(self,rid=None):
     q = '''SELECT * FROM pages WHERE rid = ?'''

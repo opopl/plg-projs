@@ -203,9 +203,11 @@ class RootPageParser(CoreClass):
       if not self.date_bare:
         continue
 
-      s = self.date_bare.split(sep)[0]
-      d = datetime.datetime.strptime(s,fmt)
-      date = d.strftime('%d_%m_%Y')
+      date = self._date_from_bare()
+
+      #s = self.date_bare.split(sep)[0]
+      #d = datetime.datetime.strptime(s,fmt)
+      #date = d.strftime('%d_%m_%Y')
       if date:
         app.page.set({ 'date' : date })
         break
@@ -484,8 +486,37 @@ class RootPageParser(CoreClass):
   
                 elif type(v) in [dict]:
                   get = v.get('get','')
-                  if get == 'text':
-                    d_parse[k] = txt
+
+                  if type(get) in [str]:
+                    if get == 'text':
+                      d_parse[k] = txt
+
+                      r_match = v.get('match','')
+                      if r_match: 
+                        if type(r_match) in [str]:
+                          pat  = r_match
+                          patc = re.compile(rf'{pat}')
+                          m = re.match(patc,txt)
+                          if m:
+                            txt = m.group(1)
+                            d_parse[k] = txt
+
+                  elif type(get) in [dict]:
+                    r_get = get
+                    css = r_get.get('css','')
+                    if css:
+                      els_css = el.select(css)
+                      for _el in els_css:
+                        _txt = _el.get_text()
+                        _get = r_get.get('get','')
+                        if _get == 'attr':
+                          _attr = r_get.get('attr','')
+                          if _el.has_attr(_attr):
+                            _val = _el[_attr]
+                            d_parse[k] = _val
+                    else:
+                      d_parse[k] = txt
+
                   elif get == 'attr':
                     attr = v.get('attr','')
                     if el.has_attr(attr):

@@ -566,6 +566,12 @@ function App(){
      return this;
   };
 
+  this.on_click_img = function(){
+     let $slf = this;
+
+     return this;
+  };
+
   this.on_click_author = function(){
      let $slf = this;
 
@@ -598,6 +604,7 @@ function App(){
      this
         .on_click_tags()
         .on_click_author()
+        .on_click_img()
         ;
 
      
@@ -691,7 +698,7 @@ function App(){
   this.opt_page_init = function(){ 
 
     //$('#opt_page_img').find('*').addClass('block');
-    $('#opt_page_img').find('button,li').addClass('block');
+    $('#opt_page_img').find('button').addClass('block');
     $('#opt_page_img').ariaDropdown();
 
     $('#opt_page_new').find('*').addClass('block').hide();
@@ -758,6 +765,7 @@ function App(){
   };
 
   this.opt_page_show = function(opt='url'){ 
+    var $slf = this;
 
     $('#control_items').children().hide();
     var id = '#opt_page_' + opt;
@@ -768,7 +776,38 @@ function App(){
        $('#div_form_new').show();
        return this;
     }
+    else if (id == '#opt_page_img') {
+       var jx = $.ajax({
+         method  : 'GET',
+         data    : {},
+         url     : '/json/page/' + $slf.rid + '/pics',
+         success : function(data){
+           var pics = util.get(data,'pics',[]);
+           $('#opt_page_img li').remove();
 
+
+           for (var i = 0; i < pics.length; i++) {
+              var pic = pics[i];
+
+              var caption = util.get(pic,'caption','');
+              var pic_url = util.get(pic,'pic_url','');
+
+              var $li = $('<li></li>');
+              $li.css({ width : '100%' });
+              if (caption) {
+                $li.text(caption);
+              }else if(pic_url){
+                $li.text(pic_url);
+              }
+              $('#opt_page_img ul').append($li);
+           };
+         },
+         error   : function(data){},
+       });
+
+       return this;
+    }
+ 
     this.ui_restore();
 
     return this;

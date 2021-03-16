@@ -22,7 +22,7 @@ PageParser:
     sels:
       - { 
           'search' : {
-              'css'   : [ ],
+              'css'   : [ 'a.author-name' ],
               'map' : {
                   'name' : 'text',
                   'url'  : { 
@@ -30,6 +30,15 @@ PageParser:
                     'attr' : 'href',
                   }
               },
+             'text' : {
+               'lines' : {
+                  'match' : { 
+                      'pat'   : 'Текст:\s+(.*)$',
+                      'name'  : 1,
+                      'split' : ',',
+                  }
+                }
+              }
           },
         }
   get_author_meta:

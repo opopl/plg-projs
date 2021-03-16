@@ -62,6 +62,8 @@ class Pic(CoreClass):
    'png'   : 'image/png',
   }
 
+  md5     = None
+
   # local (saved) path 
   path     = None
   path_uri = None
@@ -358,7 +360,7 @@ class Pic(CoreClass):
       'url_parent' : app.page.url,
     }
 
-    for k in util.qw('url img inum ext caption width height'):
+    for k in util.qw('url img inum ext caption width height md5'):
       insert[k] = getattr(pic,k,None)
 
     for k in util.qw('proj rootid'):
@@ -375,6 +377,19 @@ class Pic(CoreClass):
       'insert'  : insert
     }
 
+    dbw.insert_dict(d)
+
+    insert = {
+      'rid'     : app.page.rid,
+      'url'     : app.page.url,
+      'pic_url' : pic.url,
+    }
+
+    d = {
+      'db_file' : app.dbfile.pages,
+      'table'   : 'page_pics',
+      'insert'  : insert
+    }
     dbw.insert_dict(d)
 
     return pic
@@ -464,6 +479,18 @@ class Pic(CoreClass):
 
     return pic
 
+  def get_md5(pic):
+    app = pic.app
+    rid = app.page.rid
+
+    with open(pic.tmp['bare'],"rb") as f:
+      b = f.read() # read file as bytes
+      pic.md5 = hashlib.md5(b).hexdigest()
+
+    app.log(f'[{rid}][Pic.get_md5] got md5: {pic.md5}' )
+
+    return pic
+
   def get_ext(pic):
     map = {
        'JPEG'  : 'jpg',
@@ -493,6 +520,8 @@ class Pic(CoreClass):
 
     if not pic.bare_size:
       return pic
+
+    pic.get_md5()
 
     # pic.i = Image.open(...)
     pic.load()

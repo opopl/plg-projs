@@ -126,6 +126,13 @@ def url2base(base,url):
   u = url_parse(url)
   if not u['netloc']:
     url = url_join(base,url)
+
+  u = url_parse(url)
+  url = u['url']
+  #if not u['scheme']:
+    #url = re.sub(r'^/*', r'', url)
+    #url = f'https://{url}'
+
   return url
 
 def url_join(base,rel):

@@ -288,6 +288,16 @@ class r_json_page_add:
     j = self.req()
     return j
 
+class r_json_page_pics:
+  def GET(self,rid):
+    web.header('Content-Type', 'application/json; charset=utf-8')
+    pics = car._pics_from_rid(rid)
+
+    r = { 'pics' : pics }
+
+    j = json.dumps(r, ensure_ascii=False, indent=4)
+    return j
+
 class r_json_page:
   def GET(self,rid):
     page = car._page_from_rid(rid)
@@ -327,6 +337,7 @@ if __name__ == "__main__":
     '/'                      , 'r_html_index'         ,
 
     '/json/page/(\d+)'       , 'r_json_page'          ,
+    '/json/page/(\d+)/pics'  , 'r_json_page_pics'     ,
     '/json/page/add'         , 'r_json_page_add'      ,
     '/json/pages'            , 'r_json_pages'         ,
 
