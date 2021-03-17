@@ -12,6 +12,11 @@ def explode(txt='',**kwargs):
 
   return txt_a
 
+def join(sep='',arr=[]):
+  arr = list(map(lambda x: str(x), arr))
+  s = sep.join(arr)
+  return s
+
 def split_n_trim(txt='',sep='\n'):
   txt_n = txt.split('\n')
   txt_n = list(map(lambda x: x.strip(),txt_n))

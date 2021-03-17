@@ -23,7 +23,7 @@ syntax keyword zlanOp set unset setlist setdict
 syntax keyword zlanOp listpush dictex
 
 syntax keyword zlanKey page global
-syntax keyword zlanKeyword url title in ii tags date
+syntax keyword zlanKeyword url title in ii tags date imgbase
 syntax keyword zlanKeyword on eof
 syntax keyword zlanEof eof
 syntax keyword zlanFlag redo fail

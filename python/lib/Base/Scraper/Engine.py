@@ -173,6 +173,7 @@ class Page(CoreClass):
   url_srv = None
 
   pics    = []
+  imgbase = None
 
   ii_full = None
   tags    = None
@@ -209,6 +210,7 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
   EXAMPLES
         bs.py -y mix.yaml -p list_sites
         bs.py -c db_fill_tags
+        bs.py -c db_fill_auth
 '''
 
   html_parser = html.parser.HTMLParser()
@@ -499,12 +501,11 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
     self.log('[init_db_pages]')
   
     sql = '''
-
             DROP TABLE IF EXISTS log;
 
             -- DROP TABLE IF EXISTS page_pics;
             -- DROP TABLE IF EXISTS page_tags;
-            DROP TABLE IF EXISTS page_authors;
+            -- DROP TABLE IF EXISTS page_authors;
 
             CREATE TABLE IF NOT EXISTS data_meta (
                 rid INTEGER UNIQUE,
@@ -582,7 +583,19 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
             CREATE TABLE IF NOT EXISTS tag_stats (
                 tag TEXT NOT NULL UNIQUE,
                 rank INTEGER,
-                rids TEXT
+                rids TEXT,
+                FOREIGN KEY (tag) REFERENCES page_tags(tag)
+                    ON UPDATE CASCADE
+                    ON DELETE CASCADE
+            );
+
+            CREATE TABLE IF NOT EXISTS auth_stats (
+                auth_id TEXT NOT NULL UNIQUE,
+                rank INTEGER,
+                rids TEXT,
+                FOREIGN KEY (auth_id) REFERENCES page_authors(auth_id)
+                    ON UPDATE CASCADE
+                    ON DELETE CASCADE
             );
 
             CREATE TABLE IF NOT EXISTS log (
@@ -1770,7 +1783,7 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
         'ok' : 0,
     })
 
-    for k in util.qw('url date tags ii depth'):
+    for k in util.qw('url date tags ii depth imgbase'):
       v = ref.get(k,'')
       v = v.strip()
       self.page.set({ k : v })
@@ -2148,6 +2161,45 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
     h = t.render()
     return h
 
+  def _db_author_urls(self, ref={}):
+    author_id = ref.get('author_id','')
+    auth_ids  = author_id.split(',')
+
+    db_file = self.dbfile.pages
+
+    q = 'SELECT url FROM page_authors'
+
+    urls_a = None
+
+    while auth_ids:
+      auth_id = auth_ids.pop(0)
+
+      urls_db = dbw.sql_fetchlist(q,[],{
+        'db_file' : db_file,
+        'where'   : { 
+          'auth_id' : auth_id,
+        }
+      })
+
+      urls_f = []
+      for url in urls_db:
+        ok = 1
+        while 1:
+          if urls_a == None:
+            break
+
+          if not (url in urls_a):
+            ok = 0
+
+          break
+        
+        if ok:
+          urls_f.append(url)
+
+      urls_a = urls_f
+
+    return urls_a
+
   def _db_tag_urls(self, ref={}):
     tags   = ref.get('tags','')
     tags_a = tags.split(',')
@@ -2201,6 +2253,12 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
       urls = self._db_tag_urls({ 'tags' : tags })
 
       del where['tags']
+
+    if 'author_id' in where.keys():
+      author_id = where.get('author_id','')
+      urls = self._db_author_urls({ 'author_id' : author_id })
+
+      del where['author_id']
 
     r = dbw.sql_fetchall(q,p,{
       'db_file' : db_file,
@@ -2333,6 +2391,47 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
 
     return self
 
+  def c_db_fill_auth(self,ref={}):
+    self.log(f'[c_db_fill_author] processing authors...')
+
+    db_file = self.dbfile.pages
+
+    r = dbw.sql_fetchall(
+        'SELECT rid,url,author_id FROM pages',[],
+        { 'db_file' : db_file }
+    )
+    rows = r.get('rows',[])
+
+    for rh in rows:
+      self.db_save_author(rh)
+
+    auth_ids_all = dbw.sql_fetchlist(
+      'SELECT DISTINCT auth_id FROM page_authors ORDER BY auth_id ASC',[],
+      { 'db_file' : db_file }
+    )
+
+    for auth_id in auth_ids_all:
+      rids = dbw.sql_fetchlist(
+        '''SELECT 
+             DISTINCT CAST(rid AS TEXT) 
+           FROM 
+             page_authors
+           WHERE auth_id = ? ORDER BY rid ASC''',[ auth_id ],
+        { 'db_file' : db_file }
+      )
+      rids_j = ','.join(rids)
+      dbw.insert_dict({ 
+        'db_file' : db_file,
+        'table'   : 'auth_stats',
+        'insert'  : { 
+          'rids'    : rids_j,
+          'auth_id' : auth_id,
+          'rank'    : len(rids),
+        }
+      })
+
+    return self
+
   def c_html_parse(self):
 
     self                    \
@@ -2406,39 +2505,52 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
     return self
 
   def db_save_author(self,ref = {}):
-    rid = self.page.rid
+
+    author_id = ref.get('author_id',self.page.author_id)
+    url  = ref.get('url',self.page.url)
+    rid  = ref.get('rid',self.page.rid)
+
+    if not author_id:
+      return self
+
+    auth_ids = author_id.split(',')
+    if not auth_ids:
+      return self
+
+    self.log(f'[{rid}][db_save_author] saving authors: {author_id}')
 
     db_file = self.dbfile.pages
 
-    self.log(f'[{rid}][db_save_author] saving authors')
-
-    ids = ref.get('author_id',self.page.author_id)
-    if not ids:
-      return self
-
-    author_id_db = dbw.sql_fetchlist(
-       'SELECT author_id FROM page_authors where url = ?',
+    auth_ids_db = dbw.sql_fetchlist(
+       'SELECT auth_id FROM page_authors where url = ?',
        [url],
        { 'db_file' : db_file }
     )
 
-    auth_ids_db = author_id_db.split(',')
-
-    for auth_id in ids:
+    for auth_id in auth_ids:
       if auth_id in auth_ids_db:
         continue
 
+      ins_auth = {
+        'rid'     : rid,
+        'url'     : url,
+        'auth_id' : auth_id,
+      }
+      d = {
+        'db_file' : db_file,
+        'table'   : 'page_authors',
+        'insert'  : ins_auth,
+      }
+      dbw.insert_dict(d)
 
     return self
 
   def db_save_tags(self,ref = {}):
-    rid = self.page.rid
-
-    self.log(f'[{rid}][db_save_tags] saving tags')
-
     tags = ref.get('tags',self.page.tags)
     url  = ref.get('url',self.page.url)
     rid  = ref.get('rid',self.page.rid)
+
+    self.log(f'[{rid}][db_save_tags] saving tags')
 
     db_file = self.dbfile.pages
 
@@ -2451,9 +2563,9 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
        { 'db_file' : db_file }
     )
 
-    tags_a = tags.split(',')
+    tags_add = tags.split(',')
 
-    for tag in tags_a:
+    for tag in tags_add:
       if tag in tags_db:
         continue
 
@@ -2466,6 +2578,33 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
         'db_file' : db_file,
         'table'   : 'page_tags',
         'insert'  : ins_tags,
+      }
+      dbw.insert_dict(d)
+
+      rids_db_s = dbw.sql_fetchval(
+         'SELECT rids FROM tag_stats where tag = ?',
+         [tag],
+         { 'db_file' : db_file }
+      )
+      rids = []
+      if rids_db_s:
+        rids = rids_db_s.split(',')
+        rids.append(rid)
+        rids = util.uniq(rids)
+      else:
+        rids = [rid]
+
+      rank = len(rids)
+
+      rids_s = string.join(',', rids)
+      d = {
+        'db_file' : db_file,
+        'table'   : 'tag_stats',
+        'insert'  : {
+          'tag'  : tag,
+          'rids' : rids_s,
+          'rank' : rank,
+        },
       }
       dbw.insert_dict(d)
 

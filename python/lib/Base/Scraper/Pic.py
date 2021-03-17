@@ -140,6 +140,8 @@ class Pic(CoreClass):
 
     if not pic.baseurl:
       pic.baseurl    = app.page.baseurl
+      if app.page.imgbase:
+        pic.baseurl = app.page.imgbase
 
     pic.tmp = { 
       'bare' : app._dir('tmp_img bs_img'),

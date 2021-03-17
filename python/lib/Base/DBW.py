@@ -82,6 +82,20 @@ def sql_fetchone_list(q, p=[], ref={}):
 
   return lst
 
+def sql_fetchval(q, p=[], ref={}):
+  r    = sql_fetchone(q,p,ref)
+
+  val = None
+  if not r:
+    return val
+
+  row  = r.get('row',{})
+  cols = r.get('cols',[])
+
+  col = cols[0]
+  val = row[col]
+  return val
+
 def sql_fetchone(q, p=[], ref={}):
   conn     = ref.get('conn')
   db_file  = ref.get('db_file')

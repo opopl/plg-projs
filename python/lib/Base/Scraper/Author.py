@@ -32,9 +32,9 @@ class Author(CoreClass):
   def _is_name(self,name=''):
     app         = self.app
 
-    ok = False
-    if not name in util.get(app,'names.exclude',[]):
-      ok = True
+    ok = True
+    if name in util.get(app,'names.exclude.bare',[]):
+      ok = False
     return ok
 
   def parse(self,ref={}):
