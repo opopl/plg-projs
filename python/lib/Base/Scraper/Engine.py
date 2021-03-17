@@ -865,11 +865,14 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
     if not f_zlan:
       return self
 
-    self.zlan = Zlan({})
-
-    self.zlan.get_data({ 
-      'file' : f_zlan 
+    self.zlan = Zlan({
+      'file' : f_zlan
     })
+
+    self.zlan.get_data()
+    #self.zlan.get_data({ 
+      #'file' : f_zlan 
+    #})
 
     zdata  = self.zlan.data
     zorder = self.zlan.order
@@ -2477,7 +2480,19 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
     return self
 
   def c_zlan_save(self,ref={}):
-    self.zlan.save()
+
+    self                    \
+      .c_init_bs()          \
+      .save_zlan()          \
+
+    return self
+
+  def save_zlan(self,ref={}):
+
+    self.log(f'[BS][save_zlan]')
+
+    d_i = { }
+    self.zlan.save({ 'd_i' : d_i })
 
     return self
 

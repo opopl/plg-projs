@@ -13,6 +13,18 @@ from Base.Core import CoreClass
 
 class Zlan(CoreClass):
 
+  file = None
+
+  data  = {}
+  order = {}
+
+  off = None
+  end = 0
+  eof = 0
+
+  d_page   = None
+  d_global = None
+
   def __init__(self,args={}):
     super().__init__(args)
 
@@ -27,7 +39,7 @@ class Zlan(CoreClass):
   
     self.order = {
       'all' : [],
-      'on' : [],
+      'on'  : [],
     }
 
     self.off = None
@@ -37,15 +49,14 @@ class Zlan(CoreClass):
     
     self.shift = '\t'
   
-    self.d_page = None
-    self.d_global = None
+    self.d_page   = None
   
     self.d_global = {
         'listpush' : {},
-        'dictex' : {},
-        'setlist' : {},
-        'setdict' : {},
-        'set' : {},
+        'dictex'   : {},
+        'setlist'  : {},
+        'setdict'  : {},
+        'set'      : {},
     }
   
     self.pats = { 
@@ -78,7 +89,7 @@ class Zlan(CoreClass):
         break
 
       self.line = self.lines.pop(0).strip("\n")
-      self.add_main()
+      self.line_add_main()
   
       if self._is_cmt():
         continue
@@ -100,7 +111,7 @@ class Zlan(CoreClass):
     file = util.get(ref,'file',file)
 
     if not (file and os.path.isfile(file)):
-      return
+      return self
   
     plg = os.environ.get('PLG','')
     dat_file = os.path.join(plg,'projs','data','list','zlan_keys.i.dat')
@@ -121,36 +132,51 @@ class Zlan(CoreClass):
     return self
 
   def save(self,ref={}):
-    zdata = util.get(ref,'zdata',self.data)
-    d_i   = util.get(ref,'d_i')
-    zfile = util.get(ref,'zfile')
+    zdata    = util.get(ref,'zdata',self.data)
+
+    d_i      = util.get(ref,'d_i')
+
+    d_i_list = util.get(ref,'d_i_list',[])
+    if d_i:
+      d_i_list.append(d_i)
+
+    zfile = self.file
+    zfile = util.get(ref,'zfile',zfile)
 
     for j in util.qw('lines_main lines_eof'):
       if not j in zdata:
         zdata[j] = []
 
-    if d_i == None:
-      return self
-    if not type(d_i) is dict:
-      return self
-
-    zdata['lines_main'].append('page')
-
-    keys = [ 'url' ]
-    for k in d_i.keys():
-      if k == 'url':
+    for itm in d_i_list:
+      if itm == None:
         continue
-      keys.append(k)
+  
+      if not type(itm) is dict:
+        continue
+  
+      if len(itm) == 0:
+        continue
+  
+      zdata['lines_main'].append('page')
+  
+      keys_o = util.qw('url tag')
+      keys = []
+      keys.extend(keys_o)
 
-    if not 'url' in keys:
-      return self
-
-    for k in keys:
-      v = d_i.get(k)
-      if v == None:
+      if not util.get(itm,'url'):
         continue
 
-      zdata['lines_main'].append(f'\tset {k} {v}')
+      for k in itm.keys():
+        if k in keys_o:
+          continue
+        keys.append(k)
+  
+      for k in keys:
+        v = itm.get(k)
+        if v == None:
+          continue
+  
+        zdata['lines_main'].append(f'\tset {k} {v}')
 
     zlines = []
     zlines.extend(zdata['lines_main'])
@@ -322,12 +348,12 @@ class Zlan(CoreClass):
     print(f'is_end => {self.end}')
     return self
 
-  def add_eof(self):
+  def line_add_eof(self):
     self.data['lines_eof'].append(self.line)
 
     return self
 
-  def add_main(self):
+  def line_add_main(self):
     self.data['lines_main'].append(self.line)
 
     return self
@@ -339,16 +365,16 @@ class Zlan(CoreClass):
           self.line = self.lines.pop(0).strip("\n")
 
           if self.eof:
-            self.add_eof()
+            self.line_add_eof()
             continue
 
           self.line_match_block_word()
 
           if self.eof:
-            self.add_eof()
+            self.line_add_eof()
             continue
 
-          self.add_main()
+          self.line_add_main()
 
           self.line_match_block_inner()
 
