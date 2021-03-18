@@ -173,7 +173,7 @@ class Zlan(CoreClass):
   
       for k in keys:
         v = itm.get(k)
-        if v == None:
+        if v == None or v == '':
           continue
   
         zdata['lines_main'].append(f'\tset {k} {v}')

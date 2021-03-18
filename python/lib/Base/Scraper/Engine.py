@@ -178,6 +178,9 @@ class Page(CoreClass):
   ii_full = None
   tags    = None
 
+  title   = None
+  title_h = None
+
   author_id       = None
   author_id_first = None
 
@@ -2491,8 +2494,7 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
 
     self.log(f'[BS][save_zlan]')
 
-    d_i = { }
-    self.zlan.save({ 'd_i' : d_i })
+    self.zlan.save(ref)
 
     return self
 

@@ -478,6 +478,63 @@ function App(){
      return this;
   };
 
+  this.list_pics = function(){
+     let $slf = this;
+
+     var cols_t = [
+            { 
+              data : 'inum',
+              title : 'inum',
+            },
+            { 
+              data : 'caption',
+              title : 'caption',
+            },
+            { 
+              data  : 'pic_url',
+              title : 'pic_url',
+            },
+      ];
+
+      $('.mydatatable').remove();
+
+      var $tb_div = $('<div/>');
+      $tb_div
+        .attr({ id : 'tb_div_pics' })
+        .addClass('dohide')
+        .addClass('mydatatable')
+        ;
+
+      var $tb = $('<table/>');
+      $tb.append($('thead'));
+      $tb.append($('tbody'));
+      $tb.append($('tfoot'));
+
+      var id = 'tb_list_pics';
+      $tb.attr({ 
+          //id   : id,
+          width : '100%',
+          border : 1,
+      });
+      $tb_div.append($tb);
+      $('#container').append($tb_div);
+
+      $tb.dataTable({ 
+          data    : $slf.page.pics,
+          columns : cols_t,
+          paging  : true,
+          buttons: [
+            'copy', 'excel', 'pdf'
+          ],
+          //fixedHeader: {
+            //header: true,
+            //footer: true
+          //}
+      });
+
+     return this;
+  };
+
   this.list_pages = function(){
      let $slf = this;
 
@@ -521,21 +578,23 @@ function App(){
             },
       ];
 
-      var id = 'tb_list_pages';
-      $('#tb_div').remove();
+      $('.mydatatable').remove();
 
       var $tb_div = $('<div/>');
       $tb_div
-        .attr({ id : 'tb_div' })
+        .attr({ id : 'tb_div_pages' })
         .addClass('dohide')
+        .addClass('mydatatable')
         ;
 
       var $tb = $('<table/>');
       $tb.append($('thead'));
       $tb.append($('tbody'));
       $tb.append($('tfoot'));
+
+      var id = 'tb_list_pages';
       $tb.attr({ 
-          id   : id,
+          //id   : id,
           width : '100%',
           border : 1,
       });
@@ -777,30 +836,18 @@ function App(){
        return this;
     }
     else if (id == '#opt_page_img') {
+       $('#ifr_page_src, #ta_page_src').hide();
+
        var jx = $.ajax({
          method  : 'GET',
          data    : {},
          url     : '/json/page/' + $slf.rid + '/pics',
          success : function(data){
            var pics = util.get(data,'pics',[]);
-           $('#opt_page_img li').remove();
 
+           $slf.page.pics = pics;
 
-           for (var i = 0; i < pics.length; i++) {
-              var pic = pics[i];
-
-              var caption = util.get(pic,'caption','');
-              var pic_url = util.get(pic,'pic_url','');
-
-              var $li = $('<li></li>');
-              $li.css({ width : '100%' });
-              if (caption) {
-                $li.text(caption);
-              }else if(pic_url){
-                $li.text(pic_url);
-              }
-              $('#opt_page_img ul').append($li);
-           };
+           $slf.list_pics();
          },
          error   : function(data){},
        });

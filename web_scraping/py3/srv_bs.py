@@ -276,7 +276,7 @@ class r_json_page_add:
 
     car.save_zlan({ 'd_i_list' : urldata })
 
-    car.parse(urldata)
+    #car.parse(urldata)
 
     r = { 'ok' : ok, 'url' : url }
     j = json.dumps(r, ensure_ascii=False, indent=4)
