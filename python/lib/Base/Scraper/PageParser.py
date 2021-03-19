@@ -172,7 +172,7 @@ class RootPageParser(CoreClass):
     sels.extend( app._cnf('PageParser.get_date.sels',[]) )
     sels.extend( app._site_data('PageParser.get_date.sels',[]) )
 
-    tries = util.qw('ld_json meta html url')
+    tries = util.qw('html meta ld_json url')
 
     tries_site = app._site_data('PageParser.get_date.tries.order',[]) 
     if len(tries_site):
@@ -257,26 +257,26 @@ class RootPageParser(CoreClass):
   def _date_from_bare(self,sel = {}):
 
     fmt  = sel.get('fmt',"%Y-%m-%d")
-    sep  = sel.get('split',"T")
 
     if not self.date_bare:
       return 
 
-    tries = util.qw('by_fmt dateparser')
+    tries = util.qw('dateparser by_fmt')
 
     date = None
     dt = None
 
     for tri in tries:
-      if tri == 'by_fmt':
+      if tri == 'dateparser':
         try:
-          dt = datetime.datetime.strptime(self.date_bare,fmt)
+          r_dateparser = sel.get('dateparser',{})
+          dt = dateparser.parse(self.date_bare)
         except:
           continue
 
-      if tri == 'dateparser':
+      if tri == 'by_fmt':
         try:
-          dt = dateparser.parse(self.date_bare)
+          dt = datetime.datetime.strptime(self.date_bare,fmt)
         except:
           continue
 
@@ -674,7 +674,12 @@ class RootPageParser(CoreClass):
   def get_author(self,ref={}):
     app = self.app
 
-    tries = util.qw('ld_json meta html')
+    tries = util.qw('html meta ld_json')
+
+    tries_site = app._site_data('PageParser.get_author.tries.order',[]) 
+    if len(tries_site):
+      tries = tries_site
+
     while len(tries):
       tri = tries.pop(0)
 

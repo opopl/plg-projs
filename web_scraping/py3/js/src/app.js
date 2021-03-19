@@ -485,6 +485,18 @@ function App(){
             { 
               data : 'inum',
               title : 'inum',
+              render : function (data, type, row){
+                var inum = data;
+                if (type == 'display') {
+                  var $d = $('<div><input type="button"></input></div>');
+                  $d
+                    .addClass('btn_pic_inum')
+                    .addClass('block')
+                    .attr({ 'inum' : inum });
+                  return $d.html();
+                }
+                return inum;
+              }
             },
             { 
               data : 'caption',

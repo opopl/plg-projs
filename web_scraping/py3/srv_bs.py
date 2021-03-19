@@ -146,6 +146,10 @@ class r_img_inum:
 
     return iraw
 
+class r_html_pic:
+  def GET(self,inum):
+    web.header('Content-Type', 'text/html; charset=utf-8')
+
 class r_html_pages:
   def h_pages(self,params={}):
 
@@ -352,8 +356,10 @@ if __name__ == "__main__":
     '/html/page/(\d+)/(\w+)(?:/(\w*)|)' , 'r_html_page_rid_tipe' ,
 
     '/html/page/(\d+)'       , 'r_html_page_rid'      ,
-    '/html/page/last'        , 'r_html_page_last'      ,
+    '/html/page/last'        , 'r_html_page_last'     ,
     '/html/page/add'         , 'r_html_page_add'      ,
+
+    '/html/pic/(\d+)'        , 'r_html_pic'           ,
 
     '/add/page'              , 'r_add_page'           ,
 

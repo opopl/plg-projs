@@ -6,6 +6,8 @@ sel:
 
 PageParser:
   get_date:
+    tries:
+      order:
   get_date_meta:
   get_date_ld_json:
   get_date_url:
@@ -18,6 +20,8 @@ PageParser:
           'split' : ' ',
         }
   get_author:
+    tries:
+      order:
   get_author_html:
     sels:
       - { 
