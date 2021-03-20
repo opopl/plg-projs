@@ -16,6 +16,7 @@ const yaml = require('js-yaml');
 
 function App(){
 
+//@set_header
   this.set_header = function(){
     console.log('[App] set_header');
 
@@ -478,6 +479,7 @@ function App(){
      return this;
   };
 
+//@@list_pics
   this.list_pics = function(){
      let $slf = this;
 
@@ -490,12 +492,13 @@ function App(){
                 if (type == 'display') {
                   var $d = $('<div><input type="button"></input></div>');
                   $d
+                    .find('input')
                     .addClass('btn_pic_inum')
                     .addClass('block')
                     .attr({ 'inum' : inum });
                   return $d.html();
                 }
-                return inum;
+                return data;
               }
             },
             { 
@@ -505,6 +508,17 @@ function App(){
             { 
               data  : 'pic_url',
               title : 'pic_url',
+              render : function (data, type, row){
+                var pic_url = data;
+                if (type == 'display') {
+                  var $d = $('<div><a></a></div>');
+                  $d
+                    .find('a')
+                    .attr({ 'href' : pic_url });
+                  return $d.html();
+                }
+                return data;
+              }
             },
       ];
 
