@@ -2142,15 +2142,48 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
 
     db_file = self.dbfile.pages
 
-    q = 'SELECT * FROM authors'
-    p = []
-    r = dbw.sql_fetchall(q,p,{
+    wk = list(where.keys())
+    flt = { 'auth_id' : [] }
+
+    for k in wk:
+      v = where.get(k,'')
+      if k in util.qw('site date'):
+        list_author_id = dbw.sql_fetchlist(
+          '''SELECT DISTINCT author_id FROM pages''',
+          [],
+          { 'db_file' : db_file,
+            'where'   : { k : v },
+          })
+        del where[k]
+
+        for author_id in list_author_id:
+          if not author_id:
+            continue
+          auth_ids = author_id.split(',')
+          flt['auth_id'].extend(auth_ids)
+
+    flt_len = {}
+    for k in flt.keys():
+      flt[k]     = util.uniq(flt[k])
+
+      flt_len[k] = len(flt[k])
+
+    r = dbw.sql_fetchall('''SELECT * FROM authors''',[],{
       'db_file' : db_file,
       'where'   : where,
     })
 
     authors = r.get('rows',[])
     cols    = r.get('cols',[])
+
+    n = []
+    for a in authors:
+      auth_id = a.get('id','')
+      if flt_len['auth_id'] and not auth_id in flt['auth_id']:
+        continue
+      n.append(a)
+
+    authors = n
 
     r = { 
       'authors' : authors,
