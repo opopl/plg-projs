@@ -272,6 +272,8 @@ class r_json_page_add:
     r_url = util.url_parse(url,{ 'rm_query' : 1 })
     url   = r_url.get('url','')
 
+    params['url'] = url
+
     if not url:
       ok = 0
       r = { 'ok' : ok, 'err' : 'Empty URL' }

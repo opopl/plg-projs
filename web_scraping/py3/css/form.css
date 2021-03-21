@@ -32,7 +32,7 @@
   display: flex;
   flex-wrap: wrap;
   /*center,start,end,stretch*/
-  align-items: center;
+  align-items: start;
   justify-content: start; 
 }
 
@@ -86,5 +86,5 @@
 }
 
 .flex-inner li {
-  width: 300px;
+  width: 100px;
 }

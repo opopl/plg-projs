@@ -176,7 +176,6 @@ class Zlan(CoreClass):
   
         lines_page.append(f'\tset {k} {v}')
       
-      import pdb; pdb.set_trace()
       if len(lines_page):
         self.data['lines_main'].extend(lines_page)
 

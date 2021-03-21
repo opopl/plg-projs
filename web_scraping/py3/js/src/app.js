@@ -803,7 +803,6 @@ function App(){
 //@@ opt_page_init
   this.opt_page_init = function(){ 
 
-    //$('#opt_page_img').find('*').addClass('block');
     $('#opt_page_img').find('button').addClass('block');
     $('#opt_page_img').ariaDropdown();
 
@@ -876,6 +875,8 @@ function App(){
 
     $('#control_items').children().hide();
     var id = '#opt_page_' + opt;
+
+    $('.dohide').hide();
     $(id).show();
 
     if (id == '#opt_page_new') {
