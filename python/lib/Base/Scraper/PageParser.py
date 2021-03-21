@@ -256,12 +256,12 @@ class RootPageParser(CoreClass):
 
   def _date_from_bare(self,sel = {}):
 
-    fmt  = sel.get('fmt',"%Y-%m-%d")
+    fmt  = sel.get('fmt','')
 
     if not self.date_bare:
       return 
 
-    tries = util.qw('dateparser by_fmt')
+    tries = util.qw('dateparser')
 
     date = None
     dt = None
@@ -269,14 +269,19 @@ class RootPageParser(CoreClass):
     for tri in tries:
       if tri == 'dateparser':
         try:
-          r_dateparser = sel.get('dateparser',{})
-          dt = dateparser.parse(self.date_bare)
-        except:
-          continue
+          args = {}
+          args['settings'] = {}
+          if fmt:
+            if type(fmt) in [str]:
+              args['formats'] = [ fmt ]
+            elif type(fmt) in [list]:
+              args['formats'] = fmt
 
-      if tri == 'by_fmt':
-        try:
-          dt = datetime.datetime.strptime(self.date_bare,fmt)
+          order  = sel.get('order','')
+          if order:
+            args['settings']['DATE_ORDER'] = order
+
+          dt = dateparser.parse(self.date_bare,**args)
         except:
           continue
 

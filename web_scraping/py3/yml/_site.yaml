@@ -14,10 +14,14 @@ PageParser:
   get_date_html:
     sels:
       - { 
+          # css selector
           'find'  : '',
           'get'   : 'attr',
           'attr'  : '',
+          # split date string
           'split' : ' ',
+          # used by dateparser.parse()
+          'order' : 'YMD',
         }
   get_author:
     tries:

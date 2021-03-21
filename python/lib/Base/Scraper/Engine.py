@@ -2758,10 +2758,14 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
 
       r = dbw.sql_fetchone(
         'SELECT * FROM imgs WHERE url = ?',
-        [pic_url],
+        [ pic_url ],
         { 'db_file' : self.dbfile.images }
       )
-      row_pic = r.get('row',{})
+      if not r:
+        row_pic = {}
+      else:
+        row_pic = r.get('row',{})
+
       for k in util.qw('caption width height inum ext img'):
         v = row_pic.get(k,'')
         row.update({ k : v})
