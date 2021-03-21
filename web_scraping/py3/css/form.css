@@ -23,8 +23,12 @@
 }
 
 .flex-outer {
-  max-width: 800px;
-  margin: 0 auto;
+  /*max-width: 800px;*/
+  /*margin: 0 auto;*/
+  margin-right: 50%;
+  margin-left: -20%;
+  margin-bottom: 10%;
+  margin-top: 5%;
 }
 
 .flex-outer li,

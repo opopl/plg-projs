@@ -342,6 +342,7 @@ function App(){
            url     : '/json/page/add',
            success : function(data){
              console.log(data);
+             window.location = '/html/page/last';
            },
            error   : function(data){
              console.log(data);

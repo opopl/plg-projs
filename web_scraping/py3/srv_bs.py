@@ -202,15 +202,25 @@ class r_html_pages:
     return h
 
 class r_json_authors:
-  def POST(self):
+  def req(self):
     web.header('Content-Type', 'application/json; charset=utf-8')
 
     d = web.input()
     params = dict(d.items())
 
-    r = car._db_get_authors({ 'where' : params })
+    r = car._db_get_authors({ 
+      'where' : params 
+    })
 
     j = json.dumps(r, ensure_ascii=False)
+    return j
+
+  def POST(self):
+    j = self.req()
+    return j
+
+  def GET(self):
+    j = self.req()
     return j
 
 class r_json_pages:
@@ -266,7 +276,6 @@ class r_json_page_add:
     d = web.input()
     params = dict(d.items())
 
-    ok = 1
 
     url   = params.get('url','')
     r_url = util.url_parse(url,{ 'rm_query' : 1 })
@@ -274,6 +283,7 @@ class r_json_page_add:
 
     params['url'] = url
 
+    ok = 1
     if not url:
       ok = 0
       r = { 'ok' : ok, 'err' : 'Empty URL' }
@@ -287,7 +297,7 @@ class r_json_page_add:
       'd_i_list' : urldata 
     })
 
-    #car.parse(urldata)
+    car.parse(urldata)
 
     r = { 'ok' : ok, 'url' : url }
     j = json.dumps(r, ensure_ascii=False, indent=4)
