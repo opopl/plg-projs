@@ -883,6 +883,20 @@ function App(){
     if (id == '#opt_page_new') {
        $('#ifr_page_src, #ta_page_src').hide();
        $('#div_form_new').show();
+
+       var jx = $.ajax({
+         method  : 'GET',
+         data    : {},
+         url     : '/json/tags',
+         success : function(data){
+           var taglist = util.get(data,'taglist',[]);
+		       $('#div_form_new .inp_tags').autocomplete({ 
+		          source : taglist
+		       });
+         },
+         error   : function(data){},
+       });
+
        return this;
     }
     else if (id == '#opt_page_img') {

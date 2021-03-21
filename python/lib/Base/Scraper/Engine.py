@@ -2137,6 +2137,31 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
 
     return last
 
+  def _db_get_taglist(self, ref={}):
+    where = ref.get('where',{})
+
+    db_file = self.dbfile.pages
+
+    taglist = []
+
+    lst = dbw.sql_fetchlist(
+       '''SELECT tag FROM tag_stats ASC''',
+       [],
+       { 'db_file' : db_file,
+         'where'   : where,
+       })
+    taglist = lst
+
+#    for tg in lst:
+      #if not tg:
+        #continue
+      #taglist.extend(tg.split(','))
+
+    #taglist = util.uniq(taglist)
+    #taglist.sort()
+
+    return taglist
+
   def _db_get_authors(self, ref={}):
     where = ref.get('where',{})
 

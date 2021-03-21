@@ -201,6 +201,33 @@ class r_html_pages:
 
     return h
 
+class r_json_tags:
+  def req(self):
+    web.header('Content-Type', 'application/json; charset=utf-8')
+
+    d = web.input()
+    params = dict(d.items())
+
+    taglist = car._db_get_taglist({ 
+      'where' : params 
+    })
+
+    r = { 
+      'taglist' : taglist,
+      'count'   : len(taglist),
+    }
+
+    j = json.dumps(r, ensure_ascii=False)
+    return j
+
+  def POST(self):
+    j = self.req()
+    return j
+
+  def GET(self):
+    j = self.req()
+    return j
+
 class r_json_authors:
   def req(self):
     web.header('Content-Type', 'application/json; charset=utf-8')
@@ -365,6 +392,7 @@ if __name__ == "__main__":
     '/json/pages'            , 'r_json_pages'         ,
 
     '/json/authors'          , 'r_json_authors'       ,
+    '/json/tags'             , 'r_json_tags'       ,
 
     '/json/cmd/(\w+)'        , 'r_json_cmd'           ,
 
