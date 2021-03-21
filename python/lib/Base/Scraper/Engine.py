@@ -2488,11 +2488,11 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
 
     return self
 
-  def save_zlan(self,ref={}):
+  def save_zlan_fs(self,ref={}):
 
     self.log(f'[BS][save_zlan]')
 
-    self.zlan.save(ref)
+    self.zlan.save2fs(ref)
 
     return self
 

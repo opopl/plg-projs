@@ -131,40 +131,29 @@ class Zlan(CoreClass):
 
     return self
 
-  def save(self,ref={}):
-    zdata    = util.get(ref,'zdata',self.data)
-
+  def insert(self,ref={}):
     d_i      = util.get(ref,'d_i')
 
     d_i_list = util.get(ref,'d_i_list',[])
     if d_i:
       d_i_list.append(d_i)
 
-    zfile = self.file
-    zfile = util.get(ref,'zfile',zfile)
-
-    for j in util.qw('lines_main lines_eof'):
-      if not j in zdata:
-        zdata[j] = []
-
     for itm in d_i_list:
-      if itm == None:
+      if not (itm and type(itm) is dict and len(itm)):
+        continue
+
+      url = util.get(itm,'url')
+      if not url:
+        continue
+
+      if url in self.data.keys():
         continue
   
-      if not type(itm) is dict:
-        continue
-  
-      if len(itm) == 0:
-        continue
-  
-      zdata['lines_main'].append('page')
+      self.data['lines_main'].append('page')
   
       keys_o = util.qw('url tag')
       keys = []
       keys.extend(keys_o)
-
-      if not util.get(itm,'url'):
-        continue
 
       for k in itm.keys():
         if k in keys_o:
@@ -176,7 +165,27 @@ class Zlan(CoreClass):
         if v == None or v == '':
           continue
   
-        zdata['lines_main'].append(f'\tset {k} {v}')
+        self.data['lines_main'].append(f'\tset {k} {v}')
+
+    return self
+
+  def save2fs(self,ref={}):
+
+    self              \
+        .insert(ref)  \
+        .w_file(ref)  \
+
+    return self
+
+  def w_file(self,ref={}):
+    zfile = self.file
+
+    zfile = util.get(ref,'zfile',zfile)
+    zdata = util.get(ref,'zdata',self.data)
+
+    for j in util.qw('lines_main lines_eof'):
+      if not j in zdata:
+        zdata[j] = []
 
     zlines = []
     zlines.extend(zdata['lines_main'])

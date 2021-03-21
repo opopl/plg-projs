@@ -278,7 +278,7 @@ class r_json_page_add:
 
     urldata = [ params ] 
 
-    car.save_zlan({ 'd_i_list' : urldata })
+    car.save_zlan_fs({ 'd_i_list' : urldata })
 
     #car.parse(urldata)
 

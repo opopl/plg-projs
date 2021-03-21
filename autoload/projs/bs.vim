@@ -129,13 +129,14 @@ function! projs#bs#select_site (...)
     call add(pieces, piece)
     let site_j = join(pieces, ".")
 
-    call filter(sites,printf('v:val =~ "^%s"',piece))
+    call filter(sites,printf('v:val =~ escape("^%s",".")',piece))
 
     let n = []
     for site in sites
-      let site = substitute(site,printf('^%s[\.]*', piece),'','g')
-      if len(site)
-        call add(n,site)
+			let site_sub = substitute(copy(site),printf('^%s[\.]\+', piece),'','g')
+
+      if !(site_sub == site)
+        call add(n,site_sub)
       endif
     endfor
     let sites = n
