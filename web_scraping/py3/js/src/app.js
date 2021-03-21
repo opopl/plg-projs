@@ -891,7 +891,18 @@ function App(){
          success : function(data){
            var taglist = util.get(data,'taglist',[]);
 		       $('#div_form_new .inp_tags').autocomplete({ 
-		          source : taglist
+							//source : taglist
+              minLength: 1,
+					    source: function(req, resp) {
+					      var q = req.term;
+					      var myResponse = [];
+					      $.each(taglist, function(key, item) {
+					        if (item.toLowerCase().indexOf(q) === 0) {
+					          myResponse.push(item);
+					        }
+					      });
+					      resp(myResponse);
+					    },
 		       });
          },
          error   : function(data){},
