@@ -31,12 +31,32 @@ class Zlan(CoreClass):
     lines = []
     line = None
 
+    self.reset()
+  
+    self.pats = { 
+      'set'      : rf'^set\s+(\w+)(?:\s+(.*)|\s*)$',
+      'setlist'  : rf'^setlist\s+(\w+)\s*$',
+      'listpush' : rf'^listpush\s+(\w+)\s*$',
+      'setdict'  : rf'^setdict\+(\w+)\s*$',
+      'dictex'   : rf'^dictex\+(\w+)\s*$',
+      'unset'    : rf'^unset\s+(\w+)\s*$',
+    }
+
+
+
+  def _is_eof(self):
+    return re.match(r'^eof\s*$',self.line)
+
+  def _is_cmt(self):
+    return re.match(r'^\s*#',self.line)
+
+  def reset(self):
     self.data = {
       'order'      : [],
       'lines_main' : [],
       'lines_eof'  : [],
     }
-  
+
     self.order = {
       'all' : [],
       'on'  : [],
@@ -49,7 +69,7 @@ class Zlan(CoreClass):
     
     self.shift = '\t'
   
-    self.d_page   = None
+    self.d_page = None
   
     self.d_global = {
         'listpush' : {},
@@ -58,27 +78,13 @@ class Zlan(CoreClass):
         'setdict'  : {},
         'set'      : {},
     }
-  
-    self.pats = { 
-      'set'      : rf'^set\s+(\w+)(?:\s+(.*)|\s*)$',
-      'setlist'  : rf'^setlist\s+(\w+)\s*$',
-      'listpush' : rf'^listpush\s+(\w+)\s*$',
-      'setdict'  : rf'^setdict\+(\w+)\s*$',
-      'dictex'   : rf'^dictex\+(\w+)\s*$',
-      'unset'    : rf'^unset\s+(\w+)\s*$',
-    }
 
     self.flg = {
         'block'   : '',
-        'save'   : '',
+        'save'    : '',
     }
 
-
-  def _is_eof(self):
-    return re.match(r'^eof\s*$',self.line)
-
-  def _is_cmt(self):
-    return re.match(r'^\s*#',self.line)
+    return self
 
   def _lst_read(self):
     lst = []
@@ -113,8 +119,8 @@ class Zlan(CoreClass):
     if not (file and os.path.isfile(file)):
       return self
   
-    plg = os.environ.get('PLG','')
-    dat_file = os.path.join(plg,'projs','data','list','zlan_keys.i.dat')
+    plg       = os.environ.get('PLG','')
+    dat_file  = os.path.join(plg,'projs','data','list','zlan_keys.i.dat')
     self.keys = util.readarr(dat_file)
   
     with open(file,'r') as f:
@@ -132,10 +138,10 @@ class Zlan(CoreClass):
     return self
 
   def insert(self,ref={}):
-    d_i      = util.get(ref,'d_i')
+    d_i      = util.get(ref,'d_i',{})
 
     d_i_list = util.get(ref,'d_i_list',[])
-    if d_i:
+    if len(d_i):
       d_i_list.append(d_i)
 
     for itm in d_i_list:
@@ -148,8 +154,11 @@ class Zlan(CoreClass):
 
       if url in self.data.keys():
         continue
+
+      self.data[url] = itm
   
-      self.data['lines_main'].append('page')
+      lines_page = []
+      lines_page.append('page')
   
       keys_o = util.qw('url tag')
       keys = []
@@ -165,34 +174,49 @@ class Zlan(CoreClass):
         if v == None or v == '':
           continue
   
-        self.data['lines_main'].append(f'\tset {k} {v}')
+        lines_page.append(f'\tset {k} {v}')
+      
+      import pdb; pdb.set_trace()
+      if len(lines_page):
+        self.data['lines_main'].extend(lines_page)
 
     return self
 
   def save2fs(self,ref={}):
+    file_in   = util.get(ref,'file_in',self.file)
+    file_out  = util.get(ref,'file_out',self.file)
 
-    self              \
-        .insert(ref)  \
-        .w_file(ref)  \
+    d_i_list = util.get(ref,'d_i_list',[])
+
+    if not len(d_i_list):
+      return self
+
+    self                        \
+        .get_data({             \
+          'file' : file_in      \
+        })                      \
+        .insert({               \
+          'd_i_list' : d_i_list \
+        })                      \
+        .w_file({               \
+          'file' : file_out     \
+        })                      \
 
     return self
 
   def w_file(self,ref={}):
-    zfile = self.file
-
-    zfile = util.get(ref,'zfile',zfile)
-    zdata = util.get(ref,'zdata',self.data)
+    file_out = util.get(ref,'file',self.file)
 
     for j in util.qw('lines_main lines_eof'):
-      if not j in zdata:
-        zdata[j] = []
+      if not j in self.data:
+        self.data[j] = []
 
     zlines = []
-    zlines.extend(zdata['lines_main'])
-    zlines.extend(zdata['lines_eof'])
+    zlines.extend(self.data['lines_main'])
+    zlines.extend(self.data['lines_eof'])
 
     ztext = "\n".join(zlines) + "\n"
-    with open(zfile, 'w') as f:
+    with open(file_out, 'w') as f:
       f.write(ztext)
 
     return self
@@ -203,6 +227,8 @@ class Zlan(CoreClass):
       self.file = file
     else:
       file = self.file
+
+    self.reset()
   
     # loop variables
     self                              \

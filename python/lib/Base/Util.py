@@ -71,7 +71,7 @@ def mk_dirname(file):
 def keys(dict={}):
   return list(dict.keys())
 
-def url_parse(url):
+def url_parse(url,opts={}):
   u = urlparse(url)
 
   d = {}
@@ -100,6 +100,9 @@ def url_parse(url):
     'baseurl' : baseurl,
     'url'     : url,
   }
+
+  if get(opts,'rm_query'):
+    d['url'] = urljoin(url, d['path'])
 
   return d
 

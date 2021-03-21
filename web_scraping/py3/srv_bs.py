@@ -268,7 +268,10 @@ class r_json_page_add:
 
     ok = 1
 
-    url = params.get('url','')
+    url   = params.get('url','')
+    r_url = util.url_parse(url,{ 'rm_query' : 1 })
+    url   = r_url.get('url','')
+
     if not url:
       ok = 0
       r = { 'ok' : ok, 'err' : 'Empty URL' }
@@ -278,7 +281,9 @@ class r_json_page_add:
 
     urldata = [ params ] 
 
-    car.save_zlan_fs({ 'd_i_list' : urldata })
+    car.save_zlan_fs({ 
+      'd_i_list' : urldata 
+    })
 
     #car.parse(urldata)
 

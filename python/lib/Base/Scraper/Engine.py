@@ -2480,11 +2480,11 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
 
     return self
 
-  def c_zlan_save(self,ref={}):
+  def c_zlan_save_fs(self,ref={}):
 
     self                    \
       .c_init_bs()          \
-      .save_zlan()          \
+      .save_zlan_fs()       \
 
     return self
 
