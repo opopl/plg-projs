@@ -326,7 +326,13 @@ class Pic(CoreClass):
           with open(pic.tmp['bare'], 'wb') as f:
             f.write(decoded)
       else:
-        pic.resp = requests.get(pic.url, stream = True)
+        #pic.resp = requests.get(pic.url, stream = True)
+        pic.resp = app._requests_get({ 
+            'url'  : pic.url,
+            'args' : {
+                'stream' : True 
+            }
+        })
     except:
       app.die(f'ERROR[{rid}][Pic.grab] {pic.url}')
 

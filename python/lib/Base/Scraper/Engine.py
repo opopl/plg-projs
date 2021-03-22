@@ -1070,7 +1070,9 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
     return self
 
   def _requests_get(self,ref={}):
-    url = util.get(ref,'url','')
+    url     = util.get(ref,'url','')
+
+    args_in = util.get(ref,'args',{})
 
     headers = {}
     headers = {
@@ -1083,6 +1085,7 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
     }
     args_site = self._site_data('fetch.requests.args',{})
     args.update(args_site)
+    args.update(args_in)
     r = requests.get(url,**args)
 
     return r
