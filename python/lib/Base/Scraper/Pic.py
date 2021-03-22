@@ -287,6 +287,9 @@ class Pic(CoreClass):
     if pic.ext == 'gif':
       a['save_all'] = True
 
+    if pic.i.mode in ("RGBA", "P"):
+      pic.i = pic.i.convert('RGB')
+
     pic.i.save(pic.path,**a)
     pic.i.close()
 
