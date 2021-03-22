@@ -1069,6 +1069,24 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
 
     return self
 
+  def _requests_get(self,ref={}):
+    url = util.get(ref,'url','')
+
+    headers = {}
+    headers = {
+     'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.3'
+    }
+
+    args = { 
+      'headers' : headers,
+      'verify'  : True,
+    }
+    args_site = self._site_data('fetch.requests.args',{})
+    args.update(args_site)
+    r = requests.get(url,**args)
+
+    return r
+
   def url_fetch(self,ref={}):
     url = ref.get('url',self.page.url)
 
@@ -1076,11 +1094,6 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
 
     if self.page.get('fetched'):
       return self
-
-    headers = {}
-    headers = {
-     'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.3'
-    }
 
     tries = util.qw('requests requests_html')
     tries = util.qw('requests')
@@ -1091,7 +1104,7 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
     for tri in tries:
       if tri == 'requests':
         try:
-          r = requests.get(url,headers=headers,verify=False)
+          r = self._requests_get({ 'url' : url })
         except:
           ok = 0
 

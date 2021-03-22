@@ -4,6 +4,11 @@ sel:
   only:
   keep:
 
+fetch:
+  requests:
+    #verify: True
+    #headers: {}
+
 PageParser:
   get_date:
     tries:
