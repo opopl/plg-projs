@@ -1091,7 +1091,7 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
     for tri in tries:
       if tri == 'requests':
         try:
-          r = requests.get(url,headers=headers)
+          r = requests.get(url,headers=headers,verify=False)
         except:
           ok = 0
 
@@ -1690,11 +1690,11 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
     tipes_img = util.qw('img img_clean')
 
     self                                              \
+        .in_load_site_module()                        \
         .load_soup()                                  \
         .page_save_data_txt()                         \
         .db_save_meta()                               \
         .page_load_ld_json()                          \
-        .in_load_site_module()                        \
         .update_ii()                                  \
         .in_load_site_yaml()                          \
 
