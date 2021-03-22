@@ -28,8 +28,6 @@ class Zlan(CoreClass):
   def __init__(self,args={}):
     super().__init__(args)
 
-    lines = []
-    line = None
 
     self.reset()
   
@@ -51,6 +49,10 @@ class Zlan(CoreClass):
     return re.match(r'^\s*#',self.line)
 
   def reset(self):
+
+    lines = []
+    line  = None
+
     self.data = {
       'order'      : [],
       'lines_main' : [],
@@ -185,6 +187,10 @@ class Zlan(CoreClass):
     file_in   = util.get(ref,'file_in',self.file)
     file_out  = util.get(ref,'file_out',self.file)
 
+    data_in  = util.get(ref,'data',[])
+    if len(data_in):
+      self.data = data_in
+
     d_i_list = util.get(ref,'d_i_list',[])
 
     if not len(d_i_list):
@@ -221,11 +227,14 @@ class Zlan(CoreClass):
     return self
   
   def get_data(self,ref={}):
-    file = util.get(ref,'file')
+    file = util.get(ref,'file','')
     if file:
       self.file = file
     else:
       file = self.file
+
+    if not file:
+      return self
 
     self.reset()
   

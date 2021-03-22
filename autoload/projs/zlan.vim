@@ -10,24 +10,29 @@ function! projs#zlan#save (...)
   let zfile = projs#sec#file('_zlan_')
   let zfile = get(ref,'zfile',zfile)
 
-  let zdata = get(ref,'zdata',{})
-  let d_i   = get(ref,'d_i',{})
+  let zdata    = get(ref,'zdata',{})
+
+  let d_i      = get(ref,'d_i',{})
+  let d_i_list = get(ref,'d_i_list',[])
+  if len(d_i)
+    call add(d_i_list,d_i)
+  endif
 
 python3 << eof
 import vim
 from Base.Zlan import Zlan
 
-zfile = vim.eval('zfile')
-zdata = vim.eval('zdata')
-d_i   = vim.eval('d_i')
+zfile    = vim.eval('zfile')
+zdata    = vim.eval('zdata')
+d_i_list = vim.eval('d_i_list')
 
 len_main = len(zdata['lines_main'])
-len_eof = len(zdata['lines_eof'])
+len_eof  = len(zdata['lines_eof'])
 
-Zlan().save({ 
-  'zdata' : zdata,
-  'zfile' : zfile,
-  'd_i'   : d_i,
+Zlan().save2fs({ 
+  'data'     : zdata,
+  'file_out' : zfile,
+  'd_i_list' : d_i_list,
 })
   
 eof
