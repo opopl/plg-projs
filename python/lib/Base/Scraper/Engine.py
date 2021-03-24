@@ -508,6 +508,9 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
             -- DROP TABLE IF EXISTS page_tags;
             -- DROP TABLE IF EXISTS page_authors;
 
+            -- ALTER TABLE pages ADD COLUMN phrases TEXT;
+            -- ALTER TABLE pages ADD COLUMN notes TEXT;
+
             CREATE TABLE IF NOT EXISTS data_meta (
                 rid INTEGER UNIQUE,
                 url TEXT UNIQUE NOT NULL,
@@ -532,7 +535,9 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
                 author TEXT,
                 tags TEXT,
                 encoding TEXT,
-                ok INTEGER
+                ok INTEGER,
+                phrases TEXT,
+                notes TEXT
             );
 
             CREATE TABLE IF NOT EXISTS page_pics (

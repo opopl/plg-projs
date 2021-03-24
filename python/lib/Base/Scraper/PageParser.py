@@ -185,6 +185,9 @@ class RootPageParser(CoreClass):
       app.log(f'[PageParser] call: {sub_name}')
       util.call(self, sub_name, [ ref ])
 
+      if app.page.date:
+        break
+
     return self
 
   def get_date_ld_json(self,ref={}):
@@ -209,7 +212,7 @@ class RootPageParser(CoreClass):
       #d = datetime.datetime.strptime(s,fmt)
       #date = d.strftime('%d_%m_%Y')
       if date:
-        app.page.set({ 'date' : date })
+        app.page.date = date 
         break
 
     return self
@@ -239,9 +242,8 @@ class RootPageParser(CoreClass):
     for sel in sels:
       date = self._date_from_sel(app.soup, sel)
       if date:
-        app.page.set({ 'date' : date })
+        app.page.date = date 
         break
-
 
     return self
 
@@ -322,6 +324,7 @@ class RootPageParser(CoreClass):
 
     if not find:
       return 
+
 
     els = []
     if type(find) in [str]:
@@ -468,8 +471,6 @@ class RootPageParser(CoreClass):
           els_n.append(el)
 
         els = els_n
-
-      #import pdb; pdb.set_trace()
 
       for el in els:
         txt = el.get_text()
