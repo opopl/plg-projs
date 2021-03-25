@@ -21,12 +21,13 @@ PageParser:
       - { 
           # css selector
           'find'  : '',
-          'get'   : 'attr',
-          'attr'  : '',
+          'get'   : 'text',
+          #'get'   : 'attr',
+          #'attr'  : '',
           # split date string
-          'split' : ' ',
+          #'split' : ' ',
           # used by dateparser.parse()
-          'order' : 'YMD',
+          'order' : 'DMY',
         }
   get_author:
     tries:
@@ -35,7 +36,7 @@ PageParser:
     sels:
       - { 
           'search' : {
-              'css'   : [ 'a.author-name' ],
+              'css'   : [ '' ],
               'map' : {
                   'name' : 'text',
                   'url'  : { 

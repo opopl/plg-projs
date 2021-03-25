@@ -449,8 +449,9 @@ class RootPageParser(CoreClass):
       elif type(css) in [list]:
         css_a = css
         for css in css_a:
-          els_f = soup.select(css)
-          els.extend(els_f)
+          if css:
+            els_f = soup.select(css)
+            els.extend(els_f)
 
       if not len(els):
         return self
