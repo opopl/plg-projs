@@ -1710,52 +1710,91 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
   def parse_url_run(self,ref={}):
     tipes_img = util.qw('img img_clean')
 
-    self                                              \
-        .in_load_site_module()                        \
-        .load_soup()                                  \
-        .page_save_data_txt()                         \
-        .db_save_meta()                               \
-        .page_load_ld_json()                          \
-        .update_ii()                                  \
-        .in_load_site_yaml()                          \
+    acts = [
+      [ 'in_load_site_module' ],
+      [ 'load_soup' ],
+      [ 'page_save_data_txt' ],
+      [ 'db_save_meta' ],
+      [ 'page_load_ld_json' ],
+      [ 'update_ii' ],
+      [ 'in_load_site_yaml' ],
+      [ 'page_get_date' ],
+      [ 'page_get_author' ],
+      [ 'page_get_ii_full' ],
+      [ 'db_save_page' ],
+      #save image data => img.html
+      [ 'page_save_data_img' ],
+      [ 'page_clean_core' ],
+      [ 'page_rm_comments' ],
+      [ 'page_save', [{ 'tipe' : 'core'}] ],
+      [ 'page_clean' ],
+      [ 'page_save', [{ 'tipe' : 'core_clean' }] ],
+      [ 'page_only' ],
+      [ 'page_unwrap' ],
+      [ 'page_rm_empty' ],
+      [ 'page_header_insert_url' ],
+      [ 'page_save' ],
+      [ 'page_save_data_img', [{ 'tipe' : 'img_clean' }] ],
+      [ 'page_do_imgs' ],
+      [ 'page_replace_links', [{ 'act' : 'rel_to_remote' }] ],
+      [ 'page_store_links' ],
+      [ 'load_soup_file_rid', [{ 'tipes' : tipes_img }] ],
+      [ 'ii_replace_links', [
+          { 
+            'tipes' : tipes_img, 
+            'act' : 'remote_to_db' 
+          }
+      ] ],
+      [ 'page_save' ],
+      [ 'page_add' ],
+      [ 'page_save_log' ],
+      [ 'page2yaml' ],
+      [ 'db_ok' ],
+      [ 'page_save_db_record' ],
+      [ 'page_save_sh' ]
+    ]
 
-    self                                              \
-        .page_get_date()                              \
-        .page_get_author()                            \
-        .page_get_ii_full()                           \
-        .db_save_page()                               \
-        .cmt(''' save image data => img.html''')      \
-        .page_save_data_img()                         \
-        .page_clean_core()                            \
-        .page_rm_comments()                           \
-        .page_save({ 'tipe' : 'core' })               \
-        .page_clean()                                 \
-        .page_save({ 'tipe' : 'core_clean' })         \
-        .page_only()                                  \
-        .page_unwrap()                                \
-        .page_rm_empty()                              \
-        .page_header_insert_url()                     \
-        .page_save()                                  \
-        .page_save_data_img({ 'tipe' : 'img_clean' }) \
-        .page_do_imgs()                               \
-        .page_replace_links({                         \
-            'act' : 'rel_to_remote'                   \
-        })                                            \
-        .page_store_links()                           \
-        .load_soup_file_rid({                         \
-            'tipes' : tipes_img                       \
-        })                                            \
-        .ii_replace_links({                           \
-            'tipes' : tipes_img,                      \
-            'act'  : 'remote_to_db',                  \
-        })                                            \
-        .page_save()                                  \
-        .page_add()                                   \
-        .page_save_log()                              \
-        .page2yaml()                                  \
-        .db_ok()                                      \
-        .page_save_db_record()                        \
-        .page_save_sh()                               \
+    for a in acts:
+      sub = a.pop(0)
+      args = a.pop(0) if len(a) else []
+      util.call(self,sub,args)
+
+#    self                                              \
+        #.in_load_site_module()                        \
+        #.load_soup()                                  \
+        #.page_save_data_txt()                         \
+        #.db_save_meta()                               \
+        #.page_load_ld_json()                          \
+        #.update_ii()                                  \
+        #.in_load_site_yaml()                          \
+
+#    self                                              \
+        #.page_save({ 'tipe' : 'core_clean' })         \
+        #.page_only()                                  \
+        #.page_unwrap()                                \
+        #.page_rm_empty()                              \
+        #.page_header_insert_url()                     \
+        #.page_save()                                  \
+        #.page_save_data_img({ 'tipe' : 'img_clean' }) \
+        #.page_do_imgs()                               \
+        #.page_replace_links({                         \
+            #'act' : 'rel_to_remote'                   \
+        #})                                            \
+        #.page_store_links()                           \
+        #.load_soup_file_rid({                         \
+            #'tipes' : tipes_img                       \
+        #})                                            \
+        #.ii_replace_links({                           \
+            #'tipes' : tipes_img,                      \
+            #'act'  : 'remote_to_db',                  \
+        #})                                            \
+        #.page_save()                                  \
+        #.page_add()                                   \
+        #.page_save_log()                              \
+        #.page2yaml()                                  \
+        #.db_ok()                                      \
+        #.page_save_db_record()                        \
+        #.page_save_sh()                               \
 
     return self
 
