@@ -1719,7 +1719,6 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
       [ 'update_ii' ],
       [ 'in_load_site_yaml' ],
       [ 'page_get_date' ],
-      #[ 'page_get_author' ],
       [ 'page_get_ii_full' ],
       [ 'db_save_page' ],
       #save image data => img.html
