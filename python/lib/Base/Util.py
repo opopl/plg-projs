@@ -102,7 +102,7 @@ def url_parse(url,opts={}):
   }
 
   if get(opts,'rm_query'):
-    d['url'] = urljoin(url, d['path'])
+    d['url'] = urljoin(baseurl, d['path'])
 
   return d
 

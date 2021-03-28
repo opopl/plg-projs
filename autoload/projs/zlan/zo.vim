@@ -118,6 +118,11 @@ function! projs#zlan#zo#add (...)
         let url = get(d,k,'')
         let cnt = 1
 
+				let u = base#url#parse(url,{ 
+						\	'rm_query' : 1 
+						\	})
+				let url = get(u,'url','')
+
         if !len(url)
           let msg_head = "\nNon-zero URL required\n"
 

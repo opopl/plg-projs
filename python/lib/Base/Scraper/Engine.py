@@ -1729,6 +1729,8 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
       [ 'page_clean' ],
       [ 'page_save', [{ 'tipe' : 'core_clean' }] ],
       [ 'page_only' ],
+      #[ 'page_get_date' ],
+      #[ 'page_get_ii_full' ],
       [ 'page_get_author' ],
       [ 'page_unwrap' ],
       [ 'page_rm_empty' ],
@@ -2585,7 +2587,6 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
     self                    \
       .c_init_bs()          \
       .parse()              \
-      .render_page_list()   \
 
     return self
 
