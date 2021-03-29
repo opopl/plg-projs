@@ -1720,7 +1720,7 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
       [ 'in_load_site_yaml' ],
       [ 'page_get_date' ],
       [ 'page_get_ii_full' ],
-      [ 'db_save_page' ],
+      #[ 'db_save_page' ],
       #save image data => img.html
       [ 'page_save_data_img' ],
       [ 'page_clean_core' ],
@@ -1732,6 +1732,7 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
       #[ 'page_get_date' ],
       #[ 'page_get_ii_full' ],
       [ 'page_get_author' ],
+      [ 'db_save_page' ],
       [ 'page_unwrap' ],
       [ 'page_rm_empty' ],
       [ 'page_header_insert_url' ],
