@@ -1757,10 +1757,12 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
       [ 'page_save_sh' ]
     ]
 
-    for a in acts:
-      sub = a.pop(0)
-      args = a.pop(0) if len(a) else []
-      util.call(self,sub,args)
+    util.call(self,acts)
+
+    #for a in acts:
+      #sub = a.pop(0)
+      #args = a.pop(0) if len(a) else []
+      #util.call(self,sub,args)
 
     return self
 
