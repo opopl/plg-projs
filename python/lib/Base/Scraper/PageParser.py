@@ -347,9 +347,21 @@ class RootPageParser(CoreClass):
       if get:
         if get == 'attr':
           attr = sel.get('attr','')
-          if c.has_attr(attr):
-            self.date_bare = c[attr]
-            break
+          if type(attr) in [str]:
+            if c.has_attr(attr):
+              self.date_bare = c[attr]
+              break
+
+          elif type(attr) in [list]:
+            for a in attr:
+              if c.has_attr(a):
+                self.date_bare = c[a]
+                if self.date_bare:
+                  break
+
+            # break 'els' loop
+            if self.date_bare:
+              break
   
         if get == 'text':
           txt = c.get_text()
