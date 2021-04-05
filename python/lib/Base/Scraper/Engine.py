@@ -1890,7 +1890,7 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
       return self
 
     p.get_date()
-    date = util.get(self,'page.date')
+    date = self.page.date 
 
     if not date:
       if not self._opt('no_date'):
