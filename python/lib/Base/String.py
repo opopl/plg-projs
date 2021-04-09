@@ -18,7 +18,7 @@ def join(sep='',arr=[]):
   return s
 
 def split_n_trim(txt='',sep='\n'):
-  txt_n = txt.split('\n')
+  txt_n = txt.split(sep)
   txt_n = list(map(lambda x: x.strip(),txt_n))
   txt_n = list(filter(lambda x: len(x) > 0,txt_n))
 
