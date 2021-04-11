@@ -96,7 +96,7 @@ function! projs#zlan#zo#add (...)
           let tags_selected = n
           let msg_head = msg_head_base 
              \ . "\n" . 'Tags selected:' 
-             \ . "\n" . join(tags_selected, ',') . "\n"
+             \ . "\n" . join(tags_selected, "\n") . "\n"
 
           let cnt = 1
 

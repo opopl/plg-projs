@@ -1708,6 +1708,9 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
 
 ###pur
   def parse_url_run(self,ref={}):
+    '''
+        main => do_cmd => c_run => parse => parse_url => parse_url_run
+    '''
     tipes_img = util.qw('img img_clean')
 
     acts = [
