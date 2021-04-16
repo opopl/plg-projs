@@ -95,7 +95,7 @@ function! projs#zlan#zo#add (...)
           endfor
 
           let tags_selected = n
-					call sort(tags_selected)
+          call sort(tags_selected)
 
           let msg_head = msg_head_base 
              \ . "\n" . 'Tags selected:' 
@@ -112,11 +112,11 @@ function! projs#zlan#zo#add (...)
             endif
           endfor
 
-					call sort(tags_selected)
-					let tags_n = ''
-					for tg in tags_selected
-						let tags_n .= "  " . tg . "\n"
-					endfor
+          call sort(tags_selected)
+          let tags_n = ''
+          for tg in tags_selected
+            let tags_n .= "  " . tg . "\n"
+          endfor
 
           let msg_head = msg_head_base 
              \ . "\n" . 'Tags selected:' 
@@ -128,10 +128,10 @@ function! projs#zlan#zo#add (...)
         let url = get(d,k,'')
         let cnt = 1
 
-				let u = base#url#parse(url,{ 
-						\	'rm_query' : 1 
-						\	})
-				let url = get(u,'url','')
+        let u = base#url#parse(url,{ 
+            \ 'rm_query' : 1 
+            \ })
+        let url = get(u,'url','')
 
         if !len(url)
           let msg_head = "\nNon-zero URL required\n"
