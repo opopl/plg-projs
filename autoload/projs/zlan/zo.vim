@@ -93,7 +93,10 @@ function! projs#zlan#zo#add (...)
               call add(n,tag)
             endif
           endfor
+
           let tags_selected = n
+					call sort(tags_selected)
+
           let msg_head = msg_head_base 
              \ . "\n" . 'Tags selected:' 
              \ . "\n" . join(tags_selected, "\n") . "\n"
@@ -108,9 +111,16 @@ function! projs#zlan#zo#add (...)
               call add(tags_selected,tag)
             endif
           endfor
+
+					call sort(tags_selected)
+					let tags_n = ''
+					for tg in tags_selected
+						let tags_n .= "  " . tg . "\n"
+					endfor
+
           let msg_head = msg_head_base 
              \ . "\n" . 'Tags selected:' 
-             \ . "\n" . join(tags_selected, ',') . "\n"
+             \ . "\n" . tags_n
           let cnt = 1
         endif
 
