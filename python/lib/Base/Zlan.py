@@ -348,8 +348,8 @@ class Zlan(CoreClass):
     #print(f'[process_end]')
     #print(self.d_page)
 
-    if not self.off:
-        import pdb; pdb.set_trace()
+    #if not self.off:
+        #import pdb; pdb.set_trace()
 
     ###save_page
     if self.flg.get('save') == 'page':

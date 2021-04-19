@@ -1532,6 +1532,9 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
   def in_load_site_yaml(self,ref={}):
     site = ref.get('site',self.page.site)
 
+    if not site:
+      return self
+
     [ lib, mod ] = self._site_libdir(site)
     site_yaml = os.path.join(lib,mod + '.yaml')
 
@@ -1547,6 +1550,9 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
 ###im
   def in_load_site_module(self,ref={}):
     site = ref.get('site',self.page.site)
+
+    if not site:
+      return self
 
     [ lib, mod ] = self._site_libdir(site)
 
@@ -1814,9 +1820,11 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
         'ok' : 0,
     })
 
-    for k in util.qw('url date tags ii depth imgbase'):
+    for k in util.qw('url date tags ii depth imgbase opts'):
       v = ref.get(k,'')
-      v = v.strip()
+      if type(v) in [str]:
+        v = v.strip()
+
       self.page.set({ k : v })
 
     d = util.url_parse(self.page.url)
@@ -3172,7 +3180,6 @@ bs.py -c html_parse -i cache.html $*
     if not len(urldata):
       urldata = getattr(self,'urldata',[]) 
 
-    import pdb; pdb.set_trace()
 
     while len(urldata):
       d = urldata.pop(0)
