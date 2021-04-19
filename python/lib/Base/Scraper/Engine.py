@@ -96,7 +96,8 @@ class mixLogger:
     if opts.get('on_fail',1):
       self.on_fail()
 
-    raise Exception(msg)    
+    if not self._opt('no_die'):
+      raise Exception(msg)    
 
     return self
 
@@ -1828,7 +1829,8 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
     try:
       self.site_extract()
     except:
-      return self
+      if not self._opt('no_site'):
+        return self
 
     self.page_set_lst(ref)
 
@@ -2776,6 +2778,10 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
   def _site_skip(self,site=None):
     if not site:
       site = self.page.site
+
+    if not site:
+      if self._opt('no_site'):
+        return 0
 
     inc = self.list_sites_inc
 
