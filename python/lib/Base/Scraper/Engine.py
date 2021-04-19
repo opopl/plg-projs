@@ -1820,7 +1820,7 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
         'ok' : 0,
     })
 
-    for k in util.qw('url date tags ii depth imgbase opts'):
+    for k in util.qw('url date tags ii depth imgbase'):
       v = ref.get(k,'')
       if type(v) in [str]:
         v = v.strip()
@@ -1834,13 +1834,13 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
       v = v.strip()
       self.page.set({ k : v })
 
+    self.page_set_lst(ref)
+
     try:
       self.site_extract()
     except:
       if not self._opt('no_site'):
         return self
-
-    self.page_set_lst(ref)
 
     if not self._need_process(ref):
       return self
