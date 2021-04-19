@@ -3172,6 +3172,8 @@ bs.py -c html_parse -i cache.html $*
     if not len(urldata):
       urldata = getattr(self,'urldata',[]) 
 
+    import pdb; pdb.set_trace()
+
     while len(urldata):
       d = urldata.pop(0)
       self.parse_url(d)

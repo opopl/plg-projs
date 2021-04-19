@@ -309,7 +309,7 @@ class Zlan(CoreClass):
     self.end = 1
     word = m.group(1)
     prev = self.flg.get('block')
- 
+
     if word == 'off':
       self.off = 1
 
@@ -319,12 +319,11 @@ class Zlan(CoreClass):
     elif word == 'on':
       self.off = 0
 
-    elif word == 'global':
-      self.flg = { 'block' : 'global', 'save' : prev }
- 
-    elif word == 'page':
-      self.flg = { 'block' : 'page', 'save' : prev }
- 
+    self.flg = { 
+       'block' : word,
+       'save'  : prev
+    }
+
     return self
 
   def line_match_block_inner(self):
@@ -348,6 +347,9 @@ class Zlan(CoreClass):
   def process_end(self):
     #print(f'[process_end]')
     #print(self.d_page)
+
+    if not self.off:
+        import pdb; pdb.set_trace()
 
     ###save_page
     if self.flg.get('save') == 'page':
