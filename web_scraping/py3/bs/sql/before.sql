@@ -9,3 +9,6 @@ DROP TABLE IF EXISTS log;
 -- ALTER TABLE pages ADD COLUMN notes TEXT;
 
 -- ALTER TABLE authors ADD COLUMN bare TEXT;
+
+-- todo
+-- ALTER TABLE authors ADD COLUMN description TEXT;

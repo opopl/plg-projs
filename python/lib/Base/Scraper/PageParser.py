@@ -431,8 +431,10 @@ class RootPageParser(CoreClass):
 
     return self
 
+###search
   def itm_process_search(self,ref={}):
     app  = self.app
+
     soup = util.get(ref,'soup',app.soup)
     itm  = util.get(ref,'itm',{})
 
@@ -443,7 +445,6 @@ class RootPageParser(CoreClass):
     search  = util.get(itm,'search',{})
     if not len(search):
       return self
-
 
     app.log(f'[PageParser] itm_process_search, mode: {mode}')
 
@@ -484,6 +485,8 @@ class RootPageParser(CoreClass):
           els_n.append(el)
 
         els = els_n
+
+      #import pdb; pdb.set_trace()
 
       for el in els:
         txt = el.get_text()
@@ -662,6 +665,7 @@ class RootPageParser(CoreClass):
         'soup' : soup,
         'mode' : 'author',
       }
+      # gah = get_author_html
       self                     \
         .gah_process_nu(r)     \
         .itm_process_search(r) \

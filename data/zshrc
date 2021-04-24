@@ -1,0 +1,5 @@
+#!/bin/zsh
+#
+alias m="./mix.sh"
+alias sm="./srv_mix.sh"
+

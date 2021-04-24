@@ -333,15 +333,23 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
       }
     }
 
-
   # list of url blocks already processed
   parsed = []
 
   # order of keys for parsed
-  keys_parsed = util.qw('url rid title date tags author_id piccount')
+  keys_parsed = [ 
+    'url'       ,
+    'site'      ,
+    'rid'       ,
+    'title'     ,
+    'date'      ,
+    'tags'      ,
+    'author_id' ,
+    'piccount'  ,
+  ]
 
   bin_subpaths = {
-    'js' : 'src',
+    'js'  : 'src',
     'mjs' : 'src',
   }
 
@@ -3139,8 +3147,15 @@ bs.py -c html_parse -i cache.html $*
 
     return self
 
-  def parsed_print(self,urldata=[]):
-    self.log('Parsed Pages:')
+  def parsed_report(self,urldata=[]):
+    if not len(self.parsed):
+      return self
+    
+    page_count = len(self.parsed)
+    rids = list(map(lambda x: str(x['rid']), self.parsed))
+    rids_s = ','.join(rids)
+
+    self.log('Parse Report')
     i = 0
     while len(self.parsed):
       i+=1
@@ -3151,6 +3166,11 @@ bs.py -c html_parse -i cache.html $*
         s = '  %-12s%-12s' % (k, v)
         self.log(s)
 
+    self.log(f'Parsed {page_count} pages')
+    self.log(f'  rids: {rids_s}')
+
+    return self
+
   def parse(self,urldata=[]):
 
     if not len(urldata):
@@ -3160,7 +3180,7 @@ bs.py -c html_parse -i cache.html $*
       d = urldata.pop(0)
       self.parse_url(d)
 
-    self.parsed_print()
+    self.parsed_report()
 
     return self
 

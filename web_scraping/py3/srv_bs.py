@@ -370,12 +370,16 @@ class r_html_page_add:
     params = dict(d.items())
 
 if __name__ == "__main__":
+  dirname = os.path.dirname(__file__)
+  script  = os.path.realpath(__file__)
+
   r = { 
     'files' : {
-      'script' : os.path.realpath(__file__),
+      'script' : script,
     },
     'dirs' : {
-      'bin' : os.path.dirname(__file__),
+      'bin' : dirname,
+      'sql' : os.path.join(dirname,'bs','sql')
     }
   }
   
