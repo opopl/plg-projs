@@ -533,7 +533,6 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
 ###db
 ###db_init
   def init_db_pages(self):
-    self.log('[init_db_pages]')
 
     dir = self._dir('sql')
     ct_order = util.get(self,'tb.create.order',[])
@@ -554,8 +553,8 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
       'db_file'   : self.dbfile.pages
     })
 
-    import pdb; pdb.set_trace()
-  
+    self.log('[init_db_pages] done')
+
     return self
 
   def init_logging(self):

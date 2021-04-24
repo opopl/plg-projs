@@ -246,17 +246,26 @@ def sql_fetchall(q, p=[], ref={}):
   return { 'rows' : rows, 'cols' : cols }
 
 def sql_do(ref={}):
-  sql      = ref.get('sql','')
-  sql_file = ref.get('sql_file','')
+  sql       = ref.get('sql','')
+  sql_file  = ref.get('sql_file','')
+  sql_files = ref.get('sql_files',[])
 
   conn     = ref.get('conn')
   db_file  = ref.get('db_file')
   db_close = ref.get('db_close')
 
+  if len(sql_files):
+    for sql_file in sql_files:
+      sql_do({ 
+        'sql_file' : sql_file,
+        'db_file'  : db_file
+      })
+    return 1
+
   if sql_file and os.path.isfile(sql_file):
     with open(sql_file,'r') as f:
       sql = f.read()
-
+  
       sql_do({ 
         'sql'     : sql,
         'db_file' : db_file
