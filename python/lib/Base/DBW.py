@@ -130,6 +130,30 @@ def sql_fetchone(q, p=[], ref={}):
 
   return { 'row' : row, 'cols' : cols }
 
+def _tb_exist(ref={}):
+  db_file = ref.get('db_file','')
+  table   = ref.get('table','')
+
+  tb_list = _tb_list({ 'db_file' : db_file })
+  return (table in tb_list) or False
+
+def _tb_list(ref={}):
+  db_file = ref.get('db_file','')
+
+  q = f'''
+    SELECT 
+        name
+    FROM 
+        sqlite_master 
+    WHERE 
+        type = 'table' 
+            AND 
+        name NOT LIKE 'sqlite_%';
+  '''
+
+  tb_list = sql_fetchlist(q,[],{ 'db_file' : db_file })
+  return tb_list
+
 def _cols(ref={}):
   table   = ref.get('table','')
   db_file = ref.get('db_file','')
@@ -223,10 +247,22 @@ def sql_fetchall(q, p=[], ref={}):
 
 def sql_do(ref={}):
   sql      = ref.get('sql','')
+  sql_file = ref.get('sql_file','')
 
   conn     = ref.get('conn')
   db_file  = ref.get('db_file')
   db_close = ref.get('db_close')
+
+  if sql_file and os.path.isfile(sql_file):
+    with open(sql_file,'r') as f:
+      sql = f.read()
+
+      sql_do({ 
+        'sql'     : sql,
+        'db_file' : db_file
+      })
+
+    return 1
 
   if not conn:
     if db_file:
@@ -248,6 +284,8 @@ def sql_do(ref={}):
   if db_close:
     conn.commit()
     conn.close()
+
+  return 1
 
 def insert_dict(ref={}):
   conn     = ref.get('conn')

@@ -141,23 +141,31 @@ class mixLogger:
       return self
 
     db_file = self.dbfile.pages
-    conn = sqlite3.connect(db_file)
-    c = conn.cursor()
-  
-    insert = {
-        'msg'   : msg,
-        'rid'   : self.page.rid,
-        'url'   : self.page.url,
-        'site'  : self.page.site,
-        'time'  : util.now()
-    }
-  
-    d = {
-       'db_file' : self.dbfile.pages,
-       'table'   : 'log',
-       'insert'  : insert,
-    }
-    dbw.insert_dict(d)
+
+    tables = [ 'log' ]
+    for table in tables:
+      exist = dbw._tb_exist({ 
+        'table'   : table,
+        'db_file' : db_file,
+      })
+      
+      if not exist:
+        continue
+    
+      insert = {
+          'msg'   : msg,
+          'rid'   : self.page.rid,
+          'url'   : self.page.url,
+          'site'  : self.page.site,
+          'time'  : util.now()
+      }
+    
+      d = {
+         'db_file' : self.dbfile.pages,
+         'table'   : table,
+         'insert'  : insert,
+      }
+      dbw.insert_dict(d)
 
     return self
 
@@ -308,12 +316,29 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
   # list of url blocks to be fetched and parsed
   urldata = []
 
+  # tables
+  tb = {
+      'create' : {
+          'order' : [
+              'pages',
+              'data_meta',
+              'page_pics',
+              'page_tags',
+              'page_authors',
+              'authors',
+              'tag_stats',
+              'auth_stats',
+              'log',
+        ]
+      }
+    }
+
 
   # list of url blocks already processed
   parsed = []
 
   # order of keys for parsed
-  keys_parsed = util.qw('url date tags author_id')
+  keys_parsed = util.qw('url rid title date tags author_id piccount')
 
   bin_subpaths = {
     'js' : 'src',
@@ -322,6 +347,7 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
 
   # end: attributes }
 
+###_i_engine
   def __init__(self,args={}):
     self.img_root  = os.environ.get('IMG_ROOT')
     self.html_root = os.environ.get('HTML_ROOT')
@@ -508,124 +534,28 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
 ###db_init
   def init_db_pages(self):
     self.log('[init_db_pages]')
-  
-    sql = '''
-            DROP TABLE IF EXISTS log;
 
-            -- DROP TABLE IF EXISTS page_pics;
-            -- DROP TABLE IF EXISTS page_tags;
-            -- DROP TABLE IF EXISTS page_authors;
+    dir = self._dir('sql')
+    ct_order = util.get(self,'tb.create.order',[])
 
-            -- ALTER TABLE pages ADD COLUMN phrases TEXT;
-            -- ALTER TABLE pages ADD COLUMN notes TEXT;
+    f_before = os.path.join(dir,f'before.sql')
+    f_after  = os.path.join(dir,f'after.sql')
 
-            CREATE TABLE IF NOT EXISTS data_meta (
-                rid INTEGER UNIQUE,
-                url TEXT UNIQUE NOT NULL,
-                src TEXT,
-                og_url TEXT
-            );
+    sql_files = [ f_before ]
 
-            CREATE TABLE IF NOT EXISTS pages (
-                baseurl TEXT,
-                host TEXT,
-                rid INTEGER UNIQUE,
-                url TEXT UNIQUE NOT NULL,
-                date TEXT,
-                title TEXT,
-                title_h TEXT,
-                site TEXT,
-                ii TEXT,
-                ii_num INTEGER,
-                ii_full TEXT,
-                author_id TEXT,
-                author_id_first TEXT,
-                author TEXT,
-                tags TEXT,
-                encoding TEXT,
-                ok INTEGER,
-                phrases TEXT,
-                notes TEXT
-            );
+    for t in ct_order:
+      f = os.path.join(dir,f'ct_{t}.sql')
+      sql_files.append(f)
 
-            CREATE TABLE IF NOT EXISTS page_pics (
-                rid INTEGER,
-                url TEXT,
-                pic_url TEXT,
-                FOREIGN KEY (rid) REFERENCES pages(rid)
-                    ON UPDATE CASCADE
-                    ON DELETE CASCADE,
-                FOREIGN KEY (url) REFERENCES pages(url)
-                    ON UPDATE CASCADE
-                    ON DELETE CASCADE
-            );
+    sql_files.append(f_after)
 
-            CREATE TABLE IF NOT EXISTS page_tags (
-                url TEXT,
-                rid INTEGER,
-                tag TEXT,
-                FOREIGN KEY (url) REFERENCES pages(url)
-                    ON UPDATE CASCADE
-                    ON DELETE CASCADE,
-                FOREIGN KEY (rid) REFERENCES pages(rid)
-                    ON UPDATE CASCADE
-                    ON DELETE CASCADE
-            );
-
-            CREATE TABLE IF NOT EXISTS page_authors (
-                url TEXT,
-                rid INTEGER,
-                auth_id TEXT,
-                FOREIGN KEY (url) REFERENCES pages(url)
-                    ON UPDATE CASCADE
-                    ON DELETE CASCADE,
-                FOREIGN KEY (rid) REFERENCES pages(rid)
-                    ON UPDATE CASCADE
-                    ON DELETE CASCADE,
-                FOREIGN KEY (auth_id) REFERENCES authors(id)
-                    ON UPDATE CASCADE
-                    ON DELETE CASCADE
-            );
-
-            CREATE TABLE IF NOT EXISTS authors (
-                id TEXT NOT NULL UNIQUE,
-                url TEXT,
-                name TEXT,
-                description TEXT
-            );
-
-            CREATE TABLE IF NOT EXISTS tag_stats (
-                tag TEXT NOT NULL UNIQUE,
-                rank INTEGER,
-                rids TEXT,
-                FOREIGN KEY (tag) REFERENCES page_tags(tag)
-                    ON UPDATE CASCADE
-                    ON DELETE CASCADE
-            );
-
-            CREATE TABLE IF NOT EXISTS auth_stats (
-                auth_id TEXT NOT NULL UNIQUE,
-                rank INTEGER,
-                rids TEXT,
-                FOREIGN KEY (auth_id) REFERENCES page_authors(auth_id)
-                    ON UPDATE CASCADE
-                    ON DELETE CASCADE
-            );
-
-            CREATE TABLE IF NOT EXISTS log (
-                engine TEXT DEFAULT 'bs',
-                rid INTEGER,
-                url TEXT,
-                site TEXT,
-                msg TEXT,
-                time TEXT
-            );
-        '''
     dbw.sql_do({ 
-      'sql'     : sql,
-      'db_file' : self.dbfile.pages
+      'sql_files' : sql_files,
+      'db_file'   : self.dbfile.pages
     })
 
+    import pdb; pdb.set_trace()
+  
     return self
 
   def init_logging(self):
@@ -2851,6 +2781,9 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
     return 0
 
   def _pics_from_rid(self,rid=None):
+    if rid == None:
+      rid = self.page.rid
+
     r = dbw.sql_fetchall(
       'SELECT * FROM page_pics WHERE rid = ?',
       [rid],
@@ -2994,6 +2927,7 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
     return self
 
   def page_save2parsed(self):
+    rid = self.page.rid
 
     p = {}
     defaults = {}
@@ -3005,8 +2939,12 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
         'default'  : ''
     }
     util.obj_update(**ref)
-    print(self.page.__dict__)
 
+    pics = self._pics_from_rid(rid)
+    piccount = len(pics)
+    p.update({ 
+      'piccount' : len(pics)
+    })
     self.parsed.append(p)
 
     return self

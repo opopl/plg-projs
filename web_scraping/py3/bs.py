@@ -3,10 +3,16 @@
 from Base.Scraper.Engine import BS
 import os
 
+dirname = os.path.dirname(__file__)
+script  = os.path.realpath(__file__)
+
 r = { 
   'files' : {
-    'script' : os.path.realpath(__file__)
+    'script' : script
   },
+  'dirs' : {
+    'sql' : os.path.join(dirname,'bs','sql')
+  }
 }
 
 BS(r).main()
