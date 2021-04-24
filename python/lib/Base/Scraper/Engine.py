@@ -305,8 +305,15 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
   # list of databases
   dbfile = dbFile()
 
-  # list of urls to be fetched and parsed
+  # list of url blocks to be fetched and parsed
   urldata = []
+
+
+  # list of url blocks already processed
+  parsed = []
+
+  # order of keys for parsed
+  keys_parsed = util.qw('url date tags author_id')
 
   bin_subpaths = {
     'js' : 'src',
@@ -316,7 +323,7 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
   # end: attributes }
 
   def __init__(self,args={}):
-    self.img_root = os.environ.get('IMG_ROOT')
+    self.img_root  = os.environ.get('IMG_ROOT')
     self.html_root = os.environ.get('HTML_ROOT')
 
     for k, v in args.items():
@@ -1147,6 +1154,7 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
 
     return self
 
+
   def page_save_cache(self):
 
     util.mk_parent_dir(self.ii_cache)
@@ -1764,7 +1772,8 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
       [ 'page2yaml' ],
       [ 'db_ok' ],
       [ 'page_save_db_record' ],
-      [ 'page_save_sh' ]
+      [ 'page_save_sh' ],
+      [ 'page_save2parsed' ],
     ]
 
     util.call(self,acts)
@@ -2984,6 +2993,24 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
   def do_css(self):
     return self
 
+  def page_save2parsed(self):
+
+    p = {}
+    defaults = {}
+    ref = {
+        'dest'     : p,
+        'source'   : self.page,
+        'keys'     : self.keys_parsed,
+        'defaults' : defaults,
+        'default'  : ''
+    }
+    util.obj_update(**ref)
+    print(self.page.__dict__)
+
+    self.parsed.append(p)
+
+    return self
+
   def page_save_sh(self,ref={}):
     file = self._file_rid({ 'tipe' : '_parse_cache', 'ext' : 'sh' })
     h = '''#!/bin/sh
@@ -3175,16 +3202,29 @@ bs.py -c html_parse -i cache.html $*
 
     return self
 
+  def parsed_print(self,urldata=[]):
+    self.log('Parsed Pages:')
+    i = 0
+    while len(self.parsed):
+      i+=1
+      p = self.parsed.pop(0)
+      self.log(f'page {i}')
+      for k in p.keys():
+        v = util.get(p,k)
+        s = '  %-12s%-12s' % (k, v)
+        self.log(s)
+
   def parse(self,urldata=[]):
 
     if not len(urldata):
       urldata = getattr(self,'urldata',[]) 
 
-
     while len(urldata):
       d = urldata.pop(0)
       self.parse_url(d)
-    
+
+    self.parsed_print()
+
     return self
 
   def init(self):

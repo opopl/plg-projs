@@ -118,6 +118,20 @@ def strip(s):
   s = s.strip("\'\"\n\t ")
   return s
 
+def obj_update(**kwargs):
+  keys     = get(kwargs,'keys',[])
+  defaults = get(kwargs,'defaults',{})
+  default  = get(kwargs,'default')
+
+  dest     = get(kwargs,'dest',{})
+  source   = get(kwargs,'source',{})
+
+  for k in keys:
+    df      = get(defaults,k,default)
+    dest[k] = get(source,k,df)
+  
+  return dest
+
 def obj_methods(obj):
   methods = [m for m in dir(obj) if callable(getattr(obj, m)) ]
   return methods
