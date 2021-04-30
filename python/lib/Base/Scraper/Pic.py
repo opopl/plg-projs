@@ -248,6 +248,9 @@ class Pic(CoreClass):
           )
           pic.i = Image.open(pic.tmp['png'])
 
+        elif pic.ct in [ 'image/gif' ]:
+          pass
+
     if not pic.i:
       app                                                                \
         .log(f'FAIL[{rid}][Pic.grab] no Image.open instance: {pic.url}') \
@@ -314,6 +317,7 @@ class Pic(CoreClass):
       u = util.url_parse(pic.url)
       if u['scheme'] == 'data':
         data = u['path']
+
         m = re.match(r'^(image/svg\+xml);base64,(.*)$',u['path'])
 
         decoded = None
