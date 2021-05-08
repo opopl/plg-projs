@@ -14,7 +14,6 @@ from requests_html import HTMLSession
 import logging
 from http.client import HTTPConnection  # py3
 
-
 import datetime
 #from cdata.core import any2utf8
 

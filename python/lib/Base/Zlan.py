@@ -256,7 +256,7 @@ class Zlan(CoreClass):
     if not self.d_page:
       self.d_page = {}
       if self.off:
-       self.d_page['off'] = 1
+        self.d_page['off'] = 1
   
     m = re.match(self.pc['set'], self.line_t)
     if m:
