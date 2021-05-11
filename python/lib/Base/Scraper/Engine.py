@@ -184,6 +184,8 @@ class Page(CoreClass):
   ii_full = None
   tags    = None
 
+  limit   = None
+
   title   = None
   title_h = None
 
@@ -1765,7 +1767,7 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
         'ok' : 0,
     })
 
-    for k in util.qw('url date tags ii depth imgbase'):
+    for k in util.qw('url date tags ii depth imgbase limit'):
       v = ref.get(k,'')
       if type(v) in [str]:
         v = v.strip()
@@ -3175,9 +3177,16 @@ bs.py -c html_parse -i cache.html $*
     if not len(urldata):
       urldata = getattr(self,'urldata',[]) 
 
+    self.page_index = 1
     while len(urldata):
       d = urldata.pop(0)
       self.parse_url(d)
+
+      if self.page.limit:
+        if self.page_index == self.page.limit:
+           break
+
+      self.page_index = self.page_index + 1
 
     self.parsed_report()
 
