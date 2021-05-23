@@ -27,7 +27,7 @@ PageParser:
           # split date string
           #'split' : ' ',
           # used by dateparser.parse()
-          'order' : 'DMY',
+          #'order' : 'DMY',
         }
   get_author:
     tries:

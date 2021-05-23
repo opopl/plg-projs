@@ -951,6 +951,7 @@ function! projs#maps (...)
             \  ';bx'   : 'call projs#action#bld_compile_xelatex()'  ,
             \  ';bj'   : 'PrjAct bld_join'  ,
             \  ';bl'   : 'BLD last_compile'  ,
+            \  ';bt'   : 'BLD print_ii_tree'  ,
             \  ';e'    : 'PrjAct edt'  ,
             \  ';gi'   : 'PrjAct get_img'  ,
             \  ';kr'   : 'KEYMAP russian_jcukenwin'  ,

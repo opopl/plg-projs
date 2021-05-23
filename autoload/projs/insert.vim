@@ -273,12 +273,12 @@ function! projs#insert#ii_url ()
   endif
 
   let html_file = base#qw#catpath('html_root projs ' . rootid . ' pin ii_url 1.htm')
-  call idephp#curl#run({ 
-    \ 'url'         : url,
-    \ 'insecure'    : 1 ,
-    \ 'output_file' : html_file,
-    \ })
-  return 
+"  call idephp#curl#run({ 
+    "\ 'url'         : url,
+    "\ 'insecure'    : 1 ,
+    "\ 'output_file' : html_file,
+    "\ })
+  "return 
 
   let data = projs#db#url_data({ 'url' : url })
   let sec  = get(data,'sec','')

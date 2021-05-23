@@ -3176,6 +3176,7 @@ bs.py -c html_parse -i cache.html $*
 
     if not len(urldata):
       urldata = getattr(self,'urldata',[]) 
+    import pdb; pdb.set_trace()
 
     self.page_index = 1
     while len(urldata):

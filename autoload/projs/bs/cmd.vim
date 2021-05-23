@@ -175,12 +175,12 @@ function! projs#bs#cmd#init ()
   function env.get(temp_file) dict
     let temp_file = a:temp_file
     let code      = self.return_code
-  
-    if ! filereadable(a:temp_file)
+
+    if ! filereadable(temp_file)
       return 1
     endif
 
-    let out = readfile(a:temp_file)
+    let out = readfile(temp_file)
 
     let type = ''
     let field = ''

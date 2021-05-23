@@ -345,7 +345,7 @@ class Pic(CoreClass):
 
     if pic.resp:
       pic.resp.raw.decoded_content = True
-      pic.ct = pic.resp.headers['content-type']
+      pic.ct = util.get(pic.resp.headers, 'content-type', '')
   
       with open(pic.tmp['bare'], 'wb') as lf:
         shutil.copyfileobj(pic.resp.raw, lf)
