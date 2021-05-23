@@ -792,23 +792,6 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
 
     return 
 
-  def dbg_load_zlan(self, ref={}):
-   for url in zorder:
-      d = zdata.get(url)
-      tags = d.get('tags','')
-      redo = d.get('redo','')
-      acts = d.get('acts',[])
-
-      print(f'*'*50)
-      print(f'tags => {tags}')
-      print(f'redo => {redo}')
-      print(f'acts => {acts}')
-
-   print(f'zorder => {len(zorder)}')
-   print(f'd_global => {z.d_global}')
-
-   return self
-
 ###zlan
   def load_zlan(self, ref={}):
     f_zlan = util.get(self,'files.zlan')
@@ -822,9 +805,6 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
     })
 
     self.zlan.get_data()
-    #self.zlan.get_data({ 
-      #'file' : f_zlan 
-    #})
 
     zdata  = self.zlan.data
     zorder = self.zlan.order
@@ -1767,11 +1747,11 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
         'ok' : 0,
     })
 
+    # strings
     for k in util.qw('url date tags ii depth imgbase limit'):
       v = ref.get(k,'')
       if type(v) in [str]:
         v = v.strip()
-
       self.page.set({ k : v })
 
     d = util.url_parse(self.page.url)
