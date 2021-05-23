@@ -15,6 +15,13 @@ class Zlan(CoreClass):
 
   file = None
 
+  # regexp definitions, to be compiled into self.pc
+  pats = {}
+
+  # compiled regular expressions, obtained
+  #   from self.pats
+  pc  = {}
+
   data  = {}
   order = {}
 
@@ -28,7 +35,6 @@ class Zlan(CoreClass):
   def __init__(self,args={}):
     super().__init__(args)
 
-
     self.reset()
   
     self.pats = { 
@@ -39,7 +45,6 @@ class Zlan(CoreClass):
       'dictex'   : rf'^dictex\+(\w+)\s*$',
       'unset'    : rf'^unset\s+(\w+)\s*$',
     }
-
 
 
   def _is_eof(self):
@@ -251,6 +256,27 @@ class Zlan(CoreClass):
   
     return self
 
+  def _value_process(self, value):
+    pt = [
+      '^"(.*)"$',
+      '^(.*)$',
+    ]
+
+    while 1:
+      m = re.match(r'^(\d+)$', value)
+      if m:
+        value = int(m.group(1))
+        break
+
+      for p in pt:
+        m = re.match(rf'{p}', value)
+        if m:
+          value = m.group(1)
+
+      break
+
+    return value
+
   def b_page(self):
 
     if not self.d_page:
@@ -260,9 +286,10 @@ class Zlan(CoreClass):
   
     m = re.match(self.pc['set'], self.line_t)
     if m:
-      var = m.group(1)
-      val = m.group(2)
-      self.d_page.update({ var : val })
+      var   = m.group(1)
+      value = m.group(2)
+      value = self._value_process(value)
+      self.d_page.update({ var : value })
   
     m = re.match(self.pc['setlist'], self.line_t)
     if m:
@@ -284,11 +311,11 @@ class Zlan(CoreClass):
   
     m = re.match(self.pc['set'], self.line_t)
     if m:
-      k = m.group(1)
-      v = m.group(2)
-      if v:
-        v = v.strip()
-        self.d_global['set'].update({ k : v })
+      var = m.group(1)
+      value = m.group(2)
+      if value:
+        value = self._value_process(value)
+        self.d_global['set'].update({ var : value })
   
     for j in util.qw('listpush setlist'):
       m = re.match(self.pc[j], self.line_t)
@@ -345,11 +372,6 @@ class Zlan(CoreClass):
     return self
   
   def process_end(self):
-    #print(f'[process_end]')
-    #print(self.d_page)
-
-    #if not self.off:
-        #import pdb; pdb.set_trace()
 
     ###save_page
     if self.flg.get('save') == 'page':

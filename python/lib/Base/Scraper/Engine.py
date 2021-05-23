@@ -3075,7 +3075,6 @@ bs.py -c html_parse -i cache.html $*
 
     j = 0
     els_img = self.soup.select("img")
-    #import pdb; pdb.set_trace()
     for el_img in els_img:
       j+=1
       caption = ''
@@ -3156,6 +3155,7 @@ bs.py -c html_parse -i cache.html $*
 
     if not len(urldata):
       urldata = getattr(self,'urldata',[]) 
+
     import pdb; pdb.set_trace()
 
     self.page_index = 1
