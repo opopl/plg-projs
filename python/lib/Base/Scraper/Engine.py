@@ -1779,6 +1779,8 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
 
     self.parse_url_run()
 
+    self.page_index = self.page_index + 1
+
     return self
 
   def page_ii_from_title(self,ref={}):
@@ -3156,9 +3158,7 @@ bs.py -c html_parse -i cache.html $*
     if not len(urldata):
       urldata = getattr(self,'urldata',[]) 
 
-    import pdb; pdb.set_trace()
-
-    self.page_index = 1
+    self.page_index = 0
     while len(urldata):
       d = urldata.pop(0)
       self.parse_url(d)
@@ -3166,8 +3166,6 @@ bs.py -c html_parse -i cache.html $*
       if self.page.limit:
         if self.page_index == self.page.limit:
            break
-
-      self.page_index = self.page_index + 1
 
     self.parsed_report()
 

@@ -115,6 +115,7 @@ class Author(CoreClass):
       'id'   : auth_id,
       'name' : auth_name,
       'url'  : auth_url,
+      'bare' : auth_bare,
     }
     auth_list.append(auth)
 
