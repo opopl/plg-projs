@@ -945,9 +945,9 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
     date_db = None
 
     while 1:
-      if self._site_skip():
-        need = False
-        break
+      #if self._site_skip():
+        #need = False
+        #break
   
       if ref.get('redo',0):
         need = True
@@ -1519,6 +1519,8 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
         'soup' : self.soup,
         'app'  : self,
       })
+    else:
+      self.page_parser = None
 
     return self
 
@@ -1619,9 +1621,10 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
             j.extend(jj)
         #g = Graph().parse(data=jj)
       except:
-        #self.log('WARN[page_load_ld_json] JSON decode errors')
-        #self.log(e.string)
-        raise
+        self.log('WARN[page_load_ld_json] JSON decode errors')
+        self.log(e.string)
+        #raise
+        #pass
         continue
 
       #if type(jj) is dict:
@@ -1763,13 +1766,16 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
 
     self.page_set_lst(ref)
 
+    if not self._need_process(ref):
+      return self
+
     try:
       self.site_extract()
     except:
       if not self._opt('no_site'):
         return self
 
-    if not self._need_process(ref):
+    if self._site_skip():
       return self
 
     self.log(f'[site_extract] site = {self.page.site}')
