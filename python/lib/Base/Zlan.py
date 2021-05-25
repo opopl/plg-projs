@@ -29,6 +29,10 @@ class Zlan(CoreClass):
   end = 0
   eof = 0
 
+  var_types = {
+    'int' : util.qw('limit redo'),
+  }
+
   d_page   = None
   d_global = None
 
@@ -256,17 +260,18 @@ class Zlan(CoreClass):
   
     return self
 
-  def _value_process(self, value):
+  def _value_process(self, var, value):
     pt = [
       '^"(.*)"$',
       '^(.*)$',
     ]
 
     while 1:
-      m = re.match(r'^(\d+)$', value)
-      if m:
-        value = int(m.group(1))
-        break
+      if var in self.var_types['int']:
+        m = re.match(r'^(\d+)$', value)
+        if m:
+          value = int(m.group(1))
+          break
 
       for p in pt:
         m = re.match(rf'{p}', value)
@@ -288,7 +293,7 @@ class Zlan(CoreClass):
     if m:
       var   = m.group(1)
       value = m.group(2)
-      value = self._value_process(value)
+      value = self._value_process(var, value)
       self.d_page.update({ var : value })
   
     m = re.match(self.pc['setlist'], self.line_t)
@@ -314,7 +319,7 @@ class Zlan(CoreClass):
       var = m.group(1)
       value = m.group(2)
       if value:
-        value = self._value_process(value)
+        value = self._value_process(var, value)
         self.d_global['set'].update({ var : value })
   
     for j in util.qw('listpush setlist'):
