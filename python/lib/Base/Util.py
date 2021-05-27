@@ -218,8 +218,16 @@ def var_type(x):
     return typ
 
 def uniq(lst=[]):
-    lst = list(set(lst))
-    return lst
+    #lst = list(set(lst))
+    unique = []
+
+    for item in lst:
+      if item in unique:
+        continue
+      else:
+        unique.append(item)
+
+    return unique
 
 def add_libs(libs):
   for lib in libs:
@@ -241,8 +249,12 @@ def readarr(dat_file, opts={}):
       if re.match(r'^#',line) or (len(line) == 0):
         continue
 
-      F = re.split(splitsep, line)
-      vars.extend(F)
+      if splitsep:
+        F = re.split(splitsep, line)
+        vars.extend(F)
+      else:
+        vars.append(line)
+
       vars = uniq(vars)
 
     return vars

@@ -212,7 +212,6 @@ class Page(CoreClass):
 
   pass
 
-
 class BS(CoreClass,mixLogger,mixCmdRunner):
   # class attributes {
   usage='''
@@ -279,6 +278,9 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
   # input YAML file
   f_yaml = None
 
+  # lists
+  lists = {}
+
   # output directory
   out_dir = None
 
@@ -330,6 +332,7 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
               'tag_stats',
               'auth_stats',
               'log',
+              'slova_citaty',
         ]
       }
     }
@@ -346,6 +349,7 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
     'date'      ,
     'tags'      ,
     'author_id' ,
+    'author_line' ,
     'piccount'  ,
   ]
 
@@ -820,6 +824,27 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
       d = zdata.get(url)
       if not d.get('off'):
         self.urldata.append(d)
+
+    return self
+
+  def load_lists(self):
+    in_dir_lists = os.path.join(self.in_dir,'lists')
+    if not os.path.isdir(in_dir_lists):
+      return self
+
+    for f in Path(in_dir_lists).glob('*.i.dat'):
+      dat_file = f.as_posix()
+
+      k = os.path.basename(f)
+      m = re.match('^(.*)\.i\.dat$', k)
+      if not m:
+        continue
+
+      lst_name = m.group(1)
+      lst = util.readarr(dat_file)
+      self.lists[lst_name] = lst
+
+    import pdb; pdb.set_trace()
 
     return self
 
@@ -2332,7 +2357,7 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
     conn.row_factory = sqlite3.Row
     c = conn.cursor()
 
-    q = '''SELECT id, name, url FROM authors WHERE id = ?'''
+    q = '''SELECT id, name, url, bare FROM authors WHERE id = ?'''
     c.execute(q,[auth_id])
     rw = c.fetchone()
     if rw:
@@ -2936,10 +2961,23 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
     }
     util.obj_update(**ref)
 
+    author_line = ''
+    author_id = self.page.author_id
+    if author_id:
+      ids = author_id.split(',')
+      author_line_a = []
+      for id in ids:
+        auth = self._db_get_auth({ 'auth_id' : id })
+        bare = util.get(auth,'bare','')
+        author_line_a.append(bare)
+  
+      author_line = ' ; '.join(author_line_a)
+
     pics = self._pics_from_rid(rid)
     piccount = len(pics)
     p.update({ 
-      'piccount' : len(pics)
+      'piccount'    : len(pics),
+      'author_line' : author_line,
     })
     self.parsed.append(p)
 
@@ -3149,9 +3187,9 @@ bs.py -c html_parse -i cache.html $*
       i+=1
       p = self.parsed.pop(0)
       self.log(f'page {i}')
-      for k in p.keys():
+      for k in self.keys_parsed:
         v = util.get(p,k)
-        s = '  %-12s%-12s' % (k, v)
+        s = '  %-15s%-12s' % (k, v)
         self.log(s)
 
     self.log(f'Parsed {page_count} pages')
@@ -3189,6 +3227,7 @@ bs.py -c html_parse -i cache.html $*
       [ 'init_tmpl' ],
       [ 'mk_dirs' ],
       [ 'load_yaml' ],
+      [ 'load_lists' ],
       [ 'load_zlan' ],
     ]
 

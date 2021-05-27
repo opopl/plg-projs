@@ -33,7 +33,7 @@ class Author(CoreClass):
     app         = self.app
 
     ok = True
-    if name in util.get(app,'names.exclude.bare',[]):
+    if name in app._list('names_exclude_bare',[]):
       ok = False
     return ok
 
@@ -102,10 +102,16 @@ class Author(CoreClass):
       auth_name = f'{last_name}, {first_name}'
 
     auth_db = app._db_get_auth({ 'auth_id' : auth_id })
+
+    auth_update = app._act('auth_update')
+    if not auth_db:
+      auth_update = True
+
     if auth_db:
-      auth_name = auth_db.get('name')
-      if not auth_url:
-        auth_url = auth_db.get('url')
+      if not auth_update:
+        auth_name = auth_db.get('name')
+        if not auth_url:
+          auth_url = auth_db.get('url')
 
     app.log(f'[PageParser] author name: {auth_name}')
 
@@ -119,7 +125,7 @@ class Author(CoreClass):
     }
     auth_list.append(auth)
 
-    if not auth_db:
+    if auth_update:
       d = {
         'db_file' : app.dbfile.pages,
         'table'   : 'authors',
