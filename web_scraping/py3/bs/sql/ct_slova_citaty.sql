@@ -5,5 +5,6 @@ CREATE TABLE IF NOT EXISTS slova_citaty (
     avtor TEXT,
     vremja TEXT,
     sajt TEXT,
-    zagolovok TEXT
+    zagolovok TEXT,
+    ssylka TEXT
 );

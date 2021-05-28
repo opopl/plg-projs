@@ -844,8 +844,6 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
       lst = util.readarr(dat_file)
       self.lists[lst_name] = lst
 
-    import pdb; pdb.set_trace()
-
     return self
 
   def load_yaml(self, f_yaml=None):
@@ -2761,6 +2759,10 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
     if key in skip:
       return 1
     return 0
+
+  def _list(self,key=None,default=[]):
+    lst = util.get(self,[ 'lists', key ],default)
+    return lst
 
   def _opt(self,key=None):
     opts = self.page.get('opts',[])
