@@ -21,20 +21,11 @@ class Author(CoreClass):
   # app instance
   app = None
 
-  def _is_last_name(self,name=''):
-    app         = self.app
+  def _str_is_name_first(self,name=''):
+    app = self.app
+    lst = app.lists['names_first']
 
-    ok = False
-    if name in util.get(app,'names.last',[]):
-      ok = True
-    return ok
-
-  def _is_name(self,name=''):
-    app         = self.app
-
-    ok = True
-    if name in app._list('names_exclude_bare',[]):
-      ok = False
+    ok = name in app._list('names_first',[])
     return ok
 
   def parse(self,ref={}):
@@ -66,48 +57,40 @@ class Author(CoreClass):
 
     invert = False
 
-    aa = auth_bare.split(' ')
-    namlen = len(aa)
+    aa     = auth_bare.split(' ')
+    i = 0
+    while i < len(aa):
+      aa[i] = aa[i].lower().capitalize()
+      i+=1
 
-    auth_id = auth_bare
+    auth_bare = ' '.join(aa)
+      
+    first  = aa.pop(0)
+    tail   = ' '.join(aa)
 
-    if namlen >= 2:
-      first_name = aa.pop(0)
-      last_name  = aa.pop(0)
-      remainder  = ' '.join(aa)
+    invert = self._str_is_name_first(first)
 
-      if self._is_name(auth_bare):
-        invert = True
+    auth_id_bare = f'{first}_{tail}'
+    if invert:
+      auth_id_bare = f'{tail}_{first}'
 
-      if namlen == 2:
-        # last_name <=> first_name
-        if self._is_last_name(first_name):
-          invert = True
-
-          ln = last_name
-          last_name = first_name
-          first_name = ln
-
-      auth_id = f'{last_name}_{first_name}'
-      if remainder:
-        auth_id = f'{auth_id}_{remainder}'
-
-    auth_id = cyrtranslit.to_latin(auth_id,'ru')
+    auth_id = cyrtranslit.to_latin(auth_id_bare,'ru')
     auth_id = re.sub(r'\s', r'_', auth_id)
     auth_id = re.sub(r'[\W]*', r'', auth_id)
     auth_id = auth_id.lower()
 
+    #import pdb; pdb.set_trace()
+
     auth_name = auth_bare
     if invert:
-      auth_name = f'{last_name}, {first_name}'
+      auth_name = f'{tail}, {first}'
 
     auth_db = app._db_get_auth({ 'auth_id' : auth_id })
 
     auth_update = app._act('auth_update')
     if not auth_db:
       auth_update = True
-
-    if auth_db:
+    else:
       if not auth_update:
         auth_name = auth_db.get('name')
         if not auth_url:

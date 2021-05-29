@@ -12,6 +12,10 @@ def explode(txt='',**kwargs):
 
   return txt_a
 
+def char_range(start, end, step=1):
+  for char in range(ord(start), ord(end)+1, step):
+    yield chr(char)
+
 def join(sep='',arr=[]):
   arr = list(map(lambda x: str(x), arr))
   s = sep.join(arr)
