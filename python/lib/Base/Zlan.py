@@ -299,9 +299,13 @@ class Zlan(CoreClass):
     m = re.match(self.pc['setlist'], self.line_t)
     if m:
       var = m.group(1)
-      var_lst = self._lst_read()
+      var_lst_read = self._lst_read()
   
-      if len(var_lst):
+      if len(var_lst_read):
+        #self.d_page.update({ var : var_lst_read })
+        var_lst = util.get( self.d_page, [ var ], [] )
+        var_lst.extend(var_lst_read)
+
         self.d_page.update({ var : var_lst })
 
     return self
@@ -326,9 +330,12 @@ class Zlan(CoreClass):
       m = re.match(self.pc[j], self.line_t)
       if m:
         var = m.group(1)
-        var_lst = self._lst_read()
+        var_lst_read = self._lst_read()
   
-        if len(var_lst):
+        if len(var_lst_read):
+          var_lst = util.get( self.d_global, [ j, var ], [] )
+          var_lst.extend(var_lst_read)
+
           self.d_global[j].update({ var : var_lst })
 
     return self
