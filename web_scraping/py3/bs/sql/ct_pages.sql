@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS pages (
     ii_full TEXT,
     author_id TEXT,
     author_id_first TEXT,
-    author TEXT,
+    author_bare TEXT,
     tags TEXT,
     encoding TEXT,
     ok INTEGER,

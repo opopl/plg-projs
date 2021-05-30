@@ -600,6 +600,7 @@ class RootPageParser(CoreClass):
 
     return self
 
+# get_author_html = gah
   def gah_process_nu(self,ref={}):
     app  = self.app
     soup = util.get(ref,'soup',app.soup)
@@ -666,9 +667,12 @@ class RootPageParser(CoreClass):
         'mode' : 'author',
       }
       # gah = get_author_html
-      self                     \
-        .gah_process_nu(r)     \
-        .itm_process_search(r) \
+      # nu = name url
+      acts = [
+        [ 'gah_process_nu', [r] ],
+        [ 'itm_process_search', [r] ],
+      ]
+      util.call(self,acts)
 
       auth_bare = util.get(self.d_parse_author,'name')
       if auth_bare:
@@ -725,6 +729,8 @@ class RootPageParser(CoreClass):
           get_author_sels
             gah_process_nu      - process: url name
             itm_process_search  - process: search
+
+            Author.parse() - process auth_bare
     '''
     app = self.app
 

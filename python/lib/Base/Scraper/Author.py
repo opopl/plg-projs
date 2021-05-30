@@ -69,7 +69,7 @@ class Author(CoreClass):
 
     tail   = ' '.join(aa)
     tail = self._tail_nice(tail=tail)
-    auth_bare = f'{first} {tail}'
+    auth_plain = f'{first} {tail}'
 
     invert = self._str_is_name_first(first)
 
@@ -108,10 +108,10 @@ class Author(CoreClass):
     app.log(f'[PageParser] author name: {auth_name}')
 
     auth = {
-      'id'   : auth_id,
-      'name' : auth_name,
-      'url'  : auth_url,
-      'bare' : auth_bare,
+      'id'    : auth_id,
+      'name'  : auth_name,
+      'url'   : auth_url,
+      'plain' : auth_plain,
     }
 
     return [ auth, auth_update ]
@@ -119,6 +119,8 @@ class Author(CoreClass):
   def parse(self,ref={}):
     page_parser = self.page_parser
     app         = self.app
+
+    import pdb; pdb.set_trace()
 
     auth_bare = ref.get('name','')
     auth_url  = ref.get('url','')

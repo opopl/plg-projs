@@ -2355,7 +2355,7 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
     conn.row_factory = sqlite3.Row
     c = conn.cursor()
 
-    q = '''SELECT id, name, url, bare FROM authors WHERE id = ?'''
+    q = '''SELECT id, name, url, plain FROM authors WHERE id = ?'''
     c.execute(q,[auth_id])
     rw = c.fetchone()
     if rw:
@@ -2969,11 +2969,11 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
       ids = author_id.split(',')
       author_line_a = []
       for id in ids:
-        auth = self._db_get_auth({ 'auth_id' : id })
-        bare = util.get(auth,'bare','')
-        author_line_a.append(bare)
+        auth  = self._db_get_auth({ 'auth_id' : id })
+        plain = util.get(auth,'plain','')
+        author_line_a.append(plain)
   
-      author_line = ' ; '.join(author_line_a)
+      author_line = '; '.join(author_line_a)
 
     pics = self._pics_from_rid(rid)
     piccount = len(pics)
