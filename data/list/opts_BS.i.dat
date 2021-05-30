@@ -1,4 +1,4 @@
-add
+#add
 db_page_act
 db_query
 info
@@ -9,4 +9,8 @@ rid_grep
 rid_terminal
 site_view
 yaml_site_load
+
+# run bs.py
 x
+# author info
+auth_info
