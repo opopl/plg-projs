@@ -192,6 +192,11 @@ class Page(CoreClass):
   author_id       = None
   author_id_first = None
 
+  # depth of link following
+  depth     = 0
+
+  date = None
+
   def __init__(page,ref={}):
     super().__init__(ref)
 
@@ -207,8 +212,6 @@ class Page(CoreClass):
 
     return data
       
-  # depth of link following
-  depth     = 0
 
   pass
 
@@ -342,15 +345,16 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
 
   # order of keys for parsed
   keys_parsed = [ 
-    'url'       ,
-    'site'      ,
-    'rid'       ,
-    'title'     ,
-    'date'      ,
-    'tags'      ,
-    'author_id' ,
+    'url'         ,
+    'site'        ,
+    'rid'         ,
+    'title'       ,
+    'title_h'     ,
+    'date'        ,
+    'tags'        ,
+    'author_id'   ,
     'author_line' ,
-    'piccount'  ,
+    'piccount'    ,
   ]
 
   bin_subpaths = {
@@ -2950,6 +2954,10 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
     return self
 
   def page_save2parsed(self):
+    '''
+      see also:
+        parsed_report
+    '''
     rid = self.page.rid
 
     p = {}
@@ -2975,11 +2983,19 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
   
       author_line = '; '.join(author_line_a)
 
+    date = self.page.date
+    dt = datetime.datetime.strptime(date,'%d_%m_%Y')
+    date_dot  = dt.strftime('%d.%m.%Y')
+    #date_lang  = dt.strftime('%d.%m.%Y')
+
+    date_all = f'{date}; {date_dot}'
+
     pics = self._pics_from_rid(rid)
     piccount = len(pics)
     p.update({ 
       'piccount'    : len(pics),
       'author_line' : author_line,
+      'date'        : date_all,
     })
     self.parsed.append(p)
 
@@ -3176,6 +3192,11 @@ bs.py -c html_parse -i cache.html $*
     return self
 
   def parsed_report(self,urldata=[]):
+    '''
+        see also:
+          page_save2parsed
+          keys_parsed
+    '''
     if not len(self.parsed):
       return self
     

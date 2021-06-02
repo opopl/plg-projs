@@ -88,8 +88,6 @@ class Author(CoreClass):
     auth_id = re.sub(r'[\W]*', r'', auth_id)
     auth_id = auth_id.lower()
 
-    #import pdb; pdb.set_trace()
-
     auth_name = auth_bare
     if invert:
       auth_name = f'{tail}, {first}'
@@ -119,8 +117,6 @@ class Author(CoreClass):
   def parse(self,ref={}):
     page_parser = self.page_parser
     app         = self.app
-
-    import pdb; pdb.set_trace()
 
     auth_bare = ref.get('name','')
     auth_url  = ref.get('url','')
