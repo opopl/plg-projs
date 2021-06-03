@@ -475,6 +475,8 @@ class RootPageParser(CoreClass):
         for ind in indices:
           if ind == 'last':
             ind = len(els)-1
+          elif ind == 'first':
+            ind = 0
           else:
             ind = int(ind)
 

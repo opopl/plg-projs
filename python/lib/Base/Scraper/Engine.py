@@ -63,6 +63,9 @@ from Base.Core import CoreClass
 from Base.Scraper.Server import Srv
 from Base.Scraper.Pic import Pic
 
+from Base.Mix.mixCmdRunner import mixCmdRunner
+from Base.Mix.mixLogger import mixLogger
+
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import time
 
@@ -70,22 +73,6 @@ import time
 class dbFile(CoreClass):
   images = None
   pages = None
-
-class mixCmdRunner:
-
-  def do_cmd(self,cmds=None):
-    if not cmds:
-      cmds = util.get(self,'vars.mixCmdRunner.cmds',[])
-
-    for cmd in cmds:
-      sub = f'c_{cmd}'
-      if not util.obj_has_method(self,sub):
-        print(f'No method: {sub}')
-        continue
-
-      util.call(self, sub)
-  
-    return self
 
 class mixLogger:
 
@@ -2984,11 +2971,14 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
       author_line = '; '.join(author_line_a)
 
     date = self.page.date
-    dt = datetime.datetime.strptime(date,'%d_%m_%Y')
-    date_dot  = dt.strftime('%d.%m.%Y')
-    #date_lang  = dt.strftime('%d.%m.%Y')
+    if date:
+      dt = datetime.datetime.strptime(date,'%d_%m_%Y')
+      date_dot  = dt.strftime('%d.%m.%Y')
+      #date_lang  = dt.strftime('%d.%m.%Y')
 
-    date_all = f'{date}; {date_dot}'
+      date_all = f'{date}; {date_dot}'
+    else:
+      date_all = ''
 
     pics = self._pics_from_rid(rid)
     piccount = len(pics)
