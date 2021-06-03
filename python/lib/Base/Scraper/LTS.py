@@ -16,3 +16,6 @@ class LTS(CoreClass):
 
     for k, v in args.items():
       setattr(self, k, v)
+
+  def main(self):
+    return self
