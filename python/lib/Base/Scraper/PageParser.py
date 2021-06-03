@@ -344,6 +344,13 @@ class RootPageParser(CoreClass):
       return
 
     for c in els:
+      r_found = util.get(sel,'found',{})
+      r_remove = r_found.get('remove',{})
+      css_remove = r_remove.get('css','')
+      if css_remove:
+        for cc in c.select(css_remove):
+          cc.decompose()
+
       if get:
         if get == 'attr':
           attr = sel.get('attr','')
@@ -367,7 +374,13 @@ class RootPageParser(CoreClass):
           txt = c.get_text()
           if util.get(sel,'text.strip_n',1):
             txt = string.strip_n(txt)
-  
+
+          mm = util.get(sel,'text.match','') 
+          if mm:
+            m = re.match(rf'{mm}',txt)
+            if m:
+              txt = m.group(0)
+
           lopt = util.get(sel,'text.lines',{})
           if len(lopt):
             found = 0

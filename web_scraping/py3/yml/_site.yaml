@@ -28,6 +28,11 @@ PageParser:
           #'split' : ' ',
           # used by dateparser.parse()
           #'order' : 'DMY',
+
+          # options for the case 'get' = 'text'
+          #'text' : {
+            #'match' : '^(?P<year>\d{4})-(?P<month>\d{2})-(?P<day>\d{2})',
+          #},
         }
   get_author:
     tries:
