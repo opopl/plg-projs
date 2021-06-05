@@ -337,13 +337,13 @@ function App(){
   this.on_form_submit = function(){
       var $f = $( "#div_form_plan form" );
       
-      $f.submit(function( event ) {
+      $f.submit( function(event) {
         //alert( $f.find('') );
         var d = $f.serialize();
         var jx = $.ajax({
            method  : 'POST',
            data    : d,
-           url     : '/json/page/add',
+           url     : '/json/zlan/add',
            success : function(data){
              console.log(data);
              //window.location = '/html/page/last';
@@ -383,6 +383,7 @@ function App(){
         }))
         .register_on_enter('#inp_rid',this.func_enter_rid())
         .register_on_enter('#opt_page_url',this.func_enter_url())
+        .register_on_enter('#plan_inp_tags',this.func_enter_tags_plan())
         ;
 
       return this;
@@ -400,6 +401,21 @@ function App(){
             $(this).trigger("enterKey");
         }
      });
+
+     return this;
+  };
+
+//@@ func_enter_tags_plan
+  this.func_enter_tags_plan = function(){
+     var $slf = this;
+
+     return function(e){
+        var tags = $(this).val();
+
+        alert(tags);
+
+        return 1;
+     };
 
      return this;
   };
@@ -736,7 +752,6 @@ function App(){
         window.location = '/html/page/' + $slf.rid;
      });
 
-
      $('#btn_json').on('click',function() {
         $('#ifr_page_src').attr({ src : '/json/page/' + $slf.rid });
      });
@@ -889,6 +904,7 @@ function App(){
     $('.dohide').hide();
     $(id).show();
 
+//@a opt_page_plan
     if (id == '#opt_page_plan') {
        $('#ifr_page_src, #ta_page_src').hide();
        $('#div_form_plan').show();
@@ -919,6 +935,7 @@ function App(){
 
        return this;
     }
+//@a opt_page_img
     else if (id == '#opt_page_img') {
        $('#ifr_page_src, #ta_page_src').hide();
 
@@ -935,6 +952,11 @@ function App(){
          },
          error   : function(data){},
        });
+
+       return this;
+//@a opt_page_console
+    }else if (id == '#opt_page_console') {
+       $('#ifr_page_src, #ta_page_src').hide();
 
        return this;
     }

@@ -1,14 +1,9 @@
 
     <div id="pane_control" class="flex-row">
       <select id="select_control">
-        <option>plan</option>
-        <option selected>url</option>
-        <option>title</option>
-        <option>title_h</option>
-        <option>tags</option>
-        <option>author</option>
-        <option>img</option>
-        <option>console</option>
+        {% for opt in selectcontrol.options %}
+          <option> {{ opt }} </option>
+        {% endfor %}
       </select>
 
       <div id="control_items" class="flex-row">
@@ -32,8 +27,10 @@
         </div>
         <div id="opt_page_author" class='flex-row'> </div>
 
-        <div id="opt_page_img">
-        </div>
+        <div id="opt_page_img"> </div>
+
+				<div id="opt_page_console"> 
+				</div>
       </div>
 
     </div>

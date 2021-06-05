@@ -108,15 +108,17 @@ class r_html_page_rid_tipe:
 
       t = car.template_env.get_template("page.t.html")
       h = t.render(
-          selectcontrol={
+          # id = select_control in pane_control.t.html
+          selectcontrol = {
             'options' : [
-                'plan',
                 'url',
+                'plan',
                 'title',
                 'title_h',
                 'tags',
                 'author',
                 'img',
+                'console',
             ]
           },
           page=page.dict(),
@@ -330,6 +332,8 @@ class r_json_zlan_add:
 
     urldata = [ params ] 
 
+    # Engine.py save_zlan_fs
+    #   Zlan.py save2fs
     car.save_zlan_fs({ 
       'd_i_list' : urldata 
     })
