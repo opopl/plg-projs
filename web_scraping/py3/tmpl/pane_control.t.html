@@ -1,7 +1,7 @@
 
     <div id="pane_control" class="flex-row">
       <select id="select_control">
-        <option>new</option>
+        <option>plan</option>
         <option selected>url</option>
         <option>title</option>
         <option>title_h</option>
@@ -11,7 +11,7 @@
       </select>
 
       <div id="control_items" class="flex-row">
-        <div id="opt_page_new" class='flex-row'> 
+        <div id="opt_page_plan" class='flex-row'> 
           <label id="lab_new_url" for="new_url">URL:</label>
           <input type="text" name="new_url" id="input_new_url"  />
 
@@ -19,7 +19,7 @@
           <input type="text" name="new_tags" id="input_new_tags"  />
         </div>
 
-        <input type="text" class="block" id="opt_page_new" value="{{ page.url }}"  />
+        <input type="text" class="block" id="opt_page_plan" value="{{ page.url }}"  />
 
         <input type="text" class="block" id="opt_page_url" value="{{ page.url }}"  />
         <input type="text" class="block" id="opt_page_title" value="{{ page.title|e }}"  />

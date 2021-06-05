@@ -331,7 +331,7 @@ function App(){
 
 //@@ on_form_submit
   this.on_form_submit = function(){
-      var $f = $( "#div_form_new form" );
+      var $f = $( "#div_form_plan form" );
       
       $f.submit(function( event ) {
         //alert( $f.find('') );
@@ -807,9 +807,9 @@ function App(){
     $('#opt_page_img').find('button').addClass('block');
     $('#opt_page_img').ariaDropdown();
 
-    $('#opt_page_new').find('*').addClass('block').hide();
+    $('#opt_page_plan').find('*').addClass('block').hide();
 
-    $('#opt_page_new').find('*').hide();
+    $('#opt_page_plan').find('*').hide();
 
     $('#lab_new_url').css({ 
         width              : 'auto',
@@ -880,9 +880,9 @@ function App(){
     $('.dohide').hide();
     $(id).show();
 
-    if (id == '#opt_page_new') {
+    if (id == '#opt_page_plan') {
        $('#ifr_page_src, #ta_page_src').hide();
-       $('#div_form_new').show();
+       $('#div_form_plan').show();
 
        var jx = $.ajax({
          method  : 'GET',
@@ -890,7 +890,7 @@ function App(){
          url     : '/json/tags',
          success : function(data){
            var taglist = util.get(data,'taglist',[]);
-           $('#div_form_new .inp_tags').autocomplete({ 
+           $('#div_form_plan .inp_tags').autocomplete({ 
               //source : taglist
               minLength: 1,
               source: function(req, resp) {
@@ -1155,7 +1155,7 @@ function App(){
         });
     };
 
-    $('#div_form_new input').addClass('block');
+    $('#div_form_plan input').addClass('block');
 
     return this;
   };

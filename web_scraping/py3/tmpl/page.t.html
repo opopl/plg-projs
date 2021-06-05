@@ -3,23 +3,13 @@
   <head>
   </head>
   <body>
-    <form action="/html/pages" method="POST">
-          <label for="date">date:</label>
-          <input type="date" name="date" />
-
-          <label for="rid">rid:</label>
-          <input type="text" name="rid" />
-
-          <input type="submit" value="go!" />
-    </form>
-
     {% include 'pane_control.t.html' %}
 
     <div id="container" class='flex-container'>
       <iframe sandbox="{{ iframe.sandbox }}" class="flex-left" id="ifr_page_src" src="{{ src_uri }}"></iframe>
       <textarea id="ta_page_src" class='flex-right'> {{ src_code }} </textarea>
 
-    	{% include 'form_new.t.html' %}
+      {% include 'form_plan.t.html' %}
     </div>
 
     <script src="/js/bundle" ></script>
