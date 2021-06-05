@@ -176,15 +176,6 @@ function App(){
               width : '5%'
            }
         }),
-       this.$$btn({
-           id : 'btn_add',
-           value : 'Add',
-           css : {
-              'background-color' : 'orange',
-              'color'            : 'black',
-              width              : '5%'
-           }
-        }),
       );
 
       var $date = $('<input type="text" />');
@@ -329,6 +320,19 @@ function App(){
       return $(inp);
   };
 
+//@@ on_iframe_load
+  this.on_iframe_load = function(){
+    $('iframe').on( 'load', function () {
+        var pre = $(this).get(0).contentWindow.document.querySelector('pre');
+        pre.style.color = 'red';
+        pre.style.fontSize = '40px';
+        pre.style.fontWeight = 'bold';
+        pre.style.lineHeight = '20px';
+    })
+
+    return this
+  };
+
 //@@ on_form_submit
   this.on_form_submit = function(){
       var $f = $( "#div_form_plan form" );
@@ -342,7 +346,7 @@ function App(){
            url     : '/json/page/add',
            success : function(data){
              console.log(data);
-             window.location = '/html/page/last';
+             //window.location = '/html/page/last';
            },
            error   : function(data){
              console.log(data);
@@ -665,6 +669,13 @@ function App(){
      return this;
   };
 
+//@@ on_click_console
+  this.on_click_console = function(){
+     let $slf = this;
+
+     return this;
+  };
+
 //@@ on_click_img
   this.on_click_img = function(){
      let $slf = this;
@@ -707,6 +718,7 @@ function App(){
         .on_click_tags()
         .on_click_author()
         .on_click_img()
+        .on_click_console()
         ;
 
      
@@ -724,9 +736,6 @@ function App(){
         window.location = '/html/page/' + $slf.rid;
      });
 
-     $('#btn_add').on('click',function() {
-        window.location = '/html/page/add';
-     });
 
      $('#btn_json').on('click',function() {
         $('#ifr_page_src').attr({ src : '/json/page/' + $slf.rid });
@@ -1069,6 +1078,7 @@ function App(){
     this
         .on_click()
         .on_enter()
+        .on_iframe_load()
         .on_form_submit()
     ;
 

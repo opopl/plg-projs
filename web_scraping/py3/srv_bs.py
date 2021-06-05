@@ -108,6 +108,17 @@ class r_html_page_rid_tipe:
 
       t = car.template_env.get_template("page.t.html")
       h = t.render(
+          selectcontrol={
+            'options' : [
+                'plan',
+                'url',
+                'title',
+                'title_h',
+                'tags',
+                'author',
+                'img',
+            ]
+          },
           page=page.dict(),
           src_uri=src_uri,
           src_code=src_code_e,
@@ -296,13 +307,12 @@ class r_json_cmd:
     j = json.dumps(r, ensure_ascii=False, indent=4)
     return j
 
-class r_json_page_add:
+class r_json_zlan_add:
   def req(self):
 
     web.header('Content-Type', 'application/json; charset=utf-8')
     d = web.input()
     params = dict(d.items())
-
 
     url   = params.get('url','')
     r_url = util.url_parse(url,{ 'rm_query' : 1 })
@@ -324,7 +334,7 @@ class r_json_page_add:
       'd_i_list' : urldata 
     })
 
-    car.parse(urldata)
+    #car.parse(urldata)
 
     r = { 'ok' : ok, 'url' : url }
     j = json.dumps(r, ensure_ascii=False, indent=4)
@@ -348,6 +358,20 @@ class r_json_page_pics:
     j = json.dumps(r, ensure_ascii=False, indent=4)
     return j
 
+class r_json_console_push:
+  def req(self):
+    web.header('Content-Type', 'application/json; charset=utf-8')
+    d = web.input()
+    params = dict(d.items())
+
+    r = {}
+    j = json.dumps(r, ensure_ascii=False, indent=4)
+    return j
+
+  def POST(self):
+    j = self.req()
+    return j
+
 class r_json_page:
   def GET(self,rid):
     page = car._page_from_rid(rid)
@@ -355,19 +379,6 @@ class r_json_page:
     #j = json.dumps(page.__dict__, ensure_ascii=False)
     j = json.dumps(page.dict(), ensure_ascii=False, indent=4)
     return j
-
-class r_html_page_add:
-  def GET(self):
-    d = web.input()
-    params = dict(d.items())
-
-    h = car._render("add.t.html")
-
-    return h
-
-  def POST(self):
-    d = web.input()
-    params = dict(d.items())
 
 if __name__ == "__main__":
   dirname = os.path.dirname(__file__)
@@ -392,13 +403,16 @@ if __name__ == "__main__":
 
     '/json/page/(\d+)'       , 'r_json_page'          ,
     '/json/page/(\d+)/pics'  , 'r_json_page_pics'     ,
-    '/json/page/add'         , 'r_json_page_add'      ,
     '/json/pages'            , 'r_json_pages'         ,
 
+    '/json/zlan/add'         , 'r_json_zlan_add'      ,
+
     '/json/authors'          , 'r_json_authors'       ,
-    '/json/tags'             , 'r_json_tags'       ,
+    '/json/tags'             , 'r_json_tags'          ,
 
     '/json/cmd/(\w+)'        , 'r_json_cmd'           ,
+
+    '/json/console/push'     , 'r_json_console_push'  ,
 
     '/html/pages(?:/|)'      , 'r_html_pages'         ,
 
@@ -406,7 +420,6 @@ if __name__ == "__main__":
 
     '/html/page/(\d+)'       , 'r_html_page_rid'      ,
     '/html/page/last'        , 'r_html_page_last'     ,
-    '/html/page/add'         , 'r_html_page_add'      ,
 
     '/html/pic/(\d+)'        , 'r_html_pic'           ,
 

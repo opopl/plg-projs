@@ -56,14 +56,21 @@ def mk_parent_dir(file):
   p = str(Path(file).parent)
   os.makedirs(p,exist_ok=True)
 
-def call(obj, subn, args = []):
+def call(obj, subn, args_in = []):
   res = None
+
+  args = args_in
 
   if type(subn) in [list]:
     for a in subn:
-      sub  = a.pop(0)
-      args = a.pop(0) if len(a) else []
-      call(obj,sub,args)
+      if type(a) in [list]:
+        sub  = a.pop(0)
+        args = a.pop(0) if len(a) else args_in
+        call(obj,sub,args)
+
+      elif type(a) in [str]:
+        sub  = a
+        call(obj,sub,args)
 
   elif type(subn) in [str]:
     if subn in dir(obj):

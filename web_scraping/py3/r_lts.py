@@ -10,9 +10,7 @@ r = {
   'files' : {
     'script' : script
   },
-  'dirs' : {
-    'sql' : os.path.join(dirname,'bs','sql')
-  }
+  'dirs' : {}
 }
 
 LTS(r).main()

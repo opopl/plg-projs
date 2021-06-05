@@ -2743,7 +2743,19 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
 
     return rows
 
-  def _page_from_rid(self,rid=None):
+  def _page_from_rid(self, rid_s=None ):
+    m = re.match(r'^(\d+)$',rid_s)
+
+    rid = None
+    if not m:
+      if rid == 'last':
+        rid = self._rid_last()
+    else:
+      rid = rid_s
+
+    if rid == None:
+      return None
+
     q = '''SELECT * FROM pages WHERE rid = ?'''
     p = [rid]
     r = dbw.sql_fetchone(q,p,{ 'db_file' : self.dbfile.pages })

@@ -260,6 +260,9 @@ class Zlan(CoreClass):
   
     return self
 
+  def _has_url(self, url):
+    return ok
+
   def _value_process(self, var, value):
     pt = [
       '^"(.*)"$',
