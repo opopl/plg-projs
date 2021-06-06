@@ -398,7 +398,7 @@ function App(){
 
      $i.keyup(function(e){
         if(e.keyCode == 13) {
-            $(this).trigger("enterKey");
+          $(this).trigger("enterKey");
         }
      });
 
@@ -411,8 +411,7 @@ function App(){
 
      return function(e){
         var tags = $(this).val();
-
-        alert(tags);
+        $(this).val('');
 
         return 1;
      };
@@ -426,7 +425,7 @@ function App(){
 
      return function(e){
         var url = $(this).val();
-        var id = $(this).attr('id');
+        var id  = $(this).attr('id');
 
         var win = window.open(url, "_blank");
 
@@ -1188,6 +1187,11 @@ function App(){
     };
 
     $('#div_form_plan input').addClass('block');
+
+    $('#div_form_plan form button').css({
+      width        : 'auto',
+      'text-align' : 'left',
+    });
 
     return this;
   };

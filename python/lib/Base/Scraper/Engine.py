@@ -259,6 +259,8 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
     'tags'        ,
     'author_id'   ,
     'author_line' ,
+    'author_urls' ,
+    'cite'        ,
     'piccount'    ,
   ]
 
@@ -1987,10 +1989,29 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
   def page_unwrap(self):
     self.log(f'[page_unwrap] start')
 
+    skips = self._site_data('unwrap.skip',[])
+
+    do_cnt = 0
     while 1:
       div = self.soup.select_one('div')
       if not div:
         break
+
+      div_attrs = util.get(div, 'attrs', {})
+      div_attr_list = list(div_attrs.keys())
+      #if 'dir' in div_attr_list:
+        #import pdb; pdb.set_trace()
+
+#      for sk in skips:
+        #attr_eq = sk.get('attr_eq',{})
+        #for a, v in attr_eq.items():
+          #div_attr_val = util.get(div_attrs, a, '')
+          #if div_attr_val == v:
+            #do_break = 1
+
+      #if do_cnt:
+        #break
+
       div.unwrap()
 
     return self
@@ -2888,17 +2909,32 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
     }
     util.obj_update(**ref)
 
+    # e.g. Іван Сідоров; Коля Петренко - semicolon separated list of
+    #   'plain' author strings
     author_line = ''
+    author_urls = ''
+
     author_id = self.page.author_id
     if author_id:
       ids = author_id.split(',')
+
       author_line_a = []
+      author_urls_a = []
+
       for id in ids:
         auth  = self._db_get_auth({ 'auth_id' : id })
+
         plain = util.get(auth,'plain','')
-        author_line_a.append(plain)
+        url   = util.get(auth,'url','')
+
+        if plain:
+          author_line_a.append(plain)
+
+        if url:
+          author_urls_a.append(url)
   
       author_line = '; '.join(author_line_a)
+      author_urls = '\n'.join(author_urls_a)
 
     date = self.page.date
     if date:
@@ -2910,12 +2946,18 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
     else:
       date_all = ''
 
+    media = self.page.host
+    cite = f'\citTitle{ {self.page.title} }, {author_line}, {media}, {date_dot}'
+    cite = re.sub(r"\\citTitle{'(.*)'}(.*)", r'\\citTitle{\1}\2', cite)
+
     pics = self._pics_from_rid(rid)
     piccount = len(pics)
     p.update({ 
       'piccount'    : len(pics),
       'author_line' : author_line,
+      'author_urls' : author_urls,
       'date'        : date_all,
+      'cite'        : cite,
     })
     self.parsed.append(p)
 
