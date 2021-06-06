@@ -538,6 +538,12 @@ class RootPageParser(CoreClass):
                             txt = m.group(1)
                             d_parse[k] = txt
 
+                    elif get == 'attr':
+                      attr_name = v.get('attr','')
+                      if attr_name and el.has_attr(attr_name):
+                        attr_value = el[attr_name]
+                        d_parse[k] = attr_value
+
                   elif type(get) in [dict]:
                     r_get = get
                     css = r_get.get('css','')
@@ -558,7 +564,7 @@ class RootPageParser(CoreClass):
                     attr = v.get('attr','')
                     if el.has_attr(attr):
                       d_parse[k] = el[attr]
-  
+
             if len(d_parse):
               self.auth_obj.parse(d_parse)
   

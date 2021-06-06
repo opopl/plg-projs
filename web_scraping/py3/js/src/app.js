@@ -893,6 +893,12 @@ function App(){
     return this;
   };
 
+//@@ ui_hide
+  this.ui_hide = function(){
+    $('.dohide').hide();
+    return this;
+  };
+
 //@@ opt_page_show
   this.opt_page_show = function(opt='url'){ 
     var $slf = this;
@@ -1202,6 +1208,7 @@ function App(){
 
     this
         .init()
+        .ui_hide()
         .parse_url()
         .ajax_page()
         .set_header()

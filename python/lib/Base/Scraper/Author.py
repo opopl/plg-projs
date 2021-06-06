@@ -51,6 +51,9 @@ class Author(CoreClass):
     return ok
 
   def _bare2auth(self,ref={}):
+    ''' called by:
+          Author.parse()
+    '''
     auth_bare   = ref.get('auth_bare','')
     auth_url    = ref.get('auth_url','')
 
@@ -93,6 +96,7 @@ class Author(CoreClass):
       auth_name = f'{tail}, {first}'
 
     auth_db = app._db_get_auth({ 'auth_id' : auth_id })
+    import pdb; pdb.set_trace()
 
     auth_update = app._act('auth_update')
     if not auth_db:
@@ -115,6 +119,8 @@ class Author(CoreClass):
     return [ auth, auth_update ]
 
   def parse(self,ref={}):
+    '''
+    '''
     page_parser = self.page_parser
     app         = self.app
 
@@ -135,7 +141,10 @@ class Author(CoreClass):
     author_id = app.page.get('author_id','')
     auth_ids  = string.split_n_trim(author_id, ',')
 
-    [ auth, auth_update ] = self._bare2auth({ 'auth_bare' : auth_bare })
+    [ auth, auth_update ] = self._bare2auth({ 
+      'auth_bare' : auth_bare,
+      'auth_url'  : auth_url,
+    })
     auth_id = auth.get('id','')
 
     if auth_id:
