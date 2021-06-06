@@ -1585,12 +1585,13 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
 
     acts = [
       [ 'in_load_site_module' ],
+      [ 'in_load_site_yaml' ],
       [ 'load_soup' ],
       [ 'page_save_data_txt' ],
       [ 'db_save_meta' ],
       [ 'page_load_ld_json' ],
       [ 'update_ii' ],
-      [ 'in_load_site_yaml' ],
+      #[ 'in_load_site_yaml' ], - older call
       [ 'page_get_date' ],
       [ 'page_get_ii_full' ],
       #[ 'db_save_page' ],
