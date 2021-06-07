@@ -501,8 +501,6 @@ class RootPageParser(CoreClass):
 
         els = els_n
 
-      #import pdb; pdb.set_trace()
-
       for el in els:
         txt = el.get_text()
 

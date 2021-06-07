@@ -96,7 +96,7 @@ class Author(CoreClass):
       auth_name = f'{tail}, {first}'
 
     auth_db = app._db_get_auth({ 'auth_id' : auth_id })
-    import pdb; pdb.set_trace()
+    #import pdb; pdb.set_trace()
 
     auth_update = app._act('auth_update')
     if not auth_db:
