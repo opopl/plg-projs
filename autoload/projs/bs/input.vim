@@ -1,11 +1,17 @@
 
 function! projs#bs#input#url (...)
+  let ref = get(a:000,0,{})
+
+  let rootid   = projs#rootid()
+  let proj     = projs#proj#name()
+
+  let prefix = printf('[ rootid: %s, proj: %s ]',rootid, proj)
 
   let keep = 1
   let msg = printf('%s %s: ',prefix,'url')
 
   let msg_head = ''
-	let url = ''
+  let url = ''
 
   while keep
     let cnt = 0
@@ -17,6 +23,7 @@ function! projs#bs#input#url (...)
 
     let cnt = 1
 
+    " Base.Util url_parse()
     let u = base#url#parse(url,{ 
         \ 'rm_query' : 1 
         \ })
@@ -39,14 +46,13 @@ function! projs#bs#input#url (...)
     break
   endw
 
-	return url
+  return url
 endf
 
 function! projs#bs#input#tags (...)
   let ref = get(a:000,0,{})
 
   let rootid   = projs#rootid()
-
   let proj     = projs#proj#name()
 
   let prefix = printf('[ rootid: %s, proj: %s ]',rootid, proj)
@@ -60,17 +66,17 @@ function! projs#bs#input#tags (...)
   let msg_head = ''
 
   let msg_head_base_a = [
-  		\	'',	
-  		\	'Commands:',	
-  		\	'   ; - skip',	
-  		\	'   . - finish',	
-  		\	'   , - delete selected',	
-  		\	]
+      \ '',
+      \ 'Commands:',
+      \ '   ; - skip',
+      \ '   . - finish',
+      \ '   , - delete selected',
+      \ ]
 
   let msg_head_base = join(msg_head_base_a, "\n")
 
-	" final string with tags chosen, comma-separated list
-	let tgs = ''
+  " final string with tags chosen, comma-separated list
+  let tgs = ''
 
   let tags_selected = []
 
@@ -83,7 +89,7 @@ function! projs#bs#input#tags (...)
 
     let tgs = input(msg_head . msg,'','custom,base#complete#this')
 
-	  let tags_s = tgs
+    let tags_s = tgs
 
     " finish
     if tags_s =~ '\.\s*$'
@@ -143,8 +149,8 @@ function! projs#bs#input#tags (...)
     endif
 
     break
-	endw
+  endw
 
-	return tgs
+  return tgs
 
 endf
