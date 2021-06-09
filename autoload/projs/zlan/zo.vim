@@ -13,14 +13,13 @@ function! projs#zlan#zo#fetch ()
   
 endfunction
 
+"""zlan_add
 function! projs#zlan#zo#add (...)
   let ref = get(a:000,0,{})
 
   let rootid   = projs#rootid()
-  let rootid_i = get(ref,'rootid','')
 
   let proj   = projs#proj#name()
-  let proj_i = get(ref,'proj','')
 
   let zfile = projs#sec#file('_zlan_')
 
@@ -36,11 +35,11 @@ function! projs#zlan#zo#add (...)
 
   let keys = base#varget('projs_zlan_keys',[])
   
-  let tag_list = projs#bs#tag_list()
-
   let d = {}
 
   let tags_selected = []
+
+  let tag_list = projs#bs#tags#list()
   for k in keys
 
     let keep = 1

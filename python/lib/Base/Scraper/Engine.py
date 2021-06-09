@@ -60,8 +60,10 @@ import Base.Const as const
 
 from Base.Zlan import Zlan
 from Base.Core import CoreClass
+
 from Base.Scraper.Server import Srv
 from Base.Scraper.Pic import Pic
+from Base.Scraper.Page import Page
 
 from Base.Mix.mixCmdRunner import mixCmdRunner
 from Base.Mix.mixLogger import mixLogger
@@ -72,53 +74,6 @@ import time
 class dbFile(CoreClass):
   images = None
   pages = None
-
-class Page(CoreClass):
-
-  app     = None
-  baseurl = None
-  host    = None
-  rid     = None
-  site    = None
-  url     = None
-  url_srv = None
-
-  pics    = []
-  imgbase = None
-
-  ii_full = None
-  tags    = None
-
-  limit   = None
-
-  title   = None
-  title_h = None
-
-  author_id       = None
-  author_id_first = None
-
-  # depth of link following
-  depth     = 0
-
-  date = None
-
-  def __init__(page,ref={}):
-    super().__init__(ref)
-
-  def dict(page):
-    data = {}
-    for k in dir(page):
-      if k in [ '__dict__', '__module__' ]:
-        continue
-
-      v = getattr(page,k)
-      if type(v) in [ dict,list,str,int ]:
-        data.update({ k : v })
-
-    return data
-      
-
-  pass
 
 class BS(CoreClass,mixLogger,mixCmdRunner):
   # class attributes {
@@ -1682,7 +1637,8 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
       return self
 
     self.page = Page({ 
-        'ok' : 0,
+        'ok'  : 0,
+        'app' : self,
     })
 
     # strings
@@ -1802,7 +1758,7 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
 
   def page2yaml(self):
 
-    dy = yaml.dump(self.page.__dict__, allow_unicode=True)
+    dy = yaml.dump(self.page.dict(), allow_unicode=True)
     yfile = self._file_rid({ 'tipe' : 'page', 'ext' : 'yaml' })
     util.mk_dirname(yfile)
 
@@ -2948,6 +2904,7 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
       date_all = ''
 
     media = self.page.host
+    cite_keys = [ 'cite', 'cite_h' ]
     cite = f'\citTitle{ {self.page.title} }, {author_line}, {media}, {date_dot}'
     cite = re.sub(r"\\citTitle{'(.*)'}(.*)", r'\\citTitle{\1}\2', cite)
 
