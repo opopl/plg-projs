@@ -10,7 +10,7 @@ function! projs#zlan#save (...)
   let zfile = projs#sec#file('_zlan_')
   let zfile = get(ref,'zfile',zfile)
 
-  let zdata    = get(ref,'zdata',{})
+  let zdata = get(ref,'zdata',{})
 
   let d_i      = get(ref,'d_i',{})
   let d_i_list = get(ref,'d_i_list',[])
