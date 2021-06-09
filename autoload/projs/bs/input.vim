@@ -1,4 +1,10 @@
 
+
+if 0
+	call projs#bs#input#url()
+	call projs#bs#input#tags()
+endif
+
 function! projs#bs#input#url (...)
   let ref = get(a:000,0,{})
 
