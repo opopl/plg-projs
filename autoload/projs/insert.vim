@@ -350,7 +350,8 @@ function! projs#insert#ii_url ()
   call base#varset('this',comps)
   let ii_sec = input('ii_sec name: ',ii_prefix,'custom,base#complete#this')
 
-  let tags   = input('tags: ','')
+  "let tags   = input('tags: ','')
+  let tags = projs#bs#input#tags()
 
   let do_ii = 1
   if projs#buf#ii_has(sec)
