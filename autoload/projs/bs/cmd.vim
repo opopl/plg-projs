@@ -1,11 +1,11 @@
 
 function! projs#bs#cmd#add ()
-	call projs#zlan#zo#add()
-	call projs#bs#cmd#run()
+  call projs#zlan#zo#add()
+  call projs#bs#cmd#run()
 endf
 
 function! projs#bs#cmd#auth_info ()
-	let db_file = projs#bs#db_file()
+  let db_file = projs#bs#db_file()
 
 endf
 
@@ -14,33 +14,33 @@ function! projs#bs#cmd#x ()
 
   call chdir(bs_dir)
 
-	let rootid = projs#rootid()
-	let proj = projs#proj#name()
+  let rootid = projs#rootid()
+  let proj = projs#proj#name()
 
-	let yfile = 'mix.yaml'
-	let zfile = base#qw#catpath(rootid,proj . '.zlan')
+  let yfile = 'mix.yaml'
+  let zfile = base#qw#catpath(rootid,proj . '.zlan')
 
   let cmd = printf('bs.py -c run -y %s -z %s',yfile,zfile)
-	
-	let env = {
-		\ 'cmd'    : cmd,
-		\ 'proj'   : proj,
-		\ 'rootid' : rootid,
-		\	}
-	function env.get(temp_file) dict
-		let temp_file = a:temp_file
-		let code      = self.return_code
-	
-		if filereadable(a:temp_file)
-			let out = readfile(a:temp_file)
-			call base#buf#open_split({ 'lines' : out })
-		endif
-	endfunction
-	
-	call asc#run({ 
-		\	'cmd' : cmd, 
-		\	'Fn'  : asc#tab_restore(env) 
-		\	})
+  
+  let env = {
+    \ 'cmd'    : cmd,
+    \ 'proj'   : proj,
+    \ 'rootid' : rootid,
+    \ }
+  function env.get(temp_file) dict
+    let temp_file = a:temp_file
+    let code      = self.return_code
+  
+    if filereadable(a:temp_file)
+      let out = readfile(a:temp_file)
+      call base#buf#open_split({ 'lines' : out })
+    endif
+  endfunction
+  
+  call asc#run({ 
+    \ 'cmd' : cmd, 
+    \ 'Fn'  : asc#tab_restore(env) 
+    \ })
   
 endfunction
 
@@ -105,6 +105,11 @@ function! projs#bs#cmd#db_page_act ()
 
 endfunction
 
+function! projs#bs#cmd#new_site ()
+  let site = input('site: ','')
+
+endfunction
+
 function! projs#bs#cmd#info ()
   let info = [ 'BS INFO', ' ' ]
 
@@ -121,49 +126,49 @@ function! projs#bs#cmd#info ()
 endfunction
 
 function! projs#bs#cmd#rid_grep ()
-	let rid = projs#bs#rid_select()
+  let rid = projs#bs#rid_select()
 
-	let expr = base#input_hist('GREP: ','','hist_bs_grep')
+  let expr = base#input_hist('GREP: ','','hist_bs_grep')
 
-	let cmd  = printf('bs.py -c html_parse -i cache.html -g "%s"',expr)
+  let cmd  = printf('bs.py -c html_parse -i cache.html -g "%s"',expr)
 
-	let env = {
-		\ 'cmd' : cmd,
-		\ 'rid' : rid,
-		\	}
+  let env = {
+    \ 'cmd' : cmd,
+    \ 'rid' : rid,
+    \ }
 
-	function env.get(temp_file) dict
-		let temp_file = a:temp_file
-		let code      = self.return_code
-	
-		if filereadable(a:temp_file)
-			let out = readfile(a:temp_file)
-			call base#buf#open_split({ 'lines' : out })
-		endif
-	endfunction
-	
-	call asc#run({ 
-		\	'cmd'  : cmd,
-		\	'path' : projs#bs#rid_dir(rid),
-		\	'Fn'   : asc#tab_restore(env)
-		\	})
+  function env.get(temp_file) dict
+    let temp_file = a:temp_file
+    let code      = self.return_code
+  
+    if filereadable(a:temp_file)
+      let out = readfile(a:temp_file)
+      call base#buf#open_split({ 'lines' : out })
+    endif
+  endfunction
+  
+  call asc#run({ 
+    \ 'cmd'  : cmd,
+    \ 'path' : projs#bs#rid_dir(rid),
+    \ 'Fn'   : asc#tab_restore(env)
+    \ })
 
 endfunction
 
 function! projs#bs#cmd#rid_terminal ()
-	call projs#bs#cmd#rid_cd ()
-	terminal
+  call projs#bs#cmd#rid_cd ()
+  terminal
 
 endfunction
 
 function! projs#bs#cmd#rid_cd ()
-	let bs_data = base#varget('projs_bs_data',{})
+  let bs_data = base#varget('projs_bs_data',{})
 
-	let rid = projs#bs#rid_select()
+  let rid = projs#bs#rid_select()
 
-	let rid_dir = projs#bs#rid_dir(rid)
+  let rid_dir = projs#bs#rid_dir(rid)
 
-	call base#cd(rid_dir)
+  call base#cd(rid_dir)
 
 endfunction
 

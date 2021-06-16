@@ -1,14 +1,23 @@
+
+# projs#bs#cmd
+# projs#bs#cmd#info
+
 #add
 db_page_act
 db_query
 info
 init
 py_site_load
+
+###rid
 rid_cd
 rid_grep
 rid_terminal
-site_view
+
+###site
 yaml_site_load
+site_view
+new_site
 
 # run bs.py
 x

@@ -1369,34 +1369,23 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
     if not site:
       return self
 
+    # site => news.eng.bbc
+    #   lib => news/eng/bbc
+    #   mod => bbc
     [ lib, mod ] = self._site_libdir(site)
 
-    libs     = [ lib ]
+    # create files + dirs, if not exist
+    self.site_init_fs({ 
+        'site' : site,
+        'lib'  : lib,
+        'mod'  : mod,
+    })
 
     mod_py   = os.path.join(lib,mod + '.py')
-    mod_yaml = os.path.join(lib,mod + '.yaml')
-
-    if not os.path.isdir(lib):
-      os.makedirs(lib,exist_ok=True)
-
-    if not os.path.isfile(mod_yaml):
-      site_yml = self._dir('bin','yml _site.yaml')
-      with open(site_yml,'r') as f:
-        yml = f.read()
-        with open(mod_yaml, 'w') as f:
-            f.write(yml)
-
-    if not os.path.isfile(mod_py):
-      site_py = self._dir('bin','py _site_pageparser.py')
-      with open(site_py,'r') as f:
-        py = f.read()
-        with open(mod_py, 'w') as f:
-            f.write(py)
-
-    self.site_prepare_init_py()
-
     if not os.path.isfile(mod_py):
       return self
+
+    libs     = [ lib ]
 
     # module name
     util.add_libs(libs)
@@ -1588,6 +1577,45 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
     ]
 
     util.call(self,acts)
+
+    return self
+
+  def site_init_fs(self,ref={}):
+    '''
+    purpose
+      create site *.py *.yaml files 
+      create tree of site directories
+    call tree
+      called by
+          in_load_site_module
+    '''
+    site = ref.get('site',self.page.site)
+
+    mod  = ref.get('mod','')
+    lib  = ref.get('lib','')
+
+
+    mod_py   = os.path.join(lib,mod + '.py')
+    mod_yaml = os.path.join(lib,mod + '.yaml')
+
+    if not os.path.isdir(lib):
+      os.makedirs(lib,exist_ok=True)
+
+    if not os.path.isfile(mod_yaml):
+      site_yml = self._dir('bin','yml _site.yaml')
+      with open(site_yml,'r') as f:
+        yml = f.read()
+        with open(mod_yaml, 'w') as f:
+            f.write(yml)
+
+    if not os.path.isfile(mod_py):
+      site_py = self._dir('bin','py _site_pageparser.py')
+      with open(site_py,'r') as f:
+        py = f.read()
+        with open(mod_py, 'w') as f:
+            f.write(py)
+
+    self.site_prepare_init_py()
 
     return self
 
@@ -2894,6 +2922,7 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
       author_urls = '\n'.join(author_urls_a)
 
     date = self.page.date
+    date_dot = ''
     if date:
       dt = datetime.datetime.strptime(date,'%d_%m_%Y')
       date_dot  = dt.strftime('%d.%m.%Y')

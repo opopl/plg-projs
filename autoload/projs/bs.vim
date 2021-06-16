@@ -133,7 +133,7 @@ function! projs#bs#select_site (...)
 
     let n = []
     for site in sites
-			let site_sub = substitute(copy(site),printf('^%s[\.]\+', piece),'','g')
+      let site_sub = substitute(copy(site),printf('^%s[\.]\+', piece),'','g')
 
       if !(site_sub == site)
         call add(n,site_sub)

@@ -247,7 +247,7 @@ function! projs#insert#ii_url ()
 
   let rootid = projs#rootid()
 
-  let sec  = projs#buf#sec()
+  let sec    = projs#buf#sec()
 
   let ii_prefix = printf('%s.', sec)
 
@@ -273,12 +273,6 @@ function! projs#insert#ii_url ()
   endif
 
   let html_file = base#qw#catpath('html_root projs ' . rootid . ' pin ii_url 1.htm')
-"  call idephp#curl#run({ 
-    "\ 'url'         : url,
-    "\ 'insecure'    : 1 ,
-    "\ 'output_file' : html_file,
-    "\ })
-  "return 
 
   let data = projs#db#url_data({ 'url' : url })
   let sec  = get(data,'sec','')
@@ -312,17 +306,10 @@ function! projs#insert#ii_url ()
     let ii_prefix .= printf('%s.',pref)
   endif
 
-  let inum = 1
-  let q = printf("SELECT COUNT(*) FROM projs WHERE sec LIKE '%s%%'",ii_prefix)
-  let ref = {
-    \ 'q'      : q,
-    \ 'dbfile' : projs#db#file(),
-    \ }
-  let [rows,cols] = pymy#sqlite#query(ref)
-  let rwh = get(rows,0,{})
-  let vals = values(rwh)
-  let cnt = vals[0]
+  let cnt = projs#sec#count_ii({ 'ii_prefix' : ii_prefix })
+
   let inum = cnt + 1
+
   let ii_prefix .= printf('%s.',inum)
 
   let title = ''

@@ -541,7 +541,34 @@ function! projs#sec#add_to_db (sec,...)
 
 endfunction
 
+if 0
+  call tree
+    called by
+      projs#insert#ii_url
 
+endif
+
+function! projs#sec#count_ii (...)
+  let ref = get(a:000,0,{})
+
+  let ii_prefix = get(ref,'ii_prefix','')
+
+  let q = printf("SELECT COUNT(*) FROM projs WHERE sec LIKE '%s%%'",ii_prefix)
+
+  let ref = {
+    \ 'q'      : q,
+    \ 'dbfile' : projs#db#file(),
+    \ }
+
+  let [rows,cols] = pymy#sqlite#query(ref)
+
+  let rwh  = get(rows,0,{})
+  let vals = values(rwh)
+  let cnt  = vals[0]
+
+  return cnt
+
+endfunction
 
 
 " projs#sec#add
