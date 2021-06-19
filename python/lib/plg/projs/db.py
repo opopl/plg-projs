@@ -5,6 +5,8 @@ import sqlite3
 import sqlparse
 import sys
 
+import Base.DBW as dbw
+
 #import pprint
 #pp = pprint.PrettyPrinter(indent=4)
 
@@ -40,7 +42,7 @@ def author_add(r):
   author_id = r.get('author_id')
 
   conn = sqlite3.connect(db_file)
-  insert_dict({
+  dbw.insert_dict({
     'conn'      : conn,
     'table'     : 'authors',
     'insert'  : {
@@ -167,28 +169,6 @@ def update_dict(ref):
     conn.commit()
     conn.close()
 
-def insert_dict(ref):
-  conn     = ref.get('conn')
-  table    = ref.get('table')
-  if not conn:
-    return
-  c = conn.cursor()
-  insert   = ref.get('insert',{})
-  fields   = insert.keys()
-  fields_s = ",".join(fields)
-  values   = list( map(lambda k: insert.get(k,''), fields) )
-  quot     = list( map(lambda k: '?', fields) )
-  quot_s   = ",".join(quot)
-  q=''' INSERT OR REPLACE INTO %s (%s) VALUES (%s)''' % (table,fields_s,quot_s)
-
-  c.execute(q,values)
-
-  try:
-    c.execute(q,values)
-  except sqlite3.IntegrityError as e:
-    print(e)
-
-
 def fill_from_files(db_file, root, root_id, proj, logfun):
   conn = sqlite3.connect(db_file)
   c = conn.cursor()
@@ -277,9 +257,9 @@ def fill_from_files(db_file, root, root_id, proj, logfun):
               'tags'   : tags,
               'url'    : url,
               'title'  : data.get('title',''),
-             }
+        }
 
-        insert_dict({
+        dbw.insert_dict({
             'conn'     : conn,
             'table'    : 'projs',
             'insert'   : ins,
@@ -298,7 +278,8 @@ def fill_from_files(db_file, root, root_id, proj, logfun):
             (pm_head,pm_tail) = os.path.split(file_pm)
             (pm_root,pm_ext) = os.path.splitext(pm_tail)
             sec = '_pm.%s' % pm_root 
-            insert_dict({
+
+            dbw.insert_dict({
                 'conn'     : conn,
                 'table'    : 'projs',
                 'insert' : { 
