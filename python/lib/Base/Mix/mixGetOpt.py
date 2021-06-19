@@ -1,21 +1,22 @@
 
-import getopt,argparse
+import getopt,argparse,sys
+
 import Base.Util as util
 
 class mixGetOpt:
 
   def get_opt(self,ref={}):
-  '''
-    usage:
-        use class fields self.opts_argparse, self.usage
-      self.get_opt()
-
-        opts - ARRAY of options
-      self.get_opt({ 'opts' : opts })
-
-        usage - STRING
-      self.get_opt({ 'opts' : opts, 'usage' : usage })
-  '''
+    '''
+      usage:
+          use class fields self.opts_argparse, self.usage
+        self.get_opt()
+  
+          opts - ARRAY of options
+        self.get_opt({ 'opts' : opts })
+  
+          usage - STRING
+        self.get_opt({ 'opts' : opts, 'usage' : usage })
+    '''
     if self.skip_get_opt:
       return self
 
@@ -33,6 +34,9 @@ class mixGetOpt:
 
       if not len(arr):
         continue
+      
+      if type(arr) in [str]:
+        arr = util.qw(arr)
 
       self.parser.add_argument(*arr, **kwd)
 
@@ -42,4 +46,4 @@ class mixGetOpt:
       self.parser.print_help()
       sys.exit()
 
-  return self
+    return self

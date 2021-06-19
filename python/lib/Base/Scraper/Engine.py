@@ -67,6 +67,7 @@ from Base.Scraper.Page import Page
 
 from Base.Mix.mixCmdRunner import mixCmdRunner
 from Base.Mix.mixLogger import mixLogger
+from Base.Mix.mixGetOpt import mixGetOpt
 
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import time
@@ -75,16 +76,76 @@ class dbFile(CoreClass):
   images = None
   pages = None
 
-class BS(CoreClass,mixLogger,mixCmdRunner):
+class BS(CoreClass,mixLogger,mixCmdRunner,mixGetOpt):
   # class attributes {
-  usage='''
+  usage = '''
   PURPOSE
         This script will parse input URL
   EXAMPLES
         bs.py -y mix.yaml -p list_sites
         bs.py -c db_fill_tags
         bs.py -c db_fill_auth
-'''
+  '''
+
+  opts_argparse = [
+    { 
+       'arr' : '-y --f_yaml', 
+       'kwd' : { 
+           'help'    : 'input YAML file',
+           'default' : '',
+       } 
+    },
+    { 
+       'arr' : '-z --z_yaml', 
+       'kwd' : { 
+           'help'    : 'input ZLAN file',
+           'default' : '',
+       } 
+    },
+    { 
+       'arr' : '-i --f_input_html', 
+       'kwd' : { 
+           'help'    : 'input HTML file',
+           'default' : '',
+       } 
+    },
+    { 
+       'arr' : '-f --find', 
+       'kwd' : { 
+           'help'    : 'Find elements via XPATH/CSS',
+           'default' : '',
+       } 
+    },
+    { 
+       'arr' : '-g --grep', 
+       'kwd' : { 
+           'help'    : 'Grep in input file(s)',
+           'default' : '',
+       } 
+    },
+    { 
+       'arr' : '--gs', 
+       'kwd' : { 
+           'help'    : 'Grep scope',
+           'default' : 10,
+       } 
+    },
+    { 
+       'arr' : '-p --print', 
+       'kwd' : { 
+           'help'    : 'Print field value and exit',
+           'default' : '',
+       } 
+    },
+    { 
+       'arr' : '-c --cmd', 
+       'kwd' : { 'help'    : 'Run command(s)' } 
+    },
+    { 
+       'arr' : '-l --log', 
+       'kwd' : { 'help' : 'Enable logging' } 
+    },
+  ]
 
   html_parser = html.parser.HTMLParser()
 
@@ -251,6 +312,8 @@ class BS(CoreClass,mixLogger,mixCmdRunner):
   def get_opt(self):
     if self.skip_get_opt:
       return self
+
+    #mixGetOpt.get_opt(self)
 
     self.parser = argparse.ArgumentParser(usage=self.usage)
     
@@ -3209,10 +3272,11 @@ bs.py -c html_parse -i cache.html $*
 
   def main(self):
 
-    self                    \
-      .get_opt()            \
-      .do_cmd()             \
+    acts = [
+      [ 'get_opt' ],
+      [ 'do_cmd' ],
+    ]
+
+    util.call(self,acts)
 
     return self
-
-
