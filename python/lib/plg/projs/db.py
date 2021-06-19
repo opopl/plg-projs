@@ -129,46 +129,6 @@ def cleanup(db_file, root, proj):
   conn.commit()
   conn.close()
 
-def update_dict(ref):
-  conn     = ref.get('conn')
-  table    = ref.get('table')
-
-  db_file   = ref.get('db_file')
-  db_close  = ref.get('db_close')
-
-  if not conn:
-    if db_file:
-      conn = sqlite3.connect(db_file)
-    else:
-      return
-  c = conn.cursor()
-
-  where     = ref.get('where',{})
-  update    = ref.get('update',{})
-
-  update_keys   = update.keys()
-  update_values = list( map(lambda k: update.get(k,''), update_keys) )
-
-  where_keys    = where.keys()
-  where_values  = list( map(lambda k: where.get(k,''), where_keys) )
-
-  values = []
-  values.extend(update_values)
-  values.extend(where_values)
-
-  set_s = ','.join(list( map(lambda k: ' %s = ?' % k , update_keys ) ))
-  where_s = ' AND '.join(list( map(lambda k: ' %s = ?' % k , where_keys ) ))
-
-  q=''' UPDATE %s SET %s WHERE %s''' % (table,set_s,where_s)
-  try:
-    c.execute(q,values)
-  except sqlite3.IntegrityError as e:
-    print(e)
-
-  if db_close:
-    conn.commit()
-    conn.close()
-
 def fill_from_files(db_file, root, root_id, proj, logfun):
   conn = sqlite3.connect(db_file)
   c = conn.cursor()
