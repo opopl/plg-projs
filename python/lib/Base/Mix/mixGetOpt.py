@@ -1,26 +1,40 @@
 
 import getopt,argparse
+import Base.Util as util
 
 class mixGetOpt:
+
   def get_opt(self,ref={}):
+  '''
+    usage:
+        use class fields self.opts_argparse, self.usage
+      self.get_opt()
+
+        opts - ARRAY of options
+      self.get_opt({ 'opts' : opts })
+
+        usage - STRING
+      self.get_opt({ 'opts' : opts, 'usage' : usage })
+  '''
     if self.skip_get_opt:
       return self
 
-    self.parser = argparse.ArgumentParser(usage=self.usage)
+    opts  = util.get(self,'opts_argparse',[])
+    opts  = ref.get('opts',opts)
 
-    self.parser.add_argument("-y", "--f_yaml", help="input YAML file",default="")
-    self.parser.add_argument("-z", "--f_zlan", help="input ZLAN file",default="")
+    usage = util.get(self,'usage','')
+    usage = ref.get('usage',usage)
 
-    self.parser.add_argument("-i", "--f_input_html", help="input HTML file",default="")
-    self.parser.add_argument("-f", "--find", help="Find elements via XPATH/CSS",default="")
+    self.parser = argparse.ArgumentParser(usage=usage)
 
-    self.parser.add_argument("-g", "--grep", help="Grep in input file(s)",default="")
-    self.parser.add_argument("--gs", help="Grep scope",default=10)
+    for opt in opts:
+      arr  = opt.get('arr',[])
+      kwd  = opt.get('kwd',{})
 
-    self.parser.add_argument("-p", "--print", help="Print field value and exit",default="")
+      if not len(arr):
+        continue
 
-    self.parser.add_argument("-c", "--cmd", help="Run command(s)")
-    self.parser.add_argument("-l", "--log", help="Enable logging")
+      self.parser.add_argument(*arr, **kwd)
 
     self.oa = self.parser.parse_args()
 
@@ -28,3 +42,4 @@ class mixGetOpt:
       self.parser.print_help()
       sys.exit()
 
+  return self
