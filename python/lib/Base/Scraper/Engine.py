@@ -96,7 +96,7 @@ class BS(CoreClass,mixLogger,mixCmdRunner,mixGetOpt):
        } 
     },
     { 
-       'arr' : '-z --z_yaml', 
+       'arr' : '-z --f_zlan',
        'kwd' : { 
            'help'    : 'input ZLAN file',
            'default' : '',
@@ -309,33 +309,9 @@ class BS(CoreClass,mixLogger,mixCmdRunner,mixGetOpt):
       'table'   : 'pages',
     })
 
-  def get_opt(self):
-    if self.skip_get_opt:
+  def get_opt_apply(self):
+    if not self.oa:
       return self
-
-    #mixGetOpt.get_opt(self)
-
-    self.parser = argparse.ArgumentParser(usage=self.usage)
-    
-    self.parser.add_argument("-y", "--f_yaml", help="input YAML file",default="")
-    self.parser.add_argument("-z", "--f_zlan", help="input ZLAN file",default="")
-
-    self.parser.add_argument("-i", "--f_input_html", help="input HTML file",default="")
-    self.parser.add_argument("-f", "--find", help="Find elements via XPATH/CSS",default="")
-
-    self.parser.add_argument("-g", "--grep", help="Grep in input file(s)",default="")
-    self.parser.add_argument("--gs", help="Grep scope",default=10)
-
-    self.parser.add_argument("-p", "--print", help="Print field value and exit",default="")
-
-    self.parser.add_argument("-c", "--cmd", help="Run command(s)")
-    self.parser.add_argument("-l", "--log", help="Enable logging")
-    
-    self.oa = self.parser.parse_args()
-
-    if len(sys.argv) == 1:
-      self.parser.print_help()
-      sys.exit()
 
     for k in util.qw('f_yaml f_zlan f_input_html'):
       v  = util.get(self,[ 'oa', k ])
@@ -344,13 +320,15 @@ class BS(CoreClass,mixLogger,mixCmdRunner,mixGetOpt):
         ftype = m.group(1)
         self.files.update({ ftype : v })
 
-    cmd_s = util.get(self,'oa.cmd')
-    if not cmd_s:
-      print('No command provided!')
-      exit(0)
+    return self
 
-    cmds = cmd_s.split(',')
-    self.vars['mixCmdRunner']['cmds'].extend(cmds)
+  def get_opt(self):
+    if self.skip_get_opt:
+      return self
+
+    mixGetOpt.get_opt(self)
+
+    self.get_opt_apply()
 
     return self
 
@@ -2531,9 +2509,12 @@ class BS(CoreClass,mixLogger,mixCmdRunner,mixGetOpt):
     if len(urldata):
       self.urldata = urldata
 
-    self                    \
-      .c_init_bs()          \
-      .parse()              \
+    acts = [
+      [ 'c_init_bs' ],
+      [ 'parse' ],
+    ]
+
+    util.call(self,acts)
 
     return self
 
@@ -3236,6 +3217,7 @@ bs.py -c html_parse -i cache.html $*
 
     if not len(urldata):
       urldata = getattr(self,'urldata',[]) 
+
 
     self.page_index = 0
     while len(urldata):

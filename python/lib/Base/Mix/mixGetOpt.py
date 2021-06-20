@@ -46,4 +46,12 @@ class mixGetOpt:
       self.parser.print_help()
       sys.exit()
 
+    cmd_s = util.get(self,'oa.cmd')
+    if not cmd_s:
+      print('No command provided!')
+      exit(0)
+
+    cmds = cmd_s.split(',')
+    self.vars['mixCmdRunner']['cmds'].extend(cmds)
+
     return self
