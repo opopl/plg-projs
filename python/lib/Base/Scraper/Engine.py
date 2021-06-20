@@ -2482,17 +2482,24 @@ class BS(CoreClass,mixLogger,mixCmdRunner,mixGetOpt):
     return self
 
   def c_init_bs(self):
-    self                    \
-      .init()               \
-      .fill_vars()          \
+
+    acts = [
+      [ 'init' ],
+      [ 'fill_vars' ],
+    ]
+
+    util.call(self,acts)
 
     return self
 
   def c_zlan_save_fs(self,ref={}):
 
-    self                    \
-      .c_init_bs()          \
-      .save_zlan_fs()       \
+    acts = [
+      [ 'c_init_bs' ],
+      [ 'save_zlan_fs' ],
+    ]
+
+    util.call(self,acts)
 
     return self
 
