@@ -615,6 +615,9 @@ function! projs#onload (...)
 
   TgSet projs_this
 
+  let vf = projs#sec#file('_vim_')
+  call base#vimfile#source({ 'files' : [vf] })
+
   let root_c = projs#root()
   call projs#rootid(b:rootid)
 
@@ -625,9 +628,9 @@ function! projs#onload (...)
   endif
 
   let done = base#eval("b:projs_onload_done")
-  if done | return | endif
+	if done | return | endif
 
-  let b:projs_onload_done = 1
+	let b:projs_onload_done = 1
 
   call projs#proj#name(b:proj)
 
@@ -648,9 +651,6 @@ function! projs#onload (...)
   StatusLine projs
 
   call projs#exe_latex('pdflatex')
-
-  let vf = projs#sec#file('_vim_')
-  call base#vimfile#source({ 'files' : [vf] })
 
 endfunction
 
