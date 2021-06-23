@@ -198,7 +198,7 @@ function! projs#insert#t_file ()
 
 endfunction
 
-"""pin_ii
+"""pin_ii {
 function! projs#insert#ii ()
   let proj = projs#proj#name()
 
@@ -222,7 +222,7 @@ function! projs#insert#ii ()
   call append('.',lines)
 
   let r_new = {
-      \ 'view'   : 1,
+      \ 'view'   : 'edit',
       \ 'p_tree' : 1,
       \  }
 
@@ -232,6 +232,7 @@ function! projs#insert#ii ()
   call base#tg#update('projs_this')
 
 endfunction
+"} end of: pin_ii,  projs#insert#ii
 
 if 0
   usage

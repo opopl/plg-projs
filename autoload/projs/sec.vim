@@ -798,7 +798,7 @@ if 0
       projs#sec#header
 endif
 
-"""sec_new_start
+"""sec_new_start {
 
 function! projs#sec#new(sec,...)
     let sec        = a:sec
@@ -1085,8 +1085,16 @@ function! projs#sec#new(sec,...)
       call base#sys("git add " . bname)
     endif
 
-    if get(ref,'view')
-        exe 'split ' . sec_file
+    let vv = get(ref,'view')
+    if vv
+       if base#type(vv) == 'Number'
+         exe 'split ' . sec_file
+
+       elseif base#type(vv) == 'String'
+         if base#inlist(vv,base#qw('edit split'))
+           exe sprintf('%s %s', vv, sec_file)
+         endif
+       endif
     endif
 
     if get(ref,'p_tree')
@@ -1095,7 +1103,7 @@ function! projs#sec#new(sec,...)
     
     return 1
 endfunction
-"""sec_new_end
+"""sec_new_end }
 
 function! projs#sec#perl_open (sec,...)
   let sec = a:sec
