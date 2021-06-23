@@ -222,6 +222,8 @@ function! projs#insert#ii ()
   call append('.',lines)
 
   let r_new = {
+      \ 'view'   : 1,
+      \ 'p_tree' : 1,
       \  }
 
   " see also:
@@ -230,7 +232,6 @@ function! projs#insert#ii ()
   call base#tg#update('projs_this')
 
 endfunction
-
 
 if 0
   usage
@@ -376,6 +377,8 @@ function! projs#insert#ii_url ()
       \  'author_id' : author_id_str,
       \  'author'    : author,
       \  'tags'      : tags,
+      \  'view'      : 1,
+      \  'p_tree'    : 1,
       \  }
 
   call projs#sec#new(ii_sec,r_new)

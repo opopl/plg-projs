@@ -82,7 +82,11 @@ function! projs#bld#do#print_ii_tree (...)
 
   let opts = []
 
-  let target = projs#bld#target()
+  let target = get(ref,'target','')
+
+  if !len(target)
+    let target = projs#bld#target()
+  endif
   if len(target)
     call extend(opts,[ '-t', target ])
   endif

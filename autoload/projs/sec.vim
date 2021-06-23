@@ -821,7 +821,9 @@ function! projs#sec#new(sec,...)
         \   "author_id"  : '',
         \   "title"      : '',
         \   "tags"       : '',
+        \   "p_tree"     : 0,
         \   }
+
 
     if a:0 
         let refadd = get(a:000,0,{})
@@ -1085,6 +1087,10 @@ function! projs#sec#new(sec,...)
 
     if get(ref,'view')
         exe 'split ' . sec_file
+    endif
+
+    if get(ref,'p_tree')
+      call projs#bld#do#print_ii_tree({ 'target' : 'usual' })
     endif
     
     return 1
