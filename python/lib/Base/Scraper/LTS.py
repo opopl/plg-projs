@@ -19,7 +19,7 @@ class LTS(CoreClass,mixLogger,mixCmdRunner,mixGetOpt):
         This script is for handling LTS
   '''
 
-  skip_get_opt = False
+  #skip_get_opt = False
 
   def __init__(self,args={}):
     self.lts_root  = os.environ.get('P_SR')

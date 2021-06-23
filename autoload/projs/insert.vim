@@ -224,9 +224,10 @@ function! projs#insert#ii ()
   let r_new = {
       \  }
 
+  " see also:
+  "   projs#bld#do#print_ii_tree
   call projs#sec#new(ii_sec,r_new)
   call base#tg#update('projs_this')
-
 
 endfunction
 

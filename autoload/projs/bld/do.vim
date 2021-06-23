@@ -66,7 +66,20 @@ function! projs#bld#do#last_compile ()
 
 endfunction
 
-function! projs#bld#do#print_ii_tree ()
+if 0
+  Usage
+    call projs#bld#do#print_ii_tree ()
+    call projs#bld#do#print_ii_tree ({ 'target' : 'usual' })
+
+  Call tree
+    calls
+      projs#bld#target
+      projs#bld#run
+endif
+
+function! projs#bld#do#print_ii_tree (...)
+  let ref = get(a:000,0,{})
+
   let opts = []
 
   let target = projs#bld#target()

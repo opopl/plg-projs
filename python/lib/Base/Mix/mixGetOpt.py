@@ -5,6 +5,11 @@ import Base.Util as util
 
 class mixGetOpt:
 
+  skip_get_opt = False
+
+  #command-line options
+  oa = None
+
   def get_opt(self,ref={}):
     '''
       usage:

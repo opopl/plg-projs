@@ -208,8 +208,6 @@ class BS(CoreClass,mixLogger,mixCmdRunner,mixGetOpt):
   # output directory
   out_dir = None
 
-  #command-line options
-  oa = None
 
   # pages - stored info about processed urls
   pages = []
@@ -234,8 +232,6 @@ class BS(CoreClass,mixLogger,mixCmdRunner,mixGetOpt):
 
   # current image data
   pic = Pic()
-
-  skip_get_opt = False
 
   # list of databases
   dbfile = dbFile()
@@ -2474,10 +2470,14 @@ class BS(CoreClass,mixLogger,mixCmdRunner,mixGetOpt):
     return self
 
   def c_print_field(self):
-    self                    \
-      .init()               \
-      .fill_vars()          \
-      .print_field()        \
+
+    acts = [
+      [ 'init' ],
+      [ 'fill_vars' ],
+      [ 'print_field' ],
+    ]
+
+    util.call(self,acts)
 
     return self
 
