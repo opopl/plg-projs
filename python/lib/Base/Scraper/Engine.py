@@ -2492,6 +2492,20 @@ class BS(CoreClass,mixLogger,mixCmdRunner,mixGetOpt):
 
     return self
 
+  def c_run(self,ref={}):
+    urldata = util.get(ref,'urldata',[])
+    if len(urldata):
+      self.urldata = urldata
+
+    acts = [
+      [ 'c_init_bs' ],
+      [ 'parse' ],
+    ]
+
+    util.call(self,acts)
+
+    return self
+
   def c_zlan_save_fs(self,ref={}):
 
     acts = [
@@ -2511,19 +2525,7 @@ class BS(CoreClass,mixLogger,mixCmdRunner,mixGetOpt):
 
     return self
 
-  def c_run(self,ref={}):
-    urldata = util.get(ref,'urldata',[])
-    if len(urldata):
-      self.urldata = urldata
 
-    acts = [
-      [ 'c_init_bs' ],
-      [ 'parse' ],
-    ]
-
-    util.call(self,acts)
-
-    return self
 
   def db_ok(self):
 
