@@ -378,7 +378,7 @@ function! projs#insert#ii_url ()
       \  'author_id' : author_id_str,
       \  'author'    : author,
       \  'tags'      : tags,
-      \  'view'      : 1,
+      \  'view'      : 'edit',
       \  'p_tree'    : 1,
       \  }
 

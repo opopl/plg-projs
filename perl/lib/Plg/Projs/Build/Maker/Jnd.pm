@@ -228,6 +228,7 @@ sub cmd_jnd_compose {
             $sec = $1;
         };
 
+###m_\ifcmt
         m/^\s*\\ifcmt/ && do { $is_cmt = 1; next; };
 ###m_\fi
         m/^\s*\\fi/ && do { 
