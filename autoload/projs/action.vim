@@ -1029,18 +1029,33 @@ function! projs#action#view_bld_log (...)
 endf
 
 
-"if 0
-"  Usage
-"    projs#action#bld_compile()
-"  Call tree
-"    calls
-"      projs#proj#name
-"      projs#root
-"      projs#action#bld_compile_Fc
-"      projs#bld#make_secs
-"        projs#sec#new
-"      projs#sec#file
-"endif
+if 0
+  Usage
+    Without Options
+      projs#action#bld_compile()
+
+    With Options
+      projs#action#bld_compile({ ... })
+
+      projs#action#bld_compile({ 'proj' : proj })
+  
+      projs#action#bld_compile({ 
+        \ 'proj'   : proj,
+        \ 'config' : 'xelatex',
+        \ 'target' : 'usual',
+        \ })
+  Call tree
+    called by
+      projs#action#bld_compile_xelatex()
+      
+    calls
+      projs#proj#name
+      projs#root
+      projs#action#bld_compile_Fc
+      projs#bld#make_secs
+        projs#sec#new
+      projs#sec#file
+endif
 
 """PA_bld_compile
 function! projs#action#bld_compile (...) 
@@ -1111,11 +1126,29 @@ function! projs#action#bld_compile (...)
 
 endf
 
-function! projs#action#bld_compile_xelatex () 
+if 0
+  usage
+		call projs#action#bld_compile_xelatex () 
+    call projs#action#bld_compile_xelatex ({ 'target' : 'usual' }) 
+  call tree
+    calls 
+      projs#action#bld_compile
+        projs#proj#name
+        projs#root
+        projs#action#bld_compile_Fc
+        projs#bld#make_secs
+          projs#sec#new
+        projs#sec#file
+endif
+
+function! projs#action#bld_compile_xelatex (...) 
+  let ref = get(a:000,0,{})
 
   let r = {
       \ 'config' : 'xelatex',
       \ }
+  call extend(r,ref)
+
   call projs#action#bld_compile(r) 
 
 endf

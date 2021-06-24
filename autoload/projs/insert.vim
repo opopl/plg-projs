@@ -248,6 +248,10 @@ endif
 function! projs#insert#ii_url ()
   let proj   = projs#proj#name()
 
+	let msg = [ 'start' ]
+	let prf = { 'plugin' : 'projs', 'func' : 'projs#insert#ii_url' }
+	call base#log(msg, prf)
+
   let rootid = projs#rootid()
 
   let sec    = projs#buf#sec()
@@ -294,7 +298,7 @@ function! projs#insert#ii_url ()
   let author_id = get(ii_data,'author_id','')
   let author    = projs#author#get({ 'author_id' : author_id })
 
-  let data_pref       = projs#insert#ii_url#get_pref_auth({ 
+  let data_pref  = projs#insert#ii_url#get_pref_auth({ 
       \ 'author_id' : author_id,
       \ 'pref'      : pref,
       \ })

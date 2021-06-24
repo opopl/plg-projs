@@ -18,6 +18,23 @@ if 0
       projs#url#fb#data
 endif
 ""endcmt
+"
+
+if 0
+  usage
+    call projs#util#ii_data_from_url({ 
+      \ "url"    : url,
+      \ "prompt" : prompt,
+      \ })
+  call tree
+    calls
+      base#url#struct
+
+      projs#data#dict
+      projs#url#fb#data
+        projs#author#get
+        projs#author#add_prompt
+endif
 
 function! projs#util#ii_data_from_url (...)
   let ref = get(a:000,0,{})
@@ -51,10 +68,12 @@ function! projs#util#ii_data_from_url (...)
     endif
   endfor
 
-  return { 
+  let ii_data = {
     \ 'pref'      : pref,
     \ 'author_id' : author_id,
     \ }
+
+  return ii_data
 
 endfunction
 

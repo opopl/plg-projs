@@ -10,6 +10,8 @@ function! projs#data#dict#ids ()
 		\	"rmext"   : 1,
 		\	"fnamemodify" : '',
 		\	})
+	let ids = sort(ids)
+	let ids = base#uniq(ids)
 	return ids
 endfunction
 
