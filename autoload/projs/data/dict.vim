@@ -1,20 +1,20 @@
 
-function! projs#data#dict (...)
-  let ref = get(a:000,0,{})
-
-  let file = projs#data#dict_file(ref)
-
-  if !filereadable(file) | return {} | endif
-    
-  let dict = base#readdict({ 'file' : file })
-
-  return dict
-  
+function! projs#data#dict#ids ()
+	let dict_dir = projs#data#dict#dir()
+	let ids = base#find({ 
+		\	"dirs"    : [dict_dir],
+		\	"exts"    : base#qw('i.dat'),
+		\	"cwd"     : 1,
+		\	"relpath" : 1,
+		\	"subdirs" : 1,
+		\	"rmext"   : 1,
+		\	"fnamemodify" : '',
+		\	})
+	return ids
 endfunction
 
-
-function! projs#data#dict_choose ()
-	let dict_dir = projs#data#dict_dir()
+function! projs#data#dict#choose ()
+	let dict_dir = projs#data#dict#dir()
 	let ids = base#find({ 
 		\	"dirs"    : [dict_dir],
 		\	"exts"    : base#qw('i.dat'),
@@ -30,7 +30,7 @@ function! projs#data#dict_choose ()
 
 endfunction
 
-function! projs#data#dict_dir (...)
+function! projs#data#dict#dir (...)
   let ref = get(a:000,0,{})
 
   let proj = get(ref,'proj','')
@@ -45,13 +45,13 @@ function! projs#data#dict_dir (...)
 
 endfunction
 
-function! projs#data#dict_file (...)
+function! projs#data#dict#file (...)
   let ref = get(a:000,0,{})
 
   let id   = get(ref,'id','')
   let proj = get(ref,'proj','')
 
-	let dict_dir = projs#data#dict_dir({ 'proj' : proj })
+	let dict_dir = projs#data#dict#dir({ 'proj' : proj })
 
 	let a = []
   call extend(a,[ dict_dir, printf('%s.i.dat',id) ])
