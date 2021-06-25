@@ -1076,8 +1076,13 @@ function! projs#action#bld_compile (...)
   if !len(target)
     let target = projs#bld#target()
   endif
+
   if len(target)
+    let target = projs#bld#trg#full({ 'target' : target })
     call base#varset('projs_bld_target',target)
+  else
+    call base#warn({ 'text' : 'NO target', 'prefix' : 'projs#action#bld_compile' })
+    return 0
   endif
 
   let bfile = projs#sec#file('_perl.bld')
@@ -1130,7 +1135,7 @@ endf
 
 if 0
   usage
-		call projs#action#bld_compile_xelatex () 
+    call projs#action#bld_compile_xelatex () 
     call projs#action#bld_compile_xelatex ({ 'target' : 'usual' }) 
   call tree
     calls 

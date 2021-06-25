@@ -14,12 +14,33 @@ function! projs#bld#trg#list ()
 
   let sec_buf = projs#buf#sec()
   if len(sec_buf)
-    call add(targets,'_buf')
-    call add(targets,printf('_buf.%s',sec_buf))
+    let t_short = '_buf'
+	  let t_full  = projs#bld#trg#full({ 'target' : t_short })
+
+    for trg in [ t_short, t_full ]
+      if len(trg)
+        call add(targets,trg)
+      endif
+    endfor
+
   endif
+
+  let targets = sort(targets)
+  let targets = base#uniq(targets)
+
   return targets
   
 endfunction
+
+if 0
+  Usage
+	  let target = projs#bld#trg#full ({ 'target' : '_buf' })
+
+  Call tree
+    calls
+      projs#buf#sec
+    called by
+endif
 
 function! projs#bld#trg#full (...)
   let ref = get(a:000,0,{})
@@ -68,6 +89,8 @@ function! projs#bld#trg#choose ()
       let target = input(printf('[%s] target: ',proj),'','custom,base#complete#this')
     endw
   endif
+
+  let target = projs#bld#trg#full({ 'target' : target })
 
   call base#varset('projs_bld_target',target)
 

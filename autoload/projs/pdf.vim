@@ -33,13 +33,12 @@ endf
 if 0
   Usage:
      call projs#pdf#view ()
-     call projs#pdf#view ('',VIEWER)
-     call projs#pdf#view ('','',TYPE)
 
      call projs#pdf#view ({ 
         \ 'proj'   : PROJ,
         \ 'viewer' : VIEWER,
-        \ 'type'   : TYPE 
+        \ 'type'   : TYPE,
+        \ 'target' : TARGET,
         \ })
   
   Used by:
