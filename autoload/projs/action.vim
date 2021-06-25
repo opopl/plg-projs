@@ -1046,7 +1046,7 @@ if 0
         \ })
   Call tree
     called by
-      projs#action#bld_compile_xelatex()
+      projs#action#bld_compile_xelatex
       
     calls
       projs#proj#name
@@ -1057,7 +1057,7 @@ if 0
       projs#sec#file
 endif
 
-"""PA_bld_compile
+"""PA_bld_compile {
 function! projs#action#bld_compile (...) 
   let ref = get(a:000,0,{})
 
@@ -1122,9 +1122,11 @@ function! projs#action#bld_compile (...)
     \ 'cmd' : cmd, 
     \ 'Fn'  : asc#tab_restore(env) 
     \ })
+
   return 1
 
 endf
+" } end of: projs#action#bld_compile
 
 if 0
   usage
