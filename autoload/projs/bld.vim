@@ -187,9 +187,15 @@ if 0
 				projs#bld#trg#list
 endif
 
-function! projs#bld#target ()
+function! projs#bld#target (...)
+  let ref = get(a:000,0,{})
 
-  let target = projs#bld#trg#choose()
+  let target = get(ref,'target','')
+  if !len(target)
+    let target = projs#bld#trg#choose()
+  endif
+
+
   
   return target
 

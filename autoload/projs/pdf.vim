@@ -51,13 +51,24 @@ endif
 function! projs#pdf#view (...)
   let ref = get(a:000,0,{})
 
+	""" process input options: ref = { ... }
+	"			input options: 
+	"				proj 			project name
+	"				viewer 		Pdf viewer id: 
+	"											'evince'
+	"				type 			build type:
+	"											'bld'
+	"				target		build target
   let proj = projs#proj#name()
   let proj = get(ref,'proj',proj)
 
   let viewer_id = get(ref,'viewer','evince')
   let viewer    = base#exefile#path(viewer_id)
 
-  let type  = get(ref,'type','bld')
+  let type      = get(ref,'type','bld')
+
+  let target    = get(ref,'target','')
+	""" end of input options
 
   let pdf_files = projs#pdf#path({ 
     \ 'proj' : proj ,
