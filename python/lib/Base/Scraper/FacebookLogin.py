@@ -6,8 +6,11 @@ import os
 import pickle
 
 import Base.Util as util
+import json
 
 LOGIN_URL = 'https://mobile.facebook.com/login.php'
+
+#p [ x['clist'] for x in clist if 'clist' in x and len(x['clist'])]
  
 class FacebookLogin():
     email = None
@@ -17,6 +20,9 @@ class FacebookLogin():
     fp = None
 
     f_cookies = "cookies.pkl"
+
+    f_tex  = "cmt.tex"
+    f_json = "cmt.json"
 
     comment_list = []
 
@@ -47,8 +53,10 @@ class FacebookLogin():
            [ 'get_url_login' ], 
            [ 'load_cookies' ], 
            [ 'get_url_bil' ], 
-           [ 'page_save_comments' ], 
            #[ 'page_loop_prev' ], 
+           [ 'page_save_comments' ], 
+           [ 'page_clist2json' ], 
+           [ 'page_clist2tex' ], 
            [ 'save_cookies' ], 
         ] 
 
@@ -117,10 +125,78 @@ class FacebookLogin():
 
         return self
 
+    def _clist2tex(self,**args):
+        clist = args.get('clist') or self.comment_list
+
+        tex = []
+        tex.append('\\begin{itemize}')
+
+        for cmt in clist:
+          tex_cmt = self._cmt2tex(cmt=cmt)
+          tex.extend(tex_cmt)
+
+        tex.append('\\end{itemize}')
+
+        return tex
+
+    def _cmt2tex(self,**args):
+        cmt = args.get('cmt')
+
+        tex = []
+
+        auth_bare = cmt.get('auth_bare')
+        auth_url  = cmt.get('auth_url')
+        clist_sub = cmt.get('clist',[])
+
+        txt       = cmt.get('txt')
+
+        if auth_bare:
+          tex.append('\\iusr{' + auth_bare + '}')
+          if auth_url:
+            tex.append('\\url{' + auth_url + '}')
+
+          tex.extend(['',txt,''])
+
+          if len(clist_sub):
+            tex.extend(self._clist2tex(clist=clist_sub))
+
+        return tex
+
+    def page_clist2json(self,**args):
+        clist = args.get('clist') or self.comment_list
+
+        clist_js = json.dumps(clist,ensure_ascii=False).encode('utf8')
+
+        #with open(self.f_json, 'w') as f:
+          #f.write(clist_js)
+
+        with open(self.f_json, 'w', encoding='utf8') as f:
+          json.dump(clist, f, ensure_ascii=False)
+
+        return self
+
+    def page_clist2tex(self,**args):
+        clist = args.get('clist') or self.comment_list
+
+        tex = self._clist2tex(clist=clist)
+        texj = "\n".join(tex)
+
+        with open(self.f_tex, 'w') as f:
+          f.write(texj)
+
+        return self
+
     def _page_clist(self,**args):
+        '''
+          clist = self._page_clist(el=el)
+          clist = self._page_clist(els=els)
+        '''
         elin = args.get('el') or self.driver
 
-        cmt_els = self._el_comments(el=elin)
+        cmt_els = args.get('els')
+        if not cmt_els:
+          cmt_els = self._el_comments(el=elin)
+
         clist = []
 
         if not cmt_els:
@@ -131,11 +207,23 @@ class FacebookLogin():
 
           reply = self._el_reply(el=comment)
           if reply:
+            print('Reply click')
             reply.click()
-            clist_sub = self._page_clist(el=comment)
-            cmt['clist'] = clist_sub
-            #replies = self._el_comments(el=comment)
-            #import pdb; pdb.set_trace()
+            time.sleep(1)
+
+            replies_inline = None
+            try:
+              replies_inline = comment.find_elements_by_xpath('.//div[ @data-sigil="comment inline-reply" ]')
+            except:
+              pass
+
+            if replies_inline and len(replies_inline):
+              print('Found more replies')
+              clist_sub = self._page_clist(els=replies_inline)
+
+              if len(clist_sub):
+                print(f'cmt <- {len(clist_sub)} replies')
+                cmt['clist'] = clist_sub
 
           el_auth = comment.find_element_by_xpath('.//div[@class="_2b05"]')
           if el_auth:
@@ -156,6 +244,7 @@ class FacebookLogin():
                     auth_url_path = u['path'] + '?id=' + id
 
                 cmt['auth_url_path'] = auth_url_path
+                cmt['auth_url']      = util.url_join('https://www.facebook.com', auth_url_path)
 
           el_txt = comment.find_element_by_xpath('.//*[@data-sigil="comment-body"]')
           if el_txt:
@@ -163,8 +252,6 @@ class FacebookLogin():
 
           if len(cmt):
             clist.append(cmt)
-
-        import pdb; pdb.set_trace()
 
         return clist
 
