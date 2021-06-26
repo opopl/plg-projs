@@ -51,14 +51,14 @@ endif
 function! projs#pdf#view (...)
   let ref = get(a:000,0,{})
 
-	""" process input options: ref = { ... }
-	"			input options: 
-	"				proj 			project name
-	"				viewer 		Pdf viewer id: 
-	"											'evince'
-	"				type 			build type:
-	"											'bld'
-	"				target		build target
+  """ process input options: ref = { ... }
+  "     input options: 
+  "       proj      project name
+  "       viewer    Pdf viewer id: 
+  "                     'evince'
+  "       type      build type:
+  "                     'bld'
+  "       target    build target
   let proj = projs#proj#name()
   let proj = get(ref,'proj',proj)
 
@@ -68,7 +68,7 @@ function! projs#pdf#view (...)
   let type      = get(ref,'type','bld')
 
   let target    = get(ref,'target','')
-	""" end of input options
+  """ end of input options
 
   let pdf_files = projs#pdf#path({ 
     \ 'proj' : proj ,
@@ -94,20 +94,24 @@ function! projs#pdf#view (...)
 
   let pdf_file = ''
   if type == 'bld'
-	  let d_files = {}
-	  for file in pdf_files
-	    let file_b = fnamemodify(file,':t')
-	    let t      = substitute(file_b,pat,'\1','g')
+    let d_files = {}
+    for file in pdf_files
+      let file_b = fnamemodify(file,':t')
+      let t      = substitute(file_b,pat,'\1','g')
 
-	    if len(t)
-	      call add(targets,t)
-	      call extend(d_files,{ t : file })
-	    endif
-	  endfor
+      if len(t)
+        call add(targets,t)
+        call extend(d_files,{ t : file })
+      endif
+    endfor
 
-		let target = projs#bld#trg#choose()
-	
-	  let pdf_file = get(d_files,target,'')
+    if len(target)
+      let target = projs#bld#trg#full({ 'target' : target })
+    else
+      let target = projs#bld#trg#choose()
+    endif
+  
+    let pdf_file = get(d_files,target,'')
   elseif type == 'bare'
     let pdf_file = get(pdf_files,0,'')
   endif
@@ -128,7 +132,7 @@ function! projs#pdf#view (...)
 
     exe ec
     redraw!
-    call base#rdw_printf([ 'Opened PDF file: %s',pdf_file ],'WildMenu')
+    "call base#rdw_printf([ 'Opened PDF file: %s',pdf_file ],'WildMenu')
   endif
 endfunction
 

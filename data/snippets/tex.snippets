@@ -12,6 +12,13 @@ snippet citb
 	%%%cit_title
 	  <++>
 	%%%endcit
+snippet mc3
+	\begin{multicols}{3}
+	\end{multicols}
+snippet sk
+	\smallskip
+snippet lgh
+	\Laughey[2.0][yellow][white]
 snippet cit
 	%%%cit
 	%%%cit_pic
@@ -71,6 +78,11 @@ snippet mlz
 snippet env
 	\usepackage{p.env}
 	\getenv[<+TexMacro+>]{<+EnvVar+>}
+snippet pic04
+	\ifcmt
+	  pic <++>
+	  width 0.4
+	\fi
 snippet pic02
 	\ifcmt
 	  pic <++>

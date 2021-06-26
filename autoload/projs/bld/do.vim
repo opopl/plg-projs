@@ -14,9 +14,13 @@ if 0
       projs#pdf#view
 endif
 
-function! projs#bld#do#pdf_view ()
+function! projs#bld#do#pdf_view (...)
+  let ref = get(a:000,0,{})
 
-  call projs#pdf#view({ 'type' : 'bld' })
+  let r = { 'type' : 'bld' }
+  call extend(r,ref)
+
+  call projs#pdf#view(r)
 
 endfunction
 

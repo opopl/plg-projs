@@ -1,14 +1,14 @@
-#!/usr/bin/env python3
 
-import requests
+#https://python.gotrained.com/scraping-facebook-posts-comments/#Crawling_a_Facebook_ProfilePage
 import re
 import json
 import time
 import logging
 import pandas
-
 from collections import OrderedDict
 from bs4 import BeautifulSoup
+ 
+ 
  
 def get_bs(session, url):
     """Makes a GET requests using the given Session object
@@ -27,14 +27,8 @@ def make_login(session, base_url, credentials):
     """
     login_form_url = '/login/device-based/regular/login/?refsrc=https%3A'\
         '%2F%2Fmobile.facebook.com%2Flogin%2Fdevice-based%2Fedit-user%2F&lwv=100'
-
-    email    = os.environ.get('FB_LOGIN')
-    password = os.environ.get('FB_PASS')
  
-    params = {
-       'email' : email, 
-       'pass'  : password,
-    }
+    params = {'email':credentials['email'], 'pass':credentials['pass']}
  
     while True:
         time.sleep(3)
@@ -52,8 +46,6 @@ def crawl_profile(session, base_url, profile_url, post_limit):
     n_scraped_posts = 0
     scraped_posts = list()
     posts_id = None
-
-    #import pdb; pdb.set_trace()
  
     while n_scraped_posts < post_limit:
         try:
@@ -205,8 +197,10 @@ def save_data(data):
     """
     with open('profile_posts_data.json', 'w') as json_file:
         json.dump(data, json_file, indent=4)
-
-def main():
+ 
+ 
+if __name__ == "__main__":
+ 
     logging.basicConfig(level=logging.INFO)
     base_url = 'https://mobile.facebook.com'
     session = requests.session()
@@ -224,6 +218,3 @@ def main():
     logging.info('[!] Saving.')
     save_data(posts_data)
  
- 
-if __name__ == "__main__":
-    main()

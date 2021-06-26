@@ -126,7 +126,10 @@
 
              color xcolor colortbl
 
-             graphicx tikz pgffor
+             graphicx 
+             tikz 
+             tikzsymbols
+             pgffor
 
              adjustbox
              longtable

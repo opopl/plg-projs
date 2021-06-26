@@ -179,12 +179,15 @@ function! projs#bld#make_secs ()
 endfunction
 
 if 0
-  call tree
+  Usage
+    let target = projs#bld#target()
+
+  Call tree
     called by
       projs#action#bld_compile
     calls
       projs#bld#trg#choose
-				projs#bld#trg#list
+        projs#bld#trg#list
 endif
 
 function! projs#bld#target (...)
@@ -194,14 +197,10 @@ function! projs#bld#target (...)
   if !len(target)
     let target = projs#bld#trg#choose()
   endif
-
-
   
   return target
 
 endfunction
-
-
 
 function! projs#bld#jnd_pdf (...)
   let ref = get(a:000,0,{})

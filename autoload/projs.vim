@@ -628,9 +628,9 @@ function! projs#onload (...)
   endif
 
   let done = base#eval("b:projs_onload_done")
-	if done | return | endif
+  if done | return | endif
 
-	let b:projs_onload_done = 1
+  let b:projs_onload_done = 1
 
   call projs#proj#name(b:proj)
 
@@ -949,6 +949,7 @@ function! projs#maps (...)
             \  ';ab'   : 'PrjAct async_build_bare'  ,
             \  ';bb'   : 'call projs#action#bld_compile()'  ,
             \  ';bx'   : 'call projs#action#bld_compile_xelatex()'  ,
+            \  ';bz'   : 'call projs#action#bld_compile_xelatex({ "target" : "_buf" })',
             \  ';bj'   : 'PrjAct bld_join'  ,
             \  ';bl'   : 'BLD last_compile'  ,
             \  ';bt'   : 'BLD print_ii_tree'  ,
