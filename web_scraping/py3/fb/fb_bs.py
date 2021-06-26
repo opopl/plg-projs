@@ -6,6 +6,7 @@ import json
 import time
 import logging
 import pandas
+import os
 
 from collections import OrderedDict
 from bs4 import BeautifulSoup
@@ -48,6 +49,8 @@ def make_login(session, base_url, credentials):
 def crawl_profile(session, base_url, profile_url, post_limit):
     """Goes to profile URL, crawls it and extracts posts URLs.
     """
+    print(profile_url)
+
     profile_bs = get_bs(session, profile_url)
     n_scraped_posts = 0
     scraped_posts = list()
@@ -58,6 +61,7 @@ def crawl_profile(session, base_url, profile_url, post_limit):
     while n_scraped_posts < post_limit:
         try:
             posts_id = 'recent'
+            import pdb; pdb.set_trace()
             posts = profile_bs.find('div', id=posts_id).div.div.contents
         except Exception:
             posts_id = 'structured_composer_async_container'

@@ -86,6 +86,24 @@ def mk_dirname(file):
 def keys(dict={}):
   return list(dict.keys())
 
+def url_parse_query(query=''):
+  if not query:
+    return {}
+
+  d = {}
+
+  query_split = query.split('&')
+  for piece in query_split:
+    m = re.match(r'^(\S+)=(\S+)$',piece)
+    if not m:
+      continue
+
+    key   = m.group(1)
+    value = m.group(2)
+    d.update({ key : value })
+
+  return d
+
 def url_parse(url,opts={}):
   u = urlparse(url)
 

@@ -3,4 +3,4 @@
 from Base.Scraper.FacebookLogin import FacebookLogin
 
 fbl = FacebookLogin()
-fbl.login()
+fbl.main()
