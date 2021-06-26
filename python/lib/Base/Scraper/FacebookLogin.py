@@ -18,7 +18,7 @@ class FacebookLogin():
 
     f_cookies = "cookies.pkl"
 
-    comments = []
+    comment_list = []
 
     def __init__(self):
         if not self.email:
@@ -88,13 +88,56 @@ class FacebookLogin():
         self.driver.get('https://mobile.facebook.com/yevzhik/posts/3566865556681862')
         return self
 
-    def page_save_comments(self):
+    def _el_comments(self,**args):
+        el = args.get('el') or self.driver
 
-        cmt_els = self.driver.find_elements_by_xpath('.//div[ @data-sigil="comment" ]')
-        for el in cmt_els:
+        cmt_els = None
+        try:
+          cmt_els = el.find_elements_by_xpath('.//div[ @data-sigil="comment" ]')
+        except:
+          pass
+
+        return cmt_els
+
+    def _el_reply(self,**args):
+        elin = args.get('el') or self.driver
+
+        reply = None
+        try:
+          reply = elin.find_element_by_xpath('.//div[ @data-sigil="replies-see-more" ]')
+        except:
+          pass
+
+        return reply
+
+    def page_save_comments(self,**args):
+
+        clist = self._page_clist()
+        self.comment_list = clist
+
+        return self
+
+    def _page_clist(self,**args):
+        elin = args.get('el') or self.driver
+
+        cmt_els = self._el_comments(el=elin)
+        clist = []
+
+        if not cmt_els:
+          return clist
+
+        for comment in cmt_els:
           cmt = {}
 
-          el_auth = el.find_element_by_xpath('.//div[@class="_2b05"]')
+          reply = self._el_reply(el=comment)
+          if reply:
+            reply.click()
+            clist_sub = self._page_clist(el=comment)
+            cmt['clist'] = clist_sub
+            #replies = self._el_comments(el=comment)
+            #import pdb; pdb.set_trace()
+
+          el_auth = comment.find_element_by_xpath('.//div[@class="_2b05"]')
           if el_auth:
             cmt['auth_bare'] = el_auth.text
 
@@ -114,16 +157,16 @@ class FacebookLogin():
 
                 cmt['auth_url_path'] = auth_url_path
 
-          el_txt = el.find_element_by_xpath('.//*[@data-sigil="comment-body"]')
+          el_txt = comment.find_element_by_xpath('.//*[@data-sigil="comment-body"]')
           if el_txt:
             cmt['txt'] = el_txt.text
 
           if len(cmt):
-            self.comments.append(cmt)
+            clist.append(cmt)
 
-          import pdb; pdb.set_trace()
+        import pdb; pdb.set_trace()
 
-        return self
+        return clist
 
     def page_loop_prev(self):
 
