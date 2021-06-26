@@ -53,7 +53,7 @@ class FacebookLogin():
            [ 'get_url_login' ], 
            [ 'load_cookies' ], 
            [ 'get_url_bil' ], 
-           #[ 'page_loop_prev' ], 
+           [ 'page_loop_prev' ],
            [ 'page_save_comments' ], 
            [ 'page_clist2json' ], 
            [ 'page_clist2tex' ], 
@@ -255,11 +255,13 @@ class FacebookLogin():
 
         return clist
 
-    def page_loop_prev(self):
+    def page_loop_prev(self,**args):
 
-        i = 1
         pv = None
-        imax = 10
+
+        i    = 1
+        imax = args.get('imax') or 10
+
         while 1:
           try:
             pv = self.driver.find_element_by_id('see_prev_3566865556681862')
