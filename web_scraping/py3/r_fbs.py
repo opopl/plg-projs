@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from Base.Scraper.FBS import FBS
+from Base.Scraper.FBS.FBS import FBS
 import os
 
 dirname = os.path.dirname(__file__)

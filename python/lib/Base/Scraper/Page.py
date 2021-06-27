@@ -34,17 +34,7 @@ class Page(CoreClass):
   def __init__(page,ref={}):
     super().__init__(ref)
 
-  def dict(page):
-    data = {}
-    for k in dir(page):
-      if k in [ '__dict__', '__module__' ]:
-        continue
 
-      v = getattr(page,k)
-      if type(v) in [ dict,list,str,int ]:
-        data.update({ k : v })
-
-    return data
 
   def _cite_data(page):
     cite_data = {}

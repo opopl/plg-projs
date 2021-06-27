@@ -23,6 +23,8 @@ from Base.Mix.mixFileSys import mixFileSys
 import Base.Util as util
 from Base.Core import CoreClass
 
+from Base.Scraper.FBS.FbPost import FbPost
+
 LOGIN_URL = 'https://mobile.facebook.com/login.php'
 
 #p [ x['clist'] for x in clist if 'clist' in x and len(x['clist'])]
@@ -104,6 +106,7 @@ class FBS(CoreClass,
         self.password = os.environ.get('FB_PASS')
 
     def init(self):
+        print('[init] start')
 
         acts = [
           [ 'init_drv' ],
@@ -116,6 +119,8 @@ class FBS(CoreClass,
         return self
 
     def init_drv(self):
+        print('[init_drv] init firefox driver')
+
         fp = webdriver.FirefoxProfile()
 
         fp.set_preference("dom.webnotifications.enabled",False)
@@ -165,9 +170,41 @@ class FBS(CoreClass,
 
     def parse_post(self, ref = {}):
 
+      url = ref.get('url','')
+      u = util.url_parse(url)
+
+      m = re.match(r'.*facebook.com$',u['host'])
+
+      if not m:
+        return self
+
+      url_m = util.url_join('https://mobile.facebook.com',u['path'])
+
+      r_info = ref
+      r_info.update({ 'url_m' : url })
+
+      r = {
+        'app'   : self,
+        'info'  : r_info,
+      }
+
+      self.post = FbPost(r)
+
+      acts = [
+         'get_url_post', 
+        [ 'post_loop_prev', [ { 'imax' : 70 } ] ],
+         'post_save_story'    ,
+         'post_save_comments' ,
+         'post_wf_json'       ,
+         'post_wf_tex'        ,
+         'post_wf_html'       ,
+      ]
+
+      util.call(self,acts)
+
       return self
 
-    def get_posts(self,ref = {}):
+    def grab_posts(self,ref = {}):
 
       urldata = ref.get('urldata',[])
       if not len(urldata):
@@ -178,11 +215,11 @@ class FBS(CoreClass,
         d = urldata.pop(0)
         self.parse_post(d)
   
-        if self.page.limit:
-          if self.page_index == self.page.limit:
-             break
+#        if self.page.limit:
+          #if self.page_index == self.page.limit:
+             #break
   
-      self.parsed_report()
+      #self.parsed_report()
 
       return self
 
@@ -190,16 +227,9 @@ class FBS(CoreClass,
 
         acts = [
             'init' , 
-            #'do_auth' , 
-            'get_posts' , 
-#            'get_url_post', 
-           #[ 'post_loop_prev', [ { 'imax' : 70 } ] ],
-            #'post_save_story' , 
-            #'post_save_comments' , 
-            #'post_wf_json' , 
-            #'post_wf_tex' , 
-            #'post_wf_html' , 
-            #'save_cookies' , 
+            'do_auth' , 
+            'grab_posts' , 
+            'save_cookies' , 
         ] 
 
         util.call(self,acts)
@@ -245,7 +275,11 @@ class FBS(CoreClass,
 
         return self
 
-    def get_url_post(self):
+    def get_url_post(self,ref={}):
+        url = ref.get('url','')
+        if not url:
+          return self
+
         # 18.01.2021
         self.driver.get('https://mobile.facebook.com/yevzhik/posts/3566865556681862')
 
@@ -292,7 +326,7 @@ class FBS(CoreClass,
         story_txt = story.text
         story_src = story.get_attribute('innerHTML')
 
-        self.post_data.update({
+        self.post.set({
             'story'      : {
               'txt' : story_txt,
               'src' : story_src,
@@ -306,9 +340,9 @@ class FBS(CoreClass,
         clist = self._post_clist()
         self.comment_list = clist
 
-        self.post_data.update({
-            'comments'      : clist,
-            'comment_count' : self.comment_count,
+        self.post.set({
+            'clist'   : clist,
+            'ccount'  : self.comment_count,
         })
 
         print(f'Total Comment Count: {self.comment_count}')
@@ -381,102 +415,7 @@ class FBS(CoreClass,
           tex = f.readlines()
 
         return tex
-
-    def post_wf_tex(self,ref={}):
-        data = ref.get('data') or self.post_data
-
-        clist = self.comment_list
-
-        tex = []
-        tex_clist = self._clist2tex({ 'clist' : clist })
-
-        tex_story = util.get(self, 'post_data.story.txt', '')
-
-        tex.extend(self._tex_preamble())
-        tex.extend(['\\begin{document}'])
-        tex.append(tex_story)
-        tex.extend(['\\section{Comments}'])
-        tex.extend(tex_clist)
-        tex.extend(['\\end{document}'])
-
-        texj = "\n".join(tex)
-
-        with open(self.f_tex, 'w', encoding='utf8') as f:
-          f.write(texj)
-
-        return self
-
-    def _post_clist(self,ref={}):
-        '''
-          clist = self._post_clist({ 'el'  : el })
-          clist = self._post_clist({ 'els' : els })
-        '''
-        elin = ref.get('el') or self.driver
-
-        cmt_els = ref.get('els')
-        if not cmt_els:
-          cmt_els = self._el_comments({ 'el' : elin })
-
-        clist = []
-
-        if not cmt_els:
-          return clist
-
-        for comment in cmt_els:
-          cmt = {}
-
-          reply = self._el_reply({ 'el' : comment })
-          if reply:
-            print('Reply click')
-            reply.click()
-            time.sleep(1)
-
-            replies_inline = None
-            try:
-              replies_inline = comment.find_elements_by_xpath('.//div[ @data-sigil="comment inline-reply" ]')
-            except:
-              pass
-
-            if replies_inline and len(replies_inline):
-              print('Found more replies')
-              clist_sub = self._post_clist({ 'els' : replies_inline })
-
-              if len(clist_sub):
-                print(f'cmt <- {len(clist_sub)} replies')
-                cmt['clist'] = clist_sub
-
-###cmt_process
-          el_auth = comment.find_element_by_xpath('.//div[@class="_2b05"]')
-          if el_auth:
-            cmt['auth_bare'] = el_auth.text
-
-            el_auth_link = el_auth.find_element_by_xpath('.//a')
-            if el_auth_link:
-              href = el_auth_link.get_attribute('href')
-              if href:
-                u = util.url_parse(href,{ 'rm_query' : 1 })
-                q = u['query']
-                qp = util.url_parse_query(q)
-
-                auth_url_path = u['path']
-                if u['path'] == '/profile.php':
-                  if 'id' in qp:
-                    id = qp.get('id')
-                    auth_url_path = u['path'] + '?id=' + id
-
-                cmt['auth_url_path'] = auth_url_path
-                cmt['auth_url']      = util.url_join('https://www.facebook.com', auth_url_path)
-
-          el_txt = comment.find_element_by_xpath('.//*[@data-sigil="comment-body"]')
-          if el_txt:
-            cmt['txt'] = el_txt.text
-            cmt['src'] = el_txt.get_attribute('innerHTML')
-
-          if len(cmt):
-            clist.append(cmt)
-            self.comment_count += 1
-
-        return clist
+   
 
     def post_loop_prev(self,ref={}):
 

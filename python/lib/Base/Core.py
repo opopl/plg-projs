@@ -14,6 +14,18 @@ class CoreClass:
     jsd = json.dumps(self.__dict__)
     return jsd
 
+  def dict(page):
+    data = {}
+    for k in dir(page):
+      if k in [ '__dict__', '__module__' ]:
+        continue
+
+      v = getattr(page,k)
+      if type(v) in [ dict,list,str,int ]:
+        data.update({ k : v })
+
+    return data
+
   def listadd(self, path = None, items = []):
     lst = util.get(self,path,[])
 
