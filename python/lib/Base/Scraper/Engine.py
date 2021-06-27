@@ -208,11 +208,6 @@ class BS(CoreClass,
     'html' : None,
   }
 
-  # input directory
-  in_dir = os.path.join(os.getcwd(),'in')
-
-  # input YAML file
-  f_yaml = None
 
   # lists
   lists = {}
@@ -3124,7 +3119,6 @@ bs.py -c html_parse -i cache.html $*
 
     if not len(urldata):
       urldata = getattr(self,'urldata',[]) 
-
 
     self.page_index = 0
     while len(urldata):

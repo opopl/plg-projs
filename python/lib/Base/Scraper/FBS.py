@@ -18,6 +18,7 @@ from Base.Mix.mixCmdRunner import mixCmdRunner
 from Base.Mix.mixLogger import mixLogger
 from Base.Mix.mixGetOpt import mixGetOpt
 from Base.Mix.mixLoader import mixLoader
+from Base.Mix.mixFileSys import mixFileSys
 
 import Base.Util as util
 from Base.Core import CoreClass
@@ -30,7 +31,8 @@ class FBS(CoreClass,
         mixLogger,
         mixCmdRunner,
         mixGetOpt,
-        mixLoader
+        mixLoader,
+        mixFileSys,
     ):
 
     vars = {
@@ -40,6 +42,8 @@ class FBS(CoreClass,
     }
     dirs = {}
     files = {}
+
+    urldata = []
 
     email = None
     password = None
@@ -159,7 +163,26 @@ class FBS(CoreClass,
 
       return self
 
-    def get_posts(self):
+    def parse_post(self, ref = {}):
+
+      return self
+
+    def get_posts(self,ref = {}):
+
+      urldata = ref.get('urldata',[])
+      if not len(urldata):
+        urldata = getattr(self,'urldata',[]) 
+  
+      self.page_index = 0
+      while len(urldata):
+        d = urldata.pop(0)
+        self.parse_post(d)
+  
+        if self.page.limit:
+          if self.page_index == self.page.limit:
+             break
+  
+      self.parsed_report()
 
       return self
 

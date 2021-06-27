@@ -6,6 +6,13 @@ import Base.Util as util
 import os,re,sys
 
 class mixFileSys:
+
+  # input directory
+  in_dir = os.path.join(os.getcwd(),'in')
+
+  # input YAML file
+  f_yaml = None
+
   def _dir(self, arg = {}, *args):
     '''
        self._dir({ obj = 'out.tmpl', fs = '' })
