@@ -415,7 +415,30 @@ class FBS(CoreClass,
           tex = f.readlines()
 
         return tex
-   
+
+    def post_wf_tex(self,ref={}):
+        data = ref.get('data') or self.post_data
+
+        clist = self.comment_list
+
+        tex = []
+        tex_clist = self._clist2tex({ 'clist' : clist })
+
+        tex_story = util.get(self, 'post_data.story.txt', '')
+
+        tex.extend(self._tex_preamble())
+        tex.extend(['\\begin{document}'])
+        tex.append(tex_story)
+        tex.extend(['\\section{Comments}'])
+        tex.extend(tex_clist)
+        tex.extend(['\\end{document}'])
+
+        texj = "\n".join(tex)
+
+        with open(self.f_tex, 'w', encoding='utf8') as f:
+          f.write(texj)
+
+        return self
 
     def post_loop_prev(self,ref={}):
 
