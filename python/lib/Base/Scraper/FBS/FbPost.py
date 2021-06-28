@@ -178,10 +178,18 @@ class FbPost(CoreClass):
 
             if data_store:
               pic_url = data_store.get('imgsrc','')
+              print(f'Picture url: {pic_url}')
               if pic_url:
+                headers = {
+                 'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.3'
+                }
 
-            print(data_store)
-
+                args = {
+                  'headers' : headers,
+                  'verify'  : False,
+                  'stream'  : True,
+                }
+                r = requests.get(pic_url,**args)
 
       if len(cmt):
         clist.append(cmt)

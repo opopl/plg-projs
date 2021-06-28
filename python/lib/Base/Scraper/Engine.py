@@ -811,9 +811,9 @@ class BS(CoreClass,
 
   def url_load_content(self,ref={}):
     if self._need_load_cache():
-       with open(self.ii_cache,'r') as f:
-           self.content = f.read()
-           return self
+      with open(self.ii_cache,'r') as f:
+        self.content = f.read()
+        return self
 
     self.url_fetch()
 
