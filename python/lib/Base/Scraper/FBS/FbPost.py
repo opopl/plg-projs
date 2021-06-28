@@ -164,7 +164,6 @@ class FbPost(CoreClass):
           'xpath' : './/i[contains(@class,"img")]',
         })
 
-        import pdb; pdb.set_trace()
         if el_attach_i:
           print('Found image in attachment')
           data_store_attr = el_attach_i.get_attribute('data-store')
@@ -180,6 +179,8 @@ class FbPost(CoreClass):
               pic_url = data_store.get('imgsrc','')
               print(f'Picture url: {pic_url}')
               if pic_url:
+                cmt['pic'] = pic_url
+
                 headers = {
                  'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.3'
                 }
@@ -190,6 +191,13 @@ class FbPost(CoreClass):
                   'stream'  : True,
                 }
                 r = requests.get(pic_url,**args)
+                import pdb; pdb.set_trace()
+                #if r:
+                  #r.raw.decoded_content = True
+                  #ct = util.get(r.headers, 'content-type', '')
+              
+                  #with open(pic.tmp['bare'], 'wb') as lf:
+                    #shutil.copyfileobj(r.raw, lf)
 
       if len(cmt):
         clist.append(cmt)
@@ -273,6 +281,7 @@ class FbPost(CoreClass):
     url = ref.get('url',self.url_m)
 
     app.driver.get(url)
+    time.sleep(5) 
 
     # 18.01.2021
     #self.driver.get('https://mobile.facebook.com/yevzhik/posts/3566865556681862')
