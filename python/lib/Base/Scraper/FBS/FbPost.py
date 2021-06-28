@@ -1,5 +1,6 @@
 
 from Base.Core import CoreClass
+import Base.Util as util
 
 class FbPost(CoreClass):
   # mobile url, TEXT
@@ -7,6 +8,10 @@ class FbPost(CoreClass):
 
   # url, TEXT
   url = ''
+
+  tags  = ''
+  date  = ''
+  title = ''
 
   # story text, TEXT
   story = ''
@@ -21,6 +26,14 @@ class FbPost(CoreClass):
   def __init__(self,args={}):
     for k, v in args.items():
       setattr(self, k, v)
+
+    if self.url:
+      u = util.url_parse(self.url)
+  
+      m = re.match(r'.*facebook.com$',u['host'])
+  
+      if m:
+        self.url_m = util.url_join('https://mobile.facebook.com',u['path'])
 
   def _clist(self, ref={}):
     '''
@@ -192,3 +205,48 @@ class FbPost(CoreClass):
     print(f'Total Comment Count: {self.ccount}')
 
     return self
+
+  def loop_prev(self,ref={}):
+
+    pv = None
+
+    i    = 1
+    imax = ref.get('imax') or 10
+
+    while 1:
+      try:
+        pv = app.driver.find_element_by_id('see_prev_3566865556681862')
+      except:
+        break
+
+      if i == imax:
+        print(f'Maximum achieved, quitting the loop')
+        break
+
+      if not pv:
+        break
+
+      pv.click()
+
+      time.sleep(4) 
+      print(f'Click {i}')
+      i += 1
+
+    return self
+
+  def process(self,ref={}):
+
+    acts = [
+       'get_url', 
+      [ 'loop_prev', [ { 'imax' : 70 } ] ],
+       'save_story'    ,
+       'save_comments' ,
+       'wf_json'       ,
+       'wf_tex'        ,
+       'wf_html'       ,
+    ]
+
+    util.call(self,acts)
+
+    return self
+

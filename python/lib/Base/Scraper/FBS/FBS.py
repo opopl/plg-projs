@@ -171,36 +171,19 @@ class FBS(CoreClass,
     def parse_post(self, ref = {}):
 
       url = ref.get('url','')
-      u = util.url_parse(url)
 
-      m = re.match(r'.*facebook.com$',u['host'])
-
-      if not m:
-        return self
-
-      url_m = util.url_join('https://mobile.facebook.com',u['path'])
-
-      r_info = ref
-      r_info.update({ 'url_m' : url })
 
       r = {
-        'app'   : self,
-        'info'  : r_info,
+        'app' : self,
       }
+      for k in util.qw('tags title date'):
+        v = ref.get(k)
+        if v != None:
+          r[k] = v
 
       self.post = FbPost(r)
 
-      acts = [
-         'get_url_post', 
-        [ 'post_loop_prev', [ { 'imax' : 70 } ] ],
-         'post_save_story'    ,
-         'post_save_comments' ,
-         'post_wf_json'       ,
-         'post_wf_tex'        ,
-         'post_wf_html'       ,
-      ]
-
-      util.call(self,acts)
+      self.post.process()
 
       return self
 
@@ -296,7 +279,6 @@ class FBS(CoreClass,
           pass
 
         return reply
-
     
     def post_wf_json(self,ref={}):
         data = ref.get('data') or self.post_data
@@ -351,34 +333,7 @@ class FBS(CoreClass,
 
         return self
 
-    def post_loop_prev(self,ref={}):
-
-        pv = None
-
-        i    = 1
-        imax = ref.get('imax') or 10
-
-        while 1:
-          try:
-            pv = self.driver.find_element_by_id('see_prev_3566865556681862')
-          except:
-            break
-
-          if i == imax:
-            print(f'Maximum achieved, quitting the loop')
-            break
-
-          if not pv:
-            break
-
-          pv.click()
-
-          time.sleep(4) 
-          print(f'Click {i}')
-          i += 1
-
-        return self
- 
+  
     def login(self):
         #email_element = self.driver.find_element_by_id('email')
         email_element = self.driver.find_element_by_id('m_login_email')
