@@ -108,7 +108,12 @@ class FbPost(CoreClass):
 
         replies_inline = None
         try:
-          replies_inline = comment.find_elements_by_xpath('.//div[ @data-sigil="comment inline-reply" ]')
+          xp = '''.//div[
+                    contains(@data-sigil,"inline-reply")
+                      and
+                    contains(@data-sigil,"comment")
+               ]'''
+          replies_inline = comment.find_elements_by_xpath(xp)
         except:
           pass
 
@@ -278,6 +283,8 @@ class FbPost(CoreClass):
   def get_url(self,ref={}):
     app = self.app
 
+    print('[FbPost][get_url] start')
+
     url = ref.get('url',self.url_m)
 
     app.driver.get(url)
@@ -305,6 +312,8 @@ class FbPost(CoreClass):
 
   def loop_prev(self,ref={}):
     app = self.app
+
+    print('[FbPost][loop_prev] start')
 
     pv = None
 
