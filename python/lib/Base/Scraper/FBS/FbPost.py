@@ -24,24 +24,34 @@ class FbPost(CoreClass):
 
   def _clist(self, ref={}):
     '''
-      clist = self._clist({ 'el'  : el })
-      clist = self._clist({ 'els' : els })
+      Purpose
+        Retrieve list of comments
+
+      Usage
+        input: single web element
+          clist = self._clist({ 'el'  : el })
+
+        input: list of Web elements
+          clist = self._clist({ 'els' : els })
+
+      Return
+        ARRAY
     '''
     elin = ref.get('el') or self.app.driver
 
-    cmt_els = ref.get('els')
-    if not cmt_els:
-      cmt_els = self._el_comments({ 'el' : elin })
+    cmt_elems = ref.get('els')
+    if not cmt_elems:
+      cmt_elems = app._els_comments({ 'el' : elin })
 
     clist = []
 
-    if not cmt_els:
+    if not cmt_elems:
       return clist
 
-    for comment in cmt_els:
+    for comment in cmt_elems:
       cmt = {}
 
-      reply = self._el_reply({ 'el' : comment })
+      reply = app._el_reply({ 'el' : comment })
       if reply:
         print('Reply click')
         reply.click()
@@ -55,7 +65,7 @@ class FbPost(CoreClass):
 
         if replies_inline and len(replies_inline):
           print('Found more replies')
-          clist_sub = self._post_clist({ 'els' : replies_inline })
+          clist_sub = self._clist({ 'els' : replies_inline })
 
           if len(clist_sub):
             print(f'cmt <- {len(clist_sub)} replies')
@@ -90,9 +100,95 @@ class FbPost(CoreClass):
 
       if len(cmt):
         clist.append(cmt)
-        self.comment_count += 1
+        self.ccount += 1
 
     return clist
 
+  def _clist2tex(self,ref={}):
+    clist = ref.get('clist') or self.clist
 
+    tex = []
+    if clist and len(clist):
+      tex.append('\\begin{itemize}')
 
+      for cmt in clist:
+        tex_cmt = self._cmt2tex({ 'cmt' : cmt })
+        tex.extend(tex_cmt)
+
+      tex.append('\\end{itemize}')
+
+    return tex
+
+  def _cmt2tex(self,ref={}):
+    cmt = ref.get('cmt')
+
+    tex = []
+
+    auth_bare = cmt.get('auth_bare')
+    auth_url  = cmt.get('auth_url')
+    clist_sub = cmt.get('clist',[])
+
+    txt       = cmt.get('txt')
+
+    if auth_bare:
+      tex.append('\\iusr{' + auth_bare + '}')
+      if auth_url:
+        tex.append('\\url{' + auth_url + '}')
+
+      tex.extend(['',txt,''])
+
+      if len(clist_sub):
+        tex.extend( self._clist2tex({ 'clist' : clist_sub }) )
+
+    return tex
+
+  def save_story(self,ref={}):
+    elin = ref.get('el') or self.app.driver
+
+    story = None
+    try:
+      story = elin.find_element_by_css_selector('.story_body_container')
+    except:
+      print('ERROR: could not find story!')
+      raise
+      pass
+
+    if not story:
+      return self
+
+    story_txt = story.text
+    story_src = story.get_attribute('innerHTML')
+
+    self.set({
+        'story'      : {
+          'txt' : story_txt,
+          'src' : story_src,
+        }
+    })
+    
+    return self
+
+  def get_url(self,ref={}):
+    url = ref.get('url',self.url_m)
+
+    app.driver.get(url)
+
+    # 18.01.2021
+    #self.driver.get('https://mobile.facebook.com/yevzhik/posts/3566865556681862')
+
+    #self.driver.get('https://mobile.facebook.com/nitsoi.larysa/posts/938801726686200')
+    #self.driver.get('https://mobilefacebook.com/olesia.medvedieva/posts/1637472103110572')
+    return self
+
+  def save_comments(self,ref={}):
+
+    clist = self._clist()
+
+    self.set({
+      'clist'   : clist,
+      'ccount'  : self.ccount,
+    })
+
+    print(f'Total Comment Count: {self.ccount}')
+
+    return self

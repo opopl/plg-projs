@@ -271,23 +271,11 @@ class FBS(CoreClass,
     def get_url_login(self):
 
         self.driver.get(LOGIN_URL)
-        time.sleep(1) # Wait for some time to load
+        time.sleep(1)
 
         return self
 
-    def get_url_post(self,ref={}):
-        url = ref.get('url','')
-        if not url:
-          return self
-
-        # 18.01.2021
-        self.driver.get('https://mobile.facebook.com/yevzhik/posts/3566865556681862')
-
-        #self.driver.get('https://mobile.facebook.com/nitsoi.larysa/posts/938801726686200')
-        #self.driver.get('https://mobilefacebook.com/olesia.medvedieva/posts/1637472103110572')
-        return self
-
-    def _el_comments(self,ref={}):
+    def _els_comments(self,ref={}):
         el = ref.get('el') or self.driver
 
         cmt_els = None
@@ -309,84 +297,7 @@ class FBS(CoreClass,
 
         return reply
 
-    def post_save_story(self,ref={}):
-        elin = ref.get('el') or self.driver
-
-        story = None
-        try:
-          story = elin.find_element_by_css_selector('.story_body_container')
-        except:
-          print('ERROR: could not find story!')
-          raise
-          pass
-
-        if not story:
-          return self
-
-        story_txt = story.text
-        story_src = story.get_attribute('innerHTML')
-
-        self.post.set({
-            'story'      : {
-              'txt' : story_txt,
-              'src' : story_src,
-            }
-        })
-        
-        return self
-
-    def post_save_comments(self,ref={}):
-
-        clist = self._post_clist()
-        self.comment_list = clist
-
-        self.post.set({
-            'clist'   : clist,
-            'ccount'  : self.comment_count,
-        })
-
-        print(f'Total Comment Count: {self.comment_count}')
-
-        return self
-
-    def _clist2tex(self,ref={}):
-        clist = ref.get('clist') or self.comment_list
-
-        tex = []
-        if clist and len(clist):
-          tex.append('\\begin{itemize}')
-  
-          for cmt in clist:
-            tex_cmt = self._cmt2tex({ 'cmt' : cmt })
-            tex.extend(tex_cmt)
-  
-          tex.append('\\end{itemize}')
-
-        return tex
-
-    def _cmt2tex(self,ref={}):
-        cmt = ref.get('cmt')
-
-        tex = []
-
-        auth_bare = cmt.get('auth_bare')
-        auth_url  = cmt.get('auth_url')
-        clist_sub = cmt.get('clist',[])
-
-        txt       = cmt.get('txt')
-
-        if auth_bare:
-          tex.append('\\iusr{' + auth_bare + '}')
-          if auth_url:
-            tex.append('\\url{' + auth_url + '}')
-
-          tex.extend(['',txt,''])
-
-          if len(clist_sub):
-            tex.extend( self._clist2tex({ 'clist' : clist_sub }) )
-
-        return tex
-
+    
     def post_wf_json(self,ref={}):
         data = ref.get('data') or self.post_data
 
