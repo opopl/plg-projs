@@ -14,13 +14,17 @@ class CoreClass:
     jsd = json.dumps(self.__dict__)
     return jsd
 
-  def dict(page):
+  def dict(self,ref={}):
     data = {}
-    for k in dir(page):
-      if k in [ '__dict__', '__module__' ]:
+
+    exclude = ref.get('exclude',[])
+    exclude.extend(util.qw('__dict__ __module__'))
+
+    for k in dir(self):
+      if k in exclude:
         continue
 
-      v = getattr(page,k)
+      v = getattr(self,k)
       if type(v) in [ dict,list,str,int ]:
         data.update({ k : v })
 

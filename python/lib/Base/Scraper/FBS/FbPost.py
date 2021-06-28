@@ -1,6 +1,20 @@
 
+
+from selenium import webdriver
+
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
+from selenium.common.exceptions import TimeoutException
+
 from Base.Core import CoreClass
 import Base.Util as util
+
+import time
+import os,sys,re
+
+import json
+import requests
 
 class FbPost(CoreClass):
   # mobile url, TEXT
@@ -35,6 +49,13 @@ class FbPost(CoreClass):
       if m:
         self.url_m = util.url_join('https://mobile.facebook.com',u['path'])
 
+  def dict_json(self, ref={}):
+
+    exclude = util.qw('f_json f_html f_tex')
+    d = CoreClass.dict(self,{ 'exclude' : exclude })
+
+    return d
+
   def _clist(self, ref={}):
     '''
       Purpose
@@ -47,14 +68,27 @@ class FbPost(CoreClass):
         input: list of Web elements
           clist = self._clist({ 'els' : els })
 
+        options
+          'root' - root element
+
+            clist = self._clist({ ... 'opts' : 'root' })
+
       Return
         ARRAY
     '''
-    elin = ref.get('el') or self.app.driver
+    app = self.app
+
+    elin = ref.get('el') or app.driver
 
     cmt_elems = ref.get('els')
     if not cmt_elems:
       cmt_elems = app._els_comments({ 'el' : elin })
+
+    opts_s = ref.get('opts','')
+    opts = opts_s.split(',')
+    is_root = ( 'root' in opts ) 
+    if is_root:
+      self.ccount = 0
 
     clist = []
 
@@ -63,6 +97,8 @@ class FbPost(CoreClass):
 
     for comment in cmt_elems:
       cmt = {}
+
+      cmt['src'] = app._el_src({ 'el' : comment })
 
       reply = app._el_reply({ 'el' : comment })
       if reply:
@@ -85,7 +121,7 @@ class FbPost(CoreClass):
             cmt['clist'] = clist_sub
 
 ###cmt_process
-      el_auth = comment.find_element_by_xpath('.//div[@class="_2b05"]')
+      el_auth = comment.find_element_by_xpath('.//div[contains(@class,"_2b05")]')
       if el_auth:
         cmt['auth_bare'] = el_auth.text
 
@@ -106,10 +142,46 @@ class FbPost(CoreClass):
             cmt['auth_url_path'] = auth_url_path
             cmt['auth_url']      = util.url_join('https://www.facebook.com', auth_url_path)
 
-      el_txt = comment.find_element_by_xpath('.//*[@data-sigil="comment-body"]')
+      el_txt = app._el_find({ 
+        'el'    : comment,
+        'xpath' : './/*[@data-sigil="comment-body"]',
+      })
+
       if el_txt:
-        cmt['txt'] = el_txt.text
-        cmt['src'] = el_txt.get_attribute('innerHTML')
+        cmt['txt']     = el_txt.text
+        cmt['txt_src'] = app._el_src({ 'el' : el_txt })
+
+      el_attach = app._el_find({ 
+        'el'  : comment,
+        'css' : '.attachment'
+      })
+
+      if el_attach:
+        print('Found attachment')
+
+        el_attach_i = app._el_find({ 
+          'el'    : el_attach,
+          'xpath' : './/i[contains(@class,"img")]',
+        })
+
+        import pdb; pdb.set_trace()
+        if el_attach_i:
+          print('Found image in attachment')
+          data_store_attr = el_attach_i.get_attribute('data-store')
+          if data_store_attr:
+            data_store = None
+            if type(data_store_attr) in [str]:
+              try:
+                data_store = json.loads(data_store_attr)
+              except:
+                pass
+
+            if data_store:
+              pic_url = data_store.get('imgsrc','')
+              if pic_url:
+
+            print(data_store)
+
 
       if len(cmt):
         clist.append(cmt)
@@ -118,6 +190,8 @@ class FbPost(CoreClass):
     return clist
 
   def _clist2tex(self,ref={}):
+    app = self.app
+
     clist = ref.get('clist') or self.clist
 
     tex = []
@@ -133,6 +207,8 @@ class FbPost(CoreClass):
     return tex
 
   def _cmt2tex(self,ref={}):
+    app = self.app
+
     cmt = ref.get('cmt')
 
     tex = []
@@ -156,7 +232,9 @@ class FbPost(CoreClass):
     return tex
 
   def save_story(self,ref={}):
-    elin = ref.get('el') or self.app.driver
+    app = self.app
+
+    elin = ref.get('el') or app.driver
 
     story = None
     try:
@@ -170,7 +248,7 @@ class FbPost(CoreClass):
       return self
 
     story_txt = story.text
-    story_src = story.get_attribute('innerHTML')
+    story_src = app._el_src({ 'el' : story })
 
     self.set({
         'story'      : {
@@ -182,6 +260,8 @@ class FbPost(CoreClass):
     return self
 
   def get_url(self,ref={}):
+    app = self.app
+
     url = ref.get('url',self.url_m)
 
     app.driver.get(url)
@@ -194,12 +274,12 @@ class FbPost(CoreClass):
     return self
 
   def save_comments(self,ref={}):
+    app = self.app
 
-    clist = self._clist()
+    clist = self._clist({ 'opts' : 'root' })
 
     self.set({
-      'clist'   : clist,
-      'ccount'  : self.ccount,
+      'clist' : clist,
     })
 
     print(f'Total Comment Count: {self.ccount}')
@@ -207,6 +287,7 @@ class FbPost(CoreClass):
     return self
 
   def loop_prev(self,ref={}):
+    app = self.app
 
     pv = None
 
@@ -235,6 +316,7 @@ class FbPost(CoreClass):
     return self
 
   def process(self,ref={}):
+    app = self.app
 
     acts = [
        'get_url', 
@@ -249,4 +331,59 @@ class FbPost(CoreClass):
     util.call(self,acts)
 
     return self
+
+  def wf_json(self,ref={}):
+    app = self.app
+
+    data = ref.get('data') or self.dict_json()
+
+    #data_js = json.dumps(data,ensure_ascii=False).encode('utf8')
+
+    try:
+      with open(self.f_json, 'w', encoding='utf8') as f:
+        json.dump(data, f, ensure_ascii=False)
+    except:
+      print('ERROR: json dump')
+      import pdb; pdb.set_trace()
+
+    #with open(self.f_json, 'w') as f:
+      #f.write(clist_js)
+
+    return self
+
+  def wf_html(self,ref={}):
+    app = self.app
+
+    html = app.driver.page_source
+    with open(self.f_html, 'w', encoding='utf8' ) as f:
+      f.write(html)
+
+    return self
+
+  def wf_tex(self,ref={}):
+    app = self.app
+
+    data = ref.get('data') or self.dict()
+
+    clist = self.clist
+
+    tex = []
+    tex_clist = self._clist2tex({ 'clist' : clist })
+
+    tex_story = util.get(self, 'story.txt', '')
+
+    tex.extend(app._tex_preamble())
+    tex.extend(['\\begin{document}'])
+    tex.append(tex_story)
+    tex.extend(['\\section{Comments}'])
+    tex.extend(tex_clist)
+    tex.extend(['\\end{document}'])
+
+    texj = "\n".join(tex)
+
+    with open(self.f_tex, 'w', encoding='utf8') as f:
+      f.write(texj)
+
+    return self
+
 

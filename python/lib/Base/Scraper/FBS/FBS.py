@@ -6,10 +6,10 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import TimeoutException
 
-import time
-import os
 import pickle
-import re
+
+import time
+import os,sys,re
 
 import json
 import pylatexenc
@@ -57,6 +57,7 @@ class FBS(CoreClass,
 
     f_tex  = "post.tex"
     f_json = "post.json"
+    f_html = "post.html"
 
     comment_list = []
     comment_count = 0
@@ -170,16 +171,14 @@ class FBS(CoreClass,
 
     def parse_post(self, ref = {}):
 
-      url = ref.get('url','')
-
-
-      r = {
-        'app' : self,
-      }
-      for k in util.qw('tags title date'):
+      r = { 'app' : self }
+      for k in util.qw('url tags title date'):
         v = ref.get(k)
         if v != None:
           r[k] = v
+
+      for k in util.qw('f_json f_tex f_html'):
+        r.update({ k : util.get(self,k) })
 
       self.post = FbPost(r)
 
@@ -258,49 +257,86 @@ class FBS(CoreClass,
 
         return self
 
-    def _els_comments(self,ref={}):
-        el = ref.get('el') or self.driver
+    def _els_find(self,ref={}):
+        elin = ref.get('el',self.driver)
 
-        cmt_els = None
-        try:
-          cmt_els = el.find_elements_by_xpath('.//div[ @data-sigil="comment" ]')
-        except:
-          pass
+        xpath = ref.get('xpath','')
+        css   = ref.get('css','')
+
+        els = None
+
+        if xpath:
+          try:
+            els = elin.find_elements_by_xpath(xpath)
+          except:
+            pass
+
+        if css:
+          try:
+            els = elin.find_elements_by_css_selector(css)
+          except:
+            pass
+              
+        return els
+
+    def _el_src(self,ref={}):
+        elin = ref.get('el',self.driver)
+
+        parent = self._el_find({ 
+          'el'    : elin,
+          'xpath' : '..',
+        })
+
+        el_src = elin
+        if parent:
+          el_src = parent
+
+        src = el_src.get_attribute('innerHTML')
+
+        return src
+
+    def _el_find(self,ref={}):
+        elin = ref.get('el',self.driver)
+
+        xpath = ref.get('xpath','')
+        css   = ref.get('css','')
+
+        el = None
+
+        if xpath:
+          try:
+            el = elin.find_element_by_xpath(xpath)
+          except:
+            pass
+
+        if css:
+          try:
+            el = elin.find_element_by_css_selector(css)
+          except:
+            pass
+              
+        return el
+
+    def _els_comments(self,ref={}):
+        elin = ref.get('el') or self.driver
+
+        cmt_els = self._els_find({ 
+          'xpath' : './/div[ @data-sigil="comment" ]',
+          'el'    : elin
+        })
 
         return cmt_els
 
     def _el_reply(self,ref={}):
         elin = ref.get('el') or self.driver
 
-        reply = None
-        try:
-          reply = elin.find_element_by_xpath('.//div[ @data-sigil="replies-see-more" ]')
-        except:
-          pass
+        reply = self._el_find({ 
+          'el'    : elin,
+          'xpath' : './/div[ @data-sigil="replies-see-more" ]'
+        })
 
         return reply
     
-    def post_wf_json(self,ref={}):
-        data = ref.get('data') or self.post_data
-
-        data_js = json.dumps(data,ensure_ascii=False).encode('utf8')
-
-        #with open(self.f_json, 'w') as f:
-          #f.write(clist_js)
-
-        with open(self.f_json, 'w', encoding='utf8') as f:
-          json.dump(data, f, ensure_ascii=False)
-
-        return self
-
-    def post_wf_html(self,ref={}):
-
-        html = self.driver.page_source
-        with open(f'post.html', 'w', encoding='utf8' ) as f:
-          f.write(html)
-
-        return self
-
     def _tex_preamble(self):
 
         tex = []
@@ -308,31 +344,6 @@ class FBS(CoreClass,
           tex = f.readlines()
 
         return tex
-
-    def post_wf_tex(self,ref={}):
-        data = ref.get('data') or self.post_data
-
-        clist = self.comment_list
-
-        tex = []
-        tex_clist = self._clist2tex({ 'clist' : clist })
-
-        tex_story = util.get(self, 'post_data.story.txt', '')
-
-        tex.extend(self._tex_preamble())
-        tex.extend(['\\begin{document}'])
-        tex.append(tex_story)
-        tex.extend(['\\section{Comments}'])
-        tex.extend(tex_clist)
-        tex.extend(['\\end{document}'])
-
-        texj = "\n".join(tex)
-
-        with open(self.f_tex, 'w', encoding='utf8') as f:
-          f.write(texj)
-
-        return self
-
   
     def login(self):
         #email_element = self.driver.find_element_by_id('email')

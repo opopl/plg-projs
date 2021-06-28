@@ -88,13 +88,16 @@ class Pic(CoreClass):
     if not app:
       return 
 
-    pic                    \
-        .vars_from_app()   \
-        .el_process()      \
-        .get_caption()     \
-        .url_check_saved() \
-        .fill_data()       \
-        .get_ext()         \
+    acts = [
+      'vars_from_app'   ,
+      'el_process'      ,
+      'get_caption'     ,
+      'url_check_saved' ,
+      'fill_data'       ,
+      'get_ext'         ,
+    ]
+
+    util.call(pic,acts)
 
     pass
 
