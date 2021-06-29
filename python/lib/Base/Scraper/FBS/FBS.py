@@ -175,7 +175,7 @@ class FBS(CoreClass,
     def parse_post(self, ref = {}):
 
       r = { 'app' : self }
-      for k in util.qw('url tags title date'):
+      for k in util.qw('url tags title date ii author_id'):
         v = ref.get(k)
         if v != None:
           r[k] = v

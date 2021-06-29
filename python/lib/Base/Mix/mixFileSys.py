@@ -21,7 +21,7 @@ class mixFileSys:
 
   def _dir(self, arg = {}, *args):
     '''
-       self._dir({ obj = 'out.tmpl', fs = '' })
+       self._dir({ 'obj' : 'out.tmpl', 'fs' : '' })
        self._dir('out.tmpl')
        self._dir('img_root','tmp')
     '''

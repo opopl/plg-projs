@@ -16,16 +16,18 @@ import os,sys,re
 import json
 import requests
 
-class FbPost(CoreClass):
+class FbPost(CoreClass,mixFileSys):
   # mobile url, TEXT
   url_m = ''
 
   # url, TEXT
   url = ''
 
-  tags  = ''
-  date  = ''
-  title = ''
+  tags      = ''
+  date      = ''
+  title     = ''
+  ii        = ''
+  author_id = ''
 
   # story text, TEXT
   story = ''
@@ -43,6 +45,18 @@ class FbPost(CoreClass):
   def __init__(self,args={}):
     for k, v in args.items():
       setattr(self, k, v)
+
+    cwd = os.getcwd()
+    self.dirs.update({ 
+      'out' : os.path.join(cwd,'out'),
+    })
+
+    if self.author_id and self.date and self.ii:
+      self.dirs.update({ 
+        'out_post' : self._dir('out',[ self.author_id, self.date, self.ii ])
+      })
+
+    import pdb; pdb.set_trace()
 
     if self.url:
       u = util.url_parse(self.url)
