@@ -242,8 +242,11 @@ class FbPost(CoreClass,mixFileSys):
                   ct = util.get(r.headers, 'content-type', '')
 
                   pic = {}
+                  for k in util.qw('i ct bare png'):
+                    pic[k] = None
 
                   pic['bare'] = self._dir('out_post_pics_bare',f'{self.piccount}')
+                  pic['png']  = self._dir('out_post_pics_save',f'{self.piccount}.png')
               
                   with open(pic['bare'], 'wb') as lf:
                     shutil.copyfileobj(r.raw, lf)
@@ -252,11 +255,38 @@ class FbPost(CoreClass,mixFileSys):
                     b = f.read() # read file as bytes
                     pic.md5 = hashlib.md5(b).hexdigest()
 
+                  pic = self._pic_load(pic)
+
       if len(cmt):
         clist.append(cmt)
         self.ccount += 1
 
     return clist
+
+  def _pic_load(self,pic={}):
+
+    try:
+      pic['i'] = Image.open(pic['bare'])
+    except UnidentifiedImageError:
+
+      if pic['ct']:
+        if pic['ct'] in [ 'image/svg+xml' ]:
+          cairosvg.svg2png(
+            file_obj = open(pic['bare'], "rb"),
+            write_to = pic['png']
+          )
+          pic['i']= Image.open(pic['png'])
+
+        elif pic['ct'] in [ 'image/gif' ]:
+          pass
+
+    if not pic['i']:
+      return 
+
+    pic['width']  = pic['i'].width
+    pic['height'] = pic['i'].height
+
+    return pic
 
   def _clist2tex(self,ref={}):
     app = self.app
