@@ -801,8 +801,10 @@ class BS(CoreClass,
       'verify'  : True,
     }
     args_site = self._site_data('fetch.requests.args',{})
+
     args.update(args_site)
     args.update(args_in)
+
     r = requests.get(url,**args)
 
     return r
@@ -3083,7 +3085,29 @@ bs.py -c html_parse -i cache.html $*
     return self
 
   def parse(self,urldata=[]):
+    '''
+      Usage
+        self.parse()
+        self.parse(urldata)
 
+      Call tree
+        calls
+          parse_url
+            Page()          - initialize Page object instance
+            site_extract    - extract site
+
+            parse_url_run
+              in_load_site_module
+              in_load_site_yaml
+
+              load_soup
+                url_load_content
+                  url_fetch
+                    _requests_get
+              ...
+
+          parsed_report
+    '''
     if not len(urldata):
       urldata = getattr(self,'urldata',[]) 
 
