@@ -13,6 +13,12 @@ class mixFileSys:
   # input YAML file
   f_yaml = None
 
+  # directories
+  dirs = {}
+
+  # files
+  files = {}
+
   def _dir(self, arg = {}, *args):
     '''
        self._dir({ obj = 'out.tmpl', fs = '' })

@@ -17,8 +17,13 @@ import pylatexenc
 from Base.Mix.mixCmdRunner import mixCmdRunner
 from Base.Mix.mixLogger import mixLogger
 from Base.Mix.mixGetOpt import mixGetOpt
-from Base.Mix.mixLoader import mixLoader
+
 from Base.Mix.mixFileSys import mixFileSys
+
+# load yaml/zlan - load_zlan, load_yaml
+from Base.Mix.mixLoader import mixLoader
+
+from Base.Scraper.Mixins.mxDB import mxDB
 
 import Base.Util as util
 from Base.Core import CoreClass
@@ -35,6 +40,8 @@ class FBS(CoreClass,
         mixGetOpt,
         mixLoader,
         mixFileSys,
+
+        mxDB,
     ):
 
     vars = {
@@ -42,8 +49,6 @@ class FBS(CoreClass,
         'cmds' : []
       }
     }
-    dirs = {}
-    files = {}
 
     urldata = []
 
@@ -59,8 +64,6 @@ class FBS(CoreClass,
     f_json = "post.json"
     f_html = "post.html"
 
-    comment_list = []
-    comment_count = 0
     post_data = {}
 
     usage = '''

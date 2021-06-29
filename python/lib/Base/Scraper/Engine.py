@@ -76,7 +76,6 @@ from Base.Scraper.Mixins.mxDB import mxDB
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import time
 
-
 class BS(CoreClass,
        mixLogger,
        mixCmdRunner,
@@ -185,11 +184,6 @@ class BS(CoreClass,
     }
   }
 
-  # directories
-  dirs = {}
-
-  # files
-  files = {}
 
   # current HTML content
   content = None
@@ -197,16 +191,11 @@ class BS(CoreClass,
   # need to run npm? see init_npm(), init_npm_run()
   wp_run = None
 
-
-
-
-
   # code, e.g. html, tex
   code = {
     'tex' : None,
     'html' : None,
   }
-
 
   # lists
   lists = {}
@@ -238,7 +227,6 @@ class BS(CoreClass,
 
   # current image data
   pic = Pic()
-
 
   # list of url blocks to be fetched and parsed
   urldata = []
