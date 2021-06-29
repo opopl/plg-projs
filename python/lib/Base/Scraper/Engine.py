@@ -71,12 +71,11 @@ from Base.Mix.mixGetOpt import mixGetOpt
 from Base.Mix.mixLoader import mixLoader
 from Base.Mix.mixFileSys import mixFileSys
 
+from Base.Scraper.Mixins.mxDB import mxDB
+
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import time
 
-class dbFile(CoreClass):
-  images = None
-  pages = None
 
 class BS(CoreClass,
        mixLogger,
@@ -84,6 +83,8 @@ class BS(CoreClass,
        mixGetOpt,
        mixLoader,
        mixFileSys,
+
+       mxDB,
   ):
 
   # class attributes {
@@ -198,8 +199,6 @@ class BS(CoreClass,
 
 
 
-  # sqlite table columns, e.g. pages, imgs
-  cols = {}
 
 
   # code, e.g. html, tex
@@ -240,8 +239,6 @@ class BS(CoreClass,
   # current image data
   pic = Pic()
 
-  # list of databases
-  dbfile = dbFile()
 
   # list of url blocks to be fetched and parsed
   urldata = []
@@ -292,25 +289,7 @@ class BS(CoreClass,
 
 ###_i_engine
   def __init__(self,args={}):
-    self.img_root  = os.environ.get('IMG_ROOT')
-    self.html_root = os.environ.get('HTML_ROOT')
-
-    for k, v in args.items():
-      setattr(self, k, v)
-
-    for k in util.qw('img_root html_root'):
-      self.dirs[k] = util.get(self,k) 
-
-    if (not self.dbfile.images) and self.img_root:
-      self.dbfile.images = os.path.join(self.img_root,'img.db')
-
-    if (not self.dbfile.pages) and self.html_root:
-      self.dbfile.pages = os.path.join(self.html_root,'h.db')
-
-    self.cols['pages'] = dbw._cols({
-      'db_file' : self.dbfile.pages,
-      'table'   : 'pages',
-    })
+    mxDB.init(self,args)
 
   def get_opt_apply(self):
     if not self.oa:
