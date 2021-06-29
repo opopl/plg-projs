@@ -37,6 +37,9 @@ class FbPost(CoreClass):
   #     not-equal to len(clist)
   ccount = 0
 
+  # number of pictures
+  piccount = 0
+
   def __init__(self,args={}):
     for k, v in args.items():
       setattr(self, k, v)
@@ -89,6 +92,7 @@ class FbPost(CoreClass):
     is_root = ( 'root' in opts ) 
     if is_root:
       self.ccount = 0
+      self.piccount = 0
 
     clist = []
 
@@ -196,7 +200,9 @@ class FbPost(CoreClass):
                   'stream'  : True,
                 }
                 r = requests.get(pic_url,**args)
-                import pdb; pdb.set_trace()
+                if r.status_code == 200:
+                  self.piccount += 1
+                  print(f'Got Picture {self.piccount}')
                 #if r:
                   #r.raw.decoded_content = True
                   #ct = util.get(r.headers, 'content-type', '')
@@ -307,6 +313,7 @@ class FbPost(CoreClass):
     })
 
     print(f'Total Comment Count: {self.ccount}')
+    print(f'Total Picture Count: {self.piccount}')
 
     return self
 
@@ -322,7 +329,9 @@ class FbPost(CoreClass):
 
     while 1:
       try:
-        pv = app.driver.find_element_by_id('see_prev_3566865556681862')
+        pv = app._el_find({
+          'xpath' : '//*[ starts-with(@id,"see_prev_") ]',
+        })
       except:
         break
 
