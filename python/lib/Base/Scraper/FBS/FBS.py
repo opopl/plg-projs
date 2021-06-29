@@ -60,10 +60,6 @@ class FBS(CoreClass,
 
     f_cookies = "cookies.pkl"
 
-    f_tex  = "post.tex"
-    f_json = "post.json"
-    f_html = "post.html"
-
     post_data = {}
 
     usage = '''
@@ -179,9 +175,6 @@ class FBS(CoreClass,
         v = ref.get(k)
         if v != None:
           r[k] = v
-
-      for k in util.qw('f_json f_tex f_html'):
-        r.update({ k : util.get(self,k) })
 
       self.post = FbPost(r)
 

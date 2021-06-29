@@ -1,6 +1,7 @@
 
 
 import base64
+import hashlib
 
 import re,os,sys,stat
 
@@ -10,7 +11,6 @@ import sqlite3
 import shutil
 import requests
 
-import hashlib
 
 from pathlib import Path
 

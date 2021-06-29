@@ -10,11 +10,21 @@ from selenium.common.exceptions import TimeoutException
 from Base.Core import CoreClass
 import Base.Util as util
 
+from Base.Mix.mixFileSys import mixFileSys
+
 import time
 import os,sys,re
 
 import json
 import requests
+
+import shutil
+
+from PIL import Image
+from PIL import UnidentifiedImageError
+
+import base64
+import hashlib
 
 class FbPost(CoreClass,mixFileSys):
   # mobile url, TEXT
@@ -56,7 +66,18 @@ class FbPost(CoreClass,mixFileSys):
         'out_post' : self._dir('out',[ self.author_id, self.date, self.ii ])
       })
 
-    import pdb; pdb.set_trace()
+      self.dirs.update({ 
+        'out_post_pics_bare' : self._dir('out_post','pics bare'),
+        'out_post_pics_save' : self._dir('out_post','pics save'),
+      })
+
+      self.mk_dirs()
+
+      self.files.update({ 
+          'post_json' : self._dir('out_post','p.json'),
+          'post_html' : self._dir('out_post','p.html'),
+          'post_tex'  : self._dir('out_post','p.tex'),
+      })
 
     if self.url:
       u = util.url_parse(self.url)
@@ -68,7 +89,7 @@ class FbPost(CoreClass,mixFileSys):
 
   def dict_json(self, ref={}):
 
-    exclude = util.qw('f_json f_html f_tex')
+    exclude = util.qw('dirs files in_dir')
     d = CoreClass.dict(self,{ 'exclude' : exclude })
 
     return d
@@ -116,7 +137,7 @@ class FbPost(CoreClass,mixFileSys):
     for comment in cmt_elems:
       cmt = {}
 
-      cmt['src'] = app._el_src({ 'el' : comment })
+      #cmt['src'] = app._el_src({ 'el' : comment })
 
       reply = app._el_reply({ 'el' : comment })
       if reply:
@@ -172,7 +193,7 @@ class FbPost(CoreClass,mixFileSys):
 
       if el_txt:
         cmt['txt']     = el_txt.text
-        cmt['txt_src'] = app._el_src({ 'el' : el_txt })
+        #cmt['txt_src'] = app._el_src({ 'el' : el_txt })
 
       el_attach = app._el_find({ 
         'el'  : comment,
@@ -205,7 +226,7 @@ class FbPost(CoreClass,mixFileSys):
                 cmt['pic'] = pic_url
 
                 headers = {
-                 'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.3'
+                  'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.3'
                 }
 
                 args = {
@@ -217,12 +238,19 @@ class FbPost(CoreClass,mixFileSys):
                 if r.status_code == 200:
                   self.piccount += 1
                   print(f'Got Picture {self.piccount}')
-                #if r:
-                  #r.raw.decoded_content = True
-                  #ct = util.get(r.headers, 'content-type', '')
+                  r.raw.decoded_content = True
+                  ct = util.get(r.headers, 'content-type', '')
+
+                  pic = {}
+
+                  pic['bare'] = self._dir('out_post_pics_bare',f'{self.piccount}')
               
-                  #with open(pic.tmp['bare'], 'wb') as lf:
-                    #shutil.copyfileobj(r.raw, lf)
+                  with open(pic['bare'], 'wb') as lf:
+                    shutil.copyfileobj(r.raw, lf)
+
+                  with open(pic['bare'],"rb") as f:
+                    b = f.read() # read file as bytes
+                    pic.md5 = hashlib.md5(b).hexdigest()
 
       if len(cmt):
         clist.append(cmt)
@@ -292,9 +320,8 @@ class FbPost(CoreClass,mixFileSys):
     story_src = app._el_src({ 'el' : story })
 
     self.set({
-        'story'      : {
+        'story' : {
           'txt' : story_txt,
-          'src' : story_src,
         }
     })
     
@@ -309,9 +336,6 @@ class FbPost(CoreClass,mixFileSys):
 
     app.driver.get(url)
     time.sleep(5) 
-
-    # 18.01.2021
-    #self.driver.get('https://mobile.facebook.com/yevzhik/posts/3566865556681862')
 
     #self.driver.get('https://mobile.facebook.com/nitsoi.larysa/posts/938801726686200')
     #self.driver.get('https://mobilefacebook.com/olesia.medvedieva/posts/1637472103110572')
@@ -389,7 +413,7 @@ class FbPost(CoreClass,mixFileSys):
     #data_js = json.dumps(data,ensure_ascii=False).encode('utf8')
 
     try:
-      with open(self.f_json, 'w', encoding='utf8') as f:
+      with open(self._file('post_json'), 'w', encoding='utf8') as f:
         json.dump(data, f, ensure_ascii=False)
     except:
       print('ERROR: json dump')
@@ -404,7 +428,7 @@ class FbPost(CoreClass,mixFileSys):
     app = self.app
 
     html = app.driver.page_source
-    with open(self.f_html, 'w', encoding='utf8' ) as f:
+    with open(self._file('post_html'), 'w', encoding='utf8' ) as f:
       f.write(html)
 
     return self
@@ -430,7 +454,7 @@ class FbPost(CoreClass,mixFileSys):
 
     texj = "\n".join(tex)
 
-    with open(self.f_tex, 'w', encoding='utf8') as f:
+    with open(self._file('post_tex'), 'w', encoding='utf8') as f:
       f.write(texj)
 
     return self

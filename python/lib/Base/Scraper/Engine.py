@@ -656,11 +656,7 @@ class BS(CoreClass,
 
     return self
 
-  def mk_dirs(self):
-    for k,v in self.dirs.items():
-      os.makedirs(v, exist_ok=True)
 
-    return self
 
   def _yaml_data(self, f_yaml=None):
     if not f_yaml:

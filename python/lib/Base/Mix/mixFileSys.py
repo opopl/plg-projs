@@ -61,6 +61,12 @@ class mixFileSys:
     
     return dir
 
+  def mk_dirs(self):
+    for k,v in self.dirs.items():
+      os.makedirs(v, exist_ok=True)
+
+    return self
+
   def _file_mtime(self, id):
     f = self._file(id)
 
