@@ -253,7 +253,7 @@ class FbPost(CoreClass,mixFileSys):
 
                   with open(pic['bare'],"rb") as f:
                     b = f.read() # read file as bytes
-                    pic.md5 = hashlib.md5(b).hexdigest()
+                    pic['md5'] = hashlib.md5(b).hexdigest()
 
                   pic = self._pic_load(pic)
 
