@@ -26,6 +26,8 @@ from PIL import UnidentifiedImageError
 import base64
 import hashlib
 
+from copy import copy
+
 class FbPost(CoreClass,mixFileSys):
   # mobile url, TEXT
   url_m = ''
@@ -41,6 +43,9 @@ class FbPost(CoreClass,mixFileSys):
 
   # story text, TEXT
   story = ''
+
+  # current comment
+  cmt = {}
 
   # comments list, ARRAY
   clist = []
@@ -122,9 +127,10 @@ class FbPost(CoreClass,mixFileSys):
     if not cmt_elems:
       cmt_elems = app._els_comments({ 'el' : elin })
 
-    opts_s = ref.get('opts','')
-    opts = opts_s.split(',')
-    is_root = ( 'root' in opts ) 
+    opts_s  = ref.get('opts','')
+    opts    = opts_s.split(',')
+
+    is_root = ( 'root' in opts )
     if is_root:
       self.ccount = 0
       self.piccount = 0
@@ -135,7 +141,7 @@ class FbPost(CoreClass,mixFileSys):
       return clist
 
     for comment in cmt_elems:
-      cmt = {}
+      self.cmt = {}
 
       #cmt['src'] = app._el_src({ 'el' : comment })
 
@@ -162,12 +168,12 @@ class FbPost(CoreClass,mixFileSys):
 
           if len(clist_sub):
             print(f'cmt <- {len(clist_sub)} replies')
-            cmt['clist'] = clist_sub
+            self.cmt['clist'] = clist_sub
 
 ###cmt_process
       el_auth = comment.find_element_by_xpath('.//div[contains(@class,"_2b05")]')
       if el_auth:
-        cmt['auth_bare'] = el_auth.text
+        self.cmt['auth_bare'] = el_auth.text
 
         el_auth_link = el_auth.find_element_by_xpath('.//a')
         if el_auth_link:
@@ -183,8 +189,8 @@ class FbPost(CoreClass,mixFileSys):
                 id = qp.get('id')
                 auth_url_path = u['path'] + '?id=' + id
 
-            cmt['auth_url_path'] = auth_url_path
-            cmt['auth_url']      = util.url_join('https://www.facebook.com', auth_url_path)
+            self.cmt['auth_url_path'] = auth_url_path
+            self.cmt['auth_url']      = util.url_join('https://www.facebook.com', auth_url_path)
 
       el_txt = app._el_find({ 
         'el'    : comment,
@@ -192,76 +198,87 @@ class FbPost(CoreClass,mixFileSys):
       })
 
       if el_txt:
-        cmt['txt']     = el_txt.text
+        self.cmt['txt']     = el_txt.text
         #cmt['txt_src'] = app._el_src({ 'el' : el_txt })
 
-      el_attach = app._el_find({ 
-        'el'  : comment,
-        'css' : '.attachment'
+      self.cmt_process_attachment({
+        'el' : comment
       })
 
-      if el_attach:
-        print('Found attachment')
-
-        el_attach_i = app._el_find({ 
-          'el'    : el_attach,
-          'xpath' : './/i[contains(@class,"img")]',
-        })
-
-        if el_attach_i:
-          print('Found image in attachment')
-          data_store_attr = el_attach_i.get_attribute('data-store')
-          if data_store_attr:
-            data_store = None
-            if type(data_store_attr) in [str]:
-              try:
-                data_store = json.loads(data_store_attr)
-              except:
-                pass
-
-            if data_store:
-              pic_url = data_store.get('imgsrc','')
-              print(f'Picture url: {pic_url}')
-              if pic_url:
-                cmt['pic'] = pic_url
-
-                headers = {
-                  'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.3'
-                }
-
-                args = {
-                  'headers' : headers,
-                  'verify'  : False,
-                  'stream'  : True,
-                }
-                r = requests.get(pic_url,**args)
-                if r.status_code == 200:
-                  self.piccount += 1
-                  print(f'Got Picture {self.piccount}')
-                  r.raw.decoded_content = True
-                  ct = util.get(r.headers, 'content-type', '')
-
-                  pic = {}
-                  for k in util.qw('i ct bare png'):
-                    pic[k] = None
-
-                  pic['bare'] = self._dir('out_post_pics_bare',f'{self.piccount}')
-                  pic['png']  = self._dir('out_post_pics_save',f'{self.piccount}.png')
-              
-                  with open(pic['bare'], 'wb') as lf:
-                    shutil.copyfileobj(r.raw, lf)
-
-                  with open(pic['bare'],"rb") as f:
-                    b = f.read() # read file as bytes
-                    pic['md5'] = hashlib.md5(b).hexdigest()
-
-                  pic = self._pic_load(pic)
-
-      if len(cmt):
-        clist.append(cmt)
+      if len(self.cmt):
+        clist.append(self.cmt)
         self.ccount += 1
 
     return clist
+
+  def cmt_process_attachment(self,ref={}):
+    elin = ref.get('el')
+
+    el_attach = app._el_find({
+      'el'  : elin,
+      'css' : '.attachment'
+    })
+
+    if not el_attach:
+      return self
+
+    print('Found attachment')
+
+    el_attach_i = app._el_find({
+      'el'    : el_attach,
+      'xpath' : './/i[contains(@class,"img")]',
+    })
+
+    if el_attach_i:
+      print('Found image in attachment')
+      data_store_attr = el_attach_i.get_attribute('data-store')
+      if data_store_attr:
+        data_store = None
+        if type(data_store_attr) in [str]:
+          try:
+            data_store = json.loads(data_store_attr)
+          except:
+            pass
+
+        if data_store:
+          pic_url = data_store.get('imgsrc','')
+          print(f'Picture url: {pic_url}')
+          if pic_url:
+            self.cmt['pic'] = pic_url
+
+            headers = {
+              'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.3'
+            }
+
+            args = {
+              'headers' : headers,
+              'verify'  : False,
+              'stream'  : True,
+            }
+            r = requests.get(pic_url,**args)
+            if r.status_code == 200:
+              self.piccount += 1
+              print(f'Got Picture {self.piccount}')
+              r.raw.decoded_content = True
+              ct = util.get(r.headers, 'content-type', '')
+
+              pic = {}
+              for k in util.qw('i ct bare png'):
+                pic[k] = None
+
+              pic['bare'] = self._dir('out_post_pics_bare',f'{self.piccount}')
+              pic['png']  = self._dir('out_post_pics_save',f'{self.piccount}.png')
+
+              with open(pic['bare'], 'wb') as lf:
+                shutil.copyfileobj(r.raw, lf)
+
+              with open(pic['bare'],"rb") as f:
+                b = f.read() # read file as bytes
+                pic['md5'] = hashlib.md5(b).hexdigest()
+
+              pic = self._pic_load(pic)
+
+    return self
 
   def _pic_load(self,pic={}):
 
