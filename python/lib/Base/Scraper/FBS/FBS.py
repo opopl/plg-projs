@@ -109,9 +109,9 @@ class FBS(CoreClass,
         print('[init] start')
 
         acts = [
-          [ 'init_drv' ],
-          [ 'load_yaml' ],
-          [ 'load_zlan' ],
+          'init_drv',
+          'load_yaml',
+          'load_zlan',
         ] 
 
         util.call(self, acts)
@@ -158,8 +158,8 @@ class FBS(CoreClass,
 
     def main(self):
       acts = [
-        [ 'get_opt' ],
-        [ 'do_cmd' ],
+        'get_opt',
+        'do_cmd',
       ]
   
       util.call(self,acts)
