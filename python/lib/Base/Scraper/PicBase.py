@@ -21,10 +21,16 @@ import Base.Const as const
 
 from Base.Core import CoreClass
 
+from Base.Mix.mixFileSys import mixFileSys
+
 from PIL import Image
 from PIL import UnidentifiedImageError
 
-class PicBase(CoreClass):
+class PicBase(
+      CoreClass,
+      mixFileSys
+  ):
+
   width   = None
   caption = None
 
@@ -32,7 +38,10 @@ class PicBase(CoreClass):
   alt     = None
 
   # sqlite imgs database file
-  dbfile = None
+  dbpath = None
+
+  # database fields, see 'imgs' database
+  dbcols = None
 
   # directory with images
   root   = None
@@ -78,10 +87,21 @@ class PicBase(CoreClass):
   img      = None
   inum     = None
 
-  app     = None
-
   def __init__(pic,ref={}):
+    pic.img_root  = os.environ.get('IMG_ROOT')
+
     super().__init__(ref)
+
+    for k in util.qw('img_root'):
+      pic.dirs[k] = util.get(pic,k) 
+
+    if (not pic.dbpath) and pic.img_root:
+      pic.dbpath = os.path.join(pic.img_root,'img.db')
+
+    pic.dbcols = dbw._cols({
+      'db_file' : pic.dbpath,
+      'table'   : 'imgs',
+    })
 
     pass
 
@@ -93,11 +113,11 @@ class PicBase(CoreClass):
     if not url:
       return pic
 
-    if not ( pic.dbfile and os.path.isfile(pic.dbfile) ):
+    if not ( pic.dbpath and os.path.isfile(pic.dbpath) ):
       return pic
     else:
       q = '''SELECT img FROM imgs WHERE url = ?'''
-      r = dbw.sql_fetchone(q,[url],{ 'db_file' : pic.dbfile })
+      r = dbw.sql_fetchone(q,[url],{ 'db_file' : pic.dbpath })
 
       if r:
         img = r.get('row',{}).get('img')
@@ -241,11 +261,14 @@ class PicBase(CoreClass):
 
   def db_add(pic):
 
-    for k in util.qw('url img inum ext caption width height md5 url_parent tags sec'):
+    if not pic.dbpath:
+      return pic
+
+    for k in pic.dbcols:
       insert[k] = getattr(pic,k,None)
 
     d = {
-      'db_file' : pic.dbfile,
+      'db_file' : pic.dbpath,
       'table'   : 'imgs',
       'insert'  : insert
     }
@@ -260,7 +283,7 @@ class PicBase(CoreClass):
 
     ext    = ref.get('ext','jpg')
 
-    if not ( pic.dbfile and os.path.isfile(pic.dbfile) ):
+    if not ( pic.dbpath and os.path.isfile(pic.dbpath) ):
       return 
 
     d = None
@@ -269,7 +292,7 @@ class PicBase(CoreClass):
     while 1:
       if 'new' in opts:
         q = '''SELECT MAX(inum) FROM imgs'''
-        r = dbw.sql_fetchone(q,[],{ 'db_file' : pic.dbfile })
+        r = dbw.sql_fetchone(q,[],{ 'db_file' : pic.dbpath })
         inum = list(r.get('row',{}).values())[0]
         inum += 1
         img = f'{inum}.{ext}'
@@ -285,7 +308,7 @@ class PicBase(CoreClass):
           p = [ pic.inum ]
 
         if q:
-          r = dbw.sql_fetchone(q,p,{ 'db_file' : pic.dbfile })
+          r = dbw.sql_fetchone(q,p,{ 'db_file' : pic.dbpath })
   
           if r:
             rw = r.get('row',{})
@@ -330,9 +353,9 @@ class PicBase(CoreClass):
     pic.width  = pic.i.width
     pic.height = pic.i.height
 
-    #app.log(f"[{rid}][Pic.grab] Width: {pic.width}")
-    #app.log(f"[{rid}][Pic.grab] Height: {pic.height}")
-    #app.log(f"[{rid}][Pic.grab] Caption: {pic.caption}")
+    print(f"[Pic.grab] Width: {pic.width}")
+    print(f"[Pic.grab] Height: {pic.height}")
+    print(f"[Pic.grab] Caption: {pic.caption}")
 
     return pic
 
@@ -342,7 +365,7 @@ class PicBase(CoreClass):
       b = f.read() # read file as bytes
       pic.md5 = hashlib.md5(b).hexdigest()
 
-    #app.log(f'[{rid}][Pic.get_md5] got md5: {pic.md5}' )
+    print(f'[Pic.get_md5] got md5: {pic.md5}' )
 
     return pic
 
@@ -366,7 +389,7 @@ class PicBase(CoreClass):
 
   def grab(pic):
 
-    #app.log(f"[{rid}][Pic.grab] Getting image: \n\t{pic.url}")
+    print(f"[Pic.grab] Getting image: \n\t{pic.url}")
 
     # parse url, fetch url, save to tmp file
     pic.save2tmp()
