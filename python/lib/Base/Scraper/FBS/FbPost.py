@@ -148,7 +148,13 @@ class FbPost(CoreClass,mixFileSys):
       reply = app._el_reply({ 'el' : comment })
       if reply:
         print('Reply click')
-        reply.click()
+        try:
+          reply.click()
+        except:
+          self.save_wf()
+          print('[fbPost][_clist] ERROR: Reply click')
+          return clist
+
         time.sleep(1)
 
         replies_inline = None
@@ -206,12 +212,14 @@ class FbPost(CoreClass,mixFileSys):
       })
 
       if len(self.cmt):
-        clist.append(self.cmt)
+        clist.append(copy(self.cmt))
         self.ccount += 1
 
     return clist
 
   def cmt_process_attachment(self,ref={}):
+    app = self.app
+
     elin = ref.get('el')
 
     el_attach = app._el_find({
@@ -245,38 +253,48 @@ class FbPost(CoreClass,mixFileSys):
           print(f'Picture url: {pic_url}')
           if pic_url:
             self.cmt['pic'] = pic_url
+            self.pic_fetch({ 'url' : pic_url })
 
-            headers = {
-              'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.3'
-            }
+    return self
 
-            args = {
-              'headers' : headers,
-              'verify'  : False,
-              'stream'  : True,
-            }
-            r = requests.get(pic_url,**args)
-            if r.status_code == 200:
-              self.piccount += 1
-              print(f'Got Picture {self.piccount}')
-              r.raw.decoded_content = True
-              ct = util.get(r.headers, 'content-type', '')
+  def pic_fetch(self,ref={}):
+    url = ref.get('url','')
+    if not url:
+      return self
 
-              pic = {}
-              for k in util.qw('i ct bare png'):
-                pic[k] = None
+    headers = {
+      'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.3'
+    }
 
-              pic['bare'] = self._dir('out_post_pics_bare',f'{self.piccount}')
-              pic['png']  = self._dir('out_post_pics_save',f'{self.piccount}.png')
+    args = {
+      'headers' : headers,
+      'verify'  : False,
+      'stream'  : True,
+    }
+    r = requests.get(pic_url,**args)
+    if not ( r.status_code == 200 ):
+      return self
 
-              with open(pic['bare'], 'wb') as lf:
-                shutil.copyfileobj(r.raw, lf)
+    self.piccount += 1
+    print(f'Got Picture {self.piccount}')
+    r.raw.decoded_content = True
+    ct = util.get(r.headers, 'content-type', '')
 
-              with open(pic['bare'],"rb") as f:
-                b = f.read() # read file as bytes
-                pic['md5'] = hashlib.md5(b).hexdigest()
+    pic = {}
+    for k in util.qw('i ct bare png'):
+      pic[k] = None
 
-              pic = self._pic_load(pic)
+    pic['bare'] = self._dir('out_post_pics_bare',f'{self.piccount}')
+    pic['png']  = self._dir('out_post_pics_save',f'{self.piccount}.png')
+
+    with open(pic['bare'], 'wb') as lf:
+      shutil.copyfileobj(r.raw, lf)
+
+    with open(pic['bare'],"rb") as f:
+      b = f.read() # read file as bytes
+      pic['md5'] = hashlib.md5(b).hexdigest()
+
+    pic = self._pic_load(pic)
 
     return self
 
@@ -357,7 +375,6 @@ class FbPost(CoreClass,mixFileSys):
       story = elin.find_element_by_css_selector('.story_body_container')
     except:
       print('ERROR: could not find story!')
-      raise
       pass
 
     if not story:
@@ -412,6 +429,8 @@ class FbPost(CoreClass,mixFileSys):
     i    = 1
     imax = ref.get('imax') or 10
 
+    ccc = 0
+    ccc_prev = -1
     while 1:
       try:
         pv = app._el_find({
@@ -427,11 +446,51 @@ class FbPost(CoreClass,mixFileSys):
       if not pv:
         break
 
-      pv.click()
+      try:
+        pv.click()
+      except:
+        print('[FbPost][loop_prev] ERROR: pv.click()')
+        import pdb; pdb.set_trace()
 
-      time.sleep(4) 
+      time.sleep(7) 
       print(f'Click {i}')
+
+      comments = app._els_comments()
+      ccc_prev = ccc
+      ccc = len(list(comments))
+      print(f'Number of comments: {ccc}, previous: {ccc_prev}')
+
+      if ccc_prev == ccc:
+        print(f'BREAK: No new Comments!')
+        import pdb; pdb.set_trace()
+
       i += 1
+
+    return self
+
+  def save_wf(self,ref={}):
+    app = self.app
+
+    acts = [
+       'wf_json'       ,
+       'wf_tex'        ,
+       'wf_html'       ,
+    ]
+
+    util.call(self,acts)
+
+    return self
+
+  def save(self,ref={}):
+    app = self.app
+
+    acts = [
+       'save_story'    ,
+       'save_comments' ,
+       'save_wf' ,
+    ]
+
+    util.call(self,acts)
 
     return self
 
@@ -439,13 +498,9 @@ class FbPost(CoreClass,mixFileSys):
     app = self.app
 
     acts = [
-       'get_url', 
-      [ 'loop_prev', [ { 'imax' : 70 } ] ],
-       'save_story'    ,
-       'save_comments' ,
-       'wf_json'       ,
-       'wf_tex'        ,
-       'wf_html'       ,
+      'get_url', 
+      [ 'loop_prev', [ { 'imax' : 50 } ] ],
+      'save',
     ]
 
     util.call(self,acts)

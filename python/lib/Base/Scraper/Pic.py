@@ -547,13 +547,16 @@ class Pic(CoreClass):
     if not pic.i:
       return pic
 
-    pic                    \
-        .i_process()       \
-        .get_ext()         \
-        .setup()           \
-        .save2fs()         \
-        .db_add()          \
-        .url_check_saved() \
+    acts = [
+        'i_process',       
+        'get_ext',         
+        'setup',           
+        'save2fs',         
+        'db_add',          
+        'url_check_saved', 
+    ]
+
+    util.call(pic,acts)
     
     return pic
 

@@ -138,7 +138,7 @@ class FBS(CoreClass,
         return self
   
       for k in util.qw('f_yaml f_zlan'):
-        v  = util.get(self,[ 'oa', k ])
+        v = util.get(self,[ 'oa', k ])
         m = re.match(r'^f_(\w+)$', k)
         if m:
           ftype = m.group(1)

@@ -79,6 +79,7 @@ class mixLogger:
          'table'   : table,
          'insert'  : insert,
       }
+
       dbw.insert_dict(d)
 
     return self
