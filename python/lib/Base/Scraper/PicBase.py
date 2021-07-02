@@ -133,8 +133,6 @@ class PicBase(
     return pic
 
   def load(pic):
-    app = pic.app
-    rid = app.page.rid
 
     pic.i = None
     try:
@@ -156,10 +154,11 @@ class PicBase(
       #pic.log(f'FAIL[{rid}][Pic.grab] no Image.open instance: {pic.url}') \
          #.on_fail()                                                       \
 
+      print(f'FAIL[Pic.grab] no Image.open instance: {pic.url}')
+
       return pic
 
-    #app.log(f'[{rid}][Pic.grab] Image format: {pic.i.format}')
-    pic.log(f'[Pic.grab] Image format: {pic.i.format}')
+    print(f'[Pic.grab] Image format: {pic.i.format}')
 
     return pic
 
@@ -176,10 +175,10 @@ class PicBase(
     # fill pic.* attributes ( inum, path, ... ) from db calls
     pic.fill_data(dd)
 
-    #app.log(f'[{rid}][Pic.grab] Local path: {pic.path}')
+    print(f'[Pic.grab] Local path: {pic.path}')
     if os.path.isfile(pic.path):
       pass
-      #app.log(f'WARN[{rid}][Pic.grab] image file already exists: {pic.img}')
+      print(f'WARN[Pic.grab] image file already exists: {pic.img}')
 
     return pic
 
@@ -197,7 +196,7 @@ class PicBase(
 
     Path(pic.tmp['bare']).unlink()
 
-    #app.log(f'[{rid}][Pic.grab] Saved image: {pic.img}')
+    print(f'[Pic.grab] Saved image: {pic.img}')
 
     return pic
 
@@ -218,7 +217,7 @@ class PicBase(
           try:
             decoded = base64.decodestring(bytes(data,encoding='utf-8'))
           except:
-            app.die(f'ERROR[{rid}] base64 decoding error')
+            app.die(f'ERROR base64 decoding error')
 
         if decoded:
           with open(pic.tmp['bare'], 'wb') as f:
@@ -232,7 +231,8 @@ class PicBase(
             #}
         #})
     except:
-      app.die(f'ERROR[{rid}][Pic.grab] {pic.url}')
+      print(f'ERROR[Pic.grab] {pic.url}')
+      raise
 
     if pic.resp:
       pic.resp.raw.decoded_content = True
@@ -254,8 +254,8 @@ class PicBase(
     if pic.ct:
       m = re.match(r'^text/html',pic.ct)
 
-    app.log(f'[{rid}][Pic.grab] image file size: {pic.bare_size}')
-    app.log(f'[{rid}][Pic.grab] content-type: {pic.ct}')
+    print(f'[Pic.grab] image file size: {pic.bare_size}')
+    print(f'[Pic.grab] content-type: {pic.ct}')
 
     return pic
 
