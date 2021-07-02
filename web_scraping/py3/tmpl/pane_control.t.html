@@ -2,18 +2,17 @@
     <div id="pane_control" class="flex-row">
       <select id="select_control">
         {% for opt in selectcontrol.options %}
-          <option> {{ opt }} </option>
+          {% if opt is mapping %}
+            <option name="{{ opt.name }}"> {{ opt.value }} </option>
+          {% else %}
+            <option> {{ opt }} </option>
+          {% endif %}
         {% endfor %}
       </select>
 
       <div id="control_items" class="flex-row">
-        <div id="opt_page_plan" class='flex-row'> 
-          <label id="lab_new_url" for="new_url">URL:</label>
-          <input type="text" name="new_url" id="input_new_url"  />
 
-          <label id="lab_new_tags" for="new_tags">Tags:</label>
-          <input type="text" name="new_tags" id="input_new_tags"  />
-        </div>
+        <div id="opt_page_plan" class='flex-row'> </div>
 
         <input type="text" class="block" id="opt_page_plan" value="{{ page.url }}"  />
 
@@ -21,16 +20,15 @@
         <input type="text" class="block" id="opt_page_title" value="{{ page.title|e }}"  />
         <input type="text" class="block" id="opt_page_title_h" value="{{ page.title_h|e }}"  />
 
-        <div id="opt_page_tags" class='flex-row'> 
-          <table border="1" id="tb_list_pages_tag">
-          </table>
-        </div>
+        <div id="opt_page_tags" class='flex-row' ></div> 
         <div id="opt_page_author" class='flex-row'> </div>
-
         <div id="opt_page_img"> </div>
+        <div id="opt_page_reporter"> </div>
 
-				<div id="opt_page_console"> 
-				</div>
+        <div id="opt_page_mnu" class='flex-row' >
+          {% include 'opt_page_mnu.t.html' %}
+        </div> 
+
       </div>
 
     </div>

@@ -111,14 +111,15 @@ class r_html_page_rid_tipe:
           # id = select_control in pane_control.t.html
           selectcontrol = {
             'options' : [
-                'url',
-                'plan',
-                'title',
-                'title_h',
-                'tags',
-                'author',
-                'img',
-                'console',
+                'url'     ,
+                'plan'    ,
+                'title'   ,
+                'title_h' ,
+                'tags'    ,
+                'author'  ,
+                'img'     ,
+                'reporter' ,
+                'mnu',
             ]
           },
           page=page.dict(),
@@ -362,7 +363,7 @@ class r_json_page_pics:
     j = json.dumps(r, ensure_ascii=False, indent=4)
     return j
 
-class r_json_console_push:
+class r_json_reporter_push:
   def req(self):
     web.header('Content-Type', 'application/json; charset=utf-8')
     d = web.input()
@@ -416,7 +417,7 @@ if __name__ == "__main__":
 
     '/json/cmd/(\w+)'        , 'r_json_cmd'           ,
 
-    '/json/console/push'     , 'r_json_console_push'  ,
+    '/json/reporter/push'    , 'r_json_reporter_push'  ,
 
     '/html/pages(?:/|)'      , 'r_html_pages'         ,
 

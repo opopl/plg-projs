@@ -684,8 +684,8 @@ function App(){
      return this;
   };
 
-//@@ on_click_console
-  this.on_click_console = function(){
+//@@ on_click_reporter
+  this.on_click_reporter = function(){
      let $slf = this;
 
      return this;
@@ -733,9 +733,8 @@ function App(){
         .on_click_tags()
         .on_click_author()
         .on_click_img()
-        .on_click_console()
+        .on_click_reporter()
         ;
-
      
      $('#btn_last').on('click',function() {
         window.location = '/html/page/last';
@@ -834,16 +833,6 @@ function App(){
 
     $('#opt_page_plan').find('*').hide();
 
-    $('#lab_new_url').css({ 
-        width              : 'auto',
-        color              : 'black',
-        'background-color' : 'white',
-    });
-    $('#input_new_url').css({ 
-        width        : '100%',
-        'text-align' : 'left',
-    });
-
     var tags_s = util.get(this.page,'tags','');
     var tags = tags_s.split(',');
     for (var i = 0; i < tags.length; i++) {
@@ -940,6 +929,15 @@ function App(){
 
        return this;
     }
+//@a opt_page_mnu
+    else if (id == '#opt_page_mnu') {
+       $('#ifr_page_src, #ta_page_src').hide();
+
+
+
+       return this;
+
+    }
 //@a opt_page_img
     else if (id == '#opt_page_img') {
        $('#ifr_page_src, #ta_page_src').hide();
@@ -960,7 +958,7 @@ function App(){
 
        return this;
 //@a opt_page_console
-    }else if (id == '#opt_page_console') {
+    }else if (id == '#opt_page_reporter') {
        $('#ifr_page_src, #ta_page_src').hide();
 
        return this;
@@ -1018,7 +1016,6 @@ function App(){
             var opt = $(this).val();
 
             $slf.opt_page_show(opt);
-
           }
         }
     })
@@ -1074,10 +1071,24 @@ function App(){
     return this;
   };
 
+//@@ set_ui_dropdown
+  this.set_ui_dropdown = function(){
+
+    $('.dropdown-group-2').ariaDropdown({
+       collapseOnMenuClick: true,
+       collapseOnOutsideClick: true,
+       expandOnlyOne: true,
+       mouse: true
+    });
+
+    return this;
+  };
+
 //@@ set_ui
   this.set_ui = function(){
 
     this
+      .set_ui_dropdown()
       .set_ui_select()
       .set_ui_visible()
       .set_ui_date({ 

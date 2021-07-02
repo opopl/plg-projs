@@ -2,6 +2,7 @@
 // css
 require('../../css/style.css');
 require('../../css/form.css');
+require('../../css/dropdown.css');
 
 // js
 //window.$ = require('jquery');

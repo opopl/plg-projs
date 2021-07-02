@@ -1,0 +1,32 @@
+.dropdown__menu ul li {
+    margin: 0;
+    font-size: 0.8rem;
+}
+
+.dropdown__menu ul li span {
+    padding: 0.4rem 0.8rem;
+    display: block;
+}
+
+.dropdown__menu ul li:hover {
+    background-color: #f7f6f6;
+}
+
+.dropdown_nested {
+    padding: 0.4rem 0.8rem;
+}
+
+.dropdown_mega .dropdown__menu {
+    padding: 1rem;
+    display: flex;
+}
+
+.dropdown_mega .dropdown__menu div {
+    flex: 0 1 33.33%;
+}
+
+
+.dropdown_mega h3 {
+    padding: 0 0.3rem;
+    margin: 0.3rem 0;
+}
