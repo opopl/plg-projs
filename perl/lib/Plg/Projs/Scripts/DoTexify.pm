@@ -73,15 +73,17 @@ sub print_help {
     USAGE
         $Script OPTIONS
     OPTIONS
+        -c --cmd COMMAND
+
         -f --file FILE
         -s --start START position (line number)
         -e --end END position (line number)
 
     EXAMPLES
-        $Script -f FILE
-        $Script --file FILE
+        $Script -c rpl_quotes -f FILE 
+        $Script -c rpl_quotes --file FILE
 
-        $Script -f FILE -s START -e END
+        $Script -c rpl_quotes -f FILE -s START -e END
 
     };
 

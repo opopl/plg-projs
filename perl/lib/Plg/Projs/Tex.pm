@@ -7,7 +7,7 @@ use utf8;
 
 use Data::Dumper qw(Dumper);
 use Base::String qw(
-	str_split
+    str_split
 );
 
 binmode STDOUT,':encoding(utf8)';
@@ -150,7 +150,7 @@ sub _back {
 sub rpl_quotes {
     my ($cmd) = @_;
 
-	$cmd ||= 'enquote';
+    $cmd ||= 'enquote';
     #$cmd ||= 'zqq';
     my $start = sprintf(q|\%s{|,$cmd);
     my $end   = q|}|;
@@ -159,35 +159,35 @@ sub rpl_quotes {
     my %is = ( qq => 0, q => 0 );
     my @n;
 
-	my $push_qq = sub {
+    my $push_qq = sub {
       $is{qq} ^= 1;
 
       push @n, $start if $is{qq};
       push @n, $end unless $is{qq};
-	};
+    };
 
-	# opening/closing quotes
-	my %br = (
-		q{“} => q{”}
-	);
+    # opening/closing quotes
+    my %br = (
+        q{“} => q{”}
+    );
 
-	C: while (@c) {
+    C: while (@c) {
         local $_ = shift @c;
-		my $c = $_;
+        my $c = $_;
 
         /"/ && do {
-			$push_qq->();
+            $push_qq->();
             next;
         };
 
-		( grep { /^\Q$c\E$/ } keys %br ) && do {
-      		push @n, $start;
-			next;
-		};
-		( grep { /^\Q$c\E$/ } values %br ) && do {
-      		push @n, $end;
-			next;
-		};
+        ( grep { /^\Q$c\E$/ } keys %br ) && do {
+            push @n, $start;
+            next;
+        };
+        ( grep { /^\Q$c\E$/ } values %br ) && do {
+            push @n, $end;
+            next;
+        };
 
         push @n, $_;
     }
