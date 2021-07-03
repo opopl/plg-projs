@@ -218,6 +218,23 @@ sub rpl_verbs {
     $s = $_;
 }
 
+sub fb_format {
+    my @lines = split "\n" => $s;
+
+    my @new;
+    for(@lines){
+        #next if /^\s+· Reply ·/;
+        /^\s+· Reply ·/ && do { push @new,''; next; };
+
+        s/^\\emph/\\iusr/g;
+        s/😁/\\Laughey[1.0]/g;
+
+        push @new,$_;
+    }
+
+    $s = join("\n",@new);
+}
+
 sub rpl_special {
     local $_ = $s;
 

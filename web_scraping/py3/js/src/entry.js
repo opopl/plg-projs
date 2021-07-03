@@ -10,7 +10,7 @@ require('webpack-jquery-ui');
 require('webpack-jquery-ui/css');
 
 
-import { App } from './app.js';
+import { App } from './appa.js';
 //var app =  require('./app.js');
 
 $(function(){

@@ -1,11 +1,16 @@
+
+/*https://davidetriso.github.io/aria-dropdown/*/
+
 .dropdown__menu ul li {
     margin: 0;
     font-size: 0.8rem;
+    text-align: left;
 }
 
 .dropdown__menu ul li span {
     padding: 0.4rem 0.8rem;
     display: block;
+    text-align: left;
 }
 
 .dropdown__menu ul li:hover {
@@ -16,17 +21,25 @@
     padding: 0.4rem 0.8rem;
 }
 
-.dropdown_mega .dropdown__menu {
-    padding: 1rem;
-    display: flex;
+.btn {
+      /*display: block;*/
+      /*max-width: 300px;*/
+      max-width: auto;
+      text-align: left;
+      text-decoration: none;
+      background-color: #6216c9;
+      color: #fff;
+      /*padding: 5px;*/
+      border-radius: 5px;
+      border: 1px solid #510cad;
+      /*margin: 250px auto;*/
 }
 
-.dropdown_mega .dropdown__menu div {
-    flex: 0 1 33.33%;
+.btn:hover,
+.btn:focus {
+    background-color: #510cad;
 }
 
-
-.dropdown_mega h3 {
-    padding: 0 0.3rem;
-    margin: 0.3rem 0;
+.btn:active {
+    background-color: #6216c9;
 }
