@@ -48,6 +48,7 @@ sub get_opt {
         "end|e=s",
         "file|f=s",
         "cmd|c=s",
+        "data|d=s",
     );
     
     unless( @ARGV ){ 
@@ -75,6 +76,8 @@ sub print_help {
     OPTIONS
         -c --cmd COMMAND
 
+        -d --data input DATA (formatted as JSON)
+
         -f --file FILE
         -s --start START position (line number)
         -e --end END position (line number)
@@ -100,7 +103,7 @@ sub process_file {
 
     my $tex  = read_file $file;
 
-    my @a = @{$self}{qw( start end )};
+    my @a = @{$self}{qw( start end data )};
     texify(\$tex,$cmd,@a);
 
     write_file($file,$tex);

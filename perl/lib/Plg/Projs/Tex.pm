@@ -10,6 +10,8 @@ use Base::String qw(
     str_split
 );
 
+use JSON::XS;
+
 binmode STDOUT,':encoding(utf8)';
 
 use Exporter ();
@@ -22,6 +24,9 @@ $VERSION = '0.01';
 
 ###our
 our($l_start,$l_end);
+
+# JSON-decoded input data
+our($data_input);
 
 our(@split,@before,@after,@center);
 
@@ -45,9 +50,18 @@ my @ex_vars_array=qw(
 @EXPORT_OK = ( @{ $EXPORT_TAGS{'funcs'} }, @{ $EXPORT_TAGS{'vars'} } );
 
 sub texify {
-    my ($ss,$cmd,$s_start,$s_end) = @_;
+    my ($ss,$cmd,$s_start,$s_end,$data_js) = @_;
 
     $cmd ||= 'rpl_quotes';
+
+    # input data stored as JSON string
+    $data_js ||= '';
+
+    if ($data_js) {
+        my $coder   = JSON::XS->new->ascii->pretty->allow_nonref;
+        $data_input = $coder->decode($data_js);
+    }
+
     my @cmds; push @cmds, str_split($cmd);
 
     $s_start //= $l_start;
@@ -146,6 +160,7 @@ sub _back {
         $ss = [ @split ];
     }
 }
+
 
 sub rpl_quotes {
     my ($cmd) = @_;
