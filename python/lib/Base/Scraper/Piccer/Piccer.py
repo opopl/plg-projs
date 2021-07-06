@@ -144,15 +144,13 @@ class Piccer(CoreClass,
       return self
 
     def c_run(self):
-        print(f'command: run')
+      print(f'command: run')
 
-        acts = [
-          'init' ,
-          'grab_pics' ,
-        ] 
+      acts = [
+        'init' ,
+        'grab_pics' ,
+      ]
 
-        util.call(self,acts)
+      util.call(self,acts)
 
-
-        return self
-
+      return self

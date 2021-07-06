@@ -100,11 +100,15 @@ class PicBase(
       'table'   : 'imgs',
     })
 
-    #if not pic.tmp:
-       #pic.tmp = { 
-        #'bare' : app._dir('tmp_img bs_img'),
-        #'png'  : app._dir('tmp_img bs_img.png'),
-      #}
+    self.dirs.update({
+      'tmp_img' : self._dir('img_root', 'tmp' ),
+    })
+
+    if not pic.tmp:
+       pic.tmp = {
+        'bare' : pic._dir('tmp_img bs_img'),
+        'png'  : pic._dir('tmp_img bs_img.png'),
+       }
 
     pass
 
