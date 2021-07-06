@@ -117,21 +117,16 @@ class Piccer(CoreClass,
   
       util.call(self,acts)
 
-      import pdb; pdb.set_trace()
 
       return self
 
     def import_pic(self, ref = {}):
 
-      r = { 'app' : self }
-      for k in util.qw('url tags title date ii author_id'):
-        v = ref.get(k)
-        if v != None:
-          r[k] = v
+      self.pic = PicBase()
 
-      self.pic = PicBase(r)
+      self.pic.import_dbcols(ref)
 
-      self.post.process()
+      import pdb; pdb.set_trace()
 
       return self
 
@@ -149,12 +144,15 @@ class Piccer(CoreClass,
       return self
 
     def c_run(self):
+        print(f'command: run')
 
         acts = [
-          'init' , 
+          'init' ,
+          'grab_pics' ,
         ] 
 
         util.call(self,acts)
+
 
         return self
 

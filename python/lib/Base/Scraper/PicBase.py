@@ -100,7 +100,21 @@ class PicBase(
       'table'   : 'imgs',
     })
 
+    #if not pic.tmp:
+       #pic.tmp = { 
+        #'bare' : app._dir('tmp_img bs_img'),
+        #'png'  : app._dir('tmp_img bs_img.png'),
+      #}
+
     pass
+
+  def import_dbcols(pic, data={}):
+    for k in pic.dbcols:
+      if k in data:
+        v = data.get(k)
+        setattr(pic, k, v)
+
+    return pic
 
   def url_check_saved(pic):
     pic.img_saved = False
@@ -220,7 +234,7 @@ class PicBase(
           with open(pic.tmp['bare'], 'wb') as f:
             f.write(decoded)
       else:
-        pic.resp = requests.get(pic.url, stream = True)
+        pic.resp = requests.get(pic.url, stream = True, verify=False)
 #        pic.resp = app._requests_get({ 
             #'url'  : pic.url,
             #'args' : {
