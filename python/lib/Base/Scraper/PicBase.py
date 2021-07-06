@@ -84,6 +84,10 @@ class PicBase(
   img      = None
   inum     = None
 
+  # DICT, contains paths for temporary image files
+  #     used in the fetching process
+  tmp      = None
+
   def __init__(pic,ref={}):
     pic.img_root  = os.environ.get('IMG_ROOT')
 
@@ -100,8 +104,8 @@ class PicBase(
       'table'   : 'imgs',
     })
 
-    self.dirs.update({
-      'tmp_img' : self._dir('img_root', 'tmp' ),
+    pic.dirs.update({
+      'tmp_img' : pic._dir('img_root', 'tmp' ),
     })
 
     if not pic.tmp:
@@ -408,6 +412,7 @@ class PicBase(
 
     # parse url, fetch url, save to tmp file
     pic.save2tmp()
+    return pic
 
     if not pic.bare_size:
       return pic

@@ -126,6 +126,8 @@ class Piccer(CoreClass,
 
       self.pic.import_dbcols(ref)
 
+      self.pic.grab()
+
       import pdb; pdb.set_trace()
 
       return self
