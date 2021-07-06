@@ -1,5 +1,4 @@
 
-
 import base64
 
 import re,os,sys,stat
@@ -55,8 +54,6 @@ class PicBase(
 
   # image's content-type header
   ct = None
-
-  src_attrs = util.qw('src data-src')
 
   # image's extension
   ext = None

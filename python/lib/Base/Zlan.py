@@ -263,6 +263,18 @@ class Zlan(CoreClass):
   def _has_url(self, url):
     return ok
 
+  def _block_in(self, blocks=''):
+
+    block = self.flg.get('block')
+
+    if not block:
+      return 0
+
+    if block in util.qw(blocks):
+      return 1
+
+    return 0
+
   def _value_process(self, var, value):
     pt = [
       '^"(.*)"$',
@@ -286,12 +298,20 @@ class Zlan(CoreClass):
     return value
 
   def b_page(self):
+    '''
+      usage
+        self.b_page()
 
+      call tree
+        called by
+          line_match_block_inner
+    '''
     if not self.d_page:
       self.d_page = {}
-      if self.off:
-        self.d_page['off'] = 1
-  
+
+    if self.off:
+      self.d_page['off'] = 1
+
     m = re.match(self.pc['set'], self.line_t)
     if m:
       var   = m.group(1)
@@ -378,18 +398,23 @@ class Zlan(CoreClass):
     self.line_t = m.group(1)
     self.end = 0
  
-    if self.flg.get('block') == 'global':
+    if self._block_in('global'):
       self.b_global()
     
-    if self.flg.get('block') == 'page':
+    elif self._block_in('page pic'):
       self.b_page()
 
     return self
   
   def process_end(self):
+    '''
+      call tree
+        called by
+          loop
+    '''
 
     ###save_page
-    if self.flg.get('save') == 'page':
+    if self.flg.get('save') in util.qw('page pic'):
       if self.d_page:
         dd = deepcopy(self.d_page)
     

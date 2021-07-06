@@ -35,6 +35,8 @@ class mixLoader:
     if not f_zlan:
       return self
 
+    print(f'[load_zlan] file: {f_zlan}')
+
     self.zlan = Zlan({
       'file' : f_zlan
     })

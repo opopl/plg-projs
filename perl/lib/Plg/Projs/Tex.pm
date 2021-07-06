@@ -218,16 +218,55 @@ sub rpl_verbs {
     $s = $_;
 }
 
+sub empty_to_smallskip {
+    my @lines = split "\n" => $s;
+    my @new;
+
+    for(@lines){
+        /^\s*$/ && do { 
+        	push @new,q{\smallskip};
+			next;
+		};
+
+        push @new,$_;
+	}
+
+    $s = join("\n",@new);
+}
+
 sub fb_format {
     my @lines = split "\n" => $s;
 
     my @new;
     for(@lines){
         #next if /^\s+· Reply ·/;
-        /^\s+· Reply ·/ && do { push @new,''; next; };
+        ( /^\s+· Reply ·/ ||
+          /^\s+· (\d+)\s+(?:д|ч|г|н)./ ||
+          /^\s+· Ответить · (\d+)\s+(?:д|ч|г|н)./ 
+        )
+        && do { push @new,''; next; };
 
-        s/^\\emph/\\iusr/g;
-        s/😁/\\Laughey[1.0]/g;
+        #s/^\\iusr\{(.*)\}\\par\s*$/\\iusr{$1}/g;
+        #s/^\\emph\{(.*)\}\s*$/\\iusr{$1}/g;
+
+        /^\\emph\{(.*)\}\s*$/ && do { 
+
+			push @new, 
+				'%%%fbauth',
+				'%%%fbauth_name',
+				"\\iusr{$1}",
+				'%%%fbauth_url',
+				'%%%fbauth_pic',
+				'%%%endfbauth'
+				;
+			next;
+		};
+
+		s/…/.../g;
+
+        s/😁/\\Laughey[1.0][white]/g;
+        s/😄/\\Laughey[1.0][white]/g;
+		s/🙂/\\Smiley[1.0][yellow]/g;
 
         push @new,$_;
     }
