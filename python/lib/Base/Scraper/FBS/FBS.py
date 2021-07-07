@@ -30,6 +30,8 @@ from Base.Core import CoreClass
 
 from Base.Scraper.FBS.FbPost import FbPost
 
+from Base.Scraper.FBS.ShellFBS import ShellFBS
+
 from Base.Scraper.PicBase import PicBase
 
 LOGIN_URL = 'https://mobile.facebook.com/login.php'
@@ -70,6 +72,9 @@ class FBS(CoreClass,
     EXAMPLES
           r_fbs.py -y fb.yaml -z fb.zlan
     '''
+
+    # ShellFBS instance
+    shell = None
   
     opts_argparse = [
       { 
@@ -161,11 +166,13 @@ class FBS(CoreClass,
     def main(self):
       acts = [
         'get_opt',
-        'do_cmd',
+        #'do_cmd',
       ]
   
       util.call(self,acts)
 
+      self.shell = ShellFBS({ 'fbs' : self })
+      self.shell.cmdloop()
       import pdb; pdb.set_trace()
 
       return self

@@ -86,6 +86,9 @@ class PicBase(
   img      = None
   inum     = None
 
+  is_new   = False
+  new_saved = False
+
   category = None
 
   # DICT, contains paths for temporary image files
@@ -157,6 +160,9 @@ class PicBase(
           ipath = os.path.join(pic.root, img)
           if os.path.isfile(ipath):
             pic.img_saved = True
+
+    if pic.is_new and pic.img_saved:
+      pic.new_saved = True
 
     return pic
 
@@ -333,6 +339,7 @@ class PicBase(
         img = f'{inum}.{ext}'
 
         print(f'[Pic.fill_data_from_db] new inum = {inum}')
+        pic.is_new = 1
         break
       else:
         q = None

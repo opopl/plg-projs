@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 from Base.Scraper.FBS.FBS import FBS
+from Base.Scraper.FBS.ShellFBS import ShellFBS
 import os
 
 dirname = os.path.dirname(__file__)
@@ -10,7 +11,9 @@ r = {
   'files' : {
     'script' : script
   },
-  'dirs' : {}
+  'dirs' : {},
 }
 
-FBS(r).main()
+fbs = FBS(r)
+
+fbs.main()

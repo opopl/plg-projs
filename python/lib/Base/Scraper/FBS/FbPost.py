@@ -23,6 +23,8 @@ import shutil
 from PIL import Image
 from PIL import UnidentifiedImageError
 
+from Base.Scraper.PicBase import PicBase
+
 import base64
 import hashlib
 
@@ -262,73 +264,10 @@ class FbPost(CoreClass,mixFileSys):
             self.pic = PicBase(r)
             self.pic.grab()
 
-    return self
-
-  def pic_fetch(self,ref={}):
-    url = ref.get('url','')
-    if not url:
-      return self
-
-    headers = {
-      'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.3'
-    }
-
-    args = {
-      'headers' : headers,
-      'verify'  : False,
-      'stream'  : True,
-    }
-    r = requests.get(pic_url,**args)
-    if not ( r.status_code == 200 ):
-      return self
-
-    self.piccount += 1
-    print(f'Got Picture {self.piccount}')
-    r.raw.decoded_content = True
-    ct = util.get(r.headers, 'content-type', '')
-
-    pic = {}
-    for k in util.qw('i ct bare png'):
-      pic[k] = None
-
-    pic['bare'] = self._dir('out_post_pics_bare',f'{self.piccount}')
-    pic['png']  = self._dir('out_post_pics_save',f'{self.piccount}.png')
-
-    with open(pic['bare'], 'wb') as lf:
-      shutil.copyfileobj(r.raw, lf)
-
-    with open(pic['bare'],"rb") as f:
-      b = f.read() # read file as bytes
-      pic['md5'] = hashlib.md5(b).hexdigest()
-
-    pic = self._pic_load(pic)
+            if self.pic.new_saved:
+              self.piccount += 1
 
     return self
-
-  def _pic_load(self,pic={}):
-
-    try:
-      pic['i'] = Image.open(pic['bare'])
-    except UnidentifiedImageError:
-
-      if pic['ct']:
-        if pic['ct'] in [ 'image/svg+xml' ]:
-          cairosvg.svg2png(
-            file_obj = open(pic['bare'], "rb"),
-            write_to = pic['png']
-          )
-          pic['i']= Image.open(pic['png'])
-
-        elif pic['ct'] in [ 'image/gif' ]:
-          pass
-
-    if not pic['i']:
-      return 
-
-    pic['width']  = pic['i'].width
-    pic['height'] = pic['i'].height
-
-    return pic
 
   def _clist2tex(self,ref={}):
     app = self.app
