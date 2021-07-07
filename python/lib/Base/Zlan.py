@@ -417,6 +417,8 @@ class Zlan(CoreClass):
     if self.flg.get('save') in util.qw('page pic'):
       if self.d_page:
         dd = deepcopy(self.d_page)
+
+        dd['category'] = self.flg.get('save')
     
         if self.d_global:
           dg = deepcopy(self.d_global)

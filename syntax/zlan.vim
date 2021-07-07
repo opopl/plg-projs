@@ -30,6 +30,10 @@ syntax keyword zlanEof eof
 syntax keyword zlanFlag redo fail
 syntax keyword zlanKeyword acts 
 
+syntax keyword zlanKey pic
+syntax keyword zlanKeyword url_parent
+syntax keyword zlanKeyword caption 
+
 syn match zlanComment "^\s*#.*$"
 
 highlight link zlanKeyword Keyword

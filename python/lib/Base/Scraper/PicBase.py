@@ -86,9 +86,14 @@ class PicBase(
   img      = None
   inum     = None
 
+  category = None
+
   # DICT, contains paths for temporary image files
   #     used in the fetching process
   tmp      = None
+
+  # force image download
+  redo = False
 
   def __init__(pic,ref={}):
     pic.root  = os.environ.get('IMG_ROOT')
@@ -229,7 +234,7 @@ class PicBase(
     return pic
 
   def save2tmp(pic):
-    print(f'[Pic.save2tmp] start')
+    print(f'[Pic.save2tmp]')
 
     pic.resp = None
     try:
@@ -289,7 +294,7 @@ class PicBase(
     if not pic.dbpath:
       return pic
 
-    print(f'[Pic.db_add] start')
+    print(f'[Pic.db_add]')
 
     insert = {}
     for k in pic.dbcols:
@@ -314,7 +319,7 @@ class PicBase(
     if not ( pic.dbpath and os.path.isfile(pic.dbpath) ):
       return pic
 
-    print(f'[Pic.fill_data_from_db] start')
+    print(f'[Pic.fill_data_from_db]')
 
     d = None
 
@@ -404,7 +409,7 @@ class PicBase(
     return pic
 
   def get_ext(pic):
-    print(f'[Pic.get_ext] start')
+    print(f'[Pic.get_ext]')
 
     map = {
        'JPEG'  : 'jpg',
@@ -424,9 +429,11 @@ class PicBase(
     return pic
 
   def grab(pic):
-    if pic.img_saved:
-      print(f"[Pic.grab] Image saved: {pic.url}")
-      return pic
+
+    if not pic.redo:
+      if pic.img_saved:
+        #print(f"[Pic.grab] Image saved: {pic.url}")
+        return pic
 
     print(f"[Pic.grab] Getting image: \n\t{pic.url}")
 

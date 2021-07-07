@@ -121,6 +121,8 @@ class Piccer(CoreClass,
       return self
 
     def import_pic(self, ref = {}):
+      if not ref.get('category') == 'pic':
+        return self
 
       self.pic = PicBase(ref)
 
