@@ -75,6 +75,8 @@ class FBS(CoreClass,
 
     # ShellFBS instance
     shell = None
+
+    do_shell = True
   
     opts_argparse = [
       { 
@@ -166,14 +168,15 @@ class FBS(CoreClass,
     def main(self):
       acts = [
         'get_opt',
-        #'do_cmd',
+        'do_cmd',
       ]
   
       util.call(self,acts)
 
-      self.shell = ShellFBS({ 'fbs' : self })
-      self.shell.cmdloop()
-      import pdb; pdb.set_trace()
+      if self.do_shell:
+        self.shell = ShellFBS({ 'fbs' : self })
+        self.shell.cmdloop()
+      #import pdb; pdb.set_trace()
 
       return self
 
