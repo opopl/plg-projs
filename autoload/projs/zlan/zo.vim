@@ -20,7 +20,7 @@ function! projs#zlan#zo#add_fb_post (...)
 
   call projs#zlan#zo#add({
     \ 'zfile'  : zfile,
-    \ 'fields' : base#qw('url tags date ii author_id'),
+    \ 'fields' : base#qw('url tags title date ii author_id'),
     \ 'prefix' : '[posts.zlan]',
     \ })
 
@@ -63,6 +63,8 @@ function! projs#zlan#zo#add (...)
       let value = projs#bs#input#url({ 'zfile' : zfile, 'prefix' : prefix })
     elseif field == 'tags'
       let value = projs#bs#input#tags()
+    elseif field == 'author_id'
+      let value = projs#bs#input#author_id()
     else
       let value = input(printf('Input %s: ',field),'')
     endif

@@ -65,6 +65,19 @@ function! projs#bs#input#url (...)
   return url
 endf
 
+function! projs#bs#input#author_id (...)
+  let ref = get(a:000,0,{})
+
+  let rootid   = projs#rootid()
+  let proj     = projs#proj#name()
+
+  let prefix = printf('[ rootid: %s, proj: %s ]',rootid, proj)
+  let prefix = get(ref,'prefix',prefix)
+
+  let msg = printf('%s %s: ',prefix,'author_id')
+
+endfunction
+
 function! projs#bs#input#tags (...)
   let ref = get(a:000,0,{})
 
@@ -72,6 +85,7 @@ function! projs#bs#input#tags (...)
   let proj     = projs#proj#name()
 
   let prefix = printf('[ rootid: %s, proj: %s ]',rootid, proj)
+  let prefix = get(ref,'prefix',prefix)
 
   let tag_list = projs#bs#tags#list()
 
