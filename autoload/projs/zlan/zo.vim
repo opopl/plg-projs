@@ -13,6 +13,25 @@ function! projs#zlan#zo#fetch ()
   
 endfunction
 
+function! projs#zlan#zo#add_fb_post (...)
+  let ref = get(a:000,0,{})
+
+  let zfile = base#qw#catpath('p_sr','fb posts.zlan')
+
+  call projs#zlan#zo#add({
+    \ 'zfile'  : zfile,
+    \ 'fields' : base#qw('url tags date ii author_id')
+    \ })
+
+endfunction
+
+if 0
+  usage
+    call projs#zlan#zo#add()
+    call projs#zlan#zo#add({ 'zfile' : zfile })
+    call projs#zlan#zo#add({ 'zfile' : zfile, 'fields' : 'url tags caption' })
+endif
+
 """zlan_add
 function! projs#zlan#zo#add (...)
   let ref = get(a:000,0,{})
@@ -21,18 +40,32 @@ function! projs#zlan#zo#add (...)
   let proj     = projs#proj#name()
 
   let zfile = projs#sec#file('_zlan_')
-  let zdata = projs#zlan#data()
+  let zfile = get(ref,'zfile',zfile)
+
+  " either string or array
+  let fields   = get(ref,'fields','url tags')
+
+  let fields_a = base#type(fields) == 'String' ? base#qw(fields) : fields
+
+  let zdata = projs#zlan#data({ 'zfile' : zfile })
 
   let keys = base#varget('projs_zlan_keys',[])
 
-  let url  = projs#bs#input#url()
-  let tags = projs#bs#input#tags()
+  let d = {}
+  for field in fields_a
+    let value = ''
 
-  let d = {
-    \ 'url'  : url,
-    \ 'tags' : tags,
-    \ }
-  
+    if field == 'url'
+      let value = projs#bs#input#url({ 'zfile' : zfile })
+    elseif field == 'tags'
+      let value = projs#bs#input#tags()
+    else
+      let value = input(printf('Input %s: ',field),'')
+    endif
+
+    let d[field] = value
+  endfor
+
   call projs#zlan#save({ 
     \ 'zdata' : zdata,
     \ 'zfile' : zfile,

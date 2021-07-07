@@ -1,8 +1,8 @@
 
 
 if 0
-	call projs#bs#input#url()
-	call projs#bs#input#tags()
+  call projs#bs#input#url()
+  call projs#bs#input#tags()
 endif
 
 function! projs#bs#input#url (...)
@@ -10,6 +10,9 @@ function! projs#bs#input#url (...)
 
   let rootid   = projs#rootid()
   let proj     = projs#proj#name()
+
+  let zfile = projs#sec#file('_zlan_')
+  let zfile = get(ref,'zfile',zfile)
 
   let prefix = printf('[ rootid: %s, proj: %s ]',rootid, proj)
 
@@ -38,8 +41,12 @@ function! projs#bs#input#url (...)
     if !len(url)
        let msg_head = "\nNon-zero URL required\n"
 
-    elseif projs#zlan#has({ 'url' : url })
-       let msg_head = "\nURL in ZLAN\n"
+    elseif projs#zlan#has({
+        \ 'url'   : url,
+        \ 'zfile' : zfile
+        \ })
+
+       let msg_head = printf("\nURL in ZLAN: %s\n",fnamemodify(zfile,':t'))
 
     else
        let cnt = 0

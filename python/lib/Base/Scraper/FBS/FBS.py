@@ -179,7 +179,7 @@ class FBS(CoreClass,
     def main(self):
       acts = [
         'get_opt',
-        #'do_cmd',
+        'do_cmd',
       ]
   
       util.call(self,acts)
