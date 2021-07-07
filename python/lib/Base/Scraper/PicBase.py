@@ -70,6 +70,8 @@ class PicBase(
 
   md5     = None
 
+  session = None
+
   # local (saved) path 
   path     = None
   path_uri = None
@@ -89,15 +91,15 @@ class PicBase(
   tmp      = None
 
   def __init__(pic,ref={}):
-    pic.img_root  = os.environ.get('IMG_ROOT')
+    pic.root  = os.environ.get('IMG_ROOT')
 
     super().__init__(ref)
 
-    for k in util.qw('img_root'):
+    for k in util.qw('root'):
       pic.dirs[k] = util.get(pic,k) 
 
-    if (not pic.dbpath) and pic.img_root:
-      pic.dbpath = os.path.join(pic.img_root,'img.db')
+    if (not pic.dbpath) and pic.root:
+      pic.dbpath = os.path.join(pic.root,'img.db')
 
     pic.dbcols = dbw._cols({
       'db_file' : pic.dbpath,
@@ -105,7 +107,7 @@ class PicBase(
     })
 
     pic.dirs.update({
-      'tmp_img' : pic._dir('img_root', 'tmp' ),
+      'tmp_img' : pic._dir('root', 'tmp' ),
     })
 
     if not pic.tmp:
@@ -113,6 +115,12 @@ class PicBase(
         'bare' : pic._dir('tmp_img bs_img'),
         'png'  : pic._dir('tmp_img bs_img.png'),
        }
+
+    acts = [
+      'url_check_saved' ,
+    ]
+
+    util.call(pic, acts)
 
     pass
 
@@ -190,14 +198,15 @@ class PicBase(
 
     if not pic.img_saved:
       dd.update({ 'opts' : 'new' })
+      print(f'[Pic.setup] NO image DB info')
 
     # fill pic.* attributes ( inum, path, ... ) from db calls
-    pic.fill_data(dd)
+    pic.fill_data_from_db(dd)
 
-    print(f'[Pic.grab] Local path: {pic.path}')
+    print(f'[Pic.setup] Local path: {pic.path}')
     if os.path.isfile(pic.path):
       pass
-      print(f'WARN[Pic.grab] image file already exists: {pic.img}')
+      print(f'WARN[Pic.setup] image file already exists in FS: {pic.img}')
 
     return pic
 
@@ -215,11 +224,12 @@ class PicBase(
 
     Path(pic.tmp['bare']).unlink()
 
-    print(f'[Pic.grab] Saved image: {pic.img}')
+    print(f'[Pic.save2fs] Saved image to FS: {pic.img}')
 
     return pic
 
   def save2tmp(pic):
+    print(f'[Pic.save2tmp] start')
 
     pic.resp = None
     try:
@@ -236,26 +246,23 @@ class PicBase(
           try:
             decoded = base64.decodestring(bytes(data,encoding='utf-8'))
           except:
-            app.die(f'ERROR base64 decoding error')
+            print(f'ERROR base64 decoding error')
+            raise
 
         if decoded:
           with open(pic.tmp['bare'], 'wb') as f:
             f.write(decoded)
       else:
-        pic.resp = requests.get(pic.url, stream = True, verify=False)
-#        pic.resp = app._requests_get({ 
-            #'url'  : pic.url,
-            #'args' : {
-                #'stream' : True 
-            #}
-        #})
+        pic.session = pic.session or requests.Session()
+        #pic.resp = requests.get(pic.url, stream = True, verify=False)
+        pic.resp = pic.session.get(pic.url, stream = True, verify=False)
     except:
       print(f'ERROR[Pic.grab] {pic.url}')
       raise
 
     if pic.resp:
       pic.resp.raw.decoded_content = True
-      pic.ct = util.get(pic.resp.headers, 'content-type', '')
+      pic.ct = pic.resp.headers.get('content-type')
   
       with open(pic.tmp['bare'], 'wb') as lf:
         shutil.copyfileobj(pic.resp.raw, lf)
@@ -264,7 +271,7 @@ class PicBase(
 
     f = pic.tmp['bare']
     if (not os.path.isfile(f)) or os.stat(f).st_size == 0:
-      #app.log(f'FAIL[{app.page.rid}][Pic.grab] empty file: {pic.url}')
+      print(f'FAIL[Pic.grab] empty file: {pic.url}')
       #app.on_fail()
       return pic
 
@@ -273,16 +280,18 @@ class PicBase(
     if pic.ct:
       m = re.match(r'^text/html',pic.ct)
 
-    print(f'[Pic.grab] image file size: {pic.bare_size}')
-    print(f'[Pic.grab] content-type: {pic.ct}')
+    print(f'[Pic.save2tmp] image file size: {pic.bare_size}')
+    print(f'[Pic.save2tmp] content-type: {pic.ct}')
 
     return pic
 
   def db_add(pic):
-
     if not pic.dbpath:
       return pic
 
+    print(f'[Pic.db_add] start')
+
+    insert = {}
     for k in pic.dbcols:
       insert[k] = getattr(pic,k,None)
 
@@ -296,14 +305,16 @@ class PicBase(
 
     return pic
 
-  def fill_data(pic,ref={}):
+  def fill_data_from_db(pic,ref={}):
     opts_s = ref.get('opts','')
     opts   = opts_s.split(',')
 
     ext    = ref.get('ext','jpg')
 
     if not ( pic.dbpath and os.path.isfile(pic.dbpath) ):
-      return 
+      return pic
+
+    print(f'[Pic.fill_data_from_db] start')
 
     d = None
 
@@ -315,6 +326,8 @@ class PicBase(
         inum = list(r.get('row',{}).values())[0]
         inum += 1
         img = f'{inum}.{ext}'
+
+        print(f'[Pic.fill_data_from_db] new inum = {inum}')
         break
       else:
         q = None
@@ -332,7 +345,7 @@ class PicBase(
           if r:
             rw = r.get('row',{})
 
-            img = rw['img']
+            img  = rw['img']
             inum = rw['inum']
 
             pic.url = rw['url']
@@ -369,6 +382,8 @@ class PicBase(
 
   # process pic.i (Image instance)
   def i_process(pic):
+    print(f'[i_process]')
+
     pic.width  = pic.i.width
     pic.height = pic.i.height
 
@@ -389,6 +404,8 @@ class PicBase(
     return pic
 
   def get_ext(pic):
+    print(f'[Pic.get_ext] start')
+
     map = {
        'JPEG'  : 'jpg',
        'PNG'   : 'png',
@@ -407,12 +424,14 @@ class PicBase(
     return pic
 
   def grab(pic):
+    if pic.img_saved:
+      print(f"[Pic.grab] Image saved: {pic.url}")
+      return pic
 
     print(f"[Pic.grab] Getting image: \n\t{pic.url}")
 
     # parse url, fetch url, save to tmp file
     pic.save2tmp()
-    return pic
 
     if not pic.bare_size:
       return pic
@@ -426,12 +445,12 @@ class PicBase(
       return pic
 
     acts = [
-        'i_process',       
-        'get_ext',         
-        'setup',           
-        'save2fs',         
-        'db_add',          
-        'url_check_saved', 
+        'i_process'        ,
+        'get_ext'          ,
+        'setup'            ,
+        'save2fs'          ,
+        'db_add'           ,
+        'url_check_saved'  ,
     ]
 
     util.call(pic,acts)

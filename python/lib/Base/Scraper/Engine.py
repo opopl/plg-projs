@@ -265,6 +265,7 @@ class BS(CoreClass,
     'author_line' ,
     'author_urls' ,
     'cite'        ,
+    'cite_h'      ,
     'piccount'    ,
   ]
 
@@ -2845,8 +2846,17 @@ class BS(CoreClass,
 
     media = self.page.host
     cite_keys = [ 'cite', 'cite_h' ]
-    cite = f'\citTitle{ {self.page.title} }, {author_line}, {media}, {date_dot}'
-    cite = re.sub(r"\\citTitle{'(.*)'}(.*)", r'\\citTitle{\1}\2', cite)
+
+
+    cite = ''
+    if self.page.title:
+      cite = f'\citTitle{ {self.page.title} }, {author_line}, {media}, {date_dot}'
+      cite = re.sub(r"\\citTitle{'(.*)'}(.*)", r'\\citTitle{\1}\2', cite)
+
+    cite_h = ''
+    if self.page.title_h:
+      cite_h = f'\citTitle{ {self.page.title_h} }, {author_line}, {media}, {date_dot}'
+      cite_h = re.sub(r"\\citTitle{'(.*)'}(.*)", r'\\citTitle{\1}\2', cite_h)
 
     pics = self._pics_from_rid(rid)
     piccount = len(pics)
@@ -2856,6 +2866,7 @@ class BS(CoreClass,
       'author_urls' : author_urls,
       'date'        : date_all,
       'cite'        : cite,
+      'cite_h'      : cite_h,
     })
     self.parsed.append(p)
 

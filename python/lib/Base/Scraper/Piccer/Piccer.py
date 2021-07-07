@@ -122,13 +122,9 @@ class Piccer(CoreClass,
 
     def import_pic(self, ref = {}):
 
-      self.pic = PicBase()
-
-      self.pic.import_dbcols(ref)
+      self.pic = PicBase(ref)
 
       self.pic.grab()
-
-      import pdb; pdb.set_trace()
 
       return self
 
