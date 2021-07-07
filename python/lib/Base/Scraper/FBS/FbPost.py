@@ -253,7 +253,14 @@ class FbPost(CoreClass,mixFileSys):
           print(f'Picture url: {pic_url}')
           if pic_url:
             self.cmt['pic'] = pic_url
-            self.pic_fetch({ 'url' : pic_url })
+
+            r = {
+              'url'        : pic_url,
+              'url_parent' : self.url,
+              'tags'       : self.tags,
+            }
+            self.pic = PicBase(r)
+            self.pic.grab()
 
     return self
 

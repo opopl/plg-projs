@@ -30,6 +30,8 @@ from Base.Core import CoreClass
 
 from Base.Scraper.FBS.FbPost import FbPost
 
+from Base.Scraper.PicBase import PicBase
+
 LOGIN_URL = 'https://mobile.facebook.com/login.php'
 
 #p [ x['clist'] for x in clist if 'clist' in x and len(x['clist'])]

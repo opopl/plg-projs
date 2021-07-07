@@ -125,7 +125,6 @@ class Piccer(CoreClass,
         return self
 
       self.pic = PicBase(ref)
-
       self.pic.grab()
 
       return self
