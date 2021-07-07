@@ -20,7 +20,8 @@ function! projs#zlan#zo#add_fb_post (...)
 
   call projs#zlan#zo#add({
     \ 'zfile'  : zfile,
-    \ 'fields' : base#qw('url tags date ii author_id')
+    \ 'fields' : base#qw('url tags date ii author_id'),
+    \ 'prefix' : '[posts.zlan]',
     \ })
 
 endfunction
@@ -42,6 +43,9 @@ function! projs#zlan#zo#add (...)
   let zfile = projs#sec#file('_zlan_')
   let zfile = get(ref,'zfile',zfile)
 
+  let prefix = printf('[ rootid: %s, proj: %s ]',rootid, proj)
+  let prefix = get(ref,'prefix',prefix)
+
   " either string or array
   let fields   = get(ref,'fields','url tags')
 
@@ -56,7 +60,7 @@ function! projs#zlan#zo#add (...)
     let value = ''
 
     if field == 'url'
-      let value = projs#bs#input#url({ 'zfile' : zfile })
+      let value = projs#bs#input#url({ 'zfile' : zfile, 'prefix' : prefix })
     elseif field == 'tags'
       let value = projs#bs#input#tags()
     else

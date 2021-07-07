@@ -2,7 +2,9 @@
 
 if 0
   call projs#bs#input#url()
-  call projs#bs#input#tags()
+
+  call projs#bs#input#url({ 'zfile' : zfile })
+  call projs#bs#input#url({ 'zfile' : zfile, 'prefix' : prefix })
 endif
 
 function! projs#bs#input#url (...)
@@ -15,6 +17,7 @@ function! projs#bs#input#url (...)
   let zfile = get(ref,'zfile',zfile)
 
   let prefix = printf('[ rootid: %s, proj: %s ]',rootid, proj)
+  let prefix = get(ref,'prefix',prefix)
 
   let keep = 1
   let msg = printf('%s %s: ',prefix,'url')
