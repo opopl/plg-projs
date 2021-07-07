@@ -5,6 +5,10 @@ sel:
   keep:
 
 fetch:
+  use:
+    - py.requests.bare
+    #- py.requests.session
+    #- py.selenium.firefox
   requests:
     #verify: True
     #headers: {}

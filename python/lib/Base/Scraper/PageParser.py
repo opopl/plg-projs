@@ -717,6 +717,9 @@ class RootPageParser(CoreClass):
     
     return self
 
+  def fetch_source(self,ref={}):
+    return self
+
   def get_author(self,ref={}):
     app = self.app
 

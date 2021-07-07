@@ -59,8 +59,14 @@ class FBS(CoreClass,
     email = None
     password = None
 
-    # Firefox profile
+    # browser (Firefox) profile
     fp = None
+
+    # browser (Firefox) driver
+    driver = None
+
+    # what is done
+    done = {}
 
     f_cookies = "cookies.pkl"
 
@@ -128,17 +134,22 @@ class FBS(CoreClass,
         return self
 
     def init_drv(self):
-        print('[init_drv] init firefox driver')
 
-        fp = webdriver.FirefoxProfile()
+        if not self.fp:
+          fp = webdriver.FirefoxProfile()
+  
+          fp.set_preference("dom.webnotifications.enabled",False)
+          fp.set_preference("geo.enabled",False)
+      
+          self.fp = fp
 
-        fp.set_preference("dom.webnotifications.enabled",False)
-        fp.set_preference("geo.enabled",False)
-    
-        self.fp = fp
-    
-        driver = webdriver.Firefox(fp)
-        self.driver = driver
+          print('[init_drv] init firefox profile')
+
+        if not self.driver:
+          driver = webdriver.Firefox(self.fp)
+          self.driver = driver
+
+          print('[init_drv] init firefox driver')
 
         return self
 
@@ -168,7 +179,7 @@ class FBS(CoreClass,
     def main(self):
       acts = [
         'get_opt',
-        'do_cmd',
+        #'do_cmd',
       ]
   
       util.call(self,acts)

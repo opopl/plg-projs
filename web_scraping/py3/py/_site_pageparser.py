@@ -16,6 +16,10 @@ class PageParser(RootPageParser):
 
     return self
 
+  # custom URL fetching subroutine
+  def fetch_source(self,ref={}):
+    return self
+
   def get_date(self,ref={}):
     super().get_date(ref)
 

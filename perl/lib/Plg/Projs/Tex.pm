@@ -218,6 +218,18 @@ sub rpl_verbs {
     $s = $_;
 }
 
+# insert empty lines at the end of line
+sub expand_vertically {
+    my @lines = split "\n" => $s;
+    my @new;
+
+    for(@lines){
+        push @new,$_,'';
+	}
+
+    $s = join("\n",@new);
+}
+
 sub empty_to_smallskip {
     my @lines = split "\n" => $s;
     my @new;

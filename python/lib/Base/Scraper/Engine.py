@@ -899,6 +899,13 @@ class BS(CoreClass,
     return self
 
   def load_soup(self,ref={}):
+    '''
+      call tree
+        calls 
+          url_load_content
+            url_fetch
+              _requests_get
+    '''
     url = ref.get('url',self.page.url)
     ii  = ref.get('ii',self.page.ii)
 
