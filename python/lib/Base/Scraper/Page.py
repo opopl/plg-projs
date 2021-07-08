@@ -1,7 +1,14 @@
 
 from Base.Core import CoreClass
 
-class Page(CoreClass):
+import os,re,sys
+from pathlib import Path
+
+class Page(
+    CoreClass,
+
+    mixFileSys
+  ):
 
   app     = None
 
@@ -39,3 +46,31 @@ class Page(CoreClass):
 
     return cite_data
       
+  def _file_rid(page,ref={}):
+    tipe = ref.get('tipe','cache')
+    ext  = ref.get('ext','html')
+    rid  = ref.get('rid',page.rid)
+
+    ii_file = os.path.join(page._dir_ii({ 'rid' : rid }),f'{tipe}.{ext}')
+    return ii_file
+
+  def _dir_ii(page,ref={}):
+    rid = ref.get('rid',page.rid)
+
+    dir = page._dir('root',f'bs {rid}')
+
+    return dir
+
+  def _ii_full(page):
+    date = page.get('date')
+    site = page.site
+
+    ii_num = page._ii_num()
+    page.set({ 'ii_num' : ii_num })
+
+    a_f = page.get('author_id_first')
+    a_fs = f'.{a_f}' if a_f else ''
+
+    ii_full = f'{date}.site.{site}{a_fs}.{ii_num}.{page.ii}'
+
+    return ii_full
