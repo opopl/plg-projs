@@ -34,11 +34,8 @@ class Page(CoreClass):
   def __init__(page,ref={}):
     super().__init__(ref)
 
-
-
   def _cite_data(page):
     cite_data = {}
 
     return cite_data
       
-

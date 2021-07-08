@@ -65,6 +65,10 @@ function! projs#bs#input#url (...)
   return url
 endf
 
+if 0
+  let author_id = projs#bs#input#author_id ()
+endif
+
 function! projs#bs#input#author_id (...)
   let ref = get(a:000,0,{})
 
@@ -75,6 +79,13 @@ function! projs#bs#input#author_id (...)
   let prefix = get(ref,'prefix',prefix)
 
   let msg = printf('%s %s: ',prefix,'author_id')
+
+  let ids = projs#bs#author#ids()
+
+  call base#varset('this',ids)
+  let author_id = input(msg,'','custom,base#complete#this')
+
+  return author_id
 
 endfunction
 

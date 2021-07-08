@@ -230,6 +230,10 @@ sub expand_vertically {
     $s = join("\n",@new);
 }
 
+sub expand_punctuation {
+    my @c  = split("" => $s);
+}
+
 sub empty_to_smallskip {
     my @lines = split "\n" => $s;
     my @new;
