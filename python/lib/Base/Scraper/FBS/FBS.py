@@ -360,7 +360,7 @@ class FBS(CoreClass,
 
         tex = []
         with open('_post_preamble.tex','r') as f:
-          tex = f.readlines()
+          tex.extend( [ line.rstrip('\n') for line in f ] )
 
         return tex
   
