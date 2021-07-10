@@ -210,6 +210,20 @@ sub rpl_quotes {
     $s = join("",@n);
 }
 
+sub escape_latex {
+    local $_ = $s;
+
+	while(1){
+	  	s/_/\\_/g;
+	  	s/%/\\%/g;
+	  	s/\$/\\\$/g;
+
+		last;
+	}
+
+    $s = $_;
+}
+
 sub rpl_verbs {
     local $_ = $s;
 
@@ -271,6 +285,7 @@ sub fb_format {
 				'%%%fbauth',
 				'%%%fbauth_name',
 				"\\iusr{$1}",
+				'%%%fbauth_desc',
 				'%%%fbauth_url',
 				'%%%fbauth_pic',
 				'%%%endfbauth'

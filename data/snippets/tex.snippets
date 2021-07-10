@@ -5,6 +5,7 @@ snippet htg
 snippet fbauth
 	%%%fbauth
 	%%%fbauth_name
+	%%%fbauth_desc
 	%%%fbauth_url
 	%%%fbauth_pic
 	%%%endfbauth
@@ -96,6 +97,11 @@ snippet g01
 	  ig <++>
 	  width 0.1
 	\fi
+snippet g15
+	\ifcmt
+	  ig <++>
+	  width 0.15
+	\fi
 snippet g02
 	\ifcmt
 	  ig <++>
@@ -115,6 +121,12 @@ snippet pic02
 	\ifcmt
 	  pic <++>
 	  width 0.2
+	\fi
+snippet picc4
+	\ifcmt
+	  pic <++>
+	  caption <++>
+	  width 0.4
 	\fi
 snippet pic
 	\ifcmt
@@ -635,8 +647,12 @@ snippet up
 	\usepackage{${1}}
 snippet urlf
 	\urlFriend{${1}}
+snippet urlf,
+	\urlFriend{${1}}\par
 snippet url
 	\url{${1}}
+snippet url,
+	\url{${1}}\par
 snippet vbox
 	\vbox{${1}}
 snippet ver
