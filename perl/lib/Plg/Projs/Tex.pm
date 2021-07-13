@@ -246,6 +246,12 @@ sub expand_vertically {
 
 sub expand_punctuation {
     my @c  = split("" => $s);
+
+	local $_ = $s;
+
+	s/\b([,\.;!]+)\b/$1 /g;
+
+    $s = $_;
 }
 
 sub empty_to_smallskip {
@@ -288,7 +294,8 @@ sub fb_format {
 				'%%%fbauth_desc',
 				'%%%fbauth_url',
 				'%%%fbauth_pic',
-				'%%%endfbauth'
+				'%%%endfbauth',
+				'',
 				;
 			next;
 		};
