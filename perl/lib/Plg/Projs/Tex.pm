@@ -249,7 +249,7 @@ sub expand_punctuation {
 
 	local $_ = $s;
 
-	s/\b([,\.;!]+)\b/$1 /g;
+	s/\b([,\.\?;!]+)\b/$1 /g;
 
     $s = $_;
 }

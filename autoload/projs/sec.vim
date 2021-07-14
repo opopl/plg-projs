@@ -571,29 +571,32 @@ function! projs#sec#count_ii (...)
 endfunction
 
 
-" projs#sec#add
-"
-" Purpose:
-"   - add sec to the list of sections in dat-file: _dat_files_
-"   - add sec to var: projs_secnames
-"   - add sec to var: projs_secnamesall
-"   - add sec to db
-"   
-" Usage:
-"   call projs#sec#add (sec)
-" Returns:
-"   
-"
-" Call tree:
-"   calls:
-"     projs#proj#name
-"     projs#sec#file
-"     projs#proj#files
-"     base#file#write_lines
-"     projs#sec#exists
-"     projs#db#file
-"   called by:
-"     projs#sec#new
+if 0
+  projs#sec#add
+ 
+  Purpose:
+    - add sec to the list of sections in dat-file: _dat_files_
+    - add sec to var: projs_secnames
+    - add sec to var: projs_secnamesall
+    - add sec to db
+    
+  Usage:
+    call projs#sec#add (sec)
+
+    call projs#sec#add (sec, { 'db_data' : db_data })
+  Returns:
+    1 
+  Call tree:
+    calls:
+      projs#sec#add_to_secnames
+      projs#sec#add_to_dat
+      projs#sec#add_to_db
+        projs#db#file
+        projs#sec#file
+        pymy#sqlite#insert_hash
+    called by:
+      projs#sec#new
+endif
 
 function! projs#sec#add (sec,...)
   let ref = get(a:000,0,{})
@@ -796,6 +799,7 @@ if 0
     called by
     calls
       projs#sec#header
+      projs#sec#add ( sec_new_sec_add )
 endif
 
 """sec_new_start {
@@ -1052,8 +1056,6 @@ function! projs#sec#new(sec,...)
           call extend(r_sc,{ 'seccmd' : get(ref,'seccmd','section') })
           call extend(lines, projs#sec#lines_seccmd(r_sc))
         endif
-
-
  
     endif
 

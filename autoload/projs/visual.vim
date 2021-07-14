@@ -74,17 +74,19 @@ function! projs#visual#ii_to_new_secs (start, end, ... )
 
   let secs = projs#visual#ii#secs(start,end)
 
-	let sec_type = 'subsection'
+  let sec_type = 'subsection'
   "let sec_type = 'subsection'
   "let sec_type = input('section type:',sec_type,'custom,projs#complete#sectypes')
 
+  let r = {
+    \  'git_add'    : 1,
+    \  'p_tree'     : 1,
+    \  'rewrite'    : 0,
+    \  'parent_sec' : b:sec,
+    \  'sec_type'   : sec_type,
+    \  }
+
   for sec in secs
-    let r = {
-        \  'git_add'    : 1,
-        \  'rewrite'    : 0,
-        \  'parent_sec' : b:sec,
-        \  'sec_type'   : sec_type,
-        \  }
     call projs#sec#new(sec, r)
   endfor
 
@@ -111,8 +113,8 @@ function! projs#visual#delete_empty_lines (...)
 endfunction
 
 function! projs#visual#verb_replace (...)
-	let macro = input('macro: ','iusr')
-	exe "'<,'>" . printf('s/^\\verb|\(.*\)|/\\%s{\1}/g',macro)
+  let macro = input('macro: ','iusr')
+  exe "'<,'>" . printf('s/^\\verb|\(.*\)|/\\%s{\1}/g',macro)
 
 endfunction
 

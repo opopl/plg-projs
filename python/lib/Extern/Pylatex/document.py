@@ -17,7 +17,6 @@ from .errors import CompilerError
 from .utils import dumps_list, rm_temp_dir, NoEscape
 import pylatex.config as cf
 
-
 class Document(Environment):
     r"""
     A class that contains a full LaTeX document.
