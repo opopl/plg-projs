@@ -797,6 +797,8 @@ endif
 if 0
   call tree
     called by
+      projs#insert#ii
+      projs#insert#ii_url
     calls
       projs#sec#header
       projs#sec#add ( sec_new_sec_add )
@@ -805,44 +807,25 @@ endif
 """sec_new_start {
 
 function! projs#sec#new(sec,...)
-    let sec        = a:sec
+    let sec = a:sec
+
+    let ref = get(a:000,0,{})
 
     let proj       = projs#proj#name()
-    let parent_sec = projs#sec#parent()
 
     let rootid = projs#rootid()
 
-    let ref = { 
-        \   "git_add"    : 0,
-        \   "view"       : 0,
-        \   "prompt"     : 0,
-        \   "seccmd"     : '',
-        \   "parent_sec" : projs#buf#sec(),
-        \   "lines"      : [],
-        \   "sec_type"   : '',
-        \   "url"        : '',
-        \   "author"     : '',
-        \   "author_id"  : '',
-        \   "title"      : '',
-        \   "tags"       : '',
-        \   "p_tree"     : 0,
-        \   }
-
-
-    if a:0 
-        let refadd = get(a:000,0,{})
-        call extend(ref, refadd)
-    endif
-
     let rw = get(ref, 'rewrite', 0)
     if projs#sec#exists(sec) && !rw
-        return
+      return
     endif
 
-    let parent_sec = get(ref,'parent_sec',parent_sec)
+    let parent_sec = get(ref,'parent_sec','')
+
+    " e.g. section, subsection 
     let sec_type   = get(ref,'sec_type','')
 
-    let url       = get(ref,'url','')
+    let url        = get(ref,'url','')
 
     let author     = get(ref,'author','')
     let author_id  = get(ref,'author_id','')
@@ -863,9 +846,7 @@ function! projs#sec#new(sec,...)
 
     let sec_file = projs#sec#file(sec)
 
-    let lines = []
-
-    let sec_ext = fnamemodify(sec_file,':p:e')
+    let sec_ext  = fnamemodify(sec_file,':p:e')
 
 """head_newsec
     let rh = { 
@@ -1070,6 +1051,7 @@ function! projs#sec#new(sec,...)
       \ 'author'     : author,
       \ 'author_id'  : author_id,
       \ 'author_url' : author_url,
+      \ 'parent'     : parent_sec,
       \ }
 """sec_new_sec_add
     call projs#sec#add(sec,{ 'db_data' : db_data })

@@ -222,8 +222,9 @@ function! projs#insert#ii ()
   call append('.',lines)
 
   let r_new = {
-      \ 'view'   : 'edit',
-      \ 'p_tree' : 1,
+      \ 'view'       : 'edit',
+      \ 'p_tree'     : 1,
+      \ 'parent_sec' : projs#buf#sec(),
       \  }
 
   " see also:
@@ -376,14 +377,15 @@ function! projs#insert#ii_url ()
   endif
 
   let r_new = {
-      \  'url'       : url,
-      \  'title'     : title,
-      \  'sec_type'  : sec_type,
-      \  'author_id' : author_id_str,
-      \  'author'    : author,
-      \  'tags'      : tags,
-      \  'view'      : 'edit',
-      \  'p_tree'    : 1,
+      \  'url'        : url,
+      \  'title'      : title,
+      \  'sec_type'   : sec_type,
+      \  'author_id'  : author_id_str,
+      \  'author'     : author,
+      \  'tags'       : tags,
+      \  'view'       : 'edit',
+      \  'p_tree'     : 1,
+      \  'parent_sec' : projs#buf#sec(),
       \  }
 
   call projs#sec#new(ii_sec,r_new)

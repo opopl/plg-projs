@@ -10,13 +10,14 @@ CREATE TABLE IF NOT EXISTS projs (
     root TEXT NOT NULL,
     sec TEXT, 
     tags TEXT, 
+    -- parent section name
     parent TEXT,
     projtype TEXT,
     author TEXT,
     author_id TEXT,
     author_url TEXT,
-	-- section id
-	id TEXT,
+    -- section id
+    id TEXT,
     pic TEXT,
     rootid TEXT,
     url TEXT,
