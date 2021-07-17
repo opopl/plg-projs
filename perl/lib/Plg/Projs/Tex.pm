@@ -289,8 +289,12 @@ sub fb_format {
 
 			push @new, 
 				'%%%fbauth',
+				'%%%fbauth_id',
+				'%%%fbauth_tags',
+				'%%%fbauth_place',
 				'%%%fbauth_name',
 				"\\iusr{$1}",
+				'%%%fbauth_front',
 				'%%%fbauth_desc',
 				'%%%fbauth_url',
 				'%%%fbauth_pic',
