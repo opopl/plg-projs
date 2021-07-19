@@ -811,7 +811,7 @@ function! projs#sec#new(sec,...)
 
     let ref = get(a:000,0,{})
 
-    let proj       = projs#proj#name()
+    let proj   = projs#proj#name()
 
     let rootid = projs#rootid()
 
@@ -878,6 +878,7 @@ function! projs#sec#new(sec,...)
               \ ' ',
               \ printf('\%s{%s}' , sec_type, title),
               \ printf('\label{sec:%s}' , sec),
+              \ ' ',
               \ ]
             call extend(lines, l_title)
           endif
@@ -902,10 +903,13 @@ function! projs#sec#new(sec,...)
     let projtype = projs#varget('projtype','regular')
     let sub = printf('projs#newseclines#%s#%s', projtype, sec)
 
+    let r = {
+       \ 'proj'  : proj,
+       \ 'sec'   : sec,
+       \ 'title' : title,
+       \ }
+
     try
-      let r = {
-          \ 'proj' : proj,
-          \ }
       exe printf('call extend(lines,%s(r))',sub)
     catch 
       call projs#warn('Problems while executing:'."\n\t".sub)
@@ -1030,13 +1034,9 @@ function! projs#sec#new(sec,...)
       call extend(lines, projs#newseclines#_build_tex_(r))
 
     else
-        if prompt 
-          call extend(lines, projs#sec#lines_prompt(r))
-        else
-          let r_sc = copy(r)
-          call extend(r_sc,{ 'seccmd' : get(ref,'seccmd','section') })
-          call extend(lines, projs#sec#lines_seccmd(r_sc))
-        endif
+      if prompt 
+        call extend(lines, projs#sec#lines_prompt(r))
+      endif
  
     endif
 

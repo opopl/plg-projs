@@ -276,9 +276,10 @@ sub fb_format {
     my @new;
     for(@lines){
         #next if /^\s+· Reply ·/;
-        ( /^\s+· Reply ·/ ||
-          /^\s+· (\d+)\s+(?:д|ч|г|н)./ ||
-          /^\s+· Ответить · (\d+)\s+(?:д|ч|г|н)./ 
+        ( /^\s+· Reply ·/ 
+          || /^\s+· (\d+)\s+(?:д|ч|г|н)./ 
+          || /^\s+· Ответить · (\d+)\s+(?:д|ч|г|н)./ 
+          || /^\s+·\s*$/ 
         )
         && do { push @new,''; next; };
 
@@ -298,8 +299,11 @@ sub fb_format {
 				'%%%fbauth_desc',
 				'%%%fbauth_url',
 				'%%%fbauth_pic',
+				'%%%fbauth_pic portrait',
+				'%%%fbauth_pic background',
+				'%%%fbauth_pic other',
 				'%%%endfbauth',
-				'',
+				' ',
 				;
 			next;
 		};
