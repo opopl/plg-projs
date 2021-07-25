@@ -213,13 +213,13 @@ sub rpl_quotes {
 sub escape_latex {
     local $_ = $s;
 
-	while(1){
-	  	s/_/\\_/g;
-	  	s/%/\\%/g;
-	  	s/\$/\\\$/g;
+    while(1){
+        s/_/\\_/g;
+        s/%/\\%/g;
+        s/\$/\\\$/g;
 
-		last;
-	}
+        last;
+    }
 
     $s = $_;
 }
@@ -239,7 +239,7 @@ sub expand_vertically {
 
     for(@lines){
         push @new,$_,'';
-	}
+    }
 
     $s = join("\n",@new);
 }
@@ -247,9 +247,9 @@ sub expand_vertically {
 sub expand_punctuation {
     my @c  = split("" => $s);
 
-	local $_ = $s;
+    local $_ = $s;
 
-	s/\b([,\.\?;!]+)\b/$1 /g;
+    s/\b([,\.\?;!]+)\b/$1 /g;
 
     $s = $_;
 }
@@ -260,12 +260,12 @@ sub empty_to_smallskip {
 
     for(@lines){
         /^\s*$/ && do { 
-        	push @new,q{\smallskip};
-			next;
-		};
+            push @new,q{\smallskip};
+            next;
+        };
 
         push @new,$_;
-	}
+    }
 
     $s = join("\n",@new);
 }
@@ -279,6 +279,7 @@ sub fb_format {
         ( /^\s+· Reply ·/ 
           || /^\s+· (\d+)\s+(?:д|ч|г|н)./ 
           || /^\s+· Ответить · (\d+)\s+(?:д|ч|г|н)./ 
+          || /^\s+· Ответить · .*/ 
           || /^\s+·\s*$/ 
         )
         && do { push @new,''; next; };
@@ -288,31 +289,33 @@ sub fb_format {
 
         /^\\emph\{(.*)\}\s*$/ && do { 
 
-			push @new, 
-				'%%%fbauth',
-				'%%%fbauth_id',
-				'%%%fbauth_tags',
-				'%%%fbauth_place',
-				'%%%fbauth_name',
-				"\\iusr{$1}",
-				'%%%fbauth_front',
-				'%%%fbauth_desc',
-				'%%%fbauth_url',
-				'%%%fbauth_pic',
-				'%%%fbauth_pic portrait',
-				'%%%fbauth_pic background',
-				'%%%fbauth_pic other',
-				'%%%endfbauth',
-				' ',
-				;
-			next;
-		};
+            push @new, 
+                '%%%fbauth',
+                '%%%fbauth_name',
+                "\\iusr{$1}",
+                '%%%fbauth_url',
+                '%%%fbauth_place',
+                '%%%fbauth_id',
+                '%%%fbauth_front',
+                '%%%fbauth_desc',
+                '%%%fbauth_www',
+                '%%%fbauth_pic',
+                '%%%fbauth_pic portrait',
+                '%%%fbauth_pic background',
+                '%%%fbauth_pic other',
+                '%%%fbauth_tags',
+                '%%%fbauth_pubs',
+                '%%%endfbauth',
+                ' ',
+                ;
+            next;
+        };
 
-		s/…/.../g;
+        s/…/.../g;
 
         s/😁/\\Laughey[1.0][white]/g;
         s/😄/\\Laughey[1.0][white]/g;
-		s/🙂/\\Smiley[1.0][yellow]/g;
+        s/🙂/\\Smiley[1.0][yellow]/g;
 
         push @new,$_;
     }

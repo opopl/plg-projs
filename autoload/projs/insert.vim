@@ -198,6 +198,11 @@ function! projs#insert#t_file ()
 
 endfunction
 
+function! projs#insert#ii_fbauth ()
+  let proj = projs#proj#name()
+
+endfunction
+
 """pin_ii {
 function! projs#insert#ii ()
   let proj = projs#proj#name()
