@@ -7,10 +7,11 @@ This module implements LaTeX base classes that can be subclassed.
 """
 
 from collections import UserList
-from pylatex.utils import dumps_list
 from contextlib import contextmanager
 from .latex_object import LatexObject
 from .command import Command, Arguments
+
+from Extern.Pylatex.utils import dumps_list
 
 
 class Container(LatexObject, UserList):

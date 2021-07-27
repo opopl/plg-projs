@@ -18,4 +18,5 @@ doc.generate_tex('base')
 
 #d = Document()
 #d.generate_tex()
+doc.generate_tex('a')
 import pdb; pdb.set_trace()

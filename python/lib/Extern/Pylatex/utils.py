@@ -9,7 +9,8 @@ This module implements some simple utility functions.
 import os.path
 import shutil
 import tempfile
-import pylatex.base_classes
+
+import Extern.Pylatex.base_classes
 
 _latex_special_chars = {
     '&': r'\&',
@@ -214,7 +215,7 @@ def _latex_item_to_string(item, *, escape=False, as_content=False):
         Latex
     """
 
-    if isinstance(item, pylatex.base_classes.LatexObject):
+    if isinstance(item, Extern.Pylatex.base_classes.LatexObject):
         if as_content:
             return item.dumps_as_content()
         else:
