@@ -7,9 +7,10 @@ This module implements LaTeX base classes that can be subclassed.
 """
 
 from collections import UserList
-from contextlib import contextmanager
 from .latex_object import LatexObject
 from .command import Command, Arguments
+
+from contextlib import contextmanager
 
 from Extern.Pylatex.utils import dumps_list
 
@@ -110,7 +111,6 @@ class Container(LatexObject, UserList):
         self.data = prev_data
         self.append(child)
 
-
 class Environment(Container):
     r"""A base class for LaTeX environments.
 
@@ -158,7 +158,7 @@ class Environment(Container):
     def dumps(self):
         """Represent the environment as a string in LaTeX syntax.
 
-        Returns
+
         -------
         str
             A LaTeX string representing the environment.
@@ -177,8 +177,11 @@ class Environment(Container):
         else:
             extra_arguments = self.arguments
 
-        begin = Command('begin', self.start_arguments, self.options,
-                        extra_arguments=extra_arguments)
+        begin = Command('begin', 
+            self.start_arguments, 
+            self.options,
+            extra_arguments=extra_arguments
+        )
         begin.arguments._positional_args.insert(0, self.latex_name)
         string += begin.dumps() + self.content_separator
 

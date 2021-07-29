@@ -11,10 +11,11 @@ geometry_options = {
    "includeheadfoot" : True
 }
 
-doc = Document('basic',page_numbers=True, geometry_options=geometry_options)
+#doc = Document('basic',page_numbers=True, geometry_options=geometry_options)
+doc = Document(page_numbers=True, geometry_options=geometry_options)
 
-doc.packages.append(Package("caratula"))
-doc.generate_tex('base')
+#doc.packages.append(Package("caratula"))
+#doc.generate_tex('base')
 
 #d = Document()
 #d.generate_tex()

@@ -18,7 +18,7 @@ from .package import Package
 from .errors import CompilerError
 from .utils import dumps_list, rm_temp_dir, NoEscape
 
-import pylatex.config as cf
+import Extern.Pylatex.config as cf
 
 class Document(Environment):
     r"""
@@ -30,11 +30,22 @@ class Document(Environment):
 
     """
 
-    def __init__(self, default_filepath='default_filepath', *,
-                 documentclass='article', document_options=None, fontenc='T1',
-                 inputenc='utf8', font_size="normalsize", lmodern=True,
-                 textcomp=True, microtype=None, page_numbers=True, indent=None,
-                 geometry_options=None, data=None):
+    def __init__(self,
+                 data=None,
+                 *,
+                 default_filepath='default_filepath', 
+                 document_options=None, 
+                 documentclass='article',   
+                 font_size="normalsize", 
+                 fontenc='T1',
+                 geometry_options=None, 
+                 indent=None,
+                 inputenc='utf8', 
+                 lmodern=True,
+                 microtype=None, 
+                 page_numbers=True, 
+                 textcomp=True
+        ):
         r"""
         Args
         ----
@@ -55,7 +66,7 @@ class Document(Environment):
         lmodern: bool
             Use the Latin Modern font. This is a font that contains more glyphs
             than the standard LaTeX font.
-        textcomp: bool
+        textcomp:
             Adds even more glyphs, for instance the Euro (€) sign.
         page_numbers: bool
             Adds the ability to add the last page to the document.
