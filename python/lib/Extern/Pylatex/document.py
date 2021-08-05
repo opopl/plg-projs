@@ -41,10 +41,9 @@ class Document(Environment):
                  geometry_options=None, 
                  indent=None,
                  inputenc='utf8', 
-                 lmodern=True,
                  microtype=None, 
                  page_numbers=True, 
-                 textcomp=True
+                 packs=[]
         ):
         r"""
         Args
@@ -63,17 +62,8 @@ class Document(Environment):
             package will not be loaded at all.
         font_size: str
             The font size to declare as normalsize
-        lmodern: bool
-            Use the Latin Modern font. This is a font that contains more glyphs
-            than the standard LaTeX font.
-        textcomp:
-            Adds even more glyphs, for instance the Euro (€) sign.
         page_numbers: bool
             Adds the ability to add the last page to the document.
-        indent: bool
-            Determines whether or not the document requires indentation. If it
-            is `None` it will use the value from the active config. Which is
-            `True` by default.
         geometry_options: dict
             The options to supply to the geometry package
         data: list
@@ -90,15 +80,10 @@ class Document(Environment):
                                          options=document_options)
         if indent is None:
             indent = cf.active.indent
-        if microtype is None:
-            microtype = cf.active.microtype
 
         # These variables are used by the __repr__ method
         self._fontenc = fontenc
         self._inputenc = inputenc
-        self._lmodern = lmodern
-        self._indent = indent
-        self._microtype = microtype
 
         packages = []
 
@@ -106,16 +91,6 @@ class Document(Environment):
             packages.append(Package('fontenc', options=fontenc))
         if inputenc is not None:
             packages.append(Package('inputenc', options=inputenc))
-        if lmodern:
-            packages.append(Package('lmodern'))
-        if textcomp:
-            packages.append(Package('textcomp'))
-        if page_numbers:
-            packages.append(Package('lastpage'))
-        if not indent:
-            packages.append(Package('parskip'))
-        if microtype:
-            packages.append(Package('microtype'))
 
         if geometry_options is not None:
             packages.append(Package('geometry', options=geometry_options))
@@ -130,9 +105,6 @@ class Document(Environment):
         self.variables = []
 
         self.preamble = []
-
-        if not page_numbers:
-            self.change_document_style("empty")
 
         # No colors have been added to the document yet
         self.color = False
