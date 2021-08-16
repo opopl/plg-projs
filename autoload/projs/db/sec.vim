@@ -6,7 +6,7 @@ if 0
 endif
 
 function! projs#db#sec#add_tags ()
- let msg_a = [
+  let msg_a = [
     \  "Select proj: ",  
     \  ]
   let msg  = join(msg_a,"\n")
