@@ -254,10 +254,10 @@ sub get_opt {
 sub run_maker {
     my ($bld) = @_;
 
-    my $m = $bld->{maker};
+    my $mkr = $bld->{maker};
 
     local @ARGV = ();
-    $m->run;
+    $mkr->run;
 
     return $bld;
 }

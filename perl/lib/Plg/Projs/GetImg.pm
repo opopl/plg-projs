@@ -524,7 +524,7 @@ sub load_file {
         });
 
         my @m; push @m,
-			 'x' x 50,
+             'x' x 50,
              'Try downloading picture:',
              '  proj:     ' . $self->{proj},
              '  sec:      ' . $sec,
@@ -560,8 +560,8 @@ sub load_file {
         my $itp = image_type($img_file) || {};
         my $iif = image_info($img_file) || {};
 
-		my $media_type_str = $iif->{file_media_type} || '';
-		my ($img_type) = ( $media_type_str =~ m{image\/(\w+)} );
+        my $media_type_str = $iif->{file_media_type} || '';
+        my ($img_type) = ( $media_type_str =~ m{image\/(\w+)} );
         
         $img_err = $iif->{error};
         if ($img_err) {
@@ -575,41 +575,41 @@ sub load_file {
         }
 
         my $ft  = lc( $itp->{file_type} || '');
-		print qq{image file_type: $ft} . "\n";
+        print qq{image file_type: $ft} . "\n";
 
         $ft = 'jpg' if $ft eq 'jpeg';
 
         if ($ft) {
             if ($ft ne $ext) {
-	            $ext = $ft;
-	            my $img_new      = sprintf(q{%s.%s},$inum,$ext);
-	            $img = $img_new;
-	
-	            my $img_file_new = catfile($img_root,$img_new);
-	            move($img_file, $img_file_new);
-	            $img_file = $img_file_new;
+                $ext = $ft;
+                my $img_new      = sprintf(q{%s.%s},$inum,$ext);
+                $img = $img_new;
+    
+                my $img_file_new = catfile($img_root,$img_new);
+                move($img_file, $img_file_new);
+                $img_file = $img_file_new;
             }
 
-			if (grep { /^$ext$/ } qw(gif webp)) {
-				my $img_jpg = sprintf(q{%s.%s},$inum,'jpg');
-				my $cmd = sprintf(q{convert %s %s},$img_file, $img_jpg);
+            if (grep { /^$ext$/ } qw(gif webp)) {
+                my $img_jpg = sprintf(q{%s.%s},$inum,'jpg');
+                my $cmd = sprintf(q{convert %s %s},$img_file, $img_jpg);
 
-				printf(q{Convert: %s => %s} . "\n", basename($img_file), $img_jpg);
-				system("$cmd");
-				my $img_file_jpg = catfile($img_root,$img_jpg);
-				if (-e $img_file_jpg) {
-					print 'Convert OK' . "\n";
-					rmtree $img_file;
-					$img_file = $img_file_jpg;
-					$img = $img_jpg;
-				}
-			}
+                printf(q{Convert: %s => %s} . "\n", basename($img_file), $img_jpg);
+                system("$cmd");
+                my $img_file_jpg = catfile($img_root,$img_jpg);
+                if (-e $img_file_jpg) {
+                    print 'Convert OK' . "\n";
+                    rmtree $img_file;
+                    $img_file = $img_file_jpg;
+                    $img = $img_jpg;
+                }
+            }
         }
         $ext = undef;
 
-		print '=' x 50 . "\n";
-		print qq{Final image location: } . basename($img_file) . "\n";
-		print '=' x 50 . "\n";
+        print '=' x 50 . "\n";
+        print qq{Final image location: } . basename($img_file) . "\n";
+        print '=' x 50 . "\n";
 
         return 1;
     };

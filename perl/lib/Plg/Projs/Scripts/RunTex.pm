@@ -58,35 +58,36 @@ sub json_load {
     my ($self) = @_;
 
     my $j_file = 'run_tex.json';
-    if (-e $j_file) {
-        my $json = read_file $j_file;
-        my $coder = JSON::XS->new->ascii->pretty->allow_nonref;
-        my $h = $coder->decode($json);
-
-        my $in_data = $self->{in_data} = $h;
-
-        my $ind = $in_data->{bld}->{ind} || [];
-        my $obj_bld =  Plg::Projs::Prj::Builder->new(
-            root    => $in_data->{root} || '',
-            root_id => $in_data->{root_id} || '',
-            proj    => $in_data->{proj} || '',
-
-            prj_skip_db       => 1,
-            prj_skip_load_xml => 1,
-
-            bld_skip_init     => 1,
-            preamble => {
-                index => {
-                    ind => $ind, 
-                },
-            }
-        );
-        $self->{obj_bld} = $obj_bld;
-        print Dumper($ind) . "\n";
-
-    }else{
+    if (!-e $j_file) {
         warn qq{[RunTex] JSON input file absent: $j_file} . "\n";
-    }
+        return $self;
+
+    } 
+    
+    my $json = read_file $j_file;
+    my $coder = JSON::XS->new->ascii->pretty->allow_nonref;
+    my $h = $coder->decode($json);
+
+    my $in_data = $self->{in_data} = $h;
+
+    my $ind = $in_data->{bld}->{ind} || [];
+    my $obj_bld =  Plg::Projs::Prj::Builder->new(
+        root    => $in_data->{root} || '',
+        root_id => $in_data->{root_id} || '',
+        proj    => $in_data->{proj} || '',
+
+        prj_skip_db       => 1,
+        prj_skip_load_xml => 1,
+
+        bld_skip_init     => 1,
+        preamble => {
+            index => {
+                ind => $ind, 
+            },
+        }
+    );
+    $self->{obj_bld} = $obj_bld;
+    print Dumper($ind) . "\n";
 
     return $self;
 }
