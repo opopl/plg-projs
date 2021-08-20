@@ -35,6 +35,8 @@ use Base::DB qw(
     dbh_select_first
 );
 
+use Plg::Projs::Build::Maker::Jnd::Processor;
+
 ###jnd_compose
 sub cmd_jnd_compose {
     my ($mkr) = @_;
@@ -51,6 +53,8 @@ sub cmd_jnd_compose {
 
     my $jfile  = $mkr->_file_joined;
     my @jlines = read_file $jfile;
+
+    my $prc = Plg::Projs::Build::Maker::Jnd::Processor( jfile => $jfile );
 
     my @nlines;
     my ($is_img, $is_cmt);
