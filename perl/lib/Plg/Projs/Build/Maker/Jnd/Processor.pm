@@ -22,13 +22,16 @@ sub new
     return $prc;
 }
 
-
 sub init {
 	my ($self) = @_;
 	
 	#$self->SUPER::init();
 	
-	my $h = {};
+	my $h = {
+	   data => [],
+	   d => {},
+	   img_width_default => 0.7,
+	};
 		
 	hash_inject($self, $h);
 	return $self;
@@ -122,6 +125,46 @@ sub _tex_caption_tab {
 
   my @c; push @c, sprintf(q| \caption[%s]{%s} |, $c, $c_long );
   return @c;
+}
+
+# _width <=> $get_width
+sub _width {
+  my ($self) = @_;
+  my $w = $self->_val_('d width') || $self->_val_('tab width') || $self->{img_width_default};
+
+  return $w;
+}
+
+sub _width_tex {
+  my ($self) = @_;
+
+  my $w = $self->_width;
+  for($w){
+      /^(\d+(?:|\.\d+))$/ && do {
+          $w = qq{$w\\textwidth};
+      };
+      last;
+  }
+  return $w;
+}
+
+sub push_d {
+  my ($self) = @_;
+
+  my $d = $self->{d};
+
+  push @{$self->{data}}, { %$d } if keys %$d;
+
+  return $self;
+}
+
+sub push_d_reset {
+  my ($self) = @_;
+
+  $self->push_d;
+  $self->{d} = {};
+
+  return $self;
 }
 
 1;
