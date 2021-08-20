@@ -7,9 +7,13 @@ use warnings;
 use File::Slurp::Unicode;
 use File::Spec::Functions qw(catfile);
 
-use Base::Arg qw( hash_inject );
+use Base::Arg qw(
+  hash_inject
+  hash_update
+);
+
 use base qw(
-	Base::Obj
+    Base::Obj
 );
 
 sub new
@@ -23,18 +27,18 @@ sub new
 }
 
 sub init {
-	my ($self) = @_;
-	
-	#$self->SUPER::init();
-	
-	my $h = {
-	   data => [],
-	   d => {},
-	   img_width_default => 0.7,
-	};
-		
-	hash_inject($self, $h);
-	return $self;
+    my ($self) = @_;
+    
+    #$self->SUPER::init();
+    #
+    my $h = {
+       data => [],
+       d => {},
+       img_width_default => 0.7,
+    };
+ 
+    hash_inject($self, $h);
+    return $self;
 }
 
 
@@ -84,7 +88,7 @@ sub _tab_col_type_toggle {
     ( $ct eq 'cap') && do { $self->_tab_col_type('img'); last; };
     ( $ct eq 'img') && do { $self->_tab_col_type('cap'); last; };
 
-	last;
+    last;
   }
 
   return $self->_tab_col_type;
@@ -165,6 +169,59 @@ sub push_d_reset {
   $self->{d} = {};
 
   return $self;
+}
+
+sub _tex_caption {
+  my ($self) = @_;
+
+  $self->{caption} ? ( sprintf(q| \caption{%s} |, $self->{caption} ) ) : ();
+}
+
+sub set_null {
+  my ($self) = @_;
+
+  my $h = {
+     fig     => [],
+     d       => {},
+     caption => '',
+     tab     => undef,
+  };
+
+  hash_update($self,$h);
+
+  return $self;
+}
+
+sub _fig_env {
+  my ($self) = @_;
+
+  $self->_val_('tab fig_env') || $self->_val_('d fig_env') || 'figure';
+
+}
+
+sub _fig_start {
+  my ($self) = @_;
+
+  return () if $self->_fig_skip;
+
+  my @s;
+  my $fe = $self->_fig_env;
+  for($fe){
+      /^(figure)/ && do {
+          push @s,
+              q|\begin{figure}[ht] |,
+              q|  \centering |;
+          last;
+      };
+      /^(wrapfigure)/ && do {
+          push @s, sprintf(q/\begin{%s}{R}{%s}/, $fe, $self->_width_tex );
+          last;
+      };
+
+      last;
+   }
+
+   return @s;
 }
 
 1;
