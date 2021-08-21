@@ -54,7 +54,12 @@ sub cmd_jnd_compose {
     my $jfile  = $mkr->_file_joined;
     my @jlines = read_file $jfile;
 
-	my $prc = Plg::Projs::Build::Maker::Jnd::Processor->new( jfile => $jfile );
+    my $prc = Plg::Projs::Build::Maker::Jnd::Processor->new(
+        jfile => $jfile,
+        root  => $root,
+        proj  => $proj,
+        mkr   => $mkr,
+    );
 
     my @nlines;
     my ($is_img, $is_cmt);
