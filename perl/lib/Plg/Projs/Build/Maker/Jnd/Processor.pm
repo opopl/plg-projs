@@ -270,6 +270,232 @@ sub _fig_skip {
   return $self;
 }
 
+sub match_author_end {
+  my ($self) = @_;
+
+  my $mkr = $self->{mkr};
+
+  local $_ = $self->{line};
+
+  my @author_ids = split("," => $self->_val_('d_author author_d') || '');
+  return $self unless @author_ids;
+
+  foreach my $author_id (@author_ids) {
+     my $prj    = $mkr->{prj};
+     my $author = $prj->_author_get({ author_id => $author_id });
+
+     $author =~ s/\(/ \\textbraceleft /g;
+     $author =~ s/\)/ \\textbraceright /g;
+
+     push @{$self->{nlines}}, sprintf(q{\Pauthor{%s}}, $author) if $author;
+
+     $self->{d_author} = undef;
+
+  }
+
+  return $self;
+}
+
+sub match_fi {
+  my ($self) = @_;
+
+  my $mkr = $self->{mkr};
+
+  local $_ = $self->{line};
+
+  unless($self->{is_cmt}){
+      push @{$self->{nlines}},$_; return $self;
+  }
+    
+  if ($self->{is_img}) {
+      $self->{is_img} = 0;
+      $self->push_d_reset;
+  }
+    
+  $self->{is_cmt} = 0 if $self->{is_cmt}; 
+
+  return $self unless @{$self->{data}};
+
+  ###if_tab_push_tab_start
+  if ($self->{tab}) {
+      $self->tab_defaults;
+  
+      $self->{tab}->{width} ||= ( $self->{img_width_default} / $self->{tab}->{cols} );
+      push @{$self->{fig}}, $self->_fig_start, $self->_tab_start;
+  }
+
+###while_@data
+  while(1){
+      $self->{ct}   = $self->_tab_col_type;
+
+###if_ct_img
+      if (@{$self->{data}} && (!$self->{ct} || ($self->{ct} eq 'img')) ){
+          $self->{d} = shift @{$self->{data}} || {};
+          $self->{img} = undef;
+
+          my $w = {};
+          for(qw( url name )){
+             $w->{$_}  = $self->{d}->{$_} if $self->{d}->{$_};
+          }
+
+          my ($rows, $cols, $q, $p) = dbh_select({
+              dbh => $mkr->{dbh_img},
+              q   => q{ SELECT img, caption, url FROM imgs },
+              p   => [],
+              w   => $w,
+          });
+
+          unless (@$rows) {
+               my $url = $self->{url};
+               my $r = {    
+                   msg => q{ No image found in Database! },
+                   url => $url,
+               };
+               warn Dumper($r) . "\n";
+               push @{$self->{nlines}}, qq{%Image not found: $url };
+               next;
+          }
+
+          next unless @$rows;
+
+          $self->{$_} = $self->{d}->{$_} for @{$self->{keys}};
+
+          $self->{caption} = texify($self->{caption}) if $self->{caption};
+
+###if_tab_push_row_caps
+          if ($self->{tab}) {
+              my $tab = $self->{tab};
+    
+              my $i_col = $tab->{i_col};
+
+              if ($self->{caption}) {
+                  $tab->{row_caps}->{$i_col} = { 
+                       caption => $self->{caption},
+                       i_cap   => $tab->{i_cap},
+                  };
+     
+                  push @{$tab->{cap_list}},
+                  { 
+                      i_col   => $tab->{i_col},
+                      i_row   => $tab->{i_row},
+                      i_cap   => $tab->{i_cap},
+                      caption => $self->{caption},
+                  }
+                  ;
+                  $tab->{i_cap}++;
+              }
+          }
+
+          $self->{img_width} = $self->_width;
+
+          if (@$rows == 1) {
+              my $rw = shift @$rows;
+              $rows = [];
+     
+              $self->{$_} = $rw->{$_} for(qw(img));
+      
+              my $img_path = sprintf(q{\imgroot/%s},$self->{img});
+      
+              my $img_file = catfile($mkr->{img_root},$self->{img});
+              unless (-e $img_file) {
+                  my $r = {    
+                      msg => q{Image file not found!},
+                      img => $self->{img},
+                      url => $self->{url},
+                  };
+                  warn Dumper($r) . "\n";
+                  next;
+              }
+
+              push @{$self->{fig}},$self->_fig_start unless $self->{tab};
+
+              my $o = sprintf(q{ width=%s\textwidth },$self->{img_width});
+###push_includegraphics
+
+              push @{$self->{fig}}, 
+                 $self->{tab} ? (sprintf('%% row: %s, col: %s ', @{$self->{tab}}{qw(i_row i_col)})) : (),
+             #sprintf(q|%% %s|,$url),
+                 sprintf(q|  \includegraphics[%s]{%s} |, $o, $self->{img_path} ),
+                 $self->{caption} ? (sprintf(q|%% %s|,$self->{caption})) : (),
+             ;
+          }
+
+###end_if_ct_img
+      }elsif($self->{ct} && ($self->{ct} eq 'cap')){
+          #print join(" ",qq{$ct},@{$tab}{qw(i_col i_row)}) . "\n" if $ct;
+          my $num_cap = $self->_tab_num_cap;
+          push @{$self->{fig}}, sprintf('(%s)',$num_cap) if $num_cap;
+
+      }else{
+          last;
+      }
+###end_if_ct_cap
+
+###if_tab_col
+      if ($self->{tab}) {
+          my $tab = $self->{tab};
+          my $ct = $self->{ct};
+  
+          $self->{caption} = undef;
+          my ($s, %caps);
+  
+          %caps = %{$self->_val_('tab row_caps')};
+  
+          my $at_end = ( $self->_val_('tab i_col') == $self->_val_('tab cols') ) ? 1 : 0;
+          if ($at_end) {
+
+              $tab->{i_col} = 1;
+  
+              $tab->{i_row}++ if $ct eq 'img';
+              $tab->{row_caps} = {} if $ct eq 'cap';
+  
+              unless(@{$self->{data}}){
+                  last unless keys %caps;
+              }
+
+###call_tab_col_toggle
+                     # if there are any captions, switch row type to 'cap'
+              $ct = $self->_tab_col_type_toggle if keys %caps;
+  
+              $s = q{\\\\};
+          }else{
+              $s = q{&};
+              $tab->{i_col}++;
+          }
+  
+          push @{$self->{fig}}, $s;
+
+      }elsif(keys %{$self->{d}}){
+                 #print Dumper({ '$d' => $d }) . "\n";
+###push_fig_end
+          push @{$self->{fig}}, $self->_tex_caption, $self->_fig_end;
+
+      }
+
+      unless (@{$self->{data}}) {
+          my $ct = $self->{ct};
+          my $tab = $self->{tab};
+    
+          do { last; } unless $ct;
+          do { last; } if ( $ct eq 'cap' ) && ($tab->{i_col} == $tab->{cols});
+      }
+      next;
+  }
+###end_loop_@data
+
+  if($self->{tab}){
+      push @{$self->{fig}}, 
+          $self->_tab_end, $self->_tex_caption_tab,
+          $self->_fig_end;
+  }
+
+  push @{$self->{nlines}}, @{$self->{fig}};
+
+  $self->_set_null;
+
+  return $self;
+}
+
 sub loop {
   my ($self) = @_;
 
@@ -292,229 +518,17 @@ sub loop {
 ###m_\ifcmt
     m/^\s*\\ifcmt/ && do { $self->{is_cmt} = 1; next; };
 ###m_\fi
-    m/^\s*\\fi/ && do { 
-       unless($self->{is_cmt}){
-          push @{$self->{nlines}},$_; next;
-       }
+    m/^\s*\\fi/ && do { $self->match_fi; next; };
 
-       if ($self->{is_img}) {
-          $self->{is_img} = 0;
-          $self->push_d_reset;
-       }
-
-       $self->{is_cmt} = 0 if $self->{is_cmt}; 
-
-       next unless @{$self->{data}};
-
-###if_tab_push_tab_start
-       if ($self->{tab}) {
-         $self->tab_defaults;
-
-         $self->{tab}->{width} ||= ( $self->{img_width_default} / $self->{tab}->{cols} );
-         push @{$self->{fig}}, $self->_fig_start, $self->_tab_start;
-       }
-
-       #print join(" ", $lnum,  scalar @data ) . "\n";
-
-###while_@data
-       while(1){
-         $self->{ct}   = $self->_tab_col_type;
-
-###if_ct_img
-         if (@{$self->{data}} && (!$self->{ct} || ($self->{ct} eq 'img')) ){
-            $self->{d} = shift @{$self->{data}} || {};
-            $self->{img} = undef;
-    
-            my $w = {};
-            for(qw( url name )){
-               $w->{$_}  = $self->{d}->{$_} if $self->{d}->{$_};
-            }
-    
-            my ($rows, $cols, $q, $p) = dbh_select({
-                 dbh => $mkr->{dbh_img},
-                 q   => q{ SELECT img, caption, url FROM imgs },
-                 p   => [],
-                 w   => $w,
-            });
-
-            unless (@$rows) {
-                 my $url = $self->{url};
-                 my $r = {    
-                     msg => q{ No image found in Database! },
-                     url => $url,
-                 };
-                 warn Dumper($r) . "\n";
-                 push @{$self->{nlines}}, qq{%Image not found: $url };
-                 next;
-            }
-
-            next unless @$rows;
-
-            $self->{$_} = $self->{d}->{$_} for @{$self->{keys}};
-    
-            $self->{caption} = texify($self->{caption}) if $self->{caption};
-
-###if_tab_push_row_caps
-            if ($self->{tab}) {
-               my $tab = $self->{tab};
-
-               my $i_col = $tab->{i_col};
-    
-               if ($self->{caption}) {
-                  $tab->{row_caps}->{$i_col} = { 
-                      caption => $self->{caption},
-                      i_cap   => $tab->{i_cap},
-                  };
-        
-	              push @{$tab->{cap_list}},
-	                 { 
-	                     i_col   => $tab->{i_col},
-	                     i_row   => $tab->{i_row},
-	                     i_cap   => $tab->{i_cap},
-	                     caption => $self->{caption},
-	                 }
-                     ;
-                  $tab->{i_cap}++;
-               }
-            }
-
-            $self->{img_width} = $self->_width;
-    
-            if (@$rows == 1) {
-                my $rw = shift @$rows;
-                $rows = [];
-
-                $self->{$_} = $rw->{$_} for(qw(img));
-        
-                my $img_path = sprintf(q{\imgroot/%s},$self->{img});
-        
-                my $img_file = catfile($mkr->{img_root},$self->{img});
-                unless (-e $img_file) {
-                    my $r = {    
-                        msg => q{Image file not found!},
-                        img => $self->{img},
-                        url => $self->{url},
-                    };
-                    warn Dumper($r) . "\n";
-                    next;
-                }
-    
-                push @{$self->{fig}},$self->_fig_start unless $self->{tab};
-
-                my $o = sprintf(q{ width=%s\textwidth },$self->{img_width});
-###push_includegraphics
-
-                push @{$self->{fig}}, 
-                    $self->{tab} ? (sprintf('%% row: %s, col: %s ', @{$self->{tab}}{qw(i_row i_col)})) : (),
-                    #sprintf(q|%% %s|,$url),
-                    sprintf(q|  \includegraphics[%s]{%s} |, $o, $self->{img_path} ),
-                    $self->{caption} ? (sprintf(q|%% %s|,$self->{caption})) : (),
-                    ;
-            }
-
-###end_if_ct_img
-         }elsif($self->{ct} && ($self->{ct} eq 'cap')){
-            #print join(" ",qq{$ct},@{$tab}{qw(i_col i_row)}) . "\n" if $ct;
-            my $num_cap = $self->_tab_num_cap;
-            push @{$self->{fig}}, sprintf('(%s)',$num_cap) if $num_cap;
-
-	     }else{
-            last;
-         }
-###end_if_ct_cap
-
-###if_tab_col
-         if ($self->{tab}) {
-            my $tab = $self->{tab};
-            my $ct = $self->{ct};
-
-            $self->{caption} = undef;
-            my ($s, %caps);
-
-            %caps = %{$self->_val_('tab row_caps')};
-
-            my $at_end = ( $self->_val_('tab i_col') == $self->_val_('tab cols') ) ? 1 : 0;
-            if ($at_end) {
-
-               $tab->{i_col} = 1;
-
-               $tab->{i_row}++ if $ct eq 'img';
-               $tab->{row_caps} = {} if $ct eq 'cap';
-
-               unless(@{$self->{data}}){
-                   last unless keys %caps;
-               }
-
-###call_tab_col_toggle
-                            # if there are any captions, switch row type to 'cap'
-               $ct = $self->_tab_col_type_toggle if keys %caps;
-
-               $s = q{\\\\};
-             }else{
-               $s = q{&};
-               $tab->{i_col}++;
-             }
-
-             push @{$self->{fig}}, $s;
-
-         }elsif(keys %{$self->{d}}){
-                        #print Dumper({ '$d' => $d }) . "\n";
-###push_fig_end
-             push @{$self->{fig}}, $self->_tex_caption, $self->_fig_end;
-
-         }
-
-         unless (@{$self->{data}}) {
-             my $ct = $self->{ct};
-             my $tab = $self->{tab};
-
-             do { last; } unless $ct;
-             do { last; } if ( $ct eq 'cap' ) && ($tab->{i_col} == $tab->{cols});
-         }
-                next;
-       }
-###end_loop_@data
-
-       if($self->{tab}){
-         push @{$self->{fig}}, 
-            $self->_tab_end, $self->_tex_caption_tab,
-            $self->_fig_end;
-       }
-
-       push @{$self->{nlines}}, @{$self->{fig}};
-
-       $self->_set_null;
-
-       next LINES; 
-   };
-###end_m_\fi
-
-   unless($self->{is_cmt}){ push @{$self->{nlines}}, $_; next; }
+    unless($self->{is_cmt}){ push @{$self->{nlines}}, $_; next; }
 
 ###m_author_begin
    m/^\s*author_begin\b(.*)$/g && do { 
       $self->{d_author} = {};
    };
 
-###m_author_end
-   m/^\s*author_end\b(.*)$/g && do { 
-      my @author_ids = split("," => $self->_val_('d_author author_d') || '');
-      next unless @author_ids;
+   m/^\s*author_end\b(.*)$/g && do { $self->match_author_end; next; };
 
-      foreach my $author_id (@author_ids) {
-         my $prj    = $mkr->{prj};
-         my $author = $prj->_author_get({ author_id => $author_id });
-    
-         $author =~ s/\(/ \\textbraceleft /g;
-         $author =~ s/\)/ \\textbraceright /g;
-    
-         push @{$self->{nlines}}, sprintf(q{\Pauthor{%s}}, $author) if $author;
-    
-         $self->{d_author} = undef;
-
-      }
-      next;
-   };
 
    if ($self->{d_author}) {
       m/^\s*(\w+)\s+(\S+)\s*$/g && do { 
