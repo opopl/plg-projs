@@ -37,6 +37,10 @@ class LTS(CoreClass,mixLogger,mixCmdRunner,mixGetOpt):
 
     return self
 
+  def sec_author_add(self,ref={}):
+
+    return self
+
   def get_opt_apply(self):
     if not self.oa:
       return self

@@ -92,10 +92,11 @@ sub _tab_end {
   $env ? sprintf(q| \end{%s}|,$env) : '';
 }
 
-sub tab_defaults {
+sub tab_init {
   my $self = shift;
 
-  return unless $self->{tab};
+  $self->{tab} = {};
+
   my $h = {
       cols       => 2,
       align      => 'c',
@@ -109,7 +110,6 @@ sub tab_defaults {
 
   return $self;
 }
-
 
 
 sub _tab_start {
@@ -275,7 +275,7 @@ sub match_tab_begin {
 
   return $self unless defined $opts_s;
 
-  $self->tab_defaults;
+  $self->tab_init;
 
   my @tab_opts = grep { length } map { defined ? trim($_) : () } split("," => $opts_s);
   for(@tab_opts){
@@ -496,6 +496,11 @@ sub loop {
     }
 
     m/^\s*%/ && do { push @{$self->{nlines}},$_; next; };
+
+    m/^\s*tex\s+(.*)$/g && do {
+        my $tex = trim($1);
+        push @{$self->{nlines}},$tex; next;
+    };
 
     m/^\s*author_end\s*$/g && do { $self->match_author_end; next; };
     m/^\s*author_begin\s*$/g && do { $self->match_author_begin; next; };
