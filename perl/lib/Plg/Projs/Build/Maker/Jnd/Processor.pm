@@ -12,8 +12,15 @@ use Base::Arg qw(
   hash_update
 );
 
+use String::Util qw(trim);
+
 use Base::String qw(
   str_split
+);
+
+use Base::DB qw(
+    dbh_select
+    dbh_select_first
 );
 
 use Plg::Projs::Tex qw(
@@ -46,14 +53,15 @@ sub init {
     #$self->SUPER::init();
     #
     my $h = {
-       data => [],
-       d => {},
+       d        => undef,
        d_author => undef,
-       tab => undef,
+       tab      => undef,
 
-       img_width => undef,
-       img_width_default => 0.7,
+       img_width_default => 0.9,
        keys => [qw(url caption tags name)],
+
+       jfile  => undef,
+       jlines => [],
        nlines => [],
 
        img      => undef,
@@ -61,12 +69,8 @@ sub init {
        url      => undef,
        caption  => undef,
 
-       is_img => undef,
-       is_tab => undef,
        is_cmt => undef,
        lnum => 0,
-
-       ct => undef,
 
        root => undef,
        proj => undef,
@@ -106,14 +110,6 @@ sub tab_defaults {
   return $self;
 }
 
-sub _tab_col_type {
-  my ($self, $type) = @_;
-  return unless $self->{tab};
-
-  $self->{tab}->{col_type} = $type if $type;
-  
-  return $self->_val_('tab col_type');
-}
 
 
 sub _tab_start {
@@ -132,8 +128,14 @@ sub _tex_caption_tab {
   my $c = $tab->{caption} || '';
   return () unless $c;
 
-  my $i_cap;
-  my @caps = map { BEGIN { $i_cap = 0 }; $i_cap++; sprintf('\textbf{(%s)} %s', $i_cap, @{$_}{qw(caption)}) } @{$tab->{cap_list}};
+  my $i_cap = 0;
+  my @caps;
+    
+  for(@{$tab->{cap_list}}){
+     $i_cap++;
+     push @caps, 
+        sprintf('\textbf{(%s)} %s', $i_cap, @{$_}{qw(caption)});
+  }
   my $c_long = join(" ", $c, @caps );
 
   my @c; push @c, sprintf(q| \caption[%s]{%s} |, $c, $c_long );
@@ -215,9 +217,9 @@ sub _fig_skip {
   my ($self) = @_;
 
   my $t = $self->_val_('d type') || '';
-  (grep { /^$t$/ } qw(ig)) ? 1 : 0;
+  my $skip = (grep { /^$t$/ } qw(ig)) ? 1 : 0;
 
-  return $self;
+  return $skip;
 }
 
 sub match_author_id {
@@ -310,6 +312,7 @@ sub lpush_d {
   
   my $d = $self->{d};
   return $self unless $d;
+
 
   push @{$self->{nlines}},$self->_d2tex;
 
@@ -431,6 +434,38 @@ sub _d2tex {
   return @tex;
 }
 
+sub f_read {
+  my ($self, $ref) = @_;
+
+  $ref ||= {};
+
+  my $file = $ref->{file} || $self->{jfile};
+
+  push @{$self->{jlines}}, read_file $file;
+
+  return $self;
+}
+
+sub f_write {
+  my ($self, $ref) = @_;
+
+  my $mkr = $self->{mkr};
+
+  $ref ||= {};
+
+  my $file = $ref->{file} || $self->{jfile};
+
+  unshift @{$self->{nlines}},
+        ' ',
+        sprintf(q{\def\imgroot{%s}}, $mkr->{img_root_unix} ),
+        ' '
+        ;
+
+  write_file($file,join("\n",@{$self->{nlines}}) . "\n");
+
+  return $self;
+}
+
 sub loop {
   my ($self) = @_;
 
@@ -471,23 +506,27 @@ sub loop {
     m/^\s*tab_end\s*$/g && do { $self->match_tab_end; next; };
 
     m/^\s*(pic|doc|ig)\s+(.*)$/g && do { 
+       my $v = trim($2);
+
        $self->lpush_d;
 
-       $self->{url} = $2;
+       $self->{url} = $v;
        $self->{d} = { 
-           url  => $self->{url},
-           type => 1,
+          url  => $self->{url},
+          type => $1,
        };
 
        next;
     };
 
     m/^\s*(\w+)\s+(.*)$/g && do { 
+      my $v = trim($2);
+
       if($self->{d}){
-         $self->{d}->{$1} = $2;
+         $self->{d}->{$1} = $v;
 
       }elsif($self->{tab}){
-         $self->{tab}->{$1} = $2;
+         $self->{tab}->{$1} = $v;
       }
 
       next;
