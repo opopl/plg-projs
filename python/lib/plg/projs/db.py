@@ -6,6 +6,7 @@ import sqlparse
 import sys
 
 import Base.DBW as dbw
+import Base.Util as util
 
 #import pprint
 #pp = pprint.PrettyPrinter(indent=4)
@@ -15,9 +16,12 @@ p = {
     'proj_file'  : re.compile('^(\w+)\.(?:(.*)\.|)(tex|pl|vim)'), 
     'tags'       : re.compile('^\s*%%tags (.*)$'),
     'author'     : re.compile('^\s*%%author (.*)$'),
+    'author_id'  : re.compile('^\s*%%author_id (.*)$'),
     'url'        : re.compile('^\s*%%url (.*)$'),
     'title'      : re.compile('^\s*%%title (.*)$'),
-   }
+}
+
+p_keys = util.qw('tags author author_id url title')
 
 def create_tables(db_file, sql_file):
   conn = sqlite3.connect(db_file)
@@ -106,7 +110,7 @@ def get_data(filename):
     except UnicodeDecodeError as e:
       print(e,filename)
     if line:
-      for k in ['tags','author','url','title']:
+      for k in p_keys:
         m = p[k].match(line)
         if m:
            data[k] = m.group(1)
