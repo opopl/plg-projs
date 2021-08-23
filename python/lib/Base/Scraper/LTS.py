@@ -19,10 +19,18 @@ class LTS(CoreClass,mixLogger,mixCmdRunner,mixGetOpt):
         This script is for handling LTS
   '''
 
+  opts_argparse = [
+    {
+       'arr' : '-c --cmd',
+       'kwd' : { 'help'    : 'Run command(s)' }
+    }
+  ]
+
   #skip_get_opt = False
 
   def __init__(self,args={}):
     self.lts_root  = os.environ.get('P_SR')
+    self.proj      = 'letopis'
 
     for k, v in args.items():
       setattr(self, k, v)
@@ -37,7 +45,17 @@ class LTS(CoreClass,mixLogger,mixCmdRunner,mixGetOpt):
 
     return self
 
+  def _sec_file(self,ref={}):
+    sec = ref.get('sec','')
+
+    sec_file = os.path.join( self.lts_root, f'{self.proj}.{sec}.tex' )
+
+    return sec_file
+
   def sec_author_add(self,ref={}):
+    sec = ref.get('sec','')
+
+    sec_file = self._sec_file({ 'sec' : sec })
 
     return self
 
