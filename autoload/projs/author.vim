@@ -112,7 +112,7 @@ function! projs#author#select_id (...)
 
   let author_id = get(ref,'author_id','')
 
-  let ids = projs#author#ids()
+  let ids = projs#author#ids_db()
 
   let rootid = projs#rootid()
 

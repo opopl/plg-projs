@@ -279,6 +279,7 @@ class LTS(
               'insert'  : d_auth,
               'on_list' : [ 'id' ]
           }
+
           dbw.insert_update_dict(d)
 
           # table: auth_details in html_root/h.db
@@ -296,11 +297,19 @@ class LTS(
               'on_list' : [ 'id', 'fb_id' ]
             }
             dbw.insert_update_dict(d)
-          #print(f'{author_name} => {author_plain}')
+
+    r_db = { 'db_file' : db_file }
+
+    cnt = {}
+    for t in util.qw('authors auth_details'):
+      cnt[t] = dbw.sql_fetchval(f'select count(*) from {t}',[],r_db)
+
+    print(f'Count(authors):      {cnt["authors"]}')
+    print(f'Count(auth_details): {cnt["auth_details"]}')
 
     return self
 
-  def author_add(self, ref = {}):
+  def sec_author_add(self, ref = {}):
     sec       = ref.get('sec','')
     author_id = ref.get('author_id','')
 
@@ -320,7 +329,7 @@ class LTS(
 
     return self
 
-  def author_rm(self, ref = {}):
+  def sec_author_rm(self, ref = {}):
     sec       = ref.get('sec','')
     author_id = ref.get('author_id','')
 

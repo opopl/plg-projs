@@ -270,10 +270,10 @@ def readdict(dat_file, opts={}):
         if re.match(r'^#',line) or (len(line) == 0):
           continue
 
-        m = re.match(r'^\s*(\w+)\s+(.*)$',line)
+        m = re.match(r'^\s*(\S+)\s+(.*)$',line)
         if m:
-          key = m.group(1)
-          value = m.group(2)
+          key = m.group(1).strip()
+          value = m.group(2).strip()
           dict.update({ key : value })
 
     return dict

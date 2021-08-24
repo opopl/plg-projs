@@ -250,6 +250,21 @@ if 0
       projs#author#get
 endif
 
+function! projs#insert#ii_url_new ()
+  let proj   = projs#proj#name()
+  let rootid = projs#rootid()
+
+  let sec    = projs#buf#sec()
+
+	let msg = [ 'start' ]
+	let prf = { 'plugin' : 'projs', 'func' : 'projs#insert#ii_url' }
+	call base#log(msg, prf)
+
+  let ii_prefix = printf('%s.', sec)
+  let list  = matchlist(sec,'^\(\w\+\)_\(\d\+\)$')
+
+endif
+
 """pin_ii_url {
 function! projs#insert#ii_url ()
   let proj   = projs#proj#name()
