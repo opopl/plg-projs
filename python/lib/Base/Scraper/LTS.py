@@ -71,6 +71,30 @@ class LTS(
 
     return sec_file
 
+  def _author_id_remove(self, ids_in = [], ids_remove = []):
+
+    ids_in_a     = []
+    ids_remove_a = []
+
+    ids_new_a    = []
+
+    for id in ids_in:
+      ids = string.split_n_trim(id, sep = ',')
+      ids_in_a.extend(ids)
+
+    for id in ids_remove:
+      ids = string.split_n_trim(id, sep = ',')
+      ids_remove_a.extend(ids)
+
+    for id in ids_in_a:
+      if not id in ids_remove_a:
+        ids_new_a.append(id)
+
+    ids_new_a = util.uniq(ids_new_a)
+    ids_new   = ','.join(ids_new_a)
+
+    return ids_new
+
   def _author_id_merge(self,ids_in = []):
     ids_merged = []
     for id in ids_in:
@@ -116,12 +140,20 @@ class LTS(
           for action in actions:
             name = action.get('name','')
             args = action.get('args',[])
+
             if name in [ '_author_id_merge' ]:
               if len(args):
                 author_id  = args[0].get('author_id','')
                 if author_id:
                   ids_merged = util.call(self, name, [ [ a_id, author_id ] ])
                   self.line = f'%%author_id {ids_merged}'
+
+            if name in [ '_author_id_remove' ]:
+              if len(args):
+                author_id  = args[0].get('author_id','')
+                if author_id:
+                  ids_new = util.call(self, name, [ [ a_id ] , [ author_id ] ])
+                  self.line = f'%%author_id {ids_new}'
 
       if flags.get('seccmd'):
         m = ree.match('tex.projs.ifcmt',self.line)
@@ -147,6 +179,7 @@ class LTS(
               for action in actions:
                 name = action.get('name','')
                 args = action.get('args',[])
+
                 if name in [ '_author_id_merge' ]:
                   if len(args):
                     author_id  = args[0].get('author_id','')
@@ -154,7 +187,32 @@ class LTS(
                       ids_merged = util.call(self, name, [ [ a_id, author_id ] ])
                       self.line = f'{indent}author_id {ids_merged}'
 
+                if name in [ '_author_id_remove' ]:
+                  if len(args):
+                    author_id  = args[0].get('author_id','')
+                    if author_id:
+                      ids_new = util.call(self, name, [ [ a_id ], [ author_id ] ])
+                      self.line = f'{indent}author_id {ids_new}'
+
       self.nlines.append(self.line)
+
+    return self
+
+  def sec_process(self,ref={}):
+    sec       = ref.get('sec','')
+
+    lines_ref = ref.get('lines',{})
+
+    sec_file = self._sec_file({ 'sec' : sec })
+
+    if os.path.isfile(sec_file):
+      self.nlines = []
+      with open(sec_file,'r') as f:
+        self.lines = f.readlines()
+        self.lines_tex_process(lines_ref)
+
+    with open(sec_file, 'w', encoding='utf8') as f:
+      f.write('\n'.join(self.nlines) + '\n')
 
     return self
 
@@ -162,23 +220,39 @@ class LTS(
     sec       = ref.get('sec','')
     author_id = ref.get('author_id','')
 
-    sec_file = self._sec_file({ 'sec' : sec })
+    lines_ref = {
+      'actions' : [
+          {
+            'name' : '_author_id_merge',
+            'args' : [ { 'author_id' : author_id } ]
+          }
+       ]
+    }
 
-    if os.path.isfile(sec_file):
-      nlines = []
-      with open(sec_file,'r') as f:
-        self.lines = f.readlines()
-        self.lines_tex_process({
-           'actions' : [
-               {
-                 'name' : '_author_id_merge',
-                 'args' : [ { 'author_id' : author_id } ]
-               }
-            ]
-        })
+    self.sec_process({
+      'lines' : lines_ref,
+      'sec'   : sec,
+    })
 
-    with open(sec_file, 'w', encoding='utf8') as f:
-      f.write('\n'.join(self.nlines) + '\n')
+    return self
+
+  def author_rm(self,ref={}):
+    sec       = ref.get('sec','')
+    author_id = ref.get('author_id','')
+
+    lines_ref = {
+      'actions' : [
+          {
+            'name' : '_author_id_remove',
+            'args' : [ { 'author_id' : author_id } ]
+          }
+       ]
+    }
+
+    self.sec_process({
+      'lines' : lines_ref,
+      'sec'   : sec,
+    })
 
     return self
 
