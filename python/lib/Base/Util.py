@@ -17,7 +17,6 @@ import re
 
 MATCH_ALL = r'.*'
 
-
 #https://stackoverflow.com/questions/31958637/beautifulsoup-search-by-text-inside-a-tag
 def bs_like(string):
     """
@@ -259,6 +258,26 @@ def add_libs(libs):
     if not lib in sys.path:
       sys.path.append(lib)
 
+def readdict(dat_file, opts={}):
+    dict = {}
+    if not (dat_file and os.path.isfile(dat_file)):
+      return {}
+
+    with open(dat_file,'r',encoding='utf8') as f:
+      lines = f.readlines()
+      while len(lines):
+        line = lines.pop(0).strip()
+        if re.match(r'^#',line) or (len(line) == 0):
+          continue
+
+        m = re.match(r'^\s*(\w+)\s+(.*)$',line)
+        if m:
+          key = m.group(1)
+          value = m.group(2)
+          dict.update({ key : value })
+
+    return dict
+
 def readarr(dat_file, opts={}):
     splitsep = opts.get('sep', re.compile(r'\s+'))
 
@@ -266,7 +285,7 @@ def readarr(dat_file, opts={}):
     if not (dat_file and os.path.isfile(dat_file)):
       return []
 
-    with open(dat_file,'r') as f:
+    with open(dat_file,'r',encoding='utf8') as f:
       lines = f.readlines()
 
     for line in lines:

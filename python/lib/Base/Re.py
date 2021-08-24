@@ -18,6 +18,14 @@ pats = {
         'author_id'    : r'^(\s*)author_id\s+(.*)$' ,
       }
     }
+  },
+  'idat' : {
+     'dict' : r'^(\w+)\s+(.*)$'
+  },
+  'author' : {
+    'bare' : {
+      'inverted' : r'^([^,]+),([^,]+)$'
+    }
   }
 }
 

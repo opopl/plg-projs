@@ -216,7 +216,79 @@ class LTS(
 
     return self
 
-  def author_add(self,ref={}):
+  def import_auth2db(self, ref = {}):
+    authors_file = os.path.join(self.lts_root,'data', 'dict', 'authors.i.dat')
+    fb_authors_file = os.path.join(self.lts_root,'data', 'dict', 'fb_authors.i.dat')
+
+    names_file = os.path.join(self.lts_root,'scrape','bs','in','lists','names_first.i.dat')
+    names_first = util.readarr(names_file)
+
+    fb_authors = util.readdict(fb_authors_file)
+
+    with open(authors_file,'r',encoding='utf8') as f:
+      self.lines = f.readlines()
+      while len(self.lines):
+        self.line = self.lines.pop(0).strip('\n')
+        if re.match(r'^#',self.line) or (len(self.line) == 0):
+          continue
+
+        m = ree.match('idat.dict',self.line)
+        if m:
+          author_id    = m.group(1)
+
+          # facebook ids corresponding to single author_id
+          fb_ids = []
+
+          # incoming author string
+          author_bare  = m.group(2)
+
+          # plain author name
+          author_plain = author_bare
+
+          # inverted if needed
+          author_name  = author_bare
+
+          m = ree.match('author.bare.inverted',author_bare)
+          if m:
+            last_name  = m.group(1).strip()
+            first_name = m.group(2).strip()
+            author_plain = f'{first_name} {last_name}'
+            if not first_name in names_first:
+              author_name = author_plain
+
+          for fb_id, a_id in fb_authors.items():
+            if a_id == author_id:
+              fb_ids.append(fb_id)
+
+          if len(fb_ids):
+            print(fb_ids)
+
+          # table: authors in html_root/h.db
+          d_auth = {
+            'id'    : author_id,
+            'name'  : author_name,
+            'plain' : author_plain,
+          }
+
+          d = {
+            'db_file' : db_file,
+            'table'   : 'data_meta',
+            'insert'  : insert,
+          }
+    dbw.insert_dict(d)
+
+          # table: auth_details in html_root/h.db
+          for fb_id in fb_ids:
+            d_auth_detail = {
+              'id'     : author_id,
+              'fb_url' : f'https://www.facebook.com/{fb_id}',
+              'fb_id'  : fb_id,
+            }
+          #print(f'{author_name} => {author_plain}')
+
+    return self
+
+  def author_add(self, ref = {}):
     sec       = ref.get('sec','')
     author_id = ref.get('author_id','')
 
@@ -236,7 +308,7 @@ class LTS(
 
     return self
 
-  def author_rm(self,ref={}):
+  def author_rm(self, ref = {}):
     sec       = ref.get('sec','')
     author_id = ref.get('author_id','')
 
