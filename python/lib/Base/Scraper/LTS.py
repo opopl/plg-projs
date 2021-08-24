@@ -6,6 +6,8 @@ import Base.Util as util
 import Base.String as string
 import Base.Const as const
 
+import Base.Re as ree
+
 from Base.Mix.mixCmdRunner import mixCmdRunner
 from Base.Mix.mixLogger import mixLogger
 from Base.Mix.mixLoader import mixLoader
@@ -51,6 +53,10 @@ class LTS(
 
   acts = []
 
+  line = None
+  lines = []
+  nlines = []
+
   def __init__(self,args={}):
     self.lts_root  = os.environ.get('P_SR')
     self.proj      = 'letopis'
@@ -65,7 +71,7 @@ class LTS(
 
     return sec_file
 
-  def _author_id_merge(self,ids_in=[]):
+  def _author_id_merge(self,ids_in = []):
     ids_merged = []
     for id in ids_in:
       ids = string.split_n_trim(id, sep = ',')
@@ -76,6 +82,82 @@ class LTS(
 
     return ids_merged_s
 
+  def lines_tex_process(self,ref={}):
+    if not self.lines:
+      return self
+
+    actions = ref.get('actions',[])
+
+    self.nlines = []
+    flags = {}
+
+    while len(self.lines):
+      self.line = self.lines.pop(0)
+
+      self.line = self.line.strip('\n')
+
+      if ree.match('tex.projs.beginhead', self.line):
+        flags['head'] = 1
+      if ree.match('tex.projs.endhead', self.line):
+        if 'head' in flags:
+          del flags['head']
+
+      m = ree.match('tex.projs.seccmd', self.line)
+      if m:
+        if not flags.get('seccmd'):
+          flags['seccmd'] = m.group(1)
+          flags['sectitle'] = m.group(2)
+
+      if flags.get('head'):
+        m = ree.match('tex.projs.author_id',self.line)
+        if m:
+          a_id = m.group(1)
+
+          for action in actions:
+            name = action.get('name','')
+            args = action.get('args',[])
+            if name in [ '_author_id_merge' ]:
+              if len(args):
+                author_id  = args[0].get('author_id','')
+                if author_id:
+                  ids_merged = util.call(self, name, [ [ a_id, author_id ] ])
+                  self.line = f'%%author_id {ids_merged}'
+
+      if flags.get('seccmd'):
+        m = ree.match('tex.projs.ifcmt',self.line)
+        if m:
+          flags['is_cmt'] = 1
+
+        if flags.get('is_cmt'):
+          if ree.match('tex.projs.fi',self.line):
+            del flags['is_cmt']
+
+          if ree.match('tex.projs.cmt.author_begin',self.line):
+            flags['cmt_author'] = 1
+
+          if flags.get('cmt_author'):
+            if ree.match('tex.projs.cmt.author_end',self.line):
+              del flags['cmt_author']
+
+            m = ree.match('tex.projs.cmt.author_id',self.line)
+            if m:
+              indent = m.group(1)
+              a_id = m.group(2)
+
+              for action in actions:
+                name = action.get('name','')
+                args = action.get('args',[])
+                if name in [ '_author_id_merge' ]:
+                  if len(args):
+                    author_id  = args[0].get('author_id','')
+                    if author_id:
+                      ids_merged = util.call(self, name, [ [ a_id, author_id ] ])
+                      self.line = f'{indent}author_id {ids_merged}'
+
+      self.nlines.append(self.line)
+
+    return self
+
   def author_add(self,ref={}):
     sec       = ref.get('sec','')
     author_id = ref.get('author_id','')
@@ -85,60 +167,18 @@ class LTS(
     if os.path.isfile(sec_file):
       nlines = []
       with open(sec_file,'r') as f:
-        lines = f.readlines()
-        flags = {}
-        for line in lines:
-          line = line.strip('\n')
-
-          if re.match('%%beginhead\s*$',line):
-            flags['head'] = 1
-          if re.match('%%endhead\s*$',line):
-            if 'head' in flags:
-              del flags['head']
-            #flags['head'] = 0
-
-          m = re.match(r'^\s*\\(part|chapter|section|subsection|subsubsection|paragraph)\{(.*)\}\s*$',line)
-          if m:
-            if not flags.get('seccmd'):
-              flags['seccmd'] = m.group(1)
-              flags['sectitle'] = m.group(2)
-
-          if flags.get('head'):
-            m = re.match('%%author_id\s+(.*)$',line)
-            if m:
-              a_id = m.group(1)
-              ids_merged = self._author_id_merge([ a_id, author_id ])
-              line = f'%%author_id {ids_merged}'
-
-          if flags.get('seccmd'):
-            m = re.match(r'^\\ifcmt\s*$',line)
-            if m:
-              flags['is_cmt'] = 1
-
-            if flags.get('is_cmt'):
-              if re.match(r'^\\fi\s*$',line):
-                del flags['is_cmt']
-
-              if re.match(r'^\s*author_begin\s*$',line):
-                flags['cmt_author'] = 1
-
-              if flags.get('cmt_author'):
-                if re.match(r'^\s*author_end\s*$',line):
-                  del flags['cmt_author']
-
-                m = re.match(r'^(\s*)author_id\s+(.*)$',line)
-                if m:
-                  indent = m.group(1)
-                  a_id = m.group(2)
-                  ids_merged = self._author_id_merge([ a_id, author_id ])
-                  line = f'{indent}author_id {ids_merged}'
-
-          nlines.append(line)
-
-        print(flags)
+        self.lines = f.readlines()
+        self.lines_tex_process({
+           'actions' : [
+               {
+                 'name' : '_author_id_merge',
+                 'args' : [ { 'author_id' : author_id } ]
+               }
+            ]
+        })
 
     with open(sec_file, 'w', encoding='utf8') as f:
-      f.write('\n'.join(nlines) + '\n')
+      f.write('\n'.join(self.nlines) + '\n')
 
     return self
 
@@ -147,9 +187,6 @@ class LTS(
     for d_act in self.acts:
       act  = d_act.get('act','')
       args = d_act.get('args',[])
-
-      print(act)
-      print(args)
 
       util.call(self, act, args)
 

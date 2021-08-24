@@ -232,6 +232,11 @@ function! projs#buf#sec ()
 
 endfunction
 
+function! projs#buf#sec_file ()
+  return exists('b:file') ? b:file : ''
+
+endfunction
+
 function! projs#buf#onload_tex_sty ()
 
 endfunction

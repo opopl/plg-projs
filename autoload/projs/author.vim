@@ -107,6 +107,28 @@ function! projs#author#add_prompt (...)
 
 endfunction
 
+function! projs#author#select_id (...)
+  let ref = get(a:000,0,{})
+
+  let author_id = get(ref,'author_id','')
+
+  let ids = projs#author#ids()
+
+  let rootid = projs#rootid()
+
+  call base#varset('this',ids)
+
+  while(1)
+    let author_id = input( printf('[rootid: %s] author_id: ',rootid),author_id,'custom,base#complete#this')
+    if len(author_id)
+      break
+    endif
+  endw
+
+	return author_id
+
+endfunction
+
 "if 0
 "  purpose
 "    choose author data via command-line input
