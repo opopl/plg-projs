@@ -59,6 +59,8 @@ class LTS(
 
   def __init__(self,args={}):
     self.lts_root  = os.environ.get('P_SR')
+    self.html_root = os.environ.get('HTML_ROOT')
+
     self.proj      = 'letopis'
 
     for k, v in args.items():
@@ -226,7 +228,8 @@ class LTS(
     fb_authors = util.readdict(fb_authors_file)
 
     home = os.environ.get('HOME')
-    db_file = os.path.join(home,'tmp','h.db')
+    #db_file = os.path.join(home,'tmp','h.db')
+    db_file = os.path.join(self.html_root,'h.db')
 
     with open(authors_file,'r',encoding='utf8') as f:
       self.lines = f.readlines()
@@ -274,7 +277,7 @@ class LTS(
               'db_file' : db_file,
               'table'   : 'authors',
               'insert'  : d_auth,
-              'on'      : 'id'
+              'on_list' : [ 'id' ]
           }
           dbw.insert_update_dict(d)
 
@@ -290,8 +293,9 @@ class LTS(
               'db_file' : db_file,
               'table'   : 'auth_details',
               'insert'  : d_auth_detail,
+              'on_list' : [ 'id', 'fb_id' ]
             }
-            dbw.insert_dict(d)
+            dbw.insert_update_dict(d)
           #print(f'{author_name} => {author_plain}')
 
     return self

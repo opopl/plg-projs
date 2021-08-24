@@ -20,7 +20,7 @@ pats = {
     }
   },
   'idat' : {
-     'dict' : r'^(\w+)\s+(.*)$'
+     'dict' : r'^(\S+)\s+(.*)$'
   },
   'author' : {
     'bare' : {

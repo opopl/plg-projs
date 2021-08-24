@@ -125,7 +125,7 @@ function! projs#author#select_id (...)
     endif
   endw
 
-	return author_id
+  return author_id
 
 endfunction
 
@@ -174,9 +174,25 @@ function! projs#author#hash ()
   return hash
 endfunction
 
+function! projs#author#ids_db ()
+  let dbfile = base#qw#catpath('html_root','h.db')
+  
+  let q = 'SELECT DISTINCT id FROM authors ORDER BY id ASC'
+  let p = []
+  
+  let ids = pymy#sqlite#query_as_list({
+    \ 'dbfile' : dbfile,
+    \ 'p'      : p,
+    \ 'q'      : q,
+    \ })
+  return ids
+
+endfunction
+
 function! projs#author#ids ()
-  let hash   = projs#author#hash()
+  let hash = projs#author#hash()
   let ids = keys(hash)
   let ids = base#uniq(ids)
+
   return ids
 endfunction

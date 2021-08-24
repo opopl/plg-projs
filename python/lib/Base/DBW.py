@@ -304,17 +304,31 @@ def insert_update_dict(ref={}):
   table  = ref.get('table')
   insert = ref.get('insert',{})
 
-  on     = ref.get('on','')
-  on_val = insert.get(on,'') if on else None
+  on_list     = ref.get('on_list',[])
+  on_w = {}
+  if len(on_list):
+    for on in on_list:
+      if on in insert:
+        on_val = insert.get(on,'')
+        on_w[on] = on_val
 
   r = None
-  if on_val:
+  if len(on_w):
+    w_cond = ''
+    w_cond_a = []
+    w_values = []
+
+    for on, on_val in on_w.items():
+      w_cond_a.append(f' {on} = ? ')
+      w_values.append(on_val)
+    w_cond = ' and '.join(w_cond_a)
+
     r_db = {
       'db_file'  : db_file,
       'conn'     : conn,
       'db_close' : db_close
     }
-    r = sql_fetchone(f'''select * from {table} where {on} = ? ''',[ on_val ],r_db)
+    r = sql_fetchone(f'''select * from {table} where {w_cond}''',w_values,r_db)
 
   if not r:
      d = {
@@ -325,12 +339,14 @@ def insert_update_dict(ref={}):
      insert_dict(d)
 
   else:
-     del insert[on]
+     for on in on_list:
+       del insert[on]
+
      d = {
         'db_file' : db_file,
         'table'   : table,
         'update'  : insert,
-        'where'   : { on : on_val }
+        'where'   : on_w
      }
      update_dict(d)
 
