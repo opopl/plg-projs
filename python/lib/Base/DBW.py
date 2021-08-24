@@ -296,6 +296,44 @@ def sql_do(ref={}):
 
   return 1
 
+def insert_update_dict(ref={}):
+  db_file  = ref.get('db_file')
+  db_close = ref.get('db_close')
+  conn     = ref.get('conn')
+
+  table  = ref.get('table')
+  insert = ref.get('insert',{})
+
+  on     = ref.get('on','')
+  on_val = insert.get(on,'') if on else None
+
+  r = None
+  if on_val:
+    r_db = {
+      'db_file'  : db_file,
+      'conn'     : conn,
+      'db_close' : db_close
+    }
+    r = sql_fetchone(f'''select * from {table} where {on} = ? ''',[ on_val ],r_db)
+
+  if not r:
+     d = {
+        'db_file' : db_file,
+        'table'   : table,
+        'insert'  : insert,
+     }
+     insert_dict(d)
+
+  else:
+     del insert[on]
+     d = {
+        'db_file' : db_file,
+        'table'   : table,
+        'update'  : insert,
+        'where'   : { on : on_val }
+     }
+     update_dict(d)
+
 def insert_dict(ref={}):
   conn     = ref.get('conn')
   table    = ref.get('table')

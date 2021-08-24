@@ -225,6 +225,9 @@ class LTS(
 
     fb_authors = util.readdict(fb_authors_file)
 
+    home = os.environ.get('HOME')
+    db_file = os.path.join(home,'tmp','h.db')
+
     with open(authors_file,'r',encoding='utf8') as f:
       self.lines = f.readlines()
       while len(self.lines):
@@ -260,9 +263,6 @@ class LTS(
             if a_id == author_id:
               fb_ids.append(fb_id)
 
-          if len(fb_ids):
-            print(fb_ids)
-
           # table: authors in html_root/h.db
           d_auth = {
             'id'    : author_id,
@@ -271,11 +271,12 @@ class LTS(
           }
 
           d = {
-            'db_file' : db_file,
-            'table'   : 'data_meta',
-            'insert'  : insert,
+              'db_file' : db_file,
+              'table'   : 'authors',
+              'insert'  : d_auth,
+              'on'      : 'id'
           }
-    dbw.insert_dict(d)
+          dbw.insert_update_dict(d)
 
           # table: auth_details in html_root/h.db
           for fb_id in fb_ids:
@@ -284,6 +285,13 @@ class LTS(
               'fb_url' : f'https://www.facebook.com/{fb_id}',
               'fb_id'  : fb_id,
             }
+
+            d = {
+              'db_file' : db_file,
+              'table'   : 'auth_details',
+              'insert'  : d_auth_detail,
+            }
+            dbw.insert_dict(d)
           #print(f'{author_name} => {author_plain}')
 
     return self
