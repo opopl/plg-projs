@@ -8,6 +8,8 @@ import Base.Const as const
 
 import Base.Re as ree
 
+from pathlib import Path
+
 import jinja2
 
 from Base.Mix.mixCmdRunner import mixCmdRunner
@@ -67,6 +69,49 @@ class LTS(
 
     for k, v in args.items():
       setattr(self, k, v)
+
+  def init(self):
+
+    acts = [
+      [ 'init_dirs' ],
+      [ 'init_tmpl' ],
+    ]
+
+    util.call(self,acts)
+
+    return self
+
+  def init_dirs(self):
+
+    if not self._dir('bin'):
+      self.dirs.update({
+          'bin' : str(Path(self._file('script')).parent),
+      })
+
+    if not util.get(self,'dirs.tmpl'):
+      self.dirs['tmpl'] = os.path.join(self._dir('bin'),'tmpl')
+
+    return self
+
+  def init_tmpl(self):
+
+    env_tex  = jinja2.Environment(
+      block_start_string = '\BLOCK{',
+      block_end_string = '}',
+      variable_start_string = '\VAR{',
+      variable_end_string = '}',
+      comment_start_string = '\#{',
+      comment_end_string = '}',
+      #line_statement_prefix = '%%',
+      line_comment_prefix = '%#',
+      trim_blocks = True,
+      autoescape = False,
+      loader = jinja2.FileSystemLoader(searchpath=self._dir('tmpl','tex'))
+    )
+
+    self.template_env_tex = env_tex
+
+    return self
 
   def _sec_tex_header(self,ref = {}):
     return t
@@ -316,11 +361,34 @@ class LTS(
 
   def sec_new_ii_url(self, ref = {}):
     # parent section
+    parent    = ref.get('parent','')
+
+    # section to be created
     sec       = ref.get('sec','')
+
+    date      = ref.get('date','')
+
+    tags      = ref.get('tags','')
 
     url       = ref.get('url','')
     title     = ref.get('title','')
     author_id = ref.get('author_id','')
+
+    seccmd    = ref.get('seccmd','')
+
+    t = self.template_env_tex.get_template("sec.tex")
+    h = t.render(
+        author_id = author_id,
+        date = date,
+        parent = parent,
+        sec = sec,
+        seccmd = seccmd,
+        tags = tags,
+        title = title,
+        url = url,
+    )
+
+    print(h)
 
     return self
 
@@ -400,6 +468,7 @@ class LTS(
   def main(self):
 
     acts = [
+      [ 'init' ],
       [ 'get_opt' ],
       [ 'load_yaml' ],
       [ 'do_cmd' ],
