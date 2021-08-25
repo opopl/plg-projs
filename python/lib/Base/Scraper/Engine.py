@@ -384,7 +384,7 @@ class BS(CoreClass,
     exit(0)
 
   def init_tmpl(self):
-    self.template_loader = jinja2.FileSystemLoader(searchpath=self._dir('tmpl'))
+    self.template_loader = jinja2.FileSystemLoader(searchpath=self._dir('tmpl','html'))
     env  = jinja2.Environment(loader=self.template_loader)
     env.globals['url_join'] = util.url_join
 

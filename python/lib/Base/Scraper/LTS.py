@@ -8,6 +8,8 @@ import Base.Const as const
 
 import Base.Re as ree
 
+import jinja2
+
 from Base.Mix.mixCmdRunner import mixCmdRunner
 from Base.Mix.mixLogger import mixLogger
 from Base.Mix.mixLoader import mixLoader
@@ -65,6 +67,9 @@ class LTS(
 
     for k, v in args.items():
       setattr(self, k, v)
+
+  def _sec_tex_header(self,ref = {}):
+    return t
 
   def _sec_file(self,ref = {}):
     sec = ref.get('sec','')
@@ -306,6 +311,16 @@ class LTS(
 
     print(f'Count(authors):      {cnt["authors"]}')
     print(f'Count(auth_details): {cnt["auth_details"]}')
+
+    return self
+
+  def sec_new_ii_url(self, ref = {}):
+    # parent section
+    sec       = ref.get('sec','')
+
+    url       = ref.get('url','')
+    title     = ref.get('title','')
+    author_id = ref.get('author_id','')
 
     return self
 

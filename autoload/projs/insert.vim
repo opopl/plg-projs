@@ -263,7 +263,7 @@ function! projs#insert#ii_url_new ()
   let ii_prefix = printf('%s.', sec)
   let list  = matchlist(sec,'^\(\w\+\)_\(\d\+\)$')
 
-endif
+endf
 
 """pin_ii_url {
 function! projs#insert#ii_url ()
