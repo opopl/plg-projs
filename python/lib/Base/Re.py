@@ -26,8 +26,24 @@ pats = {
     'bare' : {
       'inverted' : r'^([^,]+),([^,]+)$'
     }
+  },
+  'url' : {
+    'facebook' : { 
+       'base' : r'facebook\.com$',
+       'post_user' : r'^\/([\S^\/]+)\/posts\/(\d+)$',
+    }
   }
 }
+
+def search(pat_id,line):
+  pat = util.get( pats, pat_id )
+  if not pat:
+    return
+
+  patc = re.compile(pat)
+  m = patc.search(line)
+
+  return m
 
 def match(pat_id,line):
   pat = util.get( pats, pat_id )

@@ -1233,7 +1233,7 @@ class BS(CoreClass,
 
     return self
 
-  def _site_data(self,path=None,default=None):
+  def _site_data(self, path=None, default=None ):
     d = None
 
     site = self.page.site

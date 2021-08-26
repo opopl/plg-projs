@@ -67,6 +67,9 @@ class LTS(
 
     self.proj      = 'letopis'
 
+    self.db_file_pages = os.path.join(self.html_root,'h.db')
+    self.db_file_projs = os.path.join(self.lts_root,'projs.sqlite')
+
     for k, v in args.items():
       setattr(self, k, v)
 
@@ -122,6 +125,54 @@ class LTS(
     sec_file = os.path.join( self.lts_root, f'{self.proj}.{sec}.tex' )
 
     return sec_file
+
+  def _auth_data(self, ref = {}):
+    fb_id     = ref.get('fb_id','')
+
+    author_id = ref.get('id','')
+
+    auth = None
+
+    if not author_id:
+      if fb_id:
+        cols_d = dbw._cols({ 
+            'table'   : 'auth_details',
+            'db_file' : self.db_file_pages
+        })
+  
+        author_id = dbw.sql_fetchval('''SELECT id FROM auth_details WHERE fb_id = ? ''',[ fb_id ],
+           { 'db_file' : self.db_file_pages })
+
+    if author_id:
+      auth = { 
+        'id' : author_id 
+      }
+
+      rw = dbw.sql_fetchone('''SELECT * FROM authors WHERE id = ? ''',
+         [ author_id ],
+         { 'db_file' : self.db_file_pages })
+      row  = rw.get('row',{})
+      cols = rw.get('cols',[])
+      for col in cols:
+        auth[col] = row.get(col)
+
+      for col in cols_d:
+        if col in ['id']:
+          continue
+
+        vallist = dbw.sql_fetchlist(f'''SELECT {col} FROM auth_details WHERE id = ?''',
+           [ author_id ],
+           { 'db_file' : self.db_file_pages })
+
+        val = None
+        if vallist and (len(vallist) == 1) and (vallist[0] == None):
+          pass
+        else:
+          val = vallist
+
+        auth[col] = val
+
+    return auth
 
   def _author_id_remove(self, ids_in = [], ids_remove = []):
 
@@ -279,7 +330,6 @@ class LTS(
 
     home = os.environ.get('HOME')
     #db_file = os.path.join(home,'tmp','h.db')
-    db_file = os.path.join(self.html_root,'h.db')
 
     with open(authors_file,'r',encoding='utf8') as f:
       self.lines = f.readlines()
@@ -324,7 +374,7 @@ class LTS(
           }
 
           d = {
-              'db_file' : db_file,
+              'db_file' : self.db_file_pages,
               'table'   : 'authors',
               'insert'  : d_auth,
               'on_list' : [ 'id' ]
@@ -341,14 +391,14 @@ class LTS(
             }
 
             d = {
-              'db_file' : db_file,
+              'db_file' : self.db_file_pages,
               'table'   : 'auth_details',
               'insert'  : d_auth_detail,
               'on_list' : [ 'id', 'fb_id' ]
             }
             dbw.insert_update_dict(d)
 
-    r_db = { 'db_file' : db_file }
+    r_db = { 'db_file' : self.db_file_pages }
 
     cnt = {}
     for t in util.qw('authors auth_details'):
@@ -359,24 +409,72 @@ class LTS(
 
     return self
 
+  #let cnt = projs#sec#count_ii({ 'ii_prefix' : ii_prefix })
+  def _sec_count_ii(self, ref = {}):
+    ii_prefix = ref.get('ii_prefix','')
+
+    q = f'''SELECT COUNT(*) FROM projs WHERE sec LIKE "{ii_prefix}%%" '''
+
+    cnt = dbw.sql_fetchval(q,[],{ 'db_file' : self.db_file_projs })
+
+    return cnt
+
+  def _ii_prefix(self, ref = {}):
+    parent    = ref.get('parent','')
+    url       = ref.get('url','')
+
+    ii_prefix = f'{parent}.'
+
+    u = util.url_parse(url)
+
+    m = ree.search('url.facebook.base',u['host'])
+    if m:
+      m_path = ree.match('url.facebook.post_user',u['path'])
+      if m_path:
+        fb_id = m_path.group(1)
+
+        auth = self._auth_data({ 'fb_id' : fb_id })
+        if auth:
+          author_id = auth.get('id')
+
+          ii_prefix = f'{ii_prefix}fb.{author_id}.'
+
+    cnt = self._sec_count_ii({ 'ii_prefix' : ii_prefix })
+    inum = cnt + 1
+
+    ii_prefix = f'{ii_prefix}{inum}.'
+
+    return ii_prefix
+
   def sec_new_ii_url(self, ref = {}):
     # parent section
     parent    = ref.get('parent','')
-
-    # section to be created
-    sec       = ref.get('sec','')
-
-    date      = ref.get('date','')
-
-    tags      = ref.get('tags','')
 
     url       = ref.get('url','')
     title     = ref.get('title','')
     author_id = ref.get('author_id','')
 
+    # section to be created
+    sec       = ref.get('sec','')
+
+    # final part of the section full name
+    ii_sec    = ref.get('ii_sec','')
+
+    date      = ref.get('date','')
+
+    tags      = ref.get('tags','')
+
     seccmd    = ref.get('seccmd','')
 
+    ii_prefix = self._ii_prefix({ 
+      'parent' : parent,
+      'url'    : url,
+    })
+
+    print(f'ii_prefix => {ii_prefix}')
+
     t = self.template_env_tex.get_template("sec.tex")
+
     h = t.render(
         author_id = author_id,
         date = date,
@@ -388,7 +486,9 @@ class LTS(
         url = url,
     )
 
-    print(h)
+    sec_file = self._sec_file({ 'sec' : sec })
+
+    #print(h)
 
     return self
 

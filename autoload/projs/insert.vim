@@ -256,9 +256,9 @@ function! projs#insert#ii_url_new ()
 
   let sec    = projs#buf#sec()
 
-	let msg = [ 'start' ]
-	let prf = { 'plugin' : 'projs', 'func' : 'projs#insert#ii_url' }
-	call base#log(msg, prf)
+  let msg = [ 'start' ]
+  let prf = { 'plugin' : 'projs', 'func' : 'projs#insert#ii_url' }
+  call base#log(msg, prf)
 
   let ii_prefix = printf('%s.', sec)
   let list  = matchlist(sec,'^\(\w\+\)_\(\d\+\)$')
@@ -269,9 +269,9 @@ endf
 function! projs#insert#ii_url ()
   let proj   = projs#proj#name()
 
-	let msg = [ 'start' ]
-	let prf = { 'plugin' : 'projs', 'func' : 'projs#insert#ii_url' }
-	call base#log(msg, prf)
+  let msg = [ 'start' ]
+  let prf = { 'plugin' : 'projs', 'func' : 'projs#insert#ii_url' }
+  call base#log(msg, prf)
 
   let rootid = projs#rootid()
 
