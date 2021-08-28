@@ -25,9 +25,11 @@ function! projs#url#fb#data (...)
   let prompt = get(ref,'prompt',0)
 
   let url    = get(ref,'url','')
-  let struct = base#url#struct(url)
 
-  let path = get(struct,'path','')
+  let u = base#url#parse(url)
+  let query_p = get(u,'query_p',{})
+
+  let path = get(u,'path','')
 
   let fb_authors = projs#data#dict({ 'id' : 'fb_authors' })
   let fb_groups  = projs#data#dict({ 'id' : 'fb_groups' })
@@ -35,14 +37,19 @@ function! projs#url#fb#data (...)
   let path_a     = split(path,'/')
   let path_front = get(path_a,0,'')
 
-  let fb_auth  = path_front
   let fb_group = ''
 
   let author_id = ''
   let author    = ''
 
-  if path_front =~ 'permalink.php'
+  let fb_auth  = path_front
+
+  if path_front == 'permalink.php'
     let fb_auth = ''
+    let post_id = get(query_p,'story_fbid','')
+    if post_id
+      let fb_auth = get(query_p,'id',)
+    endif
 
   elseif path_front =~ 'groups'
     let fb_auth  = ''

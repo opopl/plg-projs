@@ -64,14 +64,24 @@ class LTS(
   def __init__(self,args={}):
     self.lts_root  = os.environ.get('P_SR')
     self.html_root = os.environ.get('HTML_ROOT')
+    self.img_root  = os.environ.get('IMG_ROOT')
 
     self.proj      = 'letopis'
 
     self.db_file_pages = os.path.join(self.html_root,'h.db')
     self.db_file_projs = os.path.join(self.lts_root,'projs.sqlite')
+    self.db_file_img   = os.path.join(self.img_root,'img.db')
+
+    self.db_files = {
+       'img'   : self.db_file_img,
+       'pages' : self.db_file_pages,
+       'projs' : self.db_file_projs,
+    }
 
     for k, v in args.items():
       setattr(self, k, v)
+
+    self.init()
 
   def init(self):
 
@@ -87,9 +97,16 @@ class LTS(
   def init_dirs(self):
 
     if not self._dir('bin'):
-      self.dirs.update({
-          'bin' : str(Path(self._file('script')).parent),
-      })
+      if self._file('script'):
+        self.dirs.update({
+            'bin' : str(Path(self._file('script')).parent),
+        })
+      else:
+        plg = os.environ.get('PLG')
+        if plg:
+          self.dirs.update({
+            'bin' : os.path.join(plg,'projs web_scraping py3'),
+          })
 
     if not util.get(self,'dirs.tmpl'):
       self.dirs['tmpl'] = os.path.join(self._dir('bin'),'tmpl')
@@ -319,6 +336,65 @@ class LTS(
 
     return self
 
+  def db_sql_do(self, ref = {}):
+    db_id   = ref.get('db_id','')
+    db_file = self.db_files.get(db_id,'')
+
+    sql_cmds = ref.get('sql_cmds',[])
+
+    if not db_file:
+      return self
+
+    for sql_cmd in sql_cmds:
+      print(sql_cmd)
+      dbw.sql_do({ 
+        'db_file' : db_file,
+        'sql'     : sql_cmd,
+      })
+
+    return self
+
+  # given section name, simply create it:
+  #    write to file, add to database
+  def sec_new(self, ref = {}):
+    sec = ref.get('sec','')
+    if not sec:
+      return self
+
+    t = self.template_env_tex.get_template("sec.tex")
+    h = t.render(**ref)
+
+    sec_file = self._sec_file({ 'sec' : sec })
+    print(h)
+    print(sec_file)
+
+    return self
+
+  def sec_new_date(self, ref = {}):
+    date      = ref.get('date','')
+
+    return self
+
+  def db_update_img(self, ref = {}):
+    img_data = ref.get('img_data',[])
+    db_file  = self.db_file_img
+
+    for d_img in img_data:
+      url = d_img.get('url','')
+      if not url:
+        continue
+
+      d = {
+        'db_file' : db_file,
+        'table'   : 'imgs',
+        'insert'  : d_img,
+        'on_list' : [ 'url' ]
+      }
+
+      dbw.insert_update_dict(d)
+
+    return self
+
   def import_auth2db(self, ref = {}):
     authors_file = os.path.join(self.lts_root,'data', 'dict', 'authors.i.dat')
     fb_authors_file = os.path.join(self.lts_root,'data', 'dict', 'fb_authors.i.dat')
@@ -419,25 +495,60 @@ class LTS(
 
     return cnt
 
-  def _ii_prefix(self, ref = {}):
+  def _fb_data(self, ref = {}):
+    url       = ref.get('url','')
+
+    u = util.url_parse(url)
+    fb_data = None
+
+    m = ree.search('url.facebook.base',u['host'])
+    if not m:
+      return
+
+    fb_id = None
+    post_id = None
+
+    if ree.match('url.facebook.permalink',u['path']):
+      fb_id   = u['query_p'].get('id','') 
+      post_id = u['query_p'].get('story_fbid','') 
+
+      if fb_id and post_id:
+         url = util.url_join('https://www.facebook.com',f'/{fb_id}/posts/{post_id}')
+         u = util.url_parse(url)
+
+    else:
+      m_path = ree.match('url.facebook.post_user',u['path'])
+
+      if m_path:
+        fb_id = m_path.group(1)
+        post_id = m_path.group(2)
+
+    fb_data = { 
+      'fb_id'   : fb_id,
+      'post_id' : post_id,
+    }
+
+    return fb_data
+
+  def _sec_ii_prefix(self, ref = {}):
     parent    = ref.get('parent','')
     url       = ref.get('url','')
 
+    author_id = ref.get('author_id','')
+
     ii_prefix = f'{parent}.'
 
-    u = util.url_parse(url)
+    fb_data = self._fb_data({ 'url' : url })
+    if fb_data:
+      fb_id = fb_data.get('fb_id','')
 
-    m = ree.search('url.facebook.base',u['host'])
-    if m:
-      m_path = ree.match('url.facebook.post_user',u['path'])
-      if m_path:
-        fb_id = m_path.group(1)
-
+      if fb_id:
         auth = self._auth_data({ 'fb_id' : fb_id })
         if auth:
           author_id = auth.get('id')
-
-          ii_prefix = f'{ii_prefix}fb.{author_id}.'
+    
+    if author_id:
+      ii_prefix = f'{ii_prefix}fb.{author_id}.'
 
     cnt = self._sec_count_ii({ 'ii_prefix' : ii_prefix })
     inum = cnt + 1
@@ -466,7 +577,7 @@ class LTS(
 
     seccmd    = ref.get('seccmd','')
 
-    ii_prefix = self._ii_prefix({ 
+    ii_prefix = self._sec_ii_prefix({ 
       'parent' : parent,
       'url'    : url,
     })
@@ -568,7 +679,6 @@ class LTS(
   def main(self):
 
     acts = [
-      [ 'init' ],
       [ 'get_opt' ],
       [ 'load_yaml' ],
       [ 'do_cmd' ],

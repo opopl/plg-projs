@@ -328,8 +328,9 @@ def insert_update_dict(ref={}):
       'conn'     : conn,
       'db_close' : db_close
     }
-    r = sql_fetchone(f'''select * from {table} where {w_cond}''',w_values,r_db)
-
+    q = f'''SELECT * FROM {table} WHERE {w_cond}'''
+    r = sql_fetchone(q,w_values,r_db)
+  
   if not r:
      d = {
         'db_file' : db_file,

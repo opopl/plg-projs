@@ -144,16 +144,16 @@ sub _tex_caption_tab {
 
 # _width <=> $get_width
 sub _width {
-  my ($self) = @_;
-  my $w = $self->_val_('d width') || $self->_val_('tab width') || $self->{img_width_default};
+  my ($self, $wd) = @_;
+  my $w = $wd || $self->_val_('d width') || $self->_val_('tab width') || $self->{img_width_default};
 
   return $w;
 }
 
 sub _width_tex {
-  my ($self) = @_;
+  my ($self, $wd) = @_;
 
-  my $w = $self->_width;
+  my $w = $self->_width($wd);
   for($w){
       /^(\d+(?:|\.\d+))$/ && do {
           $w = qq{$w\\textwidth};
@@ -243,7 +243,6 @@ sub match_author_begin {
   return $self;
 }
 
-
 sub match_author_end {
   my ($self) = @_;
 
@@ -269,6 +268,7 @@ sub match_author_end {
 
   return $self;
 }
+
 
 sub match_tab_begin {
   my ($self, $opts_s) = @_;
@@ -306,13 +306,31 @@ sub match_tab_end {
   return $self;
 }
 
+sub ldo_no_cmt {
+  my ($self) = @_;
+
+  local $_ = $self->{line};
+
+  m/^\s*%%\s*\\ii\{(.*)\}\s*$/ && do {
+     $self->{sec} = $1;
+  };
+
+  m/\@(pic|ig|doc)\{([^{}]+)\}/ && do {
+     my $type = $1;
+  };
+
+  $self->{line} = $_;
+  push @{$self->{nlines}}, $self->{line}; 
+
+  return $self;
+}
+
 # push content of d => nlines
 sub lpush_d {
   my ($self) = @_;
   
   my $d = $self->{d};
   return $self unless $d;
-
 
   push @{$self->{nlines}},$self->_d2tex;
 
@@ -372,13 +390,16 @@ sub _d2tex {
   my @tex;
 
   my $w = {};
-  for(qw( url name )){
-     $w->{$_}  = $d->{$_} if $d->{$_};
+  for(qw( url name_uniq name )){
+     if ($d->{$_}){
+        $w->{$_}  = $d->{$_};
+        last;
+     }
   }
 
   my ($rows, $cols, $q, $p) = dbh_select({
      dbh => $mkr->{dbh_img},
-     q   => q{ SELECT img, caption, url FROM imgs },
+     q   => q{ SELECT * FROM imgs },
      p   => [],
      w   => $w,
   });
@@ -412,10 +433,25 @@ sub _d2tex {
   my $caption = $d->{caption};
   texify(\$caption) if $caption;
 
-  my $o  = sprintf(q{ width=%s\textwidth },$self->_width);
+  my $wd = $d->{width} || $rw->{width_tex};
 
-  my @ig; 
-  push @ig, sprintf(q|  \includegraphics[%s]{%s} |, $o, $img_path );
+  my $o  = sprintf(q{ width=%s },$self->_width_tex($wd));
+
+  my (@ig, $ig_cmd); 
+  $ig_cmd = sprintf(q|  \includegraphics[%s]{%s} |, $o, $img_path );
+
+  push @ig, $ig_cmd;
+
+  my $repeat = $d->{repeat};
+  if ($repeat && $repeat =~ /^(\d+)$/) {
+    my $times = $1;
+    $times--;
+
+    if ($times > 0) {
+       push @ig, $ig_cmd for ( 1 .. $times );
+    }
+      
+  }
 
   unless($tab){
      push @tex,
@@ -488,11 +524,8 @@ sub loop {
     };
 
     unless($self->{is_cmt}){ 
-        m/^\s*%%\s*\\ii\{(.*)\}\s*$/ && do {
-           $self->{sec} = $1;
-        };
-        
-        push @{$self->{nlines}}, $_; next; 
+       $self->ldo_no_cmt;
+       next;
     }
 
     m/^\s*%/ && do { push @{$self->{nlines}},$_; next; };
@@ -510,16 +543,40 @@ sub loop {
     m/^\s*tab_begin\b(.*)/g && do { $self->match_tab_begin($1); next; };
     m/^\s*tab_end\s*$/g && do { $self->match_tab_end; next; };
 
-    m/^\s*(pic|doc|ig)\s+(.*)$/g && do { 
-       my $v = trim($2);
+    m/^\s*(pic|doc|ig)@(.*)$/g && do { 
+       my $v;
+       $v = trim($2) if $2;
 
        $self->lpush_d;
 
-       $self->{url} = $v;
-       $self->{d} = { 
-          url  => $self->{url},
-          type => $1,
-       };
+       next unless $v;
+
+       my @opts = grep { length } map { defined ? trim($_) : () } split("," => $v);
+       next unless @opts;
+
+       $self->{d} = { type => $1 };
+
+       for(@opts){
+         my ($k, $v) = (/([^=]+)=([^=]+)/g);
+
+         $k = trim($k);
+         $v = trim($v);
+
+         $self->{d}->{$k} = $v;
+       }
+
+       next;
+    };
+
+    m/^\s*(pic|doc|ig)(?:\s+(.*)|\s*)$/g && do { 
+       my $v;
+       $v = trim($2) if $2;
+
+       $self->lpush_d;
+
+       $self->{d} = { type => $1 };
+
+       $self->{d}->{url} = $v if $v;
 
        next;
     };

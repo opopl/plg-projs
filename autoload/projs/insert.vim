@@ -240,6 +240,79 @@ function! projs#insert#ii ()
 endfunction
 "} end of: pin_ii,  projs#insert#ii
 
+
+
+function! projs#insert#ii_url_py ()
+  let proj   = projs#proj#name()
+  let rootid = projs#rootid()
+
+  let sec    = projs#buf#sec()
+
+  let url = input('[PIN ii_url_py] URL: ','')
+
+  let data = projs#db#url_data({ 'url' : url })
+  let sec  = get(data,'sec','')
+  if len(sec)
+    call base#rdwe('URL already stored, sec: ' . sec)
+    return 
+  endif
+
+  let r_dir = base#qw#catpath('plg','projs web_scraping py3')
+
+  " select from 'pages' 'database, html_root
+  "let author_id = projs#author#select_id()
+
+python3 << eof
+import vim
+from Base.Scraper.LTS import LTS
+
+sec       = vim.eval('sec')
+url       = vim.eval('url')
+r_dir     = vim.eval('r_dir')
+
+lts = LTS()
+
+author_id = ''
+ii_prefix = ''
+fb_data = lts._fb_data({ 'url' : url })
+
+if fb_data:
+  fb_id = fb_data.get('fb_id','')
+
+  if fb_id:
+    auth = lts._auth_data({ 'fb_id' : fb_id })
+    if auth:
+      author_id = auth.get('id')
+
+if author_id:
+  ii_prefix = f'{ii_prefix}fb.{author_id}.'
+
+  cnt = lts._sec_count_ii({ 'ii_prefix' : ii_prefix })
+  inum = cnt + 1
+
+  ii_prefix = f'{ii_prefix}{inum}.'
+
+eof
+
+  let fb_data   = py3eval('fb_data')
+  let author_id = py3eval('author_id')
+  let ii_prefix = py3eval('ii_prefix')
+
+  if !author_id
+    let ids = projs#author#ids_db()
+
+    call base#varset('this',ids)
+
+	  while(1)
+	    let author_id = input( printf('[rootid: %s] New author_id: ',rootid),author_id,'custom,base#complete#this')
+	    if len(author_id)
+	      break
+	    endif
+	  endw
+  endif
+
+endfunction
+
 if 0
   usage
     call projs#insert#ii_url
@@ -249,21 +322,6 @@ if 0
       projs#util#ii_data_from_url
       projs#author#get
 endif
-
-function! projs#insert#ii_url_new ()
-  let proj   = projs#proj#name()
-  let rootid = projs#rootid()
-
-  let sec    = projs#buf#sec()
-
-  let msg = [ 'start' ]
-  let prf = { 'plugin' : 'projs', 'func' : 'projs#insert#ii_url' }
-  call base#log(msg, prf)
-
-  let ii_prefix = printf('%s.', sec)
-  let list  = matchlist(sec,'^\(\w\+\)_\(\d\+\)$')
-
-endf
 
 """pin_ii_url {
 function! projs#insert#ii_url ()

@@ -13,6 +13,22 @@ use utf8;
 use strict;
 use warnings;
 
+use base qw(
+    Base::Obj
+    Base::Opt
+
+    Plg::Projs::Build::Maker::IndFile
+    Plg::Projs::Build::Maker::Bat
+    Plg::Projs::Build::Maker::Join
+    Plg::Projs::Build::Maker::Line
+    Plg::Projs::Build::Maker::Sec
+    Plg::Projs::Build::Maker::Pats
+
+    Plg::Projs::Build::Maker::Pwg
+    Plg::Projs::Build::Maker::Jnd
+    Plg::Projs::Build::Maker::Tree
+);
+
 use File::stat;
 
 use File::Spec::Functions qw(catfile);
@@ -36,21 +52,7 @@ use File::Find qw(find);
 use Plg::Projs::Piwigo::SQL;
 use Plg::Projs::Prj;
 
-use base qw(
-    Base::Obj
-    Base::Opt
 
-    Plg::Projs::Build::Maker::IndFile
-    Plg::Projs::Build::Maker::Bat
-    Plg::Projs::Build::Maker::Join
-    Plg::Projs::Build::Maker::Line
-    Plg::Projs::Build::Maker::Sec
-    Plg::Projs::Build::Maker::Pats
-
-    Plg::Projs::Build::Maker::Pwg
-    Plg::Projs::Build::Maker::Jnd
-    Plg::Projs::Build::Maker::Tree
-);
 
 use Base::File qw(
     win2unix

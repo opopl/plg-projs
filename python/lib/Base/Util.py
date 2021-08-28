@@ -122,12 +122,15 @@ def url_parse(url,opts={}):
   if scheme and u.netloc:
     baseurl = scheme + '://' + u.netloc
 
+  query_p = url_parse_query(u.query)
+
   d = {
     'scheme'  : scheme,
     'path'    : u.path,
     'netloc'  : u.netloc,
     'params'  : u.params,
     'query'   : u.query,
+    'query_p' : query_p,
     'host'    : host,
     'baseurl' : baseurl,
     'url'     : url,

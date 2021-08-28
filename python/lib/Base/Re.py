@@ -31,6 +31,7 @@ pats = {
     'facebook' : { 
        'base' : r'facebook\.com$',
        'post_user' : r'^\/([\S^\/]+)\/posts\/(\d+)$',
+       'permalink' : r'^\/permalink.php$',
     }
   }
 }

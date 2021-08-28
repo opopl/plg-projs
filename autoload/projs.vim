@@ -939,6 +939,7 @@ function! projs#maps (...)
   let prf = { 'plugin' : 'projs', 'func' : 'projs#maps' }
   call base#log(msg, prf)
 
+
   let maps = {}
   if ext == 'tex'
     let maps = {
@@ -950,6 +951,8 @@ function! projs#maps (...)
             \  ';bb'   : 'call projs#action#bld_compile()'  ,
             \  ';bx'   : 'call projs#action#bld_compile_xelatex()'  ,
             \  ';bz'   : 'call projs#action#bld_compile_xelatex({ "target" : "_buf" })',
+            \  ';bv'   : printf('call projs#pdf#view({
+              \ "target" : "%s", "type" : "%s", "viewer" : "%s" })','_buf','bld','evince'),
             \  ';bj'   : 'PrjAct bld_join'  ,
             \  ';bl'   : 'BLD last_compile'  ,
             \  ';bt'   : 'BLD print_ii_tree'  ,

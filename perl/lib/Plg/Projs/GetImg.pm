@@ -15,6 +15,8 @@ binmode STDOUT,':encoding(utf8)';
 use Plg::Projs::Prj;
 use Cwd qw(getcwd);
 
+use Plg::Projs::GetImg::Fetcher;
+
 use File::Spec::Functions qw(catfile);
 use File::Path qw( mkpath rmtree );
 use File::Copy qw( move );
@@ -219,7 +221,13 @@ sub init_q {
                 caption TEXT,
                 name TEXT,
                 ext TEXT,
-                type TEXT
+                type TEXT,
+                md5 TEXT UNIQUE,
+                name TEXT,
+                name_uniq TEXT,
+                width INTEGER,
+                height INTEGER,
+                width_tex TEXT
             );
         },
         drop => qq{
@@ -407,7 +415,6 @@ sub cmd_load_file {
     return $self;
 }
 
-
 sub load_file {
     my ($self, $ref) = @_;
     $ref ||= {};
@@ -449,6 +456,12 @@ sub load_file {
     $self->debug(qq{Reading:\n\t$file_bn});
 ###read_file @lines
     my @lines = read_file $file;
+
+    my $ftc = Plg::Projs::GetImg::Fetcher->new(
+        file  => $file,
+        root  => $root,
+        prj   => $prj,
+    );
 
 ###vars
     my %vars;
