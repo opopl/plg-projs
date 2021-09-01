@@ -67,9 +67,12 @@ function! projs#db#sec#remove (...)
   let sec = get(ref,'sec','')
 
   let q = printf('DELETE FROM projs WHERE proj = ? AND sec = ?')
-  let ref = {
-      \ 'query'  : q,
-      \ 'params' : [proj,sec],
-      \ }
-  let rows = projs#db#query(ref)
+  let p = [ proj, sec ]
+
+  let [ rows_h, cols ] = pymy#sqlite#query({
+    \ 'dbfile' : projs#db#file(),
+    \ 'q'      : q,
+    \ 'p'      : p,
+    \ })
+
 endfunction

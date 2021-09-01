@@ -261,7 +261,8 @@ endfunction
 
 """prjact_git_add_texfiles
 function! projs#action#git_add_texfiles ()
-  let cmd = 'git add *.tex'
+	let proj = projs#proj#name()
+  let cmd = printf('git add %s.*.tex',proj)
 
   let root = projs#root()
   call base#cd(root)

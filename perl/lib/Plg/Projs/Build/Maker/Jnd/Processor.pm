@@ -216,6 +216,9 @@ sub _fig_end {
 sub _fig_skip {
   my ($self) = @_;
 
+  my $tab = $self->{tab};
+  return 1 if $tab && $tab->{no_fig};
+
   my $t = $self->_val_('d type') || '';
   my $skip = (grep { /^$t$/ } qw(ig)) ? 1 : 0;
 
@@ -279,8 +282,10 @@ sub match_tab_begin {
 
   my @tab_opts = grep { length } map { defined ? trim($_) : () } split("," => $opts_s);
   for(@tab_opts){
-     my ($k, $v) = (/([^=]+)=([^=]+)/g);
-     $self->{tab}->{$k} = $v;
+     my ($k, $v) = (/^([^=]+)(?:|=([^=]+))$/g);
+	 $k = trim($k);
+
+     $self->{tab}->{$k} = defined $v ? trim($v) : 1;
   }
 
   $self->{tab}->{width} ||= ( $self->{img_width_default} / $self->{tab}->{cols} );
@@ -519,7 +524,7 @@ sub loop {
 ###m_\fi
     m/^\\fi\s*$/g && do { 
        $self->lpush_d;
-       $self->{is_cmt} = 0; 
+       $self->{is_cmt} = undef; 
        next; 
     };
 
@@ -534,6 +539,16 @@ sub loop {
         my $tex = trim($1);
         push @{$self->{nlines}},$tex; next;
     };
+
+    m/^\s*tex_start\s+(.*)$/g && do {
+		$self->{is_tex} = 1;
+		next;
+	};
+
+    m/^\s*tex_end\s+(.*)$/g && do {
+		$self->{is_tex} = undef;
+		next;
+	};
 
     m/^\s*author_end\s*$/g && do { $self->match_author_end; next; };
     m/^\s*author_begin\s*$/g && do { $self->match_author_begin; next; };

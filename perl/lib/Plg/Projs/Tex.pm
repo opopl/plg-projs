@@ -49,6 +49,11 @@ my @ex_vars_array=qw(
 
 @EXPORT_OK = ( @{ $EXPORT_TAGS{'funcs'} }, @{ $EXPORT_TAGS{'vars'} } );
 
+our %fbicons = (
+  '😍' => 'heart.eyes',
+  '🔥' => 'flame',
+);
+
 sub texify {
     my ($ss,$cmd,$s_start,$s_end,$data_js) = @_;
 

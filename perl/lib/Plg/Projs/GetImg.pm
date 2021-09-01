@@ -15,7 +15,7 @@ binmode STDOUT,':encoding(utf8)';
 use Plg::Projs::Prj;
 use Cwd qw(getcwd);
 
-use Plg::Projs::GetImg::Fetcher;
+#use Plg::Projs::GetImg::Fetcher;
 
 use File::Spec::Functions qw(catfile);
 use File::Path qw( mkpath rmtree );
@@ -173,9 +173,9 @@ sub init_img_root {
     my ($self) = @_;
 
     my $img_root = $ENV{IMG_ROOT} // catfile($ENV{HOME},qw(img_root));
-    if ($self->{reset}) {
-        rmtree $img_root if -d $img_root;
-    }
+    #if ($self->{reset}) {
+        #rmtree $img_root if -d $img_root;
+    #}
     mkpath $img_root unless -d $img_root;
 
     $self->{img_root} = $img_root;
@@ -249,8 +249,11 @@ sub init {
     my ($self) = @_;
 
     my $h = {
-        cmd => 'load_file'
+        cmd => 'load_file',
+        ok   => [],
+        fail => [],
     };
+
     hash_inject($self, $h);
 
     $self
@@ -457,11 +460,14 @@ sub load_file {
 ###read_file @lines
     my @lines = read_file $file;
 
-    my $ftc = Plg::Projs::GetImg::Fetcher->new(
-        file  => $file,
-        root  => $root,
-        prj   => $prj,
-    );
+#    my $ftc = Plg::Projs::GetImg::Fetcher->new(
+        #file     => $file,
+        #root     => $root,
+        #prj      => $prj,
+        #gi       => $self,
+        #dbh      => $self->{dbh},
+        #img_root => $self->{img_root},
+    #);
 
 ###vars
     my %vars;
@@ -543,7 +549,8 @@ sub load_file {
              '  sec:      ' . $sec,
              '  url:      ' . $url,
              '  img:      ' . $img,
-             '  caption:  ' . ($d->{caption} || ''),
+             '  name:     ' . ( $d->{name} || '' ),
+             '  caption:  ' . ( $d->{caption} || ''),
              ;
 
         print join("\n",@m) . "\n";

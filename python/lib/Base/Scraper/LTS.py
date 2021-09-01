@@ -347,7 +347,7 @@ class LTS(
 
     for sql_cmd in sql_cmds:
       print(sql_cmd)
-      dbw.sql_do({ 
+      dbw.sql_do({
         'db_file' : db_file,
         'sql'     : sql_cmd,
       })
