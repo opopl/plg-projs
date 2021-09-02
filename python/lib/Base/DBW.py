@@ -351,6 +351,48 @@ def insert_update_dict(ref={}):
      }
      update_dict(d)
 
+  return 1
+
+def delete(ref={}):
+  conn     = ref.get('conn')
+  table    = ref.get('table')
+
+  db_file   = ref.get('db_file')
+  db_close  = ref.get('db_close')
+
+  if not conn:
+    if db_file:
+      conn = sqlite3.connect(db_file)
+      db_close = 1
+    else:
+      return
+  c = conn.cursor()
+
+  where = ref.get('where',{})
+
+  r      = cond_where({ 'where' : where })
+  cond   = r.get('cond')
+  values = r.get('values')
+
+  p = []
+  q = f'''DELETE FROM {table}'''
+
+  if cond:
+    q += ' WHERE ' + cond
+    p.extend(values)
+
+  try:
+    c.execute(q,values)
+  except sqlite3.IntegrityError as e:
+    raise Exception(f'[ERROR] SQlite error, query: {q}, params: {values}')    
+    print(e)
+
+  if db_close:
+    conn.commit()
+    conn.close()
+
+  return 1
+
 def insert_dict(ref={}):
   conn     = ref.get('conn')
   table    = ref.get('table')

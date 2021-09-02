@@ -31,7 +31,7 @@ append_thisproj
 append_section
 append_label
 ###git
-git_add_pics
+#git_add_pics
 git_commit
 git_save
 git_add_texfiles

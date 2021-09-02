@@ -262,19 +262,27 @@ endfunction
 """prjact_git_add_texfiles
 function! projs#action#git_add_texfiles ()
 	let proj = projs#proj#name()
-  let cmd = printf('git add %s.*.tex',proj)
 
   let root = projs#root()
   call base#cd(root)
 
-  let env = { 'cmd' : cmd }
+	" list untracked files
+	let cmd_a = [
+			\	'git ls-files --others --exclude-standard',
+			\	printf("perl -lane 'print if /%s.*\\.tex$/'",proj),	
+			\	'xargs git add',
+			\	]
+	let cmd = join(cmd_a, '|')
+
+  let env = { 'proj' : proj }
   function env.get(temp_file) dict
-    let code = self.return_code
-    let cmd  = get(self,'cmd','')
-  
-    if code == 0
-      call base#rdw(printf('OK: %s',cmd))
-    endif
+	  let lines = readfile(a:temp_file)
+
+		if filereadable(a:temp_file)
+			let out = readfile(a:temp_file)
+			call base#buf#open_split({ 'lines' : out })
+		endif
+		call base#rdw('OK: Git Add Untracked Tex Files')
   endfunction
   
   call asc#run({ 

@@ -40,6 +40,10 @@ class LTS(
        'arr' : '-c --cmd',
        'kwd' : { 'help'    : 'Run command(s)' }
     },
+    {
+       'arr' : '-a --act',
+       'kwd' : { 'help'    : 'Actions' }
+    },
     { 
        'arr' : '-y --f_yaml', 
        'kwd' : { 
@@ -333,6 +337,59 @@ class LTS(
 
     with open(sec_file, 'w', encoding='utf8') as f:
       f.write('\n'.join(self.nlines) + '\n')
+
+    return self
+
+  def vimtags_db_create(self, ref = {}):
+    db_file = self.db_file_projs
+
+    return self
+
+  def vimtags_update(self, ref = {}):
+    tfile = os.path.join(self.lts_root,'letopis.tags')
+
+    db_file = self.db_file_projs
+    tb = 'projs'
+
+    self.vimtags_db_create()
+
+    tlines = []
+
+    q = f'''SELECT sec, file FROM {tb} WHERE proj = ? ORDER BY sec '''
+    proj = 'letopis'
+
+    r = dbw.sql_fetchall(q,[ proj ],{ 'db_file' : db_file })
+    rows = r.get('rows')
+
+    for rw in rows:
+      sec  = rw.get('sec','')
+      file = rw.get('file','')
+      if not ( sec and file ):
+        continue
+
+      file_path = os.path.join(self.lts_root,file)
+      if not os.path.isfile(file_path):
+        print(file_path)
+        dbw.delete({ 
+          'where'   : { 'sec' : sec, 'proj' : proj },
+          'db_file' : db_file,
+          'table'   : tb
+        })
+        continue
+
+      tline = f'''{sec}\t{file_path}\t1'''
+      tlines.append(tline)
+
+    ttext = '''!_TAG_FILE_FORMAT 2 /extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED 1 /0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR  Darren Hiebert  /dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME  Exuberant Ctags //
+!_TAG_PROGRAM_URL http://ctags.sourceforge.net  /official site/
+!_TAG_PROGRAM_VERSION 5.8 //
+'''
+    ttext += '\n'.join(tlines) + '\n'
+    with open(tfile, 'w', encoding='utf8') as f:
+      f.write(ttext)
 
     return self
 
@@ -663,6 +720,13 @@ class LTS(
       if m:
         ftype = m.group(1)
         self.files.update({ ftype : v })
+
+    for k in util.qw('act'):
+      v  = util.get(self,[ 'oa', k ])
+      if v:
+        acts = string.split_n_trim(v, sep = ',' )
+        for act in acts:
+          self.acts.append({ 'act' : act })
 
     return self
 
