@@ -56,13 +56,78 @@ sub new
     return $self;
 }
 
+sub process_d {
+    my ($self) = @_;
+
+    my $d = $self->{d};
+    return $self unless $d;
+
+    my $url = $d->{url};
+
+    if ($self->_reload) {
+       $d->{inum} = dbh_select_fetchone({
+           q => q{ SELECT inum FROM imgs WHERE url = ? },
+           p => [ $url ],
+       });
+    }else{
+       my $img_db = dbh_select_fetchone({
+           q => q{ SELECT img FROM imgs WHERE url = ? },
+           p => [ $url ],
+       });
+
+       if($img_db) {
+           my $img_db_file = catfile($self->{img_root},$img_db);
+           if ( -e $img_db_file ) {
+              return $self;
+           }
+       }
+       $self->db_get_inum_max;
+    }
+
+    $self->get_img_file;
+
+    return unless $self->_fetch;
+
+    $self->db_insert_img;
+
+    $self->{d} = undef;
+
+    return $self;
+}
+
+sub process_block {
+    my ($self) = @_;
+
+    return $self unless $self->{block};
+
+    $self->{$_} = undef for qw(is_local is_global);
+
+    $self->process_d;
+
+    $self->{block} = undef;
+
+    return $self;
+}
+
 sub init {
     my ($self) = @_;
     
     #$self->SUPER::init();
     #
     my $h = {
+       # structure with image information
        d    => undef,
+
+       # local running vars within ifcmt ... fi block
+       locals => {},
+
+       # global variables for any ifcmt block
+       globals => {},
+
+       # name of block
+       block => undef,
+
+       img_root => $ENV{IMG_ROOT},
 
        keys => [qw(url caption tags name)],
 
@@ -115,7 +180,13 @@ sub db_insert_img {
 sub _reload {
   my ($self) = @_;
 
-  $self->{reload} || $self->_val_('vars reload') || $self->_val_('d reload');
+  my $reload = $self->{reload}
+        || $self->_val_('d reload')
+        || $self->_val_('locals reload')
+        || $self->_val_('globals reload')
+        ;
+
+  return $reload;
 }
 
 sub _fetch_on {
@@ -155,7 +226,6 @@ sub db_get_inum_max  {
   return $self;
 }
 
-###subs_$get_img_file
 sub get_img_file {
   my ($self) = @_;
 
@@ -189,10 +259,6 @@ sub loop {
 
   my @data; my $d = {};
 
-###subs
-  my $push_d = sub { push @data, $d if keys %$d; };
-  my $push_d_reset = sub { $push_d->(); $d = {}; };
-
   my @flines = @{$self->{flines} || []};
 
   foreach(@flines) {
@@ -203,8 +269,44 @@ sub loop {
     next if /^\s*%/;
 
     m/^\\ifcmt\s*$/g && do { $self->{is_cmt} = 1; next; };
-  }
+    m/^\\fi\s*$/g && do { 
+       $self->process_block;
+       $self->{is_cmt} = undef; 
+       next; 
+    };
 
+    next unless $self->{is_cmt};
+
+    m/^\s*(local|global)\s*$/g && do { 
+       $self->process_block;
+
+       my $k = trim($1);
+
+       $self->{'is_' . $k} = 1; 
+       $self->{block} = $k;
+    };
+
+    m/^\s*(\w+)\s+(.*)$/g && do {
+       my ($d, $locals, $globals) = @{$self}{qw(d locals globals)};
+
+       my $k = trim($1);
+       my $v = trim($2);
+
+       if (grep { /^$k$/ } qw( pic doc ig ) ){
+          $self->process_block;
+
+          $self->{block} = $k;
+          $self->{d} = { url => $v, type => $k };
+          next;
+       }
+
+       $d->{$k} = $v if $d;
+
+       $locals->{$k}  = $v if $self->{is_local};
+       $globals->{$k} = $v if $self->{is_global};
+    };
+
+  }
 
   return $self;
 }
