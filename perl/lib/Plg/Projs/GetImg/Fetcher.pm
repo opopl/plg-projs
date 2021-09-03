@@ -252,13 +252,6 @@ sub get_img_file {
 sub loop {
   my ($self) = @_;
 
-  my %vars;
-  my ($is_img, $is_cmt, $url);
-  
-  my ($img_file, $img, $img_err, $ext, $inum);
-
-  my @data; my $d = {};
-
   my @flines = @{$self->{flines} || []};
 
   foreach(@flines) {
