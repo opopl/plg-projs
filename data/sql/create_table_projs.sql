@@ -13,15 +13,14 @@ CREATE TABLE IF NOT EXISTS projs (
     -- parent section name
     parent TEXT,
     projtype TEXT,
-    author TEXT,
     author_id TEXT,
-    author_url TEXT,
     -- section id
     id TEXT,
     pic TEXT,
     rootid TEXT,
     url TEXT,
-    title TEXT
+    title TEXT,
+    date TEXT
 );
 
 -- ALTER TABLE projs ADD COLUMN url TEXT;

@@ -115,6 +115,12 @@ class LTS(
     if not util.get(self,'dirs.tmpl'):
       self.dirs['tmpl'] = os.path.join(self._dir('bin'),'tmpl')
 
+    self.dirs.update({
+      'lts_root'  : self.lts_root,
+      'html_root' : self.html_root,
+      'img_root'  : self.img_root,
+    })
+
     return self
 
   def init_tmpl(self):
@@ -660,6 +666,61 @@ class LTS(
 
     return self
 
+  def _fbauth_list_fs(self):
+    fbauth_secs = self._fbauth_secs_fs()
+    fbauth_list = []
+    for sec in fbauth_secs:
+      m = re.match(r'fbauth\.(.*)$',sec)
+      if m:
+        fba = m.group(1)
+        fbauth_list.append(fba)
+
+    return fbauth_list
+
+  def _fbauth_secs_fs(self):
+    p = Path(self._dir('lts_root'))
+
+    fbauth_secs = []
+    for pp in p.glob(f'{self.proj}.fbauth.*.tex'):
+      pp_file = pp.name
+      m = re.match(rf'^{self.proj}\.(.*)\.tex$',pp_file)
+      if not m:
+        continue
+
+      sec = m.group(1)
+      fbauth_secs.append(sec)
+
+    fbauth_secs.sort()
+
+    return fbauth_secs
+
+  def fbauth_list_fs(self, ref = {}):
+    fbauth_list = self._fbauth_list_fs()
+    for fba in fbauth_list:
+      print(fba)
+
+    return self
+
+  def fbauth_create(self, ref = {}):
+
+    return self
+
+  def fbauth_join(self, ref = {}):
+    f_join = self._dir('lts_root',f'{self.proj}.fbauth_join.tex')
+
+    lines_join = []
+
+    fbauth_secs = self._fbauth_secs_fs()
+    for sec in fbauth_secs:
+      lines_join.append('\ii{%s}' % sec)
+
+    text_join = '\n'.join(lines_join) + '\n'
+
+    with open(f_join, 'w', encoding='utf8') as f:
+      f.write(text_join)
+
+    return self
+
   def sec_author_add(self, ref = {}):
     sec       = ref.get('sec','')
     author_id = ref.get('author_id','')
@@ -676,6 +737,11 @@ class LTS(
     self.sec_process({
       'lines' : lines_ref,
       'sec'   : sec,
+    })
+
+    dbw.update_dict({
+      'db_file' : self.db_files_projs,
+      'table'   : 'projs',
     })
 
     return self

@@ -21,7 +21,7 @@ p = {
     'title'      : re.compile('^\s*%%title (.*)$'),
 }
 
-p_keys = util.qw('tags author author_id url title')
+p_keys = util.qw('tags author_id url title')
 
 def create_tables(db_file, sql_file):
   conn = sqlite3.connect(db_file)
@@ -106,7 +106,7 @@ def get_data(filename):
   for ln in lines:
     line = ''
     try:
-      line = ln.decode('utf-8')
+      line = ln.decode('utf-8').strip('\n')
     except UnicodeDecodeError as e:
       print(e,filename)
     if line:
@@ -139,14 +139,10 @@ def fill_from_files(db_file, root, root_id, proj, logfun):
 
   if len(proj):
     pt = re.compile('^(%s)\.(?:(.*)\.|)(\w+)$' % proj)
-    print('''("%s" project) Filling tables in db: 
-              %s
-          ''' % proj, db_file)
+    print(f'''("{proj}" project) Filling tables in db: {db_file}''')
   else:
     pt = re.compile('^(\w+)\.(?:(.*)\.|)(\w+)$')
-    print('''(all projects) Filling tables in db: 
-              %s
-          ''' % db_file)
+    print(f'''(all projects) Filling tables in db: {db_file}''')
 
   pt_bib   = re.compile('^(\w+)\.refs\.bib$')
   pt_dat_i = re.compile('^(.*)\.i$')
@@ -207,20 +203,20 @@ def fill_from_files(db_file, root, root_id, proj, logfun):
 
         data   = get_data(fpath)
 
-        tags   = data.get('tags','')
-        author = data.get('author','')
-        url    = data.get('url','')
+        tags      = data.get('tags','')
+        author_id = data.get('author_id','')
+        url       = data.get('url','')
 
         ins = { 
-              'author' : author,
-              'file'   : file,
-              'proj'   : proj_m,
-              'root'   : root,
-              'rootid' : root_id,
-              'sec'    : sec,
-              'tags'   : tags,
-              'url'    : url,
-              'title'  : data.get('title',''),
+          'file'      : file,
+          'author_id' : author_id,
+          'proj'      : proj_m,
+          'root'      : root,
+          'rootid'    : root_id,
+          'sec'       : sec,
+          'tags'      : tags,
+          'url'       : url,
+          'title'     : data.get('title',''),
         }
 
         dbw.insert_dict({

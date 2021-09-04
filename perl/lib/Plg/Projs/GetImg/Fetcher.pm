@@ -56,7 +56,7 @@ sub new
     return $self;
 }
 
-sub process_d {
+sub d_process {
     my ($self) = @_;
 
     my $d = $self->{d};
@@ -64,31 +64,19 @@ sub process_d {
 
     my $url = $d->{url};
 
-    if ($self->_reload) {
-       $d->{inum} = dbh_select_fetchone({
-           q => q{ SELECT inum FROM imgs WHERE url = ? },
-           p => [ $url ],
-       });
-    }else{
-       my $img_db = dbh_select_fetchone({
-           q => q{ SELECT img FROM imgs WHERE url = ? },
-           p => [ $url ],
-       });
+    my $db = {};
+    @{$db}{qw(inum img)} = dbh_select_as_list({
+        q => q{ SELECT inum, img FROM imgs WHERE url = ? },
+        p => [ $url ],
+    });
 
-       if($img_db) {
-           my $img_db_file = catfile($self->{img_root},$img_db);
-           if ( -e $img_db_file ) {
-              return $self;
-           }
-       }
-       $self->db_get_inum_max;
-    }
+    $self->db_get_inum_max unless $db->{inum};
 
-    $self->get_img_file;
+    $self->d_img_file;
 
-    return unless $self->_fetch;
+    my $fetch_ok = $self->_fetch;
 
-    $self->db_insert_img;
+    $self->db_insert_img if $fetch_ok;
 
     $self->{d} = undef;
 
@@ -102,7 +90,7 @@ sub process_block {
 
     $self->{$_} = undef for qw(is_local is_global);
 
-    $self->process_d;
+    $self->d_process;
 
     $self->{block} = undef;
 
@@ -226,7 +214,7 @@ sub db_get_inum_max  {
   return $self;
 }
 
-sub get_img_file {
+sub d_img_file {
   my ($self) = @_;
 
   my $d = $self->{d};
@@ -234,16 +222,19 @@ sub get_img_file {
 
   my $ext;
 
-  my ($scheme, $auth, $path, $query, $frag) = uri_split($d->{url});
-  my $bname = basename($path);
-  ($ext) = ($bname =~ m/\.(\w+)$/);
-  $ext ||= 'jpg';
-  $ext = lc $ext;
-  $ext = 'jpg' if $ext eq 'jpeg';
+  unless($d->{img}){
+      my ($scheme, $auth, $path, $query, $frag) = uri_split($d->{url});
+      my $bname = basename($path);
+      ($ext) = ($bname =~ m/\.(\w+)$/);
+      $ext ||= 'jpg';
+      $ext = lc $ext;
+      $ext = 'jpg' if $ext eq 'jpeg';
 
-  $d->{ext} = $ext;
-  
-  $d->{img}      = sprintf(q{%s.%s},$d->{inum},$d->{ext});
+      $d->{ext} = $ext;
+
+      $d->{img} = sprintf(q{%s.%s},$d->{inum},$d->{ext});
+  }
+
   $d->{img_file} = catfile($self->{img_root},$d->{img});
 
   return $self;
@@ -358,7 +349,9 @@ sub _fetch {
   my ($self) = @_;
 
   my $d = $self->{d};
-  return $self unless $d;
+  return $self unless $d && $d->{img_file};
+
+  return $self if !$self->_reload && -e $d->{img_file};
 
   my $gi = $self->{gi};
 

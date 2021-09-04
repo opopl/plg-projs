@@ -62,8 +62,8 @@ if args.create:
   for file in f:
     m = pt.match(file)
     if m:
-        sql_file = os.path.join(sql_dir,file)
-        db.create_tables(dbfile, sql_file)
+      sql_file = os.path.join(sql_dir,file)
+      db.create_tables(dbfile, sql_file)
 
 if args.all:
   db.fill_from_files( dbfile, root, rootid, '', logfun )

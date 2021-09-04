@@ -35,9 +35,9 @@ sub tree_init {
 sub _tree_sec_get {
     my ($mkr, $sec, $key) = @_;
 
-	my $s_data = $mkr->{ii_tree}->{$sec} || {};
+    my $s_data = $mkr->{ii_tree}->{$sec} || {};
 
-	my $k_data = $s_data->{$key};
+    my $k_data = $s_data->{$key};
 
     return $k_data;
 }
@@ -64,7 +64,7 @@ sub tree_import {
         };
 
         /^\t(\w+)$/ && do {
-			next unless ( $sec && $tree->{$sec} );
+            next unless $sec && $tree->{$sec};
 
             $prop = $1;
             $tree->{$sec}->{$prop} ||= [];
@@ -73,7 +73,7 @@ sub tree_import {
         };
 
         /^\t\t(\S+)$/ && do {
-			next unless ( $sec && $tree->{$sec} );
+            next unless $sec && $tree->{$sec};
 
             my $sc = $1;
             push @{$tree->{$sec}->{$prop}}, $sc;
@@ -90,7 +90,7 @@ sub tree_dump {
     my ($mkr,$ref) = @_;
     $ref ||= {};
 
-	print Dumper($mkr->{ii_tree}) . "\n";
+    print Dumper($mkr->{ii_tree}) . "\n";
 
     return $mkr;
 }
