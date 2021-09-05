@@ -4,7 +4,6 @@ function! projs#data#dict#ids ()
 	let ids = base#find({ 
 		\	"dirs"    : [dict_dir],
 		\	"exts"    : base#qw('i.dat'),
-		\	"cwd"     : 1,
 		\	"relpath" : 1,
 		\	"subdirs" : 1,
 		\	"rmext"   : 1,

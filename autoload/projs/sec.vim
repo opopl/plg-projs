@@ -505,7 +505,6 @@ function! projs#sec#add_to_db (sec,...)
   let ref = get(a:000,0,{})
 
   let tags   = get(ref,'tags','')
-  let author = get(ref,'author','')
 
   let db_data = get(ref,'db_data',{})
 
@@ -526,7 +525,6 @@ function! projs#sec#add_to_db (sec,...)
     \ "root"   : projs#root(),
     \ "rootid" : projs#rootid(),
     \ "tags"   : tags,
-    \ "author" : author,
     \ }
   call extend(h,db_data)
   
@@ -827,12 +825,11 @@ function! projs#sec#new(sec,...)
 
     let url        = get(ref,'url','')
 
-    let author     = get(ref,'author','')
     let author_id  = get(ref,'author_id','')
-    let author_url = get(ref,'author_url','')
 
     let title      = get(ref,'title','')
     let tags       = get(ref,'tags','')
+    let date       = get(ref,'date','')
 
     let o = base#varget('projs_opts_PrjSecNew',{})
 
@@ -855,9 +852,8 @@ function! projs#sec#new(sec,...)
       \ 'parent_sec' : parent_sec,
       \ 'url'        : url,
       \ 'author_id'  : author_id,
-      \ 'author_url' : author_url,
-      \ 'author'     : author,
       \ 'tags'       : tags,
+      \ 'date'       : date,
       \ 'title'      : title,
       \ }
 
@@ -1047,10 +1043,9 @@ function! projs#sec#new(sec,...)
     let db_data = {
       \ 'url'        : url,
       \ 'tags'       : tags,
+      \ 'date'       : date,
       \ 'title'      : title,
-      \ 'author'     : author,
       \ 'author_id'  : author_id,
-      \ 'author_url' : author_url,
       \ 'parent'     : parent_sec,
       \ }
 """sec_new_sec_add
@@ -1295,9 +1290,9 @@ function! projs#sec#header (...)
   let title      = get(ref,'title','')
   let tags       = get(ref,'tags','')
 
-  let author     = get(ref,'author','')
+  let date       = get(ref,'date','')
+
   let author_id  = get(ref,'author_id','')
-  let author_url = get(ref,'author_url','')
 
   let title      = get(ref,'title','')
   
@@ -1315,9 +1310,8 @@ function! projs#sec#header (...)
     call extend(header,[ ' ' ])
     call extend(header,[ '%%url '    . url    ] )
     call extend(header,[ ' ' ])
-    call extend(header,[ '%%author ' . author ] )
     call extend(header,[ '%%author_id ' . author_id ] )
-    call extend(header,[ '%%author_url ' . author_url ] )
+    call extend(header,[ '%%date ' . date ] )
     call extend(header,[ ' ' ])
     call extend(header,[ '%%tags '   . tags   ] )
     call extend(header,[ '%%title '  . title  ] )

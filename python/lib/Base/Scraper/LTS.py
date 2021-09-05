@@ -7,6 +7,7 @@ import Base.String as string
 import Base.Const as const
 
 import Base.Re as ree
+import plg.projs.db as projs_db
 
 from pathlib import Path
 
@@ -132,7 +133,7 @@ class LTS(
       variable_end_string = '}',
       comment_start_string = '\#{',
       comment_end_string = '}',
-      #line_statement_prefix = '%%',
+      line_statement_prefix = '@@',
       line_comment_prefix = '%#',
       trim_blocks = True,
       autoescape = False,
@@ -145,6 +146,14 @@ class LTS(
 
   def _sec_tex_header(self,ref = {}):
     return t
+
+  def _sec_file_data(self,ref = {}):
+    sec = ref.get('sec','')
+
+    sec_file = self._sec_file({ 'sec' : sec })
+    data = projs_db.get_data(sec_file)
+
+    return data
 
   def _sec_file(self,ref = {}):
     sec = ref.get('sec','')
@@ -424,8 +433,8 @@ class LTS(
     if not sec:
       return self
 
-    t = self.template_env_tex.get_template("sec.tex")
-    h = t.render(**ref)
+    t = self.template_env_tex.get_template("head.tex")
+    head = t.render(**ref)
 
     sec_file = self._sec_file({ 'sec' : sec })
     print(h)
@@ -701,7 +710,43 @@ class LTS(
 
     return self
 
+#http://eosrei.net/articles/2015/11/latex-templates-python-and-jinja2-generate-pdfs
+#https://web.archive.org/web/20121024021221/http://e6h.de/post/11/
   def fbauth_create(self, ref = {}):
+    lines = []
+
+    fba = ref.get('fba','')
+    if not fba:
+      return self
+
+    head_data   = ref.get('head_data',{})
+    fbauth_data = ref.get('fbauth_data',{})
+
+    fbauth_data = util.dict_str2int(fbauth_data, keys = [ 'friend' ])
+    fbauth_data = util.dict_none2str(fbauth_data)
+    #fbauth_data = util.dict_none_rm(fbauth_data)
+
+    print(fbauth_data)
+
+    t = self.template_env_tex.get_template("head.tex")
+    s_head = t.render(**head_data)
+
+    t = self.template_env_tex.get_template("fbauth.tex")
+    s_fbauth = t.render(**fbauth_data)
+
+    lines.extend(s_head.split('\n'))
+    lines.extend([ '' ])
+    lines.extend(string.split_n_trim(s_fbauth))
+    #lines.extend(s_fbauth.split('\n'))
+
+    t = '\n'.join(lines) + '\n'
+
+    sec = f'''fbauth.{fba}'''
+    sec_file = self._sec_file({ 'sec' : sec })
+
+    print(sec_file)
+    print(t)
+
 
     return self
 
@@ -739,9 +784,27 @@ class LTS(
       'sec'   : sec,
     })
 
+    self.sec_author_file2db({ 'sec' : sec })
+
+    return self
+
+  def sec_author_file2db(self, ref = {}):
+    sec       = ref.get('sec','')
+
+    where = {
+      'sec'  : sec,
+      'proj' : self.proj,
+    }
+
+    data = self._sec_file_data({ 'sec' : sec })
+    author_id_new = data.get('author_id','')
     dbw.update_dict({
-      'db_file' : self.db_files_projs,
-      'table'   : 'projs',
+      'db_file' : self.db_file_projs,
+      'table' : 'projs',
+      'update' : {
+         'author_id' : author_id_new
+      },
+      'where' : where
     })
 
     return self
@@ -763,6 +826,8 @@ class LTS(
       'lines' : lines_ref,
       'sec'   : sec,
     })
+
+    self.sec_author_file2db({ 'sec' : sec })
 
     return self
 

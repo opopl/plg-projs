@@ -159,6 +159,41 @@ def obj_update(**kwargs):
   
   return dest
 
+def dict_none_rm(obj):
+  keys = list(obj.keys())
+  for k in keys:
+    v = obj.get(k)
+    if v == None:
+      del obj[k]
+    elif type(v) in [dict]:
+      v = dict_none_rm(v)
+      obj[k] = v
+
+  return obj
+
+def dict_none2str(obj,keys = []):
+  if not len(keys):
+    keys = list(obj.keys())
+
+  for k in keys:
+    v = obj.get(k)
+    if v == None:
+      obj[k] = ''
+
+  return obj
+
+def dict_str2int(obj,keys = []):
+  if not len(keys):
+    keys = list(obj.keys())
+
+  for k in keys:
+    v = obj.get(k)
+    if v != None and type(v) in [str]:
+      v = int(v)
+      obj[k] = v
+
+  return obj
+
 def obj_methods(obj):
   methods = [m for m in dir(obj) if callable(getattr(obj, m)) ]
   return methods

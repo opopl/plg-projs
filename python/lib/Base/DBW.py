@@ -96,7 +96,7 @@ def sql_fetchval(q, p=[], ref={}):
   val = row[col]
   return val
 
-def sql_fetchone(q, p=[], ref={}):
+def sql_fetchone(q, p = [], ref = {}):
   conn     = ref.get('conn')
   db_file  = ref.get('db_file')
   db_close = ref.get('db_close')
@@ -108,6 +108,16 @@ def sql_fetchone(q, p=[], ref={}):
     else:
       return
 
+  where = ref.get('where',{})
+
+  r      = cond_where({ 'where' : where })
+  cond   = r.get('cond')
+  values = r.get('values')
+
+  if cond:
+    q += ' WHERE ' + cond
+    p.extend(values)
+
   conn.row_factory = sqlite3.Row
 
   c = conn.cursor()
@@ -118,6 +128,7 @@ def sql_fetchone(q, p=[], ref={}):
      print(e)
   except:
      print("Errors ", sys.exc_info()[0], " for sqlite query: " + q )
+
   rw = c.fetchone()
 
   if not rw:
