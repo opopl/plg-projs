@@ -522,7 +522,6 @@ function! projs#sec#add_to_db (sec,...)
     \ "proj"   : proj,
     \ "sec"    : sec,
     \ "file"   : sfile,
-    \ "root"   : projs#root(),
     \ "rootid" : projs#rootid(),
     \ "tags"   : tags,
     \ }

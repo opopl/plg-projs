@@ -744,9 +744,19 @@ class LTS(
     sec = f'''fbauth.{fba}'''
     sec_file = self._sec_file({ 'sec' : sec })
 
-    print(sec_file)
-    print(t)
+    with open(sec_file, 'w', encoding='utf8') as f:
+      f.write(t)
 
+    dbw.insert_dict({ 
+      'db_file' : self.db_file_projs,
+      'table' : 'projs',
+      'insert' : {
+         'sec'    : sec,
+         'proj'   : self.proj,
+         'rootid' : 'p_sr',
+         'file'   : Path(sec_file).name,
+      }
+    })
 
     return self
 

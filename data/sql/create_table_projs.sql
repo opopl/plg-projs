@@ -7,7 +7,6 @@ CREATE TABLE IF NOT EXISTS projs (
     -- project name
     proj TEXT NOT NULL, 
     file TEXT NOT NULL UNIQUE,
-    root TEXT NOT NULL,
     sec TEXT, 
     tags TEXT, 
     -- parent section name

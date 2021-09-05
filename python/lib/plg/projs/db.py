@@ -211,7 +211,6 @@ def fill_from_files(db_file, root, root_id, proj, logfun):
           'file'      : file,
           'author_id' : author_id,
           'proj'      : proj_m,
-          'root'      : root,
           'rootid'    : root_id,
           'sec'       : sec,
           'tags'      : tags,
