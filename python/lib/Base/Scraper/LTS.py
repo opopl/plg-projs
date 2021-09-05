@@ -72,6 +72,7 @@ class LTS(
     self.img_root  = os.environ.get('IMG_ROOT')
 
     self.proj      = 'letopis'
+    self.rootid    = 'p_sr'
 
     self.db_file_pages = os.path.join(self.html_root,'h.db')
     self.db_file_projs = os.path.join(self.lts_root,'projs.sqlite')
@@ -726,8 +727,6 @@ class LTS(
     fbauth_data = util.dict_none2str(fbauth_data)
     #fbauth_data = util.dict_none_rm(fbauth_data)
 
-    print(fbauth_data)
-
     t = self.template_env_tex.get_template("head.tex")
     s_head = t.render(**head_data)
 
@@ -747,15 +746,17 @@ class LTS(
     with open(sec_file, 'w', encoding='utf8') as f:
       f.write(t)
 
+    insert = {
+      'sec'    : sec,
+      'proj'   : self.proj,
+      'rootid' : self.rootid,
+      'file'   : Path(sec_file).name,
+    }
+
     dbw.insert_dict({ 
       'db_file' : self.db_file_projs,
-      'table' : 'projs',
-      'insert' : {
-         'sec'    : sec,
-         'proj'   : self.proj,
-         'rootid' : 'p_sr',
-         'file'   : Path(sec_file).name,
-      }
+      'table'  : 'projs',
+      'insert' : insert
     })
 
     return self
