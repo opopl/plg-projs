@@ -150,10 +150,69 @@ sub _width {
   return $w;
 }
 
+sub _dict_update {
+  my ($self, $dict, $k, $v) = @_;
+
+  $dict ||= {};
+
+  if (defined $dict->{$k}) {
+     my $ka = '@' . $k;
+     $dict->{$ka} ||= [ $dict->{$k} ];
+     push @{$dict->{$ka}}, $v;
+  }
+  $dict->{$k} = $v;
+
+  return $dict;
+}
+
+sub _wrapped {
+  my ($self, $wrap, $position) = @_;
+
+  return () unless $wrap;
+
+  my @lines;
+  unless(ref $wrap) {
+     local $_ = $wrap;
+     /^\\(\w+)/ && do {
+        if ($position eq 'start') {
+          push @lines, $_ . '{';
+        } elsif ($position eq 'end') {
+          push @lines, '}';
+        }
+     };
+  }elsif(ref $wrap eq 'ARRAY'){
+     foreach my $x (@$wrap) {
+        my @w = $self->_wrapped($x, $position);
+        if ($position eq 'start') {
+          push @lines, @w;
+        }elsif ($position eq 'end') {
+          unshift @lines, @w;
+        }
+     }
+  }
+  return @lines;
+}
+
+
+sub _cat_float {
+  my ($self, $var) = @_;
+
+  my $w;
+  if (ref $var eq 'ARRAY') {
+     for(@$var){
+        $w += eval $_;
+     }
+  }elsif(!ref $var){
+     $w = $var;
+  }
+  return $w;
+}
+
 sub _width_tex {
   my ($self, $wd) = @_;
 
   my $w = $self->_width($wd);
+
   for($w){
       /^(\d+(?:|\.\d+))$/ && do {
           $w = qq{$w\\textwidth};
@@ -464,6 +523,10 @@ sub _d2tex {
       
   }
 
+  my $wrap = $d->{'@wrap'} || $d->{'wrap'};
+
+  push @tex, $self->_wrapped($wrap,'start');
+
   unless($tab){
      push @tex,
         $self->_fig_start, 
@@ -474,8 +537,11 @@ sub _d2tex {
      push @tex,
         sprintf('%% row: %s, col: %s ', @{$tab}{qw(i_row i_col)}),
         $caption ? ( sprintf(q|%% %s|, $caption )) : (),
-        @ig;
+        @ig,
+        ;
   }
+
+  push @tex, $self->_wrapped($wrap,'end');
 
 
   return @tex;
@@ -528,14 +594,14 @@ sub loop {
 ###m_\ifcmt
     m/^\\ifcmt\s*$/g && do { 
         $self->{is_cmt} = 1; 
-        push @{$self->{nlines}},'{';
+        #push @{$self->{nlines}},'{';
         next; 
     };
 ###m_\fi
     m/^\\fi\s*$/g && do { 
        $self->lpush_d;
        $self->{is_cmt} = undef; 
-       push @{$self->{nlines}},'}';
+       #push @{$self->{nlines}},'}';
        next; 
     };
 
@@ -629,10 +695,10 @@ sub loop {
 
       my ($d, $tab) = @{$self}{qw( d tab )};
       if($d){
-         $d->{$k} = $v;
+         $self->_dict_update($d, $k => $v);
 
-      }elsif($self->{tab}){
-         $tab->{$k} = $v;
+      }elsif($tab){
+         $self->_dict_update($tab, $k => $v);
       }
 
       next;
