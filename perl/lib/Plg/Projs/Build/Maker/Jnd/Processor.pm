@@ -171,13 +171,26 @@ sub _wrapped {
   return () unless $wrap;
 
   my @lines;
+  #push @lines, map { '%' . $_ } split '\n' => Dumper($wrap);
+
   unless(ref $wrap) {
      local $_ = $wrap;
+
      /^\\(\w+)/ && do {
         if ($position eq 'start') {
           push @lines, $_ . '{';
         } elsif ($position eq 'end') {
           push @lines, '}';
+        }
+     };
+
+     /^(\w+)(?:|{(.*)})$/ && do {
+        my $env = $1;
+        if ($position eq 'start') {
+          my $obr = $2 ? $2 : '';
+          push @lines, "\\begin{$env}{$obr}";
+        } elsif ($position eq 'end') {
+          push @lines, "\\end{$env}";
         }
      };
   }elsif(ref $wrap eq 'ARRAY'){
