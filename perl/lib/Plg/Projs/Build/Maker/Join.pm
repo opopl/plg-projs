@@ -214,7 +214,7 @@ sub _join_lines {
     my @append = $mkr->_line_plus($sec,'append');
     push @lines, @append;
 
-    if ( ($sec eq '_main_') && (! $ref->{skip_write} )) {
+    if ( $sec eq '_main_' && !$ref->{skip_write} ) {
         write_file($jfile,join("\n",@lines) . "\n");
     }
 

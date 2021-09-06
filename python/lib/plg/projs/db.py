@@ -244,7 +244,6 @@ def fill_from_files(db_file, root, root_id, proj, logfun):
                 'insert' : { 
                   'file'    : pm_rel,
                   'proj'    : proj,
-                  'root'    : root,
                   'rootid'  : root_id,
                   'sec'     : sec,
                  }

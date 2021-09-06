@@ -190,8 +190,15 @@ sub _fig_start {
               q|  \centering |;
           last;
       };
+
       /^(wrapfigure)/ && do {
           push @s, sprintf(q/\begin{%s}{R}{%s}/, $fe, $self->_width_tex );
+          last;
+      };
+
+      /^(floatingfigure)/ && do {
+          push @s, sprintf(q/\begin{%s}{%s}/, $fe, $self->_width_tex );
+
           last;
       };
 
@@ -283,7 +290,7 @@ sub match_tab_begin {
   my @tab_opts = grep { length } map { defined ? trim($_) : () } split("," => $opts_s);
   for(@tab_opts){
      my ($k, $v) = (/^([^=]+)(?:|=([^=]+))$/g);
-	 $k = trim($k);
+     $k = trim($k);
 
      $self->{tab}->{$k} = defined $v ? trim($v) : 1;
   }
@@ -299,8 +306,6 @@ sub match_tab_begin {
 
 sub match_tab_end {
   my ($self) = @_;
-
-  $self->lpush_d;
 
   push @{$self->{nlines}}, 
      $self->_tab_end, $self->_tex_caption_tab,
@@ -409,8 +414,8 @@ sub _d2tex {
      w   => $w,
   });
 
+  my $url = $d->{url};
   unless (@$rows) {
-     my $url = $d->{url};
      my $r = {    
          msg => q{ No image found in Database! },
          url => $url,
@@ -432,6 +437,7 @@ sub _d2tex {
          url => $d->{url},
      };
      warn Dumper($r) . "\n";
+     push @tex, qq{%Image exists in DB but not found in FS: $url };
      return @tex;
   }
 
@@ -520,36 +526,59 @@ sub loop {
     $self->{line} = $_;
 
 ###m_\ifcmt
-    m/^\\ifcmt\s*$/g && do { $self->{is_cmt} = 1; next; };
+    m/^\\ifcmt\s*$/g && do { 
+        $self->{is_cmt} = 1; 
+        push @{$self->{nlines}},'{';
+        next; 
+    };
 ###m_\fi
     m/^\\fi\s*$/g && do { 
        $self->lpush_d;
        $self->{is_cmt} = undef; 
+       push @{$self->{nlines}},'}';
        next; 
     };
 
-    unless($self->{is_cmt}){ 
+    m/^\s*%/ && do { push @{$self->{nlines}},$_; next; };
+
+###m_block_end
+    if ($self->{is_cmt}) {
+       m/^\s*(\w+)/ && do { 
+          my $k = $1;
+          my @block_end = qw( 
+            tex tex_start 
+            tab_begin tab_end
+            pic ig doc
+          );
+          if ( grep { /^$k$/ } @block_end ) {
+             $self->lpush_d;
+          }
+       };
+    }else{
        $self->ldo_no_cmt;
        next;
     }
 
-    m/^\s*%/ && do { push @{$self->{nlines}},$_; next; };
-
+###m_tex
     m/^\s*tex\s+(.*)$/g && do {
         my $tex = trim($1);
-        push @{$self->{nlines}},$tex; next;
+        push @{$self->{nlines}},$tex; 
+        next;
     };
 
+###m_tex_start
     m/^\s*tex_start\s+(.*)$/g && do {
-		$self->{is_tex} = 1;
-		next;
-	};
+        $self->{is_tex} = 1;
+        next;
+    };
 
+###m_tex_end
     m/^\s*tex_end\s+(.*)$/g && do {
-		$self->{is_tex} = undef;
-		next;
-	};
+        $self->{is_tex} = undef;
+        next;
+    };
 
+###m_author
     m/^\s*author_end\s*$/g && do { $self->match_author_end; next; };
     m/^\s*author_begin\s*$/g && do { $self->match_author_begin; next; };
 
@@ -558,11 +587,10 @@ sub loop {
     m/^\s*tab_begin\b(.*)/g && do { $self->match_tab_begin($1); next; };
     m/^\s*tab_end\s*$/g && do { $self->match_tab_end; next; };
 
+###m_pic
     m/^\s*(pic|doc|ig)@(.*)$/g && do { 
        my $v;
        $v = trim($2) if $2;
-
-       $self->lpush_d;
 
        next unless $v;
 
@@ -587,8 +615,6 @@ sub loop {
        my $v;
        $v = trim($2) if $2;
 
-       $self->lpush_d;
-
        $self->{d} = { type => $1 };
 
        $self->{d}->{url} = $v if $v;
@@ -596,14 +622,17 @@ sub loop {
        next;
     };
 
-    m/^\s*(\w+)\s+(.*)$/g && do { 
+###m_@keyword
+    m/^\s*(?:@|)(\w+)\s+(.*)$/g && do { 
+      my $k = $1;
       my $v = trim($2);
 
-      if($self->{d}){
-         $self->{d}->{$1} = $v;
+      my ($d, $tab) = @{$self}{qw( d tab )};
+      if($d){
+         $d->{$k} = $v;
 
       }elsif($self->{tab}){
-         $self->{tab}->{$1} = $v;
+         $tab->{$k} = $v;
       }
 
       next;

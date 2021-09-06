@@ -56,17 +56,24 @@ sub inj_base {
         print_ii_tree
     );
 
+    my %old = (
+        # Plg::Projs::Build::Maker::Pwg cmd_build_pwg
+       'compile_pwg'      => 'build_pwg',
+    );
+
     my $h = {
         trg_list => [qw( usual )],
         maps_act => {
-            'compile_pwg'      => 'build_pwg',
+            # Plg::Projs::Build::Maker::Jnd cmd_jnd_build
             'compile'          => 'jnd_build',
+            # Plg::Projs::Build::Maker::Jnd cmd_jnd_compose
             'join'             => 'jnd_compose',
             'relax'            => 'relax',
             'show_trg'         => sub { $bld->act_show_trg; },
             'show_acts'        => sub { $bld->act_show_acts; },
             'dump_bld'         => sub { $bld->act_dump_bld; },
             %print,
+            %old
         },
         act_default    => 'compile',
         target_default => 'usual',
