@@ -19,6 +19,7 @@ p = {
     'author_id'  : re.compile('^\s*%%author_id (.*)$'),
     'url'        : re.compile('^\s*%%url (.*)$'),
     'title'      : re.compile('^\s*%%title (.*)$'),
+    'parent'     : re.compile('^\s*%%parent (.*)$'),
 }
 
 p_keys = util.qw('tags author_id url title')
@@ -216,6 +217,7 @@ def fill_from_files(db_file, root, root_id, proj, logfun):
           'tags'      : tags,
           'url'       : url,
           'title'     : data.get('title',''),
+          'parent'    : data.get('parent',''),
         }
 
         dbw.insert_dict({

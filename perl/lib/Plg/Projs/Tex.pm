@@ -52,6 +52,10 @@ my @ex_vars_array=qw(
 our %fbicons = (
   '😍' => 'heart.eyes',
   '🔥' => 'flame',
+  '😢' => 'cry',
+  '🙏' => 'hands.pray',
+  '💔' => 'heart.broken',
+  '😉' => 'wink',
 );
 
 sub texify {
@@ -275,6 +279,16 @@ sub empty_to_smallskip {
     $s = join("\n",@new);
 }
 
+sub fbicon_igg {
+	my ($char) = @_;
+
+	my ($rpl, $name);
+	$name = $fbicons{$char};
+	$rpl = $name ? sprintf('@igg{fbicon.%s}',$name) : $char;
+	
+	return $rpl;
+}
+
 sub fb_format {
     my @lines = split "\n" => $s;
 
@@ -289,6 +303,10 @@ sub fb_format {
           || /^\s+·\s*$/ 
         )
         && do { push @new,''; next; };
+
+		while(my($k,$v)=each %fbicons){
+		  s/($k)/fbicon_igg($1)/ge;
+		}
 
         #s/^\\iusr\{(.*)\}\\par\s*$/\\iusr{$1}/g;
         #s/^\\emph\{(.*)\}\s*$/\\iusr{$1}/g;

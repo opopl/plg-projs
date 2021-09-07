@@ -448,6 +448,24 @@ class LTS(
 
     return self
 
+  def db_fbicons(self, ref = {}):
+    db_file  = self.db_file_img
+
+    width_tex = 0.05
+    q = '''SELECT * FROM imgs WHERE name LIKE 'fbicon%' '''
+    r = dbw.sql_fetchall(q,[ ],{ 'db_file' : db_file })
+    rows = r.get('rows',[])
+    for rw in rows:
+      name = rw.get('name')
+      dbw.update_dict({ 
+         'db_file' : db_file,
+         'table' : 'imgs',
+         'update' : { 'width_tex' : width_tex },
+         'where' : { 'name' : name },
+      })
+
+    return self
+
   def db_update_img(self, ref = {}):
     img_data = ref.get('img_data',[])
     db_file  = self.db_file_img

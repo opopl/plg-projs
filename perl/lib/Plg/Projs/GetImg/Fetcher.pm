@@ -270,6 +270,11 @@ sub loop {
        $self->{block} = $k;
     };
 
+    m/^\s*@(\w+)\s+(.*)$/g && do {
+       my $k = trim($1);
+       my $v = trim($2);
+	};
+
     m/^\s*(\w+)\s+(.*)$/g && do {
        my ($d, $locals, $globals) = @{$self}{qw(d locals globals)};
 

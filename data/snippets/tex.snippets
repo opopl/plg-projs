@@ -158,10 +158,17 @@ snippet mlz
 snippet env
 	\usepackage{p.env}
 	\getenv[<+TexMacro+>]{<+EnvVar+>}
+snippet igw
+	\ifcmt
+	  ig <++>
+	  @width 0.5
+	  @wrap \parpic[r]
+	\fi
 snippet pic04
 	\ifcmt
 	  pic <++>
-	  width 0.4
+	  @width 0.4
+	  @wrap \parpic[r]
 	\fi
 snippet g01
 	\ifcmt

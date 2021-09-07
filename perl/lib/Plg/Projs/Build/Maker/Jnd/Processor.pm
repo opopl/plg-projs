@@ -184,7 +184,7 @@ sub _wrapped {
         }
      };
 
-     /^(\w+)(?:|{(.*)})$/ && do {
+     /^(\w+)(?:{(.*)}|)$/ && do {
         my $env = $1;
         if ($position eq 'start') {
           my $obr = $2 ? $2 : '';
@@ -227,7 +227,7 @@ sub _width_tex {
   my $w = $self->_width($wd);
 
   for($w){
-      /^(\d+(?:|\.\d+))$/ && do {
+      /^(\d+(?:\.\d+|))$/ && do {
           $w = qq{$w\\textwidth};
       };
       last;
@@ -351,6 +351,23 @@ sub match_author_end {
   return $self;
 }
 
+sub _opts_dict {
+  my ($self, $opts_s) = @_;
+
+  return {} unless defined $opts_s;
+
+  my $dict = {};
+  my @opts = grep { length } map { defined ? trim($_) : () } split("," => $opts_s);
+
+  for(@opts){
+     my ($k, $v) = (/^([^=]+)(?:|=([^=]+))$/g);
+     $k = trim($k);
+
+     $dict->{$k} = defined $v ? trim($v) : 1;
+  }
+
+  return $dict;
+}
 
 sub match_tab_begin {
   my ($self, $opts_s) = @_;
@@ -359,13 +376,18 @@ sub match_tab_begin {
 
   $self->tab_init;
 
-  my @tab_opts = grep { length } map { defined ? trim($_) : () } split("," => $opts_s);
-  for(@tab_opts){
-     my ($k, $v) = (/^([^=]+)(?:|=([^=]+))$/g);
-     $k = trim($k);
+  hash_update(
+    $self->{tab}, 
+    $self->_opts_dict($opts_s)
+  );
 
-     $self->{tab}->{$k} = defined $v ? trim($v) : 1;
-  }
+#  my @tab_opts = grep { length } map { defined ? trim($_) : () } split("," => $opts_s);
+  #for(@tab_opts){
+     #my ($k, $v) = (/^([^=]+)(?:|=([^=]+))$/g);
+     #$k = trim($k);
+
+     #$self->{tab}->{$k} = defined $v ? trim($v) : 1;
+  #}
 
   $self->{tab}->{width} ||= ( $self->{img_width_default} / $self->{tab}->{cols} );
   
@@ -592,6 +614,29 @@ sub f_write {
   return $self;
 }
 
+sub _igg {
+  my ($self, $igname, $opts_s) = @_;
+
+  $igname = trim($igname);
+
+  $self->{d} = { 
+     name => $igname, 
+     type => 'ig' 
+  };
+
+  hash_update(
+     $self->{d},
+     $self->_opts_dict($opts_s)
+  );
+
+  my ($tex, @tex);
+  push @tex, $self->_d2tex;
+  $tex = join("\n",@tex);
+
+  $self->{d} = undef;
+  return $tex;
+}
+
 sub loop {
   my ($self) = @_;
 
@@ -601,6 +646,8 @@ sub loop {
 
   foreach(@jlines) {
     $self->{lnum}++; chomp;
+
+    s/\@igg\{([^{}]*)\}(?:\{([^{}]*)\}|)/$self->_igg($1,$2)/ge;
 
     $self->{line} = $_;
 
