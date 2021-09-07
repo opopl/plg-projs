@@ -56,6 +56,7 @@ our %fbicons = (
   '🙏' => 'hands.pray',
   '💔' => 'heart.broken',
   '😉' => 'wink',
+  '👍' => 'thumb.up.yellow',
 );
 
 sub texify {

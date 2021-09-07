@@ -186,6 +186,13 @@ def cond_where(ref={}):
   for k in where_keys:
     v = where.get(k,'')
 
+    if k in ['@like'] and type(v) in [dict]:
+      like = v
+      for y,z in like.items():
+        cond_a.append(f' {y} LIKE "{z}" ')
+      
+      continue
+
     cond_k = ''
     if type(v) in [ int, str ]:
       where_values.append(v)
@@ -209,6 +216,55 @@ def cond_where(ref={}):
   r = { 'cond' : cond, 'values' : values }
 
   return r
+
+def select(ref={}):
+  db_file = ref.get('db_file')
+
+  table    = ref.get('table')
+  where    = ref.get('where',{})
+  select_a = ref.get('select',[])
+
+  output   = ref.get('output','all')
+
+  cond = ref.get('cond','')
+  p    = ref.get('p',[])
+
+  r_w      = cond_where({ 'where' : where })
+  cond_w   = r_w.get('cond')
+  values_w = r_w.get('values')
+
+  cond += cond_w
+
+  select_s = '*'
+  if type(select_a) in [str]:
+    select_a = [select_a]
+
+  if len(select_a):
+    select_s = ','.join(select_a) 
+
+  q = f'SELECT {select_s} FROM {table}'
+  if cond:
+    q += ' WHERE ' + cond
+    p.extend(values_w)
+
+  r_all = sql_fetchall(q,p,{ 'db_file' : db_file })
+
+  rows_all = r_all.get('rows',[])
+  cols     = r_all.get('cols',[])
+
+  result = r_all
+  if output == 'list':
+    lst = []
+    for rw in rows_all:
+      for col in cols:
+        lst.append(rw.get(col))
+    result = lst
+
+  elif output == 'first_row':
+    rw = rows_all[0] if len(rows_all) else {}
+    result = rw 
+
+  return result
 
 def sql_fetchall(q, p=[], ref={}):
   conn     = ref.get('conn')

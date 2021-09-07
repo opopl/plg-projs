@@ -448,7 +448,91 @@ class LTS(
 
     return self
 
-  def db_fbicons(self, ref = {}):
+  def _fbicons_db(self):
+    db_file  = self.db_file_img
+
+    names = dbw.select({ 
+      'table'   : 'imgs',
+      'db_file' : db_file,
+      'select' : 'name',
+      'output' : 'list',
+      'where' : { 
+         '@like' : { 'name' : 'fbicon%' }
+      }
+    })
+    fbicons = []
+    for name in names:
+      m = re.match(r'^fbicon\.(.*)$',name)
+      if m:
+        fbi = m.group(1)
+        fbicons.append(fbi)
+        
+    return fbicons
+
+  def _fbicon_db(self, ref = {}):
+    db_file  = self.db_file_img
+
+    name = ref.get('name')
+
+    rw = dbw.select({ 
+      'table'   : 'imgs',
+      'db_file' : db_file,
+      'output' : 'first_row',
+      'where' : { 'name' : name }
+    })
+
+    img = rw.get('img')
+    if img:
+      rw.update({ 
+         'img_file' : self._dir('img_root',[ img ])
+      })
+
+    return rw
+
+  def _tex_ig(self, ref = {}):
+    width = ref.get('width')
+    file  = ref.get('file')
+
+    iga = [
+      f'''\\includegraphics[width={width}\\textwidth]''',
+      '{', file, '}'
+    ]
+    ig = ''.join(iga)
+
+    return ig
+
+  def db_fbicons_list(self, ref = {}):
+
+    sec = 'list.fbicons'
+    list_file = self._sec_file({ 'sec' : sec })
+
+    fbicons = self._fbicons_db()
+    tex_lines = []
+    tex_lines.append('\\begin{tabular}{*{2}{l}}')
+
+    tex_tab_rows = []
+    for fbi in fbicons:
+      name = f'fbicon.{fbi}'
+      fbi_data = self._fbicon_db({ 'name' : name })
+      img_file  = fbi_data.get('img_file','')
+      width_tex = fbi_data.get('width_tex','0.05')
+      ig = self._tex_ig({ 
+        'file'  : img_file,
+        'width' : width_tex,
+      })
+
+      tex_row = ' & '.join([ ig, fbi ]) + '\\\\'
+      tex_lines.append(tex_row)
+
+    tex = tex_lines.append('\\end{tabular}')
+
+    tex = '\n'.join(tex_lines) + '\n'
+    with open(list_file, 'w', encoding='utf8') as f:
+      f.write(tex)
+
+    return self
+
+  def db_fbicons_update(self, ref = {}):
     db_file  = self.db_file_img
 
     width_tex = 0.05
@@ -465,6 +549,7 @@ class LTS(
       })
 
     return self
+
 
   def db_update_img(self, ref = {}):
     img_data = ref.get('img_data',[])
