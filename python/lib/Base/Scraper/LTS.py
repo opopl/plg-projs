@@ -9,6 +9,8 @@ import Base.Const as const
 import Base.Re as ree
 import plg.projs.db as projs_db
 
+from plg.projs.Prj import Prj
+
 from pathlib import Path
 
 import jinja2
@@ -83,6 +85,14 @@ class LTS(
        'pages' : self.db_file_pages,
        'projs' : self.db_file_projs,
     }
+
+    self.prj = Prj({ 
+      'proj'     : self.proj,
+      'rootid'   : self.rootid,
+      'root'     : self.lts_root,
+      'db_file'  : self.db_file_projs,
+      'db_files' : self.db_files,
+    })
 
     for k, v in args.items():
       setattr(self, k, v)
@@ -435,24 +445,11 @@ class LTS(
 
   def db_secs_list(self, ref = {}):
     pat  = ref.get('pat','')
+    ext  = ref.get('ext','')
 
-    proj = ref.get('proj',self.proj)
-
-    pat = '^topics.'
-
-    secs = dbw.select({ 
-      'table'   : 'projs',
-      'db_file' : self.db_file_projs,
-      'select' : 'sec',
-      'output' : 'list',
-      'orderby' : { 'sec' : 'asc' },
-      'where' : {
-        'proj' : proj,
-        '@regexp' : {
-          'file' : '\.tex$',
-          'sec' : pat,
-        }
-      }
+    secs = self.prj._sections({ 
+      'pat' : pat,
+      'ext' : ext,
     })
 
     for sec in secs:
