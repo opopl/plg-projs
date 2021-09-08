@@ -611,16 +611,44 @@ endfunction
 function! projs#sec#select (...)
   let ref = get(a:000,0,{})
 
-  let proj = get(ref,'proj','')
+  let proj = projs#proj#name()
+  let proj = get(ref,'proj',proj)
 
-  let q = 'SELECT sec FROM projs WHERE proj = ?'
-  let dbfile = projs#db#file()
-  let r = {
-    \ 'q'      : q,
-    \ 'p'      : [proj],
-    \ 'dbfile' : dbfile,
-    \ }
-  let sec = pymy#sqlite#query_fetchone(r)
+  let db_file = projs#db#file()
+
+  let pat  = get(ref,'pat','')
+
+python3 << eof
+import vim
+import Base.DBW as dbw
+
+proj = vim.eval('proj')
+pat  = vim.eval('pat')
+
+db_file  = vim.eval('db_file')
+
+r_db = {
+  'db_file' : db_file,
+  'table'   : 'projs',
+  'select'  : 'sec',
+  'output'  : 'list',
+}
+
+cond = ''
+if pat:
+  cond = f'REGEXP("{pat}",sec)'
+
+if cond:
+  r_db.update({ 'cond' : cond })
+
+secs = dbw.select(r_db)
+
+eof
+  let secs = py3eval('secs')
+
+  call base#varset('this',secs)
+  let sec = input('section: ','','custom,base#complete#this')
+
   return sec
 
 endfunction

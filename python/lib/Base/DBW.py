@@ -176,6 +176,22 @@ def _cols(ref={}):
 
   return cols
 
+def cond_orderby(ref={}):
+  orderby = ref.get('orderby',{})
+
+  if not len(orderby):
+    return ''
+
+  cond = ' ORDER BY '
+  cond_a = []
+
+  for key, mode in orderby.items():
+    cond_a.append(f'{key} {mode.upper()}')
+
+  cond += ','.join(cond_a)
+
+  return cond
+
 def cond_where(ref={}):
   where = ref.get('where',{})
 
@@ -186,10 +202,17 @@ def cond_where(ref={}):
   for k in where_keys:
     v = where.get(k,'')
 
-    if k in ['@like'] and type(v) in [dict]:
-      like = v
-      for y,z in like.items():
-        cond_a.append(f' {y} LIKE "{z}" ')
+    if type(v) in [dict]:
+      if k in ['@like']:
+        like = v
+        for y,z in like.items():
+          cond_a.append(f' {y} LIKE "{z}" ')
+
+      if k in ['@regexp']:
+        regexp = v
+        for key,pat in regexp.items():
+          if pat:
+            cond_a.append(f' REGEXP("{pat}",{key}) ')
       
       continue
 
@@ -226,12 +249,14 @@ def select(ref={}):
 
   output   = ref.get('output','all')
 
+  orderby  = ref.get('orderby',{})
+
   cond = ref.get('cond','')
   p    = ref.get('p',[])
 
   r_w      = cond_where({ 'where' : where })
-  cond_w   = r_w.get('cond')
-  values_w = r_w.get('values')
+  cond_w   = r_w.get('cond','')
+  values_w = r_w.get('values',[])
 
   cond += cond_w
 
@@ -246,6 +271,8 @@ def select(ref={}):
   if cond:
     q += ' WHERE ' + cond
     p.extend(values_w)
+
+  q += cond_orderby({ 'orderby' : orderby })
 
   r_all = sql_fetchall(q,p,{ 'db_file' : db_file })
 
@@ -265,6 +292,10 @@ def select(ref={}):
     result = rw 
 
   return result
+
+def __functionRegex(pattern, value):
+  cpat = re.compile(pattern)
+  return cpat.search(value) is not None
 
 def sql_fetchall(q, p=[], ref={}):
   conn     = ref.get('conn')
@@ -290,7 +321,10 @@ def sql_fetchall(q, p=[], ref={}):
       return { 'err' : 'no db_file' }
 
   conn.row_factory = sqlite3.Row
+  conn.create_function("REGEXP", 2, __functionRegex)
+
   c = conn.cursor()
+
 
   try:
      c.execute(q,p)

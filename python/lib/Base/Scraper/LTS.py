@@ -427,6 +427,39 @@ class LTS(
 
     return self
 
+  def _tex_tmpl_render(self, tmpl='', ref={}):
+    t = self.template_env_tex.get_template(tmpl)
+    text = t.render(**ref)
+
+    return text
+
+  def db_secs_list(self, ref = {}):
+    pat  = ref.get('pat','')
+
+    proj = ref.get('proj',self.proj)
+
+    pat = '^topics.'
+
+    secs = dbw.select({ 
+      'table'   : 'projs',
+      'db_file' : self.db_file_projs,
+      'select' : 'sec',
+      'output' : 'list',
+      'orderby' : { 'sec' : 'asc' },
+      'where' : {
+        'proj' : proj,
+        '@regexp' : {
+          'file' : '\.tex$',
+          'sec' : pat,
+        }
+      }
+    })
+
+    for sec in secs:
+      print(sec)
+
+    return self
+
   # given section name, simply create it:
   #    write to file, add to database
   def sec_new(self, ref = {}):
@@ -434,12 +467,14 @@ class LTS(
     if not sec:
       return self
 
-    t = self.template_env_tex.get_template("head.tex")
-    head = t.render(**ref)
+    s_head = self._tex_tmpl_render('head.tex',ref)
+    s_content = self._tex_tmpl_render('sec.tex',ref)
+
+    s = '\n'.join([ s_head, s_content ]) + '\n'
 
     sec_file = self._sec_file({ 'sec' : sec })
-    print(h)
-    print(sec_file)
+    with open(sec_file, 'w', encoding='utf8') as f:
+      f.write(s)
 
     return self
 
@@ -493,11 +528,14 @@ class LTS(
     width = ref.get('width')
     file  = ref.get('file')
 
-    iga = [
-      f'''\\includegraphics[width={width}\\textwidth]''',
-      '{', file, '}'
-    ]
-    ig = ''.join(iga)
+    if not os.path.isfile(file):
+      ig = ''
+    else:
+      iga = [
+        f'''\\includegraphics[width={width}\\textwidth]''',
+        '{', file, '}'
+      ]
+      ig = ''.join(iga)
 
     return ig
 
@@ -549,7 +587,6 @@ class LTS(
       })
 
     return self
-
 
   def db_update_img(self, ref = {}):
     img_data = ref.get('img_data',[])
