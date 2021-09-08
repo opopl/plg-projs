@@ -387,11 +387,11 @@ function! projs#db#url_data (...)
   let ref = {
     \ "dbfile" : dbfile,
     \ "q"      : "SELECT proj, sec FROM projs WHERE url = ?",
-		\ "p"      : [ url ],
+    \ "p"      : [ url ],
     \ }
     
   let [ rwh, cols ] = pymy#sqlite#query_first(ref)
-	return rwh
+  return rwh
 
 endfunction
 
@@ -493,55 +493,35 @@ function! projs#db#secnames (...)
   let ext = get(ref,'ext','')
   let pat = get(ref,'pat','')
 
-  let cond_a = []
-  if len(ext)
-    call add(cond_a,printf('file LIKE "%%.%s"',ext))
-  endif
-
-  let cond = join(cond_a, ' AND ')
-  if len(cond)
-    let cond = printf(' AND %s',cond)
-  endif
-  let q = printf('SELECT sec FROM projs WHERE proj = ? %s',cond)
-  let ref = {
-      \ 'query'  : q,
-      \ 'params' : [proj],
-      \ 'proj'   : proj,
-      \ }
-  let secs = projs#db#query(ref)
-
-  if len(pat)
-    if pat =~ '\w\+'
-      let pat = '.*' . pat . '.*'
-    endif
 python3 << eof
-import vim,re
-nsecs = []
+import vim
+from plg.projs.Prj import Prj
 
-secs = vim.eval('secs')
-pat  = vim.eval('pat')
+db_file = vim.eval('projs#db#file()')
+root    = vim.eval('projs#root()')
+rootid  = vim.eval('projs#rootid()')
 
-pt   = re.compile(pat)
+proj    = vim.eval('proj')
 
-for sec in secs:
-  m = pt.match(sec)
-  if m:
-    nsecs.append(sec)
+pat    = vim.eval('pat')
+ext    = vim.eval('ext')
+
+prj = Prj({ 
+  'proj'    : proj,
+  'root'    : root,
+  'rootid'  : rootid,
+  'db_file' : db_file,
+})
+
+secs = prj._sections({ 
+  'pat' : pat, 
+  'ext' : ext
+})
+
 eof
+  let secs = py3eval('secs')
+  return secs
 
-    let secs = py3eval('nsecs')
-  endif
-
-  let fsecs = []
-  for sec in secs
-    if !projs#sec#exists(sec) | continue | endif
-
-    call add(fsecs,sec)
-  endfor
-
-  let fsecs = sort(fsecs)
-
-  return fsecs
 endfunction
 
 if 0
@@ -741,15 +721,15 @@ function! projs#db#file_backup_flash ()
 endfunction
 
 if 0
-	usage
-		let [ rows_h, cols ] = projs#db#data_get()
+  usage
+    let [ rows_h, cols ] = projs#db#data_get()
 
-		let [ rows_h, cols ] = projs#db#data_get({
-			\	'proj' : proj,
-			\	})
+    let [ rows_h, cols ] = projs#db#data_get({
+      \ 'proj' : proj,
+      \ })
 
-	call tree
-		called by
+  call tree
+    called by
 endif
 
 function! projs#db#buf_data ()
@@ -766,7 +746,7 @@ function! projs#db#buf_data ()
   let [ rows_h, cols ] = projs#db#data_get(r)
   let row_h            = get(rows_h,0,{})
 
-	return row_h
+  return row_h
 endf
 
 function! projs#db#data_get (...)
