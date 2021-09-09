@@ -617,34 +617,9 @@ function! projs#sec#select (...)
   let db_file = projs#db#file()
 
   let pat  = get(ref,'pat','')
+  let ext  = get(ref,'ext','')
 
-python3 << eof
-import vim
-import Base.DBW as dbw
-
-proj = vim.eval('proj')
-pat  = vim.eval('pat')
-
-db_file  = vim.eval('db_file')
-
-r_db = {
-  'db_file' : db_file,
-  'table'   : 'projs',
-  'select'  : 'sec',
-  'output'  : 'list',
-}
-
-cond = ''
-if pat:
-  cond = f'REGEXP("{pat}",sec)'
-
-if cond:
-  r_db.update({ 'cond' : cond })
-
-secs = dbw.select(r_db)
-
-eof
-  let secs = py3eval('secs')
+	let secs = projs#db#secnames(ref)
 
   call base#varset('this',secs)
   let sec = input('section: ','','custom,base#complete#this')
@@ -1098,7 +1073,7 @@ function! projs#sec#new(sec,...)
 
        elseif base#type(vv) == 'String'
          if base#inlist(vv,base#qw('edit split'))
-           exe sprintf('%s %s', vv, sec_file)
+           exe printf('%s %s', vv, sec_file)
          endif
        endif
     endif

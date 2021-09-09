@@ -49,6 +49,7 @@ my @ex_vars_array=qw(
 
 @EXPORT_OK = ( @{ $EXPORT_TAGS{'funcs'} }, @{ $EXPORT_TAGS{'vars'} } );
 
+###fbicons
 our %fbicons = (
   '😍' => 'heart.eyes',
   '🔥' => 'flame',
@@ -57,6 +58,8 @@ our %fbicons = (
   '💔' => 'heart.broken',
   '😉' => 'wink',
   '👍' => 'thumb.up.yellow',
+  '❤️'  => 'heart',
+  '👏' => 'hands.applause.yellow',
 );
 
 sub texify {
@@ -281,13 +284,33 @@ sub empty_to_smallskip {
 }
 
 sub fbicon_igg {
-	my ($char) = @_;
+    my ($chars) = @_;
 
-	my ($rpl, $name);
-	$name = $fbicons{$char};
-	$rpl = $name ? sprintf('@igg{fbicon.%s}',$name) : $char;
-	
-	return $rpl;
+    my @chars = split "" => $chars;
+
+    my ($name, $prev, $count, @rpl);
+
+    $count = 0;
+    while (@chars) {
+      my $ch = shift @chars;
+
+      $name = $fbicons{$ch};
+      do { push @rpl, $ch; next; } unless $name;
+
+      $count++;
+      if (@chars && ( !defined $prev || $prev eq $name )) {
+         $prev = $name;
+         next;
+      }
+
+      my $o = ( $count == 1 ) ? '' : sprintf("{repeat=%s}",$count);
+      push @rpl, sprintf('@igg{fbicon.%s}%s',$name,$o);
+      $count = 0; $prev = undef;
+    }
+
+    my $rpl = join(" ",@rpl);
+   
+    return $rpl;
 }
 
 sub fb_format {
@@ -305,9 +328,9 @@ sub fb_format {
         )
         && do { push @new,''; next; };
 
-		while(my($k,$v)=each %fbicons){
-		  s/($k)/fbicon_igg($1)/ge;
-		}
+        while(my($k,$v)=each %fbicons){
+          s/($k+)/fbicon_igg($1)/ge;
+        }
 
         #s/^\\iusr\{(.*)\}\\par\s*$/\\iusr{$1}/g;
         #s/^\\emph\{(.*)\}\s*$/\\iusr{$1}/g;

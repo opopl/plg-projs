@@ -354,10 +354,12 @@ sub match_author_end {
 sub _opts_dict {
   my ($self, $opts_s) = @_;
 
-  return {} unless defined $opts_s;
+  return unless defined $opts_s;
 
-  my $dict = {};
   my @opts = grep { length } map { defined ? trim($_) : () } split("," => $opts_s);
+
+  return unless @opts;
+  my $dict = {};
 
   for(@opts){
      my ($k, $v) = (/^([^=]+)(?:|=([^=]+))$/g);
@@ -713,30 +715,24 @@ sub loop {
     m/^\s*tab_begin\b(.*)/g && do { $self->match_tab_begin($1); next; };
     m/^\s*tab_end\s*$/g && do { $self->match_tab_end; next; };
 
-###m_pic
+###m_pic@
     m/^\s*(pic|doc|ig)@(.*)$/g && do { 
        my $v;
        $v = trim($2) if $2;
 
        next unless $v;
 
-       my @opts = grep { length } map { defined ? trim($_) : () } split("," => $v);
-       next unless @opts;
+       my $opts = $self->_opts_dict($v);   
+       next unless $opts;
 
        $self->{d} = { type => $1 };
 
-       for(@opts){
-         my ($k, $v) = (/([^=]+)=([^=]+)/g);
-
-         $k = trim($k);
-         $v = trim($v);
-
-         $self->{d}->{$k} = $v;
-       }
+       hash_update( $self->{d}, $opts);
 
        next;
     };
 
+###m_pic
     m/^\s*(pic|doc|ig)(?:\s+(.*)|\s*)$/g && do { 
        my $v;
        $v = trim($2) if $2;

@@ -334,6 +334,11 @@ def sql_fetchall(q, p=[], ref={}):
      print("Errors ", sys.exc_info()[0], " for sqlite query: " + q )
 
   rws = c.fetchall()
+
+  if db_close:
+    conn.commit()
+    conn.close()
+
   if not rws:
     return { 'err' : 'zero result' }
 

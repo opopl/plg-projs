@@ -211,7 +211,10 @@ function! projs#insert#ii ()
 
   let ii_prefix = printf('%s.', sec)
 
-  let comps = []
+  let comps = projs#db#secnames({ 
+    \ 'pat' : '^'.ii_prefix, 
+    \ 'ext' : 'tex' })
+
   call base#varset('this',comps)
   let ii_sec = input('ii_sec name: ',ii_prefix,'custom,base#complete#this')
 
@@ -303,13 +306,57 @@ eof
 
     call base#varset('this',ids)
 
-	  while(1)
-	    let author_id = input( printf('[rootid: %s] New author_id: ',rootid),author_id,'custom,base#complete#this')
-	    if len(author_id)
-	      break
-	    endif
-	  endw
+    while(1)
+      let author_id = input( printf('[rootid: %s] New author_id: ',rootid),author_id,'custom,base#complete#this')
+      if len(author_id)
+        break
+      endif
+    endw
   endif
+
+endfunction
+
+function! projs#insert#ii_date (...)
+  let ref = get(a:000,0,{})
+
+  let proj   = projs#proj#name()
+
+  let prompt = get(ref,'prompt',0)
+
+  let prompt = get(ref,'prompt',0)
+
+  let date     = get(ref,'date','')
+  let sec_type = get(ref,'sec_type','')
+
+  if !date 
+    if prompt
+      let date = input('DD-MM-YYYY date: ','')
+    else | return | endif
+  endif
+
+  let ii_sec = date
+
+  if !sec_type
+    if prompt
+      let sec_type = input('section type:',sec_type,'custom,projs#complete#sectypes')
+    else | return | endif
+  endif
+
+  let date_t = substitute(date,'_','-','g')
+
+  let r_new = {
+      \ 'view'       : 'edit',
+      \ 'p_tree'     : 1,
+      \ 'date'       : date,
+      \ 'title'      : date_t,
+      \ 'sec_type'   : sec_type,
+      \ 'parent_sec' : projs#buf#sec(),
+      \  }
+
+  " see also:
+  "   projs#bld#do#print_ii_tree
+  call projs#sec#new(ii_sec,r_new)
+  call base#tg#update('projs_this')
 
 endfunction
 
@@ -357,8 +404,6 @@ function! projs#insert#ii_url ()
   if !is_date
     let url = input('[PIN ii_url] URL: ','')
   endif
-
-  let html_file = base#qw#catpath('html_root projs ' . rootid . ' pin ii_url 1.htm')
 
   let data = projs#db#url_data({ 'url' : url })
   let sec  = get(data,'sec','')
