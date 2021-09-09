@@ -1,5 +1,6 @@
 
 import os,re,sys
+from pathlib import Path
 
 import Base.DBW as dbw
 import Base.Util as util
@@ -11,7 +12,6 @@ import plg.projs.db as projs_db
 
 from plg.projs.Prj import Prj
 
-from pathlib import Path
 
 import jinja2
 
