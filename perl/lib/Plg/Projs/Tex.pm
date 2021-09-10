@@ -11,6 +11,7 @@ use Base::String qw(
 );
 
 use JSON::XS;
+use Regexp::Common qw(URI);
 
 binmode STDOUT,':encoding(utf8)';
 
@@ -49,6 +50,11 @@ my @ex_vars_array=qw(
 
 @EXPORT_OK = ( @{ $EXPORT_TAGS{'funcs'} }, @{ $EXPORT_TAGS{'vars'} } );
 
+our %flag = (
+  head => undef,
+  cmt => undef,
+);
+
 ###fbicons
 our %fbicons = (
   '😍' => 'heart.eyes',
@@ -60,6 +66,18 @@ our %fbicons = (
   '👍' => 'thumb.up.yellow',
   '❤️'  => 'heart',
   '👏' => 'hands.applause.yellow',
+  '♥️'  => 'heart.big',
+  '😀' => 'grin',
+  '😁' => 'beaming.face.smiling.eyes',
+  '💙' => 'heart.blue',
+  '💛' => 'heart.yellow',
+  '💯' => '100.percent',
+  '☝️'  => 'index.pointing.up',
+  '🙁' => 'frown',
+  '🤔' => 'thinking.face',
+  '🖤' => 'heart.black',
+  '⤵️'  => 'right.arrow.curving.down',
+  '🦉' => 'owl',
 );
 
 sub texify {
@@ -308,9 +326,69 @@ sub fbicon_igg {
       $count = 0; $prev = undef;
     }
 
-    my $rpl = join(" ",@rpl);
+    my $rpl = ' ' . join(" ",@rpl) . ' ';
    
     return $rpl;
+}
+
+sub rpl_urls {
+    my @lines = split "\n" => $s;
+
+    my @new;
+    for(@lines){
+        $flag{push} = undef;
+
+        /^%%beginhead/ && do { 
+            @flag{qw(head push)} = ( 1, 1 ); 
+        };
+        /^%%endhead/ && do { 
+            @flag{qw(head push)} = ( undef, 1 ); 
+        };
+        /^\\ifcmt\s*$/ && do { 
+            @flag{qw(cmt push)} = ( 1, 1 ); 
+        };
+        /^\\fi\s*$/ && do { 
+            @flag{qw(cmt push)} = ( undef, 1 ); 
+        };
+        foreach my $k (qw(head cmt)) {
+            $flag{push} = 1 if $flag{$k};
+        }
+
+        do { push @new,$_; next } if $flag{push};
+
+        my $pat_cmd = sub { 
+            my ($cmd) = @_; 
+            #my $r_uri = $RE{URI};
+            my $s = sprintf('(?<!\\\\%s\\{)((?:ftp|http)(?:s|):\/\/[\S]+)',$cmd);
+            #my $s = sprintf('(?<!\\\\%s\\{)',$cmd);
+            #print qq{$s} . "\n";
+            #my $pat = qr/$s($RE{URI})/;
+            #print Dumper($pat) . "\n";
+            #my $pat = qr/$s/;
+            #return $pat;
+            qr/$s/;
+        };
+        my $cond = 1;
+        my $pat_sub;
+        for my $cmd (qw( url Purl )){
+            my $pat = $pat_cmd->($cmd);
+            $cond = $cond && /$pat/;
+            $pat_sub = $pat if /$pat/;
+
+            #print qq{$cond $pat_sub} . "\n";
+            last unless $cond;
+        }
+
+        $cond && do { 
+           my $cmd_url = sub { sprintf('\url{%s}',$1) };  
+
+           s/$pat_sub/$cmd_url->()/ge;
+        };
+
+        push @new,$_;
+    }
+
+    $s = join("\n",@new);
 }
 
 sub fb_format {
@@ -361,9 +439,9 @@ sub fb_format {
 
         s/…/.../g;
 
-        s/😁/\\Laughey[1.0][white]/g;
-        s/😄/\\Laughey[1.0][white]/g;
-        s/🙂/\\Smiley[1.0][yellow]/g;
+        #s/😁/\\Laughey[1.0][white]/g;
+        #s/😄/\\Laughey[1.0][white]/g;
+        #s/🙂/\\Smiley[1.0][yellow]/g;
 
         push @new,$_;
     }

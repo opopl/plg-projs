@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from Base.Scraper.LTS import LTS
+from Base.Scraper.LTS.LTS import LTS
 import os
 
 dirname = os.path.dirname(__file__)

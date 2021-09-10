@@ -12,8 +12,12 @@ import plg.projs.db as projs_db
 
 from plg.projs.Prj import Prj
 
-
 import jinja2
+
+import yaml
+
+from pylatex import Package
+from pylatex.base_classes import Command, Options
 
 from Base.Mix.mixCmdRunner import mixCmdRunner
 from Base.Mix.mixLogger import mixLogger
@@ -457,6 +461,36 @@ class LTS(
 
     return self
 
+  def tex_compile(self, ref = {}):
+    r_preamble = ref.get('preamble',{})
+
+    pack_file = r_preamble.get('pack_file','')
+    pack_data = {}
+    if os.path.isfile(pack_file):
+      with open(pack_file) as f:
+        pack_data = yaml.full_load(f)
+
+    if len(pack_data):
+      pack_list    = pack_data.get('list',[])
+      pack_options = pack_data.get('options',{})
+
+      for pack in pack_list:
+        opts = pack_options.get(pack,{})
+
+        opts_bool = []
+        opts_dict = {}
+        for k, v in opts.items():
+           if type(v) in [bool] and v == True:
+             opts_bool.append(k)
+           else:
+             opts_dict.update({ k : v })
+
+        s = Package(pack,options=Options(*opts_bool, **opts_dict)).dumps()
+
+        print(s)
+
+    return self
+
   # given section name, simply create it:
   #    write to file, add to database
   def sec_new(self, ref = {}):
@@ -487,6 +521,7 @@ class LTS(
       'table'   : 'imgs',
       'db_file' : db_file,
       'select' : 'name',
+      'orderby' : { 'name' : 'asc' },
       'output' : 'list',
       'where' : { 
          '@like' : { 'name' : 'fbicon%' }
