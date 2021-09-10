@@ -19,6 +19,8 @@ use Exporter ();
 use base qw(Exporter);
 use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
 
+use Text::Sprintf::Named qw(named_sprintf);
+
 @ISA     = qw(Exporter);
 @EXPORT  = qw( );
 $VERSION = '0.01';
@@ -357,9 +359,13 @@ sub rpl_urls {
         do { push @new,$_; next } if $flag{push};
 
         my $pat_cmd = sub { 
-            my ($cmd) = @_; 
+            my ($ref) = @_; 
+            $ref ||= {};
+            my $cmd = $ref->{cmd} || 'url';
+
             #my $r_uri = $RE{URI};
-            my $s = sprintf('(?<!\\\\%s\\{)((?:ftp|http)(?:s|):\/\/[\S]+)',$cmd);
+            my $r_uri = '((?:ftp|http)(?:s|):\/\/[^\s,]+)';
+            my $s = named_sprintf('(?<!\\\\%(cmd)s\\{)%(r_uri)s',{ cmd => $cmd, r_uri => $r_uri });
             #my $s = sprintf('(?<!\\\\%s\\{)',$cmd);
             #print qq{$s} . "\n";
             #my $pat = qr/$s($RE{URI})/;
@@ -371,7 +377,7 @@ sub rpl_urls {
         my $cond = 1;
         my $pat_sub;
         for my $cmd (qw( url Purl )){
-            my $pat = $pat_cmd->($cmd);
+            my $pat = $pat_cmd->({ cmd => $cmd });
             $cond = $cond && /$pat/;
             $pat_sub = $pat if /$pat/;
 
@@ -380,11 +386,17 @@ sub rpl_urls {
         }
 
         $cond && do { 
-           my $cmd_url = sub { sprintf('\url{%s}',$1) };  
+           my $cmd_url = sub { 
+               my $m = $1;
+               my @ms = ($m =~ /^(.*)([,]+)$/);
+               @ms ? sprintf('\url{%s}%s',@ms) :
+                     sprintf('\url{%s}',$m);
+           };  
 
            s/$pat_sub/$cmd_url->()/ge;
         };
 
+        s/\s*$//g;
         push @new,$_;
     }
 
