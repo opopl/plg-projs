@@ -12,13 +12,11 @@ function! projs#data#dict (...)
   
 endfunction
 
-
 function! projs#data#dict_choose ()
 	let dict_dir = projs#data#dict_dir()
 	let ids = base#find({ 
 		\	"dirs"    : [dict_dir],
 		\	"exts"    : base#qw('i.dat'),
-		\	"cwd"     : 1,
 		\	"relpath" : 1,
 		\	"subdirs" : 1,
 		\	"rmext"   : 1,

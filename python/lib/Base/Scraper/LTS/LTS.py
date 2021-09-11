@@ -90,6 +90,12 @@ class LTS(
        'projs' : self.db_file_projs,
     }
 
+    self.cfg = {
+       'fbicons' : {
+          'width_tex' : 0.03
+       }
+    }
+
     self.prj = Prj({ 
       'proj'     : self.proj,
       'rootid'   : self.rootid,
@@ -572,6 +578,7 @@ class LTS(
     return ig
 
   def db_fbicons_list(self, ref = {}):
+    width_tex = util.get(self,'cfg.fbicons.width_tex',0.05)
 
     sec = 'list.fbicons'
     list_file = self._sec_file({ 'sec' : sec })
@@ -585,10 +592,10 @@ class LTS(
       name = f'fbicon.{fbi}'
       fbi_data = self._fbicon_db({ 'name' : name })
       img_file  = fbi_data.get('img_file','')
-      width_tex = fbi_data.get('width_tex','0.05')
+      wt = fbi_data.get('width_tex',width_tex)
       ig = self._tex_ig({ 
         'file'  : img_file,
-        'width' : width_tex,
+        'width' : wt,
       })
 
       tex_row = ' & '.join([ ig, fbi ]) + '\\\\'
@@ -605,7 +612,8 @@ class LTS(
   def db_fbicons_update(self, ref = {}):
     db_file  = self.db_file_img
 
-    width_tex = 0.05
+    width_tex = util.get(self,'cfg.fbicons.width_tex',0.05)
+
     q = '''SELECT * FROM imgs WHERE name LIKE 'fbicon%' '''
     r = dbw.sql_fetchall(q,[ ],{ 'db_file' : db_file })
     rows = r.get('rows',[])

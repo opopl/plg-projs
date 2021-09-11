@@ -158,12 +158,19 @@ snippet mlz
 snippet env
 	\usepackage{p.env}
 	\getenv[<+TexMacro+>]{<+EnvVar+>}
+snippet igfb
+	ig 
+	@name fbicon.<++>
+	@ref 
 snippet igw
 	\ifcmt
 	  ig <++>
 	  @width 0.4
-	  @wrap \parpic[r]
+	  %@wrap \parpic[r]
+	  @wrap \InsertBoxR{0}
 	\fi
+snippet fbi
+	@igg{fbicon.<++>}
 snippet pic04
 	\ifcmt
 	  pic <++>

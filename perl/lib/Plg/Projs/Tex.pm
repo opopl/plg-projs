@@ -10,6 +10,8 @@ use Base::String qw(
     str_split
 );
 
+use String::Util qw(trim);
+
 use JSON::XS;
 use Regexp::Common qw(URI);
 
@@ -58,7 +60,7 @@ our %flag = (
 );
 
 ###fbicons
-our %fbicons = (
+our %fbicons=(
   '😍' => 'heart.eyes',
   '🔥' => 'flame',
   '😢' => 'cry',
@@ -69,6 +71,7 @@ our %fbicons = (
   '❤️'  => 'heart',
   '👏' => 'hands.applause.yellow',
   '♥️'  => 'heart.big',
+  '❤️'  => 'heart',
   '😀' => 'grin',
   '😁' => 'beaming.face.smiling.eyes',
   '💙' => 'heart.blue',
@@ -80,6 +83,27 @@ our %fbicons = (
   '🖤' => 'heart.black',
   '⤵️'  => 'right.arrow.curving.down',
   '🦉' => 'owl',
+  '❗️' => 'exclamation.mark',
+  '🙂' => 'smile',
+  '😡' => 'anger',
+  '😩' => 'face.weary',
+  '😣' => 'face.persevering',
+  '😶' => 'face.without.mouth',
+  '😬' => 'face.grimacing',
+  '🤣' => 'laugh.rolling.floor',
+  '😜' => 'face.wink.tongue',
+  '🤮' => 'face.womiting',
+  '🤦' => 'man.facepalming',
+  '💋' => 'kiss.mark',
+  '🥰' => 'face.smiling.hearts',
+  '😘' => 'face.blowing.kiss',
+  '🤝' => 'hands.shake',
+  '💪' => 'biceps.flexed',
+  '✊' => 'fist.raised',
+  '⚡️' => 'lightning',
+  '‼️'  => 'exclamation.mark.double',
+  '✔️'  => 'check.mark',
+  '✌️'  => 'hand.victory',
 );
 
 sub texify {
@@ -95,7 +119,11 @@ sub texify {
         $data_input = $coder->decode($data_js);
     }
 
-    my @cmds; push @cmds, str_split($cmd);
+    my @cmds; 
+    push @cmds, 
+        str_split($cmd),
+        #'trim_eol'
+        ;
 
     $s_start //= $l_start;
     $s_end //= $l_end;
@@ -246,11 +274,18 @@ sub rpl_quotes {
 sub escape_latex {
     local $_ = $s;
 
-    while(1){
-        s/_/\\_/g;
-        s/%/\\%/g;
-        s/\$/\\\$/g;
+    my $escape_s = q{ & % $ # _ { } ~ ^\ };
+    my @escape = map { trim($_) } split(" " => $escape_s);
 
+    foreach my $k (@escape) {
+        s/\Q$k\E/\\$k/g;
+    }
+    #
+
+    while(1){
+        #s/_/\\_/g;
+        #s/%/\\%/g;
+        #s/\$/\\\$/g;
         last;
     }
 
@@ -304,7 +339,7 @@ sub empty_to_smallskip {
 }
 
 sub fbicon_igg {
-    my ($chars) = @_;
+    my ($chars,$str) = @_;
 
     my @chars = split "" => $chars;
 
@@ -329,8 +364,21 @@ sub fbicon_igg {
     }
 
     my $rpl = ' ' . join(" ",@rpl) . ' ';
+    $rpl .= $str if $str;
    
-    return $rpl;
+    return ($rpl);
+}
+
+sub trim_eol {
+    my @lines = split "\n" => $s;
+
+    my @new;
+    for(@lines){
+        s/\s*$//g;
+        push @new,$_;
+    }
+
+    $s = join("\n",@new);
 }
 
 sub rpl_urls {
