@@ -13,6 +13,9 @@ use File::Basename qw(basename dirname);
 use Data::Dumper qw(Dumper);
 use File::Which qw(which);  
 
+use URI::Split qw(uri_split);
+
+use File::Copy qw( move );
 
 use Image::Info qw(
     image_info
@@ -38,6 +41,7 @@ use Base::DB qw(
     dbi_connect 
     dbh_do
     dbh_select
+    dbh_select_as_list
     dbh_select_fetchone
     dbh_insert_hash
 );
@@ -64,15 +68,10 @@ sub d_process {
 
     my $url = $d->{url};
 
-    my $db = {};
-    @{$db}{qw(inum img)} = dbh_select_as_list({
-        q => q{ SELECT inum, img FROM imgs WHERE url = ? },
-        p => [ $url ],
-    });
-
-    $self->db_get_inum_max unless $db->{inum};
-
-    $self->d_img_file;
+    $self
+        ->d_get_inum
+        ->d_img_file
+        ;
 
     my $fetch_ok = $self->_fetch;
 
@@ -107,7 +106,7 @@ sub init {
        d    => undef,
 
        # local running vars within ifcmt ... fi block
-       locals => {},
+       locals => undef,
 
        # global variables for any ifcmt block
        globals => {},
@@ -199,17 +198,24 @@ sub f_read {
   return $self;
 }
 
-sub db_get_inum_max  {
+sub d_get_inum {
   my ($self) = @_;
 
   my $d = $self->{d};
-  return $self unless $d;
+  return $self unless $d && $d->{url};
 
-  my $ref = {
-     q => q{ SELECT MAX(inum) FROM imgs },
-  };
-  my $max  = dbh_select_fetchone($ref);
-  $d->{inum} = ($max) ? ($max + 1) : 1;
+  @{$d}{qw(inum img)} = dbh_select_as_list({
+      q => q{ SELECT inum, img FROM imgs WHERE url = ? },
+      p => [ $d->{url} ],
+  });
+
+  unless($d->{inum}){
+      my $ref = {
+         q => q{ SELECT MAX(inum) FROM imgs },
+      };
+      my $max  = dbh_select_fetchone($ref);
+      $d->{inum} = ($max) ? ($max + 1) : 1;
+  }
 
   return $self;
 }
@@ -220,19 +226,11 @@ sub d_img_file {
   my $d = $self->{d};
   return $self unless $d;
 
-  my $ext;
+  $self->d_get_inum unless $d->{inum};
 
   unless($d->{img}){
-      my ($scheme, $auth, $path, $query, $frag) = uri_split($d->{url});
-      my $bname = basename($path);
-      ($ext) = ($bname =~ m/\.(\w+)$/);
-      $ext ||= 'jpg';
-      $ext = lc $ext;
-      $ext = 'jpg' if $ext eq 'jpeg';
-
-      $d->{ext} = $ext;
-
-      $d->{img} = sprintf(q{%s.%s},$d->{inum},$d->{ext});
+     $d->{ext} ||= 'jpg';
+     $d->{img} = sprintf(q{%s.%s},@{$d}{qw( inum ext )} );
   }
 
   $d->{img_file} = catfile($self->{img_root},$d->{img});
@@ -252,10 +250,16 @@ sub loop {
 
     next if /^\s*%/;
 
-    m/^\\ifcmt\s*$/g && do { $self->{is_cmt} = 1; next; };
+###m_ifcmt
+    m/^\\ifcmt\s*$/g && do { 
+        $self->{is_cmt} = 1; 
+        $self->{locals} = {}; 
+        next; 
+    };
     m/^\\fi\s*$/g && do { 
        $self->process_block;
        $self->{is_cmt} = undef; 
+       $self->{locals} = undef; 
        next; 
     };
 
@@ -270,18 +274,17 @@ sub loop {
        $self->{block} = $k;
     };
 
-    m/^\s*@(\w+)\s+(.*)$/g && do {
-       my $k = trim($1);
-       my $v = trim($2);
-    };
-
-    m/^\s*(\w+)\s+(.*)$/g && do {
+    m/^\s*(@|)(\w+)\s+(.*)$/g && do {
        my ($d, $locals, $globals) = @{$self}{qw(d locals globals)};
 
-       my $k = trim($1);
-       my $v = trim($2);
+       # prefix: if =@ then it is a key-value pair for some block
+       my $pref = $1;
 
-       if (grep { /^$k$/ } qw( pic doc ig ) ){
+       my $k = trim($2);
+       my $v = trim($3);
+
+       if (!$pref && grep { /^$k$/ } qw( pic doc ig ) ){
+          # process previously stored block
           $self->process_block;
 
           $self->{block} = $k;
@@ -318,7 +321,7 @@ sub _subs_url {
     
             my $cmd = qq{ $curl -o "$img_file" $url_s };
             my $x = qx{ $cmd 2>&1 };
-            $self->debug(["Command:", $x]);
+            #$self->debug(["Command:", $x]);
             return 'curl';
         },
         sub { 
@@ -358,7 +361,7 @@ sub _fetch {
 
   return $self if !$self->_reload && -e $d->{img_file};
 
-  my $gi = $self->{gi};
+  my $gi  = $self->{gi};
 
   my $sec = $self->{sec};
 

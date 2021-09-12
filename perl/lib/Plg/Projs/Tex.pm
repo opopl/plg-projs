@@ -61,9 +61,7 @@ our %flag = (
 
 ###fbicons
 our %fbicons=(
-  '😍' => 'heart.eyes',
   '🔥' => 'flame',
-  '😢' => 'cry',
   '🙏' => 'hands.pray',
   '💔' => 'heart.broken',
   '😉' => 'wink',
@@ -72,38 +70,75 @@ our %fbicons=(
   '👏' => 'hands.applause.yellow',
   '♥️'  => 'heart.big',
   '❤️'  => 'heart',
-  '😀' => 'grin',
-  '😁' => 'beaming.face.smiling.eyes',
   '💙' => 'heart.blue',
   '💛' => 'heart.yellow',
   '💯' => '100.percent',
   '☝️'  => 'index.pointing.up',
-  '🙁' => 'frown',
-  '🤔' => 'thinking.face',
   '🖤' => 'heart.black',
   '⤵️'  => 'right.arrow.curving.down',
   '🦉' => 'owl',
   '❗️' => 'exclamation.mark',
-  '🙂' => 'smile',
-  '😡' => 'anger',
-  '😩' => 'face.weary',
-  '😣' => 'face.persevering',
-  '😶' => 'face.without.mouth',
-  '😬' => 'face.grimacing',
-  '🤣' => 'laugh.rolling.floor',
-  '😜' => 'face.wink.tongue',
-  '🤮' => 'face.womiting',
   '🤦' => 'man.facepalming',
   '💋' => 'kiss.mark',
-  '🥰' => 'face.smiling.hearts',
-  '😘' => 'face.blowing.kiss',
   '🤝' => 'hands.shake',
   '💪' => 'biceps.flexed',
   '✊' => 'fist.raised',
+  '📖' => 'book.open',
+  '🔑' => 'key',
   '⚡️' => 'lightning',
   '‼️'  => 'exclamation.mark.double',
   '✔️'  => 'check.mark',
   '✌️'  => 'hand.victory',
+  '9️⃣'  => 'digit.nine.keycap',
+  '↕️'  => 'arrow.updown',
+  '🎣' => 'fishing',
+  '💎' => 'gem',
+  '🌀' => 'cyclone',
+  '🌞' => 'sun.with.face',
+  '💖' => 'heart.sparkling',
+  '✨' => 'sparkles',
+  '💗' => 'heart.growing',
+  '🔹' => 'diamond.blue.small',
+  '🔸' => 'diamond.orange.small',
+  '🇺🇦' => 'flag.ukraina',
+);
+
+our %fbicons_face = (
+  '🙂' => 'smile',
+  '😡' => 'anger',
+  '🙁' => 'frown',
+  '😀' => 'grin',
+  '😢' => 'cry',
+
+  '🤣' => 'laugh.rolling.floor',
+  '😍' => 'heart.eyes',
+
+  '😁' => 'beaming.face.smiling.eyes',
+  '🤔' => 'thinking.face',
+
+  '😩' => 'face.weary',
+  '😣' => 'face.persevering',
+  '😶' => 'face.without.mouth',
+  '😬' => 'face.grimacing',
+  '🥰' => 'face.smiling.hearts',
+  '😘' => 'face.blowing.kiss',
+  '😜' => 'face.wink.tongue',
+  '🤮' => 'face.womiting',
+  '🤗' => 'face.happy.two.hands',
+  '😅' => 'face.grinning.sweat',
+  '😂' => 'face.tears.of.joy',
+  '😃' => 'face.grinning.big.eyes',
+  '😎' => 'face.smiling.sunglasses',
+  '🌝' => 'face.full.moon',
+  '😆' => 'face.grinning.squinting',
+  '🤧' => 'face.sneezing',
+  '🙃' => 'face.upside.down',
+  '😄' => 'face.grinning.smiling.eyes',
+);
+
+%fbicons = ( 
+  %fbicons, 
+  %fbicons_face 
 );
 
 sub texify {
@@ -500,7 +535,6 @@ sub fb_format {
         s/…/.../g;
 
         #s/😁/\\Laughey[1.0][white]/g;
-        #s/😄/\\Laughey[1.0][white]/g;
         #s/🙂/\\Smiley[1.0][yellow]/g;
 
         push @new,$_;

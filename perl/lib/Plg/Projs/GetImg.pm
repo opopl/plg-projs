@@ -15,7 +15,7 @@ binmode STDOUT,':encoding(utf8)';
 use Plg::Projs::Prj;
 use Cwd qw(getcwd);
 
-#use Plg::Projs::GetImg::Fetcher;
+use Plg::Projs::GetImg::Fetcher;
 
 use File::Spec::Functions qw(catfile);
 use File::Path qw( mkpath rmtree );
@@ -462,12 +462,20 @@ sub load_file {
 
 #    my $ftc = Plg::Projs::GetImg::Fetcher->new(
         #file     => $file,
+        #sec      => $sec,
+        #proj     => $proj,
         #root     => $root,
         #prj      => $prj,
         #gi       => $self,
         #dbh      => $self->{dbh},
         #img_root => $self->{img_root},
     #);
+    
+    #$ftc
+        #->f_read
+        #->loop;
+    #return $self;
+
 
 ###vars
     my %vars;
