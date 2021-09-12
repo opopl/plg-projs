@@ -40,6 +40,7 @@ our ($s, $s_full);
 my @ex_vars_scalar=qw(
 );
 my @ex_vars_hash=qw(
+    %fbicons
 );
 my @ex_vars_array=qw(
 );
@@ -48,6 +49,7 @@ my @ex_vars_array=qw(
     'funcs' => [qw( 
         q2quotes
         texify
+        fbicon_igg
     )],
     'vars'  => [ @ex_vars_scalar,@ex_vars_array,@ex_vars_hash ]
 );
@@ -101,8 +103,12 @@ our %fbicons=(
   '🔹' => 'diamond.blue.small',
   '🔸' => 'diamond.orange.small',
   '🇺🇦' => 'flag.ukraina',
+  '🙈' =>  'monkey.see.no.evil',
+  '👀' => 'eyes',
+  '🤷' => 'shrug',
 );
 
+###fbicons_face
 our %fbicons_face = (
   '🙂' => 'smile',
   '😡' => 'anger',
@@ -134,6 +140,12 @@ our %fbicons_face = (
   '🤧' => 'face.sneezing',
   '🙃' => 'face.upside.down',
   '😄' => 'face.grinning.smiling.eyes',
+  '🙄' => 'face.rolling.eyes',
+  '😇' => 'face.smiling.halo',
+  '😊' => 'face.smiling.eyes.smiling',
+  '😐' => 'face.neutral',
+  '😒' => 'face.unamused',
+  '🤬' => 'face.symbols.mouth',
 );
 
 %fbicons = ( 
@@ -401,7 +413,7 @@ sub fbicon_igg {
     my $rpl = ' ' . join(" ",@rpl) . ' ';
     $rpl .= $str if $str;
    
-    return ($rpl);
+    return $rpl;
 }
 
 sub trim_eol {
@@ -502,7 +514,7 @@ sub ln_emph_to_fbauth {
 }
 
 sub fb_format {
-    fb_auth();
+    #fb_auth();
 
     my (@lines, @new); 
     @lines = split "\n" => $s;
@@ -518,7 +530,13 @@ sub fb_format {
         )
         && do { push @new,''; next; };
 
-        while(my($k,$v)=each %fbicons){
+        my @utf = keys %fbicons;
+        my @fbi;
+        while(@utf){
+          my $k = shift @utf;
+
+          #while(/($k+)/){
+          #}
           s/($k+)/fbicon_igg($1)/ge;
         }
 
@@ -550,9 +568,6 @@ sub fb_format {
         };
 
         s/…/.../g;
-
-        #s/😁/\\Laughey[1.0][white]/g;
-        #s/🙂/\\Smiley[1.0][yellow]/g;
 
         push @new,$_;
     }

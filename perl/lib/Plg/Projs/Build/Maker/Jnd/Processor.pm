@@ -12,6 +12,8 @@ use Base::Arg qw(
   hash_update
 );
 
+use Plg::Projs::Regex qw(%regex);
+
 use String::Util qw(trim);
 
 use Base::String qw(
@@ -616,8 +618,25 @@ sub f_write {
   return $self;
 }
 
-sub _igg {
+sub _macro_fbicon {
+  my ($self, $arg, $opts_s) = @_;
+}
+
+sub _macro_igg {
   my ($self, $igname, $opts_s) = @_;
+
+  my @ignames = 
+     grep { !/^(\d+)$/ }
+     split ' ' => $igname;
+
+  if(@ignames > 1){
+     my ($tex, @tex);
+     for(@ignames){
+        push @tex, $self->_macro_igg($_,$opts_s);
+     }
+     $tex = join("\n",@tex);
+     return $tex;
+  }
 
   $igname = trim($igname);
 
@@ -649,7 +668,7 @@ sub loop {
   foreach(@jlines) {
     $self->{lnum}++; chomp;
 
-    s/\@igg\{([^{}]*)\}(?:\{([^{}]*)\}|)/$self->_igg($1,$2)/ge;
+    s/\@igg\{([^{}]*)\}(?:\{([^{}]*)\}|)/$self->_macro_igg($1,$2)/ge;
 
     $self->{line} = $_;
 
