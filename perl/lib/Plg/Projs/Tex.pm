@@ -486,10 +486,27 @@ sub rpl_urls {
     $s = join("\n",@new);
 }
 
-sub fb_format {
-    my @lines = split "\n" => $s;
+sub fb_auth {
+    my (@lines, @new); 
+    @lines = split "\n" => $s;
 
-    my @new;
+    for(@lines){
+
+      push @new,$_;
+    }
+
+    $s = join("\n",@new);
+}
+
+sub ln_emph_to_fbauth {
+}
+
+sub fb_format {
+    fb_auth();
+
+    my (@lines, @new); 
+    @lines = split "\n" => $s;
+
     for(@lines){
         #next if /^\s+· Reply ·/;
         ( /^\s+· Reply ·/ 
