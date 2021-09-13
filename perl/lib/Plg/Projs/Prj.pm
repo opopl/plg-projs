@@ -66,7 +66,7 @@ sub prj_load_xml {
     my $root = $self->{root};
 
     my $xfile = $self->_prj_xfile;
-    unless (-e $xfile) {
+    unless (-f $xfile) {
         return $self;
     }
 

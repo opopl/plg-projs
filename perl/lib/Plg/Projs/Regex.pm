@@ -8,6 +8,8 @@ use Exporter ();
 use base qw(Exporter);
 use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
 
+use Data::Dumper qw(Dumper);
+
 @ISA     = qw(Exporter);
 @EXPORT  = qw( );
 $VERSION = '0.01';
@@ -25,20 +27,42 @@ my @ex_vars_array=qw(
 
 %EXPORT_TAGS = (
 ###export_funcs
-	'funcs' => [qw( 
-	)],
-	'vars'  => [ @ex_vars_scalar,@ex_vars_array,@ex_vars_hash ]
+    'funcs' => [qw( 
+        match
+    )],
+    'vars'  => [ @ex_vars_scalar,@ex_vars_array,@ex_vars_hash ]
 );
 
 @EXPORT_OK = ( @{ $EXPORT_TAGS{'funcs'} }, @{ $EXPORT_TAGS{'vars'} } );
 
 our %regex = (
    jnd => { 
-	 macros => {
-	   igg => qr/\@igg\{([^{}]*)\}(?:\{([^{}]*)\}|)/,
-	 }
+     macros => {
+       igg => qr/\@igg\{([^{}]*)\}(?:\{([^{}]*)\}|)/,
+     }
    }
 );
+
+sub match {
+    my ($pattern, $string, $flags, $index) = @_;
+
+    local $_ = $string;
+    $flags ||= '';
+
+    my ($result, @group, $match);
+    eval sprintf('@group = ( m/%s/%s ); $match = $&; ',$pattern,$flags);
+
+    #print Dumper(\@group) . "\n";
+    #print Dumper($match) . "\n";
+
+    unless($index){
+      $result = $match;
+    }elsif($index =~ /^\d+$/){
+      $result = $index > 0 ? $group[$index-1] : $match;
+    }
+
+    return $result;
+}
 
 1;
 

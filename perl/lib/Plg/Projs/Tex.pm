@@ -146,6 +146,7 @@ our %fbicons_face = (
   '😐' => 'face.neutral',
   '😒' => 'face.unamused',
   '🤬' => 'face.symbols.mouth',
+  '🤯' => 'face.shoked.head.exploding',
 );
 
 %fbicons = ( 

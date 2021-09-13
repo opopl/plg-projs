@@ -668,7 +668,8 @@ sub loop {
   foreach(@jlines) {
     $self->{lnum}++; chomp;
 
-    s/\@igg\{([^{}]*)\}(?:\{([^{}]*)\}|)/$self->_macro_igg($1,$2)/ge;
+    #s/\@igg\{([^{}]*)\}(?:\{([^{}]*)\}|)/$self->_macro_igg($1,$2)/ge;
+    s/$regex{jnd}{macros}{igg}/$self->_macro_igg($1,$2)/ge;
 
     $self->{line} = $_;
 

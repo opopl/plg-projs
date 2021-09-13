@@ -73,6 +73,7 @@ sub d_process {
         ->d_img_file
         ;
 
+
     my $fetch_ok = $self->_fetch;
 
     $self->db_insert_img if $fetch_ok;
@@ -180,9 +181,9 @@ sub _fetch_on {
   my ($self) = @_;
 
   my $d = $self->{d};
-  return unless $d;
+  return unless $d && $d->{img_file};
 
-  ((! -e $d->{img_file}) || $d->{img_err}) ? 1 : 0;
+  ((! -f $d->{img_file}) || $d->{img_err}) ? 1 : 0;
 
 }
 
@@ -198,6 +199,15 @@ sub f_read {
   return $self;
 }
 
+sub _inum_max {
+  my ($self) = @_;
+
+  my $ref = { q => 'SELECT MAX(inum) FROM imgs' };
+  my $max  = dbh_select_fetchone($ref);
+
+  return $max;
+}
+
 sub d_get_inum {
   my ($self) = @_;
 
@@ -210,10 +220,7 @@ sub d_get_inum {
   });
 
   unless($d->{inum}){
-      my $ref = {
-         q => q{ SELECT MAX(inum) FROM imgs },
-      };
-      my $max  = dbh_select_fetchone($ref);
+      my $max = $self->_inum_max;
       $d->{inum} = ($max) ? ($max + 1) : 1;
   }
 
@@ -264,6 +271,7 @@ sub loop {
     };
 
     next unless $self->{is_cmt};
+
 
     m/^\s*(local|global)\s*$/g && do { 
        $self->process_block;
@@ -359,7 +367,8 @@ sub _fetch {
   my $d = $self->{d};
   return $self unless $d && $d->{img_file};
 
-  return $self if !$self->_reload && -e $d->{img_file};
+  return $self if !$self->_reload && -f $d->{img_file};
+
 
   my $gi  = $self->{gi};
 
@@ -371,7 +380,7 @@ sub _fetch {
      sec      => $sec,
   });
 
-  my @m; push @m,
+  my ($m, @m); push @m,
      'x' x 50,
      'Try downloading picture:',
      '  proj:     ' . $self->{proj},
@@ -381,9 +390,12 @@ sub _fetch {
      '  caption:  ' . ($d->{caption} || ''),
      ;
 
-  print join("\n",@m) . "\n";
+  $m = join("\n",@m);
+  print $m . "\n";
 
-  $self->_reload && (-e $d->{img_file}) && do { rmtree $d->{img_file}; };
+  $DB::single = 1 if $self->{d};
+
+  $self->_reload && (-f $d->{img_file}) && do { rmtree $d->{img_file}; };
 
   while($self->_fetch_on){
      my $s  = shift @subs;
@@ -396,7 +408,7 @@ sub _fetch {
      sec  => $sec,
   };
 
-  unless(-e $d->{img_file}){
+  unless(-f $d->{img_file}){
      print qq{DOWNLOAD FAIL: } . $d->{img} . "\n";
      push @{$gi->{fail}}, $dd;
      return ;
@@ -445,7 +457,7 @@ sub _fetch {
         printf(q{Convert: %s => %s} . "\n", basename($d->{img_file}), $img_jpg);
         system("$cmd");
         my $img_file_jpg = catfile($self->{img_root},$img_jpg);
-        if (-e $img_file_jpg) {
+        if (-f $img_file_jpg) {
             print 'Convert OK' . "\n";
             rmtree $d->{img_file};
             $d->{img_file} = $img_file_jpg;

@@ -51,7 +51,8 @@ use Base::DB qw(
 );
 
 use Base::Arg qw( 
-    hash_inject 
+    hash_inject
+    hash_update
 );
 
 use Data::Dumper::AutoEncode;
@@ -281,10 +282,13 @@ sub get_opt {
         "file|f=s",
         "proj|p=s",
         "root|r=s",
+        "sec|s=s",
+        # e.g. load_file
         "cmd|c=s",
         "reset",
         "reload",
         "debug|d",
+        # queries to img.db
         "query|q=s",
         "param=s@",
     );
@@ -297,9 +301,7 @@ sub get_opt {
         $self->{opt} = \%opt;
     }
 
-    foreach my $k (keys %opt) {
-        $self->{$k} = $opt{$k};
-    }
+    hash_update($self, \%opt);
 
     return $self;    
 }
@@ -434,12 +436,16 @@ sub load_file {
 
     $prj = $self->{prj};
     unless ($file) {
-        foreach($prj->_files){
+        my @files = $prj->_files;
+		my $j = 0;
+        foreach(@files){
+			#$j ++;
+			#last if $j == 10;
 
             my $file = catfile($root,$_->{file});
             my $sec  = $_->{sec};
 
-            next unless -e $file;
+            next unless -f $file;
 
             $self->load_file({
                 file => $file,
@@ -460,21 +466,23 @@ sub load_file {
 ###read_file @lines
     my @lines = read_file $file;
 
-#    my $ftc = Plg::Projs::GetImg::Fetcher->new(
-        #file     => $file,
-        #sec      => $sec,
-        #proj     => $proj,
-        #root     => $root,
-        #prj      => $prj,
-        #gi       => $self,
-        #dbh      => $self->{dbh},
-        #img_root => $self->{img_root},
-    #);
+    my %n = (
+        file     => $file,
+        sec      => $sec,
+        proj     => $proj,
+        root     => $root,
+        prj      => $prj,
+        gi       => $self,
+        dbh      => $self->{dbh},
+        img_root => $self->{img_root},
+    );
+
+    my $ftc = Plg::Projs::GetImg::Fetcher->new(%n);
     
-    #$ftc
-        #->f_read
-        #->loop;
-    #return $self;
+    $ftc
+        ->f_read
+        ->loop;
+    return $self;
 
 
 ###vars
@@ -539,7 +547,7 @@ sub load_file {
 
     $fetch_tries = 3;
     $fetch_on = sub { 
-        ((! -e $img_file) || $img_err) ? 1 : 0;
+        ((! -f $img_file) || $img_err) ? 1 : 0;
     };
 
 ###subs_$fetch
@@ -563,7 +571,7 @@ sub load_file {
 
         print join("\n",@m) . "\n";
 
-        $reload->() && (-e $img_file) && do { rmtree $img_file; };
+        $reload->() && (-f $img_file) && do { rmtree $img_file; };
 
         while($fetch_on->()){
             my $s  = shift @subs;
@@ -576,7 +584,7 @@ sub load_file {
             sec  => $sec,
         };
 
-        unless(-e $img_file){
+        unless(-f $img_file){
             print qq{DOWNLOAD FAIL: $img} . "\n";
             push @fail, $dd;
             return ;
@@ -625,7 +633,7 @@ sub load_file {
                 printf(q{Convert: %s => %s} . "\n", basename($img_file), $img_jpg);
                 system("$cmd");
                 my $img_file_jpg = catfile($img_root,$img_jpg);
-                if (-e $img_file_jpg) {
+                if (-f $img_file_jpg) {
                     print 'Convert OK' . "\n";
                     rmtree $img_file;
                     $img_file = $img_file_jpg;
@@ -686,7 +694,7 @@ sub load_file {
     
                     if($img_db) {
                         my $img_db_file = catfile($img_root,$img_db);
-                        if ( -e $img_db_file ) {
+                        if ( -f $img_db_file ) {
                             next;
                         }
                     }
