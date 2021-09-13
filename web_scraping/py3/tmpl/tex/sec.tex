@@ -1,0 +1,17 @@
+
+@@ if seccmd and title
+\\VAR{seccmd}{\VAR{title}}
+\label{sec:\VAR{sec}}
+@@ endif
+
+@@ if url
+\Purl{\VAR{url}}
+@@ endif
+
+@@ if author_id
+\ifcmt
+  author_begin
+    author_id \VAR{author_id}
+  author_end
+\fi
+@@ endif

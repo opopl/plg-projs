@@ -1,0 +1,47 @@
+
+@@ macro ifcmtIg(picList)
+  @@ if picList is not none and picList|length
+\ifcmt
+    @@ for pic in picList
+% --- 
+  ig \VAR{pic}
+  width 0.15
+    @@ endfor
+\fi
+  @@ endif
+@@ endmacro
+
+%%%fbauth
+%%%fbauth_name
+@@ if name
+\iusr{\VAR{name}}
+@@ endif
+%%%fbauth_url
+@@ if url
+  @@ if friend
+\urlFriend{\VAR{url}}\par
+  @@ else
+\url{\VAR{url}}\par
+  @@ endif
+@@ endif
+%%%fbauth_place
+\VAR{place}
+%%%fbauth_id
+\VAR{id}
+%%%fbauth_front
+\VAR{front}
+%%%fbauth_desc
+\VAR{desc}
+%%%fbauth_www
+\VAR{www}
+%%%fbauth_pic
+%%%fbauth_pic portrait
+\VAR{ifcmtIg(pics.portrait)}
+%%%fbauth_pic background
+\VAR{ifcmtIg(pics.background)}
+%%%fbauth_pic other
+\VAR{ifcmtIg(pics.other)}
+%%%fbauth_tags
+\VAR{tags}
+%%%fbauth_pubs
+%%%endfbauth
