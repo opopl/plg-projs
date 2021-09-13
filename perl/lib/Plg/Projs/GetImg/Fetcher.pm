@@ -17,6 +17,8 @@ use URI::Split qw(uri_split);
 
 use File::Copy qw( move );
 
+use Clone qw(clone);
+
 use Image::Info qw(
     image_info
     image_type
@@ -60,6 +62,17 @@ sub new
     return $self;
 }
 
+sub d_rm_file {
+  my ($self) = @_;
+
+  my $d = $self->{d};
+  return $self unless $d && $d->{img_file} && -f $d->{img_file};
+
+  rmtree $d->{img_file};
+  $d->{'@'}->{fs} = 0;
+  return $self;
+}
+
 sub d_process {
     my ($self) = @_;
 
@@ -70,8 +83,10 @@ sub d_process {
 
     $self
         ->d_get_inum
-        ->d_img_file
+        ->d_get_file
         ;
+
+    $DB::single = 1;
 
     my $fetch_ok = $self->_fetch;
 
@@ -229,7 +244,7 @@ sub d_get_inum {
   return $self;
 }
 
-sub d_img_file {
+sub d_get_file {
   my ($self) = @_;
 
   my $d = $self->{d};
@@ -366,13 +381,30 @@ sub _subs_url {
 
 }
 
+sub d_push_status {
+  my ($self, $key) = @_;
+
+  my $d  = $self->{d};
+  my $gi = $self->{gi};
+
+  return $self unless $d && $gi;
+  
+  push @{$gi->{$key}}, clone($d);
+
+  return $self;
+}
+
 sub _fetch {
   my ($self) = @_;
 
   my $d = $self->{d};
   return unless $d && $d->{img_file};
 
-  return if !$self->_reload && -f $d->{img_file};
+  return if !$self->_reload 
+        && $d->{'@'}->{fs} 
+        && $d->{'@'}->{db};
+
+  $self->d_rm_file;
 
   my $gi  = $self->{gi};
 
@@ -397,10 +429,6 @@ sub _fetch {
   $m = join("\n",@m);
   print $m . "\n";
 
-  $DB::single = 1 if $self->{d};
-
-  $self->_reload && (-f $d->{img_file}) && do { rmtree $d->{img_file}; };
-
   while($self->_fetch_on){
      my $s  = shift @subs;
      my $ss = $s->();
@@ -414,11 +442,10 @@ sub _fetch {
 
   unless(-f $d->{img_file}){
      print qq{DOWNLOAD FAIL: } . $d->{img} . "\n";
-     push @{$gi->{fail}}, $dd;
+     $self->d_push_status('fail');
      return ;
   }else{
      print qq{DOWNLOAD SUCCESS: } . $d->{img} . "\n";
-     push @{$gi->{ok}}, $dd;
   }
 
   my $itp = image_type($d->{img_file}) || {};
@@ -431,6 +458,7 @@ sub _fetch {
   if ($d->{img_err}) {
      print qq{image_info FAIL: } . $d->{img} . "\n";
      print '  ' .  $d->{img_err} . "\n";
+     return;
   }else{
      print qq{image_info OK: } . $d->{img} . "\n";
      foreach my $k (qw(file_media_type)) {
@@ -461,25 +489,29 @@ sub _fetch {
         printf(q{Convert: %s => %s} . "\n", basename($d->{img_file}), $img_jpg);
         system("$cmd");
         my $img_file_jpg = catfile($self->{img_root},$img_jpg);
-        if (-f $img_file_jpg) {
-            print 'Convert OK' . "\n";
-            rmtree $d->{img_file};
-            $d->{img_file} = $img_file_jpg;
-            $d->{img} = $img_jpg;
-            $d->{ext} = 'jpg';
-
+        unless(-f $img_file_jpg) {
+            return ;
         }
+        print 'Convert OK' . "\n";
+        rmtree $d->{img_file};
+        $d->{img_file} = $img_file_jpg;
+        $d->{img} = $img_jpg;
+        $d->{ext} = 'jpg';
      }
   }
 
-  $d->{'@'}->{fs} = -f $d->{img_file} ? 1 : 0;
+  my $fs = -f $d->{img_file} ? 1 : 0;
+  $d->{'@'}->{fs} = $fs;
+
+  return unless $fs;
+
+  $self->d_push_status('ok');
 
   print '=' x 50 . "\n";
   print qq{Final image location: } . basename($d->{img_file}) . "\n";
   print '=' x 50 . "\n";
 
   return 1;
-
 }
 
 

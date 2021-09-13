@@ -434,26 +434,27 @@ sub load_file {
     $file = $self->_opt_($ref,'file');
     $sec  = $self->_opt_($ref,'sec');
 
+    my $atend = sub { $self->info_ok_fail };
+
     $prj = $self->{prj};
     unless ($file) {
         my @files = $prj->_files;
-		my $j = 0;
-        foreach(@files){
-			#$j ++;
-			#last if $j == 10;
 
+        foreach(@files){
             my $file = catfile($root,$_->{file});
             my $sec  = $_->{sec};
 
             next unless -f $file;
 
             $self->load_file({
-                file => $file,
-                sec  => $sec,
+                file       => $file,
+                sec        => $sec,
+                skip_atend => 1,
             });
         }
 
-        $self->info_ok_fail;
+        $atend->();
+
         return $self;
     }
     $file_bn = basename($file);
@@ -476,299 +477,13 @@ sub load_file {
         dbh      => $self->{dbh},
         img_root => $self->{img_root},
     );
-
     my $ftc = Plg::Projs::GetImg::Fetcher->new(%n);
     
     $ftc
         ->f_read
         ->loop;
-    return $self;
-
-
-###vars
-    my %vars;
-    my ($is_img, $is_cmt, $url);
     
-    my ($img_file, $img, $img_err, $ext, $inum);
-
-    my @data; my $d = {};
-
-###subs
-    my $push_d = sub { push @data, $d if keys %$d; };
-    my $push_d_reset = sub { $push_d->(); $d = {}; };
-
-    my $reload = sub { $self->{reload} || $vars{reload} || $d->{reload} };
-
-###subs_db_insert_img
-    my $db_insert_img = sub {
-        my $ok = dbh_insert_hash({
-            t => 'imgs',
-            i => q{ INSERT OR REPLACE },
-            h => {
-                inum    => $inum,
-                url     => $url,
-                proj    => $self->{proj},
-                rootid  => $self->{rootid},
-                sec     => $sec,
-                img     => $img,
-                ext     => $ext,
-                caption => $d->{caption} || '',
-                tags    => $d->{tags} || '',
-                name    => $d->{name} || '',
-                type    => $d->{type} || '',
-            },
-        });
-    };
-
-###subs_db_get_inum_max
-    my $db_get_inum_max = sub {
-        my $ref = {
-            q => q{ SELECT MAX(inum) FROM imgs },
-        };
-        my $max  = dbh_select_fetchone($ref);
-        $inum = ($max) ? ($max + 1) : 1;
-    };
-
-###subs_$get_img_file
-    my $get_img_file = sub {
-        my ($scheme, $auth, $path, $query, $frag) = uri_split($url);
-        my $bname = basename($path);
-        ($ext) = ($bname =~ m/\.(\w+)$/);
-        $ext ||= 'jpg';
-        $ext = lc $ext;
-        $ext = 'jpg' if $ext eq 'jpeg';
-    
-        $img      = sprintf(q{%s.%s},$inum,$ext);
-        $img_file = catfile($img_root,$img);
-    };
-
-###subs_$fetch_on
-    my ($fetch_on, $fetch, $fetch_i, $fetch_tries);
-
-    $fetch_tries = 3;
-    $fetch_on = sub { 
-        ((! -f $img_file) || $img_err) ? 1 : 0;
-    };
-
-###subs_$fetch
-    $fetch = sub {
-        my @subs = $self->_subs_url({ 
-             url      => $url,
-             img_file => $img_file,
-             sec      => $sec,
-        });
-
-        my @m; push @m,
-             'x' x 50,
-             'Try downloading picture:',
-             '  proj:     ' . $self->{proj},
-             '  sec:      ' . $sec,
-             '  url:      ' . $url,
-             '  img:      ' . $img,
-             '  name:     ' . ( $d->{name} || '' ),
-             '  caption:  ' . ( $d->{caption} || ''),
-             ;
-
-        print join("\n",@m) . "\n";
-
-        $reload->() && (-f $img_file) && do { rmtree $img_file; };
-
-        while($fetch_on->()){
-            my $s  = shift @subs;
-            my $ss = $s->();
-        }
-
-        my $dd = {
-            url  => $url,
-            img  => $img,
-            sec  => $sec,
-        };
-
-        unless(-f $img_file){
-            print qq{DOWNLOAD FAIL: $img} . "\n";
-            push @fail, $dd;
-            return ;
-        }else{
-            print qq{DOWNLOAD SUCCESS: $img} . "\n";
-            push @ok, $dd;
-        }
-
-        my $itp = image_type($img_file) || {};
-        my $iif = image_info($img_file) || {};
-
-        my $media_type_str = $iif->{file_media_type} || '';
-        my ($img_type) = ( $media_type_str =~ m{image\/(\w+)} );
-        
-        $img_err = $iif->{error};
-        if ($img_err) {
-            print qq{image_info FAIL: $img} . "\n";
-            print qq{   $img_err} . "\n";
-        }else{
-            print qq{image_info OK: $img} . "\n";
-            foreach my $k (qw(file_media_type)) {
-                print qq{   $k => } . $iif->{$k} . "\n" if $iif->{$k};
-            }
-        }
-
-        my $ft  = lc( $itp->{file_type} || '');
-        print qq{image file_type: $ft} . "\n";
-
-        $ft = 'jpg' if $ft eq 'jpeg';
-
-        if ($ft) {
-            if ($ft ne $ext) {
-                $ext = $ft;
-                my $img_new      = sprintf(q{%s.%s},$inum,$ext);
-                $img = $img_new;
-    
-                my $img_file_new = catfile($img_root,$img_new);
-                move($img_file, $img_file_new);
-                $img_file = $img_file_new;
-            }
-
-            if (grep { /^$ext$/ } qw(gif webp)) {
-                my $img_jpg = sprintf(q{%s.%s},$inum,'jpg');
-                my $cmd = sprintf(q{convert %s %s},$img_file, $img_jpg);
-
-                printf(q{Convert: %s => %s} . "\n", basename($img_file), $img_jpg);
-                system("$cmd");
-                my $img_file_jpg = catfile($img_root,$img_jpg);
-                if (-f $img_file_jpg) {
-                    print 'Convert OK' . "\n";
-                    rmtree $img_file;
-                    $img_file = $img_file_jpg;
-                    $img = $img_jpg;
-                }
-            }
-        }
-        $ext = undef;
-
-        print '=' x 50 . "\n";
-        print qq{Final image location: } . basename($img_file) . "\n";
-        print '=' x 50 . "\n";
-
-        return 1;
-    };
-###end_of_$fetch
-
-    chdir $img_root;
-
-###loop_LINES
-
-    LINES: while (@lines) {
-        local $_ = shift @lines;
-        chomp;
-
-        next if /^\s*%/;
-
-        m/^\s*\\ifcmt\b/g && do { $is_cmt = 1; next; };
-###\fi
-        m/^\s*\\fi\b/g && do { 
-            $is_cmt = 0 if $is_cmt; 
-            $is_img = 0;
-
-            $push_d_reset->();
-
-            next unless @data;
-
-            #if ($sec =~ /writers/){
-                #print Dumper(\@data) . "\n";
-            #}      
-###while_@data
-            while(@data){
-                $d = shift @data;
-
-                $url = $d->{url};
-                next unless $url;
-
-                if ($reload->()) {
-                    $inum = dbh_select_fetchone({
-                        q => q{ SELECT inum FROM imgs WHERE url = ? },
-                        p => [ $url ],
-                    });
-                }else{
-                    my $img_db = dbh_select_fetchone({
-                        q => q{ SELECT img FROM imgs WHERE url = ? },
-                        p => [ $url ],
-                    });
-    
-                    if($img_db) {
-                        my $img_db_file = catfile($img_root,$img_db);
-                        if ( -f $img_db_file ) {
-                            next;
-                        }
-                    }
-                    $db_get_inum_max->();
-                }
-                $get_img_file->();
-    
-###call_$fetch
-                return unless $fetch->();
-
-                $db_insert_img->();
-            }
-
-            $d = {};
-            %vars = ();
-
-        };
-###\fi_end
-
-        m/^\s*img_begin\b/g && do { $is_img = 1; next; };
-
-###img_end
-        m/^\s*img_end\b/g && do { 
-            $is_img = 0 if $is_img; 
-
-            $push_d_reset->();
-
-            next; 
-        };
-
-        while(1){
-###m_pic
-            m/^\s*(pic|doc|ig)\s+(.*)$/g && do { 
-                my $k = $1;
-
-                $push_d_reset->();
-                $is_img = 1;
-
-                $url = $2;
-
-                $d = { url => $url };
-                if ($k eq 'doc') {
-                    $d->{type} = 'doc';
-                }
-                last; 
-            };
-###if_is_img
-            if ($is_img) {
-###m_url
-                m/^\s*url\s+(.*)$/g && do { 
-                    $push_d_reset->();
-
-                    $d = { url => $1 };
-                    $url = $1;
-                    last;
-                };
-
-                m/^\s*(?:|@)(\w+)\s+(.*)$/g && do { 
-                   $d->{$1} = $2; 
-                };
-
-                last;
-            }
-
-###m_vars
-            m/^\s*(?:|@)(\w+)\s+(.*)$/g && do { 
-                $vars{$1} = $2;
-                last;
-            };
-
-            last;
-        }
-
-    }
+    $atend->() unless $ref->{skip_atend};
 
     return $self;
 }

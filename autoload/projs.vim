@@ -957,7 +957,7 @@ function! projs#maps (...)
             \  ';bl'   : 'BLD last_compile'  ,
             \  ';bt'   : 'BLD print_ii_tree'  ,
             \  ';e'    : 'PrjAct edt'  ,
-            \  ';gi'   : 'PrjAct get_img'  ,
+            \  ';gi'   : 'call lts#buf#pic#fetch()'  ,
             \  ';kr'   : 'KEYMAP russian_jcukenwin'  ,
             \  ';ku'   : 'KEYMAP ukrainian_jcuken'  ,
             \  ';aa'   : 'PA author_add',
