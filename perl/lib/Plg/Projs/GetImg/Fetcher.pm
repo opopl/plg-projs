@@ -64,15 +64,14 @@ sub d_process {
     my ($self) = @_;
 
     my $d = $self->{d};
-    return $self unless $d;
+    return $self unless $d && $d->{url};
 
-    my $url = $d->{url};
+    $d->{'@'} ||= {};
 
     $self
         ->d_get_inum
         ->d_img_file
         ;
-
 
     my $fetch_ok = $self->_fetch;
 
@@ -143,6 +142,7 @@ sub db_insert_img {
   my $d = $self->{d};
   return $self unless $d;
 
+  $DB::single = 1;
   my $ok = dbh_insert_hash({
        t => 'imgs',
        i => q{ INSERT OR REPLACE },
@@ -154,7 +154,6 @@ sub db_insert_img {
            inum    => $d->{inum},
            url     => $d->{url},
            img     => $d->{img},
-           ext     => $d->{ext},
            caption => $d->{caption} || '',
            tags    => $d->{tags} || '',
            name    => $d->{name} || '',
@@ -214,14 +213,17 @@ sub d_get_inum {
   my $d = $self->{d};
   return $self unless $d && $d->{url};
 
-  @{$d}{qw(inum img)} = dbh_select_as_list({
-      q => q{ SELECT inum, img FROM imgs WHERE url = ? },
+  @{$d}{qw(inum img ext)} = dbh_select_as_list({
+      q => q{ SELECT inum, img, extension(img) AS ext FROM imgs WHERE url = ? },
       p => [ $d->{url} ],
   });
+  $d->{'@'}->{db} = $d->{inum} ? 1 : 0;
 
   unless($d->{inum}){
       my $max = $self->_inum_max;
       $d->{inum} = ($max) ? ($max + 1) : 1;
+      $d->{ext} = 'jpg';
+      $d->{img} = join("." => @{$d}{qw( inum ext )});
   }
 
   return $self;
@@ -237,10 +239,13 @@ sub d_img_file {
 
   unless($d->{img}){
      $d->{ext} ||= 'jpg';
+     $DB::single = 1 unless $d->{inum};
      $d->{img} = sprintf(q{%s.%s},@{$d}{qw( inum ext )} );
   }
 
   $d->{img_file} = catfile($self->{img_root},$d->{img});
+
+  $d->{'@'}->{fs} = -f $d->{img_file} ? 1 : 0;
 
   return $self;
 }
@@ -272,7 +277,6 @@ sub loop {
 
     next unless $self->{is_cmt};
 
-
     m/^\s*(local|global)\s*$/g && do { 
        $self->process_block;
 
@@ -282,7 +286,8 @@ sub loop {
        $self->{block} = $k;
     };
 
-    m/^\s*(@|)(\w+)\s+(.*)$/g && do {
+###m_pair
+    m/^\s*(@|)(\w+)\s+(\S+.*)$/g && do {
        my ($d, $locals, $globals) = @{$self}{qw(d locals globals)};
 
        # prefix: if =@ then it is a key-value pair for some block
@@ -365,10 +370,9 @@ sub _fetch {
   my ($self) = @_;
 
   my $d = $self->{d};
-  return $self unless $d && $d->{img_file};
+  return unless $d && $d->{img_file};
 
-  return $self if !$self->_reload && -f $d->{img_file};
-
+  return if !$self->_reload && -f $d->{img_file};
 
   my $gi  = $self->{gi};
 
@@ -462,10 +466,13 @@ sub _fetch {
             rmtree $d->{img_file};
             $d->{img_file} = $img_file_jpg;
             $d->{img} = $img_jpg;
+            $d->{ext} = 'jpg';
+
         }
      }
   }
-  $d->{ext} = undef;
+
+  $d->{'@'}->{fs} = -f $d->{img_file} ? 1 : 0;
 
   print '=' x 50 . "\n";
   print qq{Final image location: } . basename($d->{img_file}) . "\n";
