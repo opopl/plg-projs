@@ -17,6 +17,9 @@ function! projs#sec#picture#fetch (...)
     call extend(env,{ 'sec' : sec })
   endif
 
+	let lines_sh = []
+	call add(lines_sh,'#!/bin/sh')
+
   let cmd_a = [ 'perl', pl_e, '-p', proj ]
   if len(file)
     if !filereadable(file) | return | endif

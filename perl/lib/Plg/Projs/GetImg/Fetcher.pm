@@ -86,8 +86,6 @@ sub d_process {
         ->d_get_file
         ;
 
-    $DB::single = 1;
-
     my $fetch_ok = $self->_fetch;
 
     $self->db_insert_img if $fetch_ok;
@@ -157,7 +155,6 @@ sub db_insert_img {
   my $d = $self->{d};
   return $self unless $d;
 
-  $DB::single = 1;
   my $ok = dbh_insert_hash({
        t => 'imgs',
        i => q{ INSERT OR REPLACE },
@@ -175,6 +172,9 @@ sub db_insert_img {
            type    => $d->{type} || '',
        },
   });
+
+  $self->d_push_status('ok') if $ok;
+  $DB::single = 1;
 
   return $self;
 }
@@ -504,8 +504,6 @@ sub _fetch {
   $d->{'@'}->{fs} = $fs;
 
   return unless $fs;
-
-  $self->d_push_status('ok');
 
   print '=' x 50 . "\n";
   print qq{Final image location: } . basename($d->{img_file}) . "\n";
