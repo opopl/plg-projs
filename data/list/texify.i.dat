@@ -4,7 +4,6 @@ expand_punctuation
 expand_vertically
 fb_auth
 fb_format
-ln_emph_to_fbauth
 rpl_dashes
 rpl_quotes
 rpl_special
@@ -16,3 +15,4 @@ trim_eol
 delete_empty_lines
 sections_up
 sections_down
+wrap

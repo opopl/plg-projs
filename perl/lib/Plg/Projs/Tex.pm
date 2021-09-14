@@ -11,6 +11,7 @@ use Base::String qw(
 );
 
 use String::Util qw(trim);
+use Text::Wrap ();
 
 use JSON::XS;
 use Regexp::Common qw(URI);
@@ -60,27 +61,28 @@ my @ex_vars_array=qw(
 our %flag = (
   head => undef,
   cmt => undef,
+  push => undef,
 );
 
-###secs_down
-our @secs_down = (
-  { paragraph => 'subparagraph' },
-  { subsubsection => 'paragraph' },
-  { subsection => 'subsubsection' },
-  { section => 'subsection' },
-  { chapter => 'section' },
-  { part => 'chapter' },
-);
-
-###secs_up
-our @secs_up = (
-  { chapter => 'part' },
-  { section => 'chapter' },
-  { subsection => 'section' },
-  { subsubsection => 'subsection' },
-  { paragraph => 'subsubsection' },
-  { subparagraph => 'paragraph' },
-);
+###secs
+our $secs = {
+  down => [
+      { paragraph => 'subparagraph' },
+      { subsubsection => 'paragraph' },
+      { subsection => 'subsubsection' },
+      { section => 'subsection' },
+      { chapter => 'section' },
+      { part => 'chapter' },
+  ],
+  up => [
+      { chapter => 'part' },
+      { section => 'chapter' },
+      { subsection => 'section' },
+      { subsubsection => 'subsection' },
+      { paragraph => 'subsubsection' },
+      { subparagraph => 'paragraph' },
+  ]
+};
 
 
 ###fbicons
@@ -372,14 +374,31 @@ sub rpl_verbs {
 
 # insert empty lines at the end of line
 sub expand_vertically {
-    my @lines = split "\n" => $s;
-    my @new;
+    _lines();
 
     for(@lines){
+        next if _ln_push($_);
+
         push @new,$_,'';
     }
 
-    $s = join("\n",@new);
+    _new2s();
+}
+
+sub wrap {
+    local $Text::Wrap::columns=80;
+
+    _lines();
+
+    for(@lines){
+        next if _ln_push($_);
+
+        my $w = Text::Wrap::wrap('','',$_);
+
+        push @new,split "\n" => $w;
+    }
+
+    _new2s();
 }
 
 sub expand_punctuation {
@@ -393,10 +412,11 @@ sub expand_punctuation {
 }
 
 sub empty_to_smallskip {
-    my @lines = split "\n" => $s;
-    my @new;
+    _lines();
 
     for(@lines){
+        next if _ln_push($_);
+
         /^\s*$/ && do { 
             push @new,q{\smallskip};
             next;
@@ -405,7 +425,7 @@ sub empty_to_smallskip {
         push @new,$_;
     }
 
-    $s = join("\n",@new);
+    _new2s();
 }
 
 sub _fbicon_igg {
@@ -451,20 +471,24 @@ sub trim_eol {
     $s = join("\n",@new);
 }
 
-sub _lines { 
-    @lines = map { 
-        _ln_flags($_); $flag{push} ? $_ : ()
-    } split "\n" => $s;
-
+sub _reset { 
     @new = ();
+    $flag{$_} = undef for keys %flag;
+}
+
+sub _lines { 
+    @lines = split "\n" => $s;
+
+    _reset();
 }
 
 sub _new2s { 
     $s = join("\n",@new);
-    @new = ();
+
+    _reset();
 }
 
-sub _ln_flags { 
+sub _ln_push { 
     my ($line) = @_;
     local $_ = $line;
 
@@ -486,15 +510,16 @@ sub _ln_flags {
         $flag{push} = 1 if $flag{$k};
     }
 
+    push @new,$_ if $flag{push};
+
+    return $flag{push};
 }
 
 sub rpl_urls {
-    my @lines = split "\n" => $s;
+    _lines();
 
-    my @new;
     for(@lines){
-        _ln_flags($_);
-        do { push @new,$_; next } if $flag{push};
+        next if _ln_push($_);
 
         my $pat_cmd = sub { 
             my ($ref) = @_; 
@@ -538,7 +563,7 @@ sub rpl_urls {
         push @new,$_;
     }
 
-    $s = join("\n",@new);
+    _new2s();
 }
 
 sub fb_auth {
@@ -560,6 +585,8 @@ sub fb_format {
     _lines();
 
     for(@lines){
+        next if _ln_push($_);
+
         #next if /^\s+· Reply ·/;
         ( /^\s+· Reply ·/ 
           || /^\s+· (\d+)\s+(?:д|ч|г|н)./ 
@@ -624,21 +651,18 @@ sub rpl_special {
     $s = $_;
 }
 
-sub sections_up {
+sub sections_up { _sections_shift('up') }
+sub sections_down { _sections_shift('down') }
+
+sub _sections_shift {
+    my ($id) = @_;
+
     _lines();
 
     for(@lines){
-      push @new,$_;
-    }
+      next if _ln_push($_);
 
-    _new2s();
-}
-
-sub sections_down {
-    _lines();
-
-    for(@lines){
-      for my $s (@secs_down){
+      for my $s (@{$secs->{$id}}){
          my @k = keys %$s;
          my $k = shift @k;
          my $v = $s->{$k};
@@ -655,16 +679,17 @@ sub sections_down {
 }
 
 sub delete_empty_lines {
-    my (@lines, @new); 
-    @lines = split "\n" => $s;
+    _lines();
 
     for(@lines){
+      next if _ln_push($_);
+
       next if /^\s*$/;
 
       push @new,$_;
     }
 
-    $s = join("\n",@new);
+    _new2s();
 }
 
 sub rpl_dashes {
