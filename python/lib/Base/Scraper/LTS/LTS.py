@@ -491,6 +491,12 @@ class LTS(
     })
     return names
 
+  def _tex_head(self, ref = {}):
+    t = self._tex_tmpl_render('head.tex',ref)
+
+    tex_lines = t.split('\n')
+    return tex_lines
+
   def _tex_preamble(self, ref = {}):
     r_preamble = ref.get('preamble',{})
 
@@ -508,7 +514,7 @@ class LTS(
     if not len(r_preamble):
       return self
 
-    tex = []
+    tex_lines = []
 
     pack_file = r_preamble.get('pack_file','')
     pack_data = {}
@@ -532,11 +538,9 @@ class LTS(
              opts_dict.update({ k : v })
 
         s = Package(pack,options=Options(*opts_bool, **opts_dict)).dumps()
-        tex.append(s)
+        tex_lines.append(s)
 
-    print(tex)
-
-    return tex
+    return tex_lines
 
   def tex_compile(self, ref = {}):
 
@@ -630,12 +634,18 @@ class LTS(
     list_file = self._sec_file({ 'sec' : sec })
 
     fbicons = self._fbicons_db()
-    tex_lines = []
-    tex_lines.append('\\begin{tabular}{*{2}{l}}')
 
     tex_preamble = self._tex_preamble({ 
       'name' : 'core' 
     })
+
+    tex_head = self._tex_head({ 
+      'sec' : sec
+    })
+    tex_lines = []
+    tex_lines.extend(tex_head)
+
+    tex_lines.append('\\begin{tabular}{*{2}{l}}')
 
     tex_tab_rows = []
     for fbi in fbicons:

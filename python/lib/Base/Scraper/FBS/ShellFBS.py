@@ -25,6 +25,33 @@ class ShellFBS(Cmd):
 
    def do_fetch(self,inp):
      '''fetch URL'''
+     drv = self.fbs.driver
+     drv.get(inp)
+
+   def do_py(self,inp):
+     '''evaluate python code:
+          instances:
+            shell  - ShellFBS
+            fbs    - FBS
+            fbpost - FbPost
+            drv    - Driver
+     '''
+     try:
+       exec(inp,{
+           'shell'  : self,
+           'fbs'    : self.fbs,
+           'fbpost' : self.fbs.post,
+           'drv'    : self.fbs.driver,
+       })
+     except:
+       print('fail')
+
+   def do_page_print(self,inp):
+     '''print current page source
+     '''
+     drv = self.fbs.driver
+     src = drv.page_source
+     print(src)
 
    def do_run(self,inp):
      '''run FBS'''

@@ -378,15 +378,15 @@ class FbPost(CoreClass,mixFileSys):
     ccc = 0
     ccc_prev = -1
     while 1:
+      if i == imax:
+        print(f'Maximum achieved, quitting the loop')
+        break
+
       try:
         pv = app._el_find({
           'xpath' : '//*[ starts-with(@id,"see_prev_") ]',
         })
       except:
-        break
-
-      if i == imax:
-        print(f'Maximum achieved, quitting the loop')
         break
 
       if not pv:
