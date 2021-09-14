@@ -5,7 +5,7 @@ use warnings;
 use utf8;
 
 use base qw(
-	Plg::Projs::Scripts::DoTexify
+    Plg::Projs::Scripts::DoTexify
 );
 
 __PACKAGE__->new->run;

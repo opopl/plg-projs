@@ -30,6 +30,8 @@ $VERSION = '0.01';
 ###our
 our($l_start,$l_end);
 
+our(@lines,@new);
+
 # JSON-decoded input data
 our($data_input);
 
@@ -49,7 +51,6 @@ my @ex_vars_array=qw(
     'funcs' => [qw( 
         q2quotes
         texify
-        fbicon_igg
     )],
     'vars'  => [ @ex_vars_scalar,@ex_vars_array,@ex_vars_hash ]
 );
@@ -61,8 +62,29 @@ our %flag = (
   cmt => undef,
 );
 
+###secs_down
+our @secs_down = (
+  { paragraph => 'subparagraph' },
+  { subsubsection => 'paragraph' },
+  { subsection => 'subsubsection' },
+  { section => 'subsection' },
+  { chapter => 'section' },
+  { part => 'chapter' },
+);
+
+###secs_up
+our @secs_up = (
+  { chapter => 'part' },
+  { section => 'chapter' },
+  { subsection => 'section' },
+  { subsubsection => 'subsection' },
+  { paragraph => 'subsubsection' },
+  { subparagraph => 'paragraph' },
+);
+
+
 ###fbicons
-our %fbicons=(
+our %fbicons = (
   '🔥' => 'flame',
   '🙏' => 'hands.pray',
   '💔' => 'heart.broken',
@@ -386,7 +408,7 @@ sub empty_to_smallskip {
     $s = join("\n",@new);
 }
 
-sub fbicon_igg {
+sub _fbicon_igg {
     my ($chars,$str) = @_;
 
     my @chars = split "" => $chars;
@@ -429,29 +451,49 @@ sub trim_eol {
     $s = join("\n",@new);
 }
 
+sub _lines { 
+    @lines = map { 
+        _ln_flags($_); $flag{push} ? $_ : ()
+    } split "\n" => $s;
+
+    @new = ();
+}
+
+sub _new2s { 
+    $s = join("\n",@new);
+    @new = ();
+}
+
+sub _ln_flags { 
+    my ($line) = @_;
+    local $_ = $line;
+
+    $flag{push} = undef;
+
+    /^%%beginhead/ && do { 
+        @flag{qw(head push)} = ( 1, 1 ); 
+    };
+    /^%%endhead/ && do { 
+        @flag{qw(head push)} = ( undef, 1 ); 
+    };
+    /^\\ifcmt\s*$/ && do { 
+        @flag{qw(cmt push)} = ( 1, 1 ); 
+    };
+    /^\\fi\s*$/ && do { 
+        @flag{qw(cmt push)} = ( undef, 1 ); 
+    };
+    foreach my $k (qw(head cmt)) {
+        $flag{push} = 1 if $flag{$k};
+    }
+
+}
+
 sub rpl_urls {
     my @lines = split "\n" => $s;
 
     my @new;
     for(@lines){
-        $flag{push} = undef;
-
-        /^%%beginhead/ && do { 
-            @flag{qw(head push)} = ( 1, 1 ); 
-        };
-        /^%%endhead/ && do { 
-            @flag{qw(head push)} = ( undef, 1 ); 
-        };
-        /^\\ifcmt\s*$/ && do { 
-            @flag{qw(cmt push)} = ( 1, 1 ); 
-        };
-        /^\\fi\s*$/ && do { 
-            @flag{qw(cmt push)} = ( undef, 1 ); 
-        };
-        foreach my $k (qw(head cmt)) {
-            $flag{push} = 1 if $flag{$k};
-        }
-
+        _ln_flags($_);
         do { push @new,$_; next } if $flag{push};
 
         my $pat_cmd = sub { 
@@ -515,10 +557,7 @@ sub ln_emph_to_fbauth {
 }
 
 sub fb_format {
-    #fb_auth();
-
-    my (@lines, @new); 
-    @lines = split "\n" => $s;
+    _lines();
 
     for(@lines){
         #next if /^\s+· Reply ·/;
@@ -538,7 +577,7 @@ sub fb_format {
 
           #while(/($k+)/){
           #}
-          s/($k+)/fbicon_igg($1)/ge;
+          s/($k+)/_fbicon_igg($1)/ge;
         }
 
         #s/^\\iusr\{(.*)\}\\par\s*$/\\iusr{$1}/g;
@@ -573,7 +612,7 @@ sub fb_format {
         push @new,$_;
     }
 
-    $s = join("\n",@new);
+    _new2s();
 }
 
 sub rpl_special {
@@ -583,6 +622,49 @@ sub rpl_special {
     s/%/\\%/g;
 
     $s = $_;
+}
+
+sub sections_up {
+    _lines();
+
+    for(@lines){
+      push @new,$_;
+    }
+
+    _new2s();
+}
+
+sub sections_down {
+    _lines();
+
+    for(@lines){
+      for my $s (@secs_down){
+         my @k = keys %$s;
+         my $k = shift @k;
+         my $v = $s->{$k};
+
+         if (/\\$k/){
+            s/$k/$v/g;
+            last;
+         }
+      }
+      push @new,$_;
+    }
+
+    _new2s();
+}
+
+sub delete_empty_lines {
+    my (@lines, @new); 
+    @lines = split "\n" => $s;
+
+    for(@lines){
+      next if /^\s*$/;
+
+      push @new,$_;
+    }
+
+    $s = join("\n",@new);
 }
 
 sub rpl_dashes {

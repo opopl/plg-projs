@@ -47,8 +47,15 @@ sub get_opt {
         "start|s=s",
         "end|e=s",
         "file|f=s",
+
+        # comma-separated list of commands
         "cmd|c=s",
+
+        # json data
         "data|d=s",
+
+        # list commands
+        "list|l=s",
     );
     
     unless( @ARGV ){ 
