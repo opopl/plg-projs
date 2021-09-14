@@ -58,10 +58,12 @@ my @ex_vars_array=qw(
 
 @EXPORT_OK = ( @{ $EXPORT_TAGS{'funcs'} }, @{ $EXPORT_TAGS{'vars'} } );
 
+###flag
 our %flag = (
   head => undef,
   cmt => undef,
   push => undef,
+  fbauth => undef,
 );
 
 ###secs
@@ -94,7 +96,7 @@ our %fbicons = (
   '👍' => 'thumb.up.yellow',
   '❤️'  => 'heart',
   '👏' => 'hands.applause.yellow',
-  '♥️'  => 'heart.big',
+  '♥️'  => 'heart.suit',
   '❤️'  => 'heart',
   '💙' => 'heart.blue',
   '💛' => 'heart.yellow',
@@ -130,6 +132,7 @@ our %fbicons = (
   '🙈' =>  'monkey.see.no.evil',
   '👀' => 'eyes',
   '🤷' => 'shrug',
+  '🚀' => 'rocket',
 );
 
 ###fbicons_face
@@ -393,6 +396,8 @@ sub wrap {
     for(@lines){
         next if _ln_push($_);
 
+        push @new,$_ if /^\s*$/;
+
         my $w = Text::Wrap::wrap('','',$_);
 
         push @new,split "\n" => $w;
@@ -488,15 +493,22 @@ sub _new2s {
     _reset();
 }
 
-sub _ln_push { 
+sub _ln_flag { 
     my ($line) = @_;
     local $_ = $line;
 
-    $flag{push} = undef;
+    /^%%%fbauth/ && do { 
+        @flag{qw(fbauth)} = ( 1 ); 
+    };
+
+    /^%%%endfbauth/ && do { 
+        @flag{qw(endfbauth)} = ( undef ); 
+    };
 
     /^%%beginhead/ && do { 
         @flag{qw(head push)} = ( 1, 1 ); 
     };
+
     /^%%endhead/ && do { 
         @flag{qw(head push)} = ( undef, 1 ); 
     };
@@ -509,6 +521,15 @@ sub _ln_push {
     foreach my $k (qw(head cmt)) {
         $flag{push} = 1 if $flag{$k};
     }
+}
+
+sub _ln_push { 
+    my ($line) = @_;
+    local $_ = $line;
+
+    $flag{push} = undef;
+
+    _ln_flag($_);
 
     push @new,$_ if $flag{push};
 
@@ -581,6 +602,42 @@ sub fb_auth {
 sub ln_emph_to_fbauth {
 }
 
+sub fb_iusr {
+    _lines();
+
+    for(@lines){
+        next if _ln_push($_);
+
+        !$flag{fbauth} && /^\\iusr\{(.*)\}\s*$/ && do { 
+
+            push @new, 
+                '%%%fbauth',
+                '%%%fbauth_name',
+                "\\iusr{$1}",
+                '%%%fbauth_url',
+                '%%%fbauth_place',
+                '%%%fbauth_id',
+                '%%%fbauth_front',
+                '%%%fbauth_desc',
+                '%%%fbauth_www',
+                '%%%fbauth_pic',
+                '%%%fbauth_pic portrait',
+                '%%%fbauth_pic background',
+                '%%%fbauth_pic other',
+                '%%%fbauth_tags',
+                '%%%fbauth_pubs',
+                '%%%endfbauth',
+                ' ',
+                ;
+            next;
+        };
+
+        push @new,$_;
+    }
+
+    _new2s();
+}
+
 sub fb_format {
     _lines();
 
@@ -612,25 +669,7 @@ sub fb_format {
 
         /^\\emph\{(.*)\}\s*$/ && do { 
 
-            push @new, 
-                '%%%fbauth',
-                '%%%fbauth_name',
-                "\\iusr{$1}",
-                '%%%fbauth_url',
-                '%%%fbauth_place',
-                '%%%fbauth_id',
-                '%%%fbauth_front',
-                '%%%fbauth_desc',
-                '%%%fbauth_www',
-                '%%%fbauth_pic',
-                '%%%fbauth_pic portrait',
-                '%%%fbauth_pic background',
-                '%%%fbauth_pic other',
-                '%%%fbauth_tags',
-                '%%%fbauth_pubs',
-                '%%%endfbauth',
-                ' ',
-                ;
+            push @new, "\\iusr{$1}" ;
             next;
         };
 

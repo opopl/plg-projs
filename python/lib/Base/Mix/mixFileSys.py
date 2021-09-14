@@ -24,6 +24,7 @@ class mixFileSys:
        self._dir({ 'obj' : 'out.tmpl', 'fs' : '' })
        self._dir('out.tmpl')
        self._dir('img_root','tmp')
+       self._dir('img_root','tmp a b')
     '''
 
     dir      = None

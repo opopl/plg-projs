@@ -2,8 +2,9 @@ empty_to_smallskip
 escape_latex
 expand_punctuation
 expand_vertically
-fb_auth
+#fb_auth
 fb_format
+fb_iusr
 rpl_dashes
 rpl_quotes
 rpl_special

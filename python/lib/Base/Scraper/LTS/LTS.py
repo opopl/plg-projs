@@ -16,8 +16,11 @@ import jinja2
 
 import yaml
 
-from pylatex import Package
-from pylatex.base_classes import Command, Options
+from Extern.Pylatex import Package
+from Extern.Pylatex.base_classes import Command, Options
+
+#from pylatex import Package
+#from pylatex.base_classes import Command, Options
 
 from Base.Mix.mixCmdRunner import mixCmdRunner
 from Base.Mix.mixLogger import mixLogger
@@ -122,15 +125,20 @@ class LTS(
 
   def init_dirs(self):
 
+    plg = os.environ.get('PLG')
+    self.dirs.update({ 
+      'plg' : plg 
+    })
+
     if not self._dir('bin'):
       if self._file('script'):
         self.dirs.update({
             'bin' : str(Path(self._file('script')).parent),
         })
       else:
-        plg = os.environ.get('PLG')
         if plg:
           self.dirs.update({
+            'plg' : plg,
             'bin' : os.path.join(plg,'projs web_scraping py3'),
           })
 
@@ -141,6 +149,13 @@ class LTS(
       'lts_root'  : self.lts_root,
       'html_root' : self.html_root,
       'img_root'  : self.img_root,
+    })
+
+    plg = os.environ.get('PLG')
+    self.dirs.update({
+      'tex' : {
+         'preambles' : self._dir('plg','lts data tex preambles')
+      }
     })
 
     return self
@@ -467,8 +482,33 @@ class LTS(
 
     return self
 
-  def tex_compile(self, ref = {}):
+  def _tex_preamble_names(self, ref = {}):
+    dir = self._dir('tex.preambles','')
+    names = util.find({ 
+      'dirs' : [dir],
+      'inc'  : 'dir',
+      'relpath'  : 1,
+    })
+    return names
+
+  def _tex_preamble(self, ref = {}):
     r_preamble = ref.get('preamble',{})
+
+    if not len(r_preamble):
+      # preamble name
+      name = ref.get('name','')
+      if name:
+        names = self._tex_preamble_names()
+        if name in names:
+          dir = self._dir('tex.preambles',name)
+          pack_file = os.path.join(dir,'packs.yaml')
+          if os.path.isfile(pack_file):
+            r_preamble = { 'pack_file' : pack_file }
+
+    if not len(r_preamble):
+      return self
+
+    tex = []
 
     pack_file = r_preamble.get('pack_file','')
     pack_data = {}
@@ -492,8 +532,14 @@ class LTS(
              opts_dict.update({ k : v })
 
         s = Package(pack,options=Options(*opts_bool, **opts_dict)).dumps()
+        tex.append(s)
 
-        print(s)
+    print(tex)
+
+    return tex
+
+  def tex_compile(self, ref = {}):
+
 
     return self
 
@@ -586,6 +632,10 @@ class LTS(
     fbicons = self._fbicons_db()
     tex_lines = []
     tex_lines.append('\\begin{tabular}{*{2}{l}}')
+
+    tex_preamble = self._tex_preamble({ 
+      'name' : 'core' 
+    })
 
     tex_tab_rows = []
     for fbi in fbicons:
@@ -1025,8 +1075,11 @@ class LTS(
   def c_run(self,ref = {}):
 
     for d_act in self.acts:
-      act  = d_act.get('act','')
-      args = d_act.get('args',[])
+      act = d_act
+      args = []
+      if type(d_act) in [dict]:
+        act  = d_act.get('act','') 
+        args = d_act.get('args',[])
 
       util.call(self, act, args)
 

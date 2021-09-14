@@ -232,6 +232,38 @@ def qw(s):
   a = s.split(' ')
   return a
 
+def find(ref={}):
+  found = []
+
+  dirs    = ref.get('dirs',[])
+  
+  relpath = ref.get('relpath',0)
+  ext     = ref.get('ext',[])
+
+  inc     = ref.get('inc',qw('dir file'))
+  if type(inc) is str:
+    inc = inc.split(' ')
+
+  for dir in dirs:
+    d = Path(dir)
+    for item in d.rglob('*'):
+      full_path = str(item.as_posix())
+      f = full_path
+      if relpath:
+        f = os.path.relpath(full_path,dir)
+  
+      ok = False
+      for i in inc:
+        ok = ok or (i == 'dir' and os.path.isdir(full_path))
+        ok = ok or (i == 'file' and os.path.isfile(full_path))
+        if ok:
+          break
+  
+      if f and ok:
+        found.append(f)
+
+  return found
+
 def get(obj, path, default = None):
     if type(path) is str:
       keys = path.split(".")
