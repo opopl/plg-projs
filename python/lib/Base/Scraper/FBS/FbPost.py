@@ -7,6 +7,12 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import TimeoutException
 
+import xml.etree.ElementTree as et
+from lxml import etree
+import lxml.html
+
+from io import StringIO, BytesIO; 
+
 from Base.Core import CoreClass
 import Base.Util as util
 
@@ -48,6 +54,9 @@ class FbPost(CoreClass,mixFileSys):
 
   # current comment
   cmt = {}
+
+  # xml.etree.ElementTree instance
+  ettree = None
 
   # comments list, ARRAY
   clist = []
@@ -100,6 +109,23 @@ class FbPost(CoreClass,mixFileSys):
     d = CoreClass.dict(self,{ 'exclude' : exclude })
 
     return d
+
+  def _html(self, ref={}):
+    app = self.app
+    drv = app.driver
+    src = drv.page_source
+
+    xpath = ref.get('xpath','')
+
+    try:
+      self.html2tree()
+  
+      xel = self.xroot
+      src = lxml.html.tostring(xel,pretty_print=True,encoding='unicode')
+    except:
+      print('fail: FbPost._html()')
+
+    return src
 
   def _clist(self, ref={}):
     '''
@@ -337,6 +363,18 @@ class FbPost(CoreClass,mixFileSys):
     
     return self
 
+  def html2tree(self,ref={}):
+    app = self.app
+    drv = app.driver
+    src = drv.page_source
+    try:
+      self.xtree = lxml.html.parse(StringIO(drv.page_source))
+      self.xroot = self.xtree.getroot()
+    except:
+      print('Fail to parse page via lxml.html')
+
+    return self
+
   def get_url(self,ref={}):
     app = self.app
 
@@ -445,6 +483,7 @@ class FbPost(CoreClass,mixFileSys):
 
     acts = [
       'get_url', 
+      'html2tree', 
       [ 'loop_prev', [ { 'imax' : 50 } ] ],
       'save',
     ]

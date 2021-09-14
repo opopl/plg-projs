@@ -1,5 +1,6 @@
 
 from cmd import Cmd
+import xml.etree.ElementTree as ET
 
 class ShellFBS(Cmd):
    fbs = None
@@ -23,12 +24,17 @@ class ShellFBS(Cmd):
      print("Bye")
      return True
 
-   def do_fetch(self,inp):
+   def do_fetch(self,url):
      '''fetch URL'''
      drv = self.fbs.driver
-     drv.get(inp)
+     if url:
+       try:
+         drv.get(url)
+       except:
+         print(f'fetch fail: {url}')
 
-   def do_py(self,inp):
+   def do_x(self,inp):
+     fbs = self.fbs
      '''evaluate python code:
           instances:
             shell  - ShellFBS
@@ -37,6 +43,9 @@ class ShellFBS(Cmd):
             drv    - Driver
      '''
      try:
+       globs = { 'shell' : self }
+       if hasattr(fbs,'post') and fbs.post:
+
        exec(inp,{
            'shell'  : self,
            'fbs'    : self.fbs,
@@ -60,6 +69,15 @@ class ShellFBS(Cmd):
        fbs.do_shell = False
        fbs.c_run()
 
+   def do_cd(self,dir):
+     if dir:
+       if os.path.isdir(dir):
+         os.chdir(dir)
+
+   def do_pwd(self,dir):
+     pwd = os.getcwd()
+     print(pwd)
+
    def do_pdb(self,inp):
      print("Starting Python Debugger...")
      import pdb; pdb.set_trace()
@@ -75,6 +93,17 @@ class ShellFBS(Cmd):
  
    def help_add(self):
      print("Add a new entry to the system")
+
+   def help_x(self):
+     msg_a = [
+        'evaluate python code:',
+        '  instances:',
+        ' ',
+        'shell  - ShellFBS',
+     ]
+
+     msg = '\n'.join(msg_a)
+     print(msg)
 
    do_EOF = do_quit
    help_EOF = help_quit

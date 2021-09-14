@@ -97,7 +97,6 @@ our %fbicons = (
   '❤️'  => 'heart',
   '👏' => 'hands.applause.yellow',
   '♥️'  => 'heart.suit',
-  '❤️'  => 'heart',
   '💙' => 'heart.blue',
   '💛' => 'heart.yellow',
   '💯' => '100.percent',
@@ -133,6 +132,10 @@ our %fbicons = (
   '👀' => 'eyes',
   '🤷' => 'shrug',
   '🚀' => 'rocket',
+  '🇪🇺' => 'flag.eu',
+  '❤️'  => 'heart',
+  '❤️'  => 'heart.red',
+  '👋' => 'hand.waving',
 );
 
 ###fbicons_face
@@ -174,6 +177,8 @@ our %fbicons_face = (
   '😒' => 'face.unamused',
   '🤬' => 'face.symbols.mouth',
   '🤯' => 'face.shoked.head.exploding',
+  '😌' => 'face.relieved',
+  '☺️'  => 'face.smiling',
 );
 
 %fbicons = ( 
@@ -647,9 +652,8 @@ sub fb_format {
         #next if /^\s+· Reply ·/;
         ( /^\s+· Reply ·/ 
           || /^\s+· (\d+)\s+(?:д|ч|г|н)./ 
-          || /^\s+· Ответить · (\d+)\s+(?:д|ч|г|н)./ 
-          || /^\s+· Ответить · .*/ 
-          || /^\s+· Поделиться · .*/ 
+          || /^\s+· Ответить ·.*/ 
+          || /^\s+· Поделиться ·.*/ 
           || /^\s+·\s*$/ 
         )
         && do { push @new,''; next; };

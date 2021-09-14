@@ -6,6 +6,8 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import TimeoutException
 
+import selenium.webdriver.support.ui as ui
+
 import pickle
 
 import time
@@ -124,9 +126,9 @@ class FBS(CoreClass,
         print('[init] start')
 
         acts = [
-          'init_drv',
           'load_yaml',
           'load_zlan',
+          'init_drv',
         ] 
 
         util.call(self, acts)
@@ -229,8 +231,8 @@ class FBS(CoreClass,
         acts = [
             'init' , 
             'do_auth' , 
-            'grab_posts' , 
-            'save_cookies' , 
+            #'grab_posts' , 
+            #'save_cookies' , 
         ] 
 
         util.call(self,acts)

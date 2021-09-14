@@ -8,9 +8,9 @@ from Base.Zlan import Zlan
 import Base.Util as util
 
 class mixLoader:
-  def load_yaml(self, f_yaml=None):
-    if not f_yaml:
-      f_yaml = self._file('yaml')
+  def load_yaml(self, ref={}):
+    f_yaml = util.get(self,'files.yaml')
+    f_yaml = ref.get('yaml',f_yaml)
 
     if f_yaml and os.path.isfile(f_yaml):
       with open(f_yaml) as f:
