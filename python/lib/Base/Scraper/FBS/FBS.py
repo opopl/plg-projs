@@ -8,6 +8,12 @@ from selenium.common.exceptions import TimeoutException
 
 import selenium.webdriver.support.ui as ui
 
+#import xml.etree.ElementTree as et
+#from lxml import etree
+import lxml.html
+
+from io import StringIO, BytesIO
+
 import pickle
 
 import time
@@ -36,7 +42,6 @@ from Base.Scraper.FBS.ShellFBS import ShellFBS
 
 from Base.Scraper.PicBase import PicBase
 
-LOGIN_URL = 'https://mobile.facebook.com/login.php'
 
 #p [ x['clist'] for x in clist if 'clist' in x and len(x['clist'])]
  
@@ -64,11 +69,20 @@ class FBS(CoreClass,
     # browser (Firefox) profile
     fp = None
 
+    flags = { 
+     'done' : { 
+        'auth' : 0 
+      }
+    }
+
     # browser (Firefox) driver
     driver = None
 
     # what is done
     done = {}
+
+    # accessible via _cfg() method
+    config = {}
 
     f_cookies = "cookies.pkl"
 
@@ -122,38 +136,71 @@ class FBS(CoreClass,
       if not self.password:
         self.password = os.environ.get('FB_PASS')
 
+    def _host2site(self,host=''):
+        hs = self._cfg('host2site',[])
+        site = host
+        if not host:
+          return site
+
+        for h in hs:
+          r = h[1]
+          pat = r.get('pat','')
+          if pat:
+            m = re.match(rf'{pat}',host)
+            if m:
+              site = h[0]
+              break
+
+        return site
+
     def init(self):
-        print('[init] start')
+      print('[init] start')
 
-        acts = [
-          'load_yaml',
-          'load_zlan',
-          'init_drv',
-        ] 
+      acts = [
+        'load_yaml',
+        'load_zlan',
+        'init_drv',
+      ] 
 
-        util.call(self, acts)
+      util.call(self, acts)
 
+      return self
+
+    def drv_get(self,url):
+      if not url:
         return self
+
+      try:
+        self.driver.get(url)
+      except:
+        e = sys.exc_info()
+        print(f'fail: {e}')
+
+      return self
 
     def init_drv(self):
 
-        if not self.fp:
-          fp = webdriver.FirefoxProfile()
+      if not self.fp:
+        fp = webdriver.FirefoxProfile()
+
+        prf = self._cfg('driver.firefox.profile.preferences',{})
+        for k, v in prf.items():
+          fp.set_preference(k,v)
   
-          fp.set_preference("dom.webnotifications.enabled",False)
-          fp.set_preference("geo.enabled",False)
-      
-          self.fp = fp
+        #fp.set_preference("dom.webnotifications.enabled",False)
+        #fp.set_preference("geo.enabled",False)
+     
+        self.fp = fp
 
-          print('[init_drv] init firefox profile')
+        print('[init_drv] init firefox profile')
 
-        if not self.driver:
-          driver = webdriver.Firefox(self.fp)
-          self.driver = driver
+      if not self.driver:
+        driver = webdriver.Firefox(self.fp)
+        self.driver = driver
 
-          print('[init_drv] init firefox driver')
+        print('[init_drv] init firefox driver')
 
-        return self
+      return self
 
     def get_opt_apply(self):
       if not self.oa:
@@ -188,12 +235,14 @@ class FBS(CoreClass,
 
       if self.do_shell:
         self.shell = ShellFBS({ 'fbs' : self })
-        self.shell.cmdloop()
-      #import pdb; pdb.set_trace()
+        try:
+          self.shell.cmdloop()
+        except:
+          import pdb; pdb.set_trace()
 
       return self
 
-    def parse_post(self, ref = {}):
+    def parse_fbpost(self, ref = {}):
 
       r = { 'app' : self }
       for k in util.qw('url tags title date ii author_id'):
@@ -201,13 +250,15 @@ class FBS(CoreClass,
         if v != None:
           r[k] = v
 
+      self.auth_fb()
+
       self.post = FbPost(r)
 
       self.post.process()
 
       return self
 
-    def grab_posts(self,ref = {}):
+    def grab_pages(self,ref = {}):
 
       urldata = ref.get('urldata',[])
       if not len(urldata):
@@ -216,7 +267,7 @@ class FBS(CoreClass,
       self.page_index = 0
       while len(urldata):
         d = urldata.pop(0)
-        self.parse_post(d)
+        self.parse_page(d)
   
 #        if self.page.limit:
           #if self.page_index == self.page.limit:
@@ -229,10 +280,9 @@ class FBS(CoreClass,
     def c_run(self):
 
         acts = [
-            'init' , 
-            'do_auth' , 
-            #'grab_posts' , 
-            #'save_cookies' , 
+          'init' , 
+          'grab_pages' , 
+          #'save_cookies' , 
         ] 
 
         util.call(self,acts)
@@ -246,14 +296,19 @@ class FBS(CoreClass,
 
         return self
 
-    def do_auth(self):
-        self.get_url_login()
+    def auth_fb(self):
+        if self._done('auth_fb'):
+          return self
+
+        self.login_fb()
 
         if not os.path.isfile(self.f_cookies):
-          self.login()
+          self.login_fb_send()
           return self
 
         self.load_cookies()
+
+        self._done('fb_auth',1)
 
         return self
 
@@ -271,10 +326,62 @@ class FBS(CoreClass,
 
         return self
 
-    def get_url_login(self):
+    def parse_page(self,ref={}):
+        url = ref.get('url')
+        if not url:
+          return self
+        
+        u = util.url_parse(url)
+        host = u.get('host','')
+        site = self._host2site(host)
 
-        self.driver.get(LOGIN_URL)
-        time.sleep(1)
+        if site == 'facebook':
+          self.parse_fbpost(ref)
+          return self
+
+        self.parse_page_general(ref)
+
+        return self
+
+    def page2tree(self,ref={}):
+        try:
+          self.xtree = lxml.html.parse(StringIO(self.driver.page_source))
+          self.xroot = self.xtree.getroot()
+        except:
+          print('Fail to parse page via lxml.html')
+          e = sys.exc_info()
+          print(f'fail: {e}')
+
+        return self
+
+    def parse_page_general(self,ref={}):
+        url = ref.get('url')
+        if not url:
+          return self
+
+        acts = [
+          [ 'drv_get', [ url ]],
+          'page2tree'
+        ] 
+
+        util.call(self,acts)
+
+        return self
+
+    def login_fb(self):
+
+        url = self._cfg('url.site.facebook.login')
+
+        try:
+          self.driver.get(url)
+          element = WebDriverWait(self.driver, 10).until(
+             EC.presence_of_element_located((By.ID, "m_login_email"))
+          )
+          time.sleep(1)
+        except:
+          ei = sys.exc_info()
+          print(f'[FBS] url get fail: {url}')
+          print(f'fail: {ei}')
 
         return self
 
@@ -357,6 +464,30 @@ class FBS(CoreClass,
         })
 
         return reply
+
+    # cfg = self._cfg('driver.click.limit')
+    def _cfg(self,path='',default=None):
+        if not (path and len(path)):
+          cval = self.config
+          return cval
+        else:
+          if isinstance(path,str):
+            path = f'config.{path}'
+          elif isinstance(path,list):
+            path.insert(0,'config')
+
+        cval = util.get(self,path,default)
+        return cval
+
+    def _done(self,key,val=None):
+        r = None
+        if val == None:
+          r = util.get(self,f'done.{key}')
+        else:
+          r = val
+          self.done.update({ key : val })
+
+        return r
     
     def _tex_preamble(self):
 
@@ -366,7 +497,7 @@ class FBS(CoreClass,
 
         return tex
   
-    def login(self):
+    def login_fb_send(self):
         #email_element = self.driver.find_element_by_id('email')
         email_element = self.driver.find_element_by_id('m_login_email')
         email_element.send_keys(self.email) # Give keyboard input

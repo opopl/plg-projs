@@ -11,7 +11,7 @@ import xml.etree.ElementTree as et
 from lxml import etree
 import lxml.html
 
-from io import StringIO, BytesIO; 
+from io import StringIO, BytesIO
 
 from Base.Core import CoreClass
 import Base.Util as util
@@ -382,7 +382,7 @@ class FbPost(CoreClass,mixFileSys):
 
     url = ref.get('url',self.url_m)
 
-    app.driver.get(url)
+    app.drv_get(url)
     time.sleep(5) 
 
     #self.driver.get('https://mobile.facebook.com/nitsoi.larysa/posts/938801726686200')

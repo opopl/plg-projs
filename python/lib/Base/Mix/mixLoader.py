@@ -12,18 +12,26 @@ class mixLoader:
     f_yaml = util.get(self,'files.yaml')
     f_yaml = ref.get('yaml',f_yaml)
 
+    obj = self
+
     if f_yaml and os.path.isfile(f_yaml):
       with open(f_yaml) as f:
         d = yaml.full_load(f)
         for k,v in d.items():
-          setattr(self,k,v)
+          if isinstance(obj,object):
+            setattr(obj, k, v)
+          elif isinstance(obj,dict):
+            obj.update({ k : v })
 
     if os.path.isdir(self.in_dir):
       for f in Path(self.in_dir).glob('*.yaml'):
         k = Path(f).stem
         with open(str(f),'r') as y:
           d = yaml.full_load(y)
-          setattr(self, k, d)
+          if isinstance(obj,object):
+            setattr(obj, k, d)
+          elif isinstance(obj,dict):
+            obj.update({ k : d })
 
     return self
 

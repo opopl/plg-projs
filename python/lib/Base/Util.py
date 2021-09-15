@@ -3,6 +3,9 @@ import os
 import re
 import sys
 
+import ast
+import copy
+
 from pathlib import Path
 import pathlib
 
@@ -263,6 +266,80 @@ def find(ref={}):
         found.append(f)
 
   return found
+
+#https://stackoverflow.com/questions/33409207/how-to-return-value-from-exec-in-function
+def convertExpr2Expression(Expr):
+  Expr.lineno = 0
+  Expr.col_offset = 0
+  result = ast.Expression(Expr.value, lineno=0, col_offset = 0)
+
+  return result
+
+#https://stackoverflow.com/questions/33409207/how-to-return-value-from-exec-in-function
+# exec with return
+def x_bare(code,globs={},locs={}):
+  try:
+    code_ast = ast.parse(code)
+  except SyntaxError as e:
+    print(f'[ast.parse] SyntaxError: {e}')
+    return
+
+  #globs.update(globals())
+  #locs.update(locals())
+  #print(f'[util.x_bare], globs = {list(globs.keys())}')
+
+  for var, val in globs.items():
+    try:
+      exec(f'global {var}; {var} = val')
+    except:
+      e = sys.exc_info()
+      print(f'[Util.x_bare] global: {var}')
+
+  init_ast = copy.deepcopy(code_ast)
+  init_ast.body = code_ast.body[:-1]
+
+  last_ast = copy.deepcopy(code_ast)
+  last_ast.body = code_ast.body[-1:]
+
+  try:
+    #exec(compile(init_ast, "<ast>", "exec"), globs, locs)
+    exec(compile(init_ast, "<ast>", "exec"), globs)
+  except SyntaxError as e:
+    print(f'SyntaxError: {e}')
+    return
+
+  result = None
+  if type(last_ast.body[0]) == ast.Expr:
+    try:
+      result = eval(compile(convertExpr2Expression(last_ast.body[0]), "<ast>", "eval"))
+    except SyntaxError as e:
+      print(f'SyntaxError: {e}')
+      return
+  else:
+    try:
+      #exec(compile(last_ast, "<ast>", "exec"))
+      exec(compile(last_ast, "<ast>", "exec"),globs)
+    except SyntaxError as e:
+      print(f'SyntaxError: {e}')
+      return
+  
+  return result
+
+def x(code,globs={},locs={}):
+  result = None
+  type = None
+
+  try:
+    result = x_bare(code,globs,locs)
+  except TypeError as e:
+    print(f'[util.x] TypeError: {e}')
+  except NameError as e:
+    print(f'[util.x] NameError: {e}')
+  except:
+    e = sys.exc_info()
+    print(f'[Util.x_bare] {e[0]}')
+
+  return result
 
 def get(obj, path, default = None):
     if type(path) is str:
