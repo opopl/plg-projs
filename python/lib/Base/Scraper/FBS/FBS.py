@@ -9,7 +9,7 @@ from selenium.common.exceptions import TimeoutException
 import selenium.webdriver.support.ui as ui
 
 #import xml.etree.ElementTree as et
-#from lxml import etree
+from lxml import etree
 import lxml.html
 
 from io import StringIO, BytesIO
@@ -80,6 +80,8 @@ class FBS(CoreClass,
 
     # what is done
     done = {}
+
+    etree = lxml.etree
 
     # accessible via _cfg() method
     config = {}
@@ -187,9 +189,6 @@ class FBS(CoreClass,
         for k, v in prf.items():
           fp.set_preference(k,v)
   
-        #fp.set_preference("dom.webnotifications.enabled",False)
-        #fp.set_preference("geo.enabled",False)
-     
         self.fp = fp
 
         print('[init_drv] init firefox profile')

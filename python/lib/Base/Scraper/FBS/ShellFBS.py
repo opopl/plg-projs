@@ -86,6 +86,37 @@ class ShellFBS(Cmd):
        ei = sys.exc_info()
        print(f'fail: {ei[0]}')
 
+   def do_page_xpath(self,xpath):
+     if not xpath:
+       print('[page_xpath] no xpath!')
+       return 
+
+     out = []
+
+     fbs = self.fbs
+     # lxml.etree
+     etree = fbs.etree
+
+     # page tree
+     xtree = fbs.xtree
+
+     try:
+       elems = fbs.xtree.xpath(xpath)
+       for elem in elems:
+         txt = None
+         n = type(elem).__name__
+         if n == 'HtmlElement':
+           txt = fbs.etree.tostring(elem,encoding='unicode',pretty_print=True)
+         elif n == '_ElementUnicodeResult':
+           txt = elem.__str__()
+         out.append(txt)
+     except:
+       e = sys.exc_info()
+       print(f'page_xpath: {e}')
+
+     for ln in out:
+       print(ln)
+
    def do_page_print(self,inp):
      '''print current page source
      '''
