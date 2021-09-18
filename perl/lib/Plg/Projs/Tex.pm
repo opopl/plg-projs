@@ -5,6 +5,8 @@ use strict;
 use warnings;
 use utf8;
 
+use Plg::Projs::Build::Maker::Jnd::Processor;
+
 use Data::Dumper qw(Dumper);
 use Base::String qw(
     str_split
@@ -89,6 +91,11 @@ our $secs = {
 
 ###fbicons
 our %fbicons = (
+  '🌷' => 'tulip',
+  '🚗' => 'automobile',
+  '🏙️' => 'cityscape',
+  '📸' => 'camera.with.flash',
+  '🕊' => 'dove',
   '🔥' => 'flame',
   '🙏' => 'hands.pray',
   '💔' => 'heart.broken',
@@ -136,10 +143,13 @@ our %fbicons = (
   '❤️'  => 'heart',
   '❤️'  => 'heart.red',
   '👋' => 'hand.waving',
+  '📵' => 'no.mobile.phones',
 );
 
 ###fbicons_face
 our %fbicons_face = (
+  '🤨' => 'face.eyebrow.raised',
+  '😭' => 'face.crying.loudly',
   '🙂' => 'smile',
   '😡' => 'anger',
   '🙁' => 'frown',
@@ -179,6 +189,10 @@ our %fbicons_face = (
   '🤯' => 'face.shoked.head.exploding',
   '😌' => 'face.relieved',
   '☺️'  => 'face.smiling',
+  '😏' => 'face.smirking',
+  '☻'  => 'face.smiling.black',
+  '😥' => 'face.sad.but.relieved',
+  '🤕' => 'face.head.bandage',
 );
 
 %fbicons = ( 
@@ -614,31 +628,47 @@ sub fb_iusr {
         next if _ln_push($_);
 
         !$flag{fbauth} && /^\\iusr\{(.*)\}\s*$/ && do { 
+            my $iusr = $1;
 
-            push @new, 
-                '%%%fbauth',
-                '%%%fbauth_name',
-                "\\iusr{$1}",
-                '%%%fbauth_url',
-                '%%%fbauth_place',
-                '%%%fbauth_id',
-                '%%%fbauth_front',
-                '%%%fbauth_desc',
-                '%%%fbauth_www',
-                '%%%fbauth_pic',
-                '%%%fbauth_pic portrait',
-                '%%%fbauth_pic background',
-                '%%%fbauth_pic other',
-                '%%%fbauth_tags',
-                '%%%fbauth_pubs',
-                '%%%endfbauth',
-                ' ',
+            my $t = q{
+                %%%fbauth
+                %%%fbauth_name
+                \iusr{%(iusr)s}
+                %%%fbauth_name_profile
+                %%%fbauth_url
+                %%%fbauth_place
+                %%%fbauth_place_from
+                %%%fbauth_id
+                %%%fbauth_front
+                %%%fbauth_desc
+                %%%fbauth_www
+                %%%fbauth_pic
+                %%%fbauth_pic portrait
+                %%%fbauth_pic background
+                %%%fbauth_pic other
+                %%%fbauth_tags
+                %%%fbauth_pubs
+                %%%endfbauth
+            };
+            push @new, map { trim($_) } 
+                split "\n" => named_sprintf($t,{ iusr => $iusr })
                 ;
             next;
         };
 
         push @new,$_;
     }
+
+    _new2s();
+}
+
+sub jnd {
+    _lines();
+
+    my %n = (
+      jlines => [@lines],
+    );
+    my $p = Plg::Projs::Build::Maker::Jnd::Processor->new(%n);
 
     _new2s();
 }
@@ -654,6 +684,7 @@ sub fb_format {
           || /^\s+· (\d+)\s+(?:д|ч|г|н)./ 
           || /^\s+· Ответить ·.*/ 
           || /^\s+· Поделиться ·.*/ 
+          || /^\s+· Показать перевод.*/
           || /^\s+·\s*$/ 
         )
         && do { push @new,''; next; };

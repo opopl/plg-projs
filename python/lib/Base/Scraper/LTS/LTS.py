@@ -51,6 +51,10 @@ class LTS(
        'kwd' : { 'help'    : 'Run command(s)' }
     },
     {
+       'arr' : '-s --sec',
+       'kwd' : { 'help'    : 'Section(s)' }
+    },
+    {
        'arr' : '-a --act',
        'kwd' : { 'help'    : 'Actions' }
     },
@@ -70,6 +74,7 @@ class LTS(
   }
 
   acts = []
+  sec = None
 
   line = None
   lines = []
@@ -397,7 +402,7 @@ class LTS(
     return self
 
   def vimtags_update(self, ref = {}):
-    tfile = os.path.join(self.lts_root,'letopis.tags')
+    tfile = os.path.join(self.lts_root,f'{self.proj}.tags')
 
     db_file = self.db_file_projs
     tb = 'projs'
@@ -407,7 +412,7 @@ class LTS(
     tlines = []
 
     q = f'''SELECT sec, file FROM {tb} WHERE proj = ? ORDER BY sec '''
-    proj = 'letopis'
+    proj = self.proj 
 
     r = dbw.sql_fetchall(q,[ proj ],{ 'db_file' : db_file })
     rows = r.get('rows')
@@ -685,6 +690,11 @@ class LTS(
          'update' : { 'width_tex' : width_tex },
          'where' : { 'name' : name },
       })
+
+    return self
+
+  # collect \iusr occurences into database
+  def iusr2db(self,ref={}):
 
     return self
 
@@ -1017,8 +1027,29 @@ class LTS(
 
     return self
 
+  def sec_list_iusr(self, ref = {}):
+    sec   = ref.get('sec',self.sec)
+
+    iusr = []
+    sec_file = self._sec_file({ 'sec' : sec })
+    with open(sec_file,'r') as f:
+      lines = f.readlines()
+      for line in lines:
+        m = re.match(r'\\iusr\{(?P<name>.*)\}\s*$',line)
+        if m:
+          name = m.group('name')
+          if name and not name in iusr:
+            iusr.append(name)
+
+    if len(iusr):
+      iusr.sort()
+      for name in iusr:
+        print(name)
+
+    return self
+
   def sec_author_add(self, ref = {}):
-    sec       = ref.get('sec','')
+    sec       = ref.get('sec',self.sec)
     author_id = ref.get('author_id','')
 
     lines_ref = {
@@ -1112,6 +1143,9 @@ class LTS(
         acts = string.split_n_trim(v, sep = ',' )
         for act in acts:
           self.acts.append({ 'act' : act })
+
+    for k in util.qw('sec'):
+      setattr(self, k, getattr(self.oa, k))
 
     return self
 

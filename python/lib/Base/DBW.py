@@ -5,6 +5,7 @@ import sqlite3
 import sqlparse
 import sys
 
+import Base.Util as util
 
 def update_dict(ref):
   conn     = ref.get('conn')
@@ -130,7 +131,6 @@ def sql_fetchone(q, p = [], ref = {}):
      print("Errors ", sys.exc_info()[0], " for sqlite query: " + q )
 
   rw = c.fetchone()
-
   if not rw:
     return
 
@@ -157,9 +157,17 @@ def _tb_list(ref={}):
     FROM 
         sqlite_master 
     WHERE 
-        type = 'table' 
+        type IN ( 'table' , 'view' )
             AND 
-        name NOT LIKE 'sqlite_%';
+        name NOT LIKE 'sqlite_%'
+    UNION ALL
+    SELECT
+        name
+    FROM
+        sqlite_temp_master
+    WHERE
+        type IN ('table','view')
+    ORDER BY 1
   '''
 
   tb_list = sql_fetchlist(q,[],{ 'db_file' : db_file })
@@ -293,6 +301,10 @@ def select(ref={}):
 
   return result
 
+def conn_cfg(conn):
+  conn.row_factory = sqlite3.Row
+  conn.create_function("REGEXP", 2, __functionRegex)
+
 def __functionRegex(pattern, value):
   cpat = re.compile(pattern)
   return cpat.search(value) is not None
@@ -320,41 +332,56 @@ def sql_fetchall(q, p=[], ref={}):
     else:
       return { 'err' : 'no db_file' }
 
-  conn.row_factory = sqlite3.Row
-  conn.create_function("REGEXP", 2, __functionRegex)
+  conn_cfg(conn)
 
   c = conn.cursor()
-
 
   try:
      c.execute(q,p)
   except sqlite3.OperationalError as e:
      print(e)
+  except Exception as err:
+     print('Query Failed: %s\nError: %s' % (q, str(err)))
   except:
      print("Errors ", sys.exc_info()[0], " for sqlite query: " + q )
 
   rws = c.fetchall()
-
-  if db_close:
-    conn.commit()
-    conn.close()
-
+  lastrowid = c.lastrowid
+    
   if not rws:
     return { 'err' : 'zero result' }
 
   cols = list(map(lambda x: x[0], c.description))
 
+  cfg_row = ref.get('row',{})
+  as_list = cfg_row.get('list',0)
+
   rows = []
+  rows_a = []
   for rw in rws:
     row = rw2dict(rw)
+    row_a = util.dict2list(row,cols)
     rows.append(row)
+    rows_a.append(row_a)
 
-  return { 'rows' : rows, 'cols' : cols }
+  if db_close:
+    conn.commit()
+    conn.close()
+
+  return { 
+    'rows'      : rows,
+    'count'     : len(rows),
+    'rows_a'    : rows_a,
+    'cols'      : cols,
+    'lastrowid' : lastrowid,
+  }
 
 def sql_do(ref={}):
   sql       = ref.get('sql','')
   sql_file  = ref.get('sql_file','')
   sql_files = ref.get('sql_files',[])
+
+  p         = ref.get('p',[])
 
   conn     = ref.get('conn')
   db_file  = ref.get('db_file')
@@ -390,7 +417,7 @@ def sql_do(ref={}):
 
   for q in sqlparse.split(sql):
     try:
-        c.execute(q)
+        c.execute(q,p)
     except sqlite3.OperationalError as e:
         print(e)
     except:
@@ -538,17 +565,24 @@ def insert_dict(ref={}):
     conn.close()
 
 def sql_file_exec(db_file, sql_file):
+  ok = 1
+  if not (os.path.isfile(db_file) and os.path.isfile(sql_file)):
+    return
+
   conn = sqlite3.connect(db_file)
   c = conn.cursor()
   
   sql = open(sql_file, 'r').read()
   for q in sqlparse.split(sql):
     try:
-        c.execute(q)
+      c.execute(q)
+      ok = 0
     except sqlite3.OperationalError as e:
-        print(e)
+      print(e)
     except:
-        print("Errors ", sys.exc_info()[0], " for sqlite query: " + q )
+      print("Errors ", sys.exc_info()[0], " for sqlite query: " + q )
   
   conn.commit()
   conn.close()
+
+  return ok

@@ -9,6 +9,8 @@ import copy
 from pathlib import Path
 import pathlib
 
+import posixpath
+
 from urllib.parse import urlparse
 from urllib.parse import urljoin
 
@@ -57,6 +59,33 @@ def bs_find_by_text(soup, text, tag, **kwargs):
 def mk_parent_dir(file):
   p = str(Path(file).parent)
   os.makedirs(p,exist_ok=True)
+
+def dict2list(dct={}, keys=[]):
+  kk = list(filter(lambda x: x in dct,keys))
+  def _val(x):
+    return dct.get(x)
+
+  lst = list(map(lambda x: _val(x),kk))
+  return lst
+
+def dictnew(path, val):
+  ''' 
+    d = dictnew('a.b.c.d',value)
+  ''' 
+  def _dictnew(dct, path, val):
+    while path.startswith('.'):
+      path = path[1:]
+    parts = path.split('.', 1)
+    if len(parts) > 1:
+        branch = dct.setdefault(parts[0], {})
+        _dictnew(branch, parts[1], val)
+    else:
+        if not parts[0] in dct:
+          dct[parts[0]] = val
+
+  d = {}
+  _dictnew(d,path,val)
+  return d
 
 def call(obj, subn, args_in = []):
   res = None
@@ -127,16 +156,21 @@ def url_parse(url,opts={}):
 
   query_p = url_parse_query(u.query)
 
+  basename = posixpath.basename(u.path)
+
   d = {
-    'scheme'  : scheme,
-    'path'    : u.path,
-    'netloc'  : u.netloc,
-    'params'  : u.params,
-    'query'   : u.query,
-    'query_p' : query_p,
-    'host'    : host,
-    'baseurl' : baseurl,
-    'url'     : url,
+    'scheme'   : scheme,
+    'path'     : u.path,
+    'port'     : u.port or '',
+    'fragment' : u.fragment,
+    'netloc'   : u.netloc,
+    'params'   : u.params,
+    'query'    : u.query,
+    'query_p'  : query_p,
+    'host'     : host,
+    'baseurl'  : baseurl,
+    'basename' : basename,
+    'url'      : url,
   }
 
   if get(opts,'rm_query'):

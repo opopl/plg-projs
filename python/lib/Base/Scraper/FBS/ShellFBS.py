@@ -86,9 +86,28 @@ class ShellFBS(Cmd):
        ei = sys.exc_info()
        print(f'fail: {ei[0]}')
 
-   def do_page_xpath(self,xpath):
+   def do_xpath_rm(self,xpath):
      if not xpath:
-       print('[page_xpath] no xpath!')
+       print('[xpath_rm] no xpath!')
+       return 
+
+     fbs = self.fbs
+     etree = fbs.etree
+     xtree = fbs.xtree
+
+     try:
+       elems = fbs.xtree.xpath(xpath)
+       for elem in elems:
+         parent = elem.getparent()
+         if parent is not None:
+           parent.remove(elem)
+     except:
+       e = sys.exc_info()
+       print(f'[xpath_rm]: {e}')
+
+   def do_xpath(self,xpath):
+     if not xpath:
+       print('[xpath] no xpath!')
        return 
 
      out = []
@@ -112,7 +131,7 @@ class ShellFBS(Cmd):
          out.append(txt)
      except:
        e = sys.exc_info()
-       print(f'page_xpath: {e}')
+       print(f'[xpath]: {e}')
 
      for ln in out:
        print(ln)

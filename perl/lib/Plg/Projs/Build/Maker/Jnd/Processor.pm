@@ -59,6 +59,9 @@ sub init {
        d_author => undef,
        tab      => undef,
 
+       dbh_img    => undef,
+       dbfile_img => undef,
+
        img_width_default => 0.9,
        keys => [qw(url caption tags name)],
 
@@ -78,7 +81,12 @@ sub init {
        proj => undef,
        sec  => undef,
 
+       # external instances:
+       #
+       # mkr => Plg::Projs::Build::Maker
+       # prj => Plg::Projs::Prj
        mkr => undef,
+       prj => undef,
 
     };
  
@@ -488,10 +496,11 @@ sub _tab_at_end {
 sub _d2tex {
   my ($self) = @_;
 
-  my $mkr = $self->{mkr};
-
   my $d = $self->{d};
   return () unless $d;
+
+  my $mkr = $self->{mkr};
+  my $dbh_img = $self->{dbh_img};
 
   my $tab = $self->{tab};
 
@@ -505,8 +514,11 @@ sub _d2tex {
      }
   }
 
+  my $dbh = $mkr->{dbh_img};
   my ($rows, $cols, $q, $p) = dbh_select({
-     dbh => $mkr->{dbh_img},
+     $dbh ? ( dbh => $dbh ) : (),
+     #dbh => $mkr->{dbh_img},
+     #dbfile => $self->{dbfile_img},
      q   => q{ SELECT * FROM imgs },
      p   => [],
      w   => $w,
@@ -660,8 +672,6 @@ sub _macro_igg {
 
 sub loop {
   my ($self) = @_;
-
-  my $mkr = $self->{mkr};
 
   my @jlines = @{$self->{jlines} || []};
 
