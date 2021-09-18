@@ -384,30 +384,12 @@ function! projs#insert#ii_url ()
 
   let ii_prefix = printf('%s.', sec)
 
-  let list  = matchlist(sec,'^\(\w\+\)_\(\d\+\)$')
+  let pat = printf('^%s',ii_prefix)
+  let r = { 'pat' : pat }
 
-  let month = get(list,1,'')
-  let year  = get(list,2,'')
+  let url = base#input_we('[PIN ii_url] URL: ','')
 
-  let is_date = len(month) && len(year) && base#inlist(month,base#varget('projs_months_3',[])) ? 1 : 0
-  if is_date
-    let ii_prefix = ''
-  endif
-
-  let pat = len(ii_prefix) ? printf('^%s',ii_prefix) : ''
-  let r = {}
-  if len(pat)
-    call extend(r,{ 'pat' : pat })
-  endif
-
-  let url = ''
-  if !is_date
-    let url = input('[PIN ii_url] URL: ','')
-  endif
-
-  let data = projs#db#url_data({ 'url' : url })
-  let sec  = get(data,'sec','')
-  if len(sec)
+  if projs#sec#exists_db({ 'url' : url })
     call base#rdwe('URL already stored, sec: ' . sec)
     return 
   endif

@@ -608,6 +608,19 @@ function! projs#sec#add (sec,...)
   return 1
 endfunction
 
+function! projs#sec#is_date_my (sec)
+  let sec = a:sec
+
+  let list  = matchlist(sec,'^\(\w\+\)_\(\d\+\)$')
+
+  let month = get(list,1,'')
+  let year  = get(list,2,'')
+
+  let is_date = len(month) && len(year) && base#inlist(month,base#varget('projs_months_3',[])) ? 1 : 0
+  return is_date
+
+endfunction
+
 function! projs#sec#select (...)
   let ref = get(a:000,0,{})
 
@@ -619,7 +632,7 @@ function! projs#sec#select (...)
   let pat  = get(ref,'pat','')
   let ext  = get(ref,'ext','')
 
-	let secs = projs#db#secnames(ref)
+  let secs = projs#db#secnames(ref)
 
   call base#varset('this',secs)
   let sec = input('section: ','','custom,base#complete#this')
@@ -734,6 +747,32 @@ function! projs#sec#buf (sec)
 endfunction
 
 function! projs#sec#exists (...)
+  let sec = get(a:000,0,'')
+
+  let ok = 1
+  let ok = ok && projs#sec#exists_db({ 'sec' : sec })
+  let ok = ok && projs#sec#exists_fs(sec)
+
+  return ok
+
+endfunction
+
+function! projs#sec#exists_db (...)
+  let ref = get(a:000,0,{})
+
+  let dbfile = projs#db#file()
+
+  let [ rows_h, cols ] = pymy#sqlite#select({
+    \  'dbfile' : dbfile,
+    \  't'      : 'projs',
+    \  'f'      : 'sec',
+    \  'w'      : ref,
+    \  })
+  return len(rows_h) ? 1 : 0
+
+endfunction
+
+function! projs#sec#exists_fs (...)
   let sec = get(a:000,0,'')
 
   let sec_file = projs#sec#file(sec)
