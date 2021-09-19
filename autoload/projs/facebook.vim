@@ -20,7 +20,7 @@ function! projs#facebook#add_author_id (...)
 endfunction
 
 function! projs#facebook#file_auth ()
-  let f = projs#data#dict_file({ 'id' : 'fb_authors' })
+  let f = projs#data#dict#file({ 'id' : 'fb_authors' })
 	return f
 
 endfunction

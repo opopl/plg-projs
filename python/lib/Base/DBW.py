@@ -6,6 +6,7 @@ import sqlparse
 import sys
 
 import Base.Util as util
+import Base.Rgx as rgx
 
 def update_dict(ref):
   conn     = ref.get('conn')
@@ -303,7 +304,7 @@ def select(ref={}):
 
 def conn_cfg(conn):
   conn.row_factory = sqlite3.Row
-  conn.create_function("REGEXP", 2, __functionRegex)
+  conn.create_function("REGEXP", 2, rgx.rgx_match)
 
 def __functionRegex(pattern, value):
   cpat = re.compile(pattern)
@@ -533,7 +534,9 @@ def insert_dict(ref={}):
   db_file   = ref.get('db_file')
   db_close  = ref.get('db_close')
 
-  insert   = ref.get('insert',{})
+  insert     = ref.get('insert',{})
+  sql_insert = ref.get('sql_insert') or 'INSERT OR REPLACE'
+
   fields   = insert.keys()
 
   if ( len(fields) == 0 ) or not table:
@@ -552,7 +555,8 @@ def insert_dict(ref={}):
   values   = list( map(lambda k: insert.get(k,''), fields) )
   quot     = list( map(lambda k: '?', fields) )
   quot_s   = ",".join(quot)
-  q=''' INSERT OR REPLACE INTO %s (%s) VALUES (%s)''' % (table,fields_s,quot_s)
+
+  q = f'''{sql_insert} INTO {table} ({fields_s}) VALUES ({quot_s})'''
 
   try:
     c.execute(q,values)

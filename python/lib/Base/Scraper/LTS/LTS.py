@@ -7,7 +7,7 @@ import Base.Util as util
 import Base.String as string
 import Base.Const as const
 
-import Base.Re as ree
+import Base.Rgx as rgx
 import plg.projs.db as projs_db
 
 from plg.projs.Prj import Prj
@@ -300,20 +300,20 @@ class LTS(
 
       self.line = self.line.strip('\n')
 
-      if ree.match('tex.projs.beginhead', self.line):
+      if rgx.match('tex.projs.beginhead', self.line):
         flags['head'] = 1
-      if ree.match('tex.projs.endhead', self.line):
+      if rgx.match('tex.projs.endhead', self.line):
         if 'head' in flags:
           del flags['head']
 
-      m = ree.match('tex.projs.seccmd', self.line)
+      m = rgx.match('tex.projs.seccmd', self.line)
       if m:
         if not flags.get('seccmd'):
           flags['seccmd'] = m.group(1)
           flags['sectitle'] = m.group(2)
 
       if flags.get('head'):
-        m = ree.match('tex.projs.author_id',self.line)
+        m = rgx.match('tex.projs.author_id',self.line)
         if m:
           a_id = m.group(1)
 
@@ -336,22 +336,22 @@ class LTS(
                   self.line = f'%%author_id {ids_new}'
 
       if flags.get('seccmd'):
-        m = ree.match('tex.projs.ifcmt',self.line)
+        m = rgx.match('tex.projs.ifcmt',self.line)
         if m:
           flags['is_cmt'] = 1
 
         if flags.get('is_cmt'):
-          if ree.match('tex.projs.fi',self.line):
+          if rgx.match('tex.projs.fi',self.line):
             del flags['is_cmt']
 
-          if ree.match('tex.projs.cmt.author_begin',self.line):
+          if rgx.match('tex.projs.cmt.author_begin',self.line):
             flags['cmt_author'] = 1
 
           if flags.get('cmt_author'):
-            if ree.match('tex.projs.cmt.author_end',self.line):
+            if rgx.match('tex.projs.cmt.author_end',self.line):
               del flags['cmt_author']
 
-            m = ree.match('tex.projs.cmt.author_id',self.line)
+            m = rgx.match('tex.projs.cmt.author_id',self.line)
             if m:
               indent = m.group(1)
               a_id = m.group(2)
@@ -737,7 +737,7 @@ class LTS(
         if re.match(r'^#',self.line) or (len(self.line) == 0):
           continue
 
-        m = ree.match('idat.dict',self.line)
+        m = rgx.match('idat.dict',self.line)
         if m:
           author_id    = m.group(1)
 
@@ -753,7 +753,7 @@ class LTS(
           # inverted if needed
           author_name  = author_bare
 
-          m = ree.match('author.bare.inverted',author_bare)
+          m = rgx.match('author.bare.inverted',author_bare)
           if m:
             last_name  = m.group(1).strip()
             first_name = m.group(2).strip()
@@ -824,14 +824,14 @@ class LTS(
     u = util.url_parse(url)
     fb_data = None
 
-    m = ree.search('url.facebook.base',u['host'])
+    m = rgx.search('url.facebook.base',u['host'])
     if not m:
       return
 
     fb_id = None
     post_id = None
 
-    if ree.match('url.facebook.permalink',u['path']):
+    if rgx.match('url.facebook.permalink',u['path']):
       fb_id   = u['query_p'].get('id','') 
       post_id = u['query_p'].get('story_fbid','') 
 
@@ -840,7 +840,7 @@ class LTS(
          u = util.url_parse(url)
 
     else:
-      m_path = ree.match('url.facebook.post_user',u['path'])
+      m_path = rgx.match('url.facebook.post_user',u['path'])
 
       if m_path:
         fb_id = m_path.group(1)

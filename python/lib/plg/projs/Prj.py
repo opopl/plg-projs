@@ -6,7 +6,7 @@ import Base.Util as util
 import Base.String as string
 import Base.Const as const
 
-import Base.Re as ree
+import Base.Rgx as rgx
 import plg.projs.db as projs_db
 
 from pathlib import Path

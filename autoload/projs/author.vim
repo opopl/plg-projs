@@ -24,7 +24,7 @@ endfunction
 "  call tree
 "    called by
 "    calls
-"      projs#data#dict_file
+"      projs#data#dict#file
 "endif
 
 function! projs#author#file (...)
@@ -32,7 +32,7 @@ function! projs#author#file (...)
 
   let proj = get(ref,'proj','')
 
-  let file = projs#data#dict_file({ 'proj' : proj, 'id' : 'authors' })
+  let file = projs#data#dict#file({ 'proj' : proj, 'id' : 'authors' })
   let dir  = fnamemodify(file,':p:h')
   call base#mkdir(dir)
 

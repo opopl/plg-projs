@@ -14,6 +14,22 @@ function! projs#data#dict#ids ()
 	return ids
 endfunction
 
+function! projs#data#dict#get (...)
+	let ref = get(a:000,0,{})
+
+  let id   = get(ref,'id','')
+  let proj = get(ref,'proj','')
+	let key  = get(ref,'key','')
+
+	let dict = projs#data#dict({
+			\	'id'   : id,
+			\	'proj' : proj,
+			\	})
+	let val = get(dict,val,'')
+	return val
+
+endfunction
+
 function! projs#data#dict#choose ()
 	let dict_dir = projs#data#dict#dir()
 	let ids = base#find({ 
@@ -28,6 +44,40 @@ function! projs#data#dict#choose ()
 	call base#varset('this',ids)
 	let id = input('dict id: ','','custom,base#complete#this')
 	return id
+
+endfunction
+
+if 0
+	let upd = { 1 : 1 } | call projs#data#dict#update({ 'id' : 'authors', 'upd' : upd })
+endif
+
+function! projs#data#dict#update (...)
+  let ref = get(a:000,0,{})
+
+  let id   = get(ref,'id','')
+  let proj = get(ref,'proj','')
+	let upd  = get(ref,'upd',{})
+
+	let file = projs#data#dict#file({ 
+			\	'id'   : id,
+			\	'proj' : proj,
+			\	})
+
+  if !filereadable(file) | return | endif
+    
+  let dict = base#readdict({ 'file' : file })
+	call extend(dict,upd)
+
+  let kk = sort(keys(dict))
+  let kk = base#uniq(kk)
+
+	let lines = [] 
+	for k in kk 
+		let v = get(dict,k,'')
+    call add(lines, printf('%s %s', k, v ))
+	endfor
+
+  call writefile(lines,file)
 
 endfunction
 

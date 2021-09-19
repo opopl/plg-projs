@@ -91,6 +91,8 @@ our $secs = {
 
 ###fbicons
 our %fbicons = (
+  '👅' => 'tongue',
+  '➕' => 'plus',
   '🌷' => 'tulip',
   '🚗' => 'automobile',
   '🏙️' => 'cityscape',
@@ -144,6 +146,7 @@ our %fbicons = (
   '❤️'  => 'heart.red',
   '👋' => 'hand.waving',
   '📵' => 'no.mobile.phones',
+  '💩' => 'pile.of.poo',
 );
 
 ###fbicons_face
@@ -764,6 +767,9 @@ sub delete_empty_lines {
     }
 
     _new2s();
+}
+
+sub to_head_center {
 }
 
 sub rpl_dashes {

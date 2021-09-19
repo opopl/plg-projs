@@ -32,7 +32,9 @@ function! projs#url#fb#data (...)
   let path = get(u,'path','')
 
   let fb_authors = projs#data#dict({ 'id' : 'fb_authors' })
+
   let fb_groups  = projs#data#dict({ 'id' : 'fb_groups' })
+  let fb_group_list = values(fb_groups)
 
   let path_a     = split(path,'/')
   let path_front = get(path_a,0,'')
@@ -55,16 +57,36 @@ function! projs#url#fb#data (...)
     let fb_auth  = ''
     let fb_group = get(path_a,1,'')
 
-    let fb_group_id = get(fb_groups,fb_group,'')
+		if len(fb_group)
+	    let fb_group_id = get(fb_groups,fb_group,'')
+	
+			if !len(fb_group_id)
+		    call base#varset('this',fb_group_list)
+		
+		    let fb_group_id = base#input_we('New fb_group id:','',{ 'this' : 1 })
 
-    if len(fb_group_id)
-      echo 'Facebook group id: ' . fb_group_id
+				let msg = printf('[%s] fb group name: ',fb_group_id)
+		    let fb_group_name = base#input_we(msg,'')
+	
+		  	let author_id = printf('fb_group.%s',fb_group_id)
+				call projs#data#dict#update({ 
+						\	'id'  : 'fb_groups',
+						\	'upd' : { fb_group : fb_group_id },
+						\	})
+				call projs#data#dict#update({ 
+						\	'id'  : 'authors',
+						\	'upd' : { author_id : fb_group_name },
+						\	})
+			endif
+	
+	    echo 'Facebook group id: ' . fb_group_id
+	
+	    let author_id = printf('fb_group.%s',fb_group_id)
+	    let author    = projs#author#get({ 'author_id' : author_id })
+	    if !len(author)
+	      let author = projs#author#add_prompt({ 'author_id' : author_id })
+	    endif
 
-      let author_id = printf('fb_group.%s',fb_group_id)
-      let author    = projs#author#get({ 'author_id' : author_id })
-      if !len(author)
-        let author = projs#author#add_prompt({ 'author_id' : author_id })
-      endif
     endif
   endif
 

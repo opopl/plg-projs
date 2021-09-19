@@ -389,6 +389,9 @@ function! projs#insert#ii_url ()
 
   let url = base#input_we('[PIN ii_url] URL: ','')
 
+	"let g:fb = 0
+	"breakadd expr g:fb
+
   if projs#sec#exists_db({ 'url' : url })
     call base#rdwe('URL already stored, sec: ' . sec)
     return 
@@ -421,7 +424,7 @@ function! projs#insert#ii_url ()
 
   let cnt = projs#sec#count_ii({ 'ii_prefix' : ii_prefix })
 
-  let inum = cnt + 1
+  debug let inum = cnt + 1
 
   let ii_prefix .= printf('%s.',inum)
 
@@ -433,19 +436,9 @@ function! projs#insert#ii_url ()
   let sec_type = projs#util#subsec(headcmd)
 
   let comps = []
-  if is_date
-    let mon_num = projs#util#month_number(month)
-    let day_nums = base#varget('projs_day_nums',[])
-    for dn in day_nums
-      call add(comps,printf('%s_%s_%s',dn,mon_num,year))
-    endfor
-  else
 
-    let secs = projs#db#secnames(r)
-    for sec in secs
-      call add(comps,sec)
-    endfor
-  endif
+  let secs = projs#db#secnames(r)
+	call extend(comps,secs)
 
   call base#varset('this',comps)
   let ii_sec = input('ii_sec name: ',ii_prefix,'custom,base#complete#this')
@@ -568,3 +561,7 @@ function! projs#insert#template (type)
   call append(line('.'),tlines)
   
 endfunction
+
+
+
+

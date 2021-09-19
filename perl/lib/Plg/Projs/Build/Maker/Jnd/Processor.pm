@@ -12,7 +12,7 @@ use Base::Arg qw(
   hash_update
 );
 
-use Plg::Projs::Regex qw(%regex);
+use Plg::Projs::Rgx qw(%rgx_map);
 
 use String::Util qw(trim);
 
@@ -679,7 +679,7 @@ sub loop {
     $self->{lnum}++; chomp;
 
     #s/\@igg\{([^{}]*)\}(?:\{([^{}]*)\}|)/$self->_macro_igg($1,$2)/ge;
-    s/$regex{jnd}{macros}{igg}/$self->_macro_igg($1,$2)/ge;
+    s/$rgx_map{jnd}{macros}{igg}/$self->_macro_igg($1,$2)/ge;
 
     $self->{line} = $_;
 

@@ -1,5 +1,5 @@
 
-package Plg::Projs::Regex;
+package Plg::Projs::Rgx;
 
 use strict;
 use warnings;
@@ -19,7 +19,7 @@ my @ex_vars_scalar=qw(
 );
 ###export_vars_hash
 my @ex_vars_hash=qw(
-   %regex 
+   %rgx_map 
 );
 ###export_vars_array
 my @ex_vars_array=qw(
@@ -28,14 +28,14 @@ my @ex_vars_array=qw(
 %EXPORT_TAGS = (
 ###export_funcs
     'funcs' => [qw( 
-        match
+        rgx_match
     )],
     'vars'  => [ @ex_vars_scalar,@ex_vars_array,@ex_vars_hash ]
 );
 
 @EXPORT_OK = ( @{ $EXPORT_TAGS{'funcs'} }, @{ $EXPORT_TAGS{'vars'} } );
 
-our %regex = (
+our %rgx_map = (
    jnd => { 
      macros => {
        igg => qr/\@igg\{([^{}]*)\}(?:\{([^{}]*)\}|)/,
@@ -43,7 +43,7 @@ our %regex = (
    }
 );
 
-sub match {
+sub rgx_match {
     my ($pattern, $string, $flags, $index) = @_;
 
     local $_ = $string;

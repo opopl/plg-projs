@@ -46,6 +46,17 @@ def search(pat_id,line):
 
   return m
 
+# clone of Plg::Projs::Regex rgx_match
+def rgx_match(pattern,string,flags='',index=0):
+  m = re.match(pattern,string)
+  if not m:
+    return 
+
+  mtch = m.group(0)
+  result = (index and m.group(index)) or m.group(0)
+
+  return result
+
 def match(pat_id,line):
   pat = util.get( pats, pat_id )
   if not pat:

@@ -11,10 +11,10 @@ rpl_special
 rpl_urls
 rpl_verbs
 strip_comments
-texify
 trim_eol
 delete_empty_lines
 sections_up
 sections_down
 wrap
 jnd
+to_head_center
