@@ -16,6 +16,9 @@ from io import StringIO, BytesIO
 from Base.Core import CoreClass
 import Base.Util as util
 
+from Base.Scraper.WebDoc import WebDoc
+from Base.Scraper.FBS.WelMan import WelMan
+
 from Base.Mix.mixFileSys import mixFileSys
 
 import time
@@ -134,10 +137,10 @@ class FbPost(CoreClass,mixFileSys):
 
       Usage
         input: single web element
-          clist = self._clist({ 'el'  : el })
+          clist = self._clist({ 'wel'  : wel })
 
         input: list of Web elements
-          clist = self._clist({ 'els' : els })
+          clist = self._clist({ 'wels' : wels })
 
         options
           'root' - root element
@@ -149,11 +152,11 @@ class FbPost(CoreClass,mixFileSys):
     '''
     app = self.app
 
-    elin = ref.get('el') or app.driver
+    wel_in = ref.get('wel') or app.driver
 
-    cmt_elems = ref.get('els')
-    if not cmt_elems:
-      cmt_elems = app._els_comments({ 'el' : elin })
+    wm_in = WelMan(wel_in)
+
+    wels_comment = ref.get('wels') or wm_in.find_comments()
 
     opts_s  = ref.get('opts','')
     opts    = opts_s.split(',')
@@ -165,53 +168,54 @@ class FbPost(CoreClass,mixFileSys):
 
     clist = []
 
-    if not cmt_elems:
+    if not wels_comment:
       return clist
 
-    for comment in cmt_elems:
+    for wel_comment in wels_comment:
       self.cmt = {}
+
+      wm_comment = WelMan(wel_comment)
 
       #cmt['src'] = app._el_src({ 'el' : comment })
 
-      reply = app._el_reply({ 'el' : comment })
-      if reply:
-        print('Reply click')
-        try:
-          reply.click()
-        except:
-          self.save_wf()
-          print('[fbPost][_clist] ERROR: Reply click')
-          return clist
+      wel_reply = wm_comment.find_reply()
+      if wel_reply:
+        if app._cfg('driver.click.do'):
+          print('Reply click')
+          try:
+            wel_reply.click()
+          except:
+            self.save_wf()
+            print('[fbPost][_clist] ERROR: Reply click')
+            return clist
 
         time.sleep(1)
 
-        replies_inline = None
-        try:
-          xp = '''.//div[
+        xp = '''.//div[
                     contains(@data-sigil,"inline-reply")
                       and
                     contains(@data-sigil,"comment")
                ]'''
-          replies_inline = comment.find_elements_by_xpath(xp)
-        except:
-          pass
+        wels_reply_inline = wm_comment.find({ 'xpath' : xp })
 
-        if replies_inline and len(replies_inline):
+        if len(wels_reply_inline):
           print('Found more replies')
-          clist_sub = self._clist({ 'els' : replies_inline })
+          clist_sub = self._clist({ 'wels' : wels_reply_inline })
 
           if len(clist_sub):
             print(f'cmt <- {len(clist_sub)} replies')
             self.cmt['clist'] = clist_sub
 
 ###cmt_process
-      el_auth = comment.find_element_by_xpath('.//div[contains(@class,"_2b05")]')
-      if el_auth:
-        self.cmt['auth_bare'] = el_auth.text
+      wel_auth = wm_comment.find_one({ 'xpath' : './/div[contains(@class,"_2b05")]' })
+      if wel_auth:
+        wm_auth = WelMan(wel_auth)
 
-        el_auth_link = el_auth.find_element_by_xpath('.//a')
-        if el_auth_link:
-          href = el_auth_link.get_attribute('href')
+        self.cmt['auth_bare'] = wel_auth.text
+
+        wel_auth_link = wm_auth.find_one({ 'xpath' : './/a' })
+        if wel_auth_link:
+          href = wel_auth_link.get_attribute('href')
           if href:
             u = util.url_parse(href,{ 'rm_query' : 1 })
             q = u['query']
@@ -226,17 +230,16 @@ class FbPost(CoreClass,mixFileSys):
             self.cmt['auth_url_path'] = auth_url_path
             self.cmt['auth_url']      = util.url_join('https://www.facebook.com', auth_url_path)
 
-      el_txt = app._el_find({ 
-        'el'    : comment,
+      wel_txt = wm_comment.find_one({ 
         'xpath' : './/*[@data-sigil="comment-body"]',
       })
 
-      if el_txt:
-        self.cmt['txt']     = el_txt.text
+      if wel_txt:
+        self.cmt['txt']     = wel_txt.text
         #cmt['txt_src'] = app._el_src({ 'el' : el_txt })
 
       self.cmt_process_attachment({
-        'el' : comment
+        'wel' : wel_comment
       })
 
       if len(self.cmt):
@@ -248,26 +251,26 @@ class FbPost(CoreClass,mixFileSys):
   def cmt_process_attachment(self,ref={}):
     app = self.app
 
-    elin = ref.get('el')
+    wel_in = ref.get('wel')
+    wm_in = WelMan(wel_in)
 
-    el_attach = app._el_find({
-      'el'  : elin,
+    wel_attach = wm_in.find_one({
       'css' : '.attachment'
     })
-
-    if not el_attach:
+    if not wel_attach:
       return self
+
+    wm_attach = WelMan(wel_attach)
 
     print('Found attachment')
 
-    el_attach_i = app._el_find({
-      'el'    : el_attach,
+    wel_attach_i = wm_attach.find_one({
       'xpath' : './/i[contains(@class,"img")]',
     })
 
-    if el_attach_i:
+    if wel_attach_i:
       print('Found image in attachment')
-      data_store_attr = el_attach_i.get_attribute('data-store')
+      data_store_attr = wel_attach_i.get_attribute('data-store')
       if data_store_attr:
         data_store = None
         if type(data_store_attr) in [str]:
@@ -340,20 +343,23 @@ class FbPost(CoreClass,mixFileSys):
   def save_story(self,ref={}):
     app = self.app
 
-    elin = ref.get('el') or app.driver
+    wel_in = ref.get('wel') or app.driver
+    wm_in = WelMan(wel_in)
 
     story = None
     try:
-      story = elin.find_element_by_css_selector('.story_body_container')
+      wel_story = wm_in.find_one({ 'css' : '.story_body_container' })
     except:
       print('ERROR: could not find story!')
       pass
 
-    if not story:
+    if not wel_story:
       return self
 
-    story_txt = story.text
-    story_src = app._el_src({ 'el' : story })
+    wm_story = WelMan(wel_story)
+
+    story_txt = wel_story.text
+    story_src = wm_story.src() 
 
     self.set({
         'story' : {
@@ -371,7 +377,7 @@ class FbPost(CoreClass,mixFileSys):
       self.xtree = lxml.html.parse(StringIO(drv.page_source))
       self.xroot = self.xtree.getroot()
     except:
-      print('Fail to parse page via lxml.html')
+      print('[FbPost][html2tree] Fail to parse page via lxml.html')
 
     return self
 
@@ -392,7 +398,9 @@ class FbPost(CoreClass,mixFileSys):
   def save_comments(self,ref={}):
     app = self.app
 
-    clist = self._clist({ 'opts' : 'root' })
+    clist = self._clist({ 
+      'opts' : 'root' 
+    })
 
     self.set({
       'clist' : clist,
@@ -411,7 +419,9 @@ class FbPost(CoreClass,mixFileSys):
     pv = None
 
     i    = 1
-    imax = ref.get('imax') or 10
+
+    imax = app._cfg('FbPost.funcs.loop_prev.imax') or 10
+    imax = ref.get('imax') or imax
 
     ccc = 0
     ccc_prev = -1
@@ -430,14 +440,14 @@ class FbPost(CoreClass,mixFileSys):
       if not pv:
         break
 
-      try:
-        pv.click()
-      except:
-        print('[FbPost][loop_prev] ERROR: pv.click()')
-        import pdb; pdb.set_trace()
+      if app._cfg('driver.click.do'):
+        try:
+          pv.click()
 
-      time.sleep(7) 
-      print(f'Click {i}')
+          time.sleep(7) 
+          print(f'Click {i}')
+        except:
+          print('[FbPost][loop_prev] ERROR: pv.click()')
 
       comments = app._els_comments()
       ccc_prev = ccc
@@ -446,7 +456,6 @@ class FbPost(CoreClass,mixFileSys):
 
       if ccc_prev == ccc:
         print(f'BREAK: No new Comments!')
-        import pdb; pdb.set_trace()
 
       i += 1
 
@@ -484,7 +493,7 @@ class FbPost(CoreClass,mixFileSys):
     acts = [
       'get_url', 
       'html2tree', 
-      [ 'loop_prev', [ { 'imax' : 50 } ] ],
+      #[ 'loop_prev', [ { 'imax' : 50 } ] ],
       'save',
     ]
 
@@ -504,7 +513,6 @@ class FbPost(CoreClass,mixFileSys):
         json.dump(data, f, ensure_ascii=False)
     except:
       print('ERROR: json dump')
-      import pdb; pdb.set_trace()
 
     #with open(self.f_json, 'w') as f:
       #f.write(clist_js)

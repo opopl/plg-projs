@@ -424,7 +424,7 @@ function! projs#insert#ii_url ()
 
   let cnt = projs#sec#count_ii({ 'ii_prefix' : ii_prefix })
 
-  debug let inum = cnt + 1
+  let inum = cnt + 1
 
   let ii_prefix .= printf('%s.',inum)
 

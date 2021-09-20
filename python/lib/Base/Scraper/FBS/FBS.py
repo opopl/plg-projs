@@ -15,6 +15,7 @@ import lxml.html
 from io import StringIO, BytesIO
 
 import pickle
+import logging
 
 import time
 import os,sys,re
@@ -175,8 +176,8 @@ class FBS(CoreClass,
       try:
         self.driver.get(url)
       except:
-        e = sys.exc_info()
-        print(f'fail: {e}')
+        e = sys.exc_info()[0]
+        print(f'[drv_get] fail: {e[0]}')
 
       return self
 
@@ -188,7 +189,7 @@ class FBS(CoreClass,
         prf = self._cfg('driver.firefox.profile.preferences',{})
         for k, v in prf.items():
           fp.set_preference(k,v)
-  
+ 
         self.fp = fp
 
         print('[init_drv] init firefox profile')
@@ -224,20 +225,26 @@ class FBS(CoreClass,
   
       return self
 
+    def shell_loop(self):
+      if not self.do_shell:
+        return self
+
+      self.shell = ShellFBS({ 'fbs' : self })
+      try:
+        self.shell.cmdloop()
+      except:
+        self.shell.cmdloop()
+
+      return self
+
     def main(self):
       acts = [
         'get_opt',
         'do_cmd',
+        'shell_loop',
       ]
   
       util.call(self,acts)
-
-      if self.do_shell:
-        self.shell = ShellFBS({ 'fbs' : self })
-        try:
-          self.shell.cmdloop()
-        except:
-          import pdb; pdb.set_trace()
 
       return self
 
@@ -383,86 +390,6 @@ class FBS(CoreClass,
           print(f'fail: {ei}')
 
         return self
-
-    def _els_find(self,ref={}):
-        elin = ref.get('el',self.driver)
-
-        xpath = ref.get('xpath','')
-        css   = ref.get('css','')
-
-        els = None
-
-        if xpath:
-          try:
-            els = elin.find_elements_by_xpath(xpath)
-          except:
-            pass
-
-        if css:
-          try:
-            els = elin.find_elements_by_css_selector(css)
-          except:
-            pass
-              
-        return els
-
-    def _el_src(self,ref={}):
-        elin = ref.get('el',self.driver)
-
-        parent = self._el_find({ 
-          'el'    : elin,
-          'xpath' : '..',
-        })
-
-        el_src = elin
-        if parent:
-          el_src = parent
-
-        src = el_src.get_attribute('innerHTML')
-
-        return src
-
-    def _el_find(self,ref={}):
-        elin = ref.get('el',self.driver)
-
-        xpath = ref.get('xpath','')
-        css   = ref.get('css','')
-
-        el = None
-
-        if xpath:
-          try:
-            el = elin.find_element_by_xpath(xpath)
-          except:
-            pass
-
-        if css:
-          try:
-            el = elin.find_element_by_css_selector(css)
-          except:
-            pass
-              
-        return el
-
-    def _els_comments(self,ref={}):
-        elin = ref.get('el') or self.driver
-
-        cmt_els = self._els_find({ 
-          'xpath' : './/div[ @data-sigil="comment" ]',
-          'el'    : elin
-        })
-
-        return cmt_els
-
-    def _el_reply(self,ref={}):
-        elin = ref.get('el') or self.driver
-
-        reply = self._el_find({ 
-          'el'    : elin,
-          'xpath' : './/div[ @data-sigil="replies-see-more" ]'
-        })
-
-        return reply
 
     # cfg = self._cfg('driver.click.limit')
     def _cfg(self,path='',default=None):

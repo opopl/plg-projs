@@ -10,11 +10,18 @@ import Base.Const as const
 import Base.Rgx as rgx
 import plg.projs.db as projs_db
 
+from bs4 import BeautifulSoup, Comment
+
 from plg.projs.Prj import Prj
 
 import jinja2
 
 import yaml
+
+from lxml.html.clean import Cleaner
+from lxml import etree
+import lxml.html
+from io import StringIO, BytesIO
 
 from Extern.Pylatex import Package
 from Extern.Pylatex.base_classes import Command, Options
@@ -963,7 +970,7 @@ class LTS(
 
 #http://eosrei.net/articles/2015/11/latex-templates-python-and-jinja2-generate-pdfs
 #https://web.archive.org/web/20121024021221/http://e6h.de/post/11/
-  def fbauth_create(self, ref = {}):
+  def fbauth_new(self, ref = {}):
     lines = []
 
     fba = ref.get('fba','')
@@ -1045,6 +1052,82 @@ class LTS(
       iusr.sort()
       for name in iusr:
         print(name)
+
+    return self
+
+  def html_xpath(self, ref = {}):
+    xpath = ref.get('xpath')
+    file  = ref.get('file')
+
+    with open(file,'r') as f:
+      html = f.read()
+
+    self.etree = lxml.etree
+    hp = lxml.etree.HTMLParser(encoding='utf-8')
+    #import pdb; pdb.set_trace()
+    #print(dir(self.etree))
+    #return self
+
+    #self.xtree = lxml.html.parse(file,parser=hp)
+    #self.xtree = lxml.html.parse(file)
+#    cleaner = Cleaner(
+        #javascript = True,
+        #scripts = True,
+        #meta = True,
+        #page_structure = True,
+    #)
+    #cleaner.style = True
+    #html = cleaner.clean_html(html)
+    #print(html)
+
+    self.soup = BeautifulSoup(html,'html5lib',from_encoding='utf-8')
+    for k in ['div','span']:
+      while 1:
+        div = self.soup.select_one(k)
+        if not div:
+          break
+        div.unwrap()
+
+    html = self.soup.prettify()
+    with open('p_w.html', 'w') as f:
+      f.write(self.soup.prettify())
+
+    self.xtree = lxml.etree.parse(StringIO(html),parser=hp)
+    self.xroot = self.xtree.getroot()
+
+    out = []
+    try:
+       elems = self.xroot.xpath(xpath)
+       for elem in elems:
+         txt = None
+         n = type(elem).__name__
+         #import pdb; pdb.set_trace()
+         if n in [ 'HtmlElement','_Element' ]:
+           txt = self.etree.tostring(
+                   elem,
+                   encoding='unicode',
+                   pretty_print=True)
+           #print(elem.text)
+         elif n == '_ElementUnicodeResult':
+           txt = elem.__str__()
+         out.append(txt)
+    except:
+       e = sys.exc_info()
+       print(f'[xpath]: {e}')
+
+    t = '\n'.join(out) + '\n'
+    t = f'<div>{t}</div>'
+    #print(t)
+#    trx = lxml.etree.parse(StringIO(t), hp)
+    #tt = lxml.etree.tostring(
+         #trx,
+         #pretty_print=True,
+    #)
+    #print(tt)
+    with open('p_xpath.html', 'w', encoding='utf8') as f:
+        f.write(t)
+    #for ln in out:
+       #print(ln)
 
     return self
 

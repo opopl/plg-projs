@@ -91,6 +91,8 @@ our $secs = {
 
 ###fbicons
 our %fbicons = (
+  '💃' => 'woman.dancing',
+  '🌻' => 'sunflower',
   '👅' => 'tongue',
   '➕' => 'plus',
   '🌷' => 'tulip',
@@ -147,10 +149,18 @@ our %fbicons = (
   '👋' => 'hand.waving',
   '📵' => 'no.mobile.phones',
   '💩' => 'pile.of.poo',
+  '💕' => 'hearts.two',
+  '💓' => 'heart.beating',
+  '🍁' => 'maple.leaf',
+  '🤎' => 'heart.brown',
+  '🎶' => 'musical.notes',
+  '🌅' => 'sunrise',
 );
 
 ###fbicons_face
 our %fbicons_face = (
+  '😳' => 'face.flushed',
+  '😞' => 'face.disappointed',
   '🤨' => 'face.eyebrow.raised',
   '😭' => 'face.crying.loudly',
   '🙂' => 'smile',
