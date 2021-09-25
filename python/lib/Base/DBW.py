@@ -6,6 +6,8 @@ import sqlparse
 import sys
 
 import Base.Util as util
+import Base.String as string
+
 import Base.Rgx as rgx
 
 def update_dict(ref):
@@ -250,7 +252,7 @@ def cond_where(ref={}):
   return r
 
 def select(ref={}):
-  db_file = ref.get('db_file')
+  db_file  = ref.get('db_file')
 
   table    = ref.get('table')
   where    = ref.get('where',{})
@@ -259,15 +261,20 @@ def select(ref={}):
   output   = ref.get('output','all')
 
   orderby  = ref.get('orderby',{})
+  limit    = ref.get('limit')
 
   cond = ref.get('cond','')
   p    = ref.get('p',[])
 
   r_w      = cond_where({ 'where' : where })
-  cond_w   = r_w.get('cond','')
+  cond_w   = r_w.get('cond','') or ''
   values_w = r_w.get('values',[])
 
-  cond += cond_w
+  if cond_w:
+    if cond:
+      cond = ' AND '.join([ cond, cond_w ])
+    else:
+      cond = cond_w
 
   select_s = '*'
   if type(select_a) in [str]:
@@ -282,6 +289,8 @@ def select(ref={}):
     p.extend(values_w)
 
   q += cond_orderby({ 'orderby' : orderby })
+  if not limit in [None]:
+    q += f' LIMIT {limit}'
 
   r_all = sql_fetchall(q,p,{ 'db_file' : db_file })
 
@@ -376,6 +385,80 @@ def sql_fetchall(q, p=[], ref={}):
     'cols'      : cols,
     'lastrowid' : lastrowid,
   }
+
+def base2info(ref={}):
+  # initial ('base') table
+  tbase = ref.get('tbase') or ''
+
+  # where condition for 'base' table
+  bwhere = ref.get('bwhere') or {}
+
+  # database file
+  db_file = ref.get('db_file') or ''
+
+  # 'join' column, i.e. foreign key field
+  #   which 'joins' 'base' and 'info' tables
+  jcol  = ref.get('jcol') or ''
+
+  # 'base' => 'info' columns mapping
+  b2i  = ref.get('b2i') or {}
+
+  # columns in 'base' table which have to 
+  #   be expanded into 'info' table
+  bcols  = ref.get('bcols') or []
+
+  for bcol in bcols:
+     icol = b2i.get(bcol,bcol)
+     sql = _sql_ct_info(tbase=tbase,bcol=bcol,jcol=jcol,icol=icol)
+     sql_do({ 
+        'db_file' : db_file,
+        'sql'     : sql,
+     })
+
+  scols = [ jcol ]
+  scols.extend(bcols)
+
+  cond = ' OR '.join(list(map(lambda x: f'LENGTH({x}) > 0',bcols)))
+
+  r = select({ 
+    'table'   : tbase,
+    'db_file' : db_file,
+    'select'  : scols,
+    'cond'    : cond,
+    'where'   : bwhere,
+  })
+  rows_base = r.get('rows',[])
+
+  for rw in rows_base:
+    jval  = rw.get(jcol) or ''
+    for bcol in bcols:
+      # 'info' column name (icol) in the relevent 'info' table (itb)
+      icol = b2i.get(bcol,bcol)
+
+      # 'info' table name
+      itb = f'_info_{tbase}_{bcol}' 
+
+      # comma-separated value
+      bval = rw.get(bcol) or ''
+
+      ivals = string.split_n_trim(bval,sep=',')
+
+      for ival in ivals:
+        ins = { jcol : jval, icol : ival }
+        r = select({
+          'db_file' : db_file,
+          'table'   : itb,
+          'where'   : ins,
+        })
+        rows = r.get('rows',[])
+        if not len(rows):
+          insert_dict({
+            'db_file' : db_file,
+            'table'   : itb,
+            'insert'  : ins,
+          })
+
+  return 1
 
 def sql_do(ref={}):
   sql       = ref.get('sql','')
@@ -527,6 +610,33 @@ def delete(ref={}):
 
   return 1
 
+
+def _sql_ct_info(
+     # 'base' table
+     tbase='',
+     # join column
+     jcol='',
+     # 'base' column
+     bcol='', 
+     # 'info' column
+     icol=''
+  ):
+
+  if not icol:
+    icol = bcol
+
+  q = f'''
+    CREATE TABLE IF NOT EXISTS _info_{tbase}_{bcol} (
+        {jcol} TEXT NOT NULL,
+        {icol} TEXT, 
+        FOREIGN KEY({jcol}) REFERENCES {tbase}({jcol})
+            ON DELETE CASCADE
+            ON UPDATE CASCADE
+    );
+  '''
+
+  return q
+
 def insert_dict(ref={}):
   conn     = ref.get('conn')
   table    = ref.get('table')
@@ -537,7 +647,7 @@ def insert_dict(ref={}):
   insert     = ref.get('insert',{})
   sql_insert = ref.get('sql_insert') or 'INSERT OR REPLACE'
 
-  fields   = insert.keys()
+  fields   = list(insert.keys())
 
   if ( len(fields) == 0 ) or not table:
     return 

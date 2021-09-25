@@ -18,9 +18,10 @@ import jinja2
 
 import yaml
 
-from lxml.html.clean import Cleaner
-from lxml import etree
+#from lxml.html.clean import Cleaner
+#from lxml import etree
 import lxml.html
+
 from io import StringIO, BytesIO
 
 from Extern.Pylatex import Package
@@ -129,6 +130,7 @@ class LTS(
     acts = [
       [ 'init_dirs' ],
       [ 'init_tmpl' ],
+      [ 'init_db' ],
     ]
 
     util.call(self,acts)
@@ -479,6 +481,17 @@ class LTS(
     text = t.render(**ref)
 
     return text
+
+  def init_db(self):
+
+    self.prj.init_db()
+
+    return self
+
+  def db_base2info(self, ref = {}):
+    self.prj.db_base2info()
+
+    return self
 
   def db_secs_list(self, ref = {}):
     pat  = ref.get('pat','')
@@ -1059,38 +1072,26 @@ class LTS(
     xpath = ref.get('xpath')
     file  = ref.get('file')
 
+    unwrap = util.get('preprocess.unwrap')
+
     with open(file,'r') as f:
       html = f.read()
 
     self.etree = lxml.etree
     hp = lxml.etree.HTMLParser(encoding='utf-8')
-    #import pdb; pdb.set_trace()
-    #print(dir(self.etree))
-    #return self
 
-    #self.xtree = lxml.html.parse(file,parser=hp)
-    #self.xtree = lxml.html.parse(file)
-#    cleaner = Cleaner(
-        #javascript = True,
-        #scripts = True,
-        #meta = True,
-        #page_structure = True,
-    #)
-    #cleaner.style = True
-    #html = cleaner.clean_html(html)
-    #print(html)
-
-    self.soup = BeautifulSoup(html,'html5lib',from_encoding='utf-8')
-    for k in ['div','span']:
-      while 1:
-        div = self.soup.select_one(k)
-        if not div:
-          break
-        div.unwrap()
-
-    html = self.soup.prettify()
-    with open('p_w.html', 'w') as f:
-      f.write(self.soup.prettify())
+    if unwrap:
+      self.soup = BeautifulSoup(html,'html5lib',from_encoding='utf-8')
+      for k in ['div','span']:
+        while 1:
+          div = self.soup.select_one(k)
+          if not div:
+            break
+          div.unwrap()
+  
+      html = self.soup.prettify()
+      with open('p_w.html', 'w') as f:
+        f.write(self.soup.prettify())
 
     self.xtree = lxml.etree.parse(StringIO(html),parser=hp)
     self.xroot = self.xtree.getroot()
@@ -1101,13 +1102,11 @@ class LTS(
        for elem in elems:
          txt = None
          n = type(elem).__name__
-         #import pdb; pdb.set_trace()
          if n in [ 'HtmlElement','_Element' ]:
            txt = self.etree.tostring(
                    elem,
                    encoding='unicode',
                    pretty_print=True)
-           #print(elem.text)
          elif n == '_ElementUnicodeResult':
            txt = elem.__str__()
          out.append(txt)
@@ -1116,8 +1115,8 @@ class LTS(
        print(f'[xpath]: {e}')
 
     t = '\n'.join(out) + '\n'
-    t = f'<div>{t}</div>'
-    #print(t)
+    print(t)
+    #t = f'<div>{t}</div>'
 #    trx = lxml.etree.parse(StringIO(t), hp)
     #tt = lxml.etree.tostring(
          #trx,

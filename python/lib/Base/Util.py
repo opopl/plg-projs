@@ -68,14 +68,15 @@ def dict2list(dct={}, keys=[]):
   lst = list(map(lambda x: _val(x),kk))
   return lst
 
-def dictnew(path, val):
+def dictnew(path='', val='', sep='.'):
   ''' 
     d = dictnew('a.b.c.d',value)
+    d = dictnew('a/b/c/d',value,sep='/')
   ''' 
   def _dictnew(dct, path, val):
-    while path.startswith('.'):
+    while path.startswith(sep):
       path = path[1:]
-    parts = path.split('.', 1)
+    parts = path.split(sep, 1)
     if len(parts) > 1:
         branch = dct.setdefault(parts[0], {})
         _dictnew(branch, parts[1], val)
@@ -136,9 +137,19 @@ def url_parse_query(query=''):
   return d
 
 def url_parse(url,opts={}):
+  d = {}
+
+  if get(opts,'rm_@'):
+    m = re.match(r'^(?P<scheme>\w+://)(?P<login>\w+):(?P<pwd>\S+)@(?P<host>[^\s/]+)(?P<end>.*)$',url)
+    if m:
+      url = ''.join([ m.group('scheme'), m.group('host'), m.group('end') ])
+      d.update({ 
+         'login' : m.group('login'),
+         'pwd'   : m.group('pwd'),
+      })
+
   u = urlparse(url)
 
-  d = {}
   host = u.netloc.split(':')[0]
 
   scheme = u.scheme 
@@ -158,10 +169,16 @@ def url_parse(url,opts={}):
 
   basename = posixpath.basename(u.path)
 
+  port = ''
+  try:
+    port = u.port or ''
+  except:
+    pass
+
   d = {
     'scheme'   : scheme,
     'path'     : u.path,
-    'port'     : u.port or '',
+    'port'     : port,
     'fragment' : u.fragment,
     'netloc'   : u.netloc,
     'params'   : u.params,
@@ -375,13 +392,16 @@ def x(code,globs={},locs={}):
 
   return result
 
-def get(obj, path, default = None):
+def get(obj, path = '', default = None, sep = '.', cp=False):
     if type(path) is str:
-      keys = path.split(".")
+      keys = path.split(sep)
     elif type(path) is list:
       keys = path
 
     if not keys:
+      if cp:
+        default = copy.deepcopy(default)
+
       return default
 
     for k in keys:
@@ -404,6 +424,10 @@ def get(obj, path, default = None):
         else:
           obj = default
           break
+
+    if cp:
+      obj = copy.deepcopy(obj)
+
     return obj
 
 def var_type(x):

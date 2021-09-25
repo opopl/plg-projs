@@ -91,6 +91,7 @@ our $secs = {
 
 ###fbicons
 our %fbicons = (
+  '🙌' => 'hands.raising',
   '💃' => 'woman.dancing',
   '🌻' => 'sunflower',
   '👅' => 'tongue',
@@ -128,6 +129,7 @@ our %fbicons = (
   '✔️'  => 'check.mark',
   '✌️'  => 'hand.victory',
   '9️⃣'  => 'digit.nine.keycap',
+  '0️⃣'  => 'digit.zero.keycap',
   '↕️'  => 'arrow.updown',
   '🎣' => 'fishing',
   '💎' => 'gem',
@@ -155,10 +157,22 @@ our %fbicons = (
   '🤎' => 'heart.brown',
   '🎶' => 'musical.notes',
   '🌅' => 'sunrise',
+  '🏃' => 'runner',
+  '🕯' => 'candle',
+  '👇' => 'pointing.down',
+  '🖕' => 'finger.middle',
+  '💥' => 'collision',
+  '💫' => 'dizzy',
 );
 
 ###fbicons_face
 our %fbicons_face = (
+  '😱' => 'face.screaming.in.fear',
+  '🥴' => 'face.woozy',
+  '👿' => 'face.angry.horns',
+  '🥺' => 'face.pleading',
+  '😠' => 'face.angry',
+  '😝' => 'face.squinting.tongue',
   '😳' => 'face.flushed',
   '😞' => 'face.disappointed',
   '🤨' => 'face.eyebrow.raised',
@@ -682,6 +696,29 @@ sub jnd {
       jlines => [@lines],
     );
     my $p = Plg::Projs::Build::Maker::Jnd::Processor->new(%n);
+
+    _new2s();
+}
+
+sub fbb {
+    _lines();
+
+    my %f = ( au => 1 );
+    for(@lines){
+        next if _ln_push($_);
+
+        if ($f{au}) {
+           push @new,qq/\\iusr{$_}/;
+           $f{au} = undef;
+           next;
+        }
+
+        /^\s*·.*/ && do { 
+           $f{au}=1; push @new,''; next; 
+        };
+
+        push @new,$_;
+    }
 
     _new2s();
 }
