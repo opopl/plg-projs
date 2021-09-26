@@ -526,15 +526,6 @@ function! projs#sec#add_to_db (sec,...)
     \ "tags"   : tags,
     \ }
   call extend(h,db_data)
-  
-  let ref = {
-    \ "dbfile" : dbfile,
-    \ "i"      : "INSERT OR REPLACE",
-    \ "t"      : t,
-    \ "h"      : h,
-    \ }
-    
-  "call pymy#sqlite#insert_hash(ref)
 python3 << eof
 import vim
 from plg.projs.Prj.Prj import Prj

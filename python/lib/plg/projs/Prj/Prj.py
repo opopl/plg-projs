@@ -44,7 +44,9 @@ class Prj(
   # add section to database
   def add(self,section={}):
     d = {}; dd = {}
+
     cols = Section.cols
+
     tbase = 'projs'
 
     if type(section) in [dict]:
