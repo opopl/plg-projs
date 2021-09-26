@@ -480,8 +480,6 @@ endif
 function! projs#db#secnames (...)
   let ref  = get(a:000,0,{})
 
-  call projs#db#init_py ()
-
   let proj = projs#proj#name()
 
   if base#type(ref) == 'String'
@@ -490,12 +488,12 @@ function! projs#db#secnames (...)
     let proj = get(ref,'proj',proj)
   endif
 
-  let ext = get(ref,'ext','')
   let pat = get(ref,'pat','')
+  let ext = get(ref,'ext','')
 
 python3 << eof
 import vim
-from plg.projs.Prj import Prj
+from plg.projs.Prj.Prj import Prj
 
 db_file = vim.eval('projs#db#file()')
 root    = vim.eval('projs#root()')
@@ -513,13 +511,13 @@ prj = Prj({
   'db_file' : db_file,
 })
 
-secs = prj._sections({ 
+listsecs = prj._listsecs({ 
   'pat' : pat, 
   'ext' : ext
 })
-
+secs_ = listsecs._names()
 eof
-  let secs = py3eval('secs')
+  let secs = py3eval('secs_')
   return secs
 
 endfunction

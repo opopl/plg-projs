@@ -10,7 +10,7 @@ import Base.Const as const
 import Base.Rgx as rgx
 import plg.projs.db as projs_db
 
-from plg.projs.Prj import Prj
+from plg.projs.Prj.Prj import Prj
 
 import jinja2
 

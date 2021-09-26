@@ -91,6 +91,8 @@ our $secs = {
 
 ###fbicons
 our %fbicons = (
+  '👌' => 'hand.ok',
+  '🎯' => 'direct.hit',
   '🙌' => 'hands.raising',
   '💃' => 'woman.dancing',
   '🌻' => 'sunflower',
@@ -220,6 +222,8 @@ our %fbicons_face = (
   '☻'  => 'face.smiling.black',
   '😥' => 'face.sad.but.relieved',
   '🤕' => 'face.head.bandage',
+  '😔' => 'face.pensive',
+  '😪' => 'face.sleepy',
 );
 
 %fbicons = ( 

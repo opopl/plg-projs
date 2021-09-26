@@ -12,7 +12,7 @@ import plg.projs.db as projs_db
 
 from bs4 import BeautifulSoup, Comment
 
-from plg.projs.Prj import Prj
+from plg.projs.Prj.Prj import Prj
 
 import jinja2
 
@@ -497,12 +497,12 @@ class LTS(
     pat  = ref.get('pat','')
     ext  = ref.get('ext','')
 
-    secs = self.prj._sections({ 
+    pat = 'aa'
+    listsecs = self.prj._listsecs({ 
       'pat' : pat,
       'ext' : ext,
     })
-
-    for sec in secs:
+    for sec in listsecs._names():
       print(sec)
 
     return self
@@ -510,9 +510,9 @@ class LTS(
   def _tex_preamble_names(self, ref = {}):
     dir = self._dir('tex.preambles','')
     names = util.find({ 
-      'dirs' : [dir],
-      'inc'  : 'dir',
-      'relpath'  : 1,
+      'dirs'    : [dir],
+      'inc'     : 'dir',
+      'relpath' : 1,
     })
     return names
 

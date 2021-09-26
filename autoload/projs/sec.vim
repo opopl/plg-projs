@@ -534,7 +534,28 @@ function! projs#sec#add_to_db (sec,...)
     \ "h"      : h,
     \ }
     
-  call pymy#sqlite#insert_hash(ref)
+  "call pymy#sqlite#insert_hash(ref)
+python3 << eof
+import vim
+from plg.projs.Prj.Prj import Prj
+from plg.projs.Prj.Section import Section
+
+h = vim.eval('h')
+
+db_file = vim.eval('dbfile')
+proj    = vim.eval('proj')
+sec     = vim.eval('sec')
+
+section = Section(h)
+
+prj = Prj({ 
+  'db_file' : db_file,
+  'proj'    : proj,
+})
+
+prj.add(h)
+
+eof
 
 endfunction
 

@@ -223,7 +223,7 @@ def cond_where(ref={}):
         regexp = v
         for key,pat in regexp.items():
           if pat:
-            cond_a.append(f' REGEXP("{pat}",{key}) ')
+            cond_a.append(f' RGX("{pat}",{key}) IS NOT NULL ')
       
       continue
 
@@ -314,10 +314,7 @@ def select(ref={}):
 def conn_cfg(conn):
   conn.row_factory = sqlite3.Row
   conn.create_function("REGEXP", 2, rgx.rgx_match)
-
-def __functionRegex(pattern, value):
-  cpat = re.compile(pattern)
-  return cpat.search(value) is not None
+  conn.create_function("RGX", 2, rgx.rgx_match)
 
 def sql_fetchall(q, p=[], ref={}):
   conn     = ref.get('conn')

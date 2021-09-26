@@ -48,9 +48,9 @@ def search(pat_id,line):
 
 # clone of Plg::Projs::Regex rgx_match
 def rgx_match(pattern,string,flags='',index=0):
-  m = re.match(pattern,string)
+  m = re.search(pattern,string)
   if not m:
-    return 
+    return None 
 
   mtch = m.group(0)
   result = (index and m.group(index)) or m.group(0)
