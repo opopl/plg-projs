@@ -177,6 +177,7 @@ our %fbicons = (
 
 ###fbicons_face
 our %fbicons_face = (
+  '🤪' => 'face.zany',
   '😕' => 'face.confused',
   '🤡' => 'face.clown',
   '😱' => 'face.screaming.in.fear',

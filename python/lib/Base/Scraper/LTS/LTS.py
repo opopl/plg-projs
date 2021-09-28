@@ -20,7 +20,8 @@ import yaml
 
 #from lxml.html.clean import Cleaner
 #from lxml import etree
-import lxml.html
+#import lxml.html
+import lxml
 
 from io import StringIO, BytesIO
 
