@@ -62,7 +62,7 @@ function! projs#zlan#zo#add (...)
     if field == 'url'
       let value = projs#bs#input#url({ 'zfile' : zfile, 'prefix' : prefix })
     elseif field == 'tags'
-      let value = projs#bs#input#tags({ 'prefix' : prefix })
+      let value = projs#input#tags({ 'prefix' : prefix })
     elseif field == 'author_id'
       let value = projs#bs#input#author_id({ 'prefix' : prefix })
     else

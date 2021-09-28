@@ -96,102 +96,23 @@ function! projs#bs#input#tags (...)
   let proj     = projs#proj#name()
 
   let prefix = printf('[ rootid: %s, proj: %s ]',rootid, proj)
-  let prefix = get(ref,'prefix',prefix)
-
-  let tag_list = projs#bs#tags#list()
 
   let msg = printf('%s %s: ',prefix,'tags')
 
-  let msg_tags_del = 'delete: '
+	let tag_list = []
+ 	call extend(tag_list,	projs#bs#tags#list())
 
-  let msg_head = ''
-
-  let msg_head_base_a = [
-      \ '',
-      \ 'Commands:',
-      \ '   ; - skip',
-      \ '   . - finish',
-      \ '   , - delete selected',
-      \ ]
-
-  let msg_head_base = join(msg_head_base_a, "\n")
-
-  " final string with tags chosen, comma-separated list
-  let tgs = ''
-
-  let tags_selected = []
-
-  let keep = 1
-  while keep
-    let cnt = 0
-
-    let cmpl = ''
-    call base#varset('this',tag_list)
-
-    let tgs = input(msg_head . msg,'','custom,base#complete#this')
-
-    let tags_s = tgs
-
-    " finish
-    if tags_s =~ '\.\s*$'
-       let tgs = join(tags_selected, ',')
-       break
-
-    " skip and continue
-    elseif tags_s =~ ';\s*$'
-       let cnt = 1
-
-    " delete selected and continue
-    elseif tags_s =~ ',\s*$'
-       call base#varset('this',tags_selected)
-
-       let tags_del = input(msg_head . msg_tags_del,'','custom,base#complete#this')
-       let tags_del_a = split(tags_del,',')
-
-       let n = []
-       for tag in tags_selected
-         if !base#inlist(tag,tags_del_a)
-           call add(n,tag)
-         endif
-       endfor
-
-       let tags_selected = n
-       call sort(tags_selected)
-
-       let msg_head = msg_head_base 
-          \ . "\n" . 'Tags selected:' 
-          \ . "\n" . join(tags_selected, "\n") . "\n"
-
-       let cnt = 1
-
-     " add and continue
-    else
-       let tags_a = split(tags_s,',')
-       for tag in tags_a
-         if !base#inlist(tag,tags_selected)
-           call add(tags_selected,tag)
-         endif
-       endfor
-
-       call sort(tags_selected)
-       let tags_n = ''
-       for tg in tags_selected
-         let tags_n .= "  " . tg . "\n"
-       endfor
-
-       let msg_head = msg_head_base 
-          \ . "\n" . 'Tags selected:' 
-          \ . "\n" . tags_n
-       let cnt = 1
-    endif
-
-    if cnt 
-      continue
-    endif
-
-    break
-  endw
-
-  return tgs
+	let r = { 
+		\ 'list'   : tag_list,
+		\ 'thing'  : 'tag',
+		\ 'prefix' : 'select',
+		\ 'msg'    : msg,
+		\ 'header' : [
+				\ 'projs/bs tags selection dialog',
+				\ ],
+		\ }
+	let tags = base#inpx#ctl(r)
+  
+  return tags
 
 endf

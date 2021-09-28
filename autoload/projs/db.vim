@@ -790,6 +790,38 @@ function! projs#db#data_get (...)
   return [ rows_h, cols ]
 endfunction
 
+function! projs#db#tag_list (...)
+  let ref = get(a:000,0,{})
+
+  let proj = projs#proj#name()
+	let proj = base#x#get(ref,'proj',proj)
+
+  "let pat  = base#x#get(ref,'pat','')
+
+python3 << eof
+import vim
+from plg.projs.Prj.Prj import Prj
+
+db_file = vim.eval('projs#db#file()')
+root    = vim.eval('projs#root()')
+rootid  = vim.eval('projs#rootid()')
+
+proj    = vim.eval('proj')
+
+prj = Prj({ 
+  'proj'    : proj,
+  'root'    : root,
+  'rootid'  : rootid,
+  'db_file' : db_file,
+})
+
+taglist = prj._list('tags')
+eof
+  let tag_list = py3eval('taglist')
+  return tag_list
+
+endfunction
+
 function! projs#db#tags_get (...)
   let ref = get(a:000,0,{})
 

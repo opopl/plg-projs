@@ -151,6 +151,24 @@ class Prj(
 
     return section
 
+  def _list(self, bcol='', ref = {}):
+    where = {}
+
+    tbase = 'projs'
+    lst = []
+
+    if bcol in ['tags','author_id']:
+      itb = f'_info_{tbase}_{bcol}'
+      icol = self.b2i.get(tbase,{}).get(bcol,bcol)
+
+      if icol:
+        q = f'''SELECT DISTINCT {icol} FROM {itb} ORDER BY {icol} ASC'''
+        p = []
+  
+        lst = dbw.sql_fetchlist(q,p, { 'db_file' : self.db_file })
+
+    return lst
+
   def _listsecs(self, ref = {}):
     pat  = ref.get('pat','')
     ext  = ref.get('ext','')
