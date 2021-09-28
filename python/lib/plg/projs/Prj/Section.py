@@ -38,3 +38,7 @@ class Section(
 
   def __init__(self,args={}):
     CoreClass.__init__(self,args)
+
+  def _record(self):
+    r = self.__dict__
+    return r

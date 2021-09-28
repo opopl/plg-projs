@@ -83,7 +83,7 @@ class Prj(
     jval = d.get(jcol)
 
     for bcol in ['tags','author_id']:
-      bval = d.get(k) or ''
+      bval = d.get(bcol) or ''
 
       if bval:
         ivals = string.split_n_trim(bval,sep=',')
@@ -128,16 +128,34 @@ class Prj(
        'tbase'  : tbase,
        'jcol'   : 'file',
        'bcols'  : [ 'tags','author_id' ],
-       'b2i'    : self.b2i.get(tbase,{})
+       'b2i'    : self.b2i.get(tbase,{}),
        'bwhere' : where,
     }
     dbw.base2info(r)
 
     return self
 
+  # return 
+  def _section(self, ref = {}):
+    proj = ref.get('proj',self.proj)
+
+    w = {}
+    for k in ['sec','file','url']:
+      v = ref.get(k) 
+      if v not in ['',None]:
+        w.update({ k : v })
+
+    listsecs = self._listsecs({ 'proj' : proj, 'where' : w })
+
+    section = listsecs.first
+
+    return section
+
   def _listsecs(self, ref = {}):
     pat  = ref.get('pat','')
     ext  = ref.get('ext','')
+
+    iwhere = ref.get('where',{})
 
     proj = ref.get('proj',self.proj)
 
@@ -147,15 +165,16 @@ class Prj(
     if ext:
       regexp.update({ 'file' : f'\.{ext}$' })
 
+    where = { 'proj' : proj }
+    if len(regexp):
+      where.update({ '@regexp' : regexp })
+    where.update(iwhere)
+
     r = dbw.select({ 
       'table'   : 'projs',
       'db_file' : self.db_file,
       'orderby' : { 'sec' : 'asc' },
-      'select' : [ 'sec', f'RGX("{pat}",sec)' ],
-      'where' : {
-        'proj'    : proj,
-        '@regexp' : regexp
-      }
+      'where'   : where,
     })
     rows = r.get('rows',[])
 

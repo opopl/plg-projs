@@ -1160,15 +1160,30 @@ class LTS(
       'proj' : self.proj,
     }
 
+    tbase = 'projs'
+
     data = self._sec_file_data({ 'sec' : sec })
     author_id_new = data.get('author_id','')
     dbw.update_dict({
       'db_file' : self.db_file_projs,
-      'table' : 'projs',
+      'table' : tbase,
       'update' : {
          'author_id' : author_id_new
       },
       'where' : where
+    })
+
+    jcol = 'file'
+    b2i  = { 'tags' : 'tag' }
+    bcols = ['tags','author_id']
+
+    dbw.base2info({
+      'db_file' : self.db_file_projs,
+      'tbase'   : tbase,
+      'bwhere'  : where,
+      'jcol'    : jcol,
+      'b2i'     : b2i,
+      'bcols'   : bcols
     })
 
     return self

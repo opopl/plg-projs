@@ -88,9 +88,12 @@ our $secs = {
   ]
 };
 
-
 ###fbicons
 our %fbicons = (
+  '🏆' => 'trophy',
+  '🥇' => 'medal.first.place',
+  '🥊' => 'boxing.glove',
+  '🌹' => 'rose',
   '👌' => 'hand.ok',
   '🎯' => 'direct.hit',
   '🙌' => 'hands.raising',
@@ -115,6 +118,7 @@ our %fbicons = (
   '💛' => 'heart.yellow',
   '💯' => '100.percent',
   '☝️'  => 'index.pointing.up',
+  '💭' => 'thought.baloon',
   '🖤' => 'heart.black',
   '⤵️'  => 'right.arrow.curving.down',
   '🦉' => 'owl',
@@ -165,10 +169,16 @@ our %fbicons = (
   '🖕' => 'finger.middle',
   '💥' => 'collision',
   '💫' => 'dizzy',
+  '🤘' => 'horns',
+  '✅' => 'check.mark.white.heavy',
+  '❣️'  => 'heart.exclamation',
+  '💌' => 'love.letter',
 );
 
 ###fbicons_face
 our %fbicons_face = (
+  '😕' => 'face.confused',
+  '🤡' => 'face.clown',
   '😱' => 'face.screaming.in.fear',
   '🥴' => 'face.woozy',
   '👿' => 'face.angry.horns',
@@ -224,6 +234,8 @@ our %fbicons_face = (
   '🤕' => 'face.head.bandage',
   '😔' => 'face.pensive',
   '😪' => 'face.sleepy',
+  '🤓' => 'face.nerd',
+  '🤩' => 'face.eyes.star',
 );
 
 %fbicons = ( 

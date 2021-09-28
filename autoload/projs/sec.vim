@@ -620,6 +620,28 @@ function! projs#sec#add (sec,...)
   return 1
 endfunction
 
+function! projs#sec#record (sec)
+  let sec    = a:sec
+
+  let proj   = projs#proj#name()
+  let dbfile = projs#db#file()
+python3 << eof
+import vim
+from plg.projs.Prj.Prj import Prj
+
+sec     = vim.eval('sec') or ''
+proj    = vim.eval('proj') or ''
+db_file = vim.eval('dbfile') or ''
+
+prj = Prj({ 'proj' : proj, 'db_file' : db_file })
+section = prj._section({ 'sec' : sec })
+record = section._record()
+eof
+  let record = py3eval('record')
+  return record
+
+endfunction
+
 function! projs#sec#is_date_my (sec)
   let sec = a:sec
 

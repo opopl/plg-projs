@@ -272,7 +272,7 @@ def select(ref={}):
 
   if cond_w:
     if cond:
-      cond = ' AND '.join([ cond, cond_w ])
+      cond = ' AND '.join( list(map(lambda x: f'( {x} )', [ cond, cond_w ] )) )
     else:
       cond = cond_w
 
@@ -285,7 +285,7 @@ def select(ref={}):
 
   q = f'SELECT {select_s} FROM {table}'
   if cond:
-    q += ' WHERE ' + cond
+    q += f' WHERE ( {cond} )'
     p.extend(values_w)
 
   q += cond_orderby({ 'orderby' : orderby })
