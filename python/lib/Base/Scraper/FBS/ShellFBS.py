@@ -117,7 +117,7 @@ class ShellFBS(Cmd):
      etree = fbs.etree
 
      # page tree
-     xtree = fbs.xtree
+     #xtree = fbs.xtree
 
      try:
        elems = fbs.xtree.xpath(xpath)
@@ -130,8 +130,7 @@ class ShellFBS(Cmd):
            txt = elem.__str__()
          out.append(txt)
      except:
-       e = sys.exc_info()
-       print(f'[xpath]: {e}')
+       fbs.lg('fbs','error',f'xpath: {xpath}',exc_info=True)
 
      for ln in out:
        print(ln)

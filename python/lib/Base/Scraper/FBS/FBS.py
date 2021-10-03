@@ -29,6 +29,10 @@ from Base.Mix.mixGetOpt import mixGetOpt
 
 from Base.Mix.mixFileSys import mixFileSys
 
+from Base.Mix.mixLg import mixLg
+from Base.Mix.mixDrv import mixDrv
+from Base.Mix.mixEval import mixEval
+
 # load yaml/zlan - load_zlan, load_yaml
 from Base.Mix.mixLoader import mixLoader
 
@@ -43,6 +47,8 @@ from Base.Scraper.FBS.ShellFBS import ShellFBS
 
 from Base.Scraper.PicBase import PicBase
 
+from dict_recursive_update import recursive_update
+
 
 #p [ x['clist'] for x in clist if 'clist' in x and len(x['clist'])]
  
@@ -54,6 +60,9 @@ class FBS(CoreClass,
         mixFileSys,
 
         mxDB,
+        mixLg,
+        mixEval,
+        mixDrv,
     ):
 
     vars = {
@@ -75,9 +84,6 @@ class FBS(CoreClass,
         'auth' : 0 
       }
     }
-
-    # browser (Firefox) driver
-    driver = None
 
     # what is done
     done = {}
@@ -160,28 +166,25 @@ class FBS(CoreClass,
       print('[init] start')
 
       acts = [
-        'load_yaml',
-        'load_zlan',
-        'init_drv',
+        # mixLoader:  load_yaml(), load_zlan()
+        'load_yaml',   
+        'load_zlan',   
+        'evl',   
+        # mixLg: init_lg(path)
+        'init_lg',
+        #'init_drv',
       ] 
 
       util.call(self, acts)
 
       return self
 
-    def drv_get(self,url):
-      if not url:
-        return self
 
-      try:
-        self.driver.get(url)
-      except:
-        e = sys.exc_info()[0]
-        print(f'[drv_get] fail: {e[0]}')
 
-      return self
+
 
     def init_drv(self):
+      self.lg('fbs','info','[init_drv] start')
 
       if not self.fp:
         fp = webdriver.FirefoxProfile()
@@ -192,13 +195,13 @@ class FBS(CoreClass,
  
         self.fp = fp
 
-        print('[init_drv] init firefox profile')
+        self.lg('fbs','info','[init_drv] init firefox profile')
 
       if not self.driver:
         driver = webdriver.Firefox(self.fp)
         self.driver = driver
 
-        print('[init_drv] init firefox driver')
+        self.lg('fbs','info','[init_drv] init firefox driver')
 
       return self
 
@@ -256,10 +259,14 @@ class FBS(CoreClass,
         if v != None:
           r[k] = v
 
-      self.auth_fb()
+      c = self.get('class.fbpost',{})
+      if c and len(c):
+        recursive_update(r, c)
 
       self.post = FbPost(r)
+      import pdb; pdb.set_trace()
 
+      self.auth_fb()
       self.post.process()
 
       return self
@@ -322,11 +329,12 @@ class FBS(CoreClass,
         if not os.path.isfile(self.f_cookies):
           return self
 
-        print(f'Loading cookie file: {self.f_cookies}')
+        self.lg('fbs','info',f'Loading cookie file: {self.f_cookies}')
 
         cookies = pickle.load(open(self.f_cookies, "rb"))
-        for cookie in cookies:
-          self.driver.add_cookie(cookie)
+        if self.driver:
+          for cookie in cookies:
+            self.driver.add_cookie(cookie)
 
         time.sleep(2) 
 

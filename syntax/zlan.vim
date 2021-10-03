@@ -22,7 +22,7 @@ highlight link IfOff Comment
 syntax keyword zlanOp set unset setlist setdict
 syntax keyword zlanOp listpush dictex
 
-syntax keyword zlanKey page global todo
+syntax keyword zlanKey page global todo video
 syntax keyword zlanKeyword url title in ii tags date imgbase rids author_id
 syntax keyword zlanKeyword condition site problem
 syntax keyword zlanKeyword on eof

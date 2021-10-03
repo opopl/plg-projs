@@ -90,6 +90,7 @@ our $secs = {
 
 ###fbicons
 our %fbicons = (
+  '👊' => 'fist.oncoming',
   '🏆' => 'trophy',
   '🥇' => 'medal.first.place',
   '🥊' => 'boxing.glove',
@@ -111,6 +112,7 @@ our %fbicons = (
   '💔' => 'heart.broken',
   '😉' => 'wink',
   '👍' => 'thumb.up.yellow',
+  '👎' => 'thumb.down.yellow',
   '❤️'  => 'heart',
   '👏' => 'hands.applause.yellow',
   '♥️'  => 'heart.suit',
@@ -173,15 +175,31 @@ our %fbicons = (
   '✅' => 'check.mark.white.heavy',
   '❣️'  => 'heart.exclamation',
   '💌' => 'love.letter',
+  '🍀' => 'clover',
+  '😺' => 'cat.grinning',
+  '😻' => 'cat.heart.eyes',
+  '🙀' => 'cat.weary',
+  '🌺' => 'hibiscus',
+  '🎬' => 'clapboard',
+  '☄️'  => 'comet',
+  '💞' => 'hearts.revolving',
+  '👼' => 'baby.angel',
 );
 
 ###fbicons_face
 our %fbicons_face = (
+  '🥳' => 'face.partying',
+  '🤤' => 'face.drooling',
+  '😲' => 'face.astonished',
+  '😴' => 'face.sleeping',
+  '🤑' => 'face.money.mouth',
+  '😤' => 'face.steam.nose',
   '🤪' => 'face.zany',
   '😕' => 'face.confused',
   '🤡' => 'face.clown',
   '😱' => 'face.screaming.in.fear',
   '🥴' => 'face.woozy',
+  '😈' => 'face.smiling.horns',
   '👿' => 'face.angry.horns',
   '🥺' => 'face.pleading',
   '😠' => 'face.angry',

@@ -3,6 +3,7 @@ import Base.DBW as dbw
 import Base.Util as util
 
 class mixLogger:
+  loggers = {}
 
   def die(self,msg='',opts = {}):
     self.log(msg)
@@ -84,3 +85,4 @@ class mixLogger:
 
     return self
 
+ 

@@ -97,8 +97,8 @@ def call(obj, subn, args_in = []):
     for a in subn:
       if type(a) in [list]:
         sub  = a.pop(0)
-        args = a.pop(0) if len(a) else args_in
-        call(obj,sub,args)
+        args_ = a.pop(0) if len(a) else args_in
+        call(obj,sub,args_)
 
       elif type(a) in [str]:
         sub  = a
@@ -108,7 +108,10 @@ def call(obj, subn, args_in = []):
     if subn in dir(obj):
       sub = getattr(obj,subn)
       if callable(sub):
-        res = sub(*args)
+        if type(args) in [list]:
+          res = sub(*args)
+        elif type(args) in [dict]:
+          res = sub(**args)
 
   return res
 
@@ -391,6 +394,48 @@ def x(code,globs={},locs={}):
     print(f'[Util.x_bare] {e[0]}')
 
   return result
+
+def getx(obj, path = '', default = None, sep = '.', cp=False):
+    keys = []
+    if type(path) is str:
+      keys = path.split(sep)
+    elif type(path) is int:
+      keys = [ f'{path}' ]
+    elif type(path) is list:
+      keys = path
+
+    if not keys:
+      if cp:
+        default = copy.deepcopy(default)
+
+      return default
+
+    for k in keys:
+      if obj in ['',None]:
+        obj = default
+        break
+      if isinstance(obj,dict):
+        if k in obj:
+          obj = obj.get(k)
+          if obj in [ None,'' ]:
+            obj = default
+        else:
+          obj = default
+          break
+      elif isinstance(obj,object):
+        if hasattr(obj,k):
+          obj = getattr(obj, k)
+          if obj in [ None,'' ]:
+            obj = default
+        else:
+          obj = default
+          break
+
+    if cp:
+      obj = copy.deepcopy(obj)
+
+    return obj
+
 
 def get(obj, path = '', default = None, sep = '.', cp=False):
     if type(path) is str:

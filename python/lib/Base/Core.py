@@ -1,14 +1,18 @@
 
 import os,sys
 import json
+import copy
 
 import Base.Util as util
+
+from dict_recursive_update import recursive_update
 
 class CoreClass:
 
   def __init__(self,args={}):
-    for k, v in args.items():
-      setattr(self, k, v)
+    recursive_update(self.__dict__, args)
+    #for k, v in args.items():
+      #setattr(self, k, v)
 
   def _json(self):
     jsd = json.dumps(self.__dict__)
@@ -46,9 +50,14 @@ class CoreClass:
     for k, v in ref.items():
       setattr(self, k, v)
 
-  def get(self, path, default=None):
-    val = util.get(self,path,default)
-  
+  def get(self, path='', default=None, cp=False):
+    val = self.__dict__
+    if cp:
+      val = copy.deepcopy(val)
+
+    if path:
+      val = util.get(self,path=path,default=default,cp=cp)
+
     return val
 
   def len(self):

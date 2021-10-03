@@ -113,17 +113,15 @@ function! projs#author#select_id (...)
   let author_id = get(ref,'author_id','')
 
   let ids = projs#author#ids_db()
-
-  let rootid = projs#rootid()
-
-  call base#varset('this',ids)
-
-  while(1)
-    let author_id = input( printf('[rootid: %s] author_id: ',rootid),author_id,'custom,base#complete#this')
-    if len(author_id)
-      break
-    endif
-  endw
+	let r = { 
+	  \ 'list'  : ids,
+	  \ 'thing' : 'author_id',
+	  \ 'prefix' : 'select',
+	  \ 'header' : [
+	    \ 'author_id selection dialog',
+	    \ ],
+	  \ }
+	let author_id = base#inpx#ctl(r)
 
   return author_id
 

@@ -1,4 +1,5 @@
 
+from dict_recursive_update import recursive_update
 
 from selenium import webdriver
 
@@ -37,9 +38,16 @@ from Base.Scraper.PicBase import PicBase
 import base64
 import hashlib
 
+from Base.Mix.mixLg import mixLg
+from Base.Mix.mixEval import mixEval
+
 from copy import copy
 
-class FbPost(CoreClass,mixFileSys):
+class FbPost(
+     CoreClass,
+     mixFileSys,
+     mixLg
+  ):
   # mobile url, TEXT
   url_m = ''
 
@@ -72,8 +80,19 @@ class FbPost(CoreClass,mixFileSys):
   piccount = 0
 
   def __init__(self,args={}):
-    for k, v in args.items():
-      setattr(self, k, v)
+    CoreClass.__init__(self,args)
+
+    acts = [
+      # mixLg
+      'init_lg',
+      'init_dirs',
+      'init_url',
+    ]
+
+    util.call(self,acts)
+    import pdb; pdb.set_trace()
+
+  def init_dirs(self):
 
     cwd = os.getcwd()
     self.dirs.update({ 
@@ -98,6 +117,10 @@ class FbPost(CoreClass,mixFileSys):
           'post_tex'  : self._dir('out_post','p.tex'),
       })
 
+    return self
+
+  def init_url(self):
+
     if self.url:
       u = util.url_parse(self.url)
   
@@ -105,6 +128,8 @@ class FbPost(CoreClass,mixFileSys):
   
       if m:
         self.url_m = util.url_join('https://mobile.facebook.com',u['path'])
+
+    return self
 
   def dict_json(self, ref={}):
 
@@ -420,7 +445,7 @@ class FbPost(CoreClass,mixFileSys):
 
     i    = 1
 
-    imax = app._cfg('FbPost.funcs.loop_prev.imax') or 10
+    imax = self.get('config.funcs.loop_prev.imax') or 10
     imax = ref.get('imax') or imax
 
     ccc = 0
