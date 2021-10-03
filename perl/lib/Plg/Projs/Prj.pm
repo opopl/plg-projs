@@ -17,8 +17,6 @@ use File::Find qw(find);
 use Base::XML::Dict qw(xml2dict);
 use XML::LibXML::Cache;
 
-use Plg::Projs::Piwigo::SQL;
-
 use Base::DB qw(
     dbi_connect
     dbh_select_as_list
@@ -50,7 +48,6 @@ sub init {
 
     $self
         ->init_proj
-        #->init_pwg
         ->init_db
         ;
 
@@ -158,19 +155,6 @@ sub _projects {
     }
 
     wantarray ? @$projects : $projects;
-}
-
-sub init_pwg {
-    my ($self) = @_;
-
-    if ($self->{load_pwg}) {
-        local @ARGV = ();
-        $self->{pwg} ||= eval { Plg::Projs::Piwigo::SQL->new; };
-    }
-
-    $self->{tags_img} ||= [qw(projs), ( $self->{proj}, $self->{root_id} )];
-
-    return $self;
 }
 
 sub init_proj {

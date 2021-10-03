@@ -540,14 +540,5 @@ sub run {
 
 1;
 
-=head2 SEE ALSO
-
-    see also:
-        Plg::Projs::Build::Maker
-            cmd_insert_pwg
-                cnv_img_begin
-=cut
-
-1;
  
 

@@ -24,7 +24,6 @@ use base qw(
     Plg::Projs::Build::Maker::Sec
     Plg::Projs::Build::Maker::Pats
 
-    Plg::Projs::Build::Maker::Pwg
     Plg::Projs::Build::Maker::Jnd
     Plg::Projs::Build::Maker::Tree
 );
@@ -49,7 +48,6 @@ use JSON::Dumper::Compact;
 use FindBin qw($Bin $Script);
 use File::Find qw(find);
 
-use Plg::Projs::Piwigo::SQL;
 use Plg::Projs::Prj;
 
 

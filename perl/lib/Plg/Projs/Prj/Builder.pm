@@ -56,11 +56,6 @@ sub inj_base {
         print_ii_tree
     );
 
-    my %old = (
-        # Plg::Projs::Build::Maker::Pwg cmd_build_pwg
-       'compile_pwg'      => 'build_pwg',
-    );
-
     my $h = {
         trg_list => [qw( usual )],
         maps_act => {
@@ -72,8 +67,7 @@ sub inj_base {
             'show_trg'         => sub { $bld->act_show_trg; },
             'show_acts'        => sub { $bld->act_show_acts; },
             'dump_bld'         => sub { $bld->act_dump_bld; },
-            %print,
-            %old
+            %print
         },
         act_default    => 'compile',
         target_default => 'usual',
