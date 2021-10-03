@@ -274,7 +274,6 @@ sub init {
     hash_inject($mkr, $h);
 
     $mkr
-       #->init_pwg
        ->init_img
        ->init_prj
        ->init_ii_include

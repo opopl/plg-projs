@@ -170,7 +170,6 @@ sub init_proj {
         proj     => $proj,
         root     => $root,
         root_id  => $root_id,
-        load_pwg => 0,
     };
 
     hash_inject($self, $h);
