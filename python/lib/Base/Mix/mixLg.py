@@ -31,9 +31,6 @@ class mixLg:
 
     lfile = lg_conf.get('file')
 
-    #if type(self).__name__ == 'FbPost':
-      #import pdb; pdb.set_trace()
-
     if lfile:
       if os.path.isfile(lfile):
         os.remove(lfile)
@@ -68,6 +65,7 @@ class mixLg:
           lg.addHandler(handler)
 
       self.loggers.update({ name : lg })
+
 
     return self
 

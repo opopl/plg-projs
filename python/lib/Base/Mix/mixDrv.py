@@ -9,6 +9,10 @@ from selenium.webdriver.common.by import By
 from seleniumwire import webdriver as webDriverWire
 from selenium import webdriver as webDriver
 
+import time
+import os,sys,re
+import pickle
+
 class mixDrv:
 
   # browser (Firefox) driver
@@ -22,6 +26,28 @@ class mixDrv:
       self.driver.get(url)
     except:
       self.lg('driver','error',f' driver.get(url), url = {url}',exc_info=True)
+
+    return self
+
+  def drv_save_cookies(self,file=''):
+    self.lg('driver','info',f'Saving cookie file: {file}')
+
+    pickle.dump( self.driver.get_cookies(), open(file,"wb"))
+
+    return self
+
+  def drv_load_cookies(self,file=''):
+    if not os.path.isfile(file):
+      return self
+
+    self.lg('driver','info',f'Loading cookie file: {file}')
+
+    cookies = pickle.load(open(file, "rb"))
+    if self.driver:
+      for cookie in cookies:
+        self.driver.add_cookie(cookie)
+
+    time.sleep(2) 
 
     return self
 

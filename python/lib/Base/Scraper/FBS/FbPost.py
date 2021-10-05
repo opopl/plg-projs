@@ -46,7 +46,8 @@ from copy import copy
 class FbPost(
      CoreClass,
      mixFileSys,
-     mixLg
+     mixLg,
+     mixDrv,
   ):
   # mobile url, TEXT
   url_m = ''
@@ -65,6 +66,8 @@ class FbPost(
 
   # current comment
   cmt = {}
+
+  done = {}
 
   # xml.etree.ElementTree instance
   ettree = None
@@ -91,6 +94,22 @@ class FbPost(
 
     util.call(self,acts)
     import pdb; pdb.set_trace()
+
+  def auth(self):
+    if self.done['auth']:
+      return self
+
+    self.login()
+
+    if not os.path.isfile(self.f_cookies):
+      self.login_send()
+      return self
+
+    self.drv_load_cookies(file=self.f_cookies)
+
+    self._done('fb_auth',1)
+
+    return self
 
   def init_dirs(self):
 

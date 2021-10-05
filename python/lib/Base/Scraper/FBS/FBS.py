@@ -302,43 +302,7 @@ class FBS(CoreClass,
 
         return self
 
-    def save_cookies(self):
-        print(f'Saving cookie file: {self.f_cookies}')
 
-        pickle.dump( self.driver.get_cookies(), open(self.f_cookies,"wb"))
-
-        return self
-
-    def auth_fb(self):
-        if self._done('auth_fb'):
-          return self
-
-        self.login_fb()
-
-        if not os.path.isfile(self.f_cookies):
-          self.login_fb_send()
-          return self
-
-        self.load_cookies()
-
-        self._done('fb_auth',1)
-
-        return self
-
-    def load_cookies(self):
-        if not os.path.isfile(self.f_cookies):
-          return self
-
-        self.lg('fbs','info',f'Loading cookie file: {self.f_cookies}')
-
-        cookies = pickle.load(open(self.f_cookies, "rb"))
-        if self.driver:
-          for cookie in cookies:
-            self.driver.add_cookie(cookie)
-
-        time.sleep(2) 
-
-        return self
 
     def parse_page(self,ref={}):
         url = ref.get('url')
@@ -413,16 +377,6 @@ class FBS(CoreClass,
         cval = util.get(self,path,default)
         return cval
 
-    def _done(self,key,val=None):
-        r = None
-        if val == None:
-          r = util.get(self,f'done.{key}')
-        else:
-          r = val
-          self.done.update({ key : val })
-
-        return r
-    
     def _tex_preamble(self):
 
         tex = []
