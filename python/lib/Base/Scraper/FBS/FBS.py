@@ -93,7 +93,8 @@ class FBS(CoreClass,
     # accessible via _cfg() method
     config = {}
 
-    f_cookies = "cookies.pkl"
+    # FbPost instance
+    fbpost = None
 
     post_data = {}
 
@@ -139,11 +140,7 @@ class FBS(CoreClass,
       for k, v in ref.items():
         setattr(self, k, v)
 
-      if not self.email:
-        self.email = os.environ.get('FB_LOGIN')
 
-      if not self.password:
-        self.password = os.environ.get('FB_PASS')
 
     def _host2site(self,host=''):
         hs = self._cfg('host2site',[])
@@ -172,7 +169,7 @@ class FBS(CoreClass,
         'evl',   
         # mixLg: init_lg(path)
         'init_lg',
-        #'init_drv',
+        'init_drv',
       ] 
 
       util.call(self, acts)
@@ -253,7 +250,10 @@ class FBS(CoreClass,
 
     def parse_fbpost(self, ref = {}):
 
-      r = { 'app' : self }
+      r = { 
+         'app'    : self,
+         'driver' : self.driver
+      }
       for k in util.qw('url tags title date ii author_id'):
         v = ref.get(k)
         if v != None:
@@ -263,11 +263,11 @@ class FBS(CoreClass,
       if c and len(c):
         recursive_update(r, c)
 
-      self.post = FbPost(r)
-      import pdb; pdb.set_trace()
-
-      self.auth_fb()
-      self.post.process()
+      if not self.fbpost:
+        self.fbpost = FbPost(r)
+  
+        self.fbpost.authorize()
+        self.fbpost.process()
 
       return self
 
@@ -295,7 +295,6 @@ class FBS(CoreClass,
         acts = [
           'init' , 
           'grab_pages' , 
-          #'save_cookies' , 
         ] 
 
         util.call(self,acts)
@@ -346,22 +345,7 @@ class FBS(CoreClass,
 
         return self
 
-    def login_fb(self):
 
-        url = self._cfg('url.site.facebook.login')
-
-        try:
-          self.driver.get(url)
-          element = WebDriverWait(self.driver, 10).until(
-             EC.presence_of_element_located((By.ID, "m_login_email"))
-          )
-          time.sleep(1)
-        except:
-          ei = sys.exc_info()
-          print(f'[FBS] url get fail: {url}')
-          print(f'fail: {ei}')
-
-        return self
 
     # cfg = self._cfg('driver.click.limit')
     def _cfg(self,path='',default=None):
@@ -385,21 +369,4 @@ class FBS(CoreClass,
 
         return tex
   
-    def login_fb_send(self):
-        #email_element = self.driver.find_element_by_id('email')
-        email_element = self.driver.find_element_by_id('m_login_email')
-        email_element.send_keys(self.email) # Give keyboard input
- 
-        #password_element = self.driver.find_element_by_id('pass')
-        password_element = self.driver.find_element_by_id('m_login_password')
-        password_element.send_keys(self.password) # Give password as input too
- 
-        #login_button = self.driver.find_element_by_id('loginbutton')
-        login_button = self.driver.find_element_by_id('login_password_step_element')
-        login_button.click() # Send mouse click
-
-        time.sleep(2) # Wait for 2 seconds for the page to show up
-
-        self.save_cookies()
-
-        return self
+  

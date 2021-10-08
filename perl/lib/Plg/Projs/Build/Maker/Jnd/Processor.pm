@@ -155,7 +155,11 @@ sub _tex_caption_tab {
 # _width <=> $get_width
 sub _width {
   my ($self, $wd) = @_;
-  my $w = $wd || $self->_val_('d width') || $self->_val_('tab width') || $self->{img_width_default};
+  my $w = $wd 
+  			// $self->_val_('d width') 
+  			// $self->_val_('tab width') 
+  			// $self->_val_('locals width') 
+			// $self->{img_width_default};
 
   return $w;
 }
@@ -393,14 +397,6 @@ sub match_tab_begin {
     $self->_opts_dict($opts_s)
   );
 
-#  my @tab_opts = grep { length } map { defined ? trim($_) : () } split("," => $opts_s);
-  #for(@tab_opts){
-     #my ($k, $v) = (/^([^=]+)(?:|=([^=]+))$/g);
-     #$k = trim($k);
-
-     #$self->{tab}->{$k} = defined $v ? trim($v) : 1;
-  #}
-
   $self->{tab}->{width} ||= ( $self->{img_width_default} / $self->{tab}->{cols} );
   
   push @{$self->{nlines}}, 
@@ -556,7 +552,15 @@ sub _d2tex {
 
   my $wd = $d->{width} || $rw->{width_tex};
 
-  my $o  = sprintf(q{ width=%s },$self->_width_tex($wd));
+  my @o;
+  push @o, sprintf(q{ width=%s },$self->_width_tex($wd));
+
+  if (my $rotate = $d->{rotate}) {
+	#my $dict_rotate = opts_dict($rotate);
+  	push @o, $rotate;
+  }
+
+  my $o = join(",",@o);
 
   my (@ig, $ig_cmd); 
   $ig_cmd = sprintf(q|  \includegraphics[%s]{%s} |, $o, $img_path );
@@ -686,13 +690,14 @@ sub loop {
 ###m_\ifcmt
     m/^\\ifcmt\s*$/g && do { 
         $self->{is_cmt} = 1; 
+        $self->{locals} = {};
         #push @{$self->{nlines}},'{';
         next; 
     };
 ###m_\fi
     m/^\\fi\s*$/g && do { 
        $self->lpush_d;
-       $self->{is_cmt} = undef; 
+       $self->{$_} = undef for(qw(is_cmt locals));  
        #push @{$self->{nlines}},'}';
        next; 
     };
@@ -775,16 +780,20 @@ sub loop {
     };
 
 ###m_@keyword
-    m/^\s*(?:@|)(\w+)\s+(.*)$/g && do { 
-      my $k = $1;
-      my $v = trim($2);
+    m/^\s*(?:@|)(?<key>\w+)\s+(?<value>.*)$/g && do { 
+      my $k = $+{'key'};
+      my $v = trim($+{'value'});
 
-      my ($d, $tab) = @{$self}{qw( d tab )};
+      my ($d, $tab, $locals) = @{$self}{qw( d tab locals )};
       if($d){
          $self->_dict_update($d, $k => $v);
 
       }elsif($tab){
          $self->_dict_update($tab, $k => $v);
+
+      # variables within ifcmt ... fi block
+      }elsif($locals){
+         $self->_dict_update($locals, $k => $v);
       }
 
       next;

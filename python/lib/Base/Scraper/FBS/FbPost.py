@@ -40,6 +40,7 @@ import hashlib
 
 from Base.Mix.mixLg import mixLg
 from Base.Mix.mixEval import mixEval
+from Base.Mix.mixDrv import mixDrv
 
 from copy import copy
 
@@ -48,6 +49,7 @@ class FbPost(
      mixFileSys,
      mixLg,
      mixDrv,
+     mixEval,
   ):
   # mobile url, TEXT
   url_m = ''
@@ -67,7 +69,12 @@ class FbPost(
   # current comment
   cmt = {}
 
-  done = {}
+  email = None
+  password = None
+
+  done = {
+    'authorize' : False,
+  }
 
   # xml.etree.ElementTree instance
   ettree = None
@@ -82,8 +89,15 @@ class FbPost(
   # number of pictures
   piccount = 0
 
+
   def __init__(self,args={}):
     CoreClass.__init__(self,args)
+
+    if not self.email:
+      self.email = os.environ.get('FB_LOGIN')
+
+    if not self.password:
+      self.password = os.environ.get('FB_PASS')
 
     acts = [
       # mixLg
@@ -93,21 +107,59 @@ class FbPost(
     ]
 
     util.call(self,acts)
-    import pdb; pdb.set_trace()
 
-  def auth(self):
-    if self.done['auth']:
+  def login_send(self):
+    if not self.email and self.password:
+      self.lge('login_send - no email and password given')
       return self
 
-    self.login()
+    #email_element = self.driver.find_element_by_id('email')
+    email_element = self.driver.find_element_by_id('m_login_email')
+    email_element.send_keys(self.email) # Give keyboard input
+ 
+    #password_element = self.driver.find_element_by_id('pass')
+    password_element = self.driver.find_element_by_id('m_login_password')
+    password_element.send_keys(self.password) # Give password as input too
+ 
+    #login_button = self.driver.find_element_by_id('loginbutton')
+    login_button = self.driver.find_element_by_id('login_password_step_element')
+    login_button.click() # Send mouse click
 
-    if not os.path.isfile(self.f_cookies):
+    time.sleep(2) # Wait for 2 seconds for the page to show up
+
+    return self
+
+  def goto_login(self):
+    url = util.get(self, 'config.funcs.login.url')
+    if not url:
+      self.lge('[login] no url')
+      return self
+
+    acts = [
+      [ 'drv_get', [ url ]],
+      [ 'drv_wait', [ { 'id' : 'm_login_email' } ]],
+    ]
+    
+    util.call(self,acts)  
+
+    return self
+
+  def authorize(self):
+    if self.done['authorize']:
+      return self
+
+    self.goto_login()
+
+    fc = self._file('cookies')
+    if not os.path.isfile(fc):
       self.login_send()
+      
+      self.drv_save_cookies(file=fc)
       return self
 
-    self.drv_load_cookies(file=self.f_cookies)
+    self.drv_load_cookies(file=fc)
 
-    self._done('fb_auth',1)
+    self.done['authorize'] = True
 
     return self
 
@@ -170,7 +222,7 @@ class FbPost(
       xel = self.xroot
       src = lxml.html.tostring(xel,pretty_print=True,encoding='unicode')
     except:
-      print('fail: FbPost._html()')
+      self.lge('[_html]',exc_info=True)
 
     return src
 
@@ -420,8 +472,11 @@ class FbPost(
     try:
       self.xtree = lxml.html.parse(StringIO(drv.page_source))
       self.xroot = self.xtree.getroot()
+
+      app.xtree = self.xtree
+      app.xroot = self.xroot
     except:
-      print('[FbPost][html2tree] Fail to parse page via lxml.html')
+      self.lge('[html2tree] Fail to parse page via lxml.html')
 
     return self
 
@@ -546,6 +601,8 @@ class FbPost(
     return self
 
   def wf_json(self,ref={}):
+    self.lgi('wf_json')
+
     app = self.app
 
     data = ref.get('data') or self.dict_json()
@@ -564,6 +621,8 @@ class FbPost(
     return self
 
   def wf_html(self,ref={}):
+    self.lgi('wf_html')
+
     app = self.app
 
     html = app.driver.page_source
@@ -573,6 +632,8 @@ class FbPost(
     return self
 
   def wf_tex(self,ref={}):
+    self.lgi('wf_tex')
+
     app = self.app
 
     data = ref.get('data') or self.dict()

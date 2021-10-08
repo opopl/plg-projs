@@ -129,6 +129,7 @@ our %fbicons = (
   '🖤' => 'heart.black',
   '⤵️'  => 'right.arrow.curving.down',
   '🦉' => 'owl',
+  '🔔' => 'bell',
   '❗️' => 'exclamation.mark',
   '🤦' => 'man.facepalming',
   '💋' => 'kiss.mark',
@@ -195,10 +196,14 @@ our %fbicons = (
   '☄️'  => 'comet',
   '💞' => 'hearts.revolving',
   '👼' => 'baby.angel',
+  '📣' => 'megaphone',
+  '🌍' => 'globe.europe.afrika',
 );
 
 ###fbicons_face
 our %fbicons_face = (
+  '😗' => 'face.kissing',
+  '😓' => 'face.downcast.sweat',
   '🥳' => 'face.partying',
   '🤤' => 'face.drooling',
   '😲' => 'face.astonished',

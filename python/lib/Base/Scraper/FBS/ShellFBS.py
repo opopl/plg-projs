@@ -19,6 +19,7 @@ class ShellFBS(Cmd):
        setattr(self, k, v)
 
    def do_q(self,inp):
+     '''quit the shell'''
      return self.do_quit(inp)
 
    def do_h(self,inp):
@@ -63,6 +64,7 @@ class ShellFBS(Cmd):
      return globs
 
    def do_x(self,inp):
+     '''execute Python code'''
      if not inp:
        print('[x] no input!')
        return 
@@ -87,6 +89,7 @@ class ShellFBS(Cmd):
        print(f'fail: {ei[0]}')
 
    def do_xpath_rm(self,xpath):
+     '''remove xpath'''
      if not xpath:
        print('[xpath_rm] no xpath!')
        return 
@@ -106,6 +109,7 @@ class ShellFBS(Cmd):
        print(f'[xpath_rm]: {e}')
 
    def do_xpath(self,xpath):
+     '''execute Xpath''' 
      if not xpath:
        print('[xpath] no xpath!')
        return 
@@ -130,7 +134,7 @@ class ShellFBS(Cmd):
            txt = elem.__str__()
          out.append(txt)
      except:
-       fbs.lg('fbs','error',f'xpath: {xpath}',exc_info=True)
+       fbs.lge(f'xpath: {xpath}',exc_info=True)
 
      for ln in out:
        print(ln)

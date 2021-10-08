@@ -30,14 +30,29 @@ class mixDrv:
     return self
 
   def drv_save_cookies(self,file=''):
+    file = file or self._file('cookies')
+    if not file:
+      self.lg('driver','error',f'drv_save_cookies - No cookies file')
+      return self
+
     self.lg('driver','info',f'Saving cookie file: {file}')
 
     pickle.dump( self.driver.get_cookies(), open(file,"wb"))
 
     return self
 
+  ''' see also: drv_save_cookies
+  '''
   def drv_load_cookies(self,file=''):
+    file = file or self._file('cookies')
+    print(file)
+
+    if not file:
+      self.lg('driver','error',f'drv_load_cookies - No cookie file')
+      return self
+
     if not os.path.isfile(file):
+      self.lg('driver','error',f'drv_load_cookies - Cookie file does not exist: {file}')
       return self
 
     self.lg('driver','info',f'Loading cookie file: {file}')
@@ -47,7 +62,7 @@ class mixDrv:
       for cookie in cookies:
         self.driver.add_cookie(cookie)
 
-    time.sleep(2) 
+    time.sleep(2)
 
     return self
 
@@ -59,6 +74,8 @@ class mixDrv:
 
     # mixEval
     r_wait = self._eval_all(r_wait)
+
+    w_id    = r_wait.get('id','')
 
     w_xpath = r_wait.get('xpath','')
 
@@ -80,8 +97,8 @@ class mixDrv:
     elif type(r_url) in [str]:
       w_url = r_url
 
-    cond_keys = [ 
-      'text.contains' 
+    cond_keys = [
+      'text.contains'
     ]
 
     def _wait_condition(drv):
@@ -91,18 +108,32 @@ class mixDrv:
 
       elem = None; elem_txt = None
 
+###wait_xpath
       if len(w_xpath_list):
         for w_xpath in w_xpath_list:
           elem = drv.find_element_by_xpath(w_xpath)
           if elem:
             elem_txt = util.get(elem,'text') or ''
-  
+
           ok = ok and elem
           if ok:
             msg = f'driver_wait OK: xpath => {w_xpath}'
             msgs.get('ok').append(msg)
           else:
             return False
+
+###wait_id
+      if len(w_id):
+        elem = drv.find_element_by_id(w_id)
+        if elem:
+          elem_txt = util.getx(elem,'text','')
+
+        ok = ok and elem
+        if ok:
+          msg = f'driver_wait OK: id => {w_id}'
+          msgs.get('ok').append(msg)
+        else:
+          return False
 
       for k in cond_keys:
         vv = util.get(r_wait,k) or ''
@@ -134,7 +165,7 @@ class mixDrv:
 
       return ok
 
-    timeout = self._get('config.selenium.WebDriverWait.timeout',10)
+    timeout = self.get('config.selenium.WebDriverWait.timeout',10)
     if w_frame:
       self.drv_switch(w_frame)
 
@@ -143,10 +174,40 @@ class mixDrv:
       wait_res = WebDriverWait(self.driver, timeout).until( _wait_condition )
     except:
       self.lg('driver','error',"driver_wait errors", exc_info=True)
+      if util.get(self,'exceptions.dbg'):
+        import pdb; pdb.set_trace()
+    #finally:
+      #self.drv_switch_back()
+
+    return self
+
+  def drv_switch(self,xpath=''):
+    elem_frame = self._find(xpath)
+    if not elem_frame:
+      return self
+
+    try:
+      self.driver.switch_to.frame(elem_frame)
+      self.lg('driver','debug',f"switch_to.frame(), frame xpath = {xpath}")
+      self.flg['inframe'] = True
+    except:
+      self.lg('driver','error',f"switch_to frame, xpath = {xpath}", exc_info=True)
       if util.get(self,'exceptions.dbg'): 
         import pdb; pdb.set_trace()
-    finally:
-      self.drv_switch_back()
+
+    return self
+
+  def drv_switch_back(self):
+    if not self.flg['inframe']:
+      return self
+
+    try:
+      self.driver.switch_to.default_content()
+      self.lg('driver','debug',"switch_to.default_content()")
+    except:
+      self.lg('driver','error',"switch_to.default_content()", exc_info=True)
+      if util.get(self,'exceptions.dbg'): 
+        import pdb; pdb.set_trace()
 
     return self
 

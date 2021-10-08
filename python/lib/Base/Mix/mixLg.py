@@ -66,7 +66,6 @@ class mixLg:
 
       self.loggers.update({ name : lg })
 
-
     return self
 
   # return logger instance
@@ -85,6 +84,8 @@ class mixLg:
     if sub and callable(sub):
       for m in msg:
         sub(m,**args)
+
+    return self
 
   def lgi(self,msg=[],**args):
     lev = 'info'

@@ -645,7 +645,8 @@ class BS(CoreClass,
     self.init_df_script_bin()
     
     if not util.get(self,'dirs.tmpl'):
-      self.dirs['tmpl'] = os.path.join(self._dir('bin'),'tmpl')
+      self.dirs['tmpl'] = os.path.join(self._dir('bin'),'bs tmpl')
+      import pdb; pdb.set_trace()
     self.log(f'[BS] Template directory: {self._dir("tmpl")}')
 
     self.init_dirs_f_yaml()
