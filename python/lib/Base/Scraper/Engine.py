@@ -91,9 +91,9 @@ class BS(CoreClass,
   PURPOSE
         This script will parse input URL
   EXAMPLES
-        bs.py -y mix.yaml -p list_sites
-        bs.py -c db_fill_tags
-        bs.py -c db_fill_auth
+        r_bs.py -y mix.yaml -p list_sites
+        r_bs.py -c db_fill_tags
+        r_bs.py -c db_fill_auth
   '''
 
   opts_argparse = [
@@ -465,9 +465,9 @@ class BS(CoreClass,
   def init_npm(self):
     f = self._file('package_json.prod')
     if not os.path.isfile(f):
-      os.chdir(self._dir('html'))
+      os.chdir(self._dir('html_out'))
 
-    os.makedirs(self._dir('html','js dist'), exist_ok=True)
+    os.makedirs(self._dir('html_out','js dist'), exist_ok=True)
 
     self.wp_run = False
 
@@ -531,7 +531,7 @@ class BS(CoreClass,
     try:
         self.log(f'[BS][npm_init] running npm command: {cmd}')
 
-        os.chdir(self._dir('html'))
+        os.chdir(self._dir('html_out'))
 
         stderr, stdout = npm_run('run',cmd)
 
@@ -558,10 +558,10 @@ class BS(CoreClass,
         Path(f_log).unlink()
 
     self.files.update({ 
-        'package_json.prod'      : self._dir('html','package.json'),
-        'package_json.vcs'       : self._dir('bin','js package.json'),
-        'webpack_config_js.vcs'  : self._dir('bin','js webpack.config.js'),
-        'webpack_config_js.prod' : self._dir('html','webpack.config.js'),
+        'package_json.prod'      : self._dir('html_out','package.json'),
+        'package_json.vcs'       : self._dir('srv','js package.json'),
+        'webpack_config_js.vcs'  : self._dir('srv','js webpack.config.js'),
+        'webpack_config_js.prod' : self._dir('html_out','webpack.config.js'),
     })
 
     for ext in self.asset_exts:
@@ -573,12 +573,12 @@ class BS(CoreClass,
 
         rel = f'{ext_dir} {subpath} {stem}.{ext}'
         self.files.update({ 
-            f'{stem}_{ext}.vcs'  : self._dir('bin',rel),
-            f'{stem}_{ext}.prod' : self._dir('html',rel),
+            f'{stem}_{ext}.vcs'  : self._dir('srv',rel),
+            f'{stem}_{ext}.prod' : self._dir('html_out',rel),
         })
   
     self.files.update({ 
-        'bundle_js.dist'    : self._dir('html','js dist bundle.js'),
+        'bundle_js.dist'    : self._dir('html_out','js dist bundle.js'),
         'bundle_js.final'   : self._dir('html_root','bs dist bundle.js'),
     })
 
@@ -599,7 +599,7 @@ class BS(CoreClass,
 
     ext_dir = self.ext_dir_pieces.get(ext,ext)
 
-    ext_files = list(Path(self._dir('bin',f'{ext_dir} {subpath}')).glob(f'*.{ext}'))
+    ext_files = list(Path(self._dir('srv',f'{ext_dir} {subpath}')).glob(f'*.{ext}'))
     ext_files = list(map(lambda x: x.as_posix(),ext_files))
 
     return ext_files
@@ -645,14 +645,15 @@ class BS(CoreClass,
     self.init_df_script_bin()
     
     if not util.get(self,'dirs.tmpl'):
-      self.dirs['tmpl'] = os.path.join(self._dir('bin'),'bs tmpl')
-      import pdb; pdb.set_trace()
+      self.dirs['tmpl'] = self._dir('bin','bs tmpl')
     self.log(f'[BS] Template directory: {self._dir("tmpl")}')
 
     self.init_dirs_f_yaml()
     
     self.dirs.update({ 
+      'srv'        : self._dir('bin' , 'bs srv'),
       'html'       : self._dir('out' , 'html'),
+      'html_out'   : self._dir('out' , 'html'),
       'tex_out'    : self._dir('out' , 'tex'),
       'tmp_img'    : self._dir('img_root', 'tmp' ),
     })
@@ -2885,7 +2886,7 @@ class BS(CoreClass,
     file = self._file_rid({ 'tipe' : '_parse_cache', 'ext' : 'sh' })
     h = '''#!/bin/sh
 
-bs.py -c html_parse -i cache.html $*
+r_bs.py -c html_parse -i cache.html $*
 
     '''
     with open(file, 'w') as f:
@@ -3061,7 +3062,7 @@ bs.py -c html_parse -i cache.html $*
     t = self.template_env.get_template("list.t.html")
     h = t.render(pages=self.pages)
 
-    h_file = self._dir('html list.html')
+    h_file = self._dir('html_out list.html')
 
     with open(h_file, 'w') as f:
       f.write(h)

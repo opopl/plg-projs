@@ -198,10 +198,13 @@ our %fbicons = (
   '👼' => 'baby.angel',
   '📣' => 'megaphone',
   '🌍' => 'globe.europe.afrika',
+  '😹' => 'cat.tears.of.joy',
 );
 
 ###fbicons_face
 our %fbicons_face = (
+  '🤢' => 'face.nauseated',
+  '😮' => 'face.open.mouth',
   '😗' => 'face.kissing',
   '😓' => 'face.downcast.sweat',
   '🥳' => 'face.partying',
