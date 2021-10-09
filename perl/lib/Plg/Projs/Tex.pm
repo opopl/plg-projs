@@ -199,6 +199,7 @@ our %fbicons = (
   '📣' => 'megaphone',
   '🌍' => 'globe.europe.afrika',
   '😹' => 'cat.tears.of.joy',
+  '🙊' => 'monkey.speak.no.evil',
 );
 
 ###fbicons_face

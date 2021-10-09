@@ -643,15 +643,20 @@ class BS(CoreClass,
 
   def init_dirs(self):
     self.init_df_script_bin()
+
+    self.dirs.update({
+      'app_root'        : self._dir('bin' , 'bs'),
+    })
     
     if not util.get(self,'dirs.tmpl'):
-      self.dirs['tmpl'] = self._dir('bin','bs tmpl')
+      self.dirs['tmpl'] = self._dir('app_root','tmpl')
+
     self.log(f'[BS] Template directory: {self._dir("tmpl")}')
 
     self.init_dirs_f_yaml()
-    
+
     self.dirs.update({ 
-      'srv'        : self._dir('bin' , 'bs srv'),
+      'srv'        : self._dir('app_root' , 'srv'),
       'html'       : self._dir('out' , 'html'),
       'html_out'   : self._dir('out' , 'html'),
       'tex_out'    : self._dir('out' , 'tex'),
@@ -659,8 +664,6 @@ class BS(CoreClass,
     })
 
     return self
-
-
 
   def _yaml_data(self, f_yaml=None):
     if not f_yaml:
@@ -1508,14 +1511,14 @@ class BS(CoreClass,
       os.makedirs(lib,exist_ok=True)
 
     if not os.path.isfile(mod_yaml):
-      site_yml = self._dir('bin','yml _site.yaml')
+      site_yml = self._dir('app_root','yml _site.yaml')
       with open(site_yml,'r') as f:
         yml = f.read()
         with open(mod_yaml, 'w') as f:
             f.write(yml)
 
     if not os.path.isfile(mod_py):
-      site_py = self._dir('bin','py _site_pageparser.py')
+      site_py = self._dir('app_root','py _site_pageparser.py')
       with open(site_py,'r') as f:
         py = f.read()
         with open(mod_py, 'w') as f:
