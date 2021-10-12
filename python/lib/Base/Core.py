@@ -24,8 +24,22 @@ class CoreClass:
     exclude = ref.get('exclude',[])
     exclude.extend(util.qw('__dict__ __module__'))
 
+    include = ref.get('include',[ '@all' ])
+    inew = []
+    for i in include:
+      if i == '@all':
+        inew.extend(include)
+      else:
+        inew.append(i)
+
+    include = inew
+
     for k in dir(self):
-      if k in exclude:
+      ok = 1
+      ok = ok and k not in exclude
+      ok = ok and k in include
+
+      if not ok:
         continue
 
       v = getattr(self,k)

@@ -10,4 +10,4 @@ def complete(text,state):
 
 readline.set_completer(complete)
 
-line = raw_input('prompt> ')
+line = input('prompt> ')

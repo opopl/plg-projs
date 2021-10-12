@@ -100,9 +100,9 @@ class FBS(CoreClass,
 
     usage = '''
     PURPOSE
-          This script will scrape FB posts
+       This script will scrape FB posts
     EXAMPLES
-          r_fbs.py -y fb.yaml -z fb.zlan
+       r_fbs.py -y fb.yaml -z fb.zlan
     '''
 
     # ShellFBS instance

@@ -99,14 +99,20 @@ class FbPost(
     if not self.password:
       self.password = os.environ.get('FB_PASS')
 
+    self.init()
+
+  def init(self):
     acts = [
       # mixLg
       'init_lg',
       'init_dirs',
+      'init_files',
       'init_url',
     ]
 
     util.call(self,acts)
+
+    return self
 
   def login_send(self):
     if not self.email and self.password:
@@ -182,6 +188,10 @@ class FbPost(
 
       self.mk_dirs()
 
+    return self
+
+  def init_files(self):
+
       self.files.update({ 
           'post_json' : self._dir('out_post','p.json'),
           'post_html' : self._dir('out_post','p.html'),
@@ -205,7 +215,21 @@ class FbPost(
   def dict_json(self, ref={}):
 
     exclude = util.qw('dirs files in_dir')
-    d = CoreClass.dict(self,{ 'exclude' : exclude })
+    include = [
+      'author_id',
+      'ccount',
+      'clist',
+      'cmt',
+      'date',
+      'ii',
+      'piccount',
+      'story',
+      'tags',
+      'title',
+      'url',
+      'url_m',
+    ]
+    d = CoreClass.dict(self,{ 'include' : include })
 
     return d
 
@@ -226,26 +250,27 @@ class FbPost(
 
     return src
 
+  '''
+    Purpose
+      Retrieve list of comments
+
+    Usage
+      input: single web element
+        clist = self._clist({ 'wel'  : wel })
+
+      input: list of Web elements
+        clist = self._clist({ 'wels' : wels })
+
+      options
+        'root' - root element
+
+          clist = self._clist({ ... 'opts' : 'root' })
+
+    Return
+      ARRAY
+  '''
   def _clist(self, ref={}):
-    '''
-      Purpose
-        Retrieve list of comments
 
-      Usage
-        input: single web element
-          clist = self._clist({ 'wel'  : wel })
-
-        input: list of Web elements
-          clist = self._clist({ 'wels' : wels })
-
-        options
-          'root' - root element
-
-            clist = self._clist({ ... 'opts' : 'root' })
-
-      Return
-        ARRAY
-    '''
     app = self.app
 
     wel_in = ref.get('wel') or app.driver
@@ -483,9 +508,9 @@ class FbPost(
   def get_url(self,ref={}):
     app = self.app
 
-    print('[FbPost][get_url] start')
-
     url = ref.get('url',self.url_m)
+
+    self.lgi(f'get_url {url}')
 
     app.drv_get(url)
     time.sleep(5) 
@@ -505,8 +530,11 @@ class FbPost(
       'clist' : clist,
     })
 
-    print(f'Total Comment Count: {self.ccount}')
-    print(f'Total Picture Count: {self.piccount}')
+    m = [ 
+       f'Total Comment Count: {self.ccount}',
+       f'Total Picture Count: {self.piccount}'
+    ]
+    self.lgi(m)
 
     return self
 
@@ -613,7 +641,9 @@ class FbPost(
       with open(self._file('post_json'), 'w', encoding='utf8') as f:
         json.dump(data, f, ensure_ascii=False)
     except:
-      print('ERROR: json dump')
+      self.lge('json dump')
+
+    import pdb; pdb.set_trace()
 
     #with open(self.f_json, 'w') as f:
       #f.write(clist_js)

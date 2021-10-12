@@ -103,7 +103,7 @@ class mixLg:
     if not name:
       return self
 
-    self.lg(name,lev,msg,**args)
+    self.lg(name,lev,msg,exc_info=True,**args)
  
     return self
 
