@@ -20,23 +20,28 @@ class mixDrv:
 
   def drv_init(self):
     if self.driver:
-       return self
+      return self
 
     self.lgi('[drv_init] start')
 
+    use_wire = self._cfg('config.selenium.use_wire')
+
+    if use_wire:
+      self.class_webdriver = webDriverWire
+    else:
+      self.class_webdriver = webDriver
+
     if not self.fp:
-      fp = webdriver.FirefoxProfile()
+      self.fp = self.class_webdriver.FirefoxProfile()
 
       prf = self._cfg('driver.firefox.profile.preferences',{})
       for k, v in prf.items():
-        fp.set_preference(k,v)
+        self.fp.set_preference(k,v)
  
-      self.fp = fp
-
       self.lgi('[drv_init] init firefox profile')
 
     if not self.driver:
-      driver = webdriver.Firefox(self.fp)
+      driver = self.class_webdriver.Firefox(self.fp)
       self.driver = driver
 
       self.lgi('[drv_init] init firefox driver')
@@ -88,6 +93,7 @@ class mixDrv:
         self.driver.add_cookie(cookie)
 
     time.sleep(2)
+    import pdb; pdb.set_trace()
 
     return self
 

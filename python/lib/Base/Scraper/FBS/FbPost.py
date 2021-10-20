@@ -127,6 +127,7 @@ class FbPost(
     drv = app.driver
     if not drv:
       app.drv_init()
+      self.driver = app.driver
 
     return self
 
