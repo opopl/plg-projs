@@ -9,7 +9,7 @@ from dict_recursive_update import recursive_update
 class mixLg:
   loggers = {}
 
-  def init_lg(self,path='config.logging',lg_conf=None):
+  def init_lg( self, path='config.logging', lg_conf=None ):
     #https://docs.python.org/3/howto/logging-cookbook.html
 
     # get() from CoreClass

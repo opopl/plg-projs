@@ -393,8 +393,9 @@ function! projs#insert#ii_url ()
 	"breakadd expr g:fb
 
   if projs#sec#exists_db({ 'url' : url })
-    call base#rdwe('URL already stored, sec: ' . sec)
-    return 
+    call base#rdwe()
+		let cnt = input('URL already stored, sec: ' . sec . 'continue? (1/0)',0)
+		if !cnt | return | endif
   endif
 
 """ii_data
@@ -482,6 +483,7 @@ function! projs#insert#ii_url ()
       \  'tags'       : tags,
       \  'view'       : 'edit',
       \  'p_tree'     : 1,
+      \  'rewrite'    : 1,
       \  'parent_sec' : projs#buf#sec(),
       \  }
 

@@ -18,6 +18,31 @@ class mixDrv:
   # browser (Firefox) driver
   driver = None
 
+  def drv_init(self):
+    if self.driver:
+       return self
+
+    self.lgi('[drv_init] start')
+
+    if not self.fp:
+      fp = webdriver.FirefoxProfile()
+
+      prf = self._cfg('driver.firefox.profile.preferences',{})
+      for k, v in prf.items():
+        fp.set_preference(k,v)
+ 
+      self.fp = fp
+
+      self.lgi('[drv_init] init firefox profile')
+
+    if not self.driver:
+      driver = webdriver.Firefox(self.fp)
+      self.driver = driver
+
+      self.lgi('[drv_init] init firefox driver')
+
+    return self
+
   def drv_get(self,url):
     if not (self.driver and url):
       return self

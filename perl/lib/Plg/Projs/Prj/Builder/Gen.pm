@@ -20,7 +20,7 @@ use Base::Data qw(
 
 =head4 Call tree
 
-	_join_lines  Plg::Projs::Build::Maker::Join
+    _join_lines  Plg::Projs::Build::Maker::Join
 
 =cut
 

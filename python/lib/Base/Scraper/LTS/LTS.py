@@ -121,8 +121,7 @@ class LTS(
       'db_files' : self.db_files,
     })
 
-    for k, v in args.items():
-      setattr(self, k, v)
+    CoreClass.__init__(self,args)
 
     self.init()
 
@@ -157,8 +156,12 @@ class LTS(
             'bin' : os.path.join(plg,'projs web_scraping py3'),
           })
 
+    self.dirs.update({
+      'app_root' : self._dir('bin','lts')
+    })
+
     if not util.get(self,'dirs.tmpl'):
-      self.dirs['tmpl'] = os.path.join(self._dir('bin'),'tmpl')
+      self.dirs['tmpl'] = self._dir('app_root','tmpl')
 
     self.dirs.update({
       'lts_root'  : self.lts_root,
@@ -1128,6 +1131,17 @@ class LTS(
         f.write(t)
     #for ln in out:
        #print(ln)
+
+    return self
+
+  def sec_delete(self, ref = {}):
+
+    fields = [ 'sec', 'url' ]
+    where  = {}
+    for k in fields:
+      if k in ref:
+        v = ref.get(k)  
+        where.update({ k : v })
 
     return self
 

@@ -88,6 +88,8 @@ class FBS(CoreClass,
     # what is done
     done = {}
 
+    driver = None
+
     etree = lxml.etree
 
     # accessible via _cfg() method
@@ -169,36 +171,9 @@ class FBS(CoreClass,
         'evl',   
         # mixLg: init_lg(path)
         'init_lg',
-        'init_drv',
       ] 
 
       util.call(self, acts)
-
-      return self
-
-
-
-
-
-    def init_drv(self):
-      self.lg('fbs','info','[init_drv] start')
-
-      if not self.fp:
-        fp = webdriver.FirefoxProfile()
-
-        prf = self._cfg('driver.firefox.profile.preferences',{})
-        for k, v in prf.items():
-          fp.set_preference(k,v)
- 
-        self.fp = fp
-
-        self.lg('fbs','info','[init_drv] init firefox profile')
-
-      if not self.driver:
-        driver = webdriver.Firefox(self.fp)
-        self.driver = driver
-
-        self.lg('fbs','info','[init_drv] init firefox driver')
 
       return self
 
@@ -265,8 +240,9 @@ class FBS(CoreClass,
 
       if not self.fbpost:
         self.fbpost = FbPost(r)
+
+        import pdb; pdb.set_trace()
   
-        self.fbpost.authorize()
         self.fbpost.process()
 
       return self

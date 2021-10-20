@@ -89,7 +89,6 @@ class FbPost(
   # number of pictures
   piccount = 0
 
-
   def __init__(self,args={}):
     CoreClass.__init__(self,args)
 
@@ -101,6 +100,12 @@ class FbPost(
 
     self.init()
 
+  def check_db_projs(self):
+    return self
+
+  def check_db_pages(self):
+    return self
+
   def init(self):
     acts = [
       # mixLg
@@ -108,9 +113,20 @@ class FbPost(
       'init_dirs',
       'init_files',
       'init_url',
+      'init_driver',
+      'check_db_projs',
+      'check_db_pages',
     ]
 
     util.call(self,acts)
+
+    return self
+
+  def init_driver(self):
+    app = self.app
+    drv = app.driver
+    if not drv:
+      app.drv_init()
 
     return self
 
@@ -192,11 +208,11 @@ class FbPost(
 
   def init_files(self):
 
-      self.files.update({ 
-          'post_json' : self._dir('out_post','p.json'),
-          'post_html' : self._dir('out_post','p.html'),
-          'post_tex'  : self._dir('out_post','p.tex'),
-      })
+    self.files.update({ 
+      'post_json' : self._dir('out_post','p.json'),
+      'post_html' : self._dir('out_post','p.html'),
+      'post_tex'  : self._dir('out_post','p.tex'),
+    })
 
     return self
 
@@ -618,6 +634,7 @@ class FbPost(
     app = self.app
 
     acts = [
+      'authorize', 
       'get_url', 
       'html2tree', 
       #[ 'loop_prev', [ { 'imax' : 50 } ] ],

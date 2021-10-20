@@ -568,6 +568,8 @@ def insert_update_dict(ref={}):
   return 1
 
 def delete(ref={}):
+  where = ref.get('where',{})
+
   conn     = ref.get('conn')
   table    = ref.get('table')
 
@@ -581,8 +583,6 @@ def delete(ref={}):
     else:
       return
   c = conn.cursor()
-
-  where = ref.get('where',{})
 
   r      = cond_where({ 'where' : where })
   cond   = r.get('cond')

@@ -85,6 +85,7 @@ sub _join_lines {
     while(1){
         my $gen = $mkr->_val_('sections generate ' . $sec);
         $gen //= sub { $bld->_gen_sec($sec); };
+		$DB::single = 1;
 
         if ($gen) {
             if (ref $gen eq 'CODE') {
@@ -97,7 +98,7 @@ sub _join_lines {
         }
             
         my $f_sec = $ref->{file} || $mkr->_file_sec($sec,{ proj => $proj });
-        if (!-e $f_sec){ return (); }
+        return () unless -f $f_sec; 
         @f_lines = read_file $f_sec;
 
         last;

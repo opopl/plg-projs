@@ -12,6 +12,11 @@ use Base::Arg qw(
   hash_update
 );
 
+use Image::Info qw(
+    image_info
+    image_type
+);
+
 use Plg::Projs::Rgx qw(%rgx_map);
 
 use String::Util qw(trim);
@@ -95,12 +100,7 @@ sub init {
 }
 
 
-sub _tab_end {
-  my $self = shift;
 
-  my $env = $self->_val_('tab env');
-  $env ? sprintf(q| \end{%s}|,$env) : '';
-}
 
 sub tab_init {
   my $self = shift;
@@ -115,6 +115,7 @@ sub tab_init {
       i_row      => 1,
       fig_env    => 'figure',
       cap_list   => [],
+      resizebox  => 1,
   };
   hash_inject($self->{tab}, $h);
 
@@ -125,8 +126,36 @@ sub tab_init {
 sub _tab_start {
   my ($self) = @_;
   my $tab = $self->{tab};
+  
+  return () unless $tab;
+  my @tex;
 
-  ($tab) ? sprintf(q| \begin{%s}{*{%s}{%s}} |,@{$tab}{qw(env cols align)}) : '';
+  push @tex, 
+    $tab->{resizebox} ? '\resizebox{0.9\textwidth}{!}{%' : (),
+    sprintf(q| \begin{%s}{*{%s}{%s}} |,@{$tab}{qw(env cols align)})
+    ;
+
+  return @tex;
+
+}
+
+sub _tab_end {
+  my $self = shift;
+
+  my $tab = $self->{tab};
+
+  return () unless $tab;
+  my @tex;
+
+  my $env = $tab->{env};
+
+  push @tex, 
+    sprintf(q| \end{%s}|,$env),
+    $tab->{resizebox} ? '}' : ()
+    ;
+
+  return @tex;
+
 }
 
 sub _tex_caption_tab { 
@@ -156,10 +185,10 @@ sub _tex_caption_tab {
 sub _width {
   my ($self, $wd) = @_;
   my $w = $wd 
-  			// $self->_val_('d width') 
-  			// $self->_val_('tab width') 
-  			// $self->_val_('locals width') 
-			// $self->{img_width_default};
+            // $self->_val_('d width') 
+            // $self->_val_('tab width') 
+            // $self->_val_('locals width') 
+            // $self->{img_width_default};
 
   return $w;
 }
@@ -235,17 +264,26 @@ sub _cat_float {
   return $w;
 }
 
+sub _len2tex {
+  my ($self, $len) = @_;
+
+  my $tex = $len;
+  for($len){
+      /^(\d+(?:\.\d+|))$/ && do {
+          $tex = qq{$len\\textwidth};
+      };
+      last;
+  }
+  return $tex;
+}
+
 sub _width_tex {
   my ($self, $wd) = @_;
 
   my $w = $self->_width($wd);
 
-  for($w){
-      /^(\d+(?:\.\d+|))$/ && do {
-          $w = qq{$w\\textwidth};
-      };
-      last;
-  }
+  $w = $self->_len2tex($w);
+
   return $w;
 }
 
@@ -397,7 +435,8 @@ sub match_tab_begin {
     $self->_opts_dict($opts_s)
   );
 
-  $self->{tab}->{width} ||= ( $self->{img_width_default} / $self->{tab}->{cols} );
+  my $tab = $self->{tab};
+  $tab->{width} ||= ( $self->{img_width_default} / $self->{tab}->{cols} );
   
   push @{$self->{nlines}}, 
      $self->_fig_start, 
@@ -409,9 +448,12 @@ sub match_tab_begin {
 sub match_tab_end {
   my ($self) = @_;
 
+  my $tab = $self->{tab};
+
   push @{$self->{nlines}}, 
      $self->_tab_end, $self->_tex_caption_tab,
-     $self->_fig_end;
+     $self->_fig_end,
+     ;
 
   $self->{tab} = undef;
 
@@ -547,17 +589,46 @@ sub _d2tex {
      return @tex;
   }
 
+  {
+    my $iinfo = image_info($img_file);
+    my ($w, $h) = map { $iinfo->{$_} } qw( height width );
+    my $w2h = $h ? ($w*1.0)/$h : '';
+    push @tex, '% w2h = ' . $w2h;
+  }
+
   my $caption = $d->{caption};
-  texify(\$caption) if $caption;
+  Plg::Projs::Tex::texify(\$caption) if $caption;
 
   my $wd = $d->{width} || $rw->{width_tex};
 
   my @o;
-  push @o, sprintf(q{ width=%s },$self->_width_tex($wd));
+  push @o, 
+    'keepaspectratio';
+
+  unless($tab){
+    push @o, 
+      sprintf(q{ width=%s },$self->_width_tex($wd));
+  }else{
+    my $tab_width = $self->_val_('tab width');
+    my $tab_height = $tab_width*0.9;
+    my $locals = $self->{locals} || {};
+
+    push @o, 
+      #sprintf(q{ height=%s, width=%s }, $self->_width_tex($tw), $self->_width_tex($wd));
+      sprintf(q{ height=%s }, $self->_len2tex($tab_height));
+
+      if ($d->{width} && $tab->{use_d}) {
+        push @o, sprintf(q{ width=%s }, $self->_len2tex($d->{width}));
+      }
+
+      if ($locals->{width} && $tab->{use_locals}) {
+        push @o, sprintf(q{ width=%s }, $self->_len2tex($locals->{width}));
+      }
+  }
 
   if (my $rotate = $d->{rotate}) {
-	#my $dict_rotate = opts_dict($rotate);
-  	push @o, $rotate;
+    #my $dict_rotate = opts_dict($rotate);
+    push @o, $rotate;
   }
 
   my $o = join(",",@o);
