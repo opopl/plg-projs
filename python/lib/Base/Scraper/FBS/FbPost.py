@@ -42,6 +42,10 @@ from Base.Mix.mixLg import mixLg
 from Base.Mix.mixEval import mixEval
 from Base.Mix.mixDrv import mixDrv
 
+from peewee import SqliteDatabase
+
+from Base.Scraper.Models import mAuthors, mProjs
+
 from copy import copy
 
 class FbPost(
@@ -98,24 +102,73 @@ class FbPost(
     if not self.password:
       self.password = os.environ.get('FB_PASS')
 
+    self.lts_root  = os.environ.get('P_SR')
+    self.html_root = os.environ.get('HTML_ROOT')
+    self.proj = 'letopis'
+
     self.init()
 
-  def check_db_projs(self):
+  def init_db_projs(self):
+
+    #if self.author_id and self.date and self.ii:
+
+    a = mProjs.select().where(mProjs.url == self.url).dicts()
+    rows = list(a)
+    r = {}
+
+    sec = None
+    if not len(rows):
+      prefix = f'{self.date}.fb.{self.author_id}'
+      pat_inum = rf'{prefix}\.(\d+)'
+
+      inum = 1
+
+      z = mProjs.select().where(mProjs.sec.startswith(prefix)).dicts()
+      rr = list(z)
+      if len(rr):
+        def get_inum(x):
+          sec = x.get('sec')
+          inum = re.sub(pat_inum, r'\1', sec)
+          if inum != None:
+            inum = int(inum)
+          return inum
+
+        inums = list(map(get_inum,rr))
+        inums = list(filter(lambda x: x != None,inums))
+
+        inum = max(inums)
+
+      sec = f'{prefix}.{inum}.{self.ii}'
+      sec_file = f'{self.proj}.{sec}.tex'
+
+      r = { 
+        'author_id' : self.author_id,
+        'date'      : self.date,
+        'sec'       : sec,
+        'file'      : sec_file,
+      }
+
+    else:
+      r = rows[0]
+      sec = r.get('sec')
+
+    sec_file_path = os.path.join( self.lts_root, f'{self.proj}.{sec}.tex' )
+
     return self
 
-  def check_db_pages(self):
+  def init_db_pages(self):
     return self
 
   def init(self):
     acts = [
       # mixLg
       'init_lg',
+      'init_db_projs',
+      'init_db_pages',
       'init_dirs',
       'init_files',
       'init_url',
       'init_driver',
-      'check_db_projs',
-      'check_db_pages',
     ]
 
     util.call(self,acts)
@@ -220,12 +273,12 @@ class FbPost(
   def init_url(self):
 
     if self.url:
-      u = util.url_parse(self.url)
+      self.url_parsed = util.url_parse(self.url)
   
-      m = re.match(r'.*facebook.com$',u['host'])
+      m = re.match(r'.*facebook.com$',self.url_parsed['host'])
   
       if m:
-        self.url_m = util.url_join('https://mobile.facebook.com',u['path'])
+        self.url_m = util.url_join('https://mobile.facebook.com',self.url_parsed['path'])
 
     return self
 
@@ -661,7 +714,7 @@ class FbPost(
     except:
       self.lge('json dump')
 
-    import pdb; pdb.set_trace()
+    #import pdb; pdb.set_trace()
 
     #with open(self.f_json, 'w') as f:
       #f.write(clist_js)
@@ -673,7 +726,7 @@ class FbPost(
 
     app = self.app
 
-    html = app.driver.page_source
+    html = self.driver.page_source
     with open(self._file('post_html'), 'w', encoding='utf8' ) as f:
       f.write(html)
 

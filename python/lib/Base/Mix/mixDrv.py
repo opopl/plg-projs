@@ -24,7 +24,7 @@ class mixDrv:
 
     self.lgi('[drv_init] start')
 
-    use_wire = self._cfg('config.selenium.use_wire')
+    use_wire = self._cfg('selenium.use_wire')
 
     if use_wire:
       self.class_webdriver = webDriverWire

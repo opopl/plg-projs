@@ -42,3 +42,11 @@ class Section(
   def _record(self):
     r = self.__dict__
     return r
+
+#  def _file(self,ref = {}):
+    #if not self.sec:
+      #return 
+
+    #sec_file = os.path.join( self.lts_root, f'{self.proj}.{sec}.tex' )
+
+    #return sec_file

@@ -193,7 +193,9 @@ def url_parse(url,opts={}):
     'url'      : url,
   }
 
-  if get(opts,'rm_query'):
+  rm_query = get(opts,'rm_query') or 0
+  rm_query = int(rm_query)
+  if rm_query:
     d['url'] = urljoin(baseurl, d['path'])
 
   return d

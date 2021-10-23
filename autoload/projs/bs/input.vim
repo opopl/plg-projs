@@ -16,6 +16,8 @@ function! projs#bs#input#url (...)
   let zfile = projs#sec#file('_zlan_')
   let zfile = get(ref,'zfile',zfile)
 
+  let rm_query = get(ref,'rm_query',1)
+
   let prefix = printf('[ rootid: %s, proj: %s ]',rootid, proj)
   let prefix = get(ref,'prefix',prefix)
 
@@ -37,7 +39,7 @@ function! projs#bs#input#url (...)
 
     " Base.Util url_parse()
     let u = base#url#parse(url,{ 
-        \ 'rm_query' : 1 
+        \ 'rm_query' : rm_query
         \ })
     let url = get(u,'url','')
 

@@ -22,6 +22,7 @@ function! projs#zlan#zo#add_fb_post (...)
     \ 'zfile'  : zfile,
     \ 'fields' : base#qw('url tags title date ii author_id'),
     \ 'prefix' : '[posts.zlan]',
+    \ 'rm_query' : 0,
     \ })
 
 endfunction
@@ -46,6 +47,8 @@ function! projs#zlan#zo#add (...)
   let prefix = printf('[ rootid: %s, proj: %s ]',rootid, proj)
   let prefix = get(ref,'prefix',prefix)
 
+  let rm_query = get(ref,'rm_query',1)
+
   " either string or array
   let fields   = get(ref,'fields','url tags')
 
@@ -60,13 +63,21 @@ function! projs#zlan#zo#add (...)
     let value = ''
 
     if field == 'url'
-      let value = projs#bs#input#url({ 'zfile' : zfile, 'prefix' : prefix })
+      let value = projs#bs#input#url({ 
+        \ 'zfile'    : zfile,
+        \ 'prefix'   : prefix,
+        \ 'rm_query' : rm_query,
+        \ })
+
     elseif field == 'tags'
       let value = projs#input#tags({ 'prefix' : prefix })
+
     elseif field == 'author_id'
       let value = projs#bs#input#author_id({ 'prefix' : prefix })
+
     else
       let value = input(printf('Input %s: ',field),'')
+
     endif
 
     let d[field] = value
