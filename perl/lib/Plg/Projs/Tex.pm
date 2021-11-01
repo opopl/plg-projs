@@ -90,6 +90,7 @@ our $secs = {
 
 ###fbicons
 our %fbicons = (
+  '🔴' => 'circle.red',
   '🐕' => 'dog',
   '🐷' => 'pig.face',
   '🍿' => 'popcorn',
@@ -221,6 +222,7 @@ our %fbicons = (
 
 ###fbicons_face
 our %fbicons_face = (
+  '🤭' => 'face.hand.over.mouth',
   '🤢' => 'face.nauseated',
   '😮' => 'face.open.mouth',
   '😗' => 'face.kissing',

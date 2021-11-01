@@ -4,18 +4,26 @@ function! projs#author#id#select_db (...)
 
   let author_id = get(ref,'author_id','')
 
-  let ids = projs#author#id#list_db()
+  "let ids = projs#author#id#list_db()
 
-  let rootid = projs#rootid()
+"  let rootid = projs#rootid()
 
-  call base#varset('this',ids)
+  "call base#varset('this',ids)
 
-  while(1)
-    let author_id = input( printf('[Database][rootid: %s] author_id: ',rootid),author_id,'custom,base#complete#this')
-    if len(author_id)
-      break
-    endif
-  endw
+  "while(1)
+    "let author_id = input( printf('[Database][rootid: %s] author_id: ',rootid),author_id,'custom,base#complete#this')
+    "if len(author_id)
+      "break
+    "endif
+  "endw
+
+  let lst = projs#author#id#list_db()
+  let r = { 
+    \ 'list'  : lst,
+    \ 'thing' : 'author_id',
+    \ }
+
+  let author_id = base#inpx#ctl(r) 
 
   return author_id
   
