@@ -90,6 +90,7 @@ our $secs = {
 
 ###fbicons
 our %fbicons = (
+  '👹' => 'ogre',
   '🔴' => 'circle.red',
   '🐕' => 'dog',
   '🐷' => 'pig.face',
@@ -295,6 +296,7 @@ our %fbicons_face = (
   '🤓' => 'face.nerd',
   '🤩' => 'face.eyes.star',
   '🧐' => 'face.monocle',
+  '😰' => 'face.anxious.sweat',
 );
 
 %fbicons = ( 

@@ -797,10 +797,10 @@ class LTS(
           }
 
           d = {
-              'db_file' : self.db_file_pages,
-              'table'   : 'authors',
-              'insert'  : d_auth,
-              'on_list' : [ 'id' ]
+            'db_file' : self.db_file_pages,
+            'table'   : 'authors',
+            'insert'  : d_auth,
+            'on_list' : [ 'id' ]
           }
 
           dbw.insert_update_dict(d)
