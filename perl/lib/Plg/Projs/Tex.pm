@@ -90,6 +90,10 @@ our $secs = {
 
 ###fbicons
 our %fbicons = (
+  '🐓' => 'rooster',
+  '🐍' => 'snake',
+  '💚' => 'heart.green',
+  '🐸' => 'frog',
   '👹' => 'ogre',
   '🔴' => 'circle.red',
   '🐕' => 'dog',
