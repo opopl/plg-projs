@@ -122,7 +122,7 @@ def sql_fetchone(q, p = [], ref = {}):
     q += ' WHERE ' + cond
     p.extend(values)
 
-  conn.row_factory = sqlite3.Row
+  conn_cfg(conn)
 
   c = conn.cursor()
 
@@ -494,6 +494,7 @@ def sql_do(ref={}):
     else:
       return
 
+  conn_cfg(conn)
   c = conn.cursor()
 
   for q in sqlparse.split(sql):
@@ -656,6 +657,7 @@ def insert_dict(ref={}):
     else:
       return
 
+  conn_cfg(conn)
   c = conn.cursor()
 
   fields_s = ",".join(fields)
@@ -674,6 +676,8 @@ def insert_dict(ref={}):
   if db_close:
     conn.commit()
     conn.close()
+
+  return 1
 
 def sql_file_exec(db_file, sql_file):
   ok = 1
