@@ -557,12 +557,21 @@ if 0
 
 endif
 
-function! projs#sec#count_ii (...)
+if 0
+  call tree
+    calls
+      pymy#sqlite#query
+        base#sql#split
+endif
+
+function! projs#sec#ii_max (...)
   let ref = get(a:000,0,{})
 
   let ii_prefix = get(ref,'ii_prefix','')
+  let iipe      = escape(ii_prefix,'.')
 
-  let q = printf("SELECT COUNT(*) FROM projs WHERE sec LIKE '%s%%'",ii_prefix)
+  let qs = printf("MAX( CAST(RGX_SUB('^%s(\\d+)\\..*', '\\1', sec) AS INTEGER) )", iipe)
+  let q  = printf("SELECT %s as s FROM projs WHERE RGX('^%s(\\d+)',sec)", qs, iipe)
 
   let ref = {
     \ 'q'      : q,
@@ -572,6 +581,40 @@ function! projs#sec#count_ii (...)
   let [rows,cols] = pymy#sqlite#query(ref)
 
   let rwh  = get(rows,0,{})
+  let vals = values(rwh)
+  let max  = get(vals,0,0)
+  let max  = ( max == v:none || max == '') ? 0 : max
+
+  return max
+
+endf
+
+function! projs#sec#count_ii (...)
+  let ref = get(a:000,0,{})
+
+  let ii_prefix = get(ref,'ii_prefix','')
+  let iipe = escape(ii_prefix,'.')
+
+  "let q = printf("SELECT COUNT(*) FROM projs WHERE sec LIKE '%s%%'",ii_prefix)
+  "let q = printf("SELECT sec FROM projs WHERE sec LIKE '%s%%'",ii_prefix)
+  let qs = printf("MAX( CAST(RGX_SUB('^%s(\\d+)\\..*', '\\1', sec) AS INTEGER) )", iipe)
+  let q = printf("SELECT %s as s FROM projs WHERE RGX('^%s',sec)", qs, iipe)
+
+"def rgx_sub(pattern, replacement, string):
+
+  let ref = {
+    \ 'q'      : q,
+    \ 'dbfile' : projs#db#file(),
+    \ }
+
+  let [rows,cols] = pymy#sqlite#query(ref)
+  let nums = [] 
+  "for rw in rows
+    ""let sec = get(rw,'sec','')
+    ""let num = 
+  "endfor
+
+  debug let rwh  = get(rows,0,{})
   let vals = values(rwh)
   let cnt  = vals[0]
 

@@ -47,14 +47,18 @@ def search(pat_id,line):
   return m
 
 # clone of Plg::Projs::Regex rgx_match
-def rgx_match(pattern,string,flags='',index=0):
-  m = re.search(pattern,string)
+def rgx_match(pattern, string, flags='', index=0):
+  m = re.search(rf'{pattern}',string)
   if not m:
     return None 
 
   mtch = m.group(0)
   result = (index and m.group(index)) or m.group(0)
 
+  return result
+
+def rgx_sub(pattern, replacement, string):
+  result = re.sub(rf'{pattern}',rf'{replacement}',string)
   return result
 
 def match(pat_id,line):

@@ -315,6 +315,7 @@ def conn_cfg(conn):
   conn.row_factory = sqlite3.Row
   conn.create_function("REGEXP", 2, rgx.rgx_match)
   conn.create_function("RGX", 2, rgx.rgx_match)
+  conn.create_function("RGX_SUB", 3, rgx.rgx_sub)
 
 def sql_fetchall(q, p=[], ref={}):
   conn     = ref.get('conn')

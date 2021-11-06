@@ -423,8 +423,7 @@ function! projs#insert#ii_url ()
     let ii_prefix .= printf('%s.',pref)
   endif
 
-  let cnt = projs#sec#count_ii({ 'ii_prefix' : ii_prefix })
-
+  let cnt = projs#sec#ii_max({ 'ii_prefix' : ii_prefix })
   let inum = cnt + 1
 
   let ii_prefix .= printf('%s.',inum)
