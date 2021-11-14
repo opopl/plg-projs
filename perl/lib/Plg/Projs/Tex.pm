@@ -90,6 +90,10 @@ our $secs = {
 
 ###fbicons
 our %fbicons = (
+  '🥀' => 'wilted.flower',
+  '🎄' => 'christmas.tree',
+  '🐮' => 'cow.face',
+  '🚲' => 'bicycle',
   '🎩' => 'top.hat',
   '🍂' => 'fallen.leaf',
   '🔺' => 'triangle.red.up',
@@ -190,6 +194,7 @@ our %fbicons = (
   '🇺🇦' => 'flag.ukraina',
   '🇭🇺' => 'flag.vengria',
   '🙈' =>  'monkey.see.no.evil',
+  '🙉' => 'monkey.hear.no.evil',
   '👀' => 'eyes',
   '🤷' => 'shrug',
   '🚀' => 'rocket',
@@ -220,6 +225,7 @@ our %fbicons = (
   '😺' => 'cat.grinning',
   '😻' => 'cat.heart.eyes',
   '🙀' => 'cat.weary',
+  '😿' => 'cat.crying',
   '🌺' => 'hibiscus',
   '🎬' => 'clapboard',
   '☄️'  => 'comet',
@@ -229,10 +235,12 @@ our %fbicons = (
   '🌍' => 'globe.europe.afrika',
   '😹' => 'cat.tears.of.joy',
   '🙊' => 'monkey.speak.no.evil',
+  '👮' => 'police.officer',
 );
 
 ###fbicons_face
 our %fbicons_face = (
+  '🤫' => 'face.shushing',
   '🤭' => 'face.hand.over.mouth',
   '🤢' => 'face.nauseated',
   '😮' => 'face.open.mouth',
@@ -307,6 +315,9 @@ our %fbicons_face = (
   '🤩' => 'face.eyes.star',
   '🧐' => 'face.monocle',
   '😰' => 'face.anxious.sweat',
+  '😚' => 'face.kissing.closed.eyes',
+  '😋' => 'face.savoring.food',
+  '😯' => 'face.hushed',
 );
 
 %fbicons = ( 
