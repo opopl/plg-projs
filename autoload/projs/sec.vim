@@ -734,7 +734,7 @@ function! projs#sec#insert_url (...)
   let file = projs#sec#file(sec)
 python3 << eof
 import vim,in_place,re
-import db
+import Base.DBW as dbw
 
 file      = vim.eval('file')
 url       = vim.eval('url')
@@ -792,7 +792,7 @@ b    = vim.current.buffer
 b[:] = []
 b[:] = lines_w
 
-db.update_dict({ 
+dbw.update_dict({ 
   'db_file' : db_file,
   'table'   : 'projs',
   'update'  : {
