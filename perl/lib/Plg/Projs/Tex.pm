@@ -90,6 +90,9 @@ our $secs = {
 
 ###fbicons
 our %fbicons = (
+  '🎻' => 'violin',
+  '🏔' => 'mountain.snow.capped',
+  '🌟' => 'glowing.star',
   '🎁' => 'gift.wrapped',
   '🌊' => 'water.wave',
   '🎭' => 'performing.arts',

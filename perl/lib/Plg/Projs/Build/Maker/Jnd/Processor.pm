@@ -131,6 +131,7 @@ sub _tab_start {
   my @tex;
 
   push @tex, 
+    $tab->{center} ? '\begin{center}%' : (),
     $tab->{resizebox} ? '\resizebox{0.9\textwidth}{!}{%' : (),
     sprintf(q| \begin{%s}{*{%s}{%s}} |,@{$tab}{qw(env cols align)})
     ;
@@ -151,7 +152,8 @@ sub _tab_end {
 
   push @tex, 
     sprintf(q| \end{%s}|,$env),
-    $tab->{resizebox} ? '}' : ()
+    $tab->{resizebox} ? '}' : (),
+    $tab->{center} ? '\end{center}' : (),
     ;
 
   return @tex;
