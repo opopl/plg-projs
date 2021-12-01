@@ -271,6 +271,7 @@ our %fbicons = (
   '⛵' => 'sailboat',
   '🦋' => 'butterfly',
   '👽' => 'alien',
+  '🌿' => 'herb',
 );
 
 ###fbicons_face
