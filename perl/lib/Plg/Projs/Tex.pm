@@ -90,6 +90,8 @@ our $secs = {
 
 ###fbicons
 our %fbicons = (
+  '🤞' => 'crossed.fingers',
+  '🦆' => 'duck',
   '🦧' => 'orangutan',
   '🐀' => 'rat',
   '🤜' => 'fist.right.facing',
@@ -276,10 +278,14 @@ our %fbicons = (
   '🌿' => 'herb',
   '🐛' => 'bug',
   '🎥' => 'movie.camera',
+  '🍓' => 'strawberry',
+  '💝' => 'heart.with.ribbon',
+  '🏴' => 'flag.black',
 );
 
 ###fbicons_face
 our %fbicons_face = (
+  '😑' => 'face.expressionless',
   '🥵' => 'face.hot',
   '😵' => 'face.eyes.crossed.out',
   '😧' => 'face.anguished',

@@ -1129,7 +1129,8 @@ function! projs#action#bld_compile (...)
     call projs#action#bld_compile_Fc(self,a:temp_file)
   endfunction
 
-  let msg = printf('bld_compile: %s; target: %s; config: %s', proj, target, config)
+	let target_short = target[0:40]
+  let msg = printf('bld_compile: %s; target: %s; config: %s', proj, target_short, config)
   call base#rdw(msg)
 
   call asc#run({ 

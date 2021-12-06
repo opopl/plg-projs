@@ -963,6 +963,7 @@ function! projs#maps (...)
             \  ';aa'   : 'PA author_add',
             \  ';iu'   : 'PIN ii_url',
             \  ';ii'   : 'PIN ii',
+            \  ';if'   : 'PIN ii_full',
             \  '<F2>'  : 'PrjBuild Cleanup'    ,
             \  '<F3>'  : 'copen'               ,
             \  '<F4>'  : 'cclose'              ,

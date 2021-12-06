@@ -203,6 +203,27 @@ function! projs#insert#ii_fbauth ()
 
 endfunction
 
+"""pin_ii_full {
+function! projs#insert#ii_full ()
+  let proj = projs#proj#name()
+
+  let sec  = projs#buf#sec()
+
+  let ii_prefix = printf('%s.', sec)
+
+  call base#varset('this',comps)
+  let ii_sec = input('ii_sec name: ',ii_prefix,'custom,base#complete#this')
+
+  let do_ii = 1
+  if projs#buf#ii_has(sec)
+    let do_ii = input('Section already here, insert? (1/0):',0)
+  endif
+
+  if !do_ii | return | endif
+
+endfunction
+"} end of: pin_ii_full,  projs#insert#ii_full
+
 """pin_ii {
 function! projs#insert#ii ()
   let proj = projs#proj#name()
@@ -388,14 +409,15 @@ function! projs#insert#ii_url ()
   let r = { 'pat' : pat }
 
   let url = base#input_we('[PIN ii_url] URL: ','')
+	"let url = substitute(url,'^\(.*\)[/]*\s*$','\1','g')
 
-	"let g:fb = 0
-	"breakadd expr g:fb
+  "let g:fb = 0
+  "breakadd expr g:fb
 
   if projs#sec#exists_db({ 'url' : url })
     call base#rdwe()
-		let cnt = input('URL already stored, sec: ' . sec . 'continue? (1/0)',0)
-		if !cnt | return | endif
+    let cnt = input('URL already stored, sec: ' . sec . 'continue? (1/0)',0)
+    if !cnt | return | endif
   endif
 
 """ii_data
@@ -429,7 +451,7 @@ function! projs#insert#ii_url ()
   let ii_prefix .= printf('%s.',inum)
 
   let title = ''
-  let title = input('ii section title: ','')
+  let title = input(ii_prefix . "\n" . 'ii section title: ','')
   let title = base#rmwh(title)
 
   let headcmd  = projs#buf#headcmd('chapter')
@@ -438,7 +460,7 @@ function! projs#insert#ii_url ()
   let comps = []
 
   let secs = projs#db#secnames(r)
-	call extend(comps,secs)
+  call extend(comps,secs)
 
   call base#varset('this',comps)
   let ii_sec = input('ii_sec name: ',ii_prefix,'custom,base#complete#this')
