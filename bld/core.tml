@@ -111,6 +111,7 @@
              titletoc
              xparse 
              p.core
+             <!--p.wrapfig-->
              p.fancyquote
              <!--p.shadequote-->
              p.env

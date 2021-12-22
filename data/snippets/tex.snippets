@@ -6,6 +6,12 @@ snippet iifba
 	% -------------------------------------
 	\ii{fbauth.<++>}
 	% -------------------------------------
+snippet ab
+	\ifcmt
+	 author_begin
+	   author_id
+	 author_end
+	\fi
 snippet !!
 	@igg{fbicon.exclamation.mark.double}
 snippet mp
@@ -23,8 +29,8 @@ snippet igmc
 snippet cbk
 	\columnbreak
 snippet mlc2
-	\begin{multicols}{2}
-	\end{multicols}
+	\begin{multicols}{2} % {
+	\end{multicols} % }
 snippet mp45
 	\begin{minipage}{0.45\textwidth}
 	
@@ -73,12 +79,15 @@ snippet fbauth
 	%%%fbauth_desc
 	%%%fbauth_www
 	%%%fbauth_pic
+	%%%fbauth_pic profile
 	%%%fbauth_pic portrait
 	%%%fbauth_pic background
 	%%%fbauth_pic other
 	%%%fbauth_tags
 	%%%fbauth_pubs
 	%%%endfbauth
+snippet pi0
+	\setlength{\parindent}{0pt}
 snippet pub
 	%pub
 	%pub_title
@@ -116,7 +125,11 @@ snippet cit
 	%%%cit_comment
 	%%%cit_title
 	  <++>
+	%%%cit_url
+	\href{<++>}{link}
 	%%%endcit
+snippet zhr
+	@igg{fbicon.heart.red}
 snippet cittex
 	\citEntry{%
 	  <+citata+>
@@ -214,6 +227,11 @@ snippet g04
 	  ig <++>
 	  @width 0.4
 	\fi
+snippet g045
+	\ifcmt
+	  ig <++>
+	  @width 0.45
+	\fi
 snippet pic01
 	\ifcmt
 	  pic <++>
@@ -237,9 +255,7 @@ snippet pic
 snippet pictb
 	
 	\ifcmt
-	  tab_begin cols=2
-
-	     pic <++>
+	  tab_begin cols=3,no_fig,center
 
 	     pic <++>
 
@@ -290,6 +306,9 @@ snippet cmtfig
 	\fi
 snippet cmts
 	\subsubsection{Коментарі}
+snippet cmtz
+	\zzSecCmt
+	
 snippet cmt
 	\newif\ifcmt\cmtfalse
 snippet ifcmt

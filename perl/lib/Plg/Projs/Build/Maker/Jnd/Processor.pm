@@ -115,7 +115,7 @@ sub tab_init {
       i_row      => 1,
       fig_env    => 'figure',
       cap_list   => [],
-      resizebox  => 1,
+      resizebox  => 0.9,
   };
   hash_inject($self->{tab}, $h);
 
@@ -132,7 +132,7 @@ sub _tab_start {
 
   push @tex, 
     $tab->{center} ? '\begin{center}%' : (),
-    $tab->{resizebox} ? '\resizebox{0.9\textwidth}{!}{%' : (),
+    $tab->{resizebox} ? '\resizebox{'.$tab->{resizebox}.'\textwidth}{!}{%' : (),
     sprintf(q| \begin{%s}{*{%s}{%s}} |,@{$tab}{qw(env cols align)})
     ;
 
@@ -292,7 +292,8 @@ sub _width_tex {
 sub _tex_caption {
   my ($self, $caption) = @_;
 
-  $caption ? ( sprintf(q| \caption{%s} |, $caption ) ) : ();
+  my $c = $self->_fig_skip ? 'captionof{figure}[]' : 'caption[]' ; 
+  $caption ? ( sprintf(q| \%s{%s} |, $c, $caption ) ) : ();
 }
 
 sub _fig_env {
@@ -611,21 +612,21 @@ sub _d2tex {
     push @o, 
       sprintf(q{ width=%s },$self->_width_tex($wd));
   }else{
-    my $tab_width = $self->_val_('tab width');
-    my $tab_height = $tab_width*0.9;
+    my $tab_width = $tab->{width};
+    my $tab_height = $self->_val_('tab height') || $tab_width*0.9;
     my $locals = $self->{locals} || {};
 
-    push @o, 
-      #sprintf(q{ height=%s, width=%s }, $self->_width_tex($tw), $self->_width_tex($wd));
-      sprintf(q{ height=%s }, $self->_len2tex($tab_height));
+    my $use_height =  ( $tab->{use_locals} ? $locals->{no_height} : 0 )
+       || $d->{no_height} || $tab->{no_height} ? 0 : 1;
 
-      if ($d->{width} && $tab->{use_d}) {
-        push @o, sprintf(q{ width=%s }, $self->_len2tex($d->{width}));
-      }
+    my $width = ( $tab->{use_locals} ? $locals->{width} : 0 ) || 
+                ( $tab->{use_d} ? $d->{width} : 0 ) || $tab_width;
 
-      if ($locals->{width} && $tab->{use_locals}) {
-        push @o, sprintf(q{ width=%s }, $self->_len2tex($locals->{width}));
-      }
+    if($use_height) {
+      push @o, sprintf(q{ height=%s }, $self->_len2tex($tab_height));
+    }elsif($width){
+      push @o, sprintf(q{ width=%s }, $self->_len2tex($width));
+    }
   }
 
   if (my $rotate = $d->{rotate}) {
