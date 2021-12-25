@@ -133,6 +133,11 @@ our %fbicons_heart = (
 
 ###fbicons_all
 our %fbicons_all = (
+  '🌲' => 'evergreen.tree',
+  '🪁' => 'kite',
+  '🌦' => 'sun.behind.rain.cloud',
+  '🍄' => 'mushroom',
+  '🤳' => 'selfie',
   '🌌' => 'milky.way',
   '🖐' => 'hand.fingers.splayed',
   '🐽' => 'pig.nose',

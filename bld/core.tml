@@ -111,7 +111,7 @@
              titletoc
              xparse 
              p.core
-             <!--p.wrapfig-->
+						 p.wrapfig
              p.fancyquote
              <!--p.shadequote-->
              p.env
@@ -161,7 +161,8 @@
              bookmarksnumbered=true
             </hyperref>
             <geometry>
-                hmargin={1cm,1cm}
+								hmargin={1cm,1cm}
+								<!--hmargin={1.5cm,1.5cm}-->
                 vmargin={2cm,2cm}
                 centering
             </geometry>

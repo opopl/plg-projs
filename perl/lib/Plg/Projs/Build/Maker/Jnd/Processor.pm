@@ -232,8 +232,8 @@ sub _wrapped {
      /^(\w+)(?:{(.*)}|)$/ && do {
         my $env = $1;
         if ($position eq 'start') {
-          my $obr = $2 ? $2 : '';
-          push @lines, "\\begin{$env}{$obr}";
+          my $obr = $2 ? "{$2}" : '';
+          push @lines, "\\begin{$env}$obr";
         } elsif ($position eq 'end') {
           push @lines, "\\end{$env}";
         }
@@ -671,7 +671,6 @@ sub _d2tex {
   }
 
   push @tex, $self->_wrapped($wrap,'end');
-
 
   return @tex;
 }
