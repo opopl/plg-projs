@@ -545,7 +545,6 @@ sub _d2tex {
 
   my $tab = $self->{tab};
 
-  my @tex;
 
   my $w = {};
   for(qw( url name_uniq name )){
@@ -567,13 +566,14 @@ sub _d2tex {
 
   my $url = $d->{url};
   unless (@$rows) {
+     my @err;
      my $r = {    
          msg => q{ No image found in Database! },
          url => $url,
      };
      warn Dumper($r) . "\n";
-     push @tex, qq{%Image not found: $url };
-     return @tex;
+     push @err, qq{%Image not found: $url };
+     return @err;
   }
 
   my $rw = shift @$rows;
@@ -582,16 +582,19 @@ sub _d2tex {
  
   my $img_file = catfile($mkr->{img_root},$rw->{img});
   unless (-e $img_file) {
+     my @err;
+
      my $r = {    
          msg => q{Image file not found!},
          img => $rw->{img},
          url => $d->{url},
      };
      warn Dumper($r) . "\n";
-     push @tex, qq{%Image exists in DB but not found in FS: $url };
-     return @tex;
+     push @err, qq{%Image exists in DB but not found in FS: $url };
+     return @err;
   }
 
+  my @tex;
   {
     my $iinfo = image_info($img_file);
     my ($w, $h) = map { $iinfo->{$_} } qw( height width );
@@ -658,10 +661,11 @@ sub _d2tex {
 
   unless($tab){
      push @tex,
-        $self->_fig_start, 
+        $self->_fig_start, # () if not figure
         @ig,
         $caption ? $self->_tex_caption($caption) : (),
-        $self->_fig_end;
+        $self->_fig_end,   # () if not figure
+        ;
   }else{
      push @tex,
         sprintf('%% row: %s, col: %s ', @{$tab}{qw(i_row i_col)}),
