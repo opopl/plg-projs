@@ -534,6 +534,16 @@ sub _tab_at_end {
   return $at_end;
 }
 
+sub _param {
+  my ($self, $key) = @_;
+
+  my $d       = $self->{d};
+  my $tab     = $self->{tab};
+  my $locals  = $self->{locals};
+  my $globals = $self->{globals};
+
+}
+
 sub _d2tex {
   my ($self) = @_;
 
@@ -656,21 +666,28 @@ sub _d2tex {
   }
 
   my $wrap = $d->{'@wrap'} || $d->{'wrap'};
+  my $parbox = $self->_val_('tab parbox') || $d->{parbox};
 
   push @tex, $self->_wrapped($wrap,'start');
 
   unless($tab){
      push @tex,
         $self->_fig_start, # () if not figure
-        @ig,
-        $caption ? $self->_tex_caption($caption) : (),
+          $parbox ? sprintf('\parbox{%s}{%', $self->_len2tex($parbox) ) : (),
+            @ig,
+            $caption ? $self->_tex_caption($caption) : (),
+            $d->{cap} ? sprintf('\begin{center}\figCapA{%s}\end{center}',$d->{cap}) : (),
+          $parbox ? '}%' : (),
         $self->_fig_end,   # () if not figure
         ;
   }else{
      push @tex,
         sprintf('%% row: %s, col: %s ', @{$tab}{qw(i_row i_col)}),
-        $caption ? ( sprintf(q|%% %s|, $caption )) : (),
-        @ig,
+        $parbox ? sprintf('\parbox{%s}{%', $self->_len2tex($parbox) ) : (),
+          $caption ? ( sprintf(q|%% %s|, $caption )) : (),
+          @ig,
+          $d->{cap} ? sprintf('\begin{center}\figCapA{%s}\end{center}',$d->{cap}) : (),
+        $parbox ? '}%' : (),
         ;
   }
 

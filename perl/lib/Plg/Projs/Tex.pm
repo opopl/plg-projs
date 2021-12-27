@@ -133,6 +133,7 @@ our %fbicons_heart = (
 
 ###fbicons_all
 our %fbicons_all = (
+  '🎼' => 'musical.score',
   '🌲' => 'evergreen.tree',
   '🪁' => 'kite',
   '🌦' => 'sun.behind.rain.cloud',
@@ -145,7 +146,6 @@ our %fbicons_all = (
   '🐦' => 'bird',
   '🚩' => 'flag.triangular',
   '🚘' => 'oncoming.automobile',
-  '🙆' => 'person.gesturing.ok',
   '🎨' => 'artist.palette',
   '🐏' => 'ram',
   '👂' => 'ear',
@@ -199,8 +199,6 @@ our %fbicons_all = (
   '🌐' => 'globe.with.meridians',
   '☕' => 'hot.beverage',
   '🔎' => 'glass.magnifying.right.pointing',
-  '👰' => 'person.veil',
-  '🤵' => 'person.tuxedo',
   '🔆' => 'bright.button',
   '📚' => 'books',
   '⛄' => 'snowman.without.snow',
@@ -297,7 +295,6 @@ our %fbicons_all = (
   '💎' => 'gem',
   '🌀' => 'cyclone',
   '🌞' => 'sun.with.face',
-  '🙋' => 'person.raising.hand',
   '🍰' => 'shortcake',
   '🎂' => 'cake.birthday',
   '🍾' => 'bottle.popping.cork',
@@ -353,6 +350,15 @@ our %fbicons_all = (
   '💉' => 'syringe',
   '🍹' => 'tropical.drink',
   '🍨' => 'ice.cream',
+);
+
+###fbicons_person
+our %fbicons_person = (
+  '🙆' => 'person.gesturing.ok',
+  '👰' => 'person.veil',
+  '🤵' => 'person.tuxedo',
+  '🙋' => 'person.raising.hand',
+  '🧑' => 'person',
 );
 
 ###fbicons_face
@@ -454,6 +460,7 @@ our %fbicons = (
   %fbicons_face,
   %fbicons_weak,
   %fbicons_heart,
+  %fbicons_person,
 );
 
 sub texify {

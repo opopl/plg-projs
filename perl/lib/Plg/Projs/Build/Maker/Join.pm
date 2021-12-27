@@ -64,7 +64,6 @@ sub _join_lines {
     my $root_id = $mkr->{root_id} || '';
     my $proj    = $ref->{proj} || $mkr->{proj};
 
-
     my @include = $mkr->_ii_include;
 
     my @exclude = $mkr->_ii_exclude;

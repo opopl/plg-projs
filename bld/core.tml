@@ -111,7 +111,7 @@
              titletoc
              xparse 
              p.core
-						 p.wrapfig
+             p.wrapfig
              p.fancyquote
              <!--p.shadequote-->
              p.env
@@ -161,8 +161,8 @@
              bookmarksnumbered=true
             </hyperref>
             <geometry>
-								hmargin={1cm,1cm}
-								<!--hmargin={1.5cm,1.5cm}-->
+                hmargin={1cm,1cm}
+                <!--hmargin={1.5cm,1.5cm}-->
                 vmargin={2cm,2cm}
                 centering
             </geometry>
@@ -185,9 +185,11 @@
       </on>
     </generate>
   </sii>
+  <!--this will go into $mkr -->
   <opts_maker>
     <skip get_opt="1" />
     <load_dat ii_include="0" ii_exclude="1" />
+    <!-- Plg::Projs::Build::Maker::Join _join_lines() -->
     <join_lines>
       <include_below>
         section
