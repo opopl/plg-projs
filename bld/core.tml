@@ -39,6 +39,7 @@
   <sii>
     <insert titletoc="1" hyperlinks="1" />
     <scts>
+      <!--Plg::Projs::Prj::Builder::Sct-->
       <sct name="preamble">
         <contents>
           @doc @ii @setcounter @perl
@@ -61,8 +62,10 @@
       </sct>
       <sct name="index">
         <contents>
-          @txt.hdr
-          @txt.ptc.start @printindex @txt.ptc.stop
+          \ifFileExists{./print_index.tex}{%
+            @txt.hdr
+            @txt.ptc.start @printindex @txt.ptc.stop
+          }{}
         </contents>
         <txt>
           <hdr>

@@ -46,6 +46,7 @@ sub _sct_lines {
     #print $bld->_bld_var('pagestyle') . "\n";
 
     my @lines;
+    $DB::single = 1 if $sec eq 'index';
 
     my @contents = d_str_split_sn($data,'contents');
     foreach (@contents) {
@@ -123,14 +124,14 @@ sub _sct_lines {
             if ($@){
                 warn $@ . "\n";
             }
-            push @lines,$res;
+            push @lines, $res;
             next;
         };
         /^\@perlfile\{(.*)\}$/ && do {
             my $pl = $1;
             if (-e $pl) {
                 my $res = do $pl;
-                push @lines,$res;
+                push @lines, $res;
             }
             next;
         };

@@ -84,7 +84,6 @@ sub _join_lines {
     while(1){
         my $gen = $mkr->_val_('sections generate ' . $sec);
         $gen //= sub { $bld->_gen_sec($sec); };
-		$DB::single = 1;
 
         if ($gen) {
             if (ref $gen eq 'CODE') {
