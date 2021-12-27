@@ -19,6 +19,41 @@ sub _insert_hyperlinks {
     return [@d];
 }
 
+sub _insert_story {
+    my ($bld) = @_;
+
+    return [] unless $bld->_val_(qw( sii insert story ));
+
+	my $mkr = $bld->{mkr} || {};
+	my $r_sec = $mkr->{r_sec} || {};
+
+	my $sec   = $r_sec->{sec};
+	my $title = $r_sec->{title};
+	my $date  = $r_sec->{date};
+
+	return [] unless $sec && $title && $date;
+
+	( my $date_dot = $date ) =~ s/_/./g;
+
+	my @lines;
+	push @lines,
+		sprintf('\def\storySec{%s}',$sec),
+		sprintf('\def\storyTitle{%s}',$title),
+		sprintf('\def\storyDate{%s}',$date_dot),
+		'\def\storyLink{\hyperlink{\storySec}{\storyTitle}}',
+		'\hypertarget{\storySec}{}',
+		;
+
+    my @d;
+    push @d,
+        {
+            scts => [qw( subsection )],
+            lines => [@lines],
+        };
+
+    return [@d];
+}
+
 sub _insert_titletoc {
     my ($bld) = @_;
 

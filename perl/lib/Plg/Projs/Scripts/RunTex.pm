@@ -243,6 +243,7 @@ sub run {
         $blx->_cmd_tex,
         $blx->_cmd_tex,
         ;
+    $DB::single = 1;
 
     my $i = 1;
     while (@cmds) {

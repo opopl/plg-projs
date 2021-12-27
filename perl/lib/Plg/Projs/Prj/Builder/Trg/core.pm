@@ -23,6 +23,7 @@ sub trg_inj_core {
             insert => {
                 titletoc   => sub { $bld->_insert_titletoc },
                 hyperlinks => sub { $bld->_insert_hyperlinks },
+                story      => sub { $bld->_insert_story },
             },
             append => {
                 each => sub { },

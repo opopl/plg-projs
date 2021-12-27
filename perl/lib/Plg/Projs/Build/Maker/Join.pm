@@ -105,12 +105,16 @@ sub _join_lines {
     my $pats = $mkr->_pats;
 
     my $delim = '%' x 50;  
+	
+	( my $date = $sec ) =~ ( m/^(\d+_\d+_\d+)\./ );
 
     my $r_sec = {
-        proj      => $proj,
-        sec       => $sec,
-        file      => $file,
+        proj   => $proj,
+        sec    => $sec,
+        file   => $file,
+		date   => $date,	
     };
+	$mkr->{r_sec} = $r_sec;
 
     my $sect;
 
@@ -130,6 +134,8 @@ sub _join_lines {
             $sect = $1;
             my $title = $2;
             texify(\$title);
+			
+			$mkr->{r_sec}->{title} = $title;
 
             s|$pats->{sect}|\\$1\{$title\}|g;
 

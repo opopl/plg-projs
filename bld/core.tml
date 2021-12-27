@@ -37,7 +37,7 @@
     </index>
   </preamble>
   <sii>
-    <insert titletoc="1" hyperlinks="1" />
+    <insert titletoc="1" hyperlinks="1" story="1" />
     <scts>
       <!--Plg::Projs::Prj::Builder::Sct-->
       <sct name="preamble">
@@ -62,7 +62,7 @@
       </sct>
       <sct name="index">
         <contents>
-          \ifFileExists{./print_index.tex}{%
+          \IfFileExists{./print_index.tex}{%
             @txt.hdr
             @txt.ptc.start @printindex @txt.ptc.stop
           }{}
@@ -116,6 +116,7 @@
              p.core
              p.wrapfig
              p.fancyquote
+             p.fancyhdr
              <!--p.shadequote-->
              p.env
              p.rus
@@ -208,6 +209,7 @@
       <ins_order>
          hyperlinks
          titletoc
+				 story
       </ins_order>
       <generate>
       </generate>
