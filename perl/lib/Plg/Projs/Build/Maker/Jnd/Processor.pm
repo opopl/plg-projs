@@ -249,8 +249,8 @@ sub _wrapped {
      }
   }
   for(@lines){
-	  s/InsertBoxR\{.*\}\{/parpic[r]{/g;
-	  s/InsertBoxL\{.*\}\{/parpic[l]{/g;
+	  s/InsertBoxR.*\{/parpic[r]{/g;
+	  s/InsertBoxL.*\{/parpic[l]{/g;
   }
   return @lines;
 }

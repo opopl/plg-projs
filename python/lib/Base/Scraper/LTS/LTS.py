@@ -1171,11 +1171,62 @@ class LTS(
 
     return self
 
+  def sec_db_update(self, ref = {}):
+    sec   = ref.get('sec','')
+
+    data  = ref.get('data',{})
+
+    where = {
+      'sec'  : sec,
+      'proj' : self.proj,
+    }
+
+    db_file = self.db_file_projs
+
+    d = {
+      'db_file' : db_file,
+      'table'   : 'projs',
+      'insert'  : {
+        'sec'       : sec,
+        'tags'      : data.get('tags',''),
+        'title'     : data.get('title',''),
+        'url'       : data.get('url',''),
+        'author_id' : data.get('author_id',''),
+      },
+      'on_list' : [ 'sec' ]
+    }
+    import pdb; pdb.set_trace()
+
+    dbw.insert_update_dict(d)
+
+    tbase = 'projs'
+
+    jcol  = 'file'
+    b2i   = { 'tags' : 'tag' }
+    bcols = [ 'tags', 'author_id' ]
+
+    dbw.base2info({
+      'db_file' : self.db_file_projs,
+      'tbase'   : tbase,
+      'bwhere'  : where,
+      'jcol'    : jcol,
+      'b2i'     : b2i,
+      'bcols'   : bcols
+    })
+
+    return self
+
   def sec_file2db(self, ref = {}):
     sec       = ref.get('sec','')
 
     data = self._sec_file_data({ 'sec' : sec })
-    import pdb; pdb.set_trace()
+    if sec and len(data):
+      self.sec_db_update({ 
+        'sec'  : sec, 
+        'data' : data, 
+      })
+
+    return self
 
   def sec_author_file2db(self, ref = {}):
     sec       = ref.get('sec','')
