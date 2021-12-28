@@ -11,79 +11,99 @@ use File::Basename qw(basename dirname);
 use File::Path qw(make_path remove_tree mkpath rmtree);
 use File::Slurp::Unicode;
 use Data::Dumper qw(Dumper);
+use File::Spec::Functions qw(catfile);
+
+use Base::DB qw(
+    dbi_connect
+    dbh_select_as_list
+    dbh_select_fetchone
+    dbh_select
+);
 
 ###see_also projs#author#get
 
 sub _author_get {
-	my ($self, $ref) = @_;
-	$ref ||= {};
+    my ($self, $ref) = @_;
+    $ref ||= {};
 
-	my $author_id = $ref->{author_id} || '';
+    my $author_id = $ref->{author_id} || '';
 
-	my $data   = $self->_data_dict({ 'id' => 'authors' });
-	my $author = $data->{$author_id} || '';
+    my $db_file = catfile($ENV{HTML_ROOT},'h.db');
 
-	return $author;
+    my $author = dbh_select_fetchone({
+        dbfile => $db_file,
+        t => 'authors',
+        f => [qw( name )],
+        w => { id => $author_id },
+    });
+    $DB::single = 1;  
+
+    unless($author){
+        my $data   = $self->_data_dict({ 'id' => 'authors' });
+        $author = $data->{$author_id} || '';
+    }
+
+    return $author;
 }
 
 ###see_also projs#author#file
 
 sub _author_file {
-	my ($self, $ref) = @_;
-	$ref ||= {};
+    my ($self, $ref) = @_;
+    $ref ||= {};
 
-	my $proj = $ref->{proj} || '';
+    my $proj = $ref->{proj} || '';
 
-	my $file = $self->_data_dict_file({ 
-		proj => $proj,
-		id   => 'authors',
-	});
-	my $dir = dirname($file);
-	mkpath $dir unless -d $dir;
+    my $file = $self->_data_dict_file({ 
+        proj => $proj,
+        id   => 'authors',
+    });
+    my $dir = dirname($file);
+    mkpath $dir unless -d $dir;
 
-	return $file;
+    return $file;
 }
 
 ###see_also projs#author#add
 
 sub author_add {
-	my ($self, $ref) = @_;
-	$ref ||= {};
+    my ($self, $ref) = @_;
+    $ref ||= {};
 
-	my $author    = $ref->{author} || '';
-	my $author_id = $ref->{author_id} || '';
+    my $author    = $ref->{author} || '';
+    my $author_id = $ref->{author_id} || '';
 
-	my $hash = $self->_data_dict({ 'id' => 'authors' });
+    my $hash = $self->_data_dict({ 'id' => 'authors' });
 
-	if ($author_id) {
-		$hash->{$author_id} = $author;
-	}
-	$self->{hash_authors} = $hash;
+    if ($author_id) {
+        $hash->{$author_id} = $author;
+    }
+    $self->{hash_authors} = $hash;
 
-	$self->author_hash_save;
+    $self->author_hash_save;
 
-	return $self;
+    return $self;
 }
 
 ###see_also projs#author#hash_save
 
 sub author_hash_save {
-	my ($self) = @_;
+    my ($self) = @_;
 
-	my $file = $self->_author_file;
+    my $file = $self->_author_file;
 
-	my $hash = $self->{hash_authors} || {};
-	my @ids = sort keys %$hash;
+    my $hash = $self->{hash_authors} || {};
+    my @ids = sort keys %$hash;
 
-	my @lines;
-	foreach my $author_id (@ids) {
-		my $author = $hash->{$author_id} || '';
-		next unless $author;
-		push @lines, sprintf('%s %s', $author_id, $author);
-	}
-	write_file($file,join("\n",@lines) . "\n");
+    my @lines;
+    foreach my $author_id (@ids) {
+        my $author = $hash->{$author_id} || '';
+        next unless $author;
+        push @lines, sprintf('%s %s', $author_id, $author);
+    }
+    write_file($file,join("\n",@lines) . "\n");
 
-	return $self;
+    return $self;
 }
 
 1;

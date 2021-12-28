@@ -761,15 +761,15 @@ class LTS(
         if re.match(r'^#',self.line) or (len(self.line) == 0):
           continue
 
-        m = rgx.match('idat.dict',self.line)
+        m = rgx.match('author.dict',self.line)
         if m:
-          author_id    = m.group(1)
+          author_id    = m.group('author_id')
 
           # facebook ids corresponding to single author_id
           fb_ids = []
 
           # incoming author string
-          author_bare  = m.group(2)
+          author_bare  = m.group('author_bare')
 
           # plain author name
           author_plain = author_bare
@@ -779,9 +779,13 @@ class LTS(
 
           m = rgx.match('author.bare.inverted',author_bare)
           if m:
-            last_name  = m.group(1).strip()
-            first_name = m.group(2).strip()
+            last_name  = m.group('last_name').strip()
+            first_name = m.group('first_name').strip()
+            info       = m.group('info')
             author_plain = f'{first_name} {last_name}'
+            if info:
+              author_plain = f'{author_plain} ({info})'
+
             if not first_name in names_first:
               author_name = author_plain
 
@@ -1166,6 +1170,12 @@ class LTS(
     self.sec_author_file2db({ 'sec' : sec })
 
     return self
+
+  def sec_file2db(self, ref = {}):
+    sec       = ref.get('sec','')
+
+    data = self._sec_file_data({ 'sec' : sec })
+    import pdb; pdb.set_trace()
 
   def sec_author_file2db(self, ref = {}):
     sec       = ref.get('sec','')

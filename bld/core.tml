@@ -37,7 +37,7 @@
     </index>
   </preamble>
   <sii>
-    <insert titletoc="1" hyperlinks="1" story="1" />
+    <insert titletoc="1" hyperlinks="0" story="1" />
     <scts>
       <!--Plg::Projs::Prj::Builder::Sct-->
       <sct name="preamble">
@@ -54,6 +54,36 @@
         <perl>
           '\relax';
         </perl>
+      </sct>
+      <sct name="listfigs">
+        <contents>
+          \IfFileExists{./lst_figs.tex}{%
+            @txt.lof
+          }{}
+        </contents>
+        <txt>
+          <lof>
+            \cleardoublepage
+            \phantomsection
+            \addcontentsline{toc}{chapter}{\listfigurename} 
+            \listoffigures
+          </lof>
+        </txt>
+      </sct>
+      <sct name="listtabs">
+        <contents>
+          \IfFileExists{./lst_tabs.tex}{%
+            @txt.lot
+          }{}
+        </contents>
+        <txt>
+          <lot>
+            \cleardoublepage
+            \phantomsection
+            \addcontentsline{toc}{chapter}{\listtablename} 
+            \listoftables
+          </lot>
+        </txt>
       </sct>
       <sct name="preamble.index">
         <contents>
@@ -116,7 +146,6 @@
              p.core
              p.wrapfig
              p.fancyquote
-             p.fancyhdr
              <!--p.shadequote-->
              p.env
              p.rus
@@ -143,6 +172,7 @@
              datetime2
              mathtext
              nameref
+             p.fancyhdr
           </pack_list>
           <pack_opts>
             <datetime2>
@@ -178,8 +208,23 @@
       </sct>
     </scts>
     <generate>
+      <!-- sii.generate.on
+      purpose:
+        list of sections to be generated
+        instructions are in path, e.g.:
+          sii.scts.sct[name="preamble"]
+          sii.scts.sct[name="index"]
+      packages: 
+        Plg::Projs::Prj::Builder::Gen     _gen_sec()
+          Plg::Projs::Prj::Builder::Sct   _sct_lines()
+
+      -->
+        
       <on>
         index
+
+        listfigs
+        listtabs
 
         preamble
         preamble.packages
@@ -209,7 +254,7 @@
       <ins_order>
          hyperlinks
          titletoc
-				 story
+         story
       </ins_order>
       <generate>
       </generate>

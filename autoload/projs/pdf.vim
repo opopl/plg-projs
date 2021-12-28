@@ -65,6 +65,9 @@ function! projs#pdf#view (...)
   let viewer_id = get(ref,'viewer','evince')
   let viewer    = base#exefile#path(viewer_id)
 
+	"let viewer    = 'skim'
+	"let viewer    = 'hh'
+
   let type      = get(ref,'type','bld')
 
   let target    = get(ref,'target','')

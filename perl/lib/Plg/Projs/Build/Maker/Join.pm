@@ -81,6 +81,8 @@ sub _join_lines {
 
     mkpath $mkr->{src_dir};
 
+    $file ||= $mkr->_file_sec($sec,{ proj => $proj });
+
     while(1){
         my $gen = $mkr->_val_('sections generate ' . $sec);
         $gen //= sub { $bld->_gen_sec($sec); };
@@ -95,9 +97,8 @@ sub _join_lines {
             }
         }
             
-        my $f_sec = $ref->{file} || $mkr->_file_sec($sec,{ proj => $proj });
-        return () unless -f $f_sec; 
-        @f_lines = read_file $f_sec;
+        return () unless -f $file; 
+        @f_lines = read_file $file;
 
         last;
     }
@@ -105,16 +106,16 @@ sub _join_lines {
     my $pats = $mkr->_pats;
 
     my $delim = '%' x 50;  
-	
-	( my $date = $sec ) =~ ( m/^(\d+_\d+_\d+)\./ );
+
+    my ($date) = ( $sec =~ m/^(\d+_\d+_\d+)\..*$/ );
 
     my $r_sec = {
         proj   => $proj,
         sec    => $sec,
         file   => $file,
-		date   => $date,	
+        date   => $date,
     };
-	$mkr->{r_sec} = $r_sec;
+    $mkr->{r_sec} = $r_sec;
 
     my $sect;
 
@@ -133,11 +134,12 @@ sub _join_lines {
         m/$pats->{sect}/ && do {
             $sect = $1;
             my $title = $2;
-            texify(\$title);
-			
-			$mkr->{r_sec}->{title} = $title;
+            #texify(\$title);
+            my $title_tex = texify($title);
 
-            s|$pats->{sect}|\\$1\{$title\}|g;
+            $mkr->{r_sec}->{title} = $title;
+
+            s|$pats->{sect}|\\$1\{$title_tex\}|g;
 
             $mkr->_line_process_pat_sect({ 
                sect    => $sect,

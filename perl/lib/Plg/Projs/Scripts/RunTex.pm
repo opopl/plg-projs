@@ -110,7 +110,7 @@ sub init {
         ->get_proj
         ->json_load
         ->get_opt
-        ->init_blx
+        ->init_mkx
         ;
 
     return $self;
@@ -136,7 +136,7 @@ sub get_proj {
     my $proj = shift @ARGV;
     my $root = getcwd();
 
-    my $blx = Plg::Projs::Build::Maker->new( 
+    my $mkx = Plg::Projs::Build::Maker->new( 
         skip => { 
             get_opt => 1 
         },
@@ -179,10 +179,10 @@ sub get_opt {
     return $self;   
 }
 
-sub init_blx {
+sub init_mkx {
     my ($self) = @_;
 
-    my $blx = Plg::Projs::Build::Maker->new( 
+    my $mkx = Plg::Projs::Build::Maker->new( 
         skip => { 
             get_opt => 1 
         },
@@ -192,7 +192,7 @@ sub init_blx {
     );
 
     my $h = {
-        blx  => $blx,
+        mkx  => $mkx,
     };
     hash_inject($self, $h);
 
@@ -202,11 +202,11 @@ sub init_blx {
 sub rm_zero {
     my ($self,$exts) = @_;
 
-    my $blx  = $self->{blx};
+    my $mkx  = $self->{mkx};
 
     my $root = $self->{root};
 
-    my @files = $blx->_find_([$root],$exts);
+    my @files = $mkx->_find_([$root],$exts);
 
     foreach my $f (@files) {
         my $st = stat($f);
@@ -225,7 +225,7 @@ sub rm_zero {
 sub run { 
     my ($self) = @_;
 
-    my $blx = $self->{blx};
+    my $mkx = $self->{mkx};
 
     my $root = $self->{root};
     my $proj = $self->{proj};
@@ -238,10 +238,10 @@ sub run {
     };
     my @cmds; 
     push @cmds, 
-        $blx->_cmd_tex,
-        $blx->_cmd_bibtex,
-        $blx->_cmd_tex,
-        $blx->_cmd_tex,
+        $mkx->_cmd_tex,
+        $mkx->_cmd_bibtex,
+        $mkx->_cmd_tex,
+        $mkx->_cmd_tex,
         ;
     $DB::single = 1;
 
@@ -262,7 +262,7 @@ sub run {
 
         /^\s*$tex\s+/ && do { 
             #next unless ($i == 1);
-            my @texindy = $blx->_cmds_texindy({ dir => $root });
+            my @texindy = $mkx->_cmds_texindy({ dir => $root });
             unshift @cmds, @texindy;
         };
 
@@ -270,16 +270,16 @@ sub run {
 
             $self->rm_zero([qw( bbl )]);
             
-            my @bbl = $blx->_find_([$root],[qw(bbl)]);
+            my @bbl = $mkx->_find_([$root],[qw(bbl)]);
 
             unshift @cmds, 
-               $blx->_cmd_tex,
+               $mkx->_cmd_tex,
                $sub_pi,
                ;
 
             if (@bbl) {
                 push @cmds, 
-                    $blx->_cmd_tex;
+                    $mkx->_cmd_tex;
             }
         };
 

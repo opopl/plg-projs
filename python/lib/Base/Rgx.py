@@ -23,8 +23,11 @@ pats = {
      'dict' : r'^(\S+)\s+(.*)$'
   },
   'author' : {
+    'dict' : r'^(?P<author_id>\S+)\s+(?P<author_bare>.*)$',
     'bare' : {
-      'inverted' : r'^([^,]+),([^,]+)$'
+      # author.bare.inverted
+      'inverted' : r'^(?P<last_name>[^,()]+),(?P<first_name>[^,()]+)(?:\s*|\s+\((?P<info>.*)\))$'
+      #'inverted' : r'^(?P<last_name>[^,]+),(?P<first_name>[^,]+)\s*$'
     }
   },
   'url' : {

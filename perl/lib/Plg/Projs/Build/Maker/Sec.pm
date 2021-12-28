@@ -42,9 +42,7 @@ sub _debug_sec {
     my ($mkr, $root_id, $proj, $sec) = @_;
 
             my $s =<< 'EOF'; 
-\vspace{0.5cm}
-{\ifDEBUG\small\LaTeX~section: \verb|_sec_| project: \verb|_proj_| rootid: \verb|_rootid_|\fi}
-\vspace{0.5cm}
+{\ifDEBUG\vspace{0.5cm}\small\LaTeX~section: \verb|_sec_| project: \verb|_proj_| rootid: \verb|_rootid_|\vspace{0.5cm}\fi}
 EOF
     $s =~ s/_sec_/$sec/g;
     $s =~ s/_proj_/$proj/g;

@@ -24,7 +24,7 @@ sub _insert_story {
 
     return [] unless $bld->_val_(qw( sii insert story ));
 
-	my $mkr = $bld->{mkr} || {};
+	my $mkr = $bld->{maker} || {};
 	my $r_sec = $mkr->{r_sec} || {};
 
 	my $sec   = $r_sec->{sec};
@@ -34,14 +34,22 @@ sub _insert_story {
 	return [] unless $sec && $title && $date;
 
 	( my $date_dot = $date ) =~ s/_/./g;
+	my $cut = 30;
+
+	$title =~ s/\\enquote\{([^{}]*)\}/$1/g;
+	my $title_cut = (length($title) < $cut) ? $title : ( substr($title, 0, 30) . '...' );   
 
 	my @lines;
 	push @lines,
+		'',
 		sprintf('\def\storySec{%s}',$sec),
-		sprintf('\def\storyTitle{%s}',$title),
+		sprintf('\def\storyTitle{%s}',$title_cut),
 		sprintf('\def\storyDate{%s}',$date_dot),
 		'\def\storyLink{\hyperlink{\storySec}{\storyTitle}}',
 		'\hypertarget{\storySec}{}',
+		'',
+		'\pagestyle{ltsStory}',
+		'',
 		;
 
     my @d;
@@ -49,6 +57,9 @@ sub _insert_story {
         {
             scts => [qw( subsection )],
             lines => [@lines],
+			at_end => [
+			  '\pagestyle{fancy}'
+			],
         };
 
     return [@d];

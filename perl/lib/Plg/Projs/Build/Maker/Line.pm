@@ -45,7 +45,8 @@ sub _line_process_pat_sect {
 
     push @$lines, 
         $line,
-        $mkr->_debug_sec($root_id, $proj, $sec)
+        $mkr->_debug_sec($root_id, $proj, $sec),
+		'\par',
         ;
 
     foreach my $ord (@$ins_order) {
@@ -67,6 +68,8 @@ sub _line_process_pat_sect {
                 if ($ord eq 'titletoc') {
                     push @$at_end, @{ $sss->{lines_stop} || [] };
                 }
+
+                push @$at_end, @{ $sss->{at_end} || [] };
             }
    
         }
