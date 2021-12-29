@@ -46,7 +46,7 @@ sub _line_process_pat_sect {
     push @$lines, 
         $line,
         $mkr->_debug_sec($root_id, $proj, $sec),
-		'\par',
+        '\par',
         ;
 
     foreach my $ord (@$ins_order) {

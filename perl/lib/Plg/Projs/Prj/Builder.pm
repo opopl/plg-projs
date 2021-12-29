@@ -102,6 +102,7 @@ sub init {
         ->act_exe
         ->init_maker
         ;
+	$DB::single = 1;
 
     return $bld;
 
@@ -367,6 +368,8 @@ sub init_maker {
     #exit;
     #print Dumper($bld->{tex_exe}) . "\n";
     #exit 1;
+	#
+	$DB::single = 1;
 
     my $mkr = Plg::Projs::Build::Maker->new(
         pdf_name     => $pdf_name,

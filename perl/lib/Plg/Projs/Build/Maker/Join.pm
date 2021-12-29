@@ -123,10 +123,16 @@ sub _join_lines {
     push @lines, @prepend;
 
     $mkr->tree_init({ sec => $sec });
+    my %flg;
 
 ###for_@f_lines
     foreach(@f_lines) {
         chomp;
+
+        /^%%beginhead/ && do { $flg{head} = 1; next; };
+        /^%%endhead/ && do { $flg{head} = undef; next; };
+        next if $flg{head};
+        next if /^%\s+vim:/;
 
         $_ = $line_sub->($_, $r_sec);
 

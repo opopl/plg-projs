@@ -12,6 +12,10 @@ use Base::Arg qw(
   hash_update
 );
 
+use Plg::Projs::Map qw(
+  %tex_syms
+);
+
 use Image::Info qw(
     image_info
     image_type
@@ -249,8 +253,8 @@ sub _wrapped {
      }
   }
   for(@lines){
-	  s/InsertBoxR.*\{/parpic[r]{/g;
-	  s/InsertBoxL.*\{/parpic[l]{/g;
+      s/InsertBoxR.*\{/parpic[r]{/g;
+      s/InsertBoxL.*\{/parpic[l]{/g;
   }
   return @lines;
 }
@@ -393,13 +397,18 @@ sub match_author_end {
   return $self unless @$author_ids;
 
   $author_ids = uniq($author_ids);
-
+ 
   foreach my $author_id (@$author_ids) {
      my $prj    = $mkr->{prj};
      my $author = $prj->_author_get({ author_id => $author_id });
 
-     $author =~ s/\(/ \\textbraceleft /g;
-     $author =~ s/\)/ \\textbraceright /g;
+     while(my($k,$v)=each %tex_syms){
+        $author =~ s/\Q$k\E/$v /g;
+     }
+     #$author =~ s/\(/ \\textbraceleft /g;
+     #$author =~ s/\(/ \\textbraceleft /g;
+     #$author =~ s/\)/ \\textbraceright /g;
+     #$author =~ s/\)/ \\textbraceright /g;
 
      push @{$self->{nlines}}, sprintf(q{\Pauthor{%s}}, $author) if $author;
 

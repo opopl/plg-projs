@@ -87,6 +87,10 @@ use Base::DB qw(
     dbi_connect
 );
 
+use Plg::Projs::Map qw(
+    %tex_syms
+);
+
 
 #use open IO => ":raw:utf8"; 
 #docstore.mik.ua/orelly/perl4/cook/ch08_20.htm
@@ -369,6 +373,19 @@ sub _cmds_texindy {
         my $idx = basename($f);
 
         local $_ = $idx;
+
+        my @lines = read_file $idx;
+        for(@lines){
+           /^\\indexentry\{(.*)\|hyperpage\}\{(\d+)\}\s*$/ &&  do { 
+              my $entry = $1;
+              my $page = $2;
+              while(my($k,$v)=each %tex_syms){
+                $entry =~ s/\Q$k\E/$v /g;
+              }
+              $_ = sprintf('\indexentry{%s|hyperpage}{%s}',$entry,$page)
+           };
+        }
+        write_file($idx,join("\n",@lines) . "\n");
 
         my ($f) = (m/^(\w+)\./);
         my $xdy = qq{$f.xdy};

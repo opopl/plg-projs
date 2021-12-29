@@ -1195,7 +1195,6 @@ class LTS(
       },
       'on_list' : [ 'sec' ]
     }
-    import pdb; pdb.set_trace()
 
     dbw.insert_update_dict(d)
 
