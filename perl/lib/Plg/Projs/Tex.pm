@@ -133,6 +133,7 @@ our %fbicons_heart = (
 
 ###fbicons_all
 our %fbicons_all = (
+  '🎀' => 'ribbon',
   '🛑' => 'stop.sign',
   '🎼' => 'musical.score',
   '🌲' => 'evergreen.tree',

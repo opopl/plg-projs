@@ -84,6 +84,7 @@ sub init {
        caption  => undef,
 
        is_cmt => undef,
+       is_caption => undef,
        lnum => 0,
 
        root => undef,
@@ -300,7 +301,10 @@ sub _width_tex {
 sub _tex_caption {
   my ($self, $caption) = @_;
 
+  my $tab = $self->{tab};
+
   my $c = $self->_fig_skip ? 'captionof{figure}[]' : 'caption[]' ; 
+  #$caption ? ( sprintf(q| \%s{%s} |, $c, ( $tab ? '\Large ' : '' ) . $caption ) ) : ();
   $caption ? ( sprintf(q| \%s{%s} |, $c, $caption ) ) : ();
 }
 
@@ -402,19 +406,18 @@ sub match_author_end {
      my $prj    = $mkr->{prj};
      my $author = $prj->_author_get({ author_id => $author_id });
 
+     next unless $author;
+
      while(my($k,$v)=each %tex_syms){
         $author =~ s/\Q$k\E/$v /g;
      }
-     #$author =~ s/\(/ \\textbraceleft /g;
-     #$author =~ s/\(/ \\textbraceleft /g;
-     #$author =~ s/\)/ \\textbraceright /g;
-     #$author =~ s/\)/ \\textbraceright /g;
+     Plg::Projs::Tex::texify(\$author);
 
-     push @{$self->{nlines}}, sprintf(q{\Pauthor{%s}}, $author) if $author;
-
-     $self->{d_author} = undef;
+     push @{$self->{nlines}}, sprintf(q{\Pauthor{%s}}, $author);
 
   }
+
+  $self->{d_author} = undef;
 
   return $self;
 }
@@ -439,6 +442,28 @@ sub _opts_dict {
   return $dict;
 }
 
+sub match_caption_begin {
+  my ($self,$opts_s) = @_;
+
+  my $d = $self->{d};
+  return $self unless $d;
+
+  $self->{is_caption} = 1;
+
+  return $self;
+}
+
+sub match_caption_end {
+  my ($self) = @_;
+
+  my $d = $self->{d};
+  return $self unless $d;
+
+  $self->{is_caption} = undef;
+
+  return $self;
+}
+
 sub match_tab_begin {
   my ($self, $opts_s) = @_;
 
@@ -452,7 +477,8 @@ sub match_tab_begin {
   );
 
   my $tab = $self->{tab};
-  $tab->{width} ||= ( $self->{img_width_default} / $self->{tab}->{cols} );
+  my $tab_cols = $tab->{cols};
+  $tab->{width} ||= ( $self->{img_width_default} / $tab_cols );
   
   push @{$self->{nlines}}, 
      $self->_fig_start, 
@@ -618,42 +644,36 @@ sub _d2tex {
   }
 
   my @tex;
+  my $w2h;
   {
     my $iinfo = image_info($img_file);
-    my ($w, $h) = map { $iinfo->{$_} } qw( height width );
-    my $w2h = $h ? ($w*1.0)/$h : '';
+    my ($w, $h) = map { $iinfo->{$_} } qw( width height );
+    $w2h = $h ? ($w*1.0)/$h : '';
     push @tex, '% w2h = ' . $w2h;
   }
 
   my $caption = $d->{caption};
   Plg::Projs::Tex::texify(\$caption) if $caption;
 
+  # current graphic width
   my $wd = $d->{width} || $rw->{width_tex};
+
+###cell_width
+  if($tab){
+    $wd = $tab->{width}*$w2h;
+    my $locals = $self->{locals} || {};
+
+    $wd = ( $locals->{force} ? $locals->{width} : 0 ) || $d->{width} || $wd;
+  }
+
+  push @tex,
+    $wd ? sprintf('\setlength{\cellWidth}{%s}',$self->_len2tex($wd)) : ();
 
   my @o;
   push @o, 
-    'keepaspectratio';
-
-  unless($tab){
-    push @o, 
-      sprintf(q{ width=%s },$self->_width_tex($wd));
-  }else{
-    my $tab_width = $tab->{width};
-    my $tab_height = $self->_val_('tab height') || $tab_width*0.9;
-    my $locals = $self->{locals} || {};
-
-    my $use_height =  ( $tab->{use_locals} ? $locals->{no_height} : 0 )
-       || $d->{no_height} || $tab->{no_height} ? 0 : 1;
-
-    my $width = ( $tab->{use_locals} ? $locals->{width} : 0 ) || 
-                ( $tab->{use_d} ? $d->{width} : 0 ) || $tab_width;
-
-    if($use_height) {
-      push @o, sprintf(q{ height=%s }, $self->_len2tex($tab_height));
-    }elsif($width){
-      push @o, sprintf(q{ width=%s }, $self->_len2tex($width));
-    }
-  }
+    q{ keepaspectratio },
+    $wd ? q{ width=\cellWidth } : (),
+    ;
 
   if (my $rotate = $d->{rotate}) {
     #my $dict_rotate = opts_dict($rotate);
@@ -665,7 +685,8 @@ sub _d2tex {
   my (@ig, $ig_cmd); 
   $ig_cmd = sprintf(q|  \includegraphics[%s]{%s} |, $o, $img_path );
 
-  push @ig, $ig_cmd;
+  push @ig, 
+    $ig_cmd;
 
   my $repeat = $d->{repeat};
   if ($repeat && $repeat =~ /^(\d+)$/) {
@@ -679,14 +700,18 @@ sub _d2tex {
   }
 
   my $wrap = $d->{'@wrap'} || $d->{'wrap'};
+
   my $parbox = $self->_val_('tab parbox') || $d->{parbox};
+  my $width_parbox = $parbox || '\cellWidth';
 
   push @tex, $self->_wrapped($wrap,'start');
+
+  $parbox = 1 if $caption;
 
   unless($tab){
      push @tex,
         $self->_fig_start, # () if not figure
-          $parbox ? sprintf('\parbox{%s}{%', $self->_len2tex($parbox) ) : (),
+          $parbox ? sprintf('\parbox{%s}{%%', $self->_len2tex($width_parbox) ) : (),
             @ig,
             $caption ? $self->_tex_caption($caption) : (),
             $d->{cap} ? sprintf('\begin{center}\figCapA{%s}\end{center}',$d->{cap}) : (),
@@ -694,14 +719,14 @@ sub _d2tex {
         $self->_fig_end,   # () if not figure
         ;
   }else{
-     push @tex,
-        sprintf('%% row: %s, col: %s ', @{$tab}{qw(i_row i_col)}),
-        $parbox ? sprintf('\parbox{%s}{%', $self->_len2tex($parbox) ) : (),
-          $caption ? ( sprintf(q|%% %s|, $caption )) : (),
-          @ig,
-          $d->{cap} ? sprintf('\begin{center}\figCapA{%s}\end{center}',$d->{cap}) : (),
-        $parbox ? '}%' : (),
-        ;
+
+    push @tex, sprintf('%% row: %s, col: %s ', @{$tab}{qw(i_row i_col)});
+    push @tex, $parbox ? sprintf('\parbox[t]{%s}{%%', $self->_len2tex($width_parbox) ) : ();
+    #push @tex,     $caption ? ( sprintf(q|%% %s|, $caption )) : ();
+    push @tex,      @ig;
+    push @tex,      $caption ? $self->_tex_caption($caption) : ();
+    push @tex,      $d->{cap} ? sprintf('\begin{center}\figCapA{%s}\end{center}',$d->{cap}) : ();
+    push @tex, $parbox ? '}%' : ();
   }
 
   push @tex, $self->_wrapped($wrap,'end');
@@ -809,7 +834,23 @@ sub loop {
        next; 
     };
 
+###m_comment
     m/^\s*%/ && do { push @{$self->{nlines}},$_; next; };
+
+###m_caption_begin
+    m/^\s*\@caption_begin\b(.*)/g && do { $self->match_caption_begin($1); next; };
+    m/^\s*\@caption_end\b(.*)/g && do { $self->match_caption_end($1); next; };
+
+    if ($self->{is_caption}) {
+        my $d = $self->{d};
+        next unless $d;
+
+        $d->{caption} ||= '';
+        $d->{caption} .= ( $d->{caption} ? ' ' : '' ) . trim($_);
+    }
+
+###m_caption_setup
+    #m/^\s*\@caption_setup\b(.*)/g && do { $self->match_caption_setup($1); next; };
 
 ###m_block_end
     if ($self->{is_cmt}) {
@@ -854,8 +895,10 @@ sub loop {
 
     m/^\s*author_id\s*(.*)\s*$/g && do { $self->match_author_id($1); next; };
    
+###m_tab
     m/^\s*tab_begin\b(.*)/g && do { $self->match_tab_begin($1); next; };
     m/^\s*tab_end\s*$/g && do { $self->match_tab_end; next; };
+
 
 ###m_pic@
     m/^\s*(pic|doc|ig)@(.*)$/g && do { 

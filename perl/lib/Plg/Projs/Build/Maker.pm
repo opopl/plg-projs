@@ -374,18 +374,23 @@ sub _cmds_texindy {
 
         local $_ = $idx;
 
-        my @lines = read_file $idx;
-        for(@lines){
-           /^\\indexentry\{(.*)\|hyperpage\}\{(\d+)\}\s*$/ &&  do { 
-              my $entry = $1;
-              my $page = $2;
-              while(my($k,$v)=each %tex_syms){
-                $entry =~ s/\Q$k\E/$v /g;
-              }
-              $_ = sprintf('\indexentry{%s|hyperpage}{%s}',$entry,$page)
-           };
+        while(1){
+          last if $idx !~ /^authors/;
+
+          my @lines = read_file $idx;
+          for(@lines){
+             /^\\indexentry\{(.*)\|hyperpage\}\{(\d+)\}\s*$/ &&  do { 
+                my $entry = $1;
+                my $page = $2;
+                while(my($k,$v)=each %tex_syms){
+                  $entry =~ s/\Q$k\E/$v /g;
+                }
+                $_ = sprintf('\indexentry{%s|hyperpage}{%s}',$entry,$page)
+             };
+          }
+          write_file($idx,join("\n",@lines) . "\n");
+          last;
         }
-        write_file($idx,join("\n",@lines) . "\n");
 
         my ($f) = (m/^(\w+)\./);
         my $xdy = qq{$f.xdy};
@@ -406,15 +411,17 @@ sub _cmds_texindy {
             $xdy = qq{$core.$lng.xdy};
             my $lang = $langs->{$lng};
 
-            $M_xdy = ( -e $xdy ) ? qq{ -M $xdy } : '';
-            $M_xdy ||= ( -e "index.$lng.xdy" ) ? qq{ -M index.$lng.xdy } : '';
+            $M_xdy = ( -f $xdy ) ? qq{ -M $xdy } : '';
+            $M_xdy ||= ( -f "index.$lng.xdy" ) ? qq{ -M index.$lng.xdy } : '';
 
             my $enc = ( $lng eq 'rus' ) ? '-C utf8' : '';
 
+            my $ind_file = "$core.$lng.ind";
+
             $cmd_idx = sprintf(qq{texindy $enc -L $lang $M_xdy $idx });
             $cmd_ind = ( $^O eq 'MSWin32' ) ? 
-                qq{call ind_ins_bmk.bat $core.$lng.ind 1 } : 
-                qq{ind_ins_bmk.sh $core.$lng.ind 1 }  
+                qq{call ind_ins_bmk.bat $ind_file 1 } : 
+                qq{ind_ins_bmk.sh $ind_file 1 }  
             ;
         };
 

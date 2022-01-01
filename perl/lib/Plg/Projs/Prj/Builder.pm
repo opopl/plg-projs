@@ -6,11 +6,16 @@ use utf8;
 use strict;
 use warnings;
 
+binmode STDOUT,':encoding(utf8)';
+
 use File::Slurp::Unicode;
 
 use XML::Hash::LX;
 use XML::Simple qw( XMLout XMLin );
 use Deep::Hash::Utils qw(reach);
+
+use YAML qw( LoadFile Load Dump DumpFile );
+
 
 use base qw(
     Plg::Projs::Prj
@@ -23,10 +28,12 @@ use base qw(
     Plg::Projs::Prj::Builder::Dmp
     Plg::Projs::Prj::Builder::Gen
     Plg::Projs::Prj::Builder::Insert
-    Plg::Projs::Prj::Builder::Sct
     Plg::Projs::Prj::Builder::Trg
     Plg::Projs::Prj::Builder::Txt
     Plg::Projs::Prj::Builder::Var
+
+    Plg::Projs::Prj::Builder::Sct
+    Plg::Projs::Prj::Builder::Sct::Index
 );
 
 use FindBin qw($Bin $Script);
@@ -99,13 +106,29 @@ sub init {
         ->read_in_file                  # process -i --in_file switch
         ->process_ii_updown               
         ->process_config
+        ->load_yaml
         ->act_exe
         ->init_maker
         ;
-	$DB::single = 1;
+
+    #my $data = LoadFile($file);
+    my $s = Dump($bld->{opts_maker});
 
     return $bld;
 
+}
+
+sub load_yaml {
+    my ($bld) = @_;
+
+    my @yfiles = @{$bld->{opt}->{yfile} || []};
+    foreach my $yfile (@yfiles) {
+        next unless -f $yfile;
+
+        my $d = LoadFile($yfile);
+    }
+
+    return $bld;
 }
 
 sub quit {
@@ -183,9 +206,11 @@ sub print_help {
             $0
         OPTIONS:
              -t --target TARGET
+
              -d --data DATA #TODO
-             -c --config CONFIG e.g. 'xelatex'
+             -c --config CONFIG e.g. 'xelatex' (comma-separated list)
              -i --in_file INFILE
+             -y --yfile YAML FILE
         USAGE:
              perl $Script ACT 
              perl $Script ACT -t TARGET
@@ -203,6 +228,7 @@ $acts_s
         EXAMPLES:
             perl $Script compile -c xelatex
             perl $Script compile -c xelatex -t usual
+            perl $Script compile -c xelatex -t usual -y a.yaml -y b.yaml
             perl $Script show_trg 
             perl $Script show_acts
             perl $Script dump_bld -d 'opts_maker sections' 
@@ -240,6 +266,7 @@ sub get_opt {
         "data|d=s",
         "in_file|i=s",
         "ii_updown=s",
+        "yfile|y=s@",
     );
 
     GetOptions(\%opt,@optstr);
@@ -368,8 +395,7 @@ sub init_maker {
     #exit;
     #print Dumper($bld->{tex_exe}) . "\n";
     #exit 1;
-	#
-	$DB::single = 1;
+    #
 
     my $mkr = Plg::Projs::Build::Maker->new(
         pdf_name     => $pdf_name,

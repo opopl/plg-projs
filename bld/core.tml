@@ -33,11 +33,16 @@
                 _bld_ind         =>  /preamble/index/ind values
     -->
     <index>
+			<enable>
+				authors.rus
+				names.rus
+				rus
+			</enable>
+      <ind name="authors.rus" title="Авторы" />
+			<ind name="rus" title="Предметный указатель" />
       <!--<ind name="" title="" />-->
       <!--<ind name="eng" title="Index" />-->
-      <!--<ind name="rus" title="Предметный указатель" />-->
       <!--<ind name="names.rus" title="Имена" />-->
-      <ind name="authors.rus" title="Авторы" />
       <!--<ind name="cities.rus" title="Города" />-->
       <!--<ind name="deaths.rus" title="Смерти" />-->
       <!--<ind name="writers.rus" title="{Писатели, Поэты, Мыслители}" />-->
@@ -180,6 +185,7 @@
              mathtext
              nameref
              p.fancyhdr
+             p.fig.caption
           </pack_list>
           <pack_opts>
             <datetime2>

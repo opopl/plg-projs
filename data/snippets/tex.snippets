@@ -6,10 +6,12 @@ snippet iifba
 	% -------------------------------------
 	\ii{fbauth.<++>}
 	% -------------------------------------
+snippet cof
+	\captionof{figure}[]{<++>}
 snippet ab
 	\ifcmt
 	 author_begin
-	   author_id
+	   author_id  
 	 author_end
 	\fi
 snippet !!
@@ -28,7 +30,12 @@ snippet igmc
 	\end{multicols}
 snippet cbk
 	\columnbreak
+snippet capb
+	@caption_begin
+	  <++>
+	@caption_end
 snippet mlc2
+	\raggedcolumns
 	\begin{multicols}{2} % {
 	\setlength{\parindent}{0pt}
 	
@@ -257,6 +264,10 @@ snippet pic02
 	  pic <++>
 	  @width 0.2
 	\fi
+snippet vwcol
+	\begin{vwcol}[widths={0.6,0.4},sep=.8cm, justify=flush, rule=0pt, indent=1em] 
+	  <++>
+	\end{vwcol} 
 snippet picc4
 	\ifcmt
 	  pic <++>

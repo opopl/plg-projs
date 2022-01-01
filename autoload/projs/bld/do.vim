@@ -32,12 +32,14 @@ if 0
           projs#bld#trg#list
 endif
 
-function! projs#bld#do#jnd_view ()
+function! projs#bld#do#jnd_view (...)
+	let ref = get(a:000,0,{})
 
-  let target  = projs#bld#target()
+	let target  = base#x#get(ref,'target',projs#bld#target())
   let proj    = projs#proj#name()
 
-  let jnd_tex = join([ projs#root(), 'builds', proj, 'src', target, 'jnd.tex' ],"/")
+  "let jnd_tex = join([ projs#root(), 'builds', proj, 'src', target, 'jnd.tex' ],"/")
+	let jnd_tex = projs#bld#jnd#tex({ 'proj' : proj, 'target' : target }) 
   call base#fileopen({ 
     \ 'files'    : [jnd_tex],
     \ 'load_buf' : 1,
