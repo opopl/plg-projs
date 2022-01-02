@@ -62,11 +62,14 @@ sub ctl_end {
     my ($self, $key) = @_;
 
     my $kv = $self->{key_val};
-    my $d = $self->{d};
+    my $d  = $self->{d};
 
     $d->{$key} = [@$kv] if $d && $kv && @$kv;
+
     $self->{is_key} = undef;
     $self->{key_val} = undef;
+
+    $DB::single = 1;
 
     return $self;
 }
@@ -907,6 +910,9 @@ sub loop {
 
     if ($self->{is_cmt} && $self->{is_key}) {
        my $key = $self->{is_key};
+
+###m_@ctl_end
+       m/^\s*\@$key%end\s*$/g && do { $self->ctl_end($key); next; };
        push @{$self->{key_val}},trim($_); next;
     }
 
@@ -1009,22 +1015,15 @@ sub loop {
        next;
     };
 
-###m_@ctl
-    m/^\s*(?:@|)(?<key>\w+)%(?<ctl>start|end)\s*$/g && do {
+###m_@ctl_start
+    m/^\s*(?:@|)(?<key>\w+)%start\s*$/g && do {
        my $key  = $+{'key'};
        my $ctl  = $+{'ctl'};
 
        my ($d, $tab) = @{$self}{qw(d tab)};
 
-       if ($ctl eq 'start'){
-          $self->{is_key} = $key;
-          $self->{key_val} ||= [];
-
-       }elsif ($ctl eq 'end'){
-          $self->ctl_end($key);
-
-       }
-       $DB::single = 1 if $ctl eq 'end';
+       $self->{is_key} = $key;
+       $self->{key_val} ||= [];
 
        next;
     };
