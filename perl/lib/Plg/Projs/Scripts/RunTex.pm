@@ -244,7 +244,6 @@ sub run {
         $mkx->_cmd_tex,
         $mkx->_cmd_tex,
         ;
-    $DB::single = 1;
 
     my $i = 1;
     while (@cmds) {

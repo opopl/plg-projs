@@ -121,6 +121,9 @@ sub tab_init {
       fig_env    => 'figure',
       cap_list   => [],
       resizebox  => 0.9,
+      minipage   => 0,
+      # table caption
+      caption    => '',
   };
   hash_inject($self->{tab}, $h);
 
@@ -135,9 +138,15 @@ sub _tab_start {
   return () unless $tab;
   my @tex;
 
+  my %w = ( 
+      resizebox => $self->_len2tex($tab->{resizebox}),
+      minipage  => $self->_len2tex($tab->{minipage}),
+  );
+
   push @tex, 
     $tab->{center} ? '\begin{center}%' : (),
-    $tab->{resizebox} ? '\resizebox{'.$tab->{resizebox}.'\textwidth}{!}{%' : (),
+    $tab->{resizebox} ? sprintf('\resizebox{%s}{!}{%%',$w{resizebox}) : (),
+    $tab->{minipage} ? sprintf('\begin{minipage}{%s}%%',$w{minipage}) : (),
     sprintf(q| \begin{%s}{*{%s}{%s}} |,@{$tab}{qw(env cols align)})
     ;
 
@@ -157,6 +166,8 @@ sub _tab_end {
 
   push @tex, 
     sprintf(q| \end{%s}|,$env),
+    $tab->{caption} ? sprintf('\captionof{table}{%s}%%',$tab->{caption}) : (),
+    $tab->{minipage} ? '\end{minipage}' : (),
     $tab->{resizebox} ? '}' : (),
     $tab->{center} ? '\end{center}' : (),
     ;
@@ -277,6 +288,8 @@ sub _cat_float {
 
 sub _len2tex {
   my ($self, $len) = @_;
+
+  return '' unless defined $len;
 
   my $tex = $len;
   for($len){
@@ -480,9 +493,9 @@ sub match_tab_begin {
   my $tab_cols = $tab->{cols};
   $tab->{width} ||= ( $self->{img_width_default} / $tab_cols );
   
-  push @{$self->{nlines}}, 
-     $self->_fig_start, 
-     $self->_tab_start;
+  #push @{$self->{nlines}},
+     #$self->_fig_start,
+     #$self->_tab_start;
 
   return $self;
 }
@@ -493,7 +506,8 @@ sub match_tab_end {
   my $tab = $self->{tab};
 
   push @{$self->{nlines}}, 
-     $self->_tab_end, $self->_tex_caption_tab,
+     $self->_tab_end,
+     $self->_tex_caption_tab,
      $self->_fig_end,
      ;
 
@@ -517,6 +531,21 @@ sub ldo_no_cmt {
 
   $self->{line} = $_;
   push @{$self->{nlines}}, $self->{line}; 
+
+  return $self;
+}
+
+sub lpush_tab_start {
+  my ($self) = @_;
+
+  my $tab = $self->{tab};
+  return $self unless $tab && !$tab->{started};
+
+  push @{$self->{nlines}},
+     $self->_fig_start,
+     $self->_tab_start;
+
+  $tab->{started} = 1;
 
   return $self;
 }
@@ -864,6 +893,9 @@ sub loop {
           if ( grep { /^$k$/ } @block_end ) {
              $self->lpush_d;
           }
+          if ( grep { /^$k$/ } qw( pic doc ig tex tex_start ) ) {
+             $self->lpush_tab_start;
+          }
        };
     }else{
        $self->ldo_no_cmt;
@@ -940,6 +972,7 @@ sub loop {
 
       }elsif($tab){
          $self->_dict_update($tab, $k => $v);
+         $DB::single = 1;
 
       # variables within ifcmt ... fi block
       }elsif($locals){

@@ -404,19 +404,21 @@ sub _cmds_texindy {
             qq{ind_ins_bmk.sh $proj.ind 1 }  
             ;
 
-        m/^(.*)\.(\w+)\.idx$/ && do {
-            my $core = $1;
-            my $lng = $2;
+        m/^(?<name>(?:|(?<pref>.*)\.)(?<lng>\w+))\.idx$/ && do {
+            my $core = $+{pref};
+            my $lng  = $+{lng};
+            my $name = $+{name};
 
-            $xdy = qq{$core.$lng.xdy};
-            my $lang = $langs->{$lng};
+            #$xdy = qq{$core.$lng.xdy};
+            $xdy = qq{$name.xdy};
+            my $lang = $langs->{$lng} || 'english';
 
             $M_xdy = ( -f $xdy ) ? qq{ -M $xdy } : '';
-            $M_xdy ||= ( -f "index.$lng.xdy" ) ? qq{ -M index.$lng.xdy } : '';
+            $M_xdy ||= ( -f "$lng.xdy" ) ? qq{ -M $lng.xdy } : '';
 
             my $enc = ( $lng eq 'rus' ) ? '-C utf8' : '';
 
-            my $ind_file = "$core.$lng.ind";
+            my $ind_file = "$name.ind";
 
             $cmd_idx = sprintf(qq{texindy $enc -L $lang $M_xdy $idx });
             $cmd_ind = ( $^O eq 'MSWin32' ) ? 
@@ -430,7 +432,6 @@ sub _cmds_texindy {
             $cmd_ind
             ;
     }
-
 
     return @cmds;
 }

@@ -36,7 +36,6 @@ sub _author_get {
         f => [qw( name )],
         w => { id => $author_id },
     });
-    $DB::single = 1;  
 
     unless($author){
         my $data   = $self->_data_dict({ 'id' => 'authors' });

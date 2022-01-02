@@ -40,10 +40,10 @@
 			</enable>
       <ind name="authors.rus" title="Авторы" />
 			<ind name="rus" title="Предметный указатель" />
+			<ind name="names.rus" title="Имена" />
+			<ind name="cities.rus" title="Города" />
       <!--<ind name="" title="" />-->
       <!--<ind name="eng" title="Index" />-->
-      <!--<ind name="names.rus" title="Имена" />-->
-      <!--<ind name="cities.rus" title="Города" />-->
       <!--<ind name="deaths.rus" title="Смерти" />-->
       <!--<ind name="writers.rus" title="{Писатели, Поэты, Мыслители}" />-->
     </index>

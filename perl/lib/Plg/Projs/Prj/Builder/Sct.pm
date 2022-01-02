@@ -45,7 +45,7 @@ sub _sct_lines {
     #print $bld->_bld_var('pagestyle') . "\n";
 
     my @lines;
-    $DB::single = 1 if $sec eq 'index';
+    #$DB::single = 1 if $sec eq 'index';
 
     my @contents = d_str_split_sn($data,'contents');
     foreach (@contents) {
