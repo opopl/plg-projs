@@ -211,6 +211,24 @@ sub _width {
   return $w;
 }
 
+
+# expand key value pair
+sub _expand_kv {
+  my ($self, $key, $val) = @_;
+
+  while(1){
+    local $_ = $key;
+
+    /^caption$/ && do {
+      $val =~ s/\@label/\\figLabel/g;
+      last;
+    };
+    last;
+  };
+
+  return $val;
+}
+
 sub _dict_update {
   my ($self, $dict, $k, $v) = @_;
 
@@ -689,7 +707,9 @@ sub _d2tex {
 
 ###cell_width
   if($tab){
-    $wd = $tab->{width}*$w2h;
+    my $cell = $tab->{cell} || {};
+
+    $wd = $cell->{width} || $tab->{width}*$w2h;
     my $locals = $self->{locals} || {};
 
     $wd = ( $locals->{force} ? $locals->{width} : 0 ) || $d->{width} || $wd;
@@ -730,6 +750,9 @@ sub _d2tex {
 
   my $wrap = $d->{'@wrap'} || $d->{'wrap'};
 
+  my $minipage = $self->_val_('tab cell minipage') || $d->{minipage};
+  my $width_minipage = $minipage || '\cellWidth';
+
   my $parbox = $self->_val_('tab parbox') || $d->{parbox};
   my $width_parbox = $parbox || '\cellWidth';
 
@@ -740,11 +763,13 @@ sub _d2tex {
   unless($tab){
      push @tex,
         $self->_fig_start, # () if not figure
-          $parbox ? sprintf('\parbox{%s}{%%', $self->_len2tex($width_parbox) ) : (),
-            @ig,
-            $caption ? $self->_tex_caption($caption) : (),
-            $d->{cap} ? sprintf('\begin{center}\figCapA{%s}\end{center}',$d->{cap}) : (),
-          $parbox ? '}%' : (),
+          $minipage ? sprintf('\begin{minipage}{%s}%%', $self->_len2tex($width_minipage) ) : (),
+            $parbox ? sprintf('\parbox{%s}{%%', $self->_len2tex($width_parbox) ) : (),
+              @ig,
+              $caption ? $self->_tex_caption($caption) : (),
+              $d->{cap} ? sprintf('\begin{center}\figCapA{%s}\end{center}',$d->{cap}) : (),
+            $parbox ? '}%' : (),
+          $minipage ? '\end{minipage}%' : (),
         $self->_fig_end,   # () if not figure
         ;
   }else{
@@ -962,9 +987,16 @@ sub loop {
     };
 
 ###m_@keyword
-    m/^\s*(?:@|)(?<key>\w+)\s+(?<value>.*)$/g && do { 
-      my $k = $+{'key'};
-      my $v = trim($+{'value'});
+    m/^\s*(?:@|)(?<key>\w+)(?:|\[(?<type>\w+)\])\s+(?<value>.*)$/g && do {
+      my $k    = $+{'key'};
+      my $v    = trim($+{'value'});
+      my $type = $+{'type'} || 'string';
+
+      $v = $self->_expand_kv($k, $v);
+
+      if ($type eq 'dict'){
+         $v = $self->_opts_dict($v);
+      }
 
       my ($d, $tab, $locals) = @{$self}{qw( d tab locals )};
       if($d){
@@ -972,7 +1004,6 @@ sub loop {
 
       }elsif($tab){
          $self->_dict_update($tab, $k => $v);
-         $DB::single = 1;
 
       # variables within ifcmt ... fi block
       }elsif($locals){
