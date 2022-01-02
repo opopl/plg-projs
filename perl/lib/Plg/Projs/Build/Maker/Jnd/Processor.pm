@@ -58,6 +58,19 @@ sub new
     return $prc;
 }
 
+sub ctl_end {
+    my ($self, $key) = @_;
+
+    my $kv = $self->{key_val};
+    my $d = $self->{d};
+
+    $d->{$key} = [@$kv] if $d && $kv && @$kv;
+    $self->{is_key} = undef;
+    $self->{key_val} = undef;
+
+    return $self;
+}
+
 sub init {
     my ($self) = @_;
     
@@ -543,6 +556,9 @@ sub ldo_no_cmt {
 
   local $_ = $self->{line};
 
+  #s/\@igg\{([^{}]*)\}(?:\{([^{}]*)\}|)/$self->_macro_igg($1,$2)/ge;
+  s/$rgx_map{jnd}{macros}{igg}/$self->_macro_igg($1,$2)/ge;
+
   m/^\s*%%\s*\\ii\{(.*)\}\s*$/ && do {
      $self->{sec} = $1;
   };
@@ -872,9 +888,6 @@ sub loop {
   foreach(@jlines) {
     $self->{lnum}++; chomp;
 
-    #s/\@igg\{([^{}]*)\}(?:\{([^{}]*)\}|)/$self->_macro_igg($1,$2)/ge;
-    s/$rgx_map{jnd}{macros}{igg}/$self->_macro_igg($1,$2)/ge;
-
     $self->{line} = $_;
 
 ###m_\ifcmt
@@ -891,6 +904,11 @@ sub loop {
        #push @{$self->{nlines}},'}';
        next; 
     };
+
+    if ($self->{is_cmt} && $self->{is_key}) {
+       my $key = $self->{is_key};
+       push @{$self->{key_val}},trim($_); next;
+    }
 
 ###m_comment
     m/^\s*%/ && do { push @{$self->{nlines}},$_; next; };
@@ -1003,16 +1021,10 @@ sub loop {
           $self->{key_val} ||= [];
 
        }elsif ($ctl eq 'end'){
-          my $kv = $self->{key_val};
-          next unless $kv;
+          $self->ctl_end($key);
 
-          if ($d) {
-             $d->{$key} = [@$kv];
-          }
-          $self->{is_key} = undef;
-          $self->{key_val} = undef;
        }
-       $DB::single = 1;
+       $DB::single = 1 if $ctl eq 'end';
 
        next;
     };
