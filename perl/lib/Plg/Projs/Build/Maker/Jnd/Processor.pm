@@ -87,6 +87,10 @@ sub init {
        is_caption => undef,
        lnum => 0,
 
+       # m_@ctl
+       is_key => undef,
+       key_val => undef,
+
        root => undef,
        proj => undef,
        sec  => undef,
@@ -571,7 +575,7 @@ sub lpush_tab_start {
 # push content of d => nlines
 sub lpush_d {
   my ($self) = @_;
-  
+
   my $d = $self->{d};
   return $self unless $d;
 
@@ -758,7 +762,7 @@ sub _d2tex {
 
   push @tex, $self->_wrapped($wrap,'start');
 
-  $parbox = 1 if $caption;
+  $parbox = 1 if $caption && !$minipage;
 
   unless($tab){
      push @tex,
@@ -905,6 +909,7 @@ sub loop {
 
 ###m_caption_setup
     #m/^\s*\@caption_setup\b(.*)/g && do { $self->match_caption_setup($1); next; };
+    #
 
 ###m_block_end
     if ($self->{is_cmt}) {
@@ -982,6 +987,32 @@ sub loop {
        $self->{d} = { type => $1 };
 
        $self->{d}->{url} = $v if $v;
+
+       next;
+    };
+
+###m_@ctl
+    m/^\s*(?:@|)(?<key>\w+)%(?<ctl>start|end)\s*$/g && do {
+       my $key  = $+{'key'};
+       my $ctl  = $+{'ctl'};
+
+       my ($d, $tab) = @{$self}{qw(d tab)};
+
+       if ($ctl eq 'start'){
+          $self->{is_key} = $key;
+          $self->{key_val} ||= [];
+
+       }elsif ($ctl eq 'end'){
+          my $kv = $self->{key_val};
+          next unless $kv;
+
+          if ($d) {
+             $d->{$key} = [@$kv];
+          }
+          $self->{is_key} = undef;
+          $self->{key_val} = undef;
+       }
+       $DB::single = 1;
 
        next;
     };
