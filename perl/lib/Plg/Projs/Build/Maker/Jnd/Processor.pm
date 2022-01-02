@@ -69,8 +69,6 @@ sub ctl_end {
     $self->{is_key} = undef;
     $self->{key_val} = undef;
 
-    $DB::single = 1;
-
     return $self;
 }
 
@@ -360,19 +358,23 @@ sub _tex_caption {
 }
 
 sub _fig_env {
-  my ($self) = @_;
+  my ($self, $d) = @_;
 
-  $self->_val_('tab fig_env') || $self->_val_('d fig_env') || 'figure';
+  $d ||= $self->{d};
+
+  $self->_val_('tab fig_env') || ( $d ? $d->{fig_env} : '' )  || 'figure';
 
 }
 
 sub _fig_start {
-  my ($self) = @_;
+  my ($self, $d) = @_;
 
-  return () if $self->_fig_skip;
+  $d ||= $self->{d};
+
+  return () if $self->_fig_skip($d);
 
   my @s;
-  my $fe = $self->_fig_env;
+  my $fe = $self->_fig_env($d);
   for($fe){
       /^(figure)/ && do {
           push @s,
@@ -399,24 +401,28 @@ sub _fig_start {
 }
 
 sub _fig_end {
-  my ($self) = @_;
+  my ($self, $d) = @_;
+
+  $d ||= $self->{d};
 
   my @e;
-  return () if $self->_fig_skip;
+  return () if $self->_fig_skip($d);
 
-  my $fe = $self->_fig_env;
+  my $fe = $self->_fig_env($d);
   push @e, sprintf(q|\end{%s}|,$fe);
 
   return @e;
 }
 
 sub _fig_skip {
-  my ($self) = @_;
+  my ($self, $d) = @_;
+
+  $d ||= $self->{d};
 
   my $tab = $self->{tab};
   return 1 if $tab && $tab->{no_fig};
 
-  my $t = $self->_val_('d type') || '';
+  my $t = $d ? $d->{type} : '' ;
   my $skip = (grep { /^$t$/ } qw(ig)) ? 1 : 0;
 
   return $skip;
