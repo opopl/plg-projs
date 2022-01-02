@@ -785,6 +785,14 @@ sub _d2tex {
   my $parbox = $self->_val_('tab parbox') || $d->{parbox};
   my $width_parbox = $parbox || '\cellWidth';
 
+  my $comments = $d->{comments};
+  if ($comments) {
+	foreach my $x (@$comments) {
+	   $x =~ s/^\s*$/\\newline/g;
+	}
+    push @$comments,'\bigskip' if $minipage || $parbox;
+  }
+
   push @tex, $self->_wrapped($wrap,'start');
 
   $parbox = 1 if $caption && !$minipage;
@@ -796,6 +804,7 @@ sub _d2tex {
             $parbox ? sprintf('\parbox{%s}{%%', $self->_len2tex($width_parbox) ) : (),
               @ig,
               $caption ? $self->_tex_caption($caption) : (),
+              $comments ? (@$comments) : (),
               $d->{cap} ? sprintf('\begin{center}\figCapA{%s}\end{center}',$d->{cap}) : (),
             $parbox ? '}%' : (),
           $minipage ? '\end{minipage}%' : (),
@@ -813,6 +822,7 @@ sub _d2tex {
   }
 
   push @tex, $self->_wrapped($wrap,'end');
+  $DB::single = 1 if $comments;
 
   return @tex;
 }
