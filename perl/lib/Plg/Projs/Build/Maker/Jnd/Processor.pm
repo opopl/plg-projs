@@ -229,6 +229,19 @@ sub _width {
   return $w;
 }
 
+sub _expand_igg {
+  my ($self, $line, $ref) = @_;
+
+  $ref ||= {};
+
+  local $_ = $line;
+
+  #s/\@igg\{([^{}]*)\}(?:\{([^{}]*)\}|)/$self->_macro_igg($1,$2)/ge;
+  s/$rgx_map{jnd}{macros}{igg}/$self->_macro_igg($1,$2,$ref)/ge;
+
+  return $_;
+};
+
 
 # expand key value pair
 sub _expand_kv {
@@ -566,8 +579,7 @@ sub ldo_no_cmt {
 
   local $_ = $self->{line};
 
-  #s/\@igg\{([^{}]*)\}(?:\{([^{}]*)\}|)/$self->_macro_igg($1,$2)/ge;
-  s/$rgx_map{jnd}{macros}{igg}/$self->_macro_igg($1,$2)/ge;
+  $_ = $self->_expand_igg($_);
 
   m/^\s*%%\s*\\ii\{(.*)\}\s*$/ && do {
      $self->{sec} = $1;
@@ -810,6 +822,7 @@ sub _d2tex {
   if ($comments) {
     foreach my $x (@$comments) {
        $x =~ s/^\s*$/\\newline/g;
+       $x = $self->_expand_igg($x,{});
     }
     push @$comments,'\bigskip' if $minipage || $parbox;
   }
@@ -885,7 +898,9 @@ sub _macro_fbicon {
 }
 
 sub _macro_igg {
-  my ($self, $igname, $opts_s) = @_;
+  my ($self, $igname, $opts_s, $ref) = @_;
+
+  $ref ||= {};
 
   my @ignames = 
      grep { !/^(\d+)$/ }
@@ -894,7 +909,7 @@ sub _macro_igg {
   if(@ignames > 1){
      my ($tex, @tex);
      for(@ignames){
-        push @tex, $self->_macro_igg($_,$opts_s);
+        push @tex, $self->_macro_igg($_, $opts_s, $ref);
      }
      $tex = join("\n",@tex);
      return $tex;
