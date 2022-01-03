@@ -984,6 +984,8 @@ sub loop {
         my $d = $self->{d};
         next unless $d;
 
+        $_ = $self->_expand_kv('caption', $_);
+
         $d->{caption} ||= '';
         $d->{caption} .= ( $d->{caption} ? ' ' : '' ) . trim($_);
     }
