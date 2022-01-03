@@ -829,7 +829,7 @@ sub _d2tex {
               $d->{cap} ? sprintf('\begin{center}\figCapA{%s}\end{center}',$d->{cap}) : (),
             $parbox ? '}%' : (),
           $minipage ? '\end{minipage}%' : (),
-        $self->_fig_end,   # () if not figure
+        $self->_fig_end($d),   # () if not figure
         ;
   }else{
 
@@ -902,21 +902,20 @@ sub _macro_igg {
 
   $igname = trim($igname);
 
-  $self->{d} = { 
+  my $d = {
      name => $igname, 
      type => 'ig' 
   };
 
   hash_update(
-     $self->{d},
+     $d,
      $self->_opts_dict($opts_s)
   );
 
   my ($tex, @tex);
-  push @tex, $self->_d2tex;
+  push @tex, $self->_d2tex($d);
   $tex = join("\n",@tex);
 
-  $self->{d} = undef;
   return $tex;
 }
 
