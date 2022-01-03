@@ -659,17 +659,13 @@ sub _param {
 
 }
 
-sub _d2tex {
-  my ($self) = @_;
+sub _d_db_data {
+  my ($self, $d) = @_;
 
-  my $d = $self->{d};
+  $d ||= $self->{d};
   return () unless $d;
 
-  my $mkr = $self->{mkr};
-  my $dbh_img = $self->{dbh_img};
-
-  my $tab = $self->{tab};
-
+  my $mkr     = $self->{mkr};
 
   my $w = {};
   for(qw( url name_uniq name )){
@@ -680,44 +676,68 @@ sub _d2tex {
   }
 
   my $dbh = $mkr->{dbh_img};
-  my ($rows, $cols, $q, $p) = dbh_select({
-     $dbh ? ( dbh => $dbh ) : (),
-     #dbh => $mkr->{dbh_img},
-     #dbfile => $self->{dbfile_img},
-     q   => q{ SELECT * FROM imgs },
-     p   => [],
-     w   => $w,
-  });
 
-  my $url = $d->{url};
-  unless (@$rows) {
-     my @err;
-     my $r = {    
-         msg => q{ No image found in Database! },
-         url => $url,
-     };
-     warn Dumper($r) . "\n";
-     push @err, qq{%Image not found: $url };
-     return @err;
+  my ($img_file, $img_path, $rw, @err);
+
+  while(1){
+    my ($rows, $cols, $q, $p) = dbh_select({
+       $dbh ? ( dbh => $dbh ) : (),
+       #dbfile => $self->{dbfile_img},
+       q   => q{ SELECT * FROM imgs },
+       p   => [],
+       w   => $w,
+    });
+
+    my $url = $d->{url};
+    unless (@$rows) {
+       my $r = {
+           msg => q{ No image found in Database! },
+           url => $url,
+       };
+       warn Dumper($r) . "\n";
+       push @err, qq{%Image not found: $url };
+       last;
+    }
+
+    $rw = shift @$rows;
+
+    $img_path = sprintf(q{\imgroot/%s},$rw->{img});
+    $img_file = catfile($mkr->{img_root},$rw->{img});
+
+    unless (-e $img_file) {
+       my $r = {
+           msg => q{Image file not found!},
+           img => $rw->{img},
+           url => $d->{url},
+       };
+       warn Dumper($r) . "\n";
+       push @err, qq{%Image exists in DB but not found in FS: $url };
+       last;
+    }
+
+    last;
   }
 
-  my $rw = shift @$rows;
- 
-  my $img_path = sprintf(q{\imgroot/%s},$rw->{img});
- 
-  my $img_file = catfile($mkr->{img_root},$rw->{img});
-  unless (-e $img_file) {
-     my @err;
+  my $r = {
+     img_file => $img_file,
+     img_path => $img_path,
+     rw       => $rw,
+  };
+  $r->{err} = [@err] if @err;
 
-     my $r = {    
-         msg => q{Image file not found!},
-         img => $rw->{img},
-         url => $d->{url},
-     };
-     warn Dumper($r) . "\n";
-     push @err, qq{%Image exists in DB but not found in FS: $url };
-     return @err;
-  }
+  return $r;
+}
+
+sub _d2tex {
+  my ($self, $d) = @_;
+
+  $d ||= $self->{d};
+  return () unless $d;
+
+  my $tab = $self->{tab};
+
+  my $d_db = $self->_d_db_data($d);
+  my ($img_file, $img_path, $rw)  = @{$d_db}{qw( img_file img_path rw )};
 
   my @tex;
   my $w2h;
