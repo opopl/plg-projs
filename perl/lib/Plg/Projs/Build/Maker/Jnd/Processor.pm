@@ -348,11 +348,12 @@ sub _width_tex {
 }
 
 sub _tex_caption {
-  my ($self, $caption) = @_;
+  my ($self, $d, $caption) = @_;
 
   my $tab = $self->{tab};
+  $d ||= $self->{d};
 
-  my $c = $self->_fig_skip ? 'captionof{figure}[]' : 'caption[]' ; 
+  my $c = $self->_fig_skip($d) ? 'captionof{figure}[]' : 'caption[]' ;
   #$caption ? ( sprintf(q| \%s{%s} |, $c, ( $tab ? '\Large ' : '' ) . $caption ) ) : ();
   $caption ? ( sprintf(q| \%s{%s} |, $c, $caption ) ) : ();
 }
@@ -807,9 +808,9 @@ sub _d2tex {
 
   my $comments = $d->{comments};
   if ($comments) {
-	foreach my $x (@$comments) {
-	   $x =~ s/^\s*$/\\newline/g;
-	}
+    foreach my $x (@$comments) {
+       $x =~ s/^\s*$/\\newline/g;
+    }
     push @$comments,'\bigskip' if $minipage || $parbox;
   }
 
@@ -819,11 +820,11 @@ sub _d2tex {
 
   unless($tab){
      push @tex,
-        $self->_fig_start, # () if not figure
+        $self->_fig_start($d), # () if not figure
           $minipage ? sprintf('\begin{minipage}{%s}%%', $self->_len2tex($width_minipage) ) : (),
             $parbox ? sprintf('\parbox{%s}{%%', $self->_len2tex($width_parbox) ) : (),
               @ig,
-              $caption ? $self->_tex_caption($caption) : (),
+              $caption ? $self->_tex_caption($d, $caption) : (),
               $comments ? (@$comments) : (),
               $d->{cap} ? sprintf('\begin{center}\figCapA{%s}\end{center}',$d->{cap}) : (),
             $parbox ? '}%' : (),
@@ -836,7 +837,7 @@ sub _d2tex {
     push @tex, $parbox ? sprintf('\parbox[t]{%s}{%%', $self->_len2tex($width_parbox) ) : ();
     #push @tex,     $caption ? ( sprintf(q|%% %s|, $caption )) : ();
     push @tex,      @ig;
-    push @tex,      $caption ? $self->_tex_caption($caption) : ();
+    push @tex,      $caption ? $self->_tex_caption($d, $caption) : ();
     push @tex,      $d->{cap} ? sprintf('\begin{center}\figCapA{%s}\end{center}',$d->{cap}) : ();
     push @tex, $parbox ? '}%' : ();
   }
