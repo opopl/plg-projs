@@ -777,6 +777,8 @@ sub _d2tex {
     $wd = ( $locals->{force} ? $locals->{width} : 0 ) || $d->{width} || $wd;
   }
 
+  $wd = $wd/$d->{width_resize} if $d->{width_resize};
+
   push @tex,
     $wd ? sprintf('\setlength{\cellWidth}{%s}',$self->_len2tex($wd)) : ();
 
@@ -818,11 +820,13 @@ sub _d2tex {
   my $parbox = $self->_val_('tab parbox') || $d->{parbox};
   my $width_parbox = $parbox || '\cellWidth';
 
+
   my $comments = $d->{comments};
   if ($comments) {
+    my $resized = $minipage || $parbox;
     foreach my $x (@$comments) {
        $x =~ s/^\s*$/\\newline/g;
-       $x = $self->_expand_igg($x,{});
+       $x = $self->_expand_igg($x,{ resized => $resized });
     }
     push @$comments,'\bigskip' if $minipage || $parbox;
   }
@@ -924,8 +928,10 @@ sub _macro_igg {
 
   hash_update(
      $d,
-     $self->_opts_dict($opts_s)
+     $self->_opts_dict($opts_s),
   );
+  my $resized = $ref->{resized};
+  $d->{width_resize} = $resized if $resized;
 
   my ($tex, @tex);
   push @tex, $self->_d2tex($d);
