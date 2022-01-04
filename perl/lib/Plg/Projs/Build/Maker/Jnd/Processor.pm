@@ -590,13 +590,13 @@ sub ldo_no_cmt {
   };
 
   m/^\s*\\begin\{multicols\}\{(\d+)\}/g && do {
-	$self->{multicols} = {
-	   cols => $1,
-	};
+    $self->{multicols} = {
+       cols => $1,
+    };
   };
 
   m/^\s*\\end\{multicols\}/g && do {
-	$self->{multicols} = undef;
+    $self->{multicols} = undef;
   };
 
   $self->{line} = $_;
@@ -762,6 +762,15 @@ sub _d2tex {
   my $d_db = $self->_d_db_data($d);
   my ($img_file, $img_path, $rw)  = @{$d_db}{qw( img_file img_path rw )};
 
+  unless ($img_file && $img_path) {
+    my $err = $d_db->{err} || [];
+    return  @$err;
+    #push @err, 
+      #'image file not found ',
+      #Dumper($d);
+    #return ( map { '%' . $_ } @err );
+  }
+
   my @tex;
   my $w2h;
   {
@@ -785,6 +794,21 @@ sub _d2tex {
     my $locals = $self->{locals} || {};
 
     $wd = ( $locals->{force} ? $locals->{width} : 0 ) || $d->{width} || $wd;
+
+  }else{
+    unless ($wd) {
+      my $mlc = $self->{multicols};
+      if ($mlc) {
+        my %mlc_w = (
+          2 => 0.45,
+          3 => 0.3,
+          4 => 0.25,
+          5 => 0.2,
+        );
+        my $cols = $mlc->{cols};
+        $wd = $mlc_w{$cols} || 1.0/$cols;
+      }
+    }
   }
 
   $wd = $wd/$d->{width_resize} if $d->{width_resize};
@@ -836,10 +860,10 @@ sub _d2tex {
        $x =~ s/^\s*$/\\newline/g;
        $x = $self->_expand_igg($x,{ resized => $resized });
     }
-	unless ($minipage || $parbox) {
-		#$minipage = $wd;
-		$parbox = $wd;
-	}
+    unless ($minipage || $parbox) {
+        #$minipage = $wd;
+        $parbox = $wd;
+    }
     #push @$comments,'\bigskip' if $minipage || $parbox;
   }
 
@@ -871,12 +895,12 @@ sub _d2tex {
     #push @tex,     $caption ? ( sprintf(q|%% %s|, $caption )) : ();
     push @tex,      @ig;
     push @tex,      $caption ? $self->_tex_caption($d, $caption) : ();
-    push @tex, 		$comments ? (@$comments) : ();
+    push @tex,      $comments ? (@$comments) : ();
     push @tex,      $d->{cap} ? sprintf('\begin{center}\figCapA{%s}\end{center}',$d->{cap}) : ();
     push @tex,   $parbox ? '}%' : ();
     push @tex, $minipage ? '\end{minipage}%' : ();
 
-	$DB::single = 1;
+    $DB::single = 1;
   }
 
   push @tex, $self->_wrapped($wrap,'end');
