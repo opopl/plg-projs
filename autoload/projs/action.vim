@@ -980,6 +980,8 @@ function! projs#action#bld_join (...)
   let proj = projs#proj#name()
   let proj = base#x#get(ref,'proj',proj)
 
+  let async = base#x#get(ref,'async',1)
+
   let target  = base#x#get(ref,'target','')
   if !len(target)
     let target = projs#bld#target()
@@ -1001,23 +1003,26 @@ function! projs#action#bld_join (...)
     \ 'cmd' : cmd, 
     \ 'act' : act })
 
-  let env = {
-    \ 'proj'  : proj,
-    \ 'root'  : root,
-    \ 'start' : start,
-    \ }
+  if async
+    let env = {
+      \ 'proj'  : proj,
+      \ 'root'  : root,
+      \ 'start' : start,
+      \ }
 
-  function env.get(temp_file) dict
-    call projs#action#bld_join_Fc(self,a:temp_file)
-  endfunction
+    function env.get(temp_file) dict
+      call projs#action#bld_join_Fc(self,a:temp_file)
+    endfunction
 
-  let msg = printf('bld_join: %s', proj)
-  call base#rdw(msg)
+    let msg = printf('bld_join: %s', proj)
+    call base#rdw(msg)
 
-  call asc#run({ 
-    \ 'cmd' : cmd, 
-    \ 'Fn'  : asc#tab_restore(env) 
-    \ })
+    call asc#run({
+      \ 'cmd' : cmd,
+      \ 'Fn'  : asc#tab_restore(env)
+      \ })
+  endif
+
   return 1
 
 endf

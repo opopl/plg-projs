@@ -47,14 +47,34 @@ function! projs#bld#do#jnd_view (...)
   "let jnd_tex = join([ projs#root(), 'builds', proj, 'src', target, 'jnd.tex' ],"/")
   let jnd_tex = projs#bld#jnd#tex({ 'proj' : proj, 'target' : target })
 
-  if !filereadable(jnd_tex)
-    call projs#action#bld_join({ 'proj' : proj, 'target' : target })
-  endif
+  let i = 0
+  " wait for 10 secs
+  let imax = 100
+  let jcall = 0
+  while 1
+    if !filereadable(jnd_tex)
+      if !jcall
+        call projs#action#bld_join({
+          \ 'proj'   : proj,
+          \ 'target' : target
+          \ })
+        let jcall = 1
+      endif
 
-  call base#fileopen({ 
-    \ 'files'    : [jnd_tex],
-    \ 'load_buf' : 1,
-    \ })
+      let i += 1
+      if i == imax | break | endif
+      sleep 100m
+
+      continue
+    else
+      call base#fileopen({
+        \ 'files'    : [jnd_tex],
+        \ 'load_buf' : 1,
+        \ })
+    endif
+
+    break
+  endw
 
 endfunction
 

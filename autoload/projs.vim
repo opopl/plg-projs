@@ -941,8 +941,8 @@ function! projs#maps (...)
 
   let maps = {}
   if ext == 'tex'
-		let file = base#qw#catpath('plg','projs data yaml maps.yaml')
-		let maps = base#yaml#parse_fs({ 'file' : file })
+    let file = base#qw#catpath('plg','projs data yaml maps.yaml')
+    let maps = base#yaml#parse_fs({ 'file' : file })
 
     call base#varset('projs_maps',maps)
   
