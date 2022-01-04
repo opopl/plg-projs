@@ -589,6 +589,16 @@ sub ldo_no_cmt {
      my $type = $1;
   };
 
+  m/^\s*\\begin\{multicols\}\{(\d+)\}/g && do {
+	$self->{multicols} = {
+	   cols => $1,
+	};
+  };
+
+  m/^\s*\\end\{multicols\}/g && do {
+	$self->{multicols} = undef;
+  };
+
   $self->{line} = $_;
   push @{$self->{nlines}}, $self->{line}; 
 
@@ -985,6 +995,8 @@ sub loop {
 
 ###m_comment
     m/^\s*%/ && do { push @{$self->{nlines}},$_; next; };
+
+
 
 ###m_caption_begin
     m/^\s*\@caption_begin\b(.*)/g && do { $self->match_caption_begin($1); next; };
