@@ -809,17 +809,15 @@ sub _d2tex {
     if ($times > 0) {
        push @ig, $ig_cmd for ( 1 .. $times );
     }
-      
   }
 
   my $wrap = $d->{'@wrap'} || $d->{'wrap'};
 
-  my $minipage = $self->_val_('tab cell minipage') || $d->{minipage};
-  my $width_minipage = $minipage || '\cellWidth';
+  my $minipage = $self->_val_('tab cell minipage') || $d->{minipage} || '';
+  my $parbox   = $self->_val_('tab parbox') || $d->{parbox} || '';
 
-  my $parbox = $self->_val_('tab parbox') || $d->{parbox};
-  my $width_parbox = $parbox || '\cellWidth';
-
+  $parbox   = $wd if $parbox eq 'auto';
+  $minipage = $wd if $minipage eq 'auto';
 
   my $comments = $d->{comments};
   if ($comments) {
@@ -828,8 +826,15 @@ sub _d2tex {
        $x =~ s/^\s*$/\\newline/g;
        $x = $self->_expand_igg($x,{ resized => $resized });
     }
-    push @$comments,'\bigskip' if $minipage || $parbox;
+	unless ($minipage || $parbox) {
+		#$minipage = $wd;
+		$parbox = $wd;
+	}
+    #push @$comments,'\bigskip' if $minipage || $parbox;
   }
+
+  my $width_parbox = $parbox || '\cellWidth';
+  my $width_minipage = $minipage || '\cellWidth';
 
   push @tex, $self->_wrapped($wrap,'start');
 
@@ -851,12 +856,17 @@ sub _d2tex {
   }else{
 
     push @tex, sprintf('%% row: %s, col: %s ', @{$tab}{qw(i_row i_col)});
-    push @tex, $parbox ? sprintf('\parbox[t]{%s}{%%', $self->_len2tex($width_parbox) ) : ();
+    push @tex, $minipage ? sprintf('\begin{minipage}{%s}%%', $self->_len2tex($width_minipage) ) : ();
+    push @tex,   $parbox ? sprintf('\parbox[t]{%s}{%%', $self->_len2tex($width_parbox) ) : ();
     #push @tex,     $caption ? ( sprintf(q|%% %s|, $caption )) : ();
     push @tex,      @ig;
     push @tex,      $caption ? $self->_tex_caption($d, $caption) : ();
+    push @tex, 		$comments ? (@$comments) : ();
     push @tex,      $d->{cap} ? sprintf('\begin{center}\figCapA{%s}\end{center}',$d->{cap}) : ();
-    push @tex, $parbox ? '}%' : ();
+    push @tex,   $parbox ? '}%' : ();
+    push @tex, $minipage ? '\end{minipage}%' : ();
+
+	$DB::single = 1;
   }
 
   push @tex, $self->_wrapped($wrap,'end');

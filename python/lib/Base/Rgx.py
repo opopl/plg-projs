@@ -7,9 +7,13 @@ pats = {
   'tex' : {
     'projs' : {
       'seccmd'    : r'^\s*\\(part|chapter|section|subsection|subsubsection|paragraph)\{(.*)\}\s*$',
+      ###
       'beginhead' : r'%%beginhead\s*$',
       'endhead'   : r'%%endhead\s*$',
+      ###
       'author_id' : r'%%author_id\s+(.*)$',
+      'title'     : r'%%title\s+(.*)$',
+      ###
       'ifcmt'     : r'^\\ifcmt\s*$',
       'fi'        : r'^\\fi\s*$',
       'cmt' : {

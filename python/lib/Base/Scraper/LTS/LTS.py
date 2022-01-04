@@ -316,9 +316,14 @@ class LTS(
 
       if rgx.match('tex.projs.beginhead', self.line):
         flags['head'] = 1
+        self.nlines.append(self.line)
+        continue
+
       if rgx.match('tex.projs.endhead', self.line):
         if 'head' in flags:
           del flags['head']
+        self.nlines.append(self.line)
+        continue
 
       m = rgx.match('tex.projs.seccmd', self.line)
       if m:
@@ -396,10 +401,11 @@ class LTS(
 
   def sec_process(self,ref={}):
     sec       = ref.get('sec','')
+    proj      = ref.get('proj',self.proj)
 
     lines_ref = ref.get('lines',{})
 
-    sec_file = self._sec_file({ 'sec' : sec })
+    sec_file = self._sec_file({ 'sec' : sec, 'proj' : proj })
 
     if os.path.isfile(sec_file):
       self.nlines = []
@@ -595,8 +601,8 @@ class LTS(
     lines_ref = {
       'actions' : [
           {
-            'name' : '_author_id_merge',
-            'args' : [ { 'author_id' : author_id } ]
+            'name' : '_update_title',
+            'args' : [ { 'title' : title } ]
           }
        ]
     }
@@ -604,6 +610,7 @@ class LTS(
     self.sec_process({
       'lines' : lines_ref,
       'sec'   : sec,
+      'proj'  : proj,
     })
 
     return self
