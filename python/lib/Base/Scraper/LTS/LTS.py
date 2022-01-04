@@ -210,9 +210,10 @@ class LTS(
     return data
 
   def _sec_file(self,ref = {}):
-    sec = ref.get('sec','')
+    sec  = ref.get('sec','')
+    proj = ref.get('proj',self.proj)
 
-    sec_file = os.path.join( self.lts_root, f'{self.proj}.{sec}.tex' )
+    sec_file = os.path.join( self.lts_root, f'{proj}.{sec}.tex' )
 
     return sec_file
 
@@ -334,6 +335,7 @@ class LTS(
             name = action.get('name','')
             args = action.get('args',[])
 
+###@@ _author_id_merge
             if name in [ '_author_id_merge' ]:
               if len(args):
                 author_id  = args[0].get('author_id','')
@@ -341,6 +343,7 @@ class LTS(
                   ids_merged = util.call(self, name, [ [ a_id, author_id ] ])
                   self.line = f'%%author_id {ids_merged}'
 
+###@@ _author_id_remove
             if name in [ '_author_id_remove' ]:
               if len(args):
                 author_id  = args[0].get('author_id','')
@@ -573,6 +576,35 @@ class LTS(
 
   def tex_compile(self, ref = {}):
 
+    return self
+
+
+# call tree:
+#    sec_process
+#      lines_tex_process
+  def sec_update_title(self, ref = {}):
+    sec   = ref.get('sec','')
+    proj  = ref.get('proj',self.proj)
+    title = ref.get('title','')
+
+    sec_file = self._sec_file({
+      'sec'  : sec,
+      'proj' : proj,
+    })
+
+    lines_ref = {
+      'actions' : [
+          {
+            'name' : '_author_id_merge',
+            'args' : [ { 'author_id' : author_id } ]
+          }
+       ]
+    }
+
+    self.sec_process({
+      'lines' : lines_ref,
+      'sec'   : sec,
+    })
 
     return self
 
