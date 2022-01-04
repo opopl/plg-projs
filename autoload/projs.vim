@@ -939,61 +939,10 @@ function! projs#maps (...)
   let prf = { 'plugin' : 'projs', 'func' : 'projs#maps' }
   call base#log(msg, prf)
 
-
   let maps = {}
   if ext == 'tex'
-    let maps = {
-          \ 'nnoremap' :
-            \ {
-            \  ';;'    : 'PrjAct pwg_insert_img'  ,
-            \  '<F1>'  : 'PrjAct async_build_pwg'  ,
-            \  ';ab'   : 'PrjAct async_build_bare'  ,
-            \  ';bb'   : 'call projs#action#bld_compile()'  ,
-            \  ';bx'   : 'call projs#action#bld_compile_xelatex()'  ,
-            \  ';bz'   : 'call projs#action#bld_compile_xelatex({ "target" : "_buf" })',
-            \  ';bv'   : printf('call projs#pdf#view({
-              \ "target" : "%s", "type" : "%s", "viewer" : "%s" })','_buf','bld','evince'),
-            \  ';bj'   : 'PrjAct bld_join'  ,
-            \  ';bl'   : 'BLD last_compile'  ,
-            \  ';bt'   : 'BLD print_ii_tree'  ,
-            \  ';e'    : 'PrjAct edt'  ,
-            \  ';gi'   : 'call lts#buf#pic#fetch()'  ,
-            \  ';kr'   : 'KEYMAP russian_jcukenwin'  ,
-            \  ';ku'   : 'KEYMAP ukrainian_jcuken'  ,
-            \  ';aa'   : 'PA author_add',
-            \  ';iu'   : 'PIN ii_url',
-            \  ';ii'   : 'PIN ii',
-            \  ';if'   : 'PIN ii_full',
-            \  '<F2>'  : 'PrjBuild Cleanup'    ,
-            \  '<F3>'  : 'copen'               ,
-            \  '<F4>'  : 'cclose'              ,
-            \  '<F5>'  : 'PrjDB thisproj_data' ,
-            \  '<F6>'  : 'PrjDB buf_data'      ,
-            \  '<F7>'  : 'call projs#git#save()' ,
-            \  '<F8>'  : 'PrjListSecs'         ,
-            \  '<F10>' : 'TgUpdate projs_this' ,
-            \  ';tp'   : 'TgUpdate projs_this' ,
-            \  ';wp'   : 'tag preamble'        ,
-            \  ';wm'   : 'tag f_main'          ,
-            \  ';wb'   : 'tag body'            ,
-            \  '<S-T>' : 'PrjDB fill_tags'   ,
-            \  '<S-Y>' : 'PrjAct html_out_view'   ,
-            \  '<C-A>' : 'PrjAct git_add_texfiles'   ,
-            \  '<C-M>' : 'PrjAct maps_update'   ,
-            \  '<C-H>' : 'PrjAct async_build_htlatex'   ,
-            \ },
-         \ 'vnoremap' : {
-              \  '?'      : 'PrjVisual help'            ,
-              \  '<F1>'   : 'VENCLOSE verbatim'         ,
-              \  '<F2>'   : 'PrjVisual ii_to_new_secs'  ,
-            \ }
-          \ }
-
-    call extend(maps.nnoremap,{
-            \  ';v'    : 'call projs#pdf#view({ "viewer" : "evince" })',
-            \  ';k'    : 'call projs#pdf#view({ "okular" : "okular" })',
-            \  ';z'    : 'PrjPdf bare_view',
-            \ })
+		let file = base#qw#catpath('plg','projs data yaml maps.yaml')
+		let maps = base#yaml#parse_fs({ 'file' : file })
 
     call base#varset('projs_maps',maps)
   

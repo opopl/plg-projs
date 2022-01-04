@@ -33,13 +33,24 @@ if 0
 endif
 
 function! projs#bld#do#jnd_view (...)
-	let ref = get(a:000,0,{})
+  let ref = get(a:000,0,{})
 
-	let target  = base#x#get(ref,'target',projs#bld#target())
+  let target  = base#x#get(ref,'target','')
+  if !len(target)
+    let target = projs#bld#target()
+  else
+    let target = projs#bld#trg#full({ 'target' : target })
+  endif
+
   let proj    = projs#proj#name()
 
   "let jnd_tex = join([ projs#root(), 'builds', proj, 'src', target, 'jnd.tex' ],"/")
-	let jnd_tex = projs#bld#jnd#tex({ 'proj' : proj, 'target' : target }) 
+  let jnd_tex = projs#bld#jnd#tex({ 'proj' : proj, 'target' : target })
+
+  if !filereadable(jnd_tex)
+    call projs#action#bld_join({ 'proj' : proj, 'target' : target })
+  endif
+
   call base#fileopen({ 
     \ 'files'    : [jnd_tex],
     \ 'load_buf' : 1,

@@ -978,9 +978,14 @@ function! projs#action#bld_join (...)
   let root_id = projs#rootid()
 
   let proj = projs#proj#name()
-  let proj = get(ref,'proj',proj)
+  let proj = base#x#get(ref,'proj',proj)
 
-  let target = projs#bld#target()
+  let target  = base#x#get(ref,'target','')
+  if !len(target)
+    let target = projs#bld#target()
+  else
+    let target = projs#bld#trg#full({ 'target' : target })
+  endif
 
   let bfile = projs#sec#file('_perl.bld')
 
@@ -1129,7 +1134,7 @@ function! projs#action#bld_compile (...)
     call projs#action#bld_compile_Fc(self,a:temp_file)
   endfunction
 
-	let target_short = target[0:40]
+  let target_short = target[0:40]
   let msg = printf('bld_compile: %s; target: %s; config: %s', proj, target_short, config)
   call base#rdw(msg)
 

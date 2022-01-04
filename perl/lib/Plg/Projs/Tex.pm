@@ -134,6 +134,7 @@ our %fbicons_heart = (
 ###fbicons_all
 ###all
 our %fbicons_all = (
+  '⛔️' => 'no.entry',
   '🌠' => 'shooting.star',
   '🎊' => 'confetti.ball',
   '💶' => 'euro.banknote',
