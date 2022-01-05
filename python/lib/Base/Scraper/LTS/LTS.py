@@ -1178,13 +1178,24 @@ class LTS(
     return self
 
   def sec_delete(self, ref = {}):
+    proj = ref.get('proj',self.proj)
+
+    where  = { 'proj' : proj }
 
     fields = [ 'sec', 'url' ]
-    where  = {}
     for k in fields:
       if k in ref:
         v = ref.get(k)  
         where.update({ k : v })
+
+    db_file = self.db_file_projs
+    tb = 'projs'
+
+#    dbw.delete({
+      #'where'   : where,
+      #'db_file' : db_file,
+      #'table'   : tb
+    #})
 
     return self
 

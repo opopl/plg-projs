@@ -845,7 +845,9 @@ sub _d2tex {
     }
   }
 
-  my $wrap = $d->{'@wrap'} || $d->{'wrap'};
+  my $wrap = $d->{'@wrap'} || $d->{'wrap'} || '';
+  my $parpic = ( ref $wrap eq 'ARRAY' && grep { /parpic/ } @$wrap )
+        || ( $wrap =~ /parpic/ );
 
   my $minipage = $self->_val_('tab cell minipage') || $d->{minipage} || '';
   my $parbox   = $self->_val_('tab parbox') || $d->{parbox} || '';
@@ -853,18 +855,20 @@ sub _d2tex {
   $parbox   = $wd if $parbox eq 'auto';
   $minipage = $wd if $minipage eq 'auto';
 
+  $DB::single = 1;
+
   my $comments = $d->{comments};
   if ($comments) {
     my $resized = $minipage || $parbox;
     foreach my $x (@$comments) {
-       $x =~ s/^\s*$/\\newline/g;
+       $x =~ s/^\s*$/\\newline/g if $parpic;
        $x = $self->_expand_igg($x,{ resized => $resized });
     }
     unless ($minipage || $parbox) {
         #$minipage = $wd;
         $parbox = $wd;
     }
-    #push @$comments,'\bigskip' if $minipage || $parbox;
+    push @$comments,'\bigskip' if $minipage || $parbox;
   }
 
   my $width_parbox = $parbox || '\cellWidth';
@@ -1047,7 +1051,7 @@ sub loop {
           my @block_end = qw( 
             tex tex_start 
             tab_begin tab_end
-            pic ig doc
+            pic ig doc globals locals
           );
           if ( grep { /^$k$/ } @block_end ) {
              $self->lpush_d;
@@ -1105,6 +1109,24 @@ sub loop {
 
        hash_update( $self->{d}, $opts);
 
+       next;
+    };
+
+###m_locals
+    m/^\s*locals\s*$/g && do {
+       $self->{locals} = {};
+       next;
+    };
+
+###m_globals
+    m/^\s*globals\s*$/g && do {
+       $self->{globals} = {};
+       next;
+    };
+
+###m_globals_end
+    m/^\s*endglobals\s*$/g && do {
+       $self->{globals} = undef;
        next;
     };
 
