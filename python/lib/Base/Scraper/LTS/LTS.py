@@ -202,9 +202,10 @@ class LTS(
     return t
 
   def _sec_file_data(self,ref = {}):
-    sec = ref.get('sec','')
+    sec  = ref.get('sec','')
+    proj = ref.get('proj',self.proj)
 
-    sec_file = self._sec_file({ 'sec' : sec })
+    sec_file = self._sec_file({ 'sec' : sec, 'proj' : proj })
     data = projs_db.get_data(sec_file)
 
     return data
@@ -1188,14 +1189,25 @@ class LTS(
         v = ref.get(k)  
         where.update({ k : v })
 
+    sec = where.get('sec','')
+    url = where.get('url','')
+    while not sec:
+      if url:
+        q = 'SELECT sec FROM projs WHERE url = ?'
+        sec =  dbw.sql_fetchval(q, [url], { 'db_file' : db_file })
+
+      break
+
     db_file = self.db_file_projs
     tb = 'projs'
 
-#    dbw.delete({
-      #'where'   : where,
-      #'db_file' : db_file,
-      #'table'   : tb
-    #})
+    dbw.delete({
+      'where'   : { 'sec' : sec },
+      'db_file' : db_file,
+      'table'   : tb
+    })
+
+    sec_file = self._sec_file({ 'sec' : sec, 'proj' : proj })
 
     return self
 
