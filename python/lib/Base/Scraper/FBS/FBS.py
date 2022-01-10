@@ -241,8 +241,6 @@ class FBS(CoreClass,
       if not self.fbpost:
         self.fbpost = FbPost(r)
 
-        import pdb; pdb.set_trace()
-  
         self.fbpost.process()
 
       return self
