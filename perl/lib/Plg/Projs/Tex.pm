@@ -134,6 +134,8 @@ our %fbicons_heart = (
 ###fbicons_all
 ###all
 our %fbicons_all = (
+  '👨' => 'man',
+  '🧚' => 'fairy',
   '📈' => 'chart.increasing',
   '💬' => 'speech.baloon',
   '⏰' => 'alarm.clock',

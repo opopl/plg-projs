@@ -101,6 +101,10 @@ sub init {
        is_caption => undef,
        lnum => 0,
 
+       # see igc
+       width_by => undef,
+       width_by_igc => 0.7,
+
        # m_@ctl
        is_key => undef,
        key_val => undef,
@@ -437,7 +441,7 @@ sub _fig_skip {
   return 1 if $tab && $tab->{no_fig};
 
   my $t = $d ? $d->{type} : '' ;
-  my $skip = (grep { /^$t$/ } qw(ig)) ? 1 : 0;
+  my $skip = (grep { /^$t$/ } qw(pic)) ? 0 : 1;
 
   return $skip;
 }
@@ -811,7 +815,15 @@ sub _d2tex {
     }
   }
 
+  $DB::single = 1;
+  unless ($d->{width_by}) {
+    if ($d->{type} eq 'igc') {
+      $d->{width_by} = $d->{width_by_igc};
+    }
+  }
+
   $wd = $wd/$d->{width_resize} if $d->{width_resize};
+  $wd = $wd*$d->{width_by} if $d->{width_by};
 
   push @tex,
     $wd ? sprintf('\setlength{\cellWidth}{%s}',$self->_len2tex($wd)) : ();
@@ -1046,17 +1058,19 @@ sub loop {
 
 ###m_block_end
     if ($self->{is_cmt}) {
-       m/^\s*(\w+)/ && do { 
+       m/^\s*(\w+)/ && do {
           my $k = $1;
           my @block_end = qw( 
             tex tex_start 
             tab_begin tab_end
-            pic ig doc globals locals
+            pic doc
+            ig igc
+            globals locals
           );
           if ( grep { /^$k$/ } @block_end ) {
              $self->lpush_d;
           }
-          if ( grep { /^$k$/ } qw( pic doc ig tex tex_start ) ) {
+          if ( grep { /^$k$/ } qw( pic doc ig igc tex tex_start ) ) {
              $self->lpush_tab_start;
           }
        };
@@ -1096,7 +1110,7 @@ sub loop {
 
 
 ###m_pic@
-    m/^\s*(pic|doc|ig)@(.*)$/g && do { 
+    m/^\s*(pic|doc|ig|igc)@(.*)$/g && do {
        my $v;
        $v = trim($2) if $2;
 
@@ -1131,7 +1145,7 @@ sub loop {
     };
 
 ###m_pic
-    m/^\s*(pic|doc|ig)(?:\s+(.*)|\s*)$/g && do { 
+    m/^\s*(pic|doc|ig|igc)(?:\s+(.*)|\s*)$/g && do {
        my $v;
        $v = trim($2) if $2;
 
