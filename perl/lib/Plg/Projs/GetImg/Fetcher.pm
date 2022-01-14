@@ -292,7 +292,7 @@ sub loop {
 
     next unless $self->{is_cmt};
 
-    m/^\s*(local|global)\s*$/g && do { 
+    m/^\s*(locals|globals)\s*$/g && do {
        $self->process_block;
 
        my $k = trim($1);
@@ -311,7 +311,7 @@ sub loop {
        my $k = trim($2);
        my $v = trim($3);
 
-       if (!$pref && grep { /^$k$/ } qw( pic doc ig ) ){
+       if (!$pref && grep { /^$k$/ } qw( pic doc ig igc ) ){
           # process previously stored block
           $self->process_block;
 

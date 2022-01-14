@@ -102,7 +102,6 @@ sub init {
        lnum => 0,
 
        # see igc
-       width_by => undef,
        width_by_igc => 0.7,
 
        # m_@ctl
@@ -815,10 +814,9 @@ sub _d2tex {
     }
   }
 
-  $DB::single = 1;
   unless ($d->{width_by}) {
     if ($d->{type} eq 'igc') {
-      $d->{width_by} = $d->{width_by_igc};
+      $d->{width_by} = $self->{width_by_igc};
     }
   }
 
@@ -867,8 +865,6 @@ sub _d2tex {
   $parbox   = $wd if $parbox eq 'auto';
   $minipage = $wd if $minipage eq 'auto';
 
-  $DB::single = 1;
-
   my $comments = $d->{comments};
   if ($comments) {
     my $resized = $minipage || $parbox;
@@ -916,11 +912,9 @@ sub _d2tex {
     push @tex,   $parbox ? '}%' : ();
     push @tex, $minipage ? '\end{minipage}%' : ();
 
-    $DB::single = 1;
   }
 
   push @tex, $self->_wrapped($wrap,'end');
-  $DB::single = 1 if $comments;
 
   return @tex;
 }
