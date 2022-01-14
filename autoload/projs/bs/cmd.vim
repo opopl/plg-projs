@@ -45,6 +45,15 @@ function! projs#bs#cmd#x ()
 endfunction
 
 """bs_site_view
+"
+if 0
+  call tree
+    calls
+      projs#bs#select_site
+        projs#bs#data
+      projs#bs#load_site_files
+endif
+
 function! projs#bs#cmd#site_view ()
   let bs_data = base#varget('projs_bs_data',{})
   let bs_data = bs_data

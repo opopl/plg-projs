@@ -91,7 +91,7 @@ class BS(CoreClass,
   PURPOSE
         This script will parse input URL
   EXAMPLES
-        r_bs.py -y mix.yaml -p list_sites
+        r_bs.py -y mix.yaml -p list_sites -c print_field
         r_bs.py -c db_fill_tags
         r_bs.py -c db_fill_auth
   '''
