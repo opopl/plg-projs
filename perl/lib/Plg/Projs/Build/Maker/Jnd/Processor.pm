@@ -886,12 +886,15 @@ sub _d2tex {
 
   $parbox = 1 if $caption && !$minipage;
 
+  my $captionsetup = $d->{captionsetup} || $tab->{captionsetup};
+
   unless($tab){
      push @tex,
         $self->_fig_start($d), # () if not figure
           $minipage ? sprintf('\begin{minipage}{%s}%%', $self->_len2tex($width_minipage) ) : (),
             $parbox ? sprintf('\parbox{%s}{%%', $self->_len2tex($width_parbox) ) : (),
               @ig,
+              $captionsetup ? sprintf('\captionsetup{%s}%%', $captionsetup ) : (),
               $caption ? $self->_tex_caption($d, $caption) : (),
               $comments ? (@$comments) : (),
               $d->{cap} ? sprintf('\begin{center}\figCapA{%s}\end{center}',$d->{cap}) : (),
@@ -906,6 +909,7 @@ sub _d2tex {
     push @tex,   $parbox ? sprintf('\parbox[t]{%s}{%%', $self->_len2tex($width_parbox) ) : ();
     #push @tex,     $caption ? ( sprintf(q|%% %s|, $caption )) : ();
     push @tex,      @ig;
+    push @tex,      $captionsetup ? sprintf('\captionsetup{%s}%%', $captionsetup ) : ();
     push @tex,      $caption ? $self->_tex_caption($d, $caption) : ();
     push @tex,      $comments ? (@$comments) : ();
     push @tex,      $d->{cap} ? sprintf('\begin{center}\figCapA{%s}\end{center}',$d->{cap}) : ();

@@ -1,13 +1,25 @@
 
+if 0
+  usage
+  call tree
+    calls
+      projs#author#id#list_db
+      base#inpx#ctl
+endif
+
 function! projs#author#id#select_db (...)
   let ref = get(a:000,0,{})
 
   let author_id = get(ref,'author_id','')
 
+  let header    = [ 'select author_id from database' ]
+  let header    = get(ref,'header',header)
+
   let lst = projs#author#id#list_db()
   let r = { 
-    \ 'list'  : lst,
-    \ 'thing' : 'author_id',
+    \ 'list'   : lst,
+    \ 'thing'  : 'author_id',
+    \ 'header' : header,
     \ }
 
   let author_id = base#inpx#ctl(r) 

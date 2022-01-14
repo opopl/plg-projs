@@ -1289,6 +1289,30 @@ class LTS(
 
     return self
 
+  def author_move(self, ref = {}):
+    old       = ref.get('old','')
+    new       = ref.get('new','')
+
+    if not old and new:
+      return self
+
+    db_file = self.db_file_pages
+
+    q = f'''UPDATE
+                authors
+            SET
+                id = '{new}'
+            WHERE
+                id = '{old}'
+        '''
+
+    dbw.sql_do({
+      'sql'     : q,
+      'db_file' : db_file
+    })
+
+    return self
+
   def sec_author_file2db(self, ref = {}):
     sec       = ref.get('sec','')
 
