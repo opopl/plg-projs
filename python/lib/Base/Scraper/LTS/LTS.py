@@ -1289,27 +1289,93 @@ class LTS(
 
     return self
 
-  def author_move(self, ref = {}):
+  def author_move_db_projs(self, ref = {}):
     old       = ref.get('old','')
     new       = ref.get('new','')
-
     if not old and new:
       return self
 
-    db_file = self.db_file_pages
+    db_file = self.db_file_projs
 
-    q = f'''UPDATE
-                authors
-            SET
-                id = '{new}'
-            WHERE
-                id = '{old}'
+    tbase = '_info_projs_author_id'
+    key = 'author_id'
+    q = f'''PRAGMA foreign_keys = OFF;
+            UPDATE {tbase}
+            SET {key} = '{new}'
+            WHERE {key} = '{old}';
+            PRAGMA foreign_keys = ON;
         '''
 
     dbw.sql_do({
       'sql'     : q,
       'db_file' : db_file
     })
+
+    q = f'''SELECT file FROM {tbase} WHERE {key} = ? '''
+    files = dbw.sql_fetchlist(q, [ new ], { 'db_file' : db_file })
+    for file in files:
+      qq = f'''SELECT {key} FROM {tbase} WHERE file = ? '''
+      ids = dbw.sql_fetchlist(qq, [ file ], { 'db_file' : db_file })
+      idm = self._author_id_merge(ids)
+
+      d = {
+        'db_file' : db_file,
+        'table'   : 'projs',
+        'insert'  : { 'file' : file, 'author_id' : idm },
+        'on_list' : [ 'file' ]
+      }
+
+      dbw.insert_update_dict(d)
+
+    return self
+
+  def author_move_db_pages(self, ref = {}):
+    old       = ref.get('old','')
+    new       = ref.get('new','')
+    if not old and new:
+      return self
+
+    db_file = self.db_file_pages
+
+    lst = [
+        { 'table' : 'authors', 'key' : 'id' },
+        { 'table' : 'auth_details', 'key' : 'id' },
+        { 'table' : 'page_authors', 'key' : 'auth_id' },
+        { 'table' : 'auth_stats', 'key' : 'auth_id' },
+    ]
+    for item in lst:
+      table = item.get('table')
+      key   = item.get('key')
+
+      q = f'''PRAGMA foreign_keys = OFF;
+              UPDATE
+                  {table}
+              SET
+                  {key} = '{new}'
+              WHERE
+                  {key} = '{old}';
+              PRAGMA foreign_keys = ON;
+          '''
+
+      dbw.sql_do({
+        'sql'     : q,
+        'db_file' : db_file
+      })
+
+    return self
+
+  def author_move(self, ref = {}):
+    old       = ref.get('old','')
+    new       = ref.get('new','')
+    if not old and new:
+      return self
+
+    acts = [
+        [ 'author_move_db_pages', [ ref ] ],
+        [ 'author_move_db_projs', [ ref ] ],
+    ]
+
+    util.call(self,acts)
 
     return self
 

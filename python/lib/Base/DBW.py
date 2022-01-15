@@ -498,6 +498,8 @@ def sql_do(ref={}):
   conn_cfg(conn)
   c = conn.cursor()
 
+  c.execute("PRAGMA foreign_keys = ON")
+
   for q in sqlparse.split(sql):
     try:
         c.execute(q,p)
