@@ -214,7 +214,17 @@ class LTS(
     sec  = ref.get('sec','')
     proj = ref.get('proj',self.proj)
 
-    sec_file = os.path.join( self.lts_root, f'{proj}.{sec}.tex' )
+    db_file = self.db_file_projs
+
+    q = 'SELECT file FROM projs WHERE sec = ? AND proj = ?'
+    p = [ sec, proj ]
+    file = dbw.sql_fetchval(q,p,{ 'db_file' : db_file })
+
+    if not file:
+      return ''
+
+    sec_file = os.path.join( self.lts_root, file )
+    #sec_file = os.path.join( self.lts_root, f'{proj}.{sec}.tex' )
 
     return sec_file
 
@@ -1311,21 +1321,15 @@ class LTS(
       'db_file' : db_file
     })
 
-    q = f'''SELECT file FROM {tbase} WHERE {key} = ? '''
-    files = dbw.sql_fetchlist(q, [ new ], { 'db_file' : db_file })
-    for file in files:
-      qq = f'''SELECT {key} FROM {tbase} WHERE file = ? '''
-      ids = dbw.sql_fetchlist(qq, [ file ], { 'db_file' : db_file })
-      idm = self._author_id_merge(ids)
+    q = f'''SELECT sec FROM projs WHERE file IN ( SELECT file FROM {tbase} WHERE {key} = ? )'''
+    secs = dbw.sql_fetchlist(q, [ new ], { 'db_file' : db_file })
+    for sec in secs:
+      acts = [
+        [ 'sec_author_rm', [ { 'sec' : sec, 'author_id' : old } ] ],
+        [ 'sec_author_add', [ { 'sec' : sec, 'author_id' : new } ] ],
+      ]
 
-      d = {
-        'db_file' : db_file,
-        'table'   : 'projs',
-        'insert'  : { 'file' : file, 'author_id' : idm },
-        'on_list' : [ 'file' ]
-      }
-
-      dbw.insert_update_dict(d)
+      util.call(self,acts)
 
     return self
 
