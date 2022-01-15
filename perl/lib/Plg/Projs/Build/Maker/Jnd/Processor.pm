@@ -886,7 +886,7 @@ sub _d2tex {
 
   $parbox = 1 if $caption && !$minipage;
 
-  my $captionsetup = $d->{captionsetup} || $tab->{captionsetup};
+  my $captionsetup = $d->{captionsetup} || ( $tab ? $tab->{captionsetup} : '' );
 
   unless($tab){
      push @tex,
