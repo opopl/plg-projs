@@ -792,8 +792,12 @@ class LTS(
 
     return self
 
-  def import_auth2db(self, ref = {}):
-    authors_file = os.path.join(self.lts_root,'data', 'dict', 'authors.i.dat')
+  def author_dat_update(self, ref = {}):
+
+    return self
+
+  def author_import_dat2db(self, ref = {}):
+    authors_file    = os.path.join(self.lts_root,'data', 'dict', 'authors.i.dat')
     fb_authors_file = os.path.join(self.lts_root,'data', 'dict', 'fb_authors.i.dat')
 
     names_file = os.path.join(self.lts_root,'scrape','bs','in','lists','names_first.i.dat')
@@ -1299,6 +1303,14 @@ class LTS(
 
     return self
 
+  def author_move_dat(self, ref = {}):
+    old       = ref.get('old','')
+    new       = ref.get('new','')
+    if not old and new:
+      return self
+
+    return self
+
   def author_move_db_projs(self, ref = {}):
     old       = ref.get('old','')
     new       = ref.get('new','')
@@ -1368,6 +1380,77 @@ class LTS(
 
     return self
 
+  def author_delete(self, ref = {}):
+    author_id       = ref.get('author_id','')
+
+    acts = [
+        [ 'author_delete_db_pages', [ ref ] ],
+        [ 'author_delete_db_projs', [ ref ] ],
+        [ 'author_delete_dat', [ ref ] ],
+    ]
+
+    util.call(self,acts)
+
+    return self
+
+  def author_delete_dat(self, ref = {}):
+    author_id       = ref.get('author_id','')
+
+    return self
+
+  def author_delete_db_projs(self, ref = {}):
+    author_id = ref.get('author_id','')
+    if not author_id:
+      return self
+
+    db_file = self.db_file_projs
+    tbase = '_info_projs_author_id'
+    key = 'author_id'
+
+    q = f'''SELECT sec FROM projs WHERE file IN ( SELECT file FROM {tbase} WHERE {key} = ? )'''
+    secs = dbw.sql_fetchlist(q, [ author_id ], { 'db_file' : db_file })
+    for sec in secs:
+      acts = [
+        [ 'sec_author_rm', [ { 'sec' : sec, 'author_id' : author_id } ] ],
+      ]
+
+      util.call(self,acts)
+
+    return self
+
+  def author_delete_db_pages(self, ref = {}):
+    author_id = ref.get('author_id','')
+    if not author_id:
+      return self
+
+    db_file = self.db_file_pages
+
+    lst = [
+        { 'table' : 'authors', 'key' : 'id' },
+        { 'table' : 'auth_details', 'key' : 'id' },
+        { 'table' : 'page_authors', 'key' : 'auth_id' },
+        { 'table' : 'auth_stats', 'key' : 'auth_id' },
+    ]
+
+    for item in lst:
+      table = item.get('table')
+      key   = item.get('key')
+
+      q = f'''PRAGMA foreign_keys = OFF;
+              DELETE FROM
+                  {table}
+              WHERE
+                  {key} = '{author_id}';
+              PRAGMA foreign_keys = ON;
+          '''
+
+      dbw.sql_do({
+        'sql'     : q,
+        'db_file' : db_file
+      })
+
+    return self
+
   def author_move(self, ref = {}):
     old       = ref.get('old','')
     new       = ref.get('new','')
@@ -1377,6 +1460,7 @@ class LTS(
     acts = [
         [ 'author_move_db_pages', [ ref ] ],
         [ 'author_move_db_projs', [ ref ] ],
+        [ 'author_move_dat', [ ref ] ],
     ]
 
     util.call(self,acts)
