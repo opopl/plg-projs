@@ -1454,8 +1454,13 @@ class LTS(
   def author_move(self, ref = {}):
     old       = ref.get('old','')
     new       = ref.get('new','')
-    if not old and new:
+
+    ok = old
+    ok = ok and new and ( old != new )
+    if not ok:
       return self
+
+    dbw.sql_fetchval('')
 
     acts = [
         [ 'author_move_db_pages', [ ref ] ],

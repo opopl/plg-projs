@@ -510,6 +510,26 @@ def add_libs(libs):
     if not lib in sys.path:
       sys.path.append(lib)
 
+# see also: readdict
+def writedict(dat_file, dict={}):
+  if not (dat_file and len(dict)):
+    return
+
+  kk = list(dict.keys())
+  kk.sort()
+  lines = []
+  for k in kk:
+    v = dict.get(k)
+    if v == None:
+      v = ''
+    lines.append(f'{k} {v}')
+
+  with open(dat_file, 'w', encoding='utf8') as f:
+    f.write(lines)
+
+  return 1
+
+# see also: writedict
 def readdict(dat_file, opts={}):
     dict = {}
     if not (dat_file and os.path.isfile(dat_file)):
