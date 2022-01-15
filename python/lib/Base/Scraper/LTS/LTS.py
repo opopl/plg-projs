@@ -113,6 +113,13 @@ class LTS(
        }
     }
 
+    self.dat_files = {}
+    kk = [ '', 'fb_', 'vk_', 'yz_' ]
+    for k in kk:
+      dat_name = f'{k}authors'
+      dat_path = os.path.join(self.lts_root, 'data', 'dict', f'{dat_name}.i.dat')
+      self.dat_files.update({ dat_name : dat_path })
+
     self.prj = Prj({ 
       'proj'     : self.proj,
       'rootid'   : self.rootid,
@@ -275,6 +282,11 @@ class LTS(
         auth[col] = val
 
     return auth
+
+  def _author_exist(self, id = ''):
+    id = dbw.sql_fetchval('SELECT id FROM authors WHERE id = ?',[ id ],
+      { 'db_file' : self.db_file_pages })
+    return id
 
   def _author_id_remove(self, ids_in = [], ids_remove = []):
 
@@ -1309,6 +1321,8 @@ class LTS(
     if not old and new:
       return self
 
+    files = []
+
     return self
 
   def author_move_db_projs(self, ref = {}):
@@ -1457,18 +1471,18 @@ class LTS(
 
     ok = old
     ok = ok and new and ( old != new )
+    ok = ok and self._author_exist(id=old)
     if not ok:
       return self
 
-    dbw.sql_fetchval('')
+    if not self._author_exist(id=new):
+      acts = [
+          [ 'author_move_db_pages', [ ref ] ],
+          [ 'author_move_db_projs', [ ref ] ],
+          [ 'author_move_dat', [ ref ] ],
+      ]
 
-    acts = [
-        [ 'author_move_db_pages', [ ref ] ],
-        [ 'author_move_db_projs', [ ref ] ],
-        [ 'author_move_dat', [ ref ] ],
-    ]
-
-    util.call(self,acts)
+      util.call(self,acts)
 
     return self
 
