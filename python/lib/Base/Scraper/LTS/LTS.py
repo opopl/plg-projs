@@ -1395,7 +1395,7 @@ class LTS(
     ]
     do = 'move'
     if self._author_exist(id=new):
-      do = 'purge'
+      do = 'merge'
       # authors          delete entry
       # auth_details     delete entry
 
@@ -1406,20 +1406,33 @@ class LTS(
       table = item.get('table')
       key   = item.get('key')
 
-      q = f'''PRAGMA foreign_keys = OFF;
-              UPDATE
-                  {table}
-              SET
-                  {key} = '{new}'
-              WHERE
-                  {key} = '{old}';
-              PRAGMA foreign_keys = ON;
-          '''
+      if do == 'move':
+        q = f'''UPDATE {table} SET {key} = ? WHERE {key} = ? '''
+        dbw.sql_do({
+           'db_file' : db_file,
+           'sql'     : q,
+           'p'       : [ new, old ],
+           'fk'      : 0
+        })
 
-      dbw.sql_do({
-        'sql'     : q,
-        'db_file' : db_file
-      })
+      elif do == 'merge':
+        if table in util.qw('authors auth_details'):
+           q = f''' DELETE FROM {table} WHERE {key} = ? '''
+           dbw.sql_do({
+             'db_file' : db_file,
+             'sql'     : q,
+             'p'       : [old],
+             'fk'      : 0
+           })
+
+        elif table in util.qw('page_authors'):
+          q = f'''UPDATE {table} SET {key} = ? WHERE {key} = ? '''
+          dbw.sql_do({
+             'db_file' : db_file,
+             'sql'     : q,
+             'p'       : [ new, old ],
+             'fk'      : 0
+          })
 
     return self
 

@@ -464,6 +464,7 @@ def sql_do(ref={}):
   sql_files = ref.get('sql_files',[])
 
   p         = ref.get('p',[])
+  fk        = ref.get('fk',1)
 
   conn     = ref.get('conn')
   db_file  = ref.get('db_file')
@@ -483,6 +484,7 @@ def sql_do(ref={}):
   
       sql_do({ 
         'sql'     : sql,
+        'p'       : p,
         'db_file' : db_file
       })
 
@@ -498,7 +500,10 @@ def sql_do(ref={}):
   conn_cfg(conn)
   c = conn.cursor()
 
-  c.execute("PRAGMA foreign_keys = ON")
+  if fk:
+    c.execute("PRAGMA foreign_keys = ON")
+  else:
+    c.execute("PRAGMA foreign_keys = OFF")
 
   for q in sqlparse.split(sql):
     try:
