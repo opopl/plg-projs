@@ -512,20 +512,21 @@ def add_libs(libs):
 
 # see also: readdict
 def writedict(dat_file, dict={}):
-  if not (dat_file and len(dict)):
+  if not dat_file:
     return
 
-  kk = list(dict.keys())
-  kk.sort()
+  dkeys = list(dict.keys())
+  dkeys.sort()
   lines = []
-  for k in kk:
+  for k in dkeys:
     v = dict.get(k)
     if v == None:
       v = ''
     lines.append(f'{k} {v}')
 
+  txt = '\n'.join(lines) + '\n'
   with open(dat_file, 'w', encoding='utf8') as f:
-    f.write(lines)
+    f.write(txt)
 
   return 1
 

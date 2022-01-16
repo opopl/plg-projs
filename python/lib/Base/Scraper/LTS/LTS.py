@@ -1315,13 +1315,35 @@ class LTS(
 
     return self
 
+  # see also: author_move
   def author_move_dat(self, ref = {}):
     old       = ref.get('old','')
     new       = ref.get('new','')
     if not old and new:
       return self
 
-    files = []
+    for dat_name, dat_path in self.dat_files.items():
+      m = re.search('authors$',dat_name)
+      if not m:
+        continue
+
+      dict = util.readdict(dat_path)
+      if dat_name == 'authors':
+        if not old in dict:
+          continue
+
+        author_name = dict[old]
+        del dict[old]
+        dict.update({ new : author_name })
+
+      else:
+        for wid, author_id in dict.items():
+          if author_id == old:
+            dict.update({ wid : new })
+
+      util.writedict(dat_path, dict)
+
+    import pdb; pdb.set_trace()
 
     return self
 
@@ -1471,18 +1493,18 @@ class LTS(
 
     ok = old
     ok = ok and new and ( old != new )
-    ok = ok and self._author_exist(id=old)
+    #ok = ok and self._author_exist(id=old)
     if not ok:
       return self
 
-    if not self._author_exist(id=new):
-      acts = [
-          [ 'author_move_db_pages', [ ref ] ],
-          [ 'author_move_db_projs', [ ref ] ],
-          [ 'author_move_dat', [ ref ] ],
-      ]
+    #if not self._author_exist(id=new):
+    acts = [
+      #[ 'author_move_db_pages', [ ref ] ],
+      #[ 'author_move_db_projs', [ ref ] ],
+      [ 'author_move_dat', [ ref ] ],
+    ]
 
-      util.call(self,acts)
+    util.call(self,acts)
 
     return self
 
