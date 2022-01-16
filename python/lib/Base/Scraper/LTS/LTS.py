@@ -1443,6 +1443,7 @@ class LTS(
       table = item.get('table')
       key   = item.get('key')
 
+###auth_move
       if do == 'move':
         q = f'''UPDATE {table} SET {key} = ? WHERE {key} = ? '''
         dbw.sql_do({
@@ -1452,6 +1453,7 @@ class LTS(
            'fk'      : 0
         })
 
+###auth_move_merge
       elif do == 'merge':
         if table in util.qw('authors auth_details'):
            q = f''' DELETE FROM {table} WHERE {key} = ? '''
@@ -1588,15 +1590,15 @@ class LTS(
 
     ok = old
     ok = ok and new and ( old != new )
-    #ok = ok and self._author_exist(id=old)
+    ok = ok and self._author_exist(id=old)
     if not ok:
       return self
 
     acts = [
       [ 'author_move_db_pages_main', [ ref ] ],
-      #[ 'author_move_db_pages', [ ref ] ],
-      #[ 'author_move_db_projs', [ ref ] ],
-      #[ 'author_move_dat', [ ref ] ],
+      [ 'author_move_db_pages', [ ref ] ],
+      [ 'author_move_db_projs', [ ref ] ],
+      [ 'author_move_dat', [ ref ] ],
     ]
 
     util.call(self,acts)
