@@ -1392,6 +1392,8 @@ class LTS(
         { 'table' : 'auth_details', 'key' : 'id' },
         { 'table' : 'page_authors', 'key' : 'auth_id' },
         { 'table' : 'auth_stats', 'key' : 'auth_id' },
+        # comma-separated list
+        { 'table' : 'pages', 'key' : 'author_id' },
     ]
     do = 'move'
     if self._author_exist(id=new):
@@ -1421,7 +1423,7 @@ class LTS(
            dbw.sql_do({
              'db_file' : db_file,
              'sql'     : q,
-             'p'       : [old],
+             'p'       : [ old ],
              'fk'      : 0
            })
 
@@ -1433,6 +1435,45 @@ class LTS(
              'p'       : [ new, old ],
              'fk'      : 0
           })
+
+        elif table in util.qw('auth_stats'):
+          rids = {}
+          rank = {}
+          jj = { 'old' : old, 'new' : new }
+          for k, v in jj.items():
+            q = f'SELECT rank, rids FROM {table} WHERE {key} = ?'
+            p = [v]
+            r = dbw.sql_fetchone(q,p,{ 'db_file' : db_file }) or {}
+            row  = r.get('row',{})
+            rank[k] = row.get('rank',0)
+            rids[k] = row.get('rids','')
+
+          rank['new'] = rank['old'] + rank['new']
+          rids['new'] = self._author_id_merge([ rids['new'], rids['old'] ])
+
+          # delete old entry
+          q = f''' DELETE FROM {table} WHERE {key} = ? '''
+          dbw.sql_do({
+            'db_file' : db_file,
+            'sql'     : q,
+            'p'       : [ old ],
+            'fk'      : 0
+          })
+
+          # update new entry with merged rank and rids values
+          d = {
+            'db_file' : db_file,
+            'table'   : table,
+            'insert'  : {
+               key    : new,
+               'rank' : rank['new'],
+               'rids' : rids['new']
+            },
+            'on_list' : [ key ]
+          }
+
+          dbw.insert_update_dict(d)
+          import pdb; pdb.set_trace()
 
     return self
 
@@ -1513,14 +1554,14 @@ class LTS(
 
     ok = old
     ok = ok and new and ( old != new )
-    ok = ok and self._author_exist(id=old)
+    #ok = ok and self._author_exist(id=old)
     if not ok:
       return self
 
     acts = [
       [ 'author_move_db_pages', [ ref ] ],
-      [ 'author_move_db_projs', [ ref ] ],
-      [ 'author_move_dat', [ ref ] ],
+      #[ 'author_move_db_projs', [ ref ] ],
+      #[ 'author_move_dat', [ ref ] ],
     ]
 
     util.call(self,acts)
