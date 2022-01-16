@@ -1393,6 +1393,15 @@ class LTS(
         { 'table' : 'page_authors', 'key' : 'auth_id' },
         { 'table' : 'auth_stats', 'key' : 'auth_id' },
     ]
+    do = 'move'
+    if self._author_exist(id=new):
+      do = 'purge'
+      # authors          delete entry
+      # auth_details     delete entry
+
+      # auth_stats       merge list of rids, rank
+      # page_authors     update
+
     for item in lst:
       table = item.get('table')
       key   = item.get('key')
@@ -1491,11 +1500,10 @@ class LTS(
 
     ok = old
     ok = ok and new and ( old != new )
-    #ok = ok and self._author_exist(id=old)
+    ok = ok and self._author_exist(id=old)
     if not ok:
       return self
 
-    #if not self._author_exist(id=new):
     acts = [
       [ 'author_move_db_pages', [ ref ] ],
       [ 'author_move_db_projs', [ ref ] ],
