@@ -1379,6 +1379,43 @@ class LTS(
 
     return self
 
+  def author_move_db_pages_main(self, ref = {}):
+    old       = ref.get('old','')
+    new       = ref.get('new','')
+    if not old and new:
+      return self
+
+    db_file = self.db_file_pages
+    table = 'pages'
+
+    q = f'''SELECT rid, author_id FROM {table}'''
+    r = dbw.sql_fetchall(q,[],{ 'db_file' : db_file })
+    rows = r.get('rows',[])
+    for rw in rows:
+      rid       = rw.get('rid')
+      author_id = rw.get('author_id') or ''
+      if not author_id:
+        continue
+
+      ids = string.split_n_trim(author_id, sep = ',')
+      if old in ids:
+        author_id = self._author_id_merge([ author_id, new ])
+        author_id = self._author_id_remove([ author_id ], [ old ])
+
+        d = {
+          'db_file' : db_file,
+          'table'   : table,
+          'insert'  : {
+             'rid'       : rid,
+             'author_id' : author_id,
+          },
+          'on_list' : [ 'rid' ]
+        }
+
+        dbw.insert_update_dict(d)
+
+    return self
+
   def author_move_db_pages(self, ref = {}):
     old       = ref.get('old','')
     new       = ref.get('new','')
@@ -1392,8 +1429,6 @@ class LTS(
         { 'table' : 'auth_details', 'key' : 'id' },
         { 'table' : 'page_authors', 'key' : 'auth_id' },
         { 'table' : 'auth_stats', 'key' : 'auth_id' },
-        # comma-separated list
-        { 'table' : 'pages', 'key' : 'author_id' },
     ]
     do = 'move'
     if self._author_exist(id=new):
@@ -1473,7 +1508,6 @@ class LTS(
           }
 
           dbw.insert_update_dict(d)
-          import pdb; pdb.set_trace()
 
     return self
 
@@ -1559,7 +1593,8 @@ class LTS(
       return self
 
     acts = [
-      [ 'author_move_db_pages', [ ref ] ],
+      [ 'author_move_db_pages_main', [ ref ] ],
+      #[ 'author_move_db_pages', [ ref ] ],
       #[ 'author_move_db_projs', [ ref ] ],
       #[ 'author_move_dat', [ ref ] ],
     ]
