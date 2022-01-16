@@ -1343,8 +1343,6 @@ class LTS(
 
       util.writedict(dat_path, dict)
 
-    import pdb; pdb.set_trace()
-
     return self
 
   def author_move_db_projs(self, ref = {}):
@@ -1499,8 +1497,8 @@ class LTS(
 
     #if not self._author_exist(id=new):
     acts = [
-      #[ 'author_move_db_pages', [ ref ] ],
-      #[ 'author_move_db_projs', [ ref ] ],
+      [ 'author_move_db_pages', [ ref ] ],
+      [ 'author_move_db_projs', [ ref ] ],
       [ 'author_move_dat', [ ref ] ],
     ]
 
