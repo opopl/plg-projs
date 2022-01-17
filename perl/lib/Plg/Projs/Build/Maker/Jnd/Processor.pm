@@ -543,6 +543,9 @@ sub match_tab_begin {
 
   return $self unless defined $opts_s;
 
+  my $globals = $self->{globals} || {};
+  return $self if $globals->{mlc};
+
   $self->tab_init;
 
   hash_update(
@@ -563,6 +566,9 @@ sub match_tab_begin {
 
 sub match_tab_end {
   my ($self) = @_;
+
+  my $globals = $self->{globals} || {};
+  return $self if $globals->{mlc};
 
   my $tab = $self->{tab};
 
@@ -627,14 +633,17 @@ sub globals_update {
   my ($self, %update) = @_;
 
   $self->{globals} ||= {};
+  my $globals = $self->{globals};
 
-  while(my($k, $v)=each %update){
-    $self->{globals}->{$k} = $v;
+  UPDATE: while(my($k, $v)=each %update){
 
     for($k){
        /^mlc$/ && do {
           if ($v) {
-            $DB::single = 1;
+            # end previous multicolumn
+            if ($globals->{mlc}) {
+              push @{$self->{nlines}}, q{\end{multicols}};
+            }
             push @{$self->{nlines}},
                 q{\raggedcolumns},
                 sprintf(q{\begin{multicols}{%s}}, $v),
@@ -645,12 +654,16 @@ sub globals_update {
             };
           }else{
             $self->{multicols} = undef;
+            delete $globals->{mlc};
             push @{$self->{nlines}}, q{\end{multicols}};
+            next UPDATE;
           }
 
           last;
        };
      }
+
+     $globals->{$k} = $v;
   }
 
   return $self;
