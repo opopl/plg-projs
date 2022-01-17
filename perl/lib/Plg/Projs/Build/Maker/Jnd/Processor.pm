@@ -436,8 +436,14 @@ sub _fig_skip {
 
   $d ||= $self->{d};
 
-  my $tab = $self->{tab};
+  my $tab     = $self->{tab};
+  my $globals = $self->{globals};
+
+  #my $ok = 1;
+  #$ok &&= $tab && $tab->{no_fig};
+
   return 1 if $tab && $tab->{no_fig};
+  return 1 if $globals && ( $globals->{no_fig} || $globals->{mlc} );
 
   my $t = $d ? $d->{type} : '' ;
   my $skip = (grep { /^$t$/ } qw(pic)) ? 0 : 1;
@@ -806,7 +812,7 @@ sub _d2tex {
   $d ||= $self->{d};
   return () unless $d;
 
-  my $tab = $self->{tab};
+  my ($tab, $locals, $globals) = @{$self}{qw( tab locals globals )};
 
   my $d_db = $self->_d_db_data($d);
   my ($img_file, $img_path, $rw)  = @{$d_db}{qw( img_file img_path rw )};
@@ -820,7 +826,7 @@ sub _d2tex {
     #return ( map { '%' . $_ } @err );
   }
 
-  my @tex;
+  my (@tex, @after);
   my $w2h;
   {
     my $iinfo = image_info($img_file);
@@ -934,6 +940,18 @@ sub _d2tex {
 
   my $captionsetup = $d->{captionsetup} || ( $tab ? $tab->{captionsetup} : '' );
 
+  if ($globals->{mlc}) {
+     push @tex,
+             '',
+             @ig,
+             '',
+             $caption ? $caption : (),
+             $comments ? (@$comments) : (),
+     ;
+
+     return @tex;
+  }
+
   unless($tab){
      push @tex,
         $self->_fig_start($d), # () if not figure
@@ -947,6 +965,7 @@ sub _d2tex {
             $parbox ? '}%' : (),
           $minipage ? '\end{minipage}%' : (),
         $self->_fig_end($d),   # () if not figure
+        @after,
         ;
   }else{
 
@@ -961,6 +980,7 @@ sub _d2tex {
     push @tex,      $d->{cap} ? sprintf('\begin{center}\figCapA{%s}\end{center}',$d->{cap}) : ();
     push @tex,   $parbox ? '}%' : ();
     push @tex, $minipage ? '\end{minipage}%' : ();
+    push @tex, @after;
 
   }
 
