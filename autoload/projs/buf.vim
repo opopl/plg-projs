@@ -227,6 +227,28 @@ function! projs#buf#headcmd (...)
 
 endfunction
 
+function! projs#buf#data (...)
+  let key   = get(a:000,0,'')
+  let value = get(a:000,1,'')
+
+  let data = exists('b:db_data') ? b:db_data : {}
+
+  let res = ''
+  if !len(key)
+    let res = data
+  else
+    if len(value)
+      call extend(data,{ key : value })
+    endif
+    let res = base#x#get(data,key,'')
+  endif
+
+  let b:db_data = data
+
+  return res
+
+endfunction
+
 function! projs#buf#sec ()
   return exists('b:sec') ? b:sec : ''
 
