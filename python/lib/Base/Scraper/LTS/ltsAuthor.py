@@ -214,7 +214,7 @@ class ltsAuthor:
   def _author_id_remove(self, ids_in = [], ids_rm = []):
     return string.ids_remove(ids_in, ids_rm)
 
-  def _author_id_merge(self,ids_in = []):
+  def _author_id_merge(self, ids_in = []):
     return string.ids_merge(ids_in)
 
   def _auth_data(self, ref = {}):

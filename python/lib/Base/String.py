@@ -22,7 +22,7 @@ def join(sep='',arr=[]):
   s = sep.join(arr)
   return s
 
-def ids_merge(self,ids_in = []):
+def ids_merge(ids_in = []):
   ids_merged = []
   for id in ids_in:
     ids = split_n_trim(id, sep = ',')
@@ -33,7 +33,7 @@ def ids_merge(self,ids_in = []):
 
   return ids_merged_s
 
-def ids_remove(self, ids_in = [], ids_remove = []):
+def ids_remove(ids_in = [], ids_remove = []):
 
   ids_in_a     = []
   ids_remove_a = []

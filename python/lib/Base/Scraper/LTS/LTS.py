@@ -1135,8 +1135,6 @@ class LTS(
 
     return self
 
-
- 
   def sec_author_file2db(self, ref = {}):
     sec       = ref.get('sec','')
 
