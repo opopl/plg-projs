@@ -37,7 +37,7 @@ from Base.Mix.mixLoader import mixLoader
 from Base.Mix.mixGetOpt import mixGetOpt
 from Base.Mix.mixFileSys import mixFileSys
 
-from Base.Scraper.LTS.ltsAuth import ltsAuthor
+from Base.Scraper.LTS.ltsAuthor import ltsAuthor
 
 from Base.Zlan import Zlan
 from Base.Core import CoreClass
@@ -238,8 +238,6 @@ class LTS(
     #sec_file = os.path.join( self.lts_root, f'{proj}.{sec}.tex' )
 
     return sec_file
-
-
 
 
   def lines_tex_process(self,ref={}):
@@ -723,103 +721,6 @@ class LTS(
 
     return self
 
-  def author_dat_update(self, ref = {}):
-
-    return self
-
-  def author_import_dat2db(self, ref = {}):
-    authors_file    = os.path.join(self.lts_root,'data', 'dict', 'authors.i.dat')
-    fb_authors_file = os.path.join(self.lts_root,'data', 'dict', 'fb_authors.i.dat')
-
-    names_file = os.path.join(self.lts_root,'scrape','bs','in','lists','names_first.i.dat')
-    names_first = util.readarr(names_file)
-
-    fb_authors = util.readdict(fb_authors_file)
-
-    home = os.environ.get('HOME')
-    #db_file = os.path.join(home,'tmp','h.db')
-
-    with open(authors_file,'r',encoding='utf8') as f:
-      self.lines = f.readlines()
-      while len(self.lines):
-        self.line = self.lines.pop(0).strip('\n')
-        if re.match(r'^#',self.line) or (len(self.line) == 0):
-          continue
-
-        m = rgx.match('author.dict',self.line)
-        if m:
-          author_id    = m.group('author_id')
-
-          # facebook ids corresponding to single author_id
-          fb_ids = []
-
-          # incoming author string
-          author_bare  = m.group('author_bare')
-
-          # plain author name
-          author_plain = author_bare
-
-          # inverted if needed
-          author_name  = author_bare
-
-          m = rgx.match('author.bare.inverted',author_bare)
-          if m:
-            last_name  = m.group('last_name').strip()
-            first_name = m.group('first_name').strip()
-            info       = m.group('info')
-            author_plain = f'{first_name} {last_name}'
-            if info:
-              author_plain = f'{author_plain} ({info})'
-
-            if not first_name in names_first:
-              author_name = author_plain
-
-          for fb_id, a_id in fb_authors.items():
-            if a_id == author_id:
-              fb_ids.append(fb_id)
-
-          # table: authors in html_root/h.db
-          d_auth = {
-            'id'    : author_id,
-            'name'  : author_name,
-            'plain' : author_plain,
-          }
-
-          d = {
-            'db_file' : self.db_file_pages,
-            'table'   : 'authors',
-            'insert'  : d_auth,
-            'on_list' : [ 'id' ]
-          }
-
-          dbw.insert_update_dict(d)
-
-          # table: auth_details in html_root/h.db
-          for fb_id in fb_ids:
-            d_auth_detail = {
-              'id'     : author_id,
-              'fb_url' : f'https://www.facebook.com/{fb_id}',
-              'fb_id'  : fb_id,
-            }
-
-            d = {
-              'db_file' : self.db_file_pages,
-              'table'   : 'auth_details',
-              'insert'  : d_auth_detail,
-              'on_list' : [ 'id', 'fb_id' ]
-            }
-            dbw.insert_update_dict(d)
-
-    r_db = { 'db_file' : self.db_file_pages }
-
-    cnt = {}
-    for t in util.qw('authors auth_details'):
-      cnt[t] = dbw.sql_fetchval(f'select count(*) from {t}',[],r_db)
-
-    print(f'Count(authors):      {cnt["authors"]}')
-    print(f'Count(auth_details): {cnt["auth_details"]}')
-
-    return self
 
   #let cnt = projs#sec#count_ii({ 'ii_prefix' : ii_prefix })
   def _sec_count_ii(self, ref = {}):
@@ -1234,106 +1135,6 @@ class LTS(
 
     return self
 
-  # see also: author_move
-  def author_move_dat(self, ref = {}):
-    old       = ref.get('old','')
-    new       = ref.get('new','')
-    if not old and new:
-      return self
-
-    for dat_name, dat_path in self.dat_files.items():
-      m = re.search('authors$',dat_name)
-      if not m:
-        continue
-
-      dict = util.readdict(dat_path)
-      if dat_name == 'authors':
-        if not old in dict:
-          continue
-
-        author_name = dict[old]
-        del dict[old]
-        dict.update({ new : author_name })
-
-      else:
-        for wid, author_id in dict.items():
-          if author_id == old:
-            dict.update({ wid : new })
-
-      util.writedict(dat_path, dict)
-
-    return self
-
-  def author_move_db_projs(self, ref = {}):
-    old       = ref.get('old','')
-    new       = ref.get('new','')
-    if not old and new:
-      return self
-
-    db_file = self.db_file_projs
-
-    tbase = '_info_projs_author_id'
-    key = 'author_id'
-    q = f'''PRAGMA foreign_keys = OFF;
-            UPDATE {tbase}
-            SET {key} = '{new}'
-            WHERE {key} = '{old}';
-            PRAGMA foreign_keys = ON;
-        '''
-
-    dbw.sql_do({
-      'sql'     : q,
-      'db_file' : db_file
-    })
-
-    q = f'''SELECT sec FROM projs WHERE file IN ( SELECT file FROM {tbase} WHERE {key} = ? )'''
-    secs = dbw.sql_fetchlist(q, [ new ], { 'db_file' : db_file })
-    for sec in secs:
-      acts = [
-        [ 'sec_author_rm', [ { 'sec' : sec, 'author_id' : old } ] ],
-        [ 'sec_author_add', [ { 'sec' : sec, 'author_id' : new } ] ],
-      ]
-
-      util.call(self,acts)
-
-    return self
-
-  def author_move_db_pages_main(self, ref = {}):
-    old       = ref.get('old','')
-    new       = ref.get('new','')
-    if not old and new:
-      return self
-
-    db_file = self.db_file_pages
-    table = 'pages'
-
-    q = f'''SELECT rid, author_id FROM {table}'''
-    r = dbw.sql_fetchall(q,[],{ 'db_file' : db_file })
-    rows = r.get('rows',[])
-    for rw in rows:
-      rid       = rw.get('rid')
-      author_id = rw.get('author_id') or ''
-      if not author_id:
-        continue
-
-      ids = string.split_n_trim(author_id, sep = ',')
-      if old in ids:
-        author_id = string.ids_merge([ author_id, new ])
-        author_id = string.ids_remove([ author_id ], [ old ])
-
-        d = {
-          'db_file' : db_file,
-          'table'   : table,
-          'insert'  : {
-             'rid'       : rid,
-             'author_id' : author_id,
-          },
-          'on_list' : [ 'rid' ]
-        }
-
-        dbw.insert_update_dict(d)
-
-    return self
 
  
   def sec_author_file2db(self, ref = {}):
