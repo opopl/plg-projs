@@ -623,6 +623,39 @@ sub lpush_tab_start {
   return $self;
 }
 
+sub globals_update {
+  my ($self, %update) = @_;
+
+  $self->{globals} ||= {};
+
+  while(my($k, $v)=each %update){
+    $self->{globals}->{$k} = $v;
+
+    for($k){
+       /^mlc$/ && do {
+          if ($v) {
+            $DB::single = 1;
+            push @{$self->{nlines}},
+                q{\raggedcolumns},
+                sprintf(q{\begin{multicols}{%s}}, $v),
+                q{\setlength{\parindent}{0pt}},
+                ;
+            $self->{multicols} = {
+               cols => $v,
+            };
+          }else{
+            $self->{multicols} = undef;
+            push @{$self->{nlines}}, q{\end{multicols}};
+          }
+
+          last;
+       };
+     }
+  }
+
+  return $self;
+}
+
 # push content of d => nlines
 sub lpush_d {
   my ($self) = @_;
@@ -1187,7 +1220,7 @@ sub loop {
          $self->_dict_update($tab, $k => $v);
 
       }elsif($globals && $self->{globals_block}){
-         $self->_dict_update($globals, $k => $v);
+         $self->globals_update($k => $v);
 
       # variables within ifcmt ... fi block
       }elsif($locals){
