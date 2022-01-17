@@ -288,8 +288,8 @@ class LTS(
       { 'db_file' : self.db_file_pages })
     return id
 
-  def _author_id_remove(self, ids_in = [], ids_remove = []):
-    return string.ids_remove(ids_in, ids_remove)
+  def _author_id_remove(self, ids_in = [], ids_rm = []):
+    return string.ids_remove(ids_in, ids_rm)
 
   def _author_id_merge(self,ids_in = []):
     return string.ids_merge(ids_in)
@@ -1370,8 +1370,8 @@ class LTS(
 
       ids = string.split_n_trim(author_id, sep = ',')
       if old in ids:
-        author_id = self._author_id_merge([ author_id, new ])
-        author_id = self._author_id_remove([ author_id ], [ old ])
+        author_id = string.ids_merge([ author_id, new ])
+        author_id = string.ids_remove([ author_id ], [ old ])
 
         d = {
           'db_file' : db_file,
