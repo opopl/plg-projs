@@ -289,39 +289,10 @@ class LTS(
     return id
 
   def _author_id_remove(self, ids_in = [], ids_remove = []):
-
-    ids_in_a     = []
-    ids_remove_a = []
-
-    ids_new_a    = []
-
-    for id in ids_in:
-      ids = string.split_n_trim(id, sep = ',')
-      ids_in_a.extend(ids)
-
-    for id in ids_remove:
-      ids = string.split_n_trim(id, sep = ',')
-      ids_remove_a.extend(ids)
-
-    for id in ids_in_a:
-      if not id in ids_remove_a:
-        ids_new_a.append(id)
-
-    ids_new_a = util.uniq(ids_new_a)
-    ids_new   = ','.join(ids_new_a)
-
-    return ids_new
+    return string.ids_remove(ids_in, ids_remove)
 
   def _author_id_merge(self,ids_in = []):
-    ids_merged = []
-    for id in ids_in:
-      ids = string.split_n_trim(id, sep = ',')
-      ids_merged.extend(ids)
-
-    ids_merged = util.uniq(ids_merged)
-    ids_merged_s = ','.join(ids_merged)
-
-    return ids_merged_s
+    return string.ids_merge(ids_in)
 
   def lines_tex_process(self,ref={}):
     if not self.lines:
