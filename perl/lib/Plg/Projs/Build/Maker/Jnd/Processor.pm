@@ -1018,7 +1018,7 @@ sub loop {
 ###m_\fi
     m/^\\fi\s*$/g && do { 
        $self->lpush_d;
-       $self->{$_} = undef for(qw(is_cmt locals));  
+       $self->{$_} = undef for(qw( is_cmt locals globals_block ));
        #push @{$self->{nlines}},'}';
        next; 
     };
@@ -1058,6 +1058,9 @@ sub loop {
     if ($self->{is_cmt}) {
        m/^\s*(\w+)/ && do {
           my $k = $1;
+
+          $DB::single = 1 if $k eq 'dbg';
+
           my @block_end = qw( 
             tex tex_start 
             tab_begin tab_end
@@ -1076,6 +1079,7 @@ sub loop {
        $self->ldo_no_cmt;
        next;
     }
+
 
 ###m_tex
     m/^\s*tex\s+(.*)$/g && do {
@@ -1124,21 +1128,16 @@ sub loop {
        next;
     };
 
-###m_locals
-    m/^\s*locals\s*$/g && do {
-       $self->{locals} = {};
-       next;
-    };
-
 ###m_globals
     m/^\s*globals\s*$/g && do {
-       $self->{globals} = {};
+       $self->{globals} ||= {};
+       $self->{globals_block} = 1;
        next;
     };
 
 ###m_globals_end
     m/^\s*endglobals\s*$/g && do {
-       $self->{globals} = undef;
+       $self->{globals_block} = undef;
        next;
     };
 
@@ -1179,12 +1178,16 @@ sub loop {
          $v = $self->_opts_dict($v);
       }
 
-      my ($d, $tab, $locals) = @{$self}{qw( d tab locals )};
+      my ($d, $tab, $locals, $globals) = @{$self}{qw( d tab locals globals )};
+
       if($d){
          $self->_dict_update($d, $k => $v);
 
       }elsif($tab){
          $self->_dict_update($tab, $k => $v);
+
+      }elsif($globals && $self->{globals_block}){
+         $self->_dict_update($globals, $k => $v);
 
       # variables within ifcmt ... fi block
       }elsif($locals){
