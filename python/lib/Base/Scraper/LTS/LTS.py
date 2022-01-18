@@ -322,18 +322,20 @@ class LTS(
 ###@@ _key_merge
       if name in [ '_key_merge' ]:
         if len(args):
-          author_id  = args[0].get('author_id','')
-          if author_id:
-            ids_merged = util.call(self, name, [ [ a_id, author_id ] ])
-            self.line = f'%%author_id {ids_merged}'
+          kv = args[0]
+          for key, value in kv.items():
+            if value:
+              ids_merged = util.call(self, name, [ [ a_id, value ] ])
+              self.line = f'%%{key} {ids_merged}'
 
 ###@@ _key_remove
       if name in [ '_key_remove' ]:
         if len(args):
-          author_id  = args[0].get('author_id','')
-          if author_id:
-            ids_new = util.call(self, name, [ [ a_id ] , [ author_id ] ])
-            self.line = f'%%author_id {ids_new}'
+          kv = args[0]
+          for key, value in kv.items():
+            if value:
+              ids_new = util.call(self, name, [ [ a_id ], [ value ] ])
+              self.line = f'%%{key} {ids_new}'
 
     return self
 
