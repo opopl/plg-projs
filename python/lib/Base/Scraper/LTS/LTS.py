@@ -345,6 +345,18 @@ class LTS(
 
     return self
 
+  def ln_match_head(self):
+    if rgx.match('tex.projs.beginhead', self.line):
+      self.flags['head'] = 1
+      self.ln_cnt()
+
+    if rgx.match('tex.projs.endhead', self.line):
+      if 'head' in self.flags:
+        del self.flags['head']
+      self.ln_cnt()
+
+    return self
+
   def ln_match_seccmd(self,ref={}):
     m = rgx.match('tex.projs.seccmd', self.line)
 
@@ -367,18 +379,7 @@ class LTS(
 
     while len(self.lines):
       self.ln_shift()
-
-      if rgx.match('tex.projs.beginhead', self.line):
-        self.flags['head'] = 1
-        self.ln_push()
-        continue
-
-      if rgx.match('tex.projs.endhead', self.line):
-        if 'head' in self.flags:
-          del self.flags['head']
-        self.ln_push()
-        continue
-
+      self.ln_match_head()
       self.ln_match_seccmd(ref)
       self.ln_if_head(ref)
       self.ln_if_seccmd(ref)
