@@ -241,6 +241,12 @@ class LTS(
 
     return sec_file
 
+  def _key_remove(self, ids_in = [], ids_rm = []):
+    return string.ids_remove(ids_in, ids_rm)
+
+  def _key_merge(self, ids_in = []):
+    return string.ids_merge(ids_in)
+
   def ln_if_seccmd(self,ref={}):
     if not self.flags.get('seccmd'):
       return self
@@ -277,19 +283,21 @@ class LTS(
             name = action.get('name','')
             args = action.get('args',[])
 
-            if name in [ '_author_id_merge' ]:
+            if name in [ '_key_merge' ]:
               if len(args):
-                author_id  = args[0].get('author_id','')
-                if author_id:
-                  ids_merged = util.call(self, name, [ [ a_id, author_id ] ])
-                  self.line = f'{indent}author_id {ids_merged}'
+                kv = args[0]
+                for key, value in kv.items():
+                  if value:
+                    ids_merged = util.call(self, name, [ [ a_id, value ] ])
+                    self.line = f'{indent}{key} {ids_merged}'
 
-            if name in [ '_author_id_remove' ]:
+            if name in [ '_key_remove' ]:
               if len(args):
-                author_id  = args[0].get('author_id','')
-                if author_id:
-                  ids_new = util.call(self, name, [ [ a_id ], [ author_id ] ])
-                  self.line = f'{indent}author_id {ids_new}'
+                kv = args[0]
+                for key, value in kv.items():
+                  if value:
+                    ids_new = util.call(self, name, [ [ a_id ], [ value ] ])
+                    self.line = f'{indent}{key} {ids_new}'
 
       break
 
@@ -311,16 +319,16 @@ class LTS(
       name = action.get('name','')
       args = action.get('args',[])
 
-###@@ _author_id_merge
-      if name in [ '_author_id_merge' ]:
+###@@ _key_merge
+      if name in [ '_key_merge' ]:
         if len(args):
           author_id  = args[0].get('author_id','')
           if author_id:
             ids_merged = util.call(self, name, [ [ a_id, author_id ] ])
             self.line = f'%%author_id {ids_merged}'
 
-###@@ _author_id_remove
-      if name in [ '_author_id_remove' ]:
+###@@ _key_remove
+      if name in [ '_key_remove' ]:
         if len(args):
           author_id  = args[0].get('author_id','')
           if author_id:
@@ -1118,7 +1126,7 @@ class LTS(
     lines_ref = {
       'actions' : [
           {
-            'name' : '_author_id_merge',
+            'name' : '_key_merge',
             'args' : [ { 'author_id' : author_id } ]
           }
        ]
@@ -1232,7 +1240,7 @@ class LTS(
     lines_ref = {
       'actions' : [
           {
-            'name' : '_author_id_remove',
+            'name' : '_key_remove',
             'args' : [ { 'author_id' : author_id } ]
           }
        ]

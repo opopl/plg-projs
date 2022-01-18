@@ -211,11 +211,7 @@ class ltsAuthor:
       { 'db_file' : self.db_file_pages })
     return id
 
-  def _author_id_remove(self, ids_in = [], ids_rm = []):
-    return string.ids_remove(ids_in, ids_rm)
 
-  def _author_id_merge(self, ids_in = []):
-    return string.ids_merge(ids_in)
 
   def _auth_data(self, ref = {}):
     fb_id     = ref.get('fb_id','')
