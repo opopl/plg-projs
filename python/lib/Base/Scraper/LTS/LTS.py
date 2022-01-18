@@ -248,7 +248,7 @@ class LTS(
     return string.ids_merge(ids_in)
 
   def ln_if_body(self,ref={}):
-    if self.flags.get['body_skip'] or not self.flags.get('body'):
+    if self.flags.get('head') or self.flags.get('seccmd'):
       return self
 
     actions = ref.get('actions',[])
@@ -272,10 +272,11 @@ class LTS(
     return self
 
   def ln_if_seccmd(self,ref={}):
-    if not self.flags.get('seccmd'):
+    if self.flags.get('head'):
       return self
 
-    self.flags['body_skip'] = 1
+    if not self.flags.get('seccmd'):
+      return self
 
     actions = ref.get('actions',[])
 
