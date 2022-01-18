@@ -1119,6 +1119,8 @@ class LTS(
 
   def sec_key(self, act='', key='', ref = {}):
     sec    = ref.get('sec',self.sec)
+    proj   = ref.get('proj',self.proj)
+
     value  = ref.get(key,'') or ''
 
     map = {
@@ -1139,9 +1141,10 @@ class LTS(
     self.sec_process({
       'lines' : lines_ref,
       'sec'   : sec,
+      'proj'  : proj,
     })
 
-    self.sec_author_file2db({ 'sec' : sec })
+    self.sec_file2db({ 'sec' : sec, 'proj' : proj })
 
     return self
 
@@ -1209,46 +1212,10 @@ class LTS(
 
     return self
 
-  def sec_author_file2db(self, ref = {}):
-    sec       = ref.get('sec','')
-
-    where = {
-      'sec'  : sec,
-      'proj' : self.proj,
-    }
-
-    tbase = 'projs'
-
-    data = self._sec_file_data({ 'sec' : sec })
-    author_id_new = data.get('author_id','')
-    dbw.update_dict({
-      'db_file' : self.db_file_projs,
-      'table' : tbase,
-      'update' : {
-         'author_id' : author_id_new
-      },
-      'where' : where
-    })
-
-    jcol = 'file'
-    b2i  = { 'tags' : 'tag' }
-    bcols = ['tags','author_id']
-
-    dbw.base2info({
-      'db_file' : self.db_file_projs,
-      'tbase'   : tbase,
-      'bwhere'  : where,
-      'jcol'    : jcol,
-      'b2i'     : b2i,
-      'bcols'   : bcols
-    })
-
-    return self
-
   #  calls:
-  #     sec_key_act
+  #     sec_key
   #       sec_process
-  #       sec_author_file2db
+  #       sec_file2db
   def sec_author_add(self, ref = {}):
     self.sec_key('add','author_id',ref)
 
