@@ -364,6 +364,8 @@ class LTS(
         del self.flags['head']
       self.ln_cnt()
 
+      self.flags['body'] = 1
+
     return self
 
   def ln_match_seccmd(self,ref={}):
@@ -388,10 +390,12 @@ class LTS(
 
     while len(self.lines):
       self.ln_shift()
+
       self.ln_match_head()
       self.ln_match_seccmd(ref)
       self.ln_if_head(ref)
       self.ln_if_seccmd(ref)
+
       self.ln_push()
 
     return self
