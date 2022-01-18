@@ -441,6 +441,12 @@ def base2info(ref={}):
 
       ivals = string.split_n_trim(bval,sep=',')
 
+      delete({
+        'db_file' : db_file,
+        'table'   : itb,
+        'where'   : { jcol : jval },
+      })
+
       for ival in ivals:
         ins = { jcol : jval, icol : ival }
         r = select({
