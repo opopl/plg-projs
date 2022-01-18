@@ -241,6 +241,40 @@ class LTS(
 
     return sec_file
 
+  def ln_head(self,ref={}):
+    if not self.flags.get('head'):
+      return self
+
+    m = rgx.match('tex.projs.author_id',self.line)
+    if not m:
+      return self
+
+    a_id = m.group(1)
+
+    actions = ref.get('actions',[])
+
+    for action in actions:
+      name = action.get('name','')
+      args = action.get('args',[])
+
+###@@ _author_id_merge
+      if name in [ '_author_id_merge' ]:
+        if len(args):
+          author_id  = args[0].get('author_id','')
+          if author_id:
+            ids_merged = util.call(self, name, [ [ a_id, author_id ] ])
+            self.line = f'%%author_id {ids_merged}'
+
+###@@ _author_id_remove
+      if name in [ '_author_id_remove' ]:
+        if len(args):
+          author_id  = args[0].get('author_id','')
+          if author_id:
+            ids_new = util.call(self, name, [ [ a_id ] , [ author_id ] ])
+            self.line = f'%%author_id {ids_new}'
+
+    return self
+
   def ln_seccmd(self,ref={}):
     m = rgx.match('tex.projs.seccmd', self.line)
 
@@ -277,32 +311,9 @@ class LTS(
         self.nlines.append(self.line)
         continue
 
-      self.ln_seccmd()
+      self.ln_seccmd(ref)
+      self.ln_head(ref)
 
-      if self.flags.get('head'):
-        m = rgx.match('tex.projs.author_id',self.line)
-        if m:
-          a_id = m.group(1)
-
-          for action in actions:
-            name = action.get('name','')
-            args = action.get('args',[])
-
-###@@ _author_id_merge
-            if name in [ '_author_id_merge' ]:
-              if len(args):
-                author_id  = args[0].get('author_id','')
-                if author_id:
-                  ids_merged = util.call(self, name, [ [ a_id, author_id ] ])
-                  self.line = f'%%author_id {ids_merged}'
-
-###@@ _author_id_remove
-            if name in [ '_author_id_remove' ]:
-              if len(args):
-                author_id  = args[0].get('author_id','')
-                if author_id:
-                  ids_new = util.call(self, name, [ [ a_id ] , [ author_id ] ])
-                  self.line = f'%%author_id {ids_new}'
 
       if self.flags.get('seccmd'):
         m = rgx.match('tex.projs.ifcmt',self.line)
