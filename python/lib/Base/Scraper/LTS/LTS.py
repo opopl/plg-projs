@@ -1118,18 +1118,21 @@ class LTS(
 
     return self
 
-  #  calls:
-  #     sec_process
-  #     sec_author_file2db
-  def sec_author_add(self, ref = {}):
-    sec       = ref.get('sec',self.sec)
-    author_id = ref.get('author_id','')
+  def sec_key(self, act='', key='', ref = {}):
+    sec    = ref.get('sec',self.sec)
+    value  = ref.get(key,'') or ''
+
+    map = {
+      'add' : '_key_merge',
+      'rm'  : '_key_remove',
+    }
+    name = map.get(act,'')
 
     lines_ref = {
       'actions' : [
           {
-            'name' : '_key_merge',
-            'args' : [ { 'author_id' : author_id } ]
+            'name' : name,
+            'args' : [ { key : value } ]
           }
        ]
     }
@@ -1142,6 +1145,8 @@ class LTS(
     self.sec_author_file2db({ 'sec' : sec })
 
     return self
+
+
 
   def sec_db_update(self, ref = {}):
     sec   = ref.get('sec','')
@@ -1235,25 +1240,17 @@ class LTS(
 
     return self
 
+  #  calls:
+  #     sec_key_act
+  #       sec_process
+  #       sec_author_file2db
+  def sec_author_add(self, ref = {}):
+    self.sec_key('add','author_id',ref)
+
+    return self
+
   def sec_author_rm(self, ref = {}):
-    sec       = ref.get('sec','')
-    author_id = ref.get('author_id','')
-
-    lines_ref = {
-      'actions' : [
-          {
-            'name' : '_key_remove',
-            'args' : [ { 'author_id' : author_id } ]
-          }
-       ]
-    }
-
-    self.sec_process({
-      'lines' : lines_ref,
-      'sec'   : sec,
-    })
-
-    self.sec_author_file2db({ 'sec' : sec })
+    self.sec_key('rm','author_id',ref)
 
     return self
 
