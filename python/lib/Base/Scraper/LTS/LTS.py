@@ -356,7 +356,7 @@ class LTS(
 
     return self
 
-  def lines_tex_process(self,ref={}):
+  def ln_loop(self,ref={}):
     if not self.lines:
       return self
 
@@ -401,7 +401,7 @@ class LTS(
       self.nlines = []
       with open(sec_file,'r') as f:
         self.lines = f.readlines()
-        self.lines_tex_process(lines_ref)
+        self.ln_loop(lines_ref)
 
     with open(sec_file, 'w', encoding='utf8') as f:
       f.write('\n'.join(self.nlines) + '\n')
@@ -577,7 +577,7 @@ class LTS(
 
 # call tree:
 #    sec_process
-#      lines_tex_process
+#      ln_loop
   def sec_update_title(self, ref = {}):
     sec   = ref.get('sec','')
     proj  = ref.get('proj',self.proj)
