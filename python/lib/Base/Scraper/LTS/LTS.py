@@ -1254,6 +1254,16 @@ class LTS(
 
     return self
 
+  def sec_tags_add(self, ref = {}):
+    self.sec_key('add','tags',ref)
+
+    return self
+
+  def sec_tags_rm(self, ref = {}):
+    self.sec_key('rm','tags',ref)
+
+    return self
+
   def c_run(self,ref = {}):
 
     for d_act in self.acts:
