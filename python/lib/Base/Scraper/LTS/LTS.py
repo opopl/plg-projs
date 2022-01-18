@@ -269,35 +269,37 @@ class LTS(
         self.flags['cmt_author'] = 1
         break
 
-      if self.flags.get('cmt_author'):
-        if rgx.match('tex.projs.cmt.author_end',self.line):
+      if rgx.match('tex.projs.cmt.author_end',self.line):
+        if self.flags.get('cmt_author'):
           del self.flags['cmt_author']
           break
 
-        m = rgx.match('tex.projs.cmt.author_id',self.line)
-        if m:
-          indent = m.group(1)
-          a_id   = m.group(2)
+      m = rgx.match('tex.projs.cmt.author_id',self.line)
+      if m:
+        key_match = 'author_id'
 
-          for action in actions:
-            name = action.get('name','')
-            args = action.get('args',[])
+        indent = m.group(1)
+        a_id   = m.group(2)
 
-            if name in [ '_key_merge' ]:
-              if len(args):
-                kv = args[0]
-                for key, value in kv.items():
-                  if value:
-                    ids_merged = util.call(self, name, [ [ a_id, value ] ])
-                    self.line = f'{indent}{key} {ids_merged}'
+        for action in actions:
+          name = action.get('name','')
+          args = action.get('args',[])
 
-            if name in [ '_key_remove' ]:
-              if len(args):
-                kv = args[0]
-                for key, value in kv.items():
-                  if value:
-                    ids_new = util.call(self, name, [ [ a_id ], [ value ] ])
-                    self.line = f'{indent}{key} {ids_new}'
+          if name in [ '_key_merge' ]:
+            if len(args):
+              kv = args[0]
+              for key, value in kv.items():
+                if value and key == key_match:
+                  ids_merged = util.call(self, name, [ [ a_id, value ] ])
+                  self.line = f'{indent}{key} {ids_merged}'
+
+          if name in [ '_key_remove' ]:
+            if len(args):
+              kv = args[0]
+              for key, value in kv.items():
+                if value and key == key_match:
+                  ids_new = util.call(self, name, [ [ a_id ], [ value ] ])
+                  self.line = f'{indent}{key} {ids_new}'
 
       break
 
@@ -307,11 +309,12 @@ class LTS(
     if not self.flags.get('head'):
       return self
 
-    m = rgx.match('tex.projs.author_id',self.line)
+    m = rgx.match('tex.projs.head.@key',self.line)
     if not m:
       return self
 
-    a_id = m.group(1)
+    m_value = m.group('value')
+    m_key   = m.group('key')
 
     actions = ref.get('actions',[])
 
@@ -320,21 +323,17 @@ class LTS(
       args = action.get('args',[])
 
 ###@@ _key_merge
-      if name in [ '_key_merge' ]:
-        if len(args):
-          kv = args[0]
-          for key, value in kv.items():
-            if value:
-              ids_merged = util.call(self, name, [ [ a_id, value ] ])
+      if len(args):
+        kv = args[0]
+        for key, value in kv.items():
+          if key == m_key and value:
+            if name in [ '_key_merge' ]:
+              ids_merged = util.call(self, name, [ [ m_value, value ] ])
               self.line = f'%%{key} {ids_merged}'
 
 ###@@ _key_remove
-      if name in [ '_key_remove' ]:
-        if len(args):
-          kv = args[0]
-          for key, value in kv.items():
-            if value:
-              ids_new = util.call(self, name, [ [ a_id ], [ value ] ])
+            elif name in [ '_key_remove' ]:
+              ids_new = util.call(self, name, [ [ m_value ], [ value ] ])
               self.line = f'%%{key} {ids_new}'
 
     return self

@@ -13,6 +13,9 @@ pats = {
       ###
       'author_id' : r'%%author_id\s+(.*)$',
       'title'     : r'%%title\s+(.*)$',
+      'head' : {
+         '@key' : r'%%(?P<key>\w+)\s+(?P<value>.*)$',
+      },
       ###
       'ifcmt'     : r'^\\ifcmt\s*$',
       'fi'        : r'^\\fi\s*$',
@@ -20,6 +23,7 @@ pats = {
         'author_begin' : r'^\s*author_begin\s*$'    ,
         'author_end'   : r'^\s*author_end\s*$'      ,
         'author_id'    : r'^(\s*)author_id\s+(.*)$' ,
+        'tags'         : r'^(\s*)tags\s+(.*)$' ,
       }
     }
   },
