@@ -215,7 +215,7 @@ class LTS(
     return t
 
   def _sec_file_data(self,ref = {}):
-    sec  = ref.get('sec','')
+    sec  = ref.get('sec',self.sec)
     proj = ref.get('proj',self.proj)
 
     sec_file = self._sec_file({ 'sec' : sec, 'proj' : proj })
@@ -1148,13 +1148,14 @@ class LTS(
 
 
   def sec_db_update(self, ref = {}):
-    sec   = ref.get('sec','')
+    sec   = ref.get('sec',self.sec)
+    proj  = ref.get('proj',self.proj)
 
     data  = ref.get('data',{})
 
     where = {
       'sec'  : sec,
-      'proj' : self.proj,
+      'proj' : proj,
     }
 
     db_file = self.db_file_projs
@@ -1192,9 +1193,14 @@ class LTS(
     return self
 
   def sec_file2db(self, ref = {}):
-    sec       = ref.get('sec','')
+    sec    = ref.get('sec',self.sec)
+    proj   = ref.get('proj',self.proj)
 
-    data = self._sec_file_data({ 'sec' : sec })
+    data = self._sec_file_data({
+      'sec'  : sec,
+      'proj' : proj,
+    })
+
     if sec and len(data):
       self.sec_db_update({ 
         'sec'  : sec, 
