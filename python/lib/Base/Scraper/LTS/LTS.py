@@ -241,7 +241,53 @@ class LTS(
 
     return sec_file
 
-  def ln_head(self,ref={}):
+  def ln_if_seccmd(self,ref={}):
+    if not self.flags.get('seccmd'):
+      return self
+
+    actions = ref.get('actions',[])
+
+    m = rgx.match('tex.projs.ifcmt',self.line)
+    if m:
+      self.flags['is_cmt'] = 1
+
+      if self.flags.get('is_cmt'):
+        if rgx.match('tex.projs.fi',self.line):
+          del self.flags['is_cmt']
+
+        if rgx.match('tex.projs.cmt.author_begin',self.line):
+          self.flags['cmt_author'] = 1
+
+        if self.flags.get('cmt_author'):
+          if rgx.match('tex.projs.cmt.author_end',self.line):
+            del self.flags['cmt_author']
+
+          m = rgx.match('tex.projs.cmt.author_id',self.line)
+          if m:
+            indent = m.group(1)
+            a_id = m.group(2)
+
+            for action in actions:
+              name = action.get('name','')
+              args = action.get('args',[])
+
+              if name in [ '_author_id_merge' ]:
+                if len(args):
+                  author_id  = args[0].get('author_id','')
+                  if author_id:
+                    ids_merged = util.call(self, name, [ [ a_id, author_id ] ])
+                    self.line = f'{indent}author_id {ids_merged}'
+
+              if name in [ '_author_id_remove' ]:
+                if len(args):
+                  author_id  = args[0].get('author_id','')
+                  if author_id:
+                    ids_new = util.call(self, name, [ [ a_id ], [ author_id ] ])
+                    self.line = f'{indent}author_id {ids_new}'
+
+    return self
+
+  def ln_if_head(self,ref={}):
     if not self.flags.get('head'):
       return self
 
@@ -275,7 +321,18 @@ class LTS(
 
     return self
 
-  def ln_seccmd(self,ref={}):
+  def ln_shift(self):
+    self.line = self.lines.pop(0)
+    self.line = self.line.strip('\n')
+
+    return self
+
+  def ln_push(self):
+    self.nlines.append(self.line)
+
+    return self
+
+  def ln_match_seccmd(self,ref={}):
     m = rgx.match('tex.projs.seccmd', self.line)
 
     if ( not m ) or self.flags.get('seccmd'):
@@ -296,65 +353,24 @@ class LTS(
     self.flags = {}
 
     while len(self.lines):
-      self.line = self.lines.pop(0)
-
-      self.line = self.line.strip('\n')
+      self.ln_shift()
 
       if rgx.match('tex.projs.beginhead', self.line):
         self.flags['head'] = 1
-        self.nlines.append(self.line)
+        self.ln_push()
         continue
 
       if rgx.match('tex.projs.endhead', self.line):
         if 'head' in self.flags:
           del self.flags['head']
-        self.nlines.append(self.line)
+        self.ln_push()
         continue
 
-      self.ln_seccmd(ref)
-      self.ln_head(ref)
+      self.ln_match_seccmd(ref)
+      self.ln_if_head(ref)
+      self.ln_if_seccmd(ref)
 
-
-      if self.flags.get('seccmd'):
-        m = rgx.match('tex.projs.ifcmt',self.line)
-        if m:
-          self.flags['is_cmt'] = 1
-
-        if self.flags.get('is_cmt'):
-          if rgx.match('tex.projs.fi',self.line):
-            del self.flags['is_cmt']
-
-          if rgx.match('tex.projs.cmt.author_begin',self.line):
-            self.flags['cmt_author'] = 1
-
-          if self.flags.get('cmt_author'):
-            if rgx.match('tex.projs.cmt.author_end',self.line):
-              del self.flags['cmt_author']
-
-            m = rgx.match('tex.projs.cmt.author_id',self.line)
-            if m:
-              indent = m.group(1)
-              a_id = m.group(2)
-
-              for action in actions:
-                name = action.get('name','')
-                args = action.get('args',[])
-
-                if name in [ '_author_id_merge' ]:
-                  if len(args):
-                    author_id  = args[0].get('author_id','')
-                    if author_id:
-                      ids_merged = util.call(self, name, [ [ a_id, author_id ] ])
-                      self.line = f'{indent}author_id {ids_merged}'
-
-                if name in [ '_author_id_remove' ]:
-                  if len(args):
-                    author_id  = args[0].get('author_id','')
-                    if author_id:
-                      ids_new = util.call(self, name, [ [ a_id ], [ author_id ] ])
-                      self.line = f'{indent}author_id {ids_new}'
-
-      self.nlines.append(self.line)
+      self.ln_push()
 
     return self
 
