@@ -247,9 +247,35 @@ class LTS(
   def _key_merge(self, ids_in = []):
     return string.ids_merge(ids_in)
 
+  def ln_if_body(self,ref={}):
+    if self.flags.get['body_skip'] or not self.flags.get('body'):
+      return self
+
+    actions = ref.get('actions',[])
+
+    while 1:
+      for action in actions:
+        name = action.get('name','')
+        args = action.get('args',[])
+
+        kv = args[0] if len(args) else {}
+
+        if name == '_update_title':
+          title  = kv.get('title','')
+          seccmd = kv.get('seccmd','subsection')
+
+          if title:
+            ln_title = "\\" + seccmd + '{' + title + '}'
+
+      break
+
+    return self
+
   def ln_if_seccmd(self,ref={}):
     if not self.flags.get('seccmd'):
       return self
+
+    self.flags['body_skip'] = 1
 
     actions = ref.get('actions',[])
 
@@ -395,6 +421,7 @@ class LTS(
       self.ln_match_seccmd(ref)
       self.ln_if_head(ref)
       self.ln_if_seccmd(ref)
+      self.ln_if_body(ref)
 
       self.ln_push()
 
