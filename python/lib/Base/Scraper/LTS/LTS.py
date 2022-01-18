@@ -90,6 +90,8 @@ class LTS(
   sec = None
 
   line = None
+  flags = {}
+
   lines = []
   nlines = []
 
@@ -239,7 +241,6 @@ class LTS(
 
     return sec_file
 
-
   def lines_tex_process(self,ref={}):
     if not self.lines:
       return self
@@ -247,7 +248,7 @@ class LTS(
     actions = ref.get('actions',[])
 
     self.nlines = []
-    flags = {}
+    self.flags = {}
 
     while len(self.lines):
       self.line = self.lines.pop(0)
@@ -255,23 +256,23 @@ class LTS(
       self.line = self.line.strip('\n')
 
       if rgx.match('tex.projs.beginhead', self.line):
-        flags['head'] = 1
+        self.flags['head'] = 1
         self.nlines.append(self.line)
         continue
 
       if rgx.match('tex.projs.endhead', self.line):
-        if 'head' in flags:
-          del flags['head']
+        if 'head' in self.flags:
+          del self.flags['head']
         self.nlines.append(self.line)
         continue
 
       m = rgx.match('tex.projs.seccmd', self.line)
       if m:
-        if not flags.get('seccmd'):
-          flags['seccmd'] = m.group(1)
-          flags['sectitle'] = m.group(2)
+        if not self.flags.get('seccmd'):
+          self.flags['seccmd'] = m.group(1)
+          self.flags['sectitle'] = m.group(2)
 
-      if flags.get('head'):
+      if self.flags.get('head'):
         m = rgx.match('tex.projs.author_id',self.line)
         if m:
           a_id = m.group(1)
@@ -296,21 +297,21 @@ class LTS(
                   ids_new = util.call(self, name, [ [ a_id ] , [ author_id ] ])
                   self.line = f'%%author_id {ids_new}'
 
-      if flags.get('seccmd'):
+      if self.flags.get('seccmd'):
         m = rgx.match('tex.projs.ifcmt',self.line)
         if m:
-          flags['is_cmt'] = 1
+          self.flags['is_cmt'] = 1
 
-        if flags.get('is_cmt'):
+        if self.flags.get('is_cmt'):
           if rgx.match('tex.projs.fi',self.line):
-            del flags['is_cmt']
+            del self.flags['is_cmt']
 
           if rgx.match('tex.projs.cmt.author_begin',self.line):
-            flags['cmt_author'] = 1
+            self.flags['cmt_author'] = 1
 
-          if flags.get('cmt_author'):
+          if self.flags.get('cmt_author'):
             if rgx.match('tex.projs.cmt.author_end',self.line):
-              del flags['cmt_author']
+              del self.flags['cmt_author']
 
             m = rgx.match('tex.projs.cmt.author_id',self.line)
             if m:
@@ -339,6 +340,9 @@ class LTS(
 
     return self
 
+  # call tree
+  #   called by
+  #     sec_author_add
   def sec_process(self,ref={}):
     sec       = ref.get('sec','')
     proj      = ref.get('proj',self.proj)
@@ -1057,6 +1061,9 @@ class LTS(
 
     return self
 
+  #  calls:
+  #     sec_process
+  #     sec_author_file2db
   def sec_author_add(self, ref = {}):
     sec       = ref.get('sec',self.sec)
     author_id = ref.get('author_id','')
