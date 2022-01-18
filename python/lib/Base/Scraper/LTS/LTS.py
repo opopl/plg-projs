@@ -241,6 +241,17 @@ class LTS(
 
     return sec_file
 
+  def ln_seccmd(self,ref={}):
+    m = rgx.match('tex.projs.seccmd', self.line)
+
+    if ( not m ) or self.flags.get('seccmd'):
+      return self
+
+    self.flags['seccmd']   = m.group(1)
+    self.flags['sectitle'] = m.group(2)
+
+    return self
+
   def lines_tex_process(self,ref={}):
     if not self.lines:
       return self
@@ -266,11 +277,7 @@ class LTS(
         self.nlines.append(self.line)
         continue
 
-      m = rgx.match('tex.projs.seccmd', self.line)
-      if m:
-        if not self.flags.get('seccmd'):
-          self.flags['seccmd'] = m.group(1)
-          self.flags['sectitle'] = m.group(2)
+      self.ln_seccmd()
 
       if self.flags.get('head'):
         m = rgx.match('tex.projs.author_id',self.line)
