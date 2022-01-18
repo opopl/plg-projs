@@ -112,16 +112,17 @@ function! projs#author#select_id (...)
 
   let author_id = get(ref,'author_id','')
 
-  let ids = projs#author#ids_db()
-	let r = { 
-	  \ 'list'  : ids,
-	  \ 'thing' : 'author_id',
-	  \ 'prefix' : 'select',
-	  \ 'header' : [
-	    \ 'author_id selection dialog',
-	    \ ],
-	  \ }
-	let author_id = base#inpx#ctl(r)
+  let ids   = has_key(ref,'ids') ? get(ref,'ids') : projs#author#ids_db()
+
+  let r = {
+    \ 'list'  : ids,
+    \ 'thing' : 'author_id',
+    \ 'prefix' : 'select',
+    \ 'header' : [
+      \ 'author_id selection dialog',
+      \ ],
+    \ }
+  let author_id = base#inpx#ctl(r)
 
   return author_id
 
