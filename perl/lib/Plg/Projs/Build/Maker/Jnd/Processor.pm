@@ -486,8 +486,9 @@ sub match_yaml_end {
   delete $self->{$_} for(qw(is_yaml yaml));
 
   hash_update(
-	$self->{d_yaml}, $ydata
+    $self->{d_yaml}, $ydata
   );
+  $DB::single = 1;
 
   return $self;
 }
@@ -1175,6 +1176,13 @@ sub loop {
        next;
     }
 
+    m/^\s*yaml_end\s*$/g && do { $self->match_yaml_end; next; };
+    m/^\s*yaml_begin\s*$/g && do { $self->match_yaml_begin; next; };
+
+    if ($self->{is_yaml}) {
+       push @{$self->{yaml}}, $_;
+       next;
+    }
 
 ###m_tex
     m/^\s*tex\s+(.*)$/g && do {
@@ -1195,8 +1203,7 @@ sub loop {
         next;
     };
 
-    m/^\s*yaml_end\s*$/g && do { $self->match_yaml_end; next; };
-    m/^\s*yaml_begin\s*$/g && do { $self->match_yaml_begin; next; };
+
 
 ###m_author
     m/^\s*author_end\s*$/g && do { $self->match_author_end; next; };
