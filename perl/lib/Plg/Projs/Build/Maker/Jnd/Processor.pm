@@ -7,6 +7,8 @@ use warnings;
 use File::Slurp::Unicode;
 use File::Spec::Functions qw(catfile);
 
+use YAML qw( LoadFile Load Dump DumpFile );
+
 use Base::Arg qw(
   hash_inject
   hash_update
@@ -460,6 +462,32 @@ sub match_author_id {
 
   push @{$self->{d_author}->{author_id}}, 
      str_split($author_id,{ 'sep' => ',', uniq => 1 });
+
+  return $self;
+}
+
+
+sub match_yaml_begin {
+  my ($self) = @_;
+
+  $self->{d_yaml} ||= {};
+
+  $self->{yaml} = [];
+  $self->{is_yaml} = 1;
+
+  return $self;
+}
+
+sub match_yaml_end {
+  my ($self) = @_;
+
+  my $ystr = join("\n",@{$self->{yaml} || [] });
+  my $ydata = Load($ystr);
+  delete $self->{$_} for(qw(is_yaml yaml));
+
+  hash_update(
+	$self->{d_yaml}, $ydata
+  );
 
   return $self;
 }
@@ -1081,6 +1109,7 @@ sub loop {
         #push @{$self->{nlines}},'{';
         next; 
     };
+
 ###m_\fi
     m/^\\fi\s*$/g && do { 
        $self->lpush_d;
@@ -1165,6 +1194,9 @@ sub loop {
         $self->{is_tex} = undef;
         next;
     };
+
+    m/^\s*yaml_end\s*$/g && do { $self->match_yaml_end; next; };
+    m/^\s*yaml_begin\s*$/g && do { $self->match_yaml_begin; next; };
 
 ###m_author
     m/^\s*author_end\s*$/g && do { $self->match_author_end; next; };

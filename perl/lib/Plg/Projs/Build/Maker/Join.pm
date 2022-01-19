@@ -7,6 +7,9 @@ use warnings;
 
 use utf8;
 
+use YAML qw( LoadFile Load Dump DumpFile );
+
+
 use Data::Dumper qw(Dumper);
 
 use File::Spec::Functions qw(catfile);
@@ -124,6 +127,7 @@ sub _join_lines {
 
     $mkr->tree_init({ sec => $sec });
     my %flg;
+    my @yaml;
 
 ###for_@f_lines
     foreach(@f_lines) {
@@ -133,6 +137,22 @@ sub _join_lines {
         /^%%endhead/ && do { $flg{head} = undef; next; };
         next if $flg{head};
         next if /^%\s+vim:/;
+
+        unless ($flg{yaml}) {
+            my $ydata = {
+               sec  => $sec,
+               proj => $proj,
+            };
+            my $ystr = Dump($ydata);
+            push @yaml,
+                '\ifcmt',
+                ' yaml_begin',
+                $ystr,
+                ' yaml_end',
+                '\fi';
+            push @lines, @yaml;
+            $flg{yaml} = 1;
+        }
 
         $_ = $line_sub->($_, $r_sec);
 
