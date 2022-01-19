@@ -488,7 +488,6 @@ sub match_yaml_end {
   hash_update(
     $self->{d_yaml}, $ydata
   );
-  $DB::single = 1;
 
   return $self;
 }

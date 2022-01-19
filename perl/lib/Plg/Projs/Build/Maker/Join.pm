@@ -139,11 +139,7 @@ sub _join_lines {
         next if /^%\s+vim:/;
 
         unless ($flg{yaml}) {
-            my $ydata = {
-               sec  => $sec,
-               proj => $proj,
-            };
-            my $ystr = Dump($ydata);
+            my $ystr = Dump($r_sec);
             push @yaml,
                 '\ifcmt',
                 ' yaml_begin',
