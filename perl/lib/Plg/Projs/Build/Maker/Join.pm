@@ -111,8 +111,17 @@ sub _join_lines {
     my $delim = '%' x 50;  
 
     my ($date) = ( $sec =~ m/^(\d+_\d+_\d+)\..*$/ );
+    my $prj = $mkr->{prj};
+    my $sd = $prj->_sec_data({
+        sec  => $sec,
+        proj => $proj,
+    });
+    while(my($k,$v)=each %$sd){
+        $sd->{$k} = '' unless defined $sd->{$k};
+    }
 
     my $r_sec = {
+        %$sd,
         proj   => $proj,
         sec    => $sec,
         file   => $file,

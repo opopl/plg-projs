@@ -1202,12 +1202,9 @@ sub loop {
         next;
     };
 
-
-
 ###m_author
     m/^\s*author_end\s*$/g && do { $self->match_author_end; next; };
     m/^\s*author_begin\s*$/g && do { $self->match_author_begin; next; };
-
     m/^\s*author_id\s*(.*)\s*$/g && do { $self->match_author_id($1); next; };
    
 ###m_tab

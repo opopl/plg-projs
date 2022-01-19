@@ -21,6 +21,7 @@ use Base::DB qw(
     dbi_connect
     dbh_select_as_list
     dbh_select
+    dbh_select_first
 );
 
 use base qw(
@@ -132,6 +133,20 @@ sub fill_files {
     }
 
     return $self;
+}
+
+sub _sec_data {
+    my ($self, $ref) = @_;
+    $ref ||= {};
+
+    my ($proj, $sec) = @{$ref}{qw(proj sec)};
+    my ($rows,$cols,$q,$p) = dbh_select({
+        dbh     => $self->{dbh},
+        q       => q{ SELECT * FROM projs },
+        w       => { proj => $proj, sec => $sec }
+    });
+    my $rw = $rows->[0];
+    return $rw;
 }
 
 sub _projects {
