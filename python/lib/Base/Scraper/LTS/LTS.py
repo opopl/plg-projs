@@ -489,9 +489,8 @@ class LTS(
         self.lines = f.readlines()
 
         self.sec_data_reset()
-        self.ln_loop()
-
-        #self.ln_loop(lines_ref)
+        #self.ln_loop()
+        self.ln_loop(lines_ref)
 
     with open(sec_file, 'w', encoding='utf8') as f:
       f.write('\n'.join(self.nlines) + '\n')
