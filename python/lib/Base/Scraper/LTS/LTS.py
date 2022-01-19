@@ -248,10 +248,14 @@ class LTS(
     return string.ids_merge(ids_in)
 
   def ln_if_body(self,ref={}):
+    if self.flags['eof']:
+      return self
+
     if self.flags.get('head') or self.flags.get('seccmd'):
       return self
 
     actions = ref.get('actions',[])
+    import pdb; pdb.set_trace()
 
     while 1:
       for action in actions:
