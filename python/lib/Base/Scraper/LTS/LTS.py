@@ -88,6 +88,11 @@ class LTS(
 
   acts = []
   sec = None
+  sec_data = {
+    'body' : [],
+    'head' : [],
+    'keys' : {},
+  }
 
   line = None
   flags = {}
@@ -352,12 +357,16 @@ class LTS(
     if not self.flags.get('head'):
       return self
 
+    self.sec_data['head'].append(self.line)
+
     m = rgx.match('tex.projs.head.@key',self.line)
     if not m:
       return self
 
     m_value = m.group('value')
     m_key   = m.group('key')
+
+    self.sec_data['keys'].update({ m_key : m_value })
 
     actions = ref.get('actions',[])
 
@@ -478,6 +487,8 @@ class LTS(
       self.nlines = []
       with open(sec_file,'r') as f:
         self.lines = f.readlines()
+
+        self.sec_data_reset()
         self.ln_loop(lines_ref)
 
     with open(sec_file, 'w', encoding='utf8') as f:
@@ -658,6 +669,15 @@ class LTS(
 
   def sec_update_url(self, ref = {}):
     self.sec_key('set','url',ref)
+
+    return self
+
+  def sec_data_reset(self):
+    sec_data = {
+      'body' : [],
+      'head' : [],
+      'keys' : {},
+    }
 
     return self
 
