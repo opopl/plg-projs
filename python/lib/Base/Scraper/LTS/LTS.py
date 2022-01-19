@@ -323,7 +323,10 @@ class LTS(
             if len(args):
               kv = args[0]
               for key, value in kv.items():
-                if value and key == key_match:
+                if value == None:
+                  value = ''
+
+                if key == key_match:
                   ids_merged = util.call(self, name, [ [ a_id, value ] ])
                   self.line = f'{indent}{key} {ids_merged}'
 
@@ -331,7 +334,10 @@ class LTS(
             if len(args):
               kv = args[0]
               for key, value in kv.items():
-                if value and key == key_match:
+                if value == None:
+                  value = ''
+
+                if key == key_match:
                   ids_new = util.call(self, name, [ [ a_id ], [ value ] ])
                   self.line = f'{indent}{key} {ids_new}'
 
@@ -363,12 +369,17 @@ class LTS(
       if len(args):
         kv = args[0]
         for key, value in kv.items():
-          if key == m_key and value:
-            if name in [ '_key_merge' ]:
+          if value == None:
+            value = ''
+
+          if key == m_key:
+            if name in [ '_key_set' ]:
+              self.line = f'%%{key} {value}'
+
+            elif name in [ '_key_merge' ]:
               ids_merged = util.call(self, name, [ [ m_value, value ] ])
               self.line = f'%%{key} {ids_merged}'
 
-###@@ _key_remove
             elif name in [ '_key_remove' ]:
               ids_new = util.call(self, name, [ [ m_value ], [ value ] ])
               self.line = f'%%{key} {ids_new}'
@@ -640,34 +651,13 @@ class LTS(
 
     return self
 
-
-# call tree:
-#    sec_process
-#      ln_loop
   def sec_update_title(self, ref = {}):
-    sec   = ref.get('sec','')
-    proj  = ref.get('proj',self.proj)
-    title = ref.get('title','')
+    self.sec_key('set','title',ref)
 
-    sec_file = self._sec_file({
-      'sec'  : sec,
-      'proj' : proj,
-    })
+    return self
 
-    lines_ref = {
-      'actions' : [
-          {
-            'name' : '_update_title',
-            'args' : [ { 'title' : title } ]
-          }
-       ]
-    }
-
-    self.sec_process({
-      'lines' : lines_ref,
-      'sec'   : sec,
-      'proj'  : proj,
-    })
+  def sec_update_url(self, ref = {}):
+    self.sec_key('set','url',ref)
 
     return self
 
@@ -1182,6 +1172,7 @@ class LTS(
     map = {
       'add' : '_key_merge',
       'rm'  : '_key_remove',
+      'set' : '_key_set',
     }
     name = map.get(act,'')
 
