@@ -488,6 +488,7 @@ sub match_yaml_end {
   hash_update(
     $self->{d_yaml}, $ydata
   );
+  $self->{r_sec} = $self->{d_yaml}->{r_sec};
 
   return $self;
 }
