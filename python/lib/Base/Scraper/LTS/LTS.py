@@ -272,6 +272,9 @@ class LTS(
     return self
 
   def ln_if_seccmd(self,ref={}):
+    if self.flags['eof']:
+      return self
+
     if self.flags.get('head'):
       return self
 
@@ -333,6 +336,9 @@ class LTS(
     return self
 
   def ln_if_head(self,ref={}):
+    if self.flags['eof']:
+      return self
+
     if not self.flags.get('head'):
       return self
 
@@ -366,12 +372,19 @@ class LTS(
     return self
 
   def ln_shift(self):
+    if not len(self.lines):
+      self.flags['eof'] = 1
+      return self
+
     self.line = self.lines.pop(0)
     self.line = self.line.strip('\n')
 
     return self
 
   def ln_push(self):
+    if self.flags['eof']:
+      return self
+
     self.nlines.append(self.line)
 
     return self
@@ -382,6 +395,9 @@ class LTS(
     return self
 
   def ln_match_head(self):
+    if self.flags['eof']:
+      return self
+
     if rgx.match('tex.projs.beginhead', self.line):
       self.flags['head'] = 1
       self.ln_cnt()
@@ -396,6 +412,9 @@ class LTS(
     return self
 
   def ln_match_seccmd(self,ref={}):
+    if self.flags['eof']:
+      return self
+
     m = rgx.match('tex.projs.seccmd', self.line)
 
     if ( not m ) or self.flags.get('seccmd'):
@@ -415,6 +434,7 @@ class LTS(
     self.nlines = []
     self.flags = {}
 
+    self.flags['eof'] = 0
     while len(self.lines):
       self.ln_shift()
 
@@ -422,7 +442,7 @@ class LTS(
       self.ln_match_seccmd(ref)
       self.ln_if_head(ref)
       self.ln_if_seccmd(ref)
-      self.ln_if_body(ref)
+      #self.ln_if_body(ref)
 
       self.ln_push()
 
