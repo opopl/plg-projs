@@ -623,28 +623,47 @@ sub ldo_no_cmt {
 
   local $_ = $self->{line};
 
-  $_ = $self->_expand_igg($_);
-
-  m/^\s*%%\s*\\ii\{(.*)\}\s*$/ && do {
-     $self->{sec} = $1;
-  };
-
-  m/\@(pic|ig|doc)\{([^{}]+)\}/ && do {
-     my $type = $1;
-  };
-
-  m/^\s*\\begin\{multicols\}\{(\d+)\}/g && do {
-    $self->{multicols} = {
-       cols => $1,
+  my $ok = 1;
+  while (1) {
+    $_ = $self->_expand_igg($_);
+  
+    m/^\s*%%\s*\\ii\{(.*)\}\s*$/ && do {
+       $self->{sec} = $1;
+       last;
     };
-  };
+  
+    m/\@(pic|ig|doc)\{([^{}]+)\}/ && do {
+       my $type = $1;
+       last;
+    };
+  
+    m/^\s*\\begin\{multicols\}\{(\d+)\}/g && do {
+      $self->{multicols} = {
+         cols => $1,
+      };
+      last;
+    };
+  
+    m/^\s*\\end\{multicols\}/g && do {
+      $self->{multicols} = undef;
+      last;
+    };
+  
+    my $r_sec = $self->{r_sec};
+    my $url = $r_sec->{url};
+    if ($r_sec && $url) {
+       /^\s*\\Purl\Q{$url}\E/ && do {
+          $ok = 0; last;
+       };
+    }
 
-  m/^\s*\\end\{multicols\}/g && do {
-    $self->{multicols} = undef;
-  };
+    last;
+  }
 
-  $self->{line} = $_;
-  push @{$self->{nlines}}, $self->{line}; 
+  if ($ok) {
+    $self->{line} = $_;
+    push @{$self->{nlines}}, $self->{line};
+  }
 
   return $self;
 }
@@ -1183,6 +1202,8 @@ sub loop {
        push @{$self->{yaml}}, $_;
        next;
     }
+
+
 
 ###m_tex
     m/^\s*tex\s+(.*)$/g && do {
