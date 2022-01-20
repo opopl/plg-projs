@@ -621,6 +621,9 @@ sub match_tab_end {
 sub ldo_no_cmt {
   my ($self) = @_;
 
+  my $mkr  = $self->{mkr};
+  my $pats = $mkr->_pats;
+
   local $_ = $self->{line};
 
   my $ok = 1;
@@ -628,7 +631,14 @@ sub ldo_no_cmt {
     $_ = $self->_expand_igg($_);
   
     m/^\s*%%\s*\\ii\{(.*)\}\s*$/ && do {
+       $self->{sec_prev} = $self->{sec};
        $self->{sec} = $1;
+       last;
+    };
+
+    m/$pats->{sect}/ && do {
+       my $seccmd = $1;
+       $DB::single = 1 if $seccmd eq 'subsection';
        last;
     };
   
