@@ -1196,10 +1196,12 @@ class LTS(
 
     # https://stackoverflow.com/questions/89228/how-to-execute-a-program-or-call-a-system-command
     if os.path.isfile(sec_file):
-      p = subprocess.Popen(f'git rm -f {sec_file}', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-      for line in p.stdout.readlines():
-        print line
-      retval = p.wait()
+      Path.unlink(sec_file)
+
+      #p = subprocess.Popen(f'git rm -f {sec_file}', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+      #for line in p.stdout.readlines():
+        #print(line)
+      #retval = p.wait()
 
     return self
 
