@@ -14,6 +14,8 @@ use Base::Arg qw(
   hash_update
 );
 
+use Date::Manip;
+
 use Plg::Projs::Map qw(
   %tex_syms
 );
@@ -507,10 +509,10 @@ sub _tex_author {
   my @tex;
   my $mkr = $self->{mkr};
 
-  my @ids = str_split($author_id,{ 'sep' => ',', uniq => 1 });
-  foreach my $aid (@ids) {
+  my @ids = (!ref $author_id) ? str_split($author_id,{ 'sep' => ',', uniq => 1 }) : @$author_id;
+  foreach my $id (@ids) {
      my $prj    = $mkr->{prj};
-     my $author = $prj->_author_get({ author_id => $aid });
+     my $author = $prj->_author_get({ author_id => $id });
 
      next unless $author;
 
@@ -535,22 +537,7 @@ sub match_author_end {
 
   $author_ids = uniq($author_ids);
  
-  my @tex_author;
-  foreach my $author_id (@$author_ids) {
-     my $prj    = $mkr->{prj};
-     my $author = $prj->_author_get({ author_id => $author_id });
-
-     next unless $author;
-
-     while(my($k,$v)=each %tex_syms){
-        $author =~ s/\Q$k\E/$v /g;
-     }
-     Plg::Projs::Tex::texify(\$author);
-
-     push @tex_author, sprintf(q{\Pauthor{%s}}, $author);
-  }
-
-  push @{$self->{nlines}}, @tex_author;
+  push @{$self->{nlines}}, $self->_tex_author($author_ids);
 
   $self->{d_author} = undef;
 
@@ -658,6 +645,17 @@ sub ldo_no_cmt {
   my $url       = $r_sec->{url} || '';
   my $sec       = $r_sec->{sec} || '';
   my $author_id = $r_sec->{author_id} || '';
+  my $date      = $r_sec->{date} || '';
+
+  my ($date_s, @date);
+
+  if ($date =~ /$pats->{date}/){
+    my $dt = Date::Manip::Date->new;
+    $dt->config('Language' => 'russian');
+    push @date, @+{qw(year month day)}, qw( 0 0 0 );
+    $dt->set('date',\@date);
+    $date_s = eval { $dt->printf("%d %B %Y, %A"); };
+  }
 
   my @push;
   while (1) {
@@ -685,8 +683,13 @@ sub ldo_no_cmt {
        $self->{sec_info}->{label} = 1;
        push @push, $lb;
        if($seccmd eq 'subsection'){
-           push @push, sprintf(q{\Purl{%s}},$url);
+           push @push,
+             $url    ? sprintf(q{\Purl{%s}},$url) : (),
+             $date_s ? sprintf(q{\Pdate{%s}},$date_s) : (),
+             $self->_tex_author($author_id),
+             ;
        }
+       $DB::single = 1 if $date;
        last;
     };
   
