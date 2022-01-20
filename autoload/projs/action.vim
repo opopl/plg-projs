@@ -982,6 +982,8 @@ function! projs#action#bld_join (...)
 
   let async = base#x#get(ref,'async',1)
 
+  let view = base#x#get(ref,'view',0)
+
   let target  = base#x#get(ref,'target','')
   if !len(target)
     let target = projs#bld#target()
@@ -1008,10 +1010,16 @@ function! projs#action#bld_join (...)
       \ 'proj'  : proj,
       \ 'root'  : root,
       \ 'start' : start,
+      \ 'view'  : view,
       \ }
 
     function env.get(temp_file) dict
       call projs#action#bld_join_Fc(self,a:temp_file)
+
+      let view = get(self,'view',0)
+      if view
+        call lts#cmd#mk#buffer_view_jnd_tex ()
+      endif
     endfunction
 
     let msg = printf('bld_join: %s', proj)

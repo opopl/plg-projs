@@ -652,6 +652,7 @@ sub ldo_no_cmt {
   if ($date =~ /$pats->{date}/){
     my $dt = Date::Manip::Date->new;
     $dt->config('Language' => 'russian');
+    #$dt->config('Language' => 'ukrainian');
     push @date, @+{qw(year month day)}, qw( 0 0 0 );
     $dt->set('date',\@date);
     $date_s = eval { $dt->printf("%d %B %Y, %A"); };
@@ -689,7 +690,6 @@ sub ldo_no_cmt {
              $self->_tex_author($author_id),
              ;
        }
-       $DB::single = 1 if $date;
        last;
     };
   
@@ -874,6 +874,7 @@ sub _d_db_data {
 
     my $url = $d->{url};
     unless (@$rows) {
+       $DB::single = 1 unless $url;
        my $r = {
            msg => q{ No image found in Database! },
            url => $url,

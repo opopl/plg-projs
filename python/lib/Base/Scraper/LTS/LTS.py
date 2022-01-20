@@ -23,6 +23,10 @@ import yaml
 #import lxml.html
 import lxml
 
+import subprocess
+
+
+
 from io import StringIO, BytesIO
 
 from Extern.Pylatex import Package
@@ -232,6 +236,8 @@ class LTS(
     sec  = ref.get('sec','')
     proj = ref.get('proj',self.proj)
 
+    short  = ref.get('short',0)
+
     db_file = self.db_file_projs
 
     q = 'SELECT file FROM projs WHERE sec = ? AND proj = ?'
@@ -241,7 +247,9 @@ class LTS(
     if not file:
       return ''
 
-    sec_file = os.path.join( self.lts_root, file )
+    sec_file = file
+    if not short:
+      sec_file = os.path.join( self.lts_root, file )
     #sec_file = os.path.join( self.lts_root, f'{proj}.{sec}.tex' )
 
     return sec_file
@@ -1180,7 +1188,18 @@ class LTS(
       'table'   : tb
     })
 
-    sec_file = self._sec_file({ 'sec' : sec, 'proj' : proj })
+    sec_file = self._sec_file({
+        'sec'   : sec,
+        'proj'  : proj,
+        'short' : 1
+    })
+
+    # https://stackoverflow.com/questions/89228/how-to-execute-a-program-or-call-a-system-command
+    if os.path.isfile(sec_file):
+      p = subprocess.Popen(f'git rm -f {sec_file}', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+      for line in p.stdout.readlines():
+        print line
+      retval = p.wait()
 
     return self
 
