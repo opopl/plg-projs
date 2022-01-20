@@ -501,6 +501,30 @@ sub match_author_begin {
   return $self;
 }
 
+sub _tex_author {
+  my ($self, $author_id) = @_;
+
+  my @tex;
+  my $mkr = $self->{mkr};
+
+  my @ids = str_split($author_id,{ 'sep' => ',', uniq => 1 });
+  foreach my $aid (@ids) {
+     my $prj    = $mkr->{prj};
+     my $author = $prj->_author_get({ author_id => $aid });
+
+     next unless $author;
+
+     while(my($k,$v)=each %tex_syms){
+        $author =~ s/\Q$k\E/$v /g;
+     }
+     Plg::Projs::Tex::texify(\$author);
+
+     push @tex, sprintf(q{\Pauthor{%s}}, $author);
+  }
+
+  return @tex;
+}
+
 sub match_author_end {
   my ($self) = @_;
 
@@ -630,9 +654,10 @@ sub ldo_no_cmt {
 
   my $ok = 1;
 
-  my $r_sec = $self->{r_sec} || {};
-  my $url = $r_sec->{url} || '';
-  my $sec = $r_sec->{sec} || '';
+  my $r_sec     = $self->{r_sec} || {};
+  my $url       = $r_sec->{url} || '';
+  my $sec       = $r_sec->{sec} || '';
+  my $author_id = $r_sec->{author_id} || '';
 
   my @push;
   while (1) {
