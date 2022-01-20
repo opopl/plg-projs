@@ -511,6 +511,7 @@ sub match_author_end {
 
   $author_ids = uniq($author_ids);
  
+  my @tex_author;
   foreach my $author_id (@$author_ids) {
      my $prj    = $mkr->{prj};
      my $author = $prj->_author_get({ author_id => $author_id });
@@ -522,9 +523,10 @@ sub match_author_end {
      }
      Plg::Projs::Tex::texify(\$author);
 
-     push @{$self->{nlines}}, sprintf(q{\Pauthor{%s}}, $author);
-
+     push @tex_author, sprintf(q{\Pauthor{%s}}, $author);
   }
+
+  push @{$self->{nlines}}, @tex_author;
 
   $self->{d_author} = undef;
 
@@ -627,18 +629,39 @@ sub ldo_no_cmt {
   local $_ = $self->{line};
 
   my $ok = 1;
+
+  my $r_sec = $self->{r_sec} || {};
+  my $url = $r_sec->{url} || '';
+  my $sec = $r_sec->{sec} || '';
+
+  my @push;
   while (1) {
     $_ = $self->_expand_igg($_);
   
     m/^\s*%%\s*\\ii\{(.*)\}\s*$/ && do {
-       $self->{sec_prev} = $self->{sec};
-       $self->{sec} = $1;
+       $self->{sec_info} = {};
+       $self->{sec_info}->{sec} =  $1;
+
+       last;
+    };
+
+    m/$pats->{label_sec}/ && do {
+       my $m_sec = trim($1);
+       $ok = 0 if $m_sec eq $sec;
+
        last;
     };
 
     m/$pats->{sect}/ && do {
        my $seccmd = $1;
-       $DB::single = 1 if $seccmd eq 'subsection';
+       $self->{sec_info}->{title} =  $1;
+
+       my $lb = sprintf(q{\label{sec:%s}},$sec);
+       $self->{sec_info}->{label} = 1;
+       push @push, $lb;
+       if($seccmd eq 'subsection'){
+           push @push, sprintf(q{\Purl{%s}},$url);
+       }
        last;
     };
   
@@ -659,9 +682,7 @@ sub ldo_no_cmt {
       last;
     };
   
-    my $r_sec = $self->{r_sec};
-    my $url = $r_sec->{url};
-    if ($r_sec && $url) {
+    if ($url) {
        /^\s*\\Purl\Q{$url}\E/ && do { $ok = 0; last; };
     }
 
@@ -670,7 +691,8 @@ sub ldo_no_cmt {
 
   if ($ok) {
     $self->{line} = $_;
-    push @{$self->{nlines}}, $self->{line};
+    unshift @push, $_;
+    push @{$self->{nlines}}, @push;
   }
 
   return $self;
