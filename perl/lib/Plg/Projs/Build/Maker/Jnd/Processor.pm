@@ -652,9 +652,7 @@ sub ldo_no_cmt {
     my $r_sec = $self->{r_sec};
     my $url = $r_sec->{url};
     if ($r_sec && $url) {
-       /^\s*\\Purl\Q{$url}\E/ && do {
-          $ok = 0; last;
-       };
+       /^\s*\\Purl\Q{$url}\E/ && do { $ok = 0; last; };
     }
 
     last;
@@ -1224,6 +1222,7 @@ sub loop {
         next;
     };
 
+    m/^\s*author_(end|begin|id)\s*$/g && do { next; };
 ###m_author
     m/^\s*author_end\s*$/g && do { $self->match_author_end; next; };
     m/^\s*author_begin\s*$/g && do { $self->match_author_begin; next; };
@@ -1232,7 +1231,6 @@ sub loop {
 ###m_tab
     m/^\s*tab_begin\b(.*)/g && do { $self->match_tab_begin($1); next; };
     m/^\s*tab_end\s*$/g && do { $self->match_tab_end; next; };
-
 
 ###m_pic@
     m/^\s*(pic|doc|ig|igc)@(.*)$/g && do {
