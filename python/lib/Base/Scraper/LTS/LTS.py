@@ -277,7 +277,11 @@ class LTS(
     if not self.flags.get('seccmd'):
       self.sec_data['save']['before_seccmd'].append(self.line)
 
-    self.sec_data['body_lines'].append(self.line)
+    else:
+      if not self.flags.get('securl'):
+        self.sec_data['save']['before_securl'].append(self.line)
+      else:
+        self.sec_data['body_lines'].append(self.line)
 
     return self
 
@@ -677,6 +681,7 @@ class LTS(
       ]
       nbody.extend(aa)
 
+
     flg = { 'seccmd' : 0 }
     while len(body):
       ln = body.pop(0).strip('\n')
@@ -702,8 +707,7 @@ class LTS(
           continue
 
       if not rgx.match('tex.projs.ifcmt',ln):
-        if flg['seccmd']:
-          nbody.append(ln)
+        nbody.append(ln)
         continue
 
       ln_cmt = []
@@ -802,6 +806,7 @@ class LTS(
         'beginhead' : '',
         'endhead'   : '',
         'before_seccmd' : [],
+        'before_securl' : [],
       }
     }
     self.sec_data.update(ref)
