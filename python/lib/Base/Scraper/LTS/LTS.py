@@ -457,6 +457,25 @@ class LTS(
 
     return self
 
+  def sec_read(self,ref={}):
+    sec       = ref.get('sec','')
+    proj      = ref.get('proj',self.proj)
+
+    sec_file = self._sec_file({ 'sec' : sec, 'proj' : proj })
+
+    if not os.path.isfile(sec_file):
+      return self
+
+    self.nlines = []
+    with open(sec_file,'r') as f:
+      self.lines = f.readlines()
+
+      self.sec_data_reset()
+      #self.ln_loop()
+      #self.ln_loop(lines_ref)
+
+    return self
+
   def ln_loop(self,ref={}):
     if not self.lines:
       return self
