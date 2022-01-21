@@ -12,6 +12,8 @@ import plg.projs.db as projs_db
 
 from bs4 import BeautifulSoup, Comment
 
+from copy import copy
+
 from plg.projs.Prj.Prj import Prj
 
 import jinja2
@@ -386,31 +388,18 @@ class LTS(
 
     return self
 
-  def ln_push(self):
-    if self.flags['eof']:
-      return self
-
-    self.nlines.append(self.line)
-
-    return self
-
-  def ln_cnt(self):
-    self.ln_push().ln_shift()
-
-    return self
-
   def ln_match_head(self):
     if self.flags['eof']:
       return self
 
     if rgx.match('tex.projs.beginhead', self.line):
       self.flags['head'] = 1
-      self.ln_cnt()
+      self.ln_shift()
 
     if rgx.match('tex.projs.endhead', self.line):
       if 'head' in self.flags:
         del self.flags['head']
-      self.ln_cnt()
+      self.ln_shift()
 
       self.flags['head_done'] = 1
       self.flags['body'] = 1
@@ -445,11 +434,15 @@ class LTS(
     if not os.path.isfile(sec_file):
       return self
 
-    self.nlines = []
     with open(sec_file,'r') as f:
       self.lines = f.readlines()
 
-      self.sec_data_reset()
+      self.sec_data_reset({
+        'sec'  : sec,
+        'file' : sec_file,
+        'proj' : proj,
+        'all_lines' : copy(self.lines),
+      })
       self.ln_loop()
 
     return self
@@ -458,9 +451,7 @@ class LTS(
     if not self.lines:
       return self
 
-    self.nlines = []
     self.flags = {}
-
     self.flags['eof'] = 0
     while len(self.lines):
       self.ln_shift()
@@ -471,7 +462,7 @@ class LTS(
       self.ln_if_top()
       self.ln_if_body()
 
-      self.ln_push()
+    self.sec_data.update({ 'done' : 1 })
 
     return self
 
@@ -484,23 +475,19 @@ class LTS(
 
     lines_ref = ref.get('lines',{})
 
-    sec_file = self._sec_file({ 'sec' : sec, 'proj' : proj })
-
-    if os.path.isfile(sec_file):
-      self.nlines = []
-      with open(sec_file,'r') as f:
-        self.lines = f.readlines()
-
-        self.sec_data_reset()
-        #self.ln_loop()
-        self.ln_loop()
-        self.sec_data_update(lines_ref)
-        import pdb; pdb.set_trace()
-
-    with open(sec_file, 'w', encoding='utf8') as f:
-      f.write('\n'.join(self.nlines) + '\n')
+    self.sec_read({ 'sec' : sec, 'proj' : proj })
+    self.sec_data_update(lines_ref)
+    self.sec_data_save2fs()
 
     return self
+
+  def sec_data_save2fs(self,ref={}):
+    file = self.sec_data.get('file')
+    file = ref.get('file',file)
+
+    lines = self.sec_data['all_lines']
+    with open(file, 'w', encoding='utf8') as f:
+      f.write('\n'.join(lines) + '\n')
 
   def vimtags_db_create(self, ref = {}):
     db_file = self.db_file_projs
@@ -679,6 +666,9 @@ class LTS(
     return self
 
   def sec_data_update(self, ref = {}):
+    if not self.sec_data['done']:
+      return self
+
     actions = ref.get('actions',[])
 
     for action in actions:
@@ -694,19 +684,30 @@ class LTS(
           old = util.get(self, f'sec_data.head_keys.{key}','')
 
           new = None
-          if name in [ '_key_merge' ]:
+          if name in [ '_key_set' ]:
+            new = value
+
+          elif name in [ '_key_merge' ]:
             new = string.ids_merge(ids_in = [ old, value ])
 
           elif name in [ '_key_remove' ]:
             new = string.ids_remove(ids_in = [ old ], ids_remove = [ value ])
 
-          if not new in [None]:
+          if not new in [ None ]:
             self.sec_data['head_keys'].update({ key : new })
 
     return self
 
-  def sec_data_reset(self):
-    sec_data = {
+  def sec_data_reset(self,ref={}):
+    self.sec_data = {
+      # section name
+      'sec'  : '',
+      # full path sec_file
+      'file'  : '',
+      # project name
+      'proj' : '',
+      # section data has been imported into sec_data?
+      'done' : 0,
       # lines before head block
       'top_lines' : [],
       # lines after head block
@@ -722,6 +723,7 @@ class LTS(
       # all lines
       'all_lines' : [],
     }
+    self.sec_data.update(ref)
 
     return self
 
