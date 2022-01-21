@@ -264,11 +264,10 @@ class LTS(
     if self.flags['eof']:
       return self
 
-    if self.flags.get('head') or self.flags.get('seccmd'):
+    if self.flags.get('head'):
       return self
 
     actions = ref.get('actions',[])
-    import pdb; pdb.set_trace()
 
     while 1:
       for action in actions:
@@ -288,14 +287,11 @@ class LTS(
 
     return self
 
-  def ln_if_seccmd(self,ref={}):
+  def ln_if_body(self,ref={}):
     if self.flags['eof']:
       return self
 
     if self.flags.get('head'):
-      return self
-
-    if not self.flags.get('seccmd'):
       return self
 
     actions = ref.get('actions',[])
@@ -353,6 +349,15 @@ class LTS(
                 if key == key_match:
                   ids_new = util.call(self, name, [ [ a_id ], [ value ] ])
                   self.line = f'{indent}{key} {ids_new}'
+
+#        kv = args[0] if len(args) else {}
+
+        #if name == '_update_title':
+          #title  = kv.get('title','')
+          #seccmd = kv.get('seccmd','subsection')
+
+          #if title:
+            #ln_title = "\\" + seccmd + '{' + title + '}'
 
       break
 
@@ -471,7 +476,7 @@ class LTS(
       self.lines = f.readlines()
 
       self.sec_data_reset()
-      #self.ln_loop()
+      self.ln_loop()
       #self.ln_loop(lines_ref)
 
     return self
@@ -493,9 +498,10 @@ class LTS(
       self.ln_match_seccmd(ref)
       self.ln_if_head(ref)
       self.ln_if_seccmd(ref)
-      #self.ln_if_body(ref)
+      self.ln_if_body(ref)
 
       self.ln_push()
+    import pdb; pdb.set_trace()
 
     return self
 
@@ -702,9 +708,16 @@ class LTS(
 
   def sec_data_reset(self):
     sec_data = {
+      # lines after head block
       'body' : [],
-      'head' : [],
-      'keys' : {},
+      # beginhead ... endhead lines
+      'head_lines' : [],
+      # keys from head block
+      'head_keys' : {},
+      # e.g. subsection
+      'seccmd' : '',
+      # title inside seccmd command
+      'sectitle' : '',
     }
 
     return self
