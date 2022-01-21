@@ -496,8 +496,6 @@ class LTS(
     self.sec_read({ 'sec' : sec, 'proj' : proj })
     self.sec_data_update(lines_ref)
     self.sec_data_gen_lines()
-    return self
-
     self.sec_data_save2fs()
 
     return self
@@ -715,22 +713,23 @@ class LTS(
     kv_title = kv.get('title','')
     if kv_title:
       nbody.append(f'\{seccmd}' + '{' + kv_title + '}')
-      nbody.append(f'\label{sec:' + sec + '}')
-      nbody.append(f' ')
+      nbody.append('\label{sec:' + sec + '}')
+      nbody.append(' ')
 
     kv_url = kv.get('url','')
     if kv_url:
-      nbody.append(f'\Purl{' + kv_url + '}')
+      nbody.append('\Purl{' + kv_url + '}')
 
-    kv_aid = kv.get('aid','')
+    kv_aid = kv.get('author_id','')
     if kv_aid:
       aa = [
         '\ifcmt',
-        '  author_begin',
+        ' author_begin',
         f'   author_id {kv_aid}',
-        '  author_end',
+        ' author_end',
         "\\fi",
       ]
+      nbody.extend(aa)
 
     while len(body):
       ln = body.pop(0).strip('\n')
@@ -780,11 +779,12 @@ class LTS(
         nbody.extend(ln_cmt)
         nbody.append("\\fi")
 
-    import pdb; pdb.set_trace()
     lines = []
-    lines.append(top)
-    lines.append(head)
-    lines.append(nbody)
+    lines.extend(top)
+    lines.extend(['%%beginhead '])
+    lines.extend(head)
+    lines.extend(['%%endhead '])
+    lines.extend(nbody)
 
     self.sec_data['all_lines'] = lines
 
