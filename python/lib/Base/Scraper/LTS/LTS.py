@@ -274,74 +274,10 @@ class LTS(
     if not ok:
       return self
 
+    if not self.flags.get('seccmd'):
+      self.sec_data['save']['before_seccmd'].append(self.line)
+
     self.sec_data['body_lines'].append(self.line)
-
-    actions = ref.get('actions',[])
-
-    while 1:
-      if rgx.match('tex.projs.ifcmt',self.line):
-        self.flags['is_cmt'] = 1
-        break
-
-      if not self.flags.get('is_cmt'):
-        break
-
-      if rgx.match('tex.projs.fi',self.line):
-        del self.flags['is_cmt']
-        break
-
-      if rgx.match('tex.projs.cmt.author_begin',self.line):
-        self.flags['cmt_author'] = 1
-        break
-
-      if rgx.match('tex.projs.cmt.author_end',self.line):
-        if self.flags.get('cmt_author'):
-          del self.flags['cmt_author']
-          break
-
-      m = rgx.match('tex.projs.cmt.author_id',self.line)
-      if m:
-        key_match = 'author_id'
-
-        indent = m.group(1)
-        a_id   = m.group(2)
-
-        for action in actions:
-          name = action.get('name','')
-          args = action.get('args',[])
-
-          if name in [ '_key_merge' ]:
-            if len(args):
-              kv = args[0]
-              for key, value in kv.items():
-                if value == None:
-                  value = ''
-
-                if key == key_match:
-                  ids_merged = util.call(self, name, [ [ a_id, value ] ])
-                  self.line = f'{indent}{key} {ids_merged}'
-
-          if name in [ '_key_remove' ]:
-            if len(args):
-              kv = args[0]
-              for key, value in kv.items():
-                if value == None:
-                  value = ''
-
-                if key == key_match:
-                  ids_new = util.call(self, name, [ [ a_id ], [ value ] ])
-                  self.line = f'{indent}{key} {ids_new}'
-
-#        kv = args[0] if len(args) else {}
-
-        #if name == '_update_title':
-          #title  = kv.get('title','')
-          #seccmd = kv.get('seccmd','subsection')
-
-          #if title:
-            #ln_title = "\\" + seccmd + '{' + title + '}'
-
-      break
 
     return self
 
@@ -394,9 +330,11 @@ class LTS(
 
     if rgx.match('tex.projs.beginhead', self.line):
       self.flags['head'] = 1
+      self.sec_data['save']['beginhead'] = self.line
       self.ln_shift()
 
     if rgx.match('tex.projs.endhead', self.line):
+      self.sec_data['save']['endhead'] = self.line
       if 'head' in self.flags:
         del self.flags['head']
       self.ln_shift()
@@ -696,6 +634,13 @@ class LTS(
     seccmd   = util.get(self,'sec_data.seccmd')
     sec      = util.get(self,'sec_data.sec')
 
+    # saved lines
+    save     = util.get(self,'sec_data.save',{})
+
+    sv_beginhead = save.get('beginhead',['%%beginhead'])
+    sv_endhead = save.get('endhead',['%%endhead'])
+    sv_before_seccmd = save.get('before_seccmd',[])
+
     for i in range(0,len(head)):
       m = rgx.match('tex.projs.head.@key', head[i])
       if m:
@@ -707,6 +652,7 @@ class LTS(
             head[i] = f'%%{hkey} {new}'
 
     nbody = []
+    nbody.extend(sv_before_seccmd)
     if not seccmd:
       seccmd = 'subsection'
 
@@ -731,6 +677,7 @@ class LTS(
       ]
       nbody.extend(aa)
 
+    flg = { 'seccmd' : 0 }
     while len(body):
       ln = body.pop(0).strip('\n')
 
@@ -748,13 +695,15 @@ class LTS(
 
       m = rgx.match('tex.projs.seccmd',ln)
       if m:
+        flg['seccmd'] = 1
         ln_seccmd   = m.group(1)
         ln_sectitle = m.group(2)
         if ln_seccmd == seccmd and ln_sectitle == sectitle:
           continue
 
       if not rgx.match('tex.projs.ifcmt',ln):
-        nbody.append(ln)
+        if flg['seccmd']:
+          nbody.append(ln)
         continue
 
       ln_cmt = []
@@ -781,9 +730,9 @@ class LTS(
 
     lines = []
     lines.extend(top)
-    lines.extend(['%%beginhead '])
+    lines.extend([sv_beginhead])
     lines.extend(head)
-    lines.extend(['%%endhead '])
+    lines.extend([sv_endhead])
     lines.extend(nbody)
 
     self.sec_data['all_lines'] = lines
@@ -848,6 +797,12 @@ class LTS(
       'sectitle' : '',
       # all lines
       'all_lines' : [],
+      # saved
+      'save' : {
+        'beginhead' : '',
+        'endhead'   : '',
+        'before_seccmd' : [],
+      }
     }
     self.sec_data.update(ref)
 
