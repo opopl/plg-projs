@@ -98,7 +98,7 @@ class LTS(
     'top_lines'  : [],
     'body_lines' : [],
     'head_lines' : [],
-    'head_keys'  : {},
+    'head_keyval'  : {},
     'seccmd'     : '',
     'sectitle'   : '',
   }
@@ -374,7 +374,7 @@ class LTS(
     m_value = m.group('value')
     m_key   = m.group('key')
 
-    self.sec_data['head_keys'].update({ m_key : m_value })
+    self.sec_data['head_keyval'].update({ m_key : m_value })
 
     return self
 
@@ -406,7 +406,24 @@ class LTS(
 
     return self
 
-  def ln_match_seccmd(self,ref={}):
+  def ln_match_purl(self):
+    ok = 1 
+    ok = ok and not self.flags.get('eof')
+    ok = ok and not self.flags.get('securl')
+    if not ok:
+      return self
+
+    m = rgx.match('tex.projs.body.purl', self.line)
+    if not m:
+      return self
+
+    self.flags['securl'] = 1
+
+    self.sec_data['securl'] = m.group(1)
+
+    return self
+
+  def ln_match_seccmd(self):
     ok = 1 
     ok = ok and not self.flags.get('eof')
     ok = ok and not self.flags.get('seccmd')
@@ -458,6 +475,7 @@ class LTS(
 
       self.ln_match_head()
       self.ln_match_seccmd()
+      self.ln_match_purl()
       self.ln_if_head()
       self.ln_if_top()
       self.ln_if_body()
@@ -469,7 +487,7 @@ class LTS(
   # call tree
   #   called by
   #     sec_author_add
-  def sec_process(self,ref={}):
+  def sec_process(self, ref={}):
     sec       = ref.get('sec','')
     proj      = ref.get('proj',self.proj)
 
@@ -477,6 +495,9 @@ class LTS(
 
     self.sec_read({ 'sec' : sec, 'proj' : proj })
     self.sec_data_update(lines_ref)
+    self.sec_data_gen_lines()
+    return self
+
     self.sec_data_save2fs()
 
     return self
@@ -665,6 +686,87 @@ class LTS(
 
     return self
 
+  # (re-)generate all_lines from sec_data
+  def sec_data_gen_lines(self):
+    top  = self.sec_data.get('top_lines')
+    head = self.sec_data.get('head_lines')
+    body = self.sec_data.get('body_lines')
+    kv   = self.sec_data.get('head_keyval')
+
+    securl   = util.get(self,'sec_data.securl')
+    sectitle = util.get(self,'sec_data.sectitle')
+    seccmd   = util.get(self,'sec_data.seccmd')
+    sec      = util.get(self,'sec_data.sec')
+
+    for i in range(0,len(head)):
+      m = rgx.match('tex.projs.head.@key', head[i])
+      if m:
+        hval = m.group('value')
+        hkey = m.group('key')
+        if hkey in kv:
+          new = kv.get(hkey)
+          if not new == None:
+            head[i] = f'%%{hkey} {new}'
+
+    nbody = []
+    while len(body):
+      ln = body.pop(0).strip('\n')
+
+      m = rgx.match('tex.projs.body.purl',ln)
+      if m:
+        purl = m.group(1)
+        if purl == securl:
+          continue
+
+      m = rgx.match('tex.projs.body.label_sec',ln)
+      if m:
+        ln_sec   = m.group(1)
+        if ln_sec == sec:
+          continue
+
+      m = rgx.match('tex.projs.seccmd',ln)
+      if m:
+        ln_seccmd   = m.group(1)
+        ln_sectitle = m.group(2)
+        if ln_seccmd == seccmd and ln_sectitle == sectitle:
+          continue
+
+      if not rgx.match('tex.projs.ifcmt',ln):
+        nbody.append(ln)
+        continue
+
+      ln_cmt = []
+      while len(body):
+        ln = body.pop(0).strip('\n')
+        if rgx.match('tex.projs.cmt.author_begin',ln):
+          continue
+        elif rgx.match('tex.projs.cmt.author_end',ln):
+          continue
+        elif rgx.match('tex.projs.cmt.author_id',ln):
+          continue
+        elif rgx.match('tex.projs.fi',ln):
+          break
+        # non-empty string
+        elif len(ln.strip()):
+          ln_cmt.append(ln)
+        else:
+          continue
+
+      if len(ln_cmt):
+        nbody.append("\\ifcmt")
+        nbody.extend(ln_cmt)
+        nbody.append("\\fi")
+
+    import pdb; pdb.set_trace()
+    lines = []
+    lines.append(top)
+    lines.append(head)
+    lines.append(nbody)
+
+    self.sec_data['all_lines'] = lines
+
+    return self
+
   def sec_data_update(self, ref = {}):
     if not self.sec_data['done']:
       return self
@@ -681,7 +783,7 @@ class LTS(
           if value in [ None,'' ]:
             continue
 
-          old = util.get(self, f'sec_data.head_keys.{key}','')
+          old = util.get(self, f'sec_data.head_keyval.{key}','')
 
           new = None
           if name in [ '_key_set' ]:
@@ -694,7 +796,7 @@ class LTS(
             new = string.ids_remove(ids_in = [ old ], ids_remove = [ value ])
 
           if not new in [ None ]:
-            self.sec_data['head_keys'].update({ key : new })
+            self.sec_data['head_keyval'].update({ key : new })
 
     return self
 
@@ -715,9 +817,10 @@ class LTS(
       # beginhead ... endhead lines
       'head_lines' : [],
       # keys from head block
-      'head_keys' : {},
+      'head_keyval' : {},
       # e.g. subsection
       'seccmd' : '',
+      'securl' : '',
       # title inside seccmd command
       'sectitle' : '',
       # all lines

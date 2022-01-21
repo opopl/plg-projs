@@ -16,6 +16,10 @@ pats = {
       'head' : {
          '@key' : r'%%(?P<key>\w+)\s+(?P<value>.*)$',
       },
+      'body' : {
+         'purl'      : r'^\s*\\Purl\{(.*)\}\s*$',
+         'label_sec' : r'^\s*\\label\{sec:(.*)\}\s*$',
+      },
       ###
       'ifcmt'     : r'^\\ifcmt\s*$',
       'fi'        : r'^\\fi\s*$',
