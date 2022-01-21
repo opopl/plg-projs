@@ -407,7 +407,7 @@ class LTS(
     return self
 
   def ln_match_purl(self):
-    ok = 1 
+    ok = 1
     ok = ok and not self.flags.get('eof')
     ok = ok and not self.flags.get('securl')
     if not ok:
@@ -709,6 +709,29 @@ class LTS(
             head[i] = f'%%{hkey} {new}'
 
     nbody = []
+    if not seccmd:
+      seccmd = 'subsection'
+
+    kv_title = kv.get('title','')
+    if kv_title:
+      nbody.append(f'\{seccmd}' + '{' + kv_title + '}')
+      nbody.append(f'\label{sec:' + sec + '}')
+      nbody.append(f' ')
+
+    kv_url = kv.get('url','')
+    if kv_url:
+      nbody.append(f'\Purl{' + kv_url + '}')
+
+    kv_aid = kv.get('aid','')
+    if kv_aid:
+      aa = [
+        '\ifcmt',
+        '  author_begin',
+        f'   author_id {kv_aid}',
+        '  author_end',
+        "\\fi",
+      ]
+
     while len(body):
       ln = body.pop(0).strip('\n')
 
