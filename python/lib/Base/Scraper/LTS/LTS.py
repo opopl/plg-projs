@@ -93,9 +93,12 @@ class LTS(
   acts = []
   sec = None
   sec_data = {
-    'body' : [],
-    'head' : [],
-    'keys' : {},
+    'top_lines'  : [],
+    'body_lines' : [],
+    'head_lines' : [],
+    'head_keys'  : {},
+    'seccmd'     : '',
+    'sectitle'   : '',
   }
 
   line = None
@@ -261,38 +264,15 @@ class LTS(
     return string.ids_merge(ids_in)
 
   def ln_if_body(self,ref={}):
-    if self.flags['eof']:
+    ok = 1
+    ok = ok and self.flags.get('head_done')
+    ok = ok and not self.flags.get('eof')
+    ok = ok and not self.flags.get('head')
+
+    if not ok:
       return self
 
-    if self.flags.get('head'):
-      return self
-
-    actions = ref.get('actions',[])
-
-    while 1:
-      for action in actions:
-        name = action.get('name','')
-        args = action.get('args',[])
-
-        kv = args[0] if len(args) else {}
-
-        if name == '_update_title':
-          title  = kv.get('title','')
-          seccmd = kv.get('seccmd','subsection')
-
-          if title:
-            ln_title = "\\" + seccmd + '{' + title + '}'
-
-      break
-
-    return self
-
-  def ln_if_body(self,ref={}):
-    if self.flags['eof']:
-      return self
-
-    if self.flags.get('head'):
-      return self
+    self.sec_data['body_lines'].append(self.line)
 
     actions = ref.get('actions',[])
 
@@ -363,14 +343,27 @@ class LTS(
 
     return self
 
+  def ln_if_top(self,ref={}):
+    ok = 1
+    ok = ok and not self.flags.get('eof')
+    ok = ok and not self.flags.get('head')
+    ok = ok and not self.flags.get('head_done')
+
+    if not ok:
+      return self
+
+    self.sec_data['top_lines'].append(self.line)
+    return self
+
+
   def ln_if_head(self,ref={}):
-    if self.flags['eof']:
+    ok = 1 
+    ok = ok and not self.flags.get('eof')
+    ok = ok and self.flags.get('head')
+    if not ok:
       return self
 
-    if not self.flags.get('head'):
-      return self
-
-    self.sec_data['head'].append(self.line)
+    self.sec_data['head_lines'].append(self.line)
 
     m = rgx.match('tex.projs.head.@key',self.line)
     if not m:
@@ -379,32 +372,7 @@ class LTS(
     m_value = m.group('value')
     m_key   = m.group('key')
 
-    self.sec_data['keys'].update({ m_key : m_value })
-
-    actions = ref.get('actions',[])
-
-    for action in actions:
-      name = action.get('name','')
-      args = action.get('args',[])
-
-###@@ _key_merge
-      if len(args):
-        kv = args[0]
-        for key, value in kv.items():
-          if value == None:
-            value = ''
-
-          if key == m_key:
-            if name in [ '_key_set' ]:
-              self.line = f'%%{key} {value}'
-
-            elif name in [ '_key_merge' ]:
-              ids_merged = util.call(self, name, [ [ m_value, value ] ])
-              self.line = f'%%{key} {ids_merged}'
-
-            elif name in [ '_key_remove' ]:
-              ids_new = util.call(self, name, [ [ m_value ], [ value ] ])
-              self.line = f'%%{key} {ids_new}'
+    self.sec_data['head_keys'].update({ m_key : m_value })
 
     return self
 
@@ -444,21 +412,27 @@ class LTS(
         del self.flags['head']
       self.ln_cnt()
 
+      self.flags['head_done'] = 1
       self.flags['body'] = 1
 
     return self
 
   def ln_match_seccmd(self,ref={}):
-    if self.flags['eof']:
+    ok = 1 
+    ok = ok and not self.flags.get('eof')
+    ok = ok and not self.flags.get('seccmd')
+    if not ok:
       return self
 
     m = rgx.match('tex.projs.seccmd', self.line)
 
-    if ( not m ) or self.flags.get('seccmd'):
+    if not m:
       return self
 
-    self.flags['seccmd']   = m.group(1)
-    self.flags['sectitle'] = m.group(2)
+    self.flags['seccmd'] = 1
+
+    self.sec_data['seccmd']   = m.group(1)
+    self.sec_data['sectitle'] = m.group(2)
 
     return self
 
@@ -477,15 +451,12 @@ class LTS(
 
       self.sec_data_reset()
       self.ln_loop()
-      #self.ln_loop(lines_ref)
 
     return self
 
   def ln_loop(self,ref={}):
     if not self.lines:
       return self
-
-    actions = ref.get('actions',[])
 
     self.nlines = []
     self.flags = {}
@@ -495,13 +466,12 @@ class LTS(
       self.ln_shift()
 
       self.ln_match_head()
-      self.ln_match_seccmd(ref)
-      self.ln_if_head(ref)
-      self.ln_if_seccmd(ref)
-      self.ln_if_body(ref)
+      self.ln_match_seccmd()
+      self.ln_if_head()
+      self.ln_if_top()
+      self.ln_if_body()
 
       self.ln_push()
-    import pdb; pdb.set_trace()
 
     return self
 
@@ -523,7 +493,9 @@ class LTS(
 
         self.sec_data_reset()
         #self.ln_loop()
-        self.ln_loop(lines_ref)
+        self.ln_loop()
+        self.sec_data_update(lines_ref)
+        import pdb; pdb.set_trace()
 
     with open(sec_file, 'w', encoding='utf8') as f:
       f.write('\n'.join(self.nlines) + '\n')
@@ -706,10 +678,39 @@ class LTS(
 
     return self
 
+  def sec_data_update(self, ref = {}):
+    actions = ref.get('actions',[])
+
+    for action in actions:
+      name = action.get('name','')
+      args = action.get('args',[])
+
+      if len(args):
+        kv = args[0]
+        for key, value in kv.items():
+          if value in [ None,'' ]:
+            continue
+
+          old = util.get(self, f'sec_data.head_keys.{key}','')
+
+          new = None
+          if name in [ '_key_merge' ]:
+            new = string.ids_merge(ids_in = [ old, value ])
+
+          elif name in [ '_key_remove' ]:
+            new = string.ids_remove(ids_in = [ old ], ids_remove = [ value ])
+
+          if not new in [None]:
+            self.sec_data['head_keys'].update({ key : new })
+
+    return self
+
   def sec_data_reset(self):
     sec_data = {
+      # lines before head block
+      'top_lines' : [],
       # lines after head block
-      'body' : [],
+      'body_lines' : [],
       # beginhead ... endhead lines
       'head_lines' : [],
       # keys from head block
@@ -718,6 +719,8 @@ class LTS(
       'seccmd' : '',
       # title inside seccmd command
       'sectitle' : '',
+      # all lines
+      'all_lines' : [],
     }
 
     return self
