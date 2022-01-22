@@ -28,7 +28,7 @@ if 0
       \ })
   call tree
     calls
-      base#url#struct
+      base#url#parse
 
       projs#data#dict
       projs#url#fb#data
@@ -42,8 +42,9 @@ function! projs#util#ii_data_from_url (...)
   let url    = get(ref,'url','')
   let prompt = get(ref,'prompt',0)
 
-  let struct = base#url#parse(url)
-  let host   = get(struct,'host','')
+  let u = base#url#parse(url)
+  let host   = get(u,'host','')
+  let path   = get(u,'path','')
 
   let pref      = ''
   let author_id = ''
@@ -57,10 +58,24 @@ function! projs#util#ii_data_from_url (...)
        \ 'prompt' : prompt,
        \ })
 
-     debug let author_id = get(fb_data,'author_id','')
+     let author_id = get(fb_data,'author_id','')
      if len(author_id)
        let pref .=  printf('.%s',author_id)
      endif
+
+  elseif site == 'news.ru.yandex.zen'
+    let yz_authors = projs#data#dict({ 'id' : 'yz_authors' })
+    let yz_ids = keys(yz_authors)
+    let id = matchstr(path, '^/media/id/\zs[^/]*\ze' )
+    let author_id = base#list#has(yz_ids, id) ? get(yz_authors,id,'') : ''
+    if !len(author_id)
+      let author_id = projs#author#select_id({ 'author_id' : 'yz.' })
+    endif
+
+    debug echo 1
+
+  else
+    let author_id = projs#author#select_id()
   endif
 
   let ii_data = {

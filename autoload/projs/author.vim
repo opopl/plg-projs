@@ -115,10 +115,11 @@ function! projs#author#select_id (...)
   let ids   = has_key(ref,'ids') ? get(ref,'ids') : projs#author#ids_db()
 
   let r = {
-    \ 'list'  : ids,
-    \ 'thing' : 'author_id',
-    \ 'prefix' : 'select',
-    \ 'header' : [
+    \ 'list'    : ids,
+    \ 'thing'   : 'author_id',
+    \ 'prefix'  : 'select',
+    \ 'default' : author_id,
+    \ 'header'  : [
       \ 'author_id selection dialog',
       \ ],
     \ }
