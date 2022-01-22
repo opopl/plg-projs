@@ -66,8 +66,8 @@ function! projs#util#ii_data_from_url (...)
   elseif site == 'news.ru.yandex.zen'
     let yz_authors = projs#data#dict({ 'id' : 'yz_authors' })
     let yz_ids = keys(yz_authors)
-    let id = matchstr(path, '^/media/id/\zs[^/]*\ze' )
-    let author_id = base#list#has(yz_ids, id) ? get(yz_authors,id,'') : ''
+    let yz_id = matchstr(path, '^/media/id/\zs[^/]*\ze' )
+    let author_id = base#list#has(yz_ids, yz_id) ? get(yz_authors, yz_id, '') : ''
     if !len(author_id)
       let author_id = projs#author#select_id({ 'author_id' : 'yz.' })
     endif
