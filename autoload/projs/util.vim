@@ -42,31 +42,26 @@ function! projs#util#ii_data_from_url (...)
   let url    = get(ref,'url','')
   let prompt = get(ref,'prompt',0)
 
-  let struct = base#url#struct(url)
+  let struct = base#url#parse(url)
   let host   = get(struct,'host','')
 
   let pref      = ''
   let author_id = ''
 
-  let pats = projs#data#dict({ 'id' : 'site_patterns' })
+  "let pats = projs#data#dict({ 'id' : 'site_patterns' })
+  let [ site, pref ] = projs#url#site#get({ 'url' : url })
 
-  for pat in keys(pats)
-    if host =~ pat
-      let pref = get(pats,pat,'')
-      if pat == 'facebook.com'
-        let fb_data   = projs#url#fb#data({ 
-          \ 'url'    : url,
-          \ 'prompt' : prompt,
-          \ })
+  if site == 'com.us.facebook'
+     let fb_data   = projs#url#fb#data({
+       \ 'url'    : url,
+       \ 'prompt' : prompt,
+       \ })
 
-        let author_id = get(fb_data,'author_id','')
-        if len(author_id)
-          let pref .=  printf('.%s',author_id)
-        endif
-      endif
-      break
-    endif
-  endfor
+     debug let author_id = get(fb_data,'author_id','')
+     if len(author_id)
+       let pref .=  printf('.%s',author_id)
+     endif
+  endif
 
   let ii_data = {
     \ 'pref'      : pref,

@@ -30,6 +30,7 @@ function! projs#url#site#get (...)
 
   let data = projs#url#site#hosts_data ()
   let site = ''
+  let prefii = ''
 
   for [ host_pats_s, host_struct ] in items(data)
     let host_pats = base#string#split_trim(host_pats_s,{ 'sep' : ',' })
@@ -37,6 +38,8 @@ function! projs#url#site#get (...)
 
       if matchstr(host, host_pat) != ''
         let site = get(host_struct,'site','')
+        let site_pref = get(host_struct,'prefii','')
+        let prefii = len(site_pref) ? site_pref : 'stz.' . site
         break
       endif
 
@@ -44,7 +47,7 @@ function! projs#url#site#get (...)
     endfor
   endfor
 
-  return site
+  return [ site, prefii ]
 
 endfunction
 
