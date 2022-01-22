@@ -23,5 +23,28 @@ function! projs#url#site#get (...)
   let ref = get(a:000,0,{})
 
   let url = get(ref,'url','')
+  let u = base#url#parse(url)
+  let host = get(u,'host','')
+
+  if !len(host) | return '' | endif
+
+  let data = projs#url#site#hosts_data ()
+  let site = ''
+
+  for [ host_pats_s, host_struct ] in items(data)
+    let host_pats = base#string#split_trim(host_pats_s,{ 'sep' : ',' })
+    for host_pat in host_pats
+
+      if matchstr(host, host_pat) != ''
+        let site = get(host_struct,'site','')
+        break
+      endif
+
+      if site | break | endif
+    endfor
+  endfor
+
+  return site
 
 endfunction
+
