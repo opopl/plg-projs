@@ -70,6 +70,10 @@ function! projs#util#ii_data_from_url (...)
     let author_id = base#list#has(yz_ids, yz_id) ? get(yz_authors, yz_id, '') : ''
     if !len(author_id)
       let author_id = projs#author#select_id({ 'author_id' : 'yz.' })
+
+      let author_ids_db   = projs#author#ids_db()
+      if !base#list#has(author_ids_db, author_id)
+      endif
     endif
 
     debug echo 1
