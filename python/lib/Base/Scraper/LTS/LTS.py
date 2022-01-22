@@ -626,10 +626,10 @@ class LTS(
 
     for key in keys:
       if key in ref:
-        value = ref.get(k)
+        value = ref.get(key)
         if value == None:
           value = ''
-        self.sec_key('set',k,{ key : value })
+        self.sec_key('set',key,{ key : value })
 
     return self
 
