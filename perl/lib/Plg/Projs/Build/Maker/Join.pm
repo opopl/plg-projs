@@ -169,6 +169,7 @@ sub _join_lines {
             my $title_tex = texify($title);
 
             $mkr->{r_sec}->{title} = $title;
+            $mkr->{r_sec}->{seccmd} = $sect;
 
             s|$pats->{sect}|\\$1\{$title_tex\}|g;
 
