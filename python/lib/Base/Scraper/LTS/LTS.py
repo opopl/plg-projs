@@ -617,10 +617,8 @@ class LTS(
     return self
 
   def sec_update(self, ref = {}):
-    title     = ref.get('title','')
-    url       = ref.get('url','')
-    tags      = ref.get('tags','')
-    author_id = ref.get('author_id','')
+    sec     = ref.get('sec',self.sec)
+    proj    = ref.get('proj',self.proj)
 
     keys = util.qw('title url tags author_id date')
 
@@ -629,7 +627,13 @@ class LTS(
         value = ref.get(key)
         if value == None:
           value = ''
-        self.sec_key('set',key,{ key : value })
+
+        r = {
+            key    : value,
+            'proj' : proj,
+            'sec'  : sec,
+        }
+        self.sec_key('set',key,r)
 
     return self
 
