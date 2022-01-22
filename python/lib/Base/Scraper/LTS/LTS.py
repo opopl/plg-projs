@@ -671,7 +671,7 @@ class LTS(
       nbody.append('\Purl{' + kv_url + '}')
 
     kv_aid = kv.get('author_id','')
-    if kv_aid:
+    if kv_aid and kv_title:
       aa = [
         '\ifcmt',
         ' author_begin',
@@ -680,7 +680,6 @@ class LTS(
         "\\fi",
       ]
       nbody.extend(aa)
-
 
     flg = { 'seccmd' : 0 }
     while len(body):
