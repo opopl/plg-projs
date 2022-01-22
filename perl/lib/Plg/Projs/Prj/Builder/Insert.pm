@@ -24,42 +24,42 @@ sub _insert_story {
 
     return [] unless $bld->_val_(qw( sii insert story ));
 
-	my $mkr = $bld->{maker} || {};
-	my $r_sec = $mkr->{r_sec} || {};
+    my $mkr = $bld->{maker} || {};
+    my $r_sec = $mkr->{r_sec} || {};
 
-	my $sec   = $r_sec->{sec};
-	my $title = $r_sec->{title};
-	my $date  = $r_sec->{date};
+    my $sec   = $r_sec->{sec};
+    my $title = $r_sec->{title};
+    my $date  = $r_sec->{date};
 
-	return [] unless $sec && $title && $date;
+    return [] unless $sec && $title && $date;
 
-	( my $date_dot = $date ) =~ s/_/./g;
-	my $cut = 30;
+    ( my $date_dot = $date ) =~ s/_/./g;
+    my $cut = 20;
 
-	$title =~ s/\\enquote\{([^{}]*)\}/$1/g;
-	my $title_cut = (length($title) < $cut) ? $title : ( substr($title, 0, 30) . '...' );   
+    $title =~ s/\\enquote\{([^{}]*)\}/$1/g;
+    my $title_cut = (length($title) < $cut) ? $title : ( substr($title, 0, 30) . '...' );
 
-	my @lines;
-	push @lines,
-		'',
-		sprintf('\def\storySec{%s}',$sec),
-		sprintf('\def\storyTitle{%s}',$title_cut),
-		sprintf('\def\storyDate{%s}',$date_dot),
-		'\def\storyLink{\hyperlink{\storySec}{\storyTitle}}',
-		'\hypertarget{\storySec}{}',
-		'',
-		'\pagestyle{ltsStory}',
-		'',
-		;
+    my @lines;
+    push @lines,
+        '',
+        sprintf('\def\storySec{%s}',$sec),
+        sprintf('\def\storyTitle{%s}',$title_cut),
+        sprintf('\def\storyDate{%s}',$date_dot),
+        '\def\storyLink{\hyperlink{\storySec}{\storyTitle}}',
+        '\hypertarget{\storySec}{}',
+        '',
+        '\pagestyle{ltsStory}',
+        '',
+        ;
 
     my @d;
     push @d,
         {
             scts => [qw( subsection )],
             lines => [@lines],
-			at_end => [
-			  '\pagestyle{fancy}'
-			],
+            at_end => [
+              '\pagestyle{fancy}'
+            ],
         };
 
     return [@d];
