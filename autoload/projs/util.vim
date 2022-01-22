@@ -72,8 +72,24 @@ function! projs#util#ii_data_from_url (...)
       let author_id = projs#author#select_id({ 'author_id' : 'yz.' })
 
       let author_ids_db   = projs#author#ids_db()
-      if !base#list#has(author_ids_db, author_id)
-      endif
+      let author_ids_dict = projs#author#ids()
+
+      # there's no author_id, need to add it
+      if !base#list#has(author_ids_dict, author_id)
+        if base#list#has(author_ids_db, author_id)
+           let author_name = base#input_we('Author name: ','')
+
+           call projs#data#dict#update({
+              \ 'id'  : 'authors',
+              \ 'upd' : { author_id : author_name },
+              \ })
+        endif
+
+      call projs#data#dict#update({
+        \ 'id'  : 'yz_authors',
+        \ 'upd' : { yz_id : author_id },
+        \ })
+
     endif
 
     debug echo 1

@@ -17,6 +17,33 @@ function! projs#author#get (...)
   
 endfunction
 
+" receive all data about author_id from database (proj + pages)
+function! projs#author#get_db (...)
+  let ref = get(a:000,0,{})
+
+  let author_id = get(ref,'author_id','bilchenko_evgenia')
+
+  let dbfile = projs#bs#db_file()
+
+  let q  = 'SELECT * FROM authors '
+  let q .= '  INNER JOIN auth_details '
+  let q .= '  ON authors.id = auth_details.id '
+  let q .= '  WHERE authors.id = ? '
+  let p  = [ author_id ]
+
+  let [rows,cols] = pymy#sqlite#query({
+    \ 'dbfile' : dbfile,
+    \ 'p'      : p,
+    \ 'q'      : q,
+    \ })
+  let rw = get(rows,0,{})
+  for [k,v] in items(rw)
+    let rw[k] = (v == v:none) ? '' : v
+  endfor
+  return rw
+
+endfunction
+
 "if 0
 "  usage
 "    let file = projs#author#file({ 'proj' : proj})
@@ -175,7 +202,7 @@ function! projs#author#hash ()
 endfunction
 
 function! projs#author#ids_db ()
-  let dbfile = base#qw#catpath('html_root','h.db')
+  let dbfile = projs#bs#db_file()
   
   let q = 'SELECT DISTINCT id FROM authors ORDER BY id ASC'
   let p = []
