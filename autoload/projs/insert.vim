@@ -468,7 +468,7 @@ function! projs#insert#ii_url ()
   let tags = projs#input#tags()
 
   let do_ii = 1
-  if projs#buf#ii_has(sec)
+  if projs#buf#ii_has(ii_sec)
     let do_ii = input('Section already here, insert? (1/0):',0)
   endif
 
