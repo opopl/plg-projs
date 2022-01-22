@@ -849,7 +849,9 @@ sub _d_db_data {
   $d ||= $self->{d};
   return () unless $d;
 
-  my $mkr     = $self->{mkr};
+  my $mkr   = $self->{mkr};
+  my $r_sec = $self->{r_sec} || {};
+  my $sec   = $r_sec->{sec};
 
   my $w = {};
   for(qw( url name_uniq name )){
@@ -877,7 +879,10 @@ sub _d_db_data {
        $DB::single = 1 unless $url;
        my $r = {
            msg => q{ No image found in Database! },
-           url => $url,
+           url   => $url,
+           sec   => $sec,
+           where => $w,
+           line  => $self->{line},
        };
        warn Dumper($r) . "\n";
        push @err, qq{%Image not found: $url };
