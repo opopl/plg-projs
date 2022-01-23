@@ -616,6 +616,10 @@ class LTS(
 
     return self
 
+  def proj_add_dates(self, ref = {}):
+
+    return self
+
   def sec_update(self, ref = {}):
     sec     = ref.get('sec',self.sec)
     proj    = ref.get('proj',self.proj)
