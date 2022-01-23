@@ -37,7 +37,7 @@ sub _insert_story {
     my $cut = 20;
 
     $title =~ s/\\enquote\{([^{}]*)\}/$1/g;
-    my $title_cut = (length($title) < $cut) ? $title : ( substr($title, 0, 30) . '...' );
+    my $title_cut = (length($title) < $cut) ? $title : ( substr($title, 0, $cut) . '...' );
 
     my @lines;
     push @lines,
