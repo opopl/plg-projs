@@ -742,9 +742,9 @@ function! projs#db#buf_data ()
     \ }
 
   let [ rows_h, cols ] = projs#db#data_get(r)
-  let row_h            = get(rows_h,0,{})
+  let rw               = get(rows_h,0,{})
 
-  return row_h
+  return rw
 endf
 
 function! projs#db#data_get (...)
