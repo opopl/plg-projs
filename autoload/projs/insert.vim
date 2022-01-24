@@ -409,7 +409,7 @@ function! projs#insert#ii_url ()
   let r = { 'pat' : pat }
 
   let url = base#input_we('[PIN ii_url] URL: ','')
-	"let url = substitute(url,'^\(.*\)[/]*\s*$','\1','g')
+  let url = substitute(url,'[/]*\s*$','','g')
 
   "let g:fb = 0
   "breakadd expr g:fb
