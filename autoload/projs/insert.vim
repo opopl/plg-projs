@@ -431,17 +431,6 @@ function! projs#insert#ii_url ()
   let author_id = get(ii_data,'author_id','')
   let author    = projs#author#get({ 'author_id' : author_id })
 
-  let data_pref  = projs#insert#ii_url#get_pref_auth({ 
-      \ 'author_id' : author_id,
-      \ 'pref'      : pref,
-      \ })
-
-  let pref            = get(data_pref,'pref','')
-  let author_id_list  = get(data_pref,'author_id_list',[])
-  let author_id_first = get(data_pref,'author_id_first','')
-
-  let author_id_str = join(author_id_list, ',')
-
   if len(pref)
     let ii_prefix .= printf('%s.',pref)
   endif
@@ -500,7 +489,7 @@ function! projs#insert#ii_url ()
       \  'url'        : url,
       \  'title'      : title,
       \  'sec_type'   : sec_type,
-      \  'author_id'  : author_id_str,
+      \  'author_id'  : author_id,
       \  'author'     : author,
       \  'tags'       : tags,
       \  'view'       : 'edit',
