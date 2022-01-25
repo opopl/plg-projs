@@ -79,7 +79,16 @@ function! projs#util#ii_data_from_url (...)
 
 " telegram, yz
   elseif base#list#has(tp_sites, site )
-    let tp_val = matchstr(path, re_path )
+    let tp_val = ''
+    if base#type(re_path) == 'String'
+      let tp_val = matchstr(path, re_path )
+
+    elseif base#type(re_path) == 'List'
+      while len(re_path)
+        let pat = remove(re_path,0)
+        let tp_val = matchstr(path, pat )
+      endw
+    endif
 
     let author_id = projs#author#find_id({
         \ 'tp_key'  : tp_key,

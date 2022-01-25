@@ -9,7 +9,9 @@ site2tp:
 
   'news.ru.yandex.zen' :
     'tp_key' : 'yz'
-    're_path' : '^/media/id/\zs[^/]*\ze'
+    're_path' :
+        - '^/media/id/\zs[^/]*\ze'
+        - '^/media/\zs[\w]\+\ze'
     'pref_sub' :
       'pat'  : '^yz\.yz\.'
       'repl' : 'yz.'
