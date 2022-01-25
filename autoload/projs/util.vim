@@ -87,6 +87,7 @@ function! projs#util#ii_data_from_url (...)
       while len(re_path)
         let pat = remove(re_path,0)
         let tp_val = matchstr(path, pat )
+        if len(tp_val) | break | endif
       endw
     endif
 
