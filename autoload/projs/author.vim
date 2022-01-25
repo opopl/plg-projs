@@ -91,8 +91,8 @@ function! projs#author#find_id (...)
   let tp_pref = printf('%s.',tp_key)
 
   let tp_authors = projs#data#dict({ 'id' : tp_dict })
-  let tp_ids = keys(tp_authors)
-  let author_id = base#list#has(tp_ids, tp_val) ? get(tp_authors, tp_val, '') : ''
+  let tp_ids     = keys(tp_authors)
+  let author_id  = base#list#has(tp_ids, tp_val) ? get(tp_authors, tp_val, '') : ''
 
   if !len(author_id)
     let author_id = projs#author#select_id({ 'author_id' : tp_pref })

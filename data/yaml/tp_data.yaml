@@ -1,0 +1,9 @@
+
+site2tp:
+  telegram: 
+    'tp_key' : 'tg'
+    're_path' : '^/\zs[^/]*\ze'
+
+  'news.ru.yandex.zen' :
+    'tp_key' : 'yz'
+    're_path' : '^/media/id/\zs[^/]*\ze'

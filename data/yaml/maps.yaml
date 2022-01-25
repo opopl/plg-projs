@@ -1,4 +1,5 @@
 
+# used in projs#maps
 nnoremap :
   ';;'    : 'PrjAct pwg_insert_img'  
   '<F1>'  : 'PrjAct async_build_pwg'  

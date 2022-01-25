@@ -52,6 +52,14 @@ function! projs#util#ii_data_from_url (...)
   "let pats = projs#data#dict({ 'id' : 'site_patterns' })
   let [ site, pref ] = projs#url#site#get({ 'url' : url })
 
+  let yfile = base#qw#catpath('plg','projs data yaml tp_data.yaml')
+
+  let tp_data = base#yaml#parse_fs({ 'file' : yfile })
+
+  let site2tp = get(tp_data,'site2tp',{})
+  let tp_key  = get(site2tp,'tp_key','')
+  let re_path = get(site2tp,'re_path','')
+
 """site_fb
   if site == 'com.us.facebook'
      let fb_data   = projs#url#fb#data({
@@ -66,15 +74,15 @@ function! projs#util#ii_data_from_url (...)
 
 """site_telegram
   elseif site == 'telegram'
-    let tg_id = matchstr(path, '^/\zs[^/]*\ze' )
+    let tp_val = matchstr(path, re_path )
 
 """site_yz
   elseif site == 'news.ru.yandex.zen'
-    let yz_id = matchstr(path, '^/media/id/\zs[^/]*\ze' )
+    let tp_val = matchstr(path, re_path )
 
     let author_id = projs#author#find_id({
-        \ 'tp_key'  : 'yz',
-        \ 'tp_val'  : yz_id })
+        \ 'tp_key'  : tp_key,
+        \ 'tp_val'  : tp_val })
 
     if len(author_id)
       let pref .=  printf('.%s',author_id)
