@@ -127,6 +127,8 @@ function! projs#author#find_id (...)
 
   endif
 
+  return author_id
+
 endfunction
 
 if 0
