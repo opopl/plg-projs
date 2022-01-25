@@ -66,48 +66,15 @@ function! projs#util#ii_data_from_url (...)
 
 """site_telegram
   elseif site == 'telegram'
-    let tgm_authors = projs#data#dict({ 'id' : 'tgm_authors' })
-    let tgm_ids = keys(tgm_authors)
-
-    let tgm_id = matchstr(path, '^/\zs[^/]*\ze' )
-    let author_id = base#list#has(tgm_ids, tgm_id) ? get(tgm_authors, tgm_id, '') : ''
+    let tg_id = matchstr(path, '^/\zs[^/]*\ze' )
 
 """site_yz
   elseif site == 'news.ru.yandex.zen'
-    let yz_authors = projs#data#dict({ 'id' : 'yz_authors' })
-    let yz_ids = keys(yz_authors)
     let yz_id = matchstr(path, '^/media/id/\zs[^/]*\ze' )
-    let author_id = base#list#has(yz_ids, yz_id) ? get(yz_authors, yz_id, '') : ''
 
-    if !len(author_id)
-      let author_id = projs#author#select_id({ 'author_id' : 'yz.' })
-
-      let author_ids_db   = projs#author#ids_db()
-      let author_ids_dict = projs#author#ids()
-
-      " there's no author_id, need to add it
-      if !base#list#has(author_ids_dict, author_id)
-        if base#list#has(author_ids_db, author_id)
-           let ref_auth = projs#author#get_db({ 'author_id' : author_id })
-           let author_name = get(ref,'name','')
-        else
-           let author_name = base#input_we('Author name: ','')
-        endif
-      endif
-
-      if len(author_name)
-        call projs#data#dict#update({
-          \ 'id'  : 'authors',
-          \ 'upd' : { author_id : author_name },
-          \ })
-      endif
-
-      call projs#data#dict#update({
-        \ 'id'  : 'yz_authors',
-        \ 'upd' : { yz_id : author_id },
-        \ })
-
-    endif
+    let author_id = projs#author#find_id({
+        \ 'tp_key'  : 'yz',
+        \ 'tp_val'  : yz_id })
 
     if len(author_id)
       let pref .=  printf('.%s',author_id)

@@ -75,6 +75,60 @@ function! projs#author#tex_cmt (...)
 
 endfunction
 
+function! projs#author#find_id (...)
+  let ref = get(a:000,0,{})
+
+  " e.g. yandex/facebook id
+  let tp_val  = get(ref,'tp_val','')
+
+  " e.g. yz
+  let tp_key  = get(ref,'tp_key','')
+
+  " e.g. yz_authors
+  let tp_dict = printf('%s_authors',tp_key)
+
+  " e.g. yz.
+  let tp_pref = printf('%s.',tp_key)
+
+  let tp_authors = projs#data#dict({ 'id' : tp_dict })
+  let tp_ids = keys(tp_authors)
+  let author_id = base#list#has(tp_ids, tp_val) ? get(tp_authors, tp_val, '') : ''
+
+  if !len(author_id)
+    let author_id = projs#author#select_id({ 'author_id' : tp_pref })
+
+    let author_ids_db   = projs#author#ids_db()
+    let author_ids_dict = projs#author#ids()
+
+    " there's no author_id, need to add it
+    if !base#list#has(author_ids_dict, author_id)
+      let author_name = ''
+
+      if base#list#has(author_ids_db, author_id)
+         let ref_auth = projs#author#get_db({ 'author_id' : author_id })
+         let author_name = get(ref,'name','')
+      else
+         let author_name = base#input_we('Author name: ','')
+      endif
+
+      if len(author_name)
+        call projs#data#dict#update({
+          \ 'id'  : 'authors',
+          \ 'upd' : { author_id : author_name },
+          \ })
+      endif
+
+    endif
+
+    call projs#data#dict#update({
+      \ 'id'  : tp_dict,
+      \ 'upd' : { tp_val : author_id },
+      \ })
+
+  endif
+
+endfunction
+
 if 0
 endif
 
