@@ -81,7 +81,7 @@ function! projs#util#ii_data_from_url (...)
   elseif base#list#has(tp_sites, site )
     let tp_val = matchstr(path, re_path )
 
-    debug let author_id = projs#author#find_id({
+    let author_id = projs#author#find_id({
         \ 'tp_key'  : tp_key,
         \ 'tp_val'  : tp_val })
 
