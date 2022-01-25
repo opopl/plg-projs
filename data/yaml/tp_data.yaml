@@ -3,7 +3,13 @@ site2tp:
   telegram: 
     'tp_key' : 'tg'
     're_path' : '^/\zs[^/]*\ze'
+    'pref_sub':
+      'pat'  : '^tg\.tg\.'
+      'repl' : 'tg.'
 
   'news.ru.yandex.zen' :
     'tp_key' : 'yz'
     're_path' : '^/media/id/\zs[^/]*\ze'
+    'pref_sub' :
+      'pat'  : '^yz\.yz\.'
+      'repl' : 'yz.'

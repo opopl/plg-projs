@@ -57,8 +57,13 @@ function! projs#util#ii_data_from_url (...)
   let tp_data = base#yaml#parse_fs({ 'file' : yfile })
 
   let site2tp = get(tp_data,'site2tp',{})
-  let tp_key  = get(site2tp,'tp_key','')
-  let re_path = get(site2tp,'re_path','')
+  let tp_sites = keys(site2tp)
+
+  let site_tp = get(site2tp,site,{})
+
+  let tp_key  = get(site_tp,'tp_key','')
+  let re_path = get(site_tp,'re_path','')
+  let pref_sub = get(site_tp,'pref_sub',{})
 
 """site_fb
   if site == 'com.us.facebook'
@@ -72,21 +77,23 @@ function! projs#util#ii_data_from_url (...)
        let pref .=  printf('.%s',author_id)
      endif
 
-"""site_telegram
-  elseif site == 'telegram'
+" telegram, yz
+  elseif base#list#has(tp_sites, site )
     let tp_val = matchstr(path, re_path )
 
-"""site_yz
-  elseif site == 'news.ru.yandex.zen'
-    let tp_val = matchstr(path, re_path )
-
-    let author_id = projs#author#find_id({
+    debug let author_id = projs#author#find_id({
         \ 'tp_key'  : tp_key,
         \ 'tp_val'  : tp_val })
 
     if len(author_id)
       let pref .=  printf('.%s',author_id)
-      let pref = substitute(pref,'^yz\.yz\.','yz.','g')
+      if len(pref_sub)
+        let pat  = get(pref_sub,'pat','')
+        let repl = get(pref_sub,'repl','')
+        if len(pat) && len(repl)
+          let pref = substitute(pref,pat,repl,'g')
+        endif
+      endif
     endif
 
   " if site == ... loop
