@@ -22,7 +22,8 @@ endif
 function! projs#url#fb#data (...)
   let ref = get(a:000,0,{})
 
-  let prompt = get(ref,'prompt',0)
+  let prompt      = get(ref,'prompt',0)
+  let prompt_head = get(ref,'prompt_head','')
 
   let url    = get(ref,'url','')
 
@@ -57,42 +58,42 @@ function! projs#url#fb#data (...)
     let fb_auth  = ''
     let fb_group = get(path_a,1,'')
 
-		if len(fb_group)
-	    let fb_group_id = get(fb_groups,fb_group,'')
-	
-			if !len(fb_group_id)
-		    call base#varset('this',fb_group_list)
-		
-		    let fb_group_id = base#input_we('New fb_group id:','',{ 'this' : 1 })
+    if len(fb_group)
+      let fb_group_id = get(fb_groups,fb_group,'')
 
-				let msg = printf('[%s] fb group name: ',fb_group_id)
-		    let fb_group_name = base#input_we(msg,'')
-	
-		  	let author_id = printf('fb_group.%s',fb_group_id)
-				call projs#data#dict#update({ 
-						\	'id'  : 'fb_groups',
-						\	'upd' : { fb_group : fb_group_id },
-						\	})
-				call projs#data#dict#update({ 
-						\	'id'  : 'authors',
-						\	'upd' : { author_id : fb_group_name },
-						\	})
-			endif
-	
-	    echo 'Facebook group id: ' . fb_group_id
-	
-	    let author_id = printf('fb_group.%s',fb_group_id)
-	    let author    = projs#author#get({ 'author_id' : author_id })
-	    if !len(author)
-	      let author = projs#author#add_prompt({ 'author_id' : author_id })
-	    endif
+      if !len(fb_group_id)
+        call base#varset('this',fb_group_list)
+
+        let fb_group_id = base#input_we('New fb_group id:','',{ 'this' : 1 })
+
+        let msg = printf('[%s] fb group name: ',fb_group_id)
+        let fb_group_name = base#input_we(msg,'')
+
+        let author_id = printf('fb_group.%s',fb_group_id)
+        call projs#data#dict#update({
+            \ 'id'  : 'fb_groups',
+            \ 'upd' : { fb_group : fb_group_id },
+            \ })
+        call projs#data#dict#update({
+            \ 'id'  : 'authors',
+            \ 'upd' : { author_id : fb_group_name },
+            \ })
+      endif
+
+      echo 'Facebook group id: ' . fb_group_id
+
+      let author_id = printf('fb_group.%s',fb_group_id)
+      let author    = projs#author#get({ 'author_id' : author_id })
+      if !len(author)
+        let author = projs#author#add_prompt({ 'author_id' : author_id })
+      endif
 
     endif
   endif
 
   if len(fb_auth)
     let author_id = get(fb_authors,fb_auth,'')
-  
+
     if !len(author_id) && prompt
       call base#varset('this',projs#author#ids())
       let author_id = input(printf('[ facebook auth: %s ] Enter new author_id: ',fb_auth), '', 'custom,base#complete#this')
