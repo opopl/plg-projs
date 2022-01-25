@@ -52,6 +52,7 @@ function! projs#util#ii_data_from_url (...)
   "let pats = projs#data#dict({ 'id' : 'site_patterns' })
   let [ site, pref ] = projs#url#site#get({ 'url' : url })
 
+"""site_fb
   if site == 'com.us.facebook'
      let fb_data   = projs#url#fb#data({
        \ 'url'    : url,
@@ -63,11 +64,21 @@ function! projs#util#ii_data_from_url (...)
        let pref .=  printf('.%s',author_id)
      endif
 
+"""site_telegram
+  elseif site == 'telegram'
+    let tgm_authors = projs#data#dict({ 'id' : 'tgm_authors' })
+    let tgm_ids = keys(tgm_authors)
+
+    let tgm_id = matchstr(path, '^/\zs[^/]*\ze' )
+    let author_id = base#list#has(tgm_ids, tgm_id) ? get(tgm_authors, tgm_id, '') : ''
+
+"""site_yz
   elseif site == 'news.ru.yandex.zen'
     let yz_authors = projs#data#dict({ 'id' : 'yz_authors' })
     let yz_ids = keys(yz_authors)
     let yz_id = matchstr(path, '^/media/id/\zs[^/]*\ze' )
     let author_id = base#list#has(yz_ids, yz_id) ? get(yz_authors, yz_id, '') : ''
+
     if !len(author_id)
       let author_id = projs#author#select_id({ 'author_id' : 'yz.' })
 
