@@ -11,7 +11,7 @@ site2tp:
     'tp_key' : 'yz'
     're_path' :
         - '^/media/id/\zs[^/]*\ze'
-        - '^/media/\zs[\w]\+\ze'
+        - '^/media/\zs[^/]*\ze'
     'pref_sub' :
       'pat'  : '^yz\.yz\.'
       'repl' : 'yz.'
