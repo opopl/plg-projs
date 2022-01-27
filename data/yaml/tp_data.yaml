@@ -15,3 +15,10 @@ site2tp:
     'pref_sub' :
       'pat'  : '^yz\.yz\.'
       'repl' : 'yz.'
+
+  'vkontakte' :
+    'tp_key' : 'vk'
+    're_path' : '^/\zs[^/]*\ze'
+    'pref_sub':
+      'pat'  : '^vk\.vk\.'
+      'repl' : 'vk.'
