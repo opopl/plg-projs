@@ -122,11 +122,17 @@ sub load_yaml {
     my ($bld) = @_;
 
     my @yfiles = @{$bld->{opt}->{yfile} || []};
+    push @yfiles, 'bld.yml';
+
+    my %done;
     foreach my $yfile (@yfiles) {
         next unless -f $yfile;
+        next if $done{$yfile};
 
         my $d = LoadFile($yfile);
+        $done{$yfile} = 1;
     }
+    $DB::single = 1;
 
     return $bld;
 }
