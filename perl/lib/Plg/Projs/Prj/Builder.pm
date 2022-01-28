@@ -53,6 +53,8 @@ use Base::String qw(
 use Base::Arg qw(
     hash_update
     hash_inject
+
+    recursive_update
 );
 
 use Plg::Projs::Build::Maker;
@@ -134,6 +136,9 @@ sub load_yaml {
         next if $done{$yfile};
 
         my $d = LoadFile($yfile);
+        recursive_update($bld, $d);
+        $DB::single = 1;
+        #hash_update($bld, $d);
         $done{$yfile} = 1;
     }
     my $e = $bld->_val_('preamble index enable');
