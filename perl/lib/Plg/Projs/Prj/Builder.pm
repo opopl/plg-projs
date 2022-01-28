@@ -16,6 +16,10 @@ use Deep::Hash::Utils qw(reach);
 
 use YAML qw( LoadFile Load Dump DumpFile );
 
+use Base::String qw(
+    str_split
+    str_split_sn
+);
 
 use base qw(
     Plg::Projs::Prj
@@ -132,6 +136,7 @@ sub load_yaml {
         my $d = LoadFile($yfile);
         $done{$yfile} = 1;
     }
+    my $e = $bld->_val_('preamble index enable');
     $DB::single = 1;
 
     return $bld;
