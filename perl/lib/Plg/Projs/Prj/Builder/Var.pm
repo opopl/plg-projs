@@ -29,6 +29,24 @@ sub _bld_var {
     return $val;
 }
 
+sub _bld_var_set {
+    my ($bld, $var, $value) = @_;
+
+    my $vars = $bld->_val_('vars') // {};
+
+    if (ref $vars eq 'ARRAY') {
+       push @$vars, {
+           name  => $var,
+           value => $value,
+       };
+
+    }elsif (ref $vars eq 'HASH') {
+       $vars->{$var} = $value;
+    }
+
+    $bld->{vars} //= $vars;
+}
+
 1;
  
 

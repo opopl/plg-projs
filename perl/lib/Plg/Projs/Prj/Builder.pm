@@ -314,10 +314,7 @@ sub process_ii_updown {
         next unless $v;
 
         if (ref $bld->{vars} eq 'ARRAY') {
-            push @{$bld->{vars}}, { 
-                name  => $x,
-                value => $v,
-            };
+            $bld->_bld_var_set($x, $v);
         }
 
         for($x){
