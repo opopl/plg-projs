@@ -36,7 +36,7 @@ sub _bld_var_set {
 
     $upd //= {};
 
-    while(my($var,$value)=each %$upd){
+    while(my($var, $value) = each %$upd){
         if (ref $vars eq 'ARRAY') {
            push @$vars, {
                name  => $var,

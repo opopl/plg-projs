@@ -138,8 +138,6 @@ sub load_yaml {
 
         my $d = LoadFile($yfile);
         dict_update($bld, $d);
-        my $e = $bld->_val_('preamble index enable');
-        $DB::single = 1;
         $done{$yfile} = 1;
     }
 
@@ -331,6 +329,8 @@ sub process_ii_updown {
 
 sub read_in_file {
     my ($bld) = @_;
+
+    $DB::single = 1;
 
     my $in_file = $bld->_opt_argv_('in_file','');
     return $bld unless ($in_file && -e $in_file);

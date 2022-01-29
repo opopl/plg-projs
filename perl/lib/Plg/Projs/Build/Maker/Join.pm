@@ -407,6 +407,7 @@ sub _ii_base {
 
     my $v    = $bld->_bld_var('ii_base') // '';
     my @base = !ref $v ? str_split_sn($v) : ( ref $v eq 'ARRAY' ? @$v : () );
+    $DB::single = 1;
 
     return @base;
 }
