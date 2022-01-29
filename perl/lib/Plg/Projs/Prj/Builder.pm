@@ -111,9 +111,9 @@ sub init {
         ->trg_apply('core')                     # apply 'core' target data into $bld instance
         ->trg_apply                             # apply $target data into $bld instance
         ->read_in_file                  # process -i --in_file switch
+        ->load_yaml
         ->process_ii_updown               
         ->process_config
-        ->load_yaml
         ->act_exe
         ->init_maker
         ;
@@ -329,8 +329,6 @@ sub process_ii_updown {
 
 sub read_in_file {
     my ($bld) = @_;
-
-    $DB::single = 1;
 
     my $in_file = $bld->_opt_argv_('in_file','');
     return $bld unless ($in_file && -e $in_file);
