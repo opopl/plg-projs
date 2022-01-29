@@ -405,8 +405,8 @@ sub _ii_base {
     my $bld  = $mkr->{bld};
     return () unless $bld;
 
-    my $v    = $bld->_bld_var('ii_base');
-    my @base = str_split_sn($v);
+    my $v    = $bld->_bld_var('ii_base') // '';
+    my @base = !ref $v ? str_split_sn($v) : ( ref $v eq 'ARRAY' ? @$v : () );
 
     return @base;
 }

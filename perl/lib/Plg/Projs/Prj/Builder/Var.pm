@@ -13,15 +13,15 @@ sub _bld_var {
     if (ref $vars eq 'ARRAY') {
         foreach my $v (@$vars) {
             if (ref $v eq 'HASH') {
-                my $name = $v->{name} || '';
-                my $value = $v->{value} || $v->{'#text'} || '';
+                my $name = $v->{name} // '';
+                my $value = $v->{value} // $v->{'#text'} // '';
                 next unless $name;
                 $values{$name} = $value;
             }
         }
     }
 
-    my $val = $values{$var} || '';
+    my $val = $values{$var} // '';
     return $val;
 }
 
