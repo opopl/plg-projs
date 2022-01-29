@@ -9,8 +9,9 @@ sub _bld_var {
 
     my $vars = $bld->_val_('vars') // '';
 
-    my %values;
+    my $val;
     if (ref $vars eq 'ARRAY') {
+        my %values;
         foreach my $v (@$vars) {
             if (ref $v eq 'HASH') {
                 my $name = $v->{name} // '';
@@ -19,9 +20,12 @@ sub _bld_var {
                 $values{$name} = $value;
             }
         }
+        $val = $values{$var} // '';
+    }
+    elsif (ref $vars eq 'HASH') {
+        $val = $vars->{$var} // '';
     }
 
-    my $val = $values{$var} // '';
     return $val;
 }
 
