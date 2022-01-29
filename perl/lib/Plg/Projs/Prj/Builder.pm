@@ -136,13 +136,13 @@ sub load_yaml {
         next if $done{$yfile};
 
         my $d = LoadFile($yfile);
-        recursive_update($bld, $d);
-        $DB::single = 1;
+        #recursive_update($bld, $d);
+        #$DB::single = 1;
         #hash_update($bld, $d);
         $done{$yfile} = 1;
     }
     my $e = $bld->_val_('preamble index enable');
-    $DB::single = 1;
+    #$DB::single = 1;
 
     return $bld;
 }
