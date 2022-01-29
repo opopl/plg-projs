@@ -19,6 +19,13 @@ sub _bld_ind_makeindex {
     my $ind_mk = sub { 
         my ($bld, $x) = @_;
 
+        my $name = $x->{name};
+        my $enable = $bld->_val_('preamble index enable');
+
+        if ($enable && !grep { /^$name$/ } @$enable) {
+          return '';
+        }
+
         my @opts;
         while(my($k,$v)=each %{$x}){
             next unless $v;

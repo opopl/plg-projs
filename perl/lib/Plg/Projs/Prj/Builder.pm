@@ -14,6 +14,8 @@ use XML::Hash::LX;
 use XML::Simple qw( XMLout XMLin );
 use Deep::Hash::Utils qw(reach);
 
+use Scalar::Util qw(blessed reftype);
+
 use YAML qw( LoadFile Load Dump DumpFile );
 
 use Base::String qw(
@@ -53,7 +55,7 @@ use Base::String qw(
 use Base::Arg qw(
     hash_inject
 
-    recursive_update
+    dict_update
 );
 
 use Plg::Projs::Build::Maker;
@@ -135,11 +137,11 @@ sub load_yaml {
         next if $done{$yfile};
 
         my $d = LoadFile($yfile);
-        #recursive_update($bld, $d);
+        dict_update($bld, $d);
+        my $e = $bld->_val_('preamble index enable');
+        $DB::single = 1;
         $done{$yfile} = 1;
     }
-    my $e = $bld->_val_('preamble index enable');
-    #$DB::single = 1;
 
     return $bld;
 }

@@ -11,7 +11,7 @@ use File::Spec::Functions qw(catfile);
 use Getopt::Long qw(GetOptions);
 
 use base qw(
-	Plg::Projs::Prj::Builder
+    Plg::Projs::Prj::Builder
 );
 
 1;
