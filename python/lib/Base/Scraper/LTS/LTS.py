@@ -1448,6 +1448,38 @@ class LTS(
 
     return self
 
+  # site info in hosts.yaml => authors database info
+  def db_sites2auth(self, ref = {}):
+    hosts_yaml =  os.path.join(self.lts_root,'scrape','bs','in','hosts.yaml')
+
+    if not hosts_yaml or not os.path.isfile(hosts_yaml):
+      return self
+
+    with open(hosts_yaml) as f:
+      d = yaml.full_load(f)
+      for host_pats, host_info in d.items():
+        site = host_info.get('site','')
+        auth = host_info.get('author',{})
+        if not len(auth):
+          continue
+
+        name = auth.get('name','')
+        if name:
+          d = {
+            'db_file' : self.db_file_pages,
+            'table'   : 'authors',
+            'insert'  : {
+               'id'    : site,
+               'name'  : name,
+               'plain' : name,
+            },
+            'on_list' : [ 'id' ]
+          }
+
+          dbw.insert_update_dict(d)
+
+    return self
+
   #  calls:
   #     sec_key
   #       sec_process
