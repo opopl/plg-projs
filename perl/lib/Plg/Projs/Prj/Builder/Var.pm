@@ -30,18 +30,23 @@ sub _bld_var {
 }
 
 sub _bld_var_set {
-    my ($bld, $var, $value) = @_;
+    my ($bld, $upd) = @_;
 
     my $vars = $bld->_val_('vars') // {};
 
-    if (ref $vars eq 'ARRAY') {
-       push @$vars, {
-           name  => $var,
-           value => $value,
-       };
+    $upd //= {};
 
-    }elsif (ref $vars eq 'HASH') {
-       $vars->{$var} = $value;
+    while(my($var,$value)=each %$upd){
+        if (ref $vars eq 'ARRAY') {
+           push @$vars, {
+               name  => $var,
+               value => $value,
+           };
+
+        }elsif (ref $vars eq 'HASH') {
+           $vars->{$var} = $value;
+        }
+
     }
 
     $bld->{vars} //= $vars;

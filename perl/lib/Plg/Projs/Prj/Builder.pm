@@ -313,9 +313,7 @@ sub process_ii_updown {
         my $v = $bld->{opt}->{$x};
         next unless $v;
 
-        if (ref $bld->{vars} eq 'ARRAY') {
-            $bld->_bld_var_set($x, $v);
-        }
+        $bld->_bld_var_set({ $x => $v });
 
         for($x){
             /^ii_updown$/ && do {
@@ -365,14 +363,7 @@ sub read_in_file {
             }
             $bld->{ctl} ||= {}; 
             $bld->{ctl}->{vars} = \%vars; 
-            while(my($k,$v) = each %vars){
-                if (ref $bld->{vars} eq 'ARRAY') {
-                    push @{$bld->{vars}}, { 
-                        name  => $k,
-                        value => $v,
-                    };
-                }
-            }
+            $bld->_bld_var_set(\%vars);
         };
     }
 
