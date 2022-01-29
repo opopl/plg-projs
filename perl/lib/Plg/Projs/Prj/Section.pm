@@ -16,7 +16,6 @@ sub new
 
 use Base::Arg qw( 
 	hash_inject
-	hash_update
 );
 
 sub init {

@@ -26,9 +26,6 @@ use Base::Util qw(
 	iswin
 );
 
-use Base::Arg qw(
-    hash_update
-);
 
 use base qw( 
     Base::Obj
@@ -37,7 +34,7 @@ use base qw(
 );
 
 use Base::Arg qw(
-    hash_update
+    hash_inject
 );
 
 #https://www.perlmonks.org/?node_id=1185809
@@ -287,7 +284,7 @@ sub init {
             height => 500,
         }
     };
-    hash_update($self, $h, { keep_already_defined => 1 });
+    hash_inject($self, $h);
 
     return $self;
 }

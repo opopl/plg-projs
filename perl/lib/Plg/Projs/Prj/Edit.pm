@@ -19,18 +19,10 @@ use File::Slurp::Unicode;
 use File::Spec::Functions qw(catfile);
 use Data::Dumper qw(Dumper);
 
-use Base::Arg qw( hash_update );
-
-
 sub init {
     my ($self) = @_;
 
     $self->SUPER::init();
-
-    my $h = { 
-    };
-        
-    hash_update($self, $h, { keep_already_defined => 1 });
 
     return $self;
 }

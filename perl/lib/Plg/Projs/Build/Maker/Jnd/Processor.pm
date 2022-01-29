@@ -487,9 +487,7 @@ sub match_yaml_end {
   my $ydata = Load($ystr);
   delete $self->{$_} for(qw(is_yaml yaml));
 
-  hash_update(
-    $self->{d_yaml}, $ydata
-  );
+  hash_update( $self->{d_yaml}, $ydata);
   $self->{r_sec} = $self->{d_yaml}->{r_sec};
 
   return $self;
@@ -596,10 +594,7 @@ sub match_tab_begin {
 
   $self->tab_init;
 
-  hash_update(
-    $self->{tab}, 
-    $self->_opts_dict($opts_s)
-  );
+  hash_update( $self->{tab}, $self->_opts_dict($opts_s) );
 
   my $tab = $self->{tab};
   my $tab_cols = $tab->{cols};
@@ -1162,10 +1157,7 @@ sub _macro_igg {
      type => 'ig' 
   };
 
-  hash_update(
-     $d,
-     $self->_opts_dict($opts_s),
-  );
+  hash_update( $d, $self->_opts_dict($opts_s) );
   my $resized = $ref->{resized};
   $d->{width_resize} = $resized if $resized;
 

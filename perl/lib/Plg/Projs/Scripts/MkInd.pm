@@ -13,7 +13,9 @@ use Data::Dumper qw(Dumper);
 use File::stat;
 use File::Path qw(rmtree);
 
-use Base::Arg qw( hash_update );
+use Base::Arg qw(
+    hash_inject
+);
 
 sub new
 {
@@ -56,7 +58,7 @@ sub init {
         blx  => $blx,
     };
 
-    hash_update($self, $h, { keep_already_defined => 1 });
+    hash_inject($self, $h);
         
 
     return $self;

@@ -30,7 +30,6 @@ use base qw(
 
 use Base::Arg qw(
   hash_inject
-  hash_update
 );
 
 use String::Util qw(trim);
