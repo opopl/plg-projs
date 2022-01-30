@@ -21,6 +21,7 @@ vars:
 decs:
 - do_ind_titletoc
 
+###opts_maker
 opts_maker:
   skip:
     get_opt: 1
@@ -52,12 +53,31 @@ opts_maker:
 #      _bld_ind_printindex         same
 #         _bld_ind_lines           same
 #            _bld_ind         =>  /preamble/index/ind values
+
+###preamble
 preamble:
   index:
-    'enable' :
+    enable :
        - authors.rus
        #- names.rus
        #- rus
+    ind:
+       - name: ''
+         title: ''
+       - name: 'rus'
+         title: 'Предметный указатель'
+       - name: 'authors.rus'
+         title: 'Авторы'
+       - name: 'names.rus'
+         title: 'Имена'
+       - name: 'cities.rus'
+         title: 'Города'
+       - name: 'deaths.rus'
+         title: 'Смерти'
+       - name: 'writers.rus'
+         title: '{Писатели, Поэты, Мыслители}'
+       - name: 'eng'
+         title: 'Index'
 
 sii:
   insert:
