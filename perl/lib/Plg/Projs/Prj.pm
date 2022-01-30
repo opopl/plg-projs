@@ -110,41 +110,6 @@ sub cnf_trg_list {
     return $self;
 }
 
-sub prj_load_xml {
-    my ($self) = @_;
-
-    return $self if $self->{prj_skip_load_xml};
-
-    my $proj = $self->{proj};
-    my $root = $self->{root};
-
-    my $xfile = $self->_prj_xfile;
-    unless (-f $xfile) {
-        return $self;
-    }
-
-    my $cache = XML::LibXML::Cache->new;
-    my $dom = $cache->parse_file($xfile);
-
-    $self->{dom_xml_trg} = $dom;
-
-    my $pl = xml2dict($dom, attr => '@');
-
-    $self->{cnf} = {};
-
-    my $name = deepvalue($pl,qw( proj @name ));
-    if ($name && ($name eq $proj)) {
-        delete $pl->{proj}->{'@name'};
-        $self->{cnf} = $pl->{proj};
-    }else{
-        $self->{cnf} = $pl->{$proj};
-    }
-
-    $self->cnf_trg_list;
-
-    return $self;
-}
-
 sub _prj_yfile {
     my ($self) = @_;
 
@@ -153,16 +118,6 @@ sub _prj_yfile {
 
     my $yfile = catfile($root,sprintf('%s.yml',$proj));
     return $yfile;
-}
-
-sub _prj_xfile {
-    my ($self) = @_;
-
-    my $proj = $self->{proj};
-    my $root = $self->{root};
-
-    my $xfile = catfile($root,sprintf('%s.xml',$proj));
-    return $xfile;
 }
 
 sub fill_files {

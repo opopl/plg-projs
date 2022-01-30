@@ -106,8 +106,8 @@ sub init {
         ->get_act
         ->get_opt
         ->set_target                            # set $bld->{target} from --target switch
-        ->trg_load_xml({ 'target' => 'core' })  # load into targets/core 
-        ->trg_load_xml                          # load into targets/$target
+        ->trg_load_yml({ 'target' => 'core' })  # load into targets/core 
+        ->trg_load_yml                          # load into targets/$target
         ->trg_apply('core')                     # apply 'core' target data into $bld instance
         ->trg_apply                             # apply $target data into $bld instance
         ->read_in_file                  # process -i --in_file switch
@@ -142,7 +142,6 @@ sub load_yaml {
     }
     my $ysave = 'bld_save.yml';
     DumpFile($ysave, $bld->{sii}->{scts});
-    $DB::single = 1;
 
 
     return $bld;

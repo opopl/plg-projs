@@ -1,0 +1,219 @@
+
+tex_exe: pdflatex
+
+vars:
+  pagestyle: fancy
+  ii_base:
+  - body 
+  - preamble 
+  - index 
+  - bib
+  - titlepage
+  - defs
+  - listfigs 
+  - listtabs
+  - tabcont
+  - preamble.index 
+  - preamble.packages 
+  - preamble.acrobat_menu 
+  - preamble.filecontents
+
+decs:
+- do_ind_titletoc
+
+opts_maker:
+  skip:
+    get_opt: 1
+  join_lines:
+    include_below: 'section'
+  load_dat:
+    ii_exclude : 1
+    ii_include : 0
+    sections :
+      include : '_base_'
+      include_with_children : 'preamble'
+      ins_order:
+      - hyperlinks
+      - titletoc
+      - story
+    append:
+      only:
+      each:
+    prepend:
+      only:
+        '_main_' :
+        - '\newif\ifDEBUG\DEBUGfalse'
+        - ''
+        - '\newif\ifcmt\cmtfalse'
+
+# _join_lines                  Plg::Projs::Build::Maker::Join
+#   _gen_sec                   Plg::Projs::Prj::Builder::Gen
+#     _sct_lines               Plg::Projs::Prj::Builder::Sct - match @printindex
+#      _bld_ind_printindex         same
+#         _bld_ind_lines           same
+#            _bld_ind         =>  /preamble/index/ind values
+preamble:
+  index:
+    'enable' :
+       - authors.rus
+       #- names.rus
+       #- rus
+
+sii:
+  insert:
+    hyperlinks: 0
+    story: 1
+    titletoc: 1
+
+  generate:
+    'on':
+    - index
+    - listfigs
+    - listtabs
+    - preamble
+    - preamble.packages
+    - preamble.index
+    - preamble.filecontents
+
+
+# Plg::Projs::Prj::Builder::Sct
+  scts:
+###sct_preamble
+    preamble:
+      contents: '@doc @ii @setcounter @perl'
+      doc:
+        class: extreport
+        opts: 'a4paper,11pt'
+      ii:
+      - preamble.packages
+      - preamble.index
+      #- preamble.acrobat_menu
+      - preamble.filecontents
+      perl: "'\\relax';"
+      setcounter:
+        secnumdepth: 0
+
+###sct_listfigs
+    listfigs:
+       contents:
+       - '\IfFileExists{./lst_figs.tex}{%'
+       - ' @txt.lof'
+       - '}{}'
+       txt:
+         lof:
+         - '\cleardoublepage'
+         - '\phantomsection'
+         - '\addcontentsline{toc}{chapter}{\listfigurename}'
+         - '\listoffigures'
+
+###sct_listtabs
+    listtabs:
+       contents:
+       - '\IfFileExists{./lst_tabs.tex}{%'
+       - ' @txt.lot'
+       - '}{}'
+       txt:
+         lot:
+         - '\cleardoublepage'
+         - '\phantomsection'
+         - '\addcontentsline{toc}{chapter}{\listtablename}'
+         - '\listoftables'
+
+###sct_preamble.index
+    'preamble.index':
+       contents: '@makeindex'
+
+###sct_index
+    'index':
+       contents:
+       - '\IfFileExists{./print_index.tex}{%'
+       - ' @txt.hdr'
+       - ' @txt.ptc.start'
+       - ' @printindex'
+       - ' @txt.ptc.stop'
+       - '}{}'
+       txt:
+         hdr:
+         - '\clearpage'
+         - '\phantomsection'
+         - '\begin{center}'
+         - '  {\Huge\bfseries \indicesname}\par'
+         - '  \hyperlink{tabcont}{\contentsname}'
+         - '\end{center}'
+         - '\addcontentsline{toc}{part}{Указатели}'
+         - '\hypertarget{indices}{}'
+         ptc:
+           start:
+           - '@ifdec{do_ind_titletoc}'
+           - '  \startcontents[indices]'
+           - '  \printcontents[indices]{l}{1}{\addtocontents{ptc}{\setcounter{tocdepth}{1}}}'
+           - '@fi'
+           stop:
+           - '@ifdec{do_ind_titletoc}'
+           - '  \stopcontents[indices]'
+           - '@fi'
+
+###sct_preamble.filecontents
+    'preamble.filecontents':
+       contents: '@input'
+       input:
+       - 'src.preamble.filecontents.xdy'
+       - 'src.preamble.filecontents.index_eng_xdy'
+       - 'src.preamble.filecontents.index_rus_xdy'
+
+###sct_preamble.packages
+    'preamble.packages':
+       contents: '@pkg @ii'
+       ii:
+       pkg:
+         'pack_list':
+         - titletoc
+         - xparse
+         - p.core
+         - p.wrapfig
+         - p.fancyquote
+        #- p.shadequote
+         - p.env
+         - p.rus
+         - p.secs
+         - p.toc
+         - p.fb
+         - p.sechyperlinks
+         - imakeidx
+         - p.hyperref
+         - geometry
+         - ''
+         - 'color xcolor colortbl'
+         - ''
+         - graphicx
+         - tikz
+         - tikzsymbols
+         - pgffor
+         - ''
+         - adjustbox
+         - longtable
+         - multicol
+         - filecontents
+         - datetime2
+         - mathtext
+         - nameref
+         - p.fancyhdr
+         - p.fig.caption
+         'pack_opts':
+           adjustbox: export
+           datetime2: useregional
+           geometry:
+           - 'hmargin={1cm,1cm}'
+           - 'vmargin={2cm,2cm}'
+           - 'centering'
+           hyperref:
+           - 'colorlinks=true'
+           - 'linktoc=all'
+           - 'linkcolor=blue'
+           - 'letterpaper'
+           - 'unicode'
+           - 'linktocpage'
+           - 'bookmarksdepth=subparagraph'
+           - 'bookmarksnumbered=true'
+           imakeidx: xindy
+           tocloft: titles

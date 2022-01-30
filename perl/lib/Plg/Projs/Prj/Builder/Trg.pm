@@ -7,6 +7,7 @@ use warnings;
 use Data::Dumper qw(Dumper);
 
 use Base::XML::Dict qw(xml2dict);
+use YAML qw( LoadFile Load Dump DumpFile );
 
 use Deep::Hash::Utils qw(deepvalue);
 
@@ -78,11 +79,6 @@ sub trg_apply {
     my $ht = $bld->_val_('targets', $target);
     hash_apply($bld, $ht);
 
-    #if ($target eq 'core') {
-        #print Dumper($bld->_val_(' opts_maker sections include')) . "\n";
-        #exit;
-    #}
-
     return $bld;
 }
 
@@ -108,77 +104,16 @@ sub _trg_dom {
 
 }
 
-sub _trg_dom_find {
-    my ($bld, $ref) = @_;
-
-    $ref ||= {};
-
-    my ($dom, $target, $xpath, $data);
-
-    $target = $ref->{target} // $bld->{target};
-    $xpath  = $ref->{xpath};
-
-    $dom = $bld->_trg_dom($target);
-
-    return $data;
-
-}
-
-=head3 _trg_data($ref)
-
-=head4 Usage
-
-=head4 Call tree
-
-  Called by
-    trg_load_xml
-  Calls
-      _trg_dom
-      xml2dict
-
-=cut
-
-sub _trg_data {
-    my ($bld, $ref) = @_;
-
-    $ref ||= {};
-
-    my $dom = $bld->_trg_dom($ref);
-    return unless $dom;
-
-    my $pl = xml2dict($dom, 
-        attr    => '',
-        array   => [ qw( scts vars ) ],
-        txt_sub => sub {
-            my ($txt_ref) = @_; 
-            #$bld->_txt_expand({ txt_ref => $txt_ref });
-        } 
-    );
-
-    my $h_bld = $pl->{bld};
-
-    return $h_bld;
-}
-
-=head3 trg_load_xml($ref)
-
-=head4 Usage
-
-=head4 Call tree
-
-  _trg_data
-    _trg_dom
-    xml2dict
-
-=cut
-
-sub trg_load_xml {
+sub trg_load_yml {
     my ($bld, $ref) = @_;
 
     $ref ||= {};
     my $target = $bld->_opt_($ref,'target');
 
-    my $h_bld = $bld->_trg_data($ref);
+    my $yfile = $ref->{yfile} || $bld->_trg_yfile($target);
+	return $bld unless -f $yfile;
+
+    my $h_bld = LoadFile($yfile);
     return $bld unless $h_bld;
 
     my $ht = $bld->_val_('targets',$target) || {};
@@ -190,24 +125,24 @@ sub trg_load_xml {
     return $bld;
 }
 
-sub _trg_xfile {
+sub _trg_yfile {
     my ($bld, $target) = @_;
 
     $target //= $bld->{target};
 
-    my ($proj, $root) = @$bld{qw(proj root)};
-    my $xfile;
+    my ($proj, $root) = @{$bld}{qw(proj root)};
+    my $yfile;
 
     for($target){
         /^core$/ && do {
-            $xfile = catfile($ENV{PLG},qw( projs bld core.tml ));
+            $yfile = catfile($ENV{PLG},qw( projs bld core.yml ));
             next;
         };
 
-        $xfile = catfile($root,sprintf('%s.bld.%s.tml',$proj, $target));
+        $yfile = catfile($root,sprintf('%s.bld.%s.yml',$proj, $target));
         last;
     }
-    return $xfile;
+    return $yfile;
 }
 
 sub _trg_opts_maker {
