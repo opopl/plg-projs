@@ -15,6 +15,7 @@ use File::Spec::Functions qw(catfile);
 
 use Base::String qw(
     str_split_sn
+    str_split
 );
 
 use Base::Data qw(
@@ -138,8 +139,12 @@ sub _sct_lines {
         /^\@pkg$/ && do {
             my @pack_list = d_str_split_sn($data,'pkg pack_list');
             foreach my $pack (@pack_list) {
+                next unless $pack;
+
                 my $s_o = $pack_opts->{$pack} || '';
-                $s_o = join "," => map { trim($_) } split("\n",$s_o);
+                my @o = str_split_sn($s_o);
+
+                $s_o = join(',' => @o);
                 
                 my $o = $s_o ? qq{[$s_o]} : '';
         
@@ -182,7 +187,7 @@ sub _sct_data {
 
     $scts = $bld->_val_('sii scts') || [];
     if (ref $scts eq 'HASH') {
-        $data = $scts->{sec};
+        $data = $scts->{$sec};
 
     } elsif (ref $scts eq 'ARRAY') {
         @data = map { $_->{name} eq $sec ? $_ : () } @$scts;
