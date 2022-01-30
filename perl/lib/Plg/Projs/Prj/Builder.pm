@@ -120,6 +120,7 @@ sub init {
 
     #my $data = LoadFile($file);
     my $s = Dump($bld->{opts_maker});
+	$DB::single = 1;
 
     return $bld;
 
@@ -140,7 +141,6 @@ sub load_yaml {
         dict_update($bld, $d);
         $done{$yfile} = 1;
     }
-    $DB::single = 1;
 
     return $bld;
 }

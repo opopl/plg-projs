@@ -1,4 +1,10 @@
 
+
+    #<langs main="russian">
+      #english
+      #russian
+    #</langs>
+
 tex_exe: pdflatex
 
 vars:
@@ -25,13 +31,17 @@ decs:
 opts_maker:
   skip:
     get_opt: 1
+# Plg::Projs::Build::Maker::Join _join_lines
   join_lines:
     include_below: 'section'
   load_dat:
     ii_exclude : 1
     ii_include : 0
+
   sections :
-    include : '_base_'
+# Plg::Projs::Build::Maker   init_ii_include
+#                            ii_filter
+    include: '_base_'
     include_with_children : 'preamble'
     ins_order:
     - hyperlinks
