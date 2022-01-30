@@ -29,13 +29,13 @@ opts_maker:
   load_dat:
     ii_exclude : 1
     ii_include : 0
-    sections :
-      include : '_base_'
-      include_with_children : 'preamble'
-      ins_order:
-      - hyperlinks
-      - titletoc
-      - story
+  sections :
+    include : '_base_'
+    include_with_children : 'preamble'
+    ins_order:
+    - hyperlinks
+    - titletoc
+    - story
     append:
       only:
       each:

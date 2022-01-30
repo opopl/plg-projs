@@ -82,28 +82,6 @@ sub trg_apply {
     return $bld;
 }
 
-sub _trg_dom {
-    my ($bld, $ref) = @_;
-
-    $ref ||={};
-    my $target = $bld->_opt_($ref,'target');
-
-    my $dom = $bld->_val_('dom_trg ' . $target);
-
-    unless ($dom) {
-        my $xfile = $ref->{xfile} || $bld->_trg_xfile($target);
-        return unless (-e $xfile);
-
-        my $cache = XML::LibXML::Cache->new;
-        $dom = $cache->parse_file($xfile);
-
-        $bld->{dom_trg}->{$target} = $dom;
-    }
-
-    return $dom;
-
-}
-
 sub trg_load_yml {
     my ($bld, $ref) = @_;
 
