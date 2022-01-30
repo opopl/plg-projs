@@ -16,9 +16,9 @@
     </var>
     <var name="pagestyle" value="fancy" />
   </vars>
-  <decs>
-    do_ind_titletoc
-  </decs>
+  <!--<decs>-->
+    <!--do_ind_titletoc-->
+  <!--</decs>-->
   <preamble>
     <langs main="russian">
       english

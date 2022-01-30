@@ -101,7 +101,7 @@ sub init {
 
     $bld
         ->inj_base
-        ->prj_load_xml          # process PROJ.xml file, set trg_list
+        ->prj_load_yml # process PROJ.yml file, set trg_list
         ->inj_targets
         ->get_act
         ->get_opt

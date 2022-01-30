@@ -14,6 +14,8 @@ use Data::Dumper qw(Dumper);
 
 use File::Find qw(find);
 
+use YAML qw( LoadFile Load Dump DumpFile );
+
 use Base::XML::Dict qw(xml2dict);
 use XML::LibXML::Cache;
 
@@ -32,6 +34,7 @@ use base qw(
 
 use Base::Arg qw(
     hash_inject
+    dict_update
 );
 
 sub new
@@ -55,35 +58,31 @@ sub init {
     return $self;
 }
 
-sub prj_load_xml {
+sub prj_load_yml {
     my ($self) = @_;
 
-    return $self if $self->{prj_skip_load_xml};
+    return $self if $self->{prj_skip_load_yml};
     
     my $proj = $self->{proj};
     my $root = $self->{root};
 
-    my $xfile = $self->_prj_xfile;
-    unless (-f $xfile) {
-        return $self;
-    }
+    my $yfile = $self->_prj_yfile;
+    return $self unless -f $yfile;
 
-    my $cache = XML::LibXML::Cache->new;
-    my $dom = $cache->parse_file($xfile);
+    my $d = LoadFile($yfile) // {};
+    $self->{cnf} //= {};
+    dict_update($self->{cnf}, $d);
 
-    $self->{dom_xml_trg} = $dom;
+    $self->cnf_trg_list;
 
-    my $pl = xml2dict($dom, attr => '@');
+    return $self;
+}
 
-    $self->{cnf} = {};
+sub cnf_trg_list {
+    my ($self) = @_;
 
-    my $name = deepvalue($pl,qw( proj @name ));
-    if ($name && ($name eq $proj)) {
-        delete $pl->{proj}->{'@name'};
-        $self->{cnf} = $pl->{proj};
-    }else{
-        $self->{cnf} = $pl->{$proj};
-    }
+    my $proj = $self->{proj};
+    my $root = $self->{root};
 
     my $include = $self->_val_list_ref_('cnf targets include');
     my $exclude = $self->_val_list_ref_('cnf targets exclude');
@@ -109,6 +108,51 @@ sub prj_load_xml {
     $self->{trg_list} = [@t];
 
     return $self;
+}
+
+sub prj_load_xml {
+    my ($self) = @_;
+
+    return $self if $self->{prj_skip_load_xml};
+
+    my $proj = $self->{proj};
+    my $root = $self->{root};
+
+    my $xfile = $self->_prj_xfile;
+    unless (-f $xfile) {
+        return $self;
+    }
+
+    my $cache = XML::LibXML::Cache->new;
+    my $dom = $cache->parse_file($xfile);
+
+    $self->{dom_xml_trg} = $dom;
+
+    my $pl = xml2dict($dom, attr => '@');
+
+    $self->{cnf} = {};
+
+    my $name = deepvalue($pl,qw( proj @name ));
+    if ($name && ($name eq $proj)) {
+        delete $pl->{proj}->{'@name'};
+        $self->{cnf} = $pl->{proj};
+    }else{
+        $self->{cnf} = $pl->{$proj};
+    }
+
+    $self->cnf_trg_list;
+
+    return $self;
+}
+
+sub _prj_yfile {
+    my ($self) = @_;
+
+    my $proj = $self->{proj};
+    my $root = $self->{root};
+
+    my $yfile = catfile($root,sprintf('%s.yml',$proj));
+    return $yfile;
 }
 
 sub _prj_xfile {
