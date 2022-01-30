@@ -161,8 +161,7 @@ sub _sct_lines {
 
             my @txt = d_str_split($data,'txt ' . $p );
             $bld->_txt_expand({ txt_lines => \@txt });
-            $DB::single = 1;
-            push @lines,@txt;
+            push @lines, @txt;
 
             next;
         };
