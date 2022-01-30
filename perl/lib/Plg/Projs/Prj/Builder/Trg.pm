@@ -89,7 +89,7 @@ sub trg_load_yml {
     my $target = $bld->_opt_($ref,'target');
 
     my $yfile = $ref->{yfile} || $bld->_trg_yfile($target);
-	return $bld unless -f $yfile;
+    return $bld unless -f $yfile;
 
     my $h_bld = LoadFile($yfile);
     return $bld unless $h_bld;
