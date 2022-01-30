@@ -140,6 +140,10 @@ sub load_yaml {
         dict_update($bld, $d);
         $done{$yfile} = 1;
     }
+    my $ysave = 'bld_save.yml';
+    DumpFile($ysave, $bld->{sii}->{scts});
+    $DB::single = 1;
+
 
     return $bld;
 }
