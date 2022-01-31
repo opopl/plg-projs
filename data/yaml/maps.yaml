@@ -13,6 +13,7 @@ nnoremap :
   ';bl'   : 'BLD last_compile'  
   ';bt'   : 'BLD print_ii_tree'  
   ';e'    : 'PrjAct edt'  
+# projs#sec#picture#fetch
   ';gi'   : 'call lts#buf#pic#fetch()'  
   ';kr'   : 'KEYMAP russian_jcukenwin'  
   ';ku'   : 'KEYMAP ukrainian_jcuken'  

@@ -341,12 +341,19 @@ sub _subs_url {
         sub { 
             my $curl = which 'curl';
             return unless $curl;
+
+            my $hdr;
+            #my $hdr = 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:96.0) Gecko/20100101 Firefox/96.0';
+            $hdr = 'User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux i686 on x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2820.59 Safari/537.36';
+            $hdr = 'User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2226.0 Safari/537.36';
+            my $o_hdr = $hdr ? sprintf('-H "%s"',$hdr) : '';
     
             print qq{try: curl} . "\n";
     
             my $url_s = $^O eq 'MSWin32' ? qq{"$url"} : qq{"$url"};
     
-            my $cmd = qq{ $curl -o "$img_file" $url_s };
+            my $cmd = qq{ $curl $o_hdr -o "$img_file" $url_s };
+            print qq{command:\n\t$cmd} . "\n";
             my $x = qx{ $cmd 2>&1 };
             #$self->debug(["Command:", $x]);
             return 'curl';

@@ -15,7 +15,7 @@ function! projs#bld#trg#list ()
   let sec_buf = projs#buf#sec()
   if len(sec_buf)
     let t_short = '_buf'
-	  let t_full  = projs#bld#trg#full({ 'target' : t_short })
+    let t_full  = projs#bld#trg#full({ 'target' : t_short })
 
     for trg in [ t_short, t_full ]
       if len(trg)
@@ -34,7 +34,7 @@ endfunction
 
 if 0
   Usage
-	  let target = projs#bld#trg#full ({ 'target' : '_buf' })
+    let target = projs#bld#trg#full ({ 'target' : '_buf' })
 
   Call tree
     calls
