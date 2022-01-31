@@ -129,6 +129,51 @@ sub init {
     return $self;
 }
 
+sub tab_store_wd {
+  my ($self) = @_;
+
+  my $tab = $self->{tab};
+  return $self unless $tab;
+
+  my $i_row = $tab->{i_row};
+  return $self unless defined $i_row;
+
+  # row, col index within loop
+  my ($jr, $jc);
+
+  # row's total width
+  my ($wd_sum);
+
+  # updated cell's width
+  my $wdn;
+
+  my $pat_sl = qr/^\\setlength\{\\cellWidth\}\{(.*)\\textwidth\}\s*$/;
+  my $pat_rc = qr/^%tab row: (\d+), col: (\d+)/;
+
+  for(@{$tab->{store}}){
+    if (/$pat_rc/) {
+      ($jr, $jc) = ( $1, $2 );
+    }
+
+    next unless defined $jr;
+    next unless defined $jc;
+
+    next unless $jr == $i_row;
+
+    $wd_sum = $tab->{rows}->{$jr}->{wd_sum};
+
+    my ($wd) = ( /$pat_sl/ );
+    if (defined $wd) {
+      if (defined $wd_sum) {
+        $wdn = $wd / $wd_sum;
+        s/\Q$wd\E/$wdn/g;
+      }
+    }
+  }
+
+  return $self;
+}
+
 sub tab_rws_sum_wd {
   my ($self) = @_;
 
@@ -150,7 +195,6 @@ sub tab_rws_sum_wd {
   }
 
   $tab->{rows}->{$i_row}->{wd_sum} = $sum;
-  $DB::single = 1;
 
   return $self;
 }
@@ -865,6 +909,7 @@ sub lpush_d {
      my @s;
      if ($self->_tab_at_end) {
         $self->tab_rws_sum_wd;
+        $self->tab_store_wd;
 
         push @s, q{\\\\};
 
@@ -1047,12 +1092,13 @@ sub _d2tex {
   $wd = $wd/$d->{width_resize} if $d->{width_resize};
   $wd = $wd*$d->{width_by} if $d->{width_by};
 
-  push @tex,
-    $wd ? sprintf('\setlength{\cellWidth}{%s}',$self->_len2tex($wd)) : ();
-
   if ($tab) {
-    $self->tab_cell_update({ wd => $wd });
+    $self->tab_cell_update({ wd => $wd }) if $wd;
   }
+
+  push @tex,
+    $tab ? sprintf('%%tab row: %s, col: %s ', @{$tab}{qw(i_row i_col)}) : (),
+    $wd ? sprintf('\setlength{\cellWidth}{%s}',$self->_len2tex($wd)) : ();
 
   my @o;
   push @o, 
@@ -1145,7 +1191,6 @@ sub _d2tex {
         ;
   }else{
 
-    push @tex, sprintf('%% row: %s, col: %s ', @{$tab}{qw(i_row i_col)});
     push @tex, $minipage ? sprintf('\begin{minipage}{%s}%%', $self->_len2tex($width_minipage) ) : ();
     push @tex,   $parbox ? sprintf('\parbox[t]{%s}{%%', $self->_len2tex($width_parbox) ) : ();
     #push @tex,     $caption ? ( sprintf(q|%% %s|, $caption )) : ();
