@@ -130,6 +130,29 @@ sub init {
 }
 
 
+sub tab_cell_update {
+  my ($self, $update, $i_row, $i_col) = @_;
+
+  my $tab = $self->{tab};
+  return $self unless $tab;
+
+  $update ||= {};
+
+  $i_row //= $tab->{i_row};
+  $i_col //= $tab->{i_col};
+
+  return $self unless defined $i_row;
+  return $self unless defined $i_col;
+
+  $tab->{$i_row}->{$i_col} ||= {};
+  my $cell = $tab->{$i_row}->{$i_col};
+
+  while(my($k,$v)=each %$update){
+     $cell->{$k} = $v;
+  }
+
+  return $self;
+}
 
 
 sub tab_init {
@@ -138,7 +161,7 @@ sub tab_init {
   $self->{tab} = {};
 
   my $h = {
-      cols       => 2,
+      cols     => 2,
       align      => 'c',
       env        => 'tabular',
       i_col      => 1,
@@ -151,6 +174,7 @@ sub tab_init {
       caption    => '',
       store      => [],
       cells      => {},
+      rws        => {},
   };
   hash_inject($self->{tab}, $h);
 
@@ -624,6 +648,7 @@ sub match_tab_end {
      ;
 
   push @{$self->{nlines}}, @{$tab->{store}};
+  $DB::single = 1;
 
   $self->{tab} = undef;
 
@@ -1001,11 +1026,7 @@ sub _d2tex {
     $wd ? sprintf('\setlength{\cellWidth}{%s}',$self->_len2tex($wd)) : ();
 
   if ($tab) {
-    my ($i_row, $i_col) = @{$tab}{qw( i_row i_col )};
-    if (defined $i_row && defined $i_col) {
-      $tab->{cells}->{$i_row}->{$i_col}->{wd} = $wd;
-    }
-    $DB::single = 1;
+    $self->tab_cell_update({ wd => $wd });
   }
 
   my @o;
