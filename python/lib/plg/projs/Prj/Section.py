@@ -47,6 +47,12 @@ class Section(
     if not self.sec:
       return 
 
+    #sec_file = f'{self.proj}.{sec}.tex'
+
+  def _file_a(self,ref = {}):
+    if not self.sec:
+      return 
+
     proj = self.proj
     sec  = self.sec
 
@@ -134,6 +140,5 @@ class Section(
     else:
       sfile_a = [ f'{proj}.{sec}.tex' ]
 
-    #sec_file = f'{self.proj}.{sec}.tex'
 
-    return sec_file
+    return sfile_a
