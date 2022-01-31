@@ -145,11 +145,12 @@ sub tab_init {
       i_row      => 1,
       fig_env    => 'figure',
       cap_list   => [],
-      resizebox  => 0.9,
+      resizebox  => 0,
       minipage   => 0,
       # table caption
       caption    => '',
       store      => [],
+      cells      => {},
   };
   hash_inject($self->{tab}, $h);
 
@@ -171,7 +172,7 @@ sub _tab_start {
 
   push @tex, 
     $tab->{center} ? '\begin{center}%' : (),
-    $tab->{resizebox} ? sprintf('\resizebox{%s}{!}{%%',$w{resizebox}) : (),
+    $tab->{resizebox} ? sprintf('\resizebox{%s}{!}{%% start_resizebox',$w{resizebox}) : (),
     $tab->{minipage} ? sprintf('\begin{minipage}{%s}%%',$w{minipage}) : (),
     sprintf(q| \begin{%s}{*{%s}{%s}} |,@{$tab}{qw(env cols align)})
     ;
@@ -194,7 +195,7 @@ sub _tab_end {
     sprintf(q| \end{%s}|,$env),
     $tab->{caption} ? sprintf('\captionof{table}{%s}%%',$tab->{caption}) : (),
     $tab->{minipage} ? '\end{minipage}' : (),
-    $tab->{resizebox} ? '}' : (),
+    $tab->{resizebox} ? '}% fin_resizebox' : (),
     $tab->{center} ? '\end{center}' : (),
     ;
 
@@ -730,9 +731,9 @@ sub lpush_tab_start {
   my $tab = $self->{tab};
   return $self unless $tab && !$tab->{started};
 
-  push @{$self->{nlines}},
-     $self->_fig_start,
-     $self->_tab_start;
+  #push @{$self->{nlines}},
+     #$self->_fig_start,
+     #$self->_tab_start;
 
   push @{$tab->{store}},
      $self->_fig_start,
@@ -783,7 +784,7 @@ sub globals_update {
   return $self;
 }
 
-# push content of d => nlines
+# push content of d => nlines (no tab), tab store (if tab)
 sub lpush_d {
   my ($self) = @_;
 
@@ -792,10 +793,11 @@ sub lpush_d {
 
   my $tab = $self->{tab};
 
+  my @d_tex = $self->_d2tex;
   if ($tab) {
-    push @{$tab->{store}},$self->_d2tex;
+    push @{$tab->{store}}, @d_tex;
   }else{
-    push @{$self->{nlines}},$self->_d2tex;
+    push @{$self->{nlines}}, @d_tex;
   }
 
   if ($tab) {
@@ -997,6 +999,14 @@ sub _d2tex {
 
   push @tex,
     $wd ? sprintf('\setlength{\cellWidth}{%s}',$self->_len2tex($wd)) : ();
+
+  if ($tab) {
+    my ($i_row, $i_col) = @{$tab}{qw( i_row i_col )};
+    if (defined $i_row && defined $i_col) {
+      $tab->{cells}->{$i_row}->{$i_col}->{wd} = $wd;
+    }
+    $DB::single = 1;
+  }
 
   my @o;
   push @o, 
