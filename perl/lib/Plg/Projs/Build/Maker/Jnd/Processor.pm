@@ -149,6 +149,7 @@ sub tab_store_wd {
 
   my $pat_sl = qr/^\\setlength\{\\cellWidth\}\{(.*)\\textwidth\}\s*$/;
   my $pat_rc = qr/^%tab row: (\d+), col: (\d+)/;
+  my $reduce = $tab->{reduce};
 
   for(@{$tab->{store}}){
     if (/$pat_rc/) {
@@ -166,6 +167,7 @@ sub tab_store_wd {
     if (defined $wd) {
       if (defined $wd_sum) {
         $wdn = $wd / $wd_sum;
+        $wdn *= $reduce if $reduce;
         s/\Q$wd\E/$wdn/g;
       }
     }
@@ -244,6 +246,7 @@ sub tab_init {
       store      => [],
       cells      => {},
       rws        => {},
+      reduce     => 0.9,
   };
   hash_inject($self->{tab}, $h);
 
@@ -712,7 +715,7 @@ sub match_tab_end {
 
   push @{$tab->{store}},
      $self->_tab_end,
-     $self->_tex_caption_tab,
+     #$self->_tex_caption_tab,
      $self->_fig_end,
      ;
 
