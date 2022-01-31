@@ -129,6 +129,31 @@ sub init {
     return $self;
 }
 
+sub tab_rws_sum_wd {
+  my ($self) = @_;
+
+  my $tab = $self->{tab};
+  return $self unless $tab;
+
+  my $i_row //= $tab->{i_row};
+  return $self unless defined $i_row;
+
+  my $cols = $tab->{cols};
+
+  my $rw_cells = $tab->{cells}->{$i_row};
+
+  my $sum = 0.0;
+  foreach my $i (1 .. $cols) {
+    my $cl = $rw_cells->{$i};
+    my $wd = $cl->{wd};
+    $sum += $wd;
+  }
+
+  $tab->{rows}->{$i_row}->{wd_sum} = $sum;
+  $DB::single = 1;
+
+  return $self;
+}
 
 sub tab_cell_update {
   my ($self, $update, $i_row, $i_col) = @_;
@@ -144,8 +169,8 @@ sub tab_cell_update {
   return $self unless defined $i_row;
   return $self unless defined $i_col;
 
-  $tab->{$i_row}->{$i_col} ||= {};
-  my $cell = $tab->{$i_row}->{$i_col};
+  $tab->{cells}->{$i_row}->{$i_col} ||= {};
+  my $cell = $tab->{cells}->{$i_row}->{$i_col};
 
   while(my($k,$v)=each %$update){
      $cell->{$k} = $v;
@@ -161,7 +186,7 @@ sub tab_init {
   $self->{tab} = {};
 
   my $h = {
-      cols     => 2,
+      cols       => 2,
       align      => 'c',
       env        => 'tabular',
       i_col      => 1,
@@ -648,7 +673,6 @@ sub match_tab_end {
      ;
 
   push @{$self->{nlines}}, @{$tab->{store}};
-  $DB::single = 1;
 
   $self->{tab} = undef;
 
@@ -840,6 +864,7 @@ sub lpush_d {
 
      my @s;
      if ($self->_tab_at_end) {
+        $self->tab_rws_sum_wd;
 
         push @s, q{\\\\};
 
