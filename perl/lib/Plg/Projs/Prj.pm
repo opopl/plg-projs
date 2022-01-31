@@ -74,7 +74,6 @@ sub prj_load_yml {
     dict_update($self->{cnf}, $d);
 
     $self->cnf_trg_list;
-    $DB::single = 1;
 
     return $self;
 }

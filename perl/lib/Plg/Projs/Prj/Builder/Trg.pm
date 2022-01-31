@@ -94,7 +94,6 @@ sub trg_load_yml {
     my $yfile = $ref->{yfile} || $bld->_trg_yfile($target);
     return $bld unless -f $yfile;
 
-    $DB::single = 1;
     my $h_bld = LoadFile($yfile);
     return $bld unless $h_bld;
 
