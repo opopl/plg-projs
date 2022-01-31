@@ -14,7 +14,9 @@ use Base::Arg qw(
   hash_update
 );
 
-use Date::Manip;
+#use Date::Manip;
+use DateTime;
+use DateTime::Locale;
 
 use Plg::Projs::Map qw(
   %tex_syms
@@ -743,14 +745,19 @@ sub ldo_no_cmt {
   my $date      = $r_sec->{date} || '';
 
   my ($date_s, @date);
+  my $date_fmt = "%d %B %Y, %A";
 
   if ($date =~ /$pats->{date}/){
-    my $dt = Date::Manip::Date->new;
-    $dt->config('Language' => 'russian');
-    #$dt->config('Language' => 'ukrainian');
-    push @date, @+{qw(year month day)}, qw( 0 0 0 );
-    $dt->set('date',\@date);
-    $date_s = eval { $dt->printf("%d %B %Y, %A"); };
+#    my $dt = Date::Manip::Date->new;
+    #$dt->config('Language' => 'russian');
+    ##$dt->config('Language' => 'ukrainian');
+    #$dt->set('date',\@date);
+    #$date_s = eval { $dt->printf("%d %B %Y, %A"); };
+    #
+    #push @date, @+{qw(year month day)}, qw( 0 0 0 );
+    my %hms = map { $_ => 0 } qw( hour minute second );
+    my $dt = DateTime->new( %+, %hms, 'locale' => 'uk' );
+    $date_s = $dt->strftime($date_fmt);
   }
 
   my @push;
