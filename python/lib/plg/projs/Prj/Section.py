@@ -18,6 +18,9 @@ class Section(
      CoreClass
   ):
 
+  sec  = None
+  proj = None
+
   cols = [
     'author_id',
     'date',

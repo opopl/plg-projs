@@ -15,6 +15,7 @@ from bs4 import BeautifulSoup, Comment
 from copy import copy
 
 from plg.projs.Prj.Prj import Prj
+from plg.projs.Prj.Section import Section
 
 import jinja2
 
@@ -236,6 +237,11 @@ class LTS(
     data = projs_db.get_data(sec_file)
 
     return data
+
+  def db_import_fs(self,ref = {}):
+    proj = ref.get('proj',self.proj)
+    exts = ref.get('exts',[])
+    return self
 
   def _sec_file(self,ref = {}):
     sec  = ref.get('sec','')

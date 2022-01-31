@@ -149,6 +149,7 @@ sub tab_init {
       minipage   => 0,
       # table caption
       caption    => '',
+      store      => [],
   };
   hash_inject($self->{tab}, $h);
 
@@ -615,11 +616,13 @@ sub match_tab_end {
 
   my $tab = $self->{tab};
 
-  push @{$self->{nlines}}, 
+  push @{$tab->{store}},
      $self->_tab_end,
      $self->_tex_caption_tab,
      $self->_fig_end,
      ;
+
+  push @{$self->{nlines}}, @{$tab->{store}};
 
   $self->{tab} = undef;
 
@@ -731,6 +734,10 @@ sub lpush_tab_start {
      $self->_fig_start,
      $self->_tab_start;
 
+  push @{$tab->{store}},
+     $self->_fig_start,
+     $self->_tab_start;
+
   $tab->{started} = 1;
 
   return $self;
@@ -783,9 +790,14 @@ sub lpush_d {
   my $d = $self->{d};
   return $self unless $d;
 
-  push @{$self->{nlines}},$self->_d2tex;
-
   my $tab = $self->{tab};
+
+  if ($tab) {
+    push @{$tab->{store}},$self->_d2tex;
+  }else{
+    push @{$self->{nlines}},$self->_d2tex;
+  }
+
   if ($tab) {
      my $i_col = $tab->{i_col};
 
@@ -813,7 +825,8 @@ sub lpush_d {
         $tab->{i_col}++;
      }
   
-     push @{$self->{nlines}}, @s;
+     #push @{$self->{nlines}}, @s;
+     push @{$tab->{store}},@s;
   }
 
   $self->{d} = undef;
@@ -1173,6 +1186,7 @@ sub loop {
 
   my @jlines = @{$self->{jlines} || []};
 
+  $self->{lnum} = 0;
   foreach(@jlines) {
     $self->{lnum}++; chomp;
 
@@ -1259,12 +1273,16 @@ sub loop {
        next;
     }
 
-
-
 ###m_tex
     m/^\s*tex\s+(.*)$/g && do {
         my $tex = trim($1);
-        push @{$self->{nlines}},$tex; 
+        my $tab = $self->{tab};
+
+        if ($tab) {
+          push @{$tab->{store}}, $tex;
+        }else{
+          push @{$self->{nlines}}, $tex;
+        }
         next;
     };
 
