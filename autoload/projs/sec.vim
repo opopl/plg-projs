@@ -328,7 +328,7 @@ function! projs#sec#file_base_a (...)
 
     elseif sec =~ '^_bld\.'
         let target = substitute(copy(sec),'^_bld\.\(.*\)$','\1','g')
-        let sfile_a = [ printf('%s.bld.%s.tml',proj,target) ]
+        let sfile_a = [ printf('%s.bld.%s.yml',proj,target) ]
 
     elseif sec =~ '^_perl\.'
         let sec = substitute(sec,'^_perl\.\(.*\)$','\1','g')
@@ -1065,7 +1065,7 @@ function! projs#sec#new(sec,...)
     elseif sec =~ '_bld\.'
       let target = substitute(copy(sec),'^_bld\.\(.*\)$','\1','g')
 
-      let xml_file = base#qw#catpath('plg',printf('projs templates tml proj.bld.%s.tml',target))
+      let xml_file = base#qw#catpath('plg',printf('projs templates yml proj.bld.%s.yml',target))
       if filereadable(xml_file)
         call extend(lines,readfile(xml_file))
 

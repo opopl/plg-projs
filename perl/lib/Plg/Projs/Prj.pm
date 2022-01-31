@@ -74,6 +74,7 @@ sub prj_load_yml {
     dict_update($self->{cnf}, $d);
 
     $self->cnf_trg_list;
+    $DB::single = 1;
 
     return $self;
 }
@@ -88,7 +89,7 @@ sub cnf_trg_list {
     my $exclude = $self->_val_list_ref_('cnf targets exclude');
 
     my @t;
-    my $pat = qr/^$proj\.bld\.(.*)\.tml$/;
+    my $pat = qr/^$proj\.bld\.(.*)\.yml$/;
     find({ 
         wanted => sub { 
             return unless /$pat/;

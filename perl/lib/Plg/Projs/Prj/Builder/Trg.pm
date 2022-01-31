@@ -14,6 +14,7 @@ use Deep::Hash::Utils qw(deepvalue);
 use Base::Arg qw(
     hash_inject
     dict_update
+    dict_rm_ctl
 );
 
 use Base::String qw(
@@ -76,9 +77,10 @@ sub trg_apply {
 
     $target //= $bld->{target};
 
+    my $opts = {};
     my $ht = $bld->_val_('targets', $target);
-    $DB::single = 1;
-    dict_update($bld, $ht);
+    $opts->{ctl} = 1;
+    dict_update($bld, $ht, $opts);
 
     return $bld;
 }
