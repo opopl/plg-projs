@@ -241,6 +241,9 @@ class LTS(
   def db_import_fs(self,ref = {}):
     proj = ref.get('proj',self.proj)
     exts = ref.get('exts',[])
+
+    root = ref.get('root',self.lts_root)
+    rp = Path(root)
     return self
 
   def _sec_file(self,ref = {}):
