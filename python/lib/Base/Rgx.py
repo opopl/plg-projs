@@ -31,6 +31,15 @@ pats = {
       }
     }
   },
+  # db_import_fs
+  'files' : {
+    'projs' : {
+      'sfile'        : r'^(?P<proj>\w+)\.(?P<sec>\w+)\.(?P<ext>\w+)$',
+      'sfile_main'   : r'^(?P<proj>\w+)\.tex$',
+      'yfile_target' : r'^(?P<proj>\w+)\.bld\.(?P<target>\w+)\.yml$',
+      'yfile_proj'   : r'^(?P<proj>\w+)\.yml$',
+    }
+  },
   'idat' : {
      'dict' : r'^(\S+)\s+(.*)$'
   },

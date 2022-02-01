@@ -241,9 +241,154 @@ class LTS(
   def db_import_fs(self,ref = {}):
     proj = ref.get('proj',self.proj)
     exts = ref.get('exts',[])
+    
+    exts.append('yml')
 
     root = ref.get('root',self.lts_root)
     rp = Path(root)
+
+    pat_order = [
+      'files.projs.yfile_proj',
+      'files.projs.yfile_target',
+      'files.projs.sfile',
+    ]
+
+    for ext in exts:
+      for f in rp.glob(f'*.{ext}'):
+        full_path = f.as_posix()
+        fname = f.name
+
+        # section, to be determined from fname
+        sec = ''
+
+        for pat in pat_order:
+          m = rgx.match(pat,fname)
+          if not m:
+            continue
+
+          m_proj = m.group('proj')
+          if not m_proj == proj:
+            continue
+
+          if pat == 'files.projs.yfile_proj':
+            sec = '_yml_' 
+
+          elif pat == 'files.projs.yfile_target':
+            m_target = m.group('target')
+            sec = f'_bld.{target}'
+
+          elif pat == 'files.projs.sfile_main':
+            sec = '_main_'
+
+          elif pat == 'files.projs.sfile':
+            m_sec = m.group('sec')
+            m_ext = m.group('ext')
+
+            if m_ext == 'tex':
+              sec = m_sec
+
+        import pdb; pdb.set_trace()
+
+# for file in f:
+    #i+=1
+    #fpath = os.path.join(root,file)
+    #m = pt.match(file)
+    #if m:
+      #proj_m = m.group(1)
+      #ext    = m.group(3)
+      #x+=1
+      #if ( not proj ) or ( proj_m == proj ):
+        #sec    = m.group(2)
+
+        #if ext == 'tex':
+          #if not sec: 
+            #sec = '_main_' 
+
+        #if ext == 'xml':
+          #if not sec: 
+            #sec = '_xml_' 
+
+        #if ext == 'pl':
+          #if not sec: 
+            #continue
+          #else:
+            #sec = '_perl.%s' % sec 
+
+        #if ext == 'dat':
+            #m = pt_dat_i.match(sec)
+            #if m:
+                #sec_m = re.sub(pt_dat_i,r'\1',sec)
+                #if sec_m == 'ii_include':
+                    #sec = '_ii_include_'
+                #if sec_m == 'ii_exclude':
+                    #sec = '_ii_exclude_'
+
+        #if ext == 'vim':
+          #if not sec: 
+            #sec = '_vim_' 
+
+        #if ext == 'bib':
+            #m_bib = pt_bib.match(file)
+            #if m_bib:
+                #sec = '_bib_' 
+
+        #if not sec:
+            #continue
+
+        #data   = get_data(fpath)
+
+        #tags      = data.get('tags','')
+        #author_id = data.get('author_id','')
+        #url       = data.get('url','')
+
+        #ins = { 
+          #'file'      : file,
+          #'author_id' : author_id,
+          #'proj'      : proj_m,
+          #'rootid'    : root_id,
+          #'sec'       : sec,
+          #'tags'      : tags,
+          #'url'       : url,
+          #'title'     : data.get('title',''),
+          #'parent'    : data.get('parent',''),
+        #}
+
+        #dbw.insert_dict({
+            #'conn'     : conn,
+            #'table'    : 'projs',
+            #'insert'   : ins,
+        #})
+
+  #c.execute('''SELECT DISTINCT proj FROM projs''')
+  #rows = c.fetchall()
+  #for row in rows:
+    #proj = row[0]
+    #dir_pm = os.path.join(root,'perl','lib','projs',root_id,proj)
+    #if os.path.isdir(dir_pm):
+      #for (dirpath, dirnames, filenames) in os.walk(dir_pm):
+        #for f in filenames:
+            #file_pm = os.path.join(dir_pm,f)
+            #pm_rel = os.path.relpath( file_pm, root )
+            #(pm_head,pm_tail) = os.path.split(file_pm)
+            #(pm_root,pm_ext) = os.path.splitext(pm_tail)
+            #sec = '_pm.%s' % pm_root 
+
+            #dbw.insert_dict({
+                #'conn'     : conn,
+                #'table'    : 'projs',
+                #'insert' : { 
+                  #'file'    : pm_rel,
+                  #'proj'    : proj,
+                  #'rootid'  : root_id,
+                  #'sec'     : sec,
+                 #}
+            #})
+        #break
+
+  #conn.commit()
+  #conn.close()
+
+
     return self
 
   def _sec_file(self,ref = {}):
