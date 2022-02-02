@@ -257,6 +257,9 @@ class LTS(
         if not sec:
           continue
 
+        if sec == '24_01_2022.fb.fb_group.svit_kriz_objektyv.1.kostogryz_fotosessia_ptahy':
+          import pdb; pdb.set_trace()
+
         data = projs_db.get_data(full_path)
         if not ( data.get('url') and data.get('author_id')):
           continue
@@ -289,16 +292,12 @@ class LTS(
     if not file:
       return self
 
-    pat_order = [
-      'files.projs.yfile_proj',
-      'files.projs.yfile_target',
-      'files.projs.sfile',
-    ]
-
     # section, to be determined from fname
     sec = ''
 
-    for pat in pat_order:
+    pats = util.get(rgx.pats,'files.projs',{})
+
+    for pat in pats.keys():
       m = rgx.match(pat,file)
       if not m:
         continue
@@ -307,31 +306,20 @@ class LTS(
       if not m_proj == proj:
         continue
 
-      if pat == 'files.projs.yfile_proj':
-        sec = '_yml_'
-
-      elif pat == 'files.projs.yfile_target':
+      if pat == 'files.projs.yfile_target':
         m_target = m.group('target')
         sec = f'_bld.{m_target}'
 
-      elif pat == 'files.projs.sfile_main':
-        sec = '_main_'
-
-      elif pat == 'files.projs.sfile_bib':
-        sec = '_bib_'
-
-      elif pat == 'files.projs.sfile_proj':
+      if pat == 'files.projs.sfile_proj':
         m_ext = m.group('ext')
-
-        if m_ext == 'vim':
+        if m_ext == 'tex':
+          sec = '_main_'
+        elif m_ext == 'vim':
           sec = '_vim_'
-
-      elif pat == 'files.projs.sfile_dat':
-        m_sec = m.group('sec')
-        if sec_m == 'ii_include':
-            sec = '_ii_include_'
-        if sec_m == 'ii_exclude':
-            sec = '_ii_exclude_'
+        elif m_ext == 'pl':
+          sec = '_pl_'
+        elif m_ext == 'yml':
+          sec = '_yml_'
 
       elif pat == 'files.projs.sfile':
         m_sec = m.group('sec')
@@ -340,9 +328,25 @@ class LTS(
         if m_ext == 'tex':
           sec = m_sec
 
-        elif m_ext == 'pl':
-          sec = f'_perl.{sec}'
+        elif m_ext == 'yml':
+          mm = re.search(r'^bld\.(?P<target>.*)$')
+          if mm:
+            m_target = mm.group('target')
+            sec = f'_bld.{m_target}'
 
+        elif m_ext == 'pl':
+          sec = f'_perl.{m_sec}'
+
+        elif m_ext == 'bib':
+          if sec_m == 'refs':
+            sec = '_bib_'
+
+        elif m_ext == 'dat':
+          if sec_m == 'ii_include.i':
+            sec = '_ii_include_'
+          elif sec_m == 'ii_exclude.i':
+            sec = '_ii_exclude_'
+            
     return sec
 
   def _sec_file(self,ref = {}):
