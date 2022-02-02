@@ -34,11 +34,24 @@ pats = {
   # db_import_fs
   'files' : {
     'projs' : {
+      # PROJ.SEC.EXT
       'sfile'        : r'^(?P<proj>\w+)\.(?P<sec>\w+)\.(?P<ext>\w+)$',
+
+      'sfile_dat'    : r'^(?P<proj>\w+)\.i\.dat$',
+
+      # _main_
       'sfile_main'   : r'^(?P<proj>\w+)\.tex$',
+
+      # _vim_, _perl_ ...
       'sfile_proj'   : r'^(?P<proj>\w+)\.(?P<ext>\w+)$',
+
+      # _bib_
       'sfile_bib'    : r'^(?P<proj>\w+)\.refs\.bib$',
+
+      # _bld.TARGET
       'yfile_target' : r'^(?P<proj>\w+)\.bld\.(?P<target>\w+)\.yml$',
+
+      # _yml_
       'yfile_proj'   : r'^(?P<proj>\w+)\.yml$',
     }
   },
