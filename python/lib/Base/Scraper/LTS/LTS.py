@@ -248,6 +248,16 @@ class LTS(
     root = ref.get('root',self.lts_root)
     rp = Path(root)
 
+    dbw.delete({
+      'db_file' : self.db_file_projs,
+      'table' : 'projs',
+      'where' : {
+        '@regexp' : {
+          'file' : '\.tml$'
+        }
+      }
+    })
+
     for ext in exts:
       for f in rp.glob(f'*.{ext}'):
         full_path = f.as_posix()

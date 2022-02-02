@@ -221,7 +221,7 @@ def cond_where(ref={}):
 
       if k in ['@regexp']:
         regexp = v
-        for key,pat in regexp.items():
+        for key, pat in regexp.items():
           if pat:
             cond_a.append(f' RGX("{pat}",{key}) IS NOT NULL ')
       
@@ -597,6 +597,8 @@ def delete(ref={}):
       db_close = 1
     else:
       return
+
+  conn_cfg(conn)
   c = conn.cursor()
 
   r      = cond_where({ 'where' : where })
