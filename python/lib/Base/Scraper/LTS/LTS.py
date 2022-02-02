@@ -280,12 +280,24 @@ class LTS(
           elif pat == 'files.projs.sfile_main':
             sec = '_main_'
 
+          elif pat == 'files.projs.sfile_bib':
+            sec = '_bib_'
+
+          elif pat == 'files.projs.sfile_proj':
+            m_ext = m.group('ext')
+
+            if m_ext == 'vim':
+              sec = '_vim_'
+
           elif pat == 'files.projs.sfile':
             m_sec = m.group('sec')
             m_ext = m.group('ext')
 
             if m_ext == 'tex':
               sec = m_sec
+
+            elif m_ext == 'pl':
+              sec = f'_perl.{sec}'
 
         import pdb; pdb.set_trace()
 
@@ -300,20 +312,6 @@ class LTS(
       #if ( not proj ) or ( proj_m == proj ):
         #sec    = m.group(2)
 
-        #if ext == 'tex':
-          #if not sec: 
-            #sec = '_main_' 
-
-        #if ext == 'xml':
-          #if not sec: 
-            #sec = '_xml_' 
-
-        #if ext == 'pl':
-          #if not sec: 
-            #continue
-          #else:
-            #sec = '_perl.%s' % sec 
-
         #if ext == 'dat':
             #m = pt_dat_i.match(sec)
             #if m:
@@ -322,18 +320,6 @@ class LTS(
                     #sec = '_ii_include_'
                 #if sec_m == 'ii_exclude':
                     #sec = '_ii_exclude_'
-
-        #if ext == 'vim':
-          #if not sec: 
-            #sec = '_vim_' 
-
-        #if ext == 'bib':
-            #m_bib = pt_bib.match(file)
-            #if m_bib:
-                #sec = '_bib_' 
-
-        #if not sec:
-            #continue
 
         #data   = get_data(fpath)
 

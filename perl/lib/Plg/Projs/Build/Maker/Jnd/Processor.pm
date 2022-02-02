@@ -1143,8 +1143,11 @@ sub _d2tex {
   my $parpic = ( ref $wrap eq 'ARRAY' && grep { /parpic/ } @$wrap )
         || ( $wrap =~ /parpic/ );
 
-  my $minipage = $self->_val_('tab cell minipage') || $d->{minipage} || '';
-  my $parbox   = $self->_val_('tab parbox') || $d->{parbox} || '';
+  my ($width_parbox, $parbox);
+  my ($width_minipage, $minipage);
+
+  $minipage = $self->_val_('tab cell minipage') || $d->{minipage} || '';
+  $parbox   = $self->_val_('tab parbox') || $d->{parbox} || '';
 
   $parbox   = $wd if $parbox eq 'auto';
   $minipage = $wd if $minipage eq 'auto';
@@ -1157,18 +1160,23 @@ sub _d2tex {
        $x = $self->_expand_igg($x,{ resized => $resized });
     }
     unless ($minipage || $parbox) {
-        #$minipage = $wd;
-        $parbox = $wd;
+        $minipage ||= 1;
+        $width_minipage ||= '\cellWidth';
     }
     push @$comments,'\bigskip' if $minipage || $parbox;
   }
 
-  my $width_parbox = $parbox || '\cellWidth';
-  my $width_minipage = $minipage || '\cellWidth';
+  $width_parbox ||= $parbox || '\cellWidth';
+  $width_minipage ||= $minipage || '\cellWidth';
 
   push @tex, $self->_wrapped($wrap,'start');
 
-  $parbox = 1 if $caption && !$minipage;
+  if ($caption) {
+    unless ($minipage) {
+      $width_parbox ||= $parbox || '\cellWidth';
+      $parbox = 1 unless $minipage;
+    }
+  }
 
   my $captionsetup = $d->{captionsetup} || ( $tab ? $tab->{captionsetup} : '' ) || $globals->{captionsetup};
 

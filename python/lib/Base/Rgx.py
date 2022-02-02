@@ -36,6 +36,8 @@ pats = {
     'projs' : {
       'sfile'        : r'^(?P<proj>\w+)\.(?P<sec>\w+)\.(?P<ext>\w+)$',
       'sfile_main'   : r'^(?P<proj>\w+)\.tex$',
+      'sfile_proj'   : r'^(?P<proj>\w+)\.(?P<ext>\w+)$',
+      'sfile_bib'    : r'^(?P<proj>\w+)\.refs\.bib$',
       'yfile_target' : r'^(?P<proj>\w+)\.bld\.(?P<target>\w+)\.yml$',
       'yfile_proj'   : r'^(?P<proj>\w+)\.yml$',
     }
