@@ -242,8 +242,8 @@ class LTS(
     proj = ref.get('proj',self.proj)
     exts = ref.get('exts',[])
     
-    #exts.append('yml')
-    exts.append('tex')
+    exts.append('yml')
+    #exts.append('tex')
 
     root = ref.get('root',self.lts_root)
     rp = Path(root)
@@ -257,13 +257,7 @@ class LTS(
         if not sec:
           continue
 
-        if sec == '24_01_2022.fb.fb_group.svit_kriz_objektyv.1.kostogryz_fotosessia_ptahy':
-          import pdb; pdb.set_trace()
-
         data = projs_db.get_data(full_path)
-        if not ( data.get('url') and data.get('author_id')):
-          continue
-        import pdb; pdb.set_trace()
 
         d = {
           'db_file' : self.db_file_projs,
@@ -279,6 +273,7 @@ class LTS(
           },
           'on_list' : [ 'file' ]
         }
+        import pdb; pdb.set_trace()
 
         dbw.insert_update_dict(d)
 
@@ -295,23 +290,22 @@ class LTS(
     # section, to be determined from fname
     sec = ''
 
-    pats = util.get(rgx.pats,'files.projs',{})
+    pat_path = 'files.projs'
+    pats = util.get(rgx.pats,pat_path,{})
 
-    for pat in pats.keys():
+    for pat_key in pats.keys():
+      pat = f'{pat_path}.{pat_key}'
       m = rgx.match(pat,file)
       if not m:
         continue
 
       m_proj = m.group('proj')
+      m_ext = m.group('ext')
+
       if not m_proj == proj:
         continue
 
-      if pat == 'files.projs.yfile_target':
-        m_target = m.group('target')
-        sec = f'_bld.{m_target}'
-
       if pat == 'files.projs.sfile_proj':
-        m_ext = m.group('ext')
         if m_ext == 'tex':
           sec = '_main_'
         elif m_ext == 'vim':
@@ -323,13 +317,12 @@ class LTS(
 
       elif pat == 'files.projs.sfile':
         m_sec = m.group('sec')
-        m_ext = m.group('ext')
 
         if m_ext == 'tex':
           sec = m_sec
 
         elif m_ext == 'yml':
-          mm = re.search(r'^bld\.(?P<target>.*)$')
+          mm = re.search(r'^bld\.(?P<target>.*)$',m_sec)
           if mm:
             m_target = mm.group('target')
             sec = f'_bld.{m_target}'
