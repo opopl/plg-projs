@@ -68,6 +68,18 @@ sub _txt_expand {
             next;
         };
 
+   #     /^\@perl$/ && do {
+            #my $pl = d_path($data,'perl');
+            #my @w;
+            #local $SIG{__WARN__} = sub { push @w,@_; };
+            #my $res = eval $pl;
+            #if ($@){
+                #warn $@ . "\n";
+            #}
+            #push @lines, $res;
+            #next;
+        #};
+
         /\@fi/ && do {
             $add = 1;
             $if--;

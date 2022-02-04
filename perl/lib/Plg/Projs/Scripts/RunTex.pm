@@ -103,7 +103,7 @@ sub init {
     my $self = shift;
 
     my $h = {
-        tex_exe => 'pdflatex',
+        tex_exe => 'xelatex',
     };
     hash_inject($self, $h);
 
