@@ -14,7 +14,7 @@ use Data::Dumper qw(Dumper);
 
 use File::Find qw(find);
 
-use YAML qw( LoadFile Load Dump DumpFile );
+use YAML::XS qw( LoadFile Load Dump DumpFile );
 
 use Base::XML::Dict qw(xml2dict);
 use XML::LibXML::Cache;

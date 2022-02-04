@@ -24,6 +24,20 @@ use Base::Data qw(
     d_path
 );
 
+use Base::DB qw(
+    dbh_insert_hash
+    dbh_select
+    dbh_select_first
+    dbh_select_as_list
+    dbh_select_fetchone
+    dbh_do
+    dbh_list_tables
+    dbh_selectall_arrayref
+    dbh_sth_exec
+    dbh_update_hash
+    dbi_connect
+);
+
 =head3 _sct_lines
 
 =head4 Usage
@@ -40,13 +54,14 @@ use Base::Data qw(
 sub _sct_lines {
     my ($bld, $sec) = @_;
 
+    my $mkr = $bld->{maker};
+
     my $data      = $bld->_sct_data($sec);
     my $pack_opts = d_path($data,'pkg pack_opts',{});
 
     #print $bld->_bld_var('pagestyle') . "\n";
 
     my @lines;
-    #$DB::single = 1 if $sec eq 'index';
 
     my @contents = d_str_split_sn($data,'contents');
     foreach (@contents) {
@@ -83,10 +98,35 @@ sub _sct_lines {
             my $p = $1 // '';
             $p =~ s/\./ /g;
 
-            my @ii = d_str_split_sn($data,'ii ' . $p);
+            my $path = 'ii ' . $p;
+
+            my $ii_list = d_path($data,$path,[]);
+            my @ii;
+            #my @ii = d_str_split_sn($data,$path);
+            foreach my $ii_sec (@$ii_list) {
+                unless(ref $ii_sec){
+                   push @ii, $ii_sec;
+                }
+                elsif (ref $ii_sec eq 'HASH') {
+                   my $sql = $ii_sec->{sql};
+                   if ($sql) {
+                      unless (ref $sql) {
+                      }elsif(ref $sql eq 'HASH'){
+                         my $query = $sql->{query} || '';
+                         my $params = $sql->{params} || [];
+                         my $ref = {
+                             dbfile  => $mkr->{dbfile},
+                             q       => $query,
+                             p       => $params,
+                         };
+                         my $list = dbh_select_as_list($ref);
+                         push @ii, @$list;
+                      }
+                   }
+                }
+            }
             foreach my $ii_sec (@ii) {
-                local $_ = sprintf('\ii{%s}',$ii_sec);
-                push @lines,$_;
+              push @lines, sprintf('\ii{%s}',$ii_sec);
             }
             next;
         };

@@ -40,18 +40,6 @@ sub _txt_expand {
     while(@$txt_lines){
         local $_ = shift @$txt_lines;
 
-        #my @a = split("",$_);
-        #my $s='';
-        #my $r = qr/\@var\{(\w+)\}/;
-        #while(@a){
-            #$s .= shift @a;
-            #my ($var) = ($s =~ /$r/);
-            #next unless defined $var;
-            #my $val = $bld->_bld_var($var);
-            #$s =~ s/$r/$val/g; 
-        #}
-        #$_ = $s;
-		#
         s/\@\@proj\b/$bld->{proj}/ge;
 
 ###m_@var
