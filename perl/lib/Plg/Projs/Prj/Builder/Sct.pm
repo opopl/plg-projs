@@ -109,7 +109,8 @@ sub _sct_lines {
                 }
                 elsif (ref $ii_sec eq 'HASH') {
                    my $sql = $ii_sec->{sql};
-                   if ($sql) {
+                   my $select = $ii_sec->{select};
+                   $sql && do {
                       unless (ref $sql) {
                       }elsif(ref $sql eq 'HASH'){
                          my $query = $sql->{query} || '';
@@ -122,7 +123,12 @@ sub _sct_lines {
                          my $list = dbh_select_as_list($ref);
                          push @ii, @$list;
                       }
-                   }
+                   };
+                   $select && do {
+                      unless (ref $select) {
+                      }elsif(ref $select eq 'HASH'){
+                      }
+                   };
                 }
             }
             foreach my $ii_sec (@ii) {
