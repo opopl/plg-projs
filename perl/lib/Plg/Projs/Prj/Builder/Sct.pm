@@ -169,6 +169,7 @@ sub _sct_lines {
             next;
         };
 
+        $bld->_txt_expand({ txt_ref => \$_ });
         push @lines,$_;
 
     }

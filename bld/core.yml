@@ -9,6 +9,7 @@ tex_exe: pdflatex
 
 vars:
   pagestyle: fancy
+  toc_depth: 1
   ii_base:
   - body 
   - preamble 
@@ -155,14 +156,17 @@ sii:
 ###sct_tabcont
     tabcont:
        contents:
-       - '\cleardoublepage'
-       - '\phantomsection'
-       - '\addcontentsline{toc}{chapter}{\contentsname}'
-       - '\hypertarget{tabcont}{}'
-       - '\tableofcontents'
-       - '%\setcounter{tocdepth}{1}'
-       - '\addtocontents{toc}{\setcounter{tocdepth}{1}}'
-       - '\newpage'
+       - '@txt.core'
+       txt:
+         core:
+         - '\cleardoublepage'
+         - '\phantomsection'
+         - '\addcontentsline{toc}{chapter}{\contentsname}'
+         - '\hypertarget{tabcont}{}'
+         - '\tableofcontents'
+         - '%\setcounter{tocdepth}{1}'
+         - '\addtocontents{toc}{\setcounter{tocdepth}{@var{toc_depth}}}'
+         - '\newpage'
 
 ###sct_preamble.index
     'preamble.index':
