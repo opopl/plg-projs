@@ -96,6 +96,7 @@ sii:
     titletoc: 1
 
   generate:
+###generate
     'on':
     - index
     - listfigs
@@ -247,3 +248,39 @@ sii:
            - 'bookmarksnumbered=true'
            imakeidx: xindy
            tocloft: titles
+
+###sct__main_
+    '_main_':
+      #contents: '@doc @ii @setcounter @perl'
+      contents:
+      - '@txt.if @txt.proj'
+      - '@ii.prm'
+      - '\begin{document}'
+      - '@ii.inner'
+      - '\end{document}'
+      ii:
+        prm:
+          - preamble
+          - defs
+        inner:
+          #- titlepage
+          - listfigs
+          - listtabs
+          - tabcont
+          - body
+          - index
+          #- bib
+      txt:
+        if:
+        - '\newif\ifDEBUG'
+        - '\DEBUGfalse'
+        - ''
+        - '\newif\ifINDEX'
+        - '\INDEXtrue'
+        - ''
+        - '\newif\ifcmt'
+        - '\cmtfalse'
+        proj:
+        - '\def\PROJ{@@proj}'
+        - '\def\ii#1{\InputIfFileExists{\PROJ.#1.tex}{}{}}'
+        - ''

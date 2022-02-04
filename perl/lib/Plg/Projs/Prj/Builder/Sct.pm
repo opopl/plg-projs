@@ -79,8 +79,11 @@ sub _sct_lines {
             next;
         };
 ###@ii
-        /^\@ii$/ && do {
-            my @ii = d_str_split_sn($data,'ii');
+        /^\@ii(?:|\.(.*))$/ && do {
+            my $p = $1 // '';
+            $p =~ s/\./ /g;
+
+            my @ii = d_str_split_sn($data,'ii ' . $p);
             foreach my $ii_sec (@ii) {
                 local $_ = sprintf('\ii{%s}',$ii_sec);
                 push @lines,$_;

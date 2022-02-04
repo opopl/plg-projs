@@ -51,6 +51,8 @@ sub _txt_expand {
             #$s =~ s/$r/$val/g; 
         #}
         #$_ = $s;
+		#
+        s/\@\@proj\b/$bld->{proj}/ge;
 
 ###m_@var
         s/\@var\{(\w+)\}/$bld->_bld_var($1)/ge; 

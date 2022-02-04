@@ -662,7 +662,6 @@ sub copy_bib_to_src {
     push @bib, 
         $mkr->_file_sec('_bib_');
 
-
     foreach(@bib) {
         my $bib_src     = $_;
         my $bib_dest    = catfile($mkr->{src_dir},basename($_));
