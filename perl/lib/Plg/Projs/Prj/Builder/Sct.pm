@@ -108,12 +108,11 @@ sub _sct_lines {
                    push @ii, $ii_sec;
                 }
                 elsif (ref $ii_sec eq 'HASH') {
-                   my $sql = $ii_sec->{sql};
-                   my $select = $ii_sec->{select};
+                   my ($sql, $select)    = @{$ii_sec}{qw(sql select)};
                    $sql && do {
                       unless (ref $sql) {
                       }elsif(ref $sql eq 'HASH'){
-                         my $query = $sql->{query} || '';
+                         my $query  = $sql->{query} || '';
                          my $params = $sql->{params} || [];
                          my $ref = {
                              dbfile  => $mkr->{dbfile},
