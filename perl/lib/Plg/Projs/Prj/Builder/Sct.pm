@@ -129,6 +129,8 @@ sub _sct_lines {
 ###@ii_select
                    };
                    $select && do {
+                      my $list=[];
+
                       unless (ref $select) {
                       }elsif(ref $select eq 'HASH'){
 
@@ -136,6 +138,7 @@ sub _sct_lines {
                         my (@cond, @params);
 
                         my $ops = $select->{'@op'} || 'and';
+                        my $limit = $select->{limit} || '';
   
                         my @keys = qw(tags author_id);
                         my %key2col = (
@@ -195,11 +198,13 @@ sub _sct_lines {
                             ij      => \@ij,
                             p       => \@params,
                             cond    => $cond,
+                            limit   => $limit,
                         };
-                        my $list = dbh_select_as_list($ref);
-                        $DB::single = 1;
+                        push @$list, dbh_select_as_list($ref);
                         push @ii, @$list;
                       }
+                      $DB::single = 1 if $select->{dbg};
+                      1;
                    };
                 }
             }

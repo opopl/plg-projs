@@ -56,6 +56,7 @@ use Base::Arg qw(
     hash_inject
 
     dict_update
+    dict_new
 );
 
 use Plg::Projs::Build::Maker;
@@ -112,6 +113,8 @@ sub init {
         ->trg_apply                             # apply $target data into $bld instance
         ->read_in_file                  # process -i --in_file switch
         ->load_yaml
+        ->load_decs
+        ->load_patch
         ->process_ii_updown               
         ->process_config
         ->act_exe
@@ -120,10 +123,43 @@ sub init {
 
     #my $data = LoadFile($file);
     my $s = Dump($bld->{opts_maker});
-	$DB::single = 1;
+    $DB::single = 1;
 
     return $bld;
 
+}
+
+sub load_decs {
+    my ($bld) = @_;
+
+    my $decs = $bld->{decs} || [];
+	if (ref $decs eq 'HASH') {
+		$decs = $bld->{decs} = [ map { $decs->{$_} ? $_ : () } keys %$decs ];
+	}
+
+    foreach(@$decs) {
+        /^om_iall$/ && do { 
+            dict_update($bld, dict_new('patch.opts_maker.ii_include_all',1));
+            next;
+        };
+    }
+
+    return $bld;
+}
+
+sub load_patch {
+    my ($bld) = @_;
+
+    my $patch = $bld->{patch} || {};
+    while(my($k,$v)=each %$patch){
+        my $d = dict_new($k, $v);
+        dict_update($bld, $d);
+
+        #my @path = split '\.' => $k;
+        #my $dd = $bld->_val_(@path);
+    }
+
+    return $bld;
 }
 
 sub load_yaml {
