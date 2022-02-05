@@ -176,13 +176,19 @@ sii:
 ###sct_index
     'index':
        contents:
-       - '\IfFileExists{./print_index.tex}{%'
-       - ' @txt.hdr'
-       - ' @txt.ptc.start'
-       - ' @printindex'
-       - ' @txt.ptc.stop'
-       - '}{}'
+       #- '\IfFileExists{./print_index.tex}{%'
+       - '@txt.open'
+       - '  @txt.hdr'
+       - '  @txt.ptc.start'
+       - '  @printindex'
+       - '  @txt.ptc.stop'
+       - '@txt.close'
+       #- '}{}'
        txt:
+         open:
+         - '\IfFileExists{./print_index.tex}{%'
+         close:
+         - '}{}'
          hdr:
          - '\clearpage'
          - '\phantomsection'
