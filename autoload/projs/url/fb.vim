@@ -83,7 +83,10 @@ function! projs#url#fb#data (...)
       echo 'Facebook group id: ' . fb_group_id
 
       let author_id = printf('fb_group.%s',fb_group_id)
-      let author    = projs#author#get({ 'author_id' : author_id })
+
+      let author_db = projs#author#get_db({ 'author_id' : author_id })
+      let author    = base#x#get(author_db,'name','')
+
       if !len(author)
         let author = projs#author#add_prompt({ 'author_id' : author_id })
       endif
@@ -95,13 +98,13 @@ function! projs#url#fb#data (...)
     let author_id = get(fb_authors,fb_auth,'')
 
     if !len(author_id) && prompt
-      call base#varset('this',projs#author#ids())
+      call base#varset('this',projs#author#ids_db())
       let author_id = input(printf('[ facebook auth: %s ] Enter new author_id: ',fb_auth), '', 'custom,base#complete#this')
   
-      let author = projs#author#get({ 'author_id' : author_id })
-      if !len(author)
-        let author = projs#author#add_prompt({ 'author_id' : author_id })
-      endif
+      "let author_db = projs#author#get_db({ 'author_id' : author_id })
+      "if !len(author)
+        "let author = projs#author#add_prompt({ 'author_id' : author_id })
+      "endif
   
       call projs#facebook#add_author_id({ 
         \ 'author_id' : author_id ,
