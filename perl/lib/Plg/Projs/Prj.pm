@@ -97,7 +97,7 @@ sub cnf_trg_list {
     },$root
     );
     my $inc_all = 0;
-    $inc_all = grep { /^_all_$/ } @$include ? 1 : 0;
+    $inc_all = ( grep { /^_all_$/ } @$include ) ? 1 : 0;
     $inc_all = 0 if @$exclude;
 
     my %include = map { $_ => 1 } @$include;
