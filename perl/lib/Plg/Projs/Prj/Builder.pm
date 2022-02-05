@@ -133,9 +133,9 @@ sub load_decs {
     my ($bld) = @_;
 
     my $decs = $bld->{decs} || [];
-	if (ref $decs eq 'HASH') {
-		$decs = $bld->{decs} = [ map { $decs->{$_} ? $_ : () } keys %$decs ];
-	}
+    if (ref $decs eq 'HASH') {
+        $decs = $bld->{decs} = [ map { $decs->{$_} ? $_ : () } keys %$decs ];
+    }
 
     foreach(@$decs) {
         /^om_iall$/ && do { 

@@ -1,11 +1,10 @@
 
+#<langs main="russian">
+#english
+#russian
+#</langs>
 
-    #<langs main="russian">
-      #english
-      #russian
-    #</langs>
-
-tex_exe: pdflatex
+tex_exe: xelatex
 
 vars:
   pagestyle: fancy

@@ -139,6 +139,7 @@ sub _sct_lines {
 
                         my $ops = $select->{'@op'} || 'and';
                         my $limit = $select->{limit} || '';
+                        my $match = $select->{match} || {};
   
                         my @keys = qw(tags author_id);
                         my %key2col = (
@@ -201,8 +202,9 @@ sub _sct_lines {
                             limit   => $limit,
                         };
                         push @$list, dbh_select_as_list($ref);
-                        push @ii, @$list;
                       }
+
+                      push @ii, @$list;
                       $DB::single = 1 if $select->{dbg};
                       1;
                    };

@@ -134,29 +134,84 @@ sub fill_files {
     return $self;
 }
 
-sub _sec_select {
-    my ($self, $ref) = @_;
-    $ref ||= {};
+sub _secs_select {
+    my ($self, $select) = @_;
+    $select ||= {};
+
+    my $list = [];
 
     my $proj = $self->{ref} || $self->{proj};
 
-    my $tags = $ref->{tags} || '';
-    my $author_id = $ref->{author_id} || '';
+    my (%wh, %conds, %tbls);
+    my (@cond, @params);
 
-    my ($query, %where, @params);
+    my $ops = $select->{'@op'} || 'and';
+    my $limit = $select->{limit} || '';
+    my $match = $select->{match} || {};
+  
+    my @keys = qw(tags author_id);
+    my %key2col = (
+      'tags' => 'tag'
+    );
+    my @ij;
+    foreach my $key (@keys) {
+        # alias index for joined tables, e.g. t0, t1, ...
+        my $ia = 0;
+  
+        my @cond_k;
+  
+        my $wk = $wh{$key} = $select->{$key};
+        next unless $wk;
+  
+        my $colk = $key2col{$key} || $key;
+        my $tk = '_info_projs_' . $key;
+        
+        if (ref $wk eq 'HASH') {
+          foreach my $op (qw( or and )) {
+            my $vals = $wk->{$op};
+            next unless $vals;
+            next unless ref $vals eq 'ARRAY';
+  
+            my @cond_op;
+  
+            foreach my $v (@$vals) {
+              $ia++;
+              my $tka = $key . $ia;
+              push @ij, { 
+                 'tbl'       => $tk,
+                 'tbl_alias' => $tka,
+                 'on'        => 'file',
+              };
+              push @cond_op, sprintf('%s.%s = ?', $tka, $colk);
+              push @params, $v;
+            }
+            push @cond_k, jcond($op => \@cond_op);
+          }
+        }
 
-    $query .= 'SELECT sec FROM projs INNER JOIN _info_projs_tags ON projs.file = _info_projs_tags.file';
-    
-    #WHERE _info_projs_tags.tag = ?'
-
-    my ($rows,$cols,$q,$p) = dbh_select({
+        my $opk = $wk->{'@op'} || 'and';
+        push @cond, jcond($opk => \@cond_k, braces => 1);
+    }
+  
+    my $cond;
+    if (@cond) {
+      $cond = 'WHERE ';
+      $cond .= jcond($ops => \@cond, braces => 1);
+    }
+  
+    my $ref = {
         dbh     => $self->{dbh},
-        q       => $query,
+        t       => 'projs',
+        t_alias => 'p',
+        f       => [qw( p.sec )],
+        ij      => \@ij,
         p       => \@params,
-        w       => \%where,
-    });
-    my $rw = $rows->[0];
-    return $rw;
+        cond    => $cond,
+        limit   => $limit,
+    };
+    push @$list, dbh_select_as_list($ref);
+
+    return $list;
 }
 
 sub _sec_data {
