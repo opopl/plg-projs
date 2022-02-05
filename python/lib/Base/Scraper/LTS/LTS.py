@@ -283,7 +283,6 @@ class LTS(
           },
           'on_list' : [ 'file' ]
         }
-        import pdb; pdb.set_trace()
 
         dbw.insert_update_dict(d)
 
