@@ -134,11 +134,38 @@ sub fill_files {
     return $self;
 }
 
+sub _sec_select {
+    my ($self, $ref) = @_;
+    $ref ||= {};
+
+    my $proj = $self->{ref} || $self->{proj};
+
+    my $tags = $ref->{tags} || '';
+    my $author_id = $ref->{author_id} || '';
+
+    my ($query, %where, @params);
+
+    $query .= 'SELECT sec FROM projs INNER JOIN _info_projs_tags ON projs.file = _info_projs_tags.file';
+    
+    #WHERE _info_projs_tags.tag = ?'
+
+    my ($rows,$cols,$q,$p) = dbh_select({
+        dbh     => $self->{dbh},
+        q       => $query,
+        p       => \@params,
+        w       => \%where,
+    });
+    my $rw = $rows->[0];
+    return $rw;
+}
+
 sub _sec_data {
     my ($self, $ref) = @_;
     $ref ||= {};
 
     my ($proj, $sec) = @{$ref}{qw(proj sec)};
+    $proj ||= $self->{proj};
+
     my ($rows,$cols,$q,$p) = dbh_select({
         dbh     => $self->{dbh},
         q       => q{ SELECT * FROM projs },
