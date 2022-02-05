@@ -36,6 +36,8 @@ use Base::DB qw(
     dbh_sth_exec
     dbh_update_hash
     dbi_connect
+
+    jcond
 );
 
 =head3 _sct_lines
@@ -132,6 +134,8 @@ sub _sct_lines {
 
                         my (%wh, %conds, %tbls);
                         my (@cond, @params);
+
+                        my $ops = $select->{'@op'} || 'and';
   
                         my @keys = qw(tags author_id);
                         my %key2col = (
@@ -156,7 +160,6 @@ sub _sct_lines {
                               next unless $vals;
                               next unless ref $vals eq 'ARRAY';
   
-                              my $opj = sprintf(' %s ',uc $op);
                               my @cond_op;
   
                               foreach my $v (@$vals) {
@@ -170,17 +173,18 @@ sub _sct_lines {
                                 push @cond_op, sprintf('%s.%s = ?', $tka, $colk);
                                 push @params, $v;
                               }
-                              push @cond_k, join $opj => @cond_op;
+                              push @cond_k, jcond($op => \@cond_op);
                             }
                           }
-  
-                          push @cond, join ' AND ' => map { $_ ? '( ' . $_ . ' )' : () } @cond_k;
+
+                          my $opk = $wk->{'@op'} || 'and';
+                          push @cond, jcond($opk => \@cond_k, braces => 1);
                         }
   
                         my $cond;
                         if (@cond) {
                           $cond = 'WHERE ';
-                          $cond .=  join ' AND ' => map { $_ ? '( ' . $_ . ' )' : () } @cond;
+                          $cond .= jcond($ops => \@cond, braces => 1);
                         }
   
                         my $ref = {
