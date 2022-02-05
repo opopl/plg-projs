@@ -24,7 +24,10 @@ use Base::DB qw(
     dbh_select_as_list
     dbh_select
     dbh_select_first
+
+    jcond
 );
+
 
 use base qw(
     Base::Opt
@@ -140,8 +143,6 @@ sub _secs_select {
 
     my $list = [];
 
-    my $proj = $self->{ref} || $self->{proj};
-
     my (%wh, %conds, %tbls);
     my (@cond, @params);
 
@@ -211,7 +212,7 @@ sub _secs_select {
     };
     push @$list, dbh_select_as_list($ref);
 
-    return $list;
+    wantarray ? @$list : $list ;
 }
 
 sub _sec_data {
