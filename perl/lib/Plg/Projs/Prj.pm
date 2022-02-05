@@ -212,6 +212,8 @@ sub _secs_select {
     };
     push @$list, dbh_select_as_list($ref);
 
+    $DB::single = 1 if $select->{dbg};
+
     wantarray ? @$list : $list ;
 }
 

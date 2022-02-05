@@ -133,13 +133,12 @@ sub _sct_lines {
                       my $list=[];
 
                       unless (ref $select) {
-                      }elsif(ref $select eq 'HASH'){
 
+                      }elsif(ref $select eq 'HASH'){
                         push @$list, $prj->_secs_select($select);
                       }
 
                       push @ii, @$list;
-                      $DB::single = 1 if $select->{dbg};
                       1;
                    };
                 }
