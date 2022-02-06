@@ -130,12 +130,12 @@ sub _sct_lines {
 ###@ii_select
                    };
                    $select && do {
-                      my $list=[];
+                      my $list = [];
 
                       unless (ref $select) {
 
                       }elsif(ref $select eq 'HASH'){
-                        push @$list, $prj->_secs_select($select);
+                         push @$list, $prj->_secs_select($select);
                       }
 
                       push @ii, @$list;

@@ -26,6 +26,7 @@ use Base::DB qw(
     dbh_select_first
 
     jcond
+    cond_where
 );
 
 
@@ -148,11 +149,11 @@ sub _secs_select {
 
     my $ops = $select->{'@op'} || 'and';
     my $limit = $select->{limit} || '';
-    my $match = $select->{match} || {};
+    my $where = $select->{where} || {};
   
-    my @keys = qw(tags author_id);
+    my @keys = qw( tags author_id );
     my %key2col = (
-      'tags' => 'tag'
+       'tags' => 'tag'
     );
     my @ij;
     foreach my $key (@keys) {
@@ -192,6 +193,13 @@ sub _secs_select {
 
         my $opk = $wk->{'@op'} || 'and';
         push @cond, jcond($opk => \@cond_k, braces => 1);
+    }
+
+    my ($q_where, $p_where) = cond_where($where);
+    $DB::single = 1;
+    if ($q_where) {
+        push @cond, $q_where;
+        push @params, @$p_where;
     }
   
     my $cond;
