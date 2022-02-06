@@ -11,6 +11,11 @@ import Base.String as string
 import Base.Rgx as rgx
 
 def update_dict(ref):
+  where     = ref.get('where',{})
+  update    = ref.get('update',{})
+  if not (len(update) and len(where)):
+    return
+
   conn     = ref.get('conn')
   table    = ref.get('table')
 
@@ -25,9 +30,6 @@ def update_dict(ref):
       return
 
   c = conn.cursor()
-
-  where     = ref.get('where',{})
-  update    = ref.get('update',{})
 
   update_keys   = update.keys()
   update_values = list( map(lambda k: update.get(k,''), update_keys) )
@@ -47,6 +49,8 @@ def update_dict(ref):
     c.execute(q,values)
   except sqlite3.IntegrityError as e:
     print(e)
+    print(q)
+    print(values)
 
   if db_close:
     conn.commit()
@@ -130,6 +134,8 @@ def sql_fetchone(q, p = [], ref = {}):
      c.execute(q,p)
   except sqlite3.OperationalError as e:
      print(e)
+     print(q)
+     print(p)
   except:
      print("Errors ", sys.exc_info()[0], " for sqlite query: " + q )
 

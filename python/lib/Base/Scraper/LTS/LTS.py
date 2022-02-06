@@ -1107,7 +1107,7 @@ class LTS(
          'db_file' : db_file,
          'table'   : 'auth_details',
          'insert' : { 'id' : id },
-         'on' : [ 'id' ]
+         'on_list' : [ 'id' ]
       }
       dbw.insert_update_dict(d)
 
