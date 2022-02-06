@@ -77,6 +77,26 @@ sub trg_adjust {
 
     $target //= $bld->{target};
 
+    local $_ = $bld->{target};
+    if (/^_buf\.(\S+)$/) {
+      my $sec = $1;
+
+      #$bld->{opt}->{ii_updown} = $sec;
+
+      my $h = {
+       'decs'  => {
+          'om_iall'  => 1
+       },
+       'vars'  => {
+          'toc_depth' => 3,
+       },
+       'patch'  => {
+          'sii.scts._main_.ii.inner.body'  => [$sec],
+       },
+      };
+      dict_update($bld, $h);
+    }
+
     return $bld;
 }
 
