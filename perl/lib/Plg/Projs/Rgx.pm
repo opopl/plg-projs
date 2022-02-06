@@ -50,7 +50,8 @@ sub rgx_match {
     $flags ||= '';
 
     my ($result, @group, $match);
-    eval sprintf('@group = ( m/%s/%s ); $match = $&; ',$pattern,$flags);
+    eval sprintf('@group = ( m/%s/%s ); $match = $& if @group; ', $pattern, $flags);
+    return unless @group;
 
     #print Dumper(\@group) . "\n";
     #print Dumper($match) . "\n";

@@ -198,6 +198,7 @@ sub _secs_select {
     my ($q_where, $p_where) = cond_where($where);
     $DB::single = 1;
     if ($q_where) {
+        $q_where =~ s/^\s*WHERE//g;
         push @cond, $q_where;
         push @params, @$p_where;
     }
