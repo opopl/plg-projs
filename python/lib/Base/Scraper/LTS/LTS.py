@@ -1097,6 +1097,22 @@ class LTS(
 
     return self
 
+  def db_update_auth_details(self, ref = {}):
+    db_file  = self.db_file_pages
+
+    q = 'SELECT id FROM authors'
+    auth_ids = dbw.sql_fetchlist(q,[],{ 'db_file' : db_file })
+    for id in auth_ids:
+      d = {
+         'db_file' : db_file,
+         'table'   : 'auth_details',
+         'insert' : { 'id' : id },
+         'on' : [ 'id' ]
+      }
+      dbw.insert_update_dict(d)
+
+    return self
+
   def db_update_img(self, ref = {}):
     img_data = ref.get('img_data',[])
     db_file  = self.db_file_img
