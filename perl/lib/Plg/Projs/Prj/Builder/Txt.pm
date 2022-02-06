@@ -40,7 +40,7 @@ sub _txt_expand {
     while(@$txt_lines){
         local $_ = shift @$txt_lines;
 
-        s/\@\@proj\b/$bld->{proj}/ge;
+        s/\@\@(\w+)\b/$bld->{$1}/ge;
 
 ###m_@var
         s/\@var\{(\w+)\}/$bld->_bld_var($1)/ge; 

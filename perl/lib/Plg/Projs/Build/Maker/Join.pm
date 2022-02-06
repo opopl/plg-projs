@@ -73,7 +73,7 @@ sub _join_lines {
     
     my $ii_include_all = $mkr->_opt_($ref,'ii_include_all',0);
 
-    my $include_below = $mkr->_val_list_ref_('join_lines include_below');
+    my $include_below = $mkr->_val_list_ref_('join_lines include below');
 
     my $ss        = $mkr->{sections} || {};
 
@@ -383,7 +383,7 @@ sub ii_insert_updown {
     %i = ( %i_updown, %i_base );
 
     @$include = sort keys %i;
-    delete $mkr->{join_lines}->{include_below};
+    delete $mkr->{join_lines}->{include}->{below};
 
     return $mkr;
 }

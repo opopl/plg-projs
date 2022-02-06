@@ -33,7 +33,8 @@ opts_maker:
     get_opt: 1
 # Plg::Projs::Build::Maker::Join _join_lines
   join_lines:
-    include_below: 'section'
+    include: 
+      below: 'section'
   load_dat:
     ii_exclude : 0
     ii_include : 0
@@ -53,9 +54,9 @@ opts_maker:
     prepend:
       only:
         '_main_' :
-        - '\newif\ifDEBUG\DEBUGfalse'
-        - ''
-        - '\newif\ifcmt\cmtfalse'
+        #- '\newif\ifDEBUG\DEBUGfalse'
+        #- ''
+        #- '\newif\ifcmt\cmtfalse'
 
 # _join_lines                  Plg::Projs::Build::Maker::Join
 #   _gen_sec                   Plg::Projs::Prj::Builder::Gen
@@ -278,7 +279,9 @@ sii:
       #contents: '@doc @ii @setcounter @perl'
       contents:
       - '@txt.cmt.head'
-      - '@txt.if @txt.proj'
+      - '@txt.target'
+      - '@txt.if'
+      - '@txt.proj'
       - '@ii.prm'
       - '\begin{document}'
       - '@ii.inner.start'
@@ -313,6 +316,8 @@ sii:
         - ' '
         - '\newif\ifcmt'
         - '\cmtfalse'
+        target:
+        - '\def\TARGET{@@target}'
         proj:
         - '\def\PROJ{@@proj}'
         - '\def\ii#1{\InputIfFileExists{\PROJ.#1.tex}{}{}}'
