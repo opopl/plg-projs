@@ -72,6 +72,14 @@ sub trg_inject {
 
 }
 
+sub trg_adjust {
+    my ($bld, $target) = @_;
+
+    $target //= $bld->{target};
+
+    return $bld;
+}
+
 sub trg_apply {
     my ($bld, $target) = @_;
 

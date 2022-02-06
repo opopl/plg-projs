@@ -111,7 +111,7 @@ sub init {
         ->trg_load_yml                          # load into targets/$target
         ->trg_apply('core')                     # apply 'core' target data into $bld instance
         ->trg_apply                             # apply $target data into $bld instance
-        ->read_in_file                  # process -i --in_file switch
+        ->trg_adjust
         ->load_yaml
         ->load_decs
         ->load_patch
@@ -259,7 +259,6 @@ sub print_help {
 
              -d --data DATA #TODO
              -c --config CONFIG e.g. 'xelatex' (comma-separated list)
-             -i --in_file INFILE
              -y --yfile YAML FILE
         USAGE:
              perl $Script ACT 
@@ -314,7 +313,6 @@ sub get_opt {
         "config|c=s",
         "target|t=s",
         "data|d=s",
-        "in_file|i=s",
         "ii_updown=s",
         "yfile|y=s@",
     );
@@ -363,48 +361,6 @@ sub process_ii_updown {
 
     return $bld;
 }
-
-sub read_in_file {
-    my ($bld) = @_;
-
-    my $in_file = $bld->_opt_argv_('in_file','');
-    return $bld unless ($in_file && -e $in_file);
-
-    my ($ext) = ( $in_file =~ m/\.(\w+)$/ );
-    for($ext){
-        /^zc$/ && do {
-            my @lines = read_file $in_file;
-
-            my ($var_name, $var_type, %vars);
-            while(@lines){
-                local $_ = shift @lines;
-                chomp;
-
-                next if /^[\s\t]+#/;
-
-                /^list\s+(\w+)$/ && do {
-                    $var_type = 'list';
-                    $var_name = $1;
-                    next;
-                };
-
-                /^[\t]+(.*)$/ && do {
-                    my $val = $1;
-                    if ($var_type eq 'list') {
-                        $vars{$var_name} ||= [];
-                        push @{$vars{$var_name}}, str_split_sn($val);
-                    }
-                };
-            }
-            $bld->{ctl} ||= {}; 
-            $bld->{ctl}->{vars} = \%vars; 
-            $bld->_bld_var_set(\%vars);
-        };
-    }
-
-    return $bld;
-}
-
 
 sub run {
     my ($bld) = @_;
