@@ -1157,7 +1157,8 @@ sub _d2tex {
     my $resized = $minipage || $parbox;
     foreach my $x (@$comments) {
        $x =~ s/^\s*$/\\newline/g if $parpic;
-       $x = $self->_expand_igg($x,{ resized => $resized });
+       #$x = $self->_expand_igg($x,{ resized => $resized });
+       $x = $self->_expand_igg($x,{});
     }
     unless ($minipage || $parbox) {
         $minipage ||= 1;
