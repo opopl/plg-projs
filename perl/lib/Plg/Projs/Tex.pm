@@ -370,10 +370,14 @@ our %fbicons_all = (
   '💉' => 'syringe',
   '🍹' => 'tropical.drink',
   '🍨' => 'ice.cream',
+  '🗽' => 'statue.of.liberty',
+  '🏳' => 'white.flag',
 );
 
 ###fbicons_person
 our %fbicons_person = (
+  '💁' => 'person.tipping.hand',
+  '👳' => 'person.wearing.turban',
   '🙆' => 'person.gesturing.ok',
   '👰' => 'person.veil',
   '🤵' => 'person.tuxedo',
