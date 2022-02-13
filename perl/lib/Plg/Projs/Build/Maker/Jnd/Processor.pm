@@ -665,8 +665,8 @@ sub _opts_dict {
 sub match_caption_begin {
   my ($self,$opts_s) = @_;
 
-  my $d = $self->{d};
-  return $self unless $d;
+  my $obj = $self->{d} || $self->{tab};
+  return $self unless $obj;
 
   $self->{is_caption} = 1;
 
@@ -676,8 +676,8 @@ sub match_caption_begin {
 sub match_caption_end {
   my ($self) = @_;
 
-  my $d = $self->{d};
-  return $self unless $d;
+  my $obj = $self->{d} || $self->{tab};
+  return $self unless $obj;
 
   $self->{is_caption} = undef;
 
@@ -1339,20 +1339,18 @@ sub loop {
 ###m_comment
     m/^\s*%/ && do { push @{$self->{nlines}},$_; next; };
 
-
-
 ###m_caption_begin
     m/^\s*\@caption_begin\b(.*)/g && do { $self->match_caption_begin($1); next; };
     m/^\s*\@caption_end\b(.*)/g && do { $self->match_caption_end($1); next; };
 
     if ($self->{is_caption}) {
-        my $d = $self->{d};
-        next unless $d;
+        my $obj = $self->{d} || $self->{tab};
+        next unless $obj;
 
         $_ = $self->_expand_kv('caption', $_);
 
-        $d->{caption} ||= '';
-        $d->{caption} .= ( $d->{caption} ? ' ' : '' ) . trim($_);
+        $obj->{caption} ||= '';
+        $obj->{caption} .= ( $obj->{caption} ? ' ' : '' ) . trim($_);
     }
 
 ###m_caption_setup
