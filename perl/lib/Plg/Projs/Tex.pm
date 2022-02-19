@@ -134,6 +134,7 @@ our %fbicons_heart = (
 ###fbicons_all
 ###all
 our %fbicons_all = (
+  '🐱' => 'cat.face',
   '🏠' => 'house',
   '🎙' => 'studio.microphone',
   '⭐️' => 'star',
