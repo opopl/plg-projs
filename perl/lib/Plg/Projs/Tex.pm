@@ -134,6 +134,8 @@ our %fbicons_heart = (
 ###fbicons_all
 ###all
 our %fbicons_all = (
+  '🔱' => 'trident',
+  '💀' => 'skull',
   '📷' => 'camera',
   '🐱' => 'cat.face',
   '🏠' => 'house',
