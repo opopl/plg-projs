@@ -106,9 +106,16 @@ our %fbicons_weak = (
   '✌️'  => 'hand.victory',
   '❤️'  => 'heart',
   '❤️'  => 'heart.red',
+);
+
+###fbicons_arrows
+our %fbicons_arrows = (
   '9️⃣'  => 'digit.nine.keycap',
   '0️⃣'  => 'digit.zero.keycap',
   '↕️'  => 'arrow.updown',
+  '⤵️'  => 'right.arrow.curving.down',
+  '🔝' => 'top.arrow',
+  '⬇️'  => 'arrow.pointing.down',
 );
 
 ###fbicons_heart
@@ -262,7 +269,6 @@ our %fbicons_all = (
   '🍿' => 'popcorn',
   '🗑' => 'wastebasket',
   '☠️'  => 'skull.crossbones',
-  '🔝' => 'top.arrow',
   '🎮' => 'video.game',
   '🦸' => 'superhero',
   '🦏' => 'nosorog',
@@ -301,7 +307,6 @@ our %fbicons_all = (
   '👈' => 'index.pointing.left',
   '💐' => 'bouquet',
   '💭' => 'thought.baloon',
-  '⤵️'  => 'right.arrow.curving.down',
   '🦉' => 'owl',
   '🔔' => 'bell',
   '🤦' => 'man.facepalming',
@@ -489,6 +494,7 @@ our %fbicons = (
   %fbicons_weak,
   %fbicons_heart,
   %fbicons_person,
+  %fbicons_arrows,
 );
 
 sub texify {

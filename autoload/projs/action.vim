@@ -267,11 +267,15 @@ function! projs#action#git_add_texfiles ()
   call base#cd(root)
 
   " list untracked files
-  let cmd_a = [
-      \ 'git ls-files --others --exclude-standard',
-      \ printf("perl -lane 'print if /%s.*\\.tex$/'",proj),
-      \ 'xargs git add',
-      \ ]
+	let cmd_a = []
+	if has('mac') || has('unix')
+	  let cmd_a = [
+	      \ 'git ls-files --others --exclude-standard',
+	      \ printf("perl -lane 'print if /%s.*\\.tex$/'",proj),
+	      \ 'xargs git add',
+	      \ ]
+	endif
+
   let cmd = join(cmd_a, '|')
 
   let env = { 'proj' : proj }
