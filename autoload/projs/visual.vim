@@ -92,7 +92,7 @@ function! projs#visual#ii_to_new_secs (start, end, ... )
 
   let s:obj = { 'secs' : secs }
   function! s:obj.init () dict
-    let yn = input('Sections have been created, open the sections now? 1/0: ', 1 )
+    let yn = input('Sections have been created, open the sections now? 1/0: ', 1)
 
     let secs = self.secs
 
