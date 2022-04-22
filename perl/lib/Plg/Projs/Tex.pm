@@ -141,6 +141,8 @@ our %fbicons_heart = (
 ###fbicons_all
 ###all
 our %fbicons_all = (
+  '⚔️' => 'crossed.swords',
+  '🎖' => 'military.medal',
   '🔱' => 'trident',
   '💀' => 'skull',
   '📷' => 'camera',
@@ -1012,6 +1014,8 @@ sub fb_format {
           || /^(\d+)\s*(д|ч|нед|мин|г)\./
           || /^ReplyShare/
           || /^Reply/
+          || /^(\d+)(w|d|m|y)/
+          || /^See\s+Translation/
         )
         && do { push @new,''; next; };
 
