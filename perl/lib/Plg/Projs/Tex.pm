@@ -135,13 +135,16 @@ our %fbicons_heart = (
   '🤎' => 'heart.brown',
   '💝' => 'heart.with.ribbon',
   '💞' => 'hearts.revolving',
-
+  '💘' => 'heart.with.arrow',
 );
 
 ###fbicons_all
 ###all
 our %fbicons_all = (
-  '⚔️' => 'crossed.swords',
+  '🩹' => 'adhesive.bandage',
+  '📘' => 'blue.book',
+  '🏫' => 'school',
+  '⚔️'  => 'crossed.swords',
   '🎖' => 'military.medal',
   '🔱' => 'trident',
   '💀' => 'skull',
