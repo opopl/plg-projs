@@ -778,6 +778,8 @@ sub ldo_no_cmt {
        last;
     };
 
+    $DB::single = 1 if /subsection/;
+
     m/$pats->{sect}/ && do {
        my $seccmd = $1;
        $self->{sec_info}->{title} =  $1;
@@ -786,12 +788,15 @@ sub ldo_no_cmt {
        $self->{sec_info}->{label} = 1;
        push @push, $lb;
        if($seccmd eq 'subsection'){
-           push @push,
+           push @push, (
              $url    ? sprintf(q{\Purl{%s}},$url) : (),
              $date_s ? sprintf(q{\Pdate{%s}},$date_s) : (),
-             $self->_tex_author($author_id),
-             ;
+             $self->_tex_author($author_id) 
+           )
+           ;
        }
+       # $_ becomes undef for unknown reason in limited cases
+       $_ = $self->{line} unless defined;
        last;
     };
   
@@ -1256,7 +1261,9 @@ sub f_write {
         ' '
         ;
 
-  write_file($file,join("\n",@{$self->{nlines}}) . "\n");
+  my $nlines = $self->{nlines};
+  $DB::single = 1;
+  write_file($file,join("\n",@$nlines) . "\n");
 
   return $self;
 }
@@ -1313,7 +1320,7 @@ sub loop {
     $self->{line} = $_;
 
 ###m_\ifcmt
-    m/^\\ifcmt\s*$/g && do { 
+    m/^\\ifcmt\s*$/g && do {
         $self->{is_cmt} = 1; 
         $self->{locals} = {};
         #push @{$self->{nlines}},'{';

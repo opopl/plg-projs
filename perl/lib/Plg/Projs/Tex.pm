@@ -120,6 +120,7 @@ our %fbicons_arrows = (
 
 ###fbicons_heart
 our %fbicons_heart = (
+  '🤍' => 'heart.white',
   '💚' => 'heart.green',
   '💟' => 'heart.decoration',
   '💔' => 'heart.broken',
@@ -141,6 +142,12 @@ our %fbicons_heart = (
 ###fbicons_all
 ###all
 our %fbicons_all = (
+  '📢' => 'loudspeaker',
+  '🧠' => 'brain',
+  '🩸' => 'drop.blood',
+  '💵' => 'dollar.banknote',
+  '🔻' => 'red.triangle.pointed.down',
+  '🚫' => 'prohibited',
   '🩹' => 'adhesive.bandage',
   '📘' => 'blue.book',
   '🏫' => 'school',
@@ -401,6 +408,7 @@ our %fbicons_person = (
 
 ###fbicons_face
 our %fbicons_face = (
+  '☹️'  => 'face.frowning',
   '😖' => 'face.confounded',
   '😉' => 'wink',
   '😷' => 'face.medical.mask',

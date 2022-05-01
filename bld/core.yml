@@ -82,10 +82,10 @@ preamble:
        - name: ''
          title: ''
        - name: 'rus'
-         title: 'Показчик'
+         title: 'Покажчик'
        - name: 'authors.rus'
          #title: 'Авторы'
-         title: 'Показчик Авторів'
+         title: 'Покажчик Авторів'
        - name: 'names.rus'
          title: 'Имена'
        - name: 'cities.rus'
@@ -234,6 +234,7 @@ sii:
          ps:
            ltsStory:
            - '\fancypagestyle{ltsStory}{%'
+           - '  \setlength{\headheight}{20.3pt}%'
            - '  \fancyhead[L]{\storyLink}%'
            - '  \fancyhead[R]{\storyDate}%'
            - '  \fancyhead[C]{%'
@@ -360,3 +361,11 @@ sii:
         - '\def\PROJ{@@proj}'
         - '\def\ii#1{\InputIfFileExists{\PROJ.#1.tex}{}{}}'
         - ''
+
+
+#Package fancyhdr Warning: \headheight is too small (12.0pt): 
+#(fancyhdr)                Make it at least 20.29706pt, for example:
+#(fancyhdr)                \setlength{\headheight}{20.29706pt}.
+#(fancyhdr)                You might also make \topmargin smaller to compensate:
+
+#(fancyhdr)                \addtolength{\topmargin}{-8.29706pt}.

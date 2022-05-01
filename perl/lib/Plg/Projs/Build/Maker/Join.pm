@@ -163,6 +163,7 @@ sub _join_lines {
 
 ###pat_sect
         m/$pats->{sect}/ && do {
+
             $sect = $1;
             my $title = $2;
             #texify(\$title);
@@ -183,7 +184,7 @@ sub _join_lines {
                lines   => \@lines,
                at_end  => \@at_end,
             });
-            
+
             next;
         };
 

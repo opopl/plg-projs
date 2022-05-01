@@ -104,7 +104,6 @@ sub _line_process_pat_ii {
     my @include = $mkr->_ii_include;
 
     my $iall = $ii_include_all;
-	$DB::single = 1;
     if ($sect) {
        $iall = ( grep { /^$sect$/ } @$include_below ) ? 1 : $iall;
     }

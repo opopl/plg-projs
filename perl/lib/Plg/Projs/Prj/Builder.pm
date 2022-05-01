@@ -123,7 +123,6 @@ sub init {
 
     #my $data = LoadFile($file);
     my $s = Dump($bld->{opts_maker});
-    $DB::single = 1;
 
     return $bld;
 
