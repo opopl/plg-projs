@@ -142,6 +142,8 @@ our %fbicons_heart = (
 ###fbicons_all
 ###all
 our %fbicons_all = (
+  '🚨' => 'police.car.light',
+  '👐' => 'open.hands',	
   '📢' => 'loudspeaker',
   '🧠' => 'brain',
   '🩸' => 'drop.blood',
