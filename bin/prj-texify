@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+
+perl $PLG/projs/scripts/bufact/tex/texify.pl $*

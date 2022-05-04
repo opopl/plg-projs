@@ -54,12 +54,12 @@ sub init_db {
     my ($self) = @_;
 
     $self->{img_db} ||= catfile($self->{img_root},'img.db');
-	
-	my $ref = {
-		dbfile => $self->{img_db},
-	};
-	
-	my $dbh = $self->{img_dbh} = dbi_connect($ref);
+    
+    my $ref = {
+        dbfile => $self->{img_db},
+    };
+    
+    my $dbh = $self->{img_dbh} = dbi_connect($ref);
 
     return $self;
 }
@@ -67,55 +67,55 @@ sub init_db {
 sub c_list {
     my ($self) = @_;
 
-	my $data=[];
-	my $rows = $self->_imgs;
-	my $header = [qw(inum ext type img sec)];
-	foreach my $row (@$rows) {
-		push @$data, [ map { $row->{$_} } @$header ];
-	}
-	my $dt = Data::Table->new($data,$header,0);
-	print $dt->tsv . "\n";
+    my $data=[];
+    my $rows = $self->_imgs;
+    my $header = [qw(inum ext type img sec)];
+    foreach my $row (@$rows) {
+        push @$data, [ map { $row->{$_} } @$header ];
+    }
+    my $dt = Data::Table->new($data,$header,0);
+    print $dt->tsv . "\n";
 
     return $self;
 }
 
 sub _imgs {
     my ($self, $ref) = @_;
-	$ref ||= {};
-	my $cond = $ref->{cond} || '';
+    $ref ||= {};
+    my $cond = $ref->{cond} || '';
 
-	my $dbh = $self->{img_dbh};
+    my $dbh = $self->{img_dbh};
     return $self unless $dbh;
 
-	my $ref = {
-		dbh  => $dbh,
-		q    => q{ SELECT * FROM imgs },
-		p    => [  ],
-		cond => $cond,
-	};
-	
-	my ($rows) = dbh_select($ref);
-	return $rows;
+    my $ref = {
+        dbh  => $dbh,
+        q    => q{ SELECT * FROM imgs },
+        p    => [  ],
+        cond => $cond,
+    };
+    
+    my ($rows) = dbh_select($ref);
+    return $rows;
 }
 
 sub c_info {
     my ($self) = @_;
 
-	my $q = q{ SELECT sql FROM sqlite_master WHERE name = ? };
-	my $p = [qw( imgs )];
+    my $q = q{ SELECT sql FROM sqlite_master WHERE name = ? };
+    my $p = [qw( imgs )];
 
-	my $dbh = $self->{img_dbh};
+    my $dbh = $self->{img_dbh};
     return $self unless $dbh;
 
-	my $ref = {
-		dbh => $dbh,
-		q   => $q,
-		p   => $p,
-	};
-	
-	my ($rows) = dbh_select($ref);
-	my $sql = $rows->[0]->{'sql'} || '' ;
-	print $sql . "\n";
+    my $ref = {
+        dbh => $dbh,
+        q   => $q,
+        p   => $p,
+    };
+    
+    my ($rows) = dbh_select($ref);
+    my $sql = $rows->[0]->{'sql'} || '' ;
+    print $sql . "\n";
 
     return $self;
 }
@@ -123,7 +123,7 @@ sub c_info {
 sub c_cnv {
     my ($self) = @_;
 
-	my $imgs = $self->_imgs;
+    my $imgs = $self->_imgs;
 
     return $self;
 }
@@ -185,15 +185,15 @@ sub run {
         ->get_opt
         ->init_db
         ;
-	my $cmd = $self->{cmd};
-	if ($cmd) {
-		my $sub = 'c_' . $cmd;
-		if ($self->can($sub)){
-			$self->$sub;
-		}else{
-			warn qq{[ImgMan] command not defined: $cmd} . "\n";
-		}
-	}
+    my $cmd = $self->{cmd};
+    if ($cmd) {
+        my $sub = 'c_' . $cmd;
+        if ($self->can($sub)){
+            $self->$sub;
+        }else{
+            warn qq{[ImgMan] command not defined: $cmd} . "\n";
+        }
+    }
 
     return $self;
 }

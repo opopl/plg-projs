@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+export shd="$PLG/projs/scripts"
+
+python3 $shd/db_fill.py $*

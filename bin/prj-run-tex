@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+perl $PLG/projs/scripts/run_tex.pl $*
