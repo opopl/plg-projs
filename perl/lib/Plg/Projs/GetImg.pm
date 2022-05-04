@@ -315,8 +315,9 @@ sub print_help {
         SEE ALSO:
             base#bufact#tex#list_img 
             BufAct list_img
-        PACKAGE:
+        PACKAGES:
             $pack
+            Plg::Projs::GetImg::Fetcher
         LOCATION:
             $0
         OPTIONS:
