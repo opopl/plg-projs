@@ -1029,6 +1029,10 @@ sub fb_format {
           || /^Reply/
           || /^(\d+)(w|d|m|y)/
           || /^See\s+Translation/
+
+          || /^\s*See\s+Translation\s*$/
+          || /^\s*Reply\s*$/
+          || /^\s*(\d+)(w|d|m|y)\s*$/
         )
         && do { push @new,''; next; };
 

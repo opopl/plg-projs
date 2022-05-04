@@ -157,13 +157,12 @@ sub init_db {
     $self->{dbh} = $dbh;
     $Base::DB::DBH = $dbh;
 
-    if ($self->{reset}) {
-        $self
-            ->db_drop
-            ->db_create
-            ;
-    }
-
+#    if ($self->{reset}) {
+        #$self
+            #->db_drop
+            #->db_create
+            #;
+    #}
     
     $self;
 }
@@ -309,6 +308,10 @@ sub print_help {
 
     my $pack = __PACKAGE__;
     print qq{
+        ENVIRONMENT:
+            IMG_ROOT   $ENV{IMG_ROOT}
+            HTML_ROOT  $ENV{HTML_ROOT}
+            PLG        $ENV{PLG}
         SEE ALSO:
             base#bufact#tex#list_img 
             BufAct list_img
@@ -316,6 +319,22 @@ sub print_help {
             $pack
         LOCATION:
             $0
+        OPTIONS:
+            --file -f FILE string
+            --proj -p PROJ string
+            --root -r ROOT string
+            --sec  -s SEC  string
+
+            --cmd  -c CMD  string    e.g. load_file
+
+            --reset (DISABLED) reset database, remove image files
+            --reload
+
+            --debug -d
+        
+            # queries to img.db
+            --query -q QUERY string
+            --param PARAMS
         USAGE:
             PROCESS SINGLE TEX-FILE:
                 perl $Script -f TEXFILE 
@@ -325,8 +344,6 @@ sub print_help {
             DEBUGGING:
                 perl $Script -p PROJ -r ROOT -d
                 perl $Script -p PROJ -r ROOT --debug
-            RESET DATABASE, REMOVE IMAGE FILES:
-                perl $Script --reset
             QUERY IMAGE DATABASE:
                 perl $Script --cmd query -q "select count(*) from imgs" 
                 perl $Script --cmd query 
@@ -341,13 +358,13 @@ sub print_help {
 sub _ok {
     my ($self) = @_;
 
-	return @{$self->{ok}};
+    return @{$self->{ok}};
 }
 
 sub _fail {
     my ($self) = @_;
 
-	return @{$self->{fail}};
+    return @{$self->{fail}};
 }
 
 sub _subs_url {
@@ -501,9 +518,9 @@ sub load_file {
 sub info_ok_fail {
     my ($self) = @_;
 
-	my @m;
+    my @m;
     if ($self->_ok) {
-		my $cnt = scalar $self->_ok;
+        my $cnt = scalar $self->_ok;
         push @m,
             sprintf('SUCCESS: %s images', $cnt)
             ;
@@ -511,7 +528,7 @@ sub info_ok_fail {
         print join("\n",@m) . "\n";
 
     } elsif ($self->_fail) {
-		my $cnt = scalar $self->_fail;
+        my $cnt = scalar $self->_fail;
         push @m,
             'FAIL dump: ' . $cnt,
             Dumper([ map { { url => $_->{url}, sec => $_->{sec} } } $self->_fail ]),

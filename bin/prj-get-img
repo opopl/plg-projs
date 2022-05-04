@@ -1,0 +1,3 @@
+#!/bin/bash
+
+perl $PLG/projs/scripts/bufact/tex/get_img.pl $*
