@@ -37,6 +37,13 @@ use Base::DB qw(
 
 use Plg::Projs::Build::Maker::Jnd::Processor;
 
+sub cmd_jnd_compose_box {
+    my ($mkr) = @_;
+
+    mkpath $mkr->{src_dir_box};
+
+    return $mkr;
+}
 
 sub cmd_jnd_compose {
     my ($mkr) = @_;
@@ -88,7 +95,7 @@ sub cmd_jnd_build {
 
     my $proj_pdf_name = $mkr->{pdf_name} || $proj;
 
-    mkpath $mkr->{src_dir} if -d $mkr->{src_dir};
+    mkpath $mkr->{src_dir} unless -d $mkr->{src_dir};
 
     $mkr->cmd_jnd_compose;
 

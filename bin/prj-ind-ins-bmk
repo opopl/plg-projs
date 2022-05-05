@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+perl $PLG/projs/scripts/ind_ins_bmk.pl $*

@@ -78,6 +78,8 @@ sub inj_base {
             'compile'          => 'jnd_build',
             # Plg::Projs::Build::Maker::Jnd cmd_jnd_compose
             'join'             => 'jnd_compose',
+            # Plg::Projs::Build::Maker::Jnd cmd_jnd_compose_box
+            'join_box'         => 'jnd_compose_box',
             'relax'            => 'relax',
             'show_trg'         => sub { $bld->act_show_trg; },
             'show_acts'        => sub { $bld->act_show_acts; },
