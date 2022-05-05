@@ -54,6 +54,7 @@ my @ex_vars_array=qw(
     'funcs' => [qw( 
         q2quotes
         texify
+        texify_ref
     )],
     'vars'  => [ @ex_vars_scalar,@ex_vars_array,@ex_vars_hash ]
 );
@@ -143,7 +144,7 @@ our %fbicons_heart = (
 ###all
 our %fbicons_all = (
   '🚨' => 'police.car.light',
-  '👐' => 'open.hands',	
+  '👐' => 'open.hands', 
   '📢' => 'loudspeaker',
   '🧠' => 'brain',
   '🩸' => 'drop.blood',
@@ -512,8 +513,21 @@ our %fbicons = (
   %fbicons_arrows,
 );
 
+sub texify_ref {
+    my ($ref) = @_;
+    $ref ||= {};
+
+    my @keys = qw( ss cmd s_start s_end data_js );
+
+    push @keys, qw( sub );
+    #my ($ss,$cmd,$s_start,$s_end,$data_js) = @{$ref}{@keys};
+    my @args = @{$ref}{@keys};
+
+    return texify(@args);
+}
+
 sub texify {
-    my ($ss,$cmd,$s_start,$s_end,$data_js) = @_;
+    my ($ss, $cmd, $s_start, $s_end, $data_js, $sub) = @_;
 
     $cmd ||= 'rpl_quotes';
 
@@ -1004,6 +1018,19 @@ sub fbb {
         };
 
         push @new,$_;
+    }
+
+    _new2s();
+}
+
+sub hyp2ii {
+    _lines();
+
+    for(@lines){
+       next if /^\s*%/;
+
+       /\\hyperlink\{([^{}]*)\}/ && do { push @new, sprintf(q{\ii{%s}},$1) };
+       next;
     }
 
     _new2s();

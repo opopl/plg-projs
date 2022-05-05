@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+perl $PLG/projs/scripts/bufact/tex/hyp2ii.pl $*
