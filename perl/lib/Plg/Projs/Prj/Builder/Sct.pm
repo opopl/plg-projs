@@ -111,7 +111,22 @@ sub _sct_lines {
                    push @ii, $ii_sec;
                 }
                 elsif (ref $ii_sec eq 'HASH') {
-                   my ($sql, $select)    = @{$ii_sec}{qw(sql select)};
+                   my ($sql, $select, $shell)    = @{$ii_sec}{qw(sql select shell)};
+
+###@ii_shell
+                   $shell && do {
+                      unless (ref $shell) {
+                         my @list = `$shell`;
+                         my @iish;
+                         for(@list){
+                             chomp;
+                             /^\\ii\{(.*)\}\s*$/ && do { push @iish, $1; next; };
+
+                             push @iish, $_;
+                         }
+                         push @ii, @iish;
+                      }
+                   };
 
 ###@ii_sql
                    $sql && do {

@@ -569,6 +569,7 @@ def insert_update_dict(ref={}):
   if not r:
      d = {
         'db_file' : db_file,
+        'conn'    : conn,
         'table'   : table,
         'insert'  : insert,
      }
@@ -580,6 +581,7 @@ def insert_update_dict(ref={}):
 
      d = {
         'db_file' : db_file,
+        'conn'    : conn,
         'table'   : table,
         'update'  : insert,
         'where'   : on_w

@@ -146,6 +146,7 @@ def fill_from_files(db_file, root, root_id, proj, logfun):
     print(f'''(all projects) Filling tables in db: {db_file}''')
 
   pt_bib   = re.compile('^(\w+)\.refs\.bib$')
+  pt_bld_sec = re.compile('^bld\.(.*)$')
   pt_dat_i = re.compile('^(.*)\.i$')
 
   f = []
@@ -174,6 +175,12 @@ def fill_from_files(db_file, root, root_id, proj, logfun):
         if ext == 'xml':
           if not sec: 
             sec = '_xml_' 
+
+        if ext == 'yml':
+          if sec:
+            m = pt_bld_sec.match(sec)
+            if m:
+              sec = '_bld.' + m.group(1)
 
         if ext == 'pl':
           if not sec: 
@@ -220,10 +227,11 @@ def fill_from_files(db_file, root, root_id, proj, logfun):
           'parent'    : data.get('parent',''),
         }
 
-        dbw.insert_dict({
+        dbw.insert_update_dict({
             'conn'     : conn,
             'table'    : 'projs',
             'insert'   : ins,
+            'on_list'  : ['file']
         })
 
   c.execute('''SELECT DISTINCT proj FROM projs''')
@@ -240,7 +248,7 @@ def fill_from_files(db_file, root, root_id, proj, logfun):
             (pm_root,pm_ext) = os.path.splitext(pm_tail)
             sec = '_pm.%s' % pm_root 
 
-            dbw.insert_dict({
+            dbw.insert_update_dict({
                 'conn'     : conn,
                 'table'    : 'projs',
                 'insert' : { 
@@ -248,7 +256,8 @@ def fill_from_files(db_file, root, root_id, proj, logfun):
                   'proj'    : proj,
                   'rootid'  : root_id,
                   'sec'     : sec,
-                 }
+                 },
+                'on_list' : ['file']
             })
         break
 

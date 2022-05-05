@@ -12,6 +12,8 @@ use FindBin qw($Bin $Script);
 use Getopt::Long qw(GetOptions);
 
 use Plg::Projs::Tex qw( texify );
+use Plg::Projs::Prj;
+use Cwd qw(getcwd);
 
 sub new
 {
@@ -45,6 +47,8 @@ sub get_opt {
     @optstr = ( 
         "input|i=s",
         "output|o=s",
+        "proj|p=s",
+        "sec|s=s",
     );
     
     unless( @ARGV ){ 
@@ -72,6 +76,8 @@ sub print_help {
     OPTIONS
         -o --out OUTPUT  (FILE)
         -i --input INPUT (FILE)
+        -s --sec SEC
+        -p --proj PROJ
 
     EXAMPLES
         $Script -i IFILE -o OFILE
@@ -85,18 +91,32 @@ sub print_help {
 sub process_input {
     my ($self) = @_;
 
-    my $ifile = $self->{input};
+    my ($ifile, $sec, $proj) = @{$self}{qw( input sec proj )};
     my $ofile = $self->{output};
 
-	print Dumper($ifile) . "\n";
+    my $root = getcwd();
+    my $prj = Plg::Projs::Prj->new(root => $root);
+
+    unless ($ifile) {
+       if ($proj && $sec) {
+           my $sdata = $prj->_sec_data({ proj => $proj, sec => $sec });
+           $ifile = $sdata->{file};
+       }
+    }
+
+    unless ($ifile && -f $ifile){
+       warn qq{no input file! abort} . "\n";
+       return $self;
+    }
 
     my $tex = read_file $ifile;
 
     texify(\$tex,'hyp2ii');
-	print Dumper($tex) . "\n";
-
-    #write_file($ofile,$tex);
-
+    if ($ofile) {
+        write_file($ofile,$tex);
+    }else{
+        print qq{$tex} . "\n";
+    }
     return $self;   
 }
 
@@ -104,12 +124,9 @@ sub run {
     my ($self) = @_;
 
     while(1){
-        if ($self->{input}) {
-            $self->process_input;
-            last;
-        }
+      $self->process_input;
 
-        last;
+      last;
     }
 
     return $self;
