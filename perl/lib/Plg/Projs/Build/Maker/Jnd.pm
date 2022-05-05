@@ -48,6 +48,7 @@ sub cmd_jnd_compose_box {
 sub cmd_jnd_compose {
     my ($mkr) = @_;
 
+    # Plg::Projs::Build::Maker
     $mkr
         ->cmd_json_out_runtex
         ->cmd_join
