@@ -1,3 +1,9 @@
 #!/usr/bin/env bash
 
-perl $PLG/projs/scripts/run_tex.pl $*
+script="$PLG/projs/scripts/run_tex.pl"
+
+if [[ $PERLDB ]]; then
+  perl -d $script $*
+else
+  perl $script $*
+fi

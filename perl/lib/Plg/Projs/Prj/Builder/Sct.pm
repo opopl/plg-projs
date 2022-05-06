@@ -116,7 +116,7 @@ sub _sct_lines {
 ###@ii_shell
                    $shell && do {
                       unless (ref $shell) {
-                         my @list = `$shell`;
+                         my @list = qx{$shell};
                          my @iish;
                          for(@list){
                              chomp;

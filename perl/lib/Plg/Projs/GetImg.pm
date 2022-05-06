@@ -116,18 +116,20 @@ sub init_prj {
         $self->{rootid} = basename($self->{root});
     }
 
-    if ($self->{root} && $self->{rootid} && $self->{proj}) {
-        $self->{prj} = Plg::Projs::Prj->new(
-            root   => $self->{root},
-            rootid => $self->{rootid},
-            proj   => $self->{proj},
-        );
-    }else{
-        die qq{
-            NOT DEFINED TOGETHER: 
-                root && rootid && proj
-        } . "\n";
-        
+    if ($self->{cmd} eq 'load_file') {
+	    if ($self->{root} && $self->{rootid} && $self->{proj}) {
+	        $self->{prj} = Plg::Projs::Prj->new(
+	            root   => $self->{root},
+	            rootid => $self->{rootid},
+	            proj   => $self->{proj},
+	        );
+	    }else{
+	        die qq{
+	            NOT DEFINED TOGETHER: 
+	                root && rootid && proj
+	        } . "\n";
+	        
+	    }
     }
 
     return $self;
@@ -276,6 +278,9 @@ sub get_opt {
     my (@optstr, %opt);
 
     @optstr = ( 
+        # image file, pattern, or directory
+        "add|a=s@",
+        # tex file
         "file|f=s",
         "proj|p=s",
         "root|r=s",
@@ -300,6 +305,10 @@ sub get_opt {
 
     hash_update($self, \%opt);
 
+    if ($self->{add}) {
+        $self->{cmd} = 'add_images';
+    }
+
     return $self;    
 }
 
@@ -321,7 +330,9 @@ sub print_help {
         LOCATION:
             $0
         OPTIONS:
-            --file -f FILE string
+            --add -a string (TODO) add image file, pattern or directory
+
+            --file -f FILE string TeX file with urls
             --proj -p PROJ string
             --root -r ROOT string
             --sec  -s SEC  string
@@ -444,6 +455,19 @@ sub cmd_load_file {
     my ($self) = @_;
 
     $self->load_file;
+
+    return $self;
+}
+
+sub cmd_add_images {
+    my ($self, $ref) = @_;
+    $ref ||= {};
+
+    my $add = $ref->{add} || $self->{add};
+    my @files = glob $add;
+
+    print Dumper($add) . "\n";
+    print Dumper(\@files) . "\n";
 
     return $self;
 }

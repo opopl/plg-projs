@@ -1,4 +1,10 @@
 #!/usr/bin/env bash
 
-perl $PLG/projs/scripts/mkind.pl $*
+script="$PLG/projs/scripts/mkind.pl"
+
+if [[ $PERLDB ]]; then
+  perl -d $script $*
+else
+  perl $script $*
+fi
 

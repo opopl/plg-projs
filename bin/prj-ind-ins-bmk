@@ -1,3 +1,9 @@
 #!/usr/bin/env bash
 
-perl $PLG/projs/scripts/ind_ins_bmk.pl $*
+script="$PLG/projs/scripts/ind_ins_bmk.pl"
+
+if [[ $PERLDB ]]; then
+  perl -d $script $*
+else
+  perl $script $*
+fi
