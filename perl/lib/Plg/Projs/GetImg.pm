@@ -17,7 +17,7 @@ use Cwd qw(getcwd);
 
 use Plg::Projs::GetImg::Fetcher;
 
-use File::Spec::Functions qw(catfile);
+use File::Spec::Functions qw(catfile rel2abs);
 use File::Path qw( mkpath rmtree );
 use File::Copy qw( move );
 
@@ -30,6 +30,12 @@ use URI::Split qw(uri_split);
 use LWP::Simple qw(getstore);
 use LWP::UserAgent;
 use Getopt::Long qw(GetOptions);
+
+use Base::Util qw(
+  md5sum
+);
+
+use DateTime;
 
 use Image::Info qw(
     image_info
@@ -117,19 +123,19 @@ sub init_prj {
     }
 
     if ($self->{cmd} eq 'load_file') {
-	    if ($self->{root} && $self->{rootid} && $self->{proj}) {
-	        $self->{prj} = Plg::Projs::Prj->new(
-	            root   => $self->{root},
-	            rootid => $self->{rootid},
-	            proj   => $self->{proj},
-	        );
-	    }else{
-	        die qq{
-	            NOT DEFINED TOGETHER: 
-	                root && rootid && proj
-	        } . "\n";
-	        
-	    }
+        if ($self->{root} && $self->{rootid} && $self->{proj}) {
+            $self->{prj} = Plg::Projs::Prj->new(
+                root   => $self->{root},
+                rootid => $self->{rootid},
+                proj   => $self->{proj},
+            );
+        }else{
+            die qq{
+                NOT DEFINED TOGETHER: 
+                    root && rootid && proj
+            } . "\n";
+            
+        }
     }
 
     return $self;
@@ -280,6 +286,8 @@ sub get_opt {
     @optstr = ( 
         # image file, pattern, or directory
         "add|a=s@",
+        # config
+        "config|c=s@",
         # tex file
         "file|f=s",
         "proj|p=s",
@@ -459,15 +467,57 @@ sub cmd_load_file {
     return $self;
 }
 
+sub pic_add {
+    my ($self, $ref) = @_;
+    $ref ||= {};
+
+    my $file = $ref->{file};
+    return $self unless -f $file;
+
+    my $dt = DateTime->now;
+    my $t = $dt->strftime('%d_%m_%y.%H.%M.%S');
+
+    my $hex = md5sum($file);
+
+    print Dumper($file) . "\n";
+    print Dumper(length $hex) . "\n";
+    print Dumper($t) . "\n";
+
+    my $ins = {};
+
+    my $ok = dbh_insert_hash({
+       t => 'imgs',
+       i => q{ INSERT OR REPLACE },
+       h => $ins,
+   #    h => {
+           #proj    => $self->{proj},
+           #rootid  => $self->{rootid},
+           #sec     => $self->{sec},
+
+           #inum    => $d->{inum},
+           #url     => $d->{url},
+           #img     => $d->{img},
+           #caption => $d->{caption} || '',
+           #tags    => $d->{tags} || '',
+           #name    => $d->{name} || '',
+           #type    => $d->{type} || '',
+       #},
+    });
+
+    return $self;
+}
+
 sub cmd_add_images {
     my ($self, $ref) = @_;
     $ref ||= {};
 
     my $add = $ref->{add} || $self->{add};
-    my @files = glob $add;
+    my @files_add = map { rel2abs($_) } ( ref $add eq 'ARRAY' ? @$add : ( $add ));
 
-    print Dumper($add) . "\n";
-    print Dumper(\@files) . "\n";
+    foreach (@files_add) {
+       -d && do { };
+       -f && do { $self->pic_add({ file => $_ }); };
+    }
 
     return $self;
 }

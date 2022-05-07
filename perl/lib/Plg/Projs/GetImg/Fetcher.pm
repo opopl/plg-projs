@@ -28,6 +28,10 @@ use base qw(
     Base::Obj
 );
 
+use Base::Util qw(
+  md5sum
+);
+
 use Base::Arg qw(
   hash_inject
 );
