@@ -73,6 +73,8 @@ sub print_help {
 
     USAGE
         $Script OPTIONS
+    LOCATION
+        $0
     OPTIONS
         -o --out OUTPUT  (FILE)
         -i --input INPUT (FILE)
