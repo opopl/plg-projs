@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+export script="$PLG/projs/web_scraping/py3/r_lts.py"
+
+python3 $script $*
