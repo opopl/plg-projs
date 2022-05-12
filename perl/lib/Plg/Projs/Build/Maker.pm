@@ -445,12 +445,16 @@ sub _cmds_texindy {
 =cut
 
 sub cmd_json_out_runtex {
-    my ($mkr) = @_;
+    my ($mkr, $ref) = @_;
+    $ref ||= {};
+
+    my $src_dir = $ref->{src_dir} || $mkr->{src_dir};
+    $src_dir = $mkr->{src_dir_box} if $ref->{box} || $mkr->{box};
 
     my $coder = JSON::XS->new->ascii->pretty->allow_nonref;
 
     my $bld = $mkr->{bld};
-    my $json_file = catfile($mkr->{src_dir},'run_tex.json');
+    my $json_file = catfile($src_dir,'run_tex.json');
 
     my $h = {
         bld => {

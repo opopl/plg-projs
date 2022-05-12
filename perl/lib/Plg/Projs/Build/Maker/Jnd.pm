@@ -41,6 +41,10 @@ sub cmd_jnd_compose_box {
     my ($mkr) = @_;
 
     mkpath $mkr->{src_dir_box};
+    $mkr->{src_dir} = $mkr->{src_dir_box};
+    $mkr->{box} = 1;
+
+    $mkr->cmd_jnd_compose;
 
     return $mkr;
 }
