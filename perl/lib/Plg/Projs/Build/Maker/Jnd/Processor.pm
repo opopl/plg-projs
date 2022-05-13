@@ -1011,7 +1011,10 @@ sub _d_db_data {
 
     $rw = shift @$rows;
 
+    # latex representation of the image file path
     $img_path = sprintf(q{\imgroot/%s},$rw->{img});
+
+    # filesystem image file path
     $img_file = catfile($mkr->{img_root},$rw->{img});
 
     unless (-e $img_file) {
@@ -1023,6 +1026,10 @@ sub _d_db_data {
        warn Dumper($r) . "\n";
        push @err, qq{%Image exists in DB but not found in FS: $url };
        last;
+    }
+
+    if ($mkr->{box}) {
+       my $src_dir = $mkr->{src_dir};
     }
 
     last;
@@ -1040,6 +1047,8 @@ sub _d_db_data {
 
 sub _d2tex {
   my ($self, $d) = @_;
+
+  my $mkr = $self->{mkr};
 
   $d ||= $self->{d};
   return () unless $d;
@@ -1130,6 +1139,9 @@ sub _d2tex {
 
   my (@ig, $ig_cmd); 
   $ig_cmd = sprintf(q|  \includegraphics[%s]{%s} |, $o, $img_path );
+  if ($mkr->{box}) {
+    # body...
+  }
 
   push @ig, 
     $ig_cmd;
