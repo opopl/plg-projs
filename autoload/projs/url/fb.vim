@@ -35,7 +35,7 @@ function! projs#url#fb#data (...)
   let fb_authors = projs#data#dict({ 'id' : 'fb_authors' })
 
   let fb_groups  = projs#data#dict({ 'id' : 'fb_groups' })
-  let fb_group_list = values(fb_groups)
+  let fb_group_list = sort(values(fb_groups))
 
   let path_a     = split(path,'/')
   let path_front = get(path_a,0,'')
@@ -85,7 +85,7 @@ function! projs#url#fb#data (...)
       let author_id = printf('fb_group.%s',fb_group_id)
 
       let author_db = projs#author#get_db({ 'author_id' : author_id })
-      let author    = base#x#get(author_db,'name','')
+      debug let author    = base#x#get(author_db,'name','')
 
       if !len(author)
         let author = projs#author#add_prompt({ 'author_id' : author_id })

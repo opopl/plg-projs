@@ -134,12 +134,7 @@ class LTS(
        }
     }
 
-    self.dat_files = {}
-    kk = [ '', 'fb_', 'vk_', 'yz_' ]
-    for k in kk:
-      dat_name = f'{k}authors'
-      dat_path = os.path.join(self.lts_root, 'data', 'dict', f'{dat_name}.i.dat')
-      self.dat_files.update({ dat_name : dat_path })
+
 
     self.prj = Prj({ 
       'proj'     : self.proj,
@@ -156,12 +151,29 @@ class LTS(
   def init(self):
 
     acts = [
+      [ 'init_dat_files' ],
       [ 'init_dirs' ],
       [ 'init_tmpl' ],
       [ 'init_db' ],
     ]
 
     util.call(self,acts)
+
+    return self
+
+  def init_dat_files(self):
+    self.dat_files = {}
+
+    kk = [ '', 'fb_', 'vk_', 'yz_' ]
+    for k in kk:
+      dat_name = f'{k}authors'
+      dat_path = os.path.join(self.lts_root, 'data', 'dict', f'{dat_name}.i.dat')
+      self.dat_files.update({ dat_name : dat_path })
+
+    self.dat_files.update({ 
+      'fb_groups' : os.path.join(self.lts_root,'data', 'dict', 'fb_groups.i.dat'),
+      'names' : os.path.join(self.lts_root,'scrape','bs','in','lists','names_first.i.dat'),
+    })
 
     return self
 

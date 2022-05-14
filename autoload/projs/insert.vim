@@ -392,6 +392,13 @@ if 0
 endif
 
 """pin_ii_url {
+
+if 0
+  call tree
+    calls
+      projs#util#ii_data_from_url
+endif
+
 function! projs#insert#ii_url ()
   let proj   = projs#proj#name()
 

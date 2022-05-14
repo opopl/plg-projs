@@ -266,13 +266,12 @@ class ltsAuthor:
     return self
 
   def author_import_dat2db(self, ref = {}):
-    authors_file    = os.path.join(self.lts_root,'data', 'dict', 'authors.i.dat')
-    fb_authors_file = os.path.join(self.lts_root,'data', 'dict', 'fb_authors.i.dat')
+    names_first = util.readarr(self.dat_files['names'])
 
-    names_file = os.path.join(self.lts_root,'scrape','bs','in','lists','names_first.i.dat')
-    names_first = util.readarr(names_file)
+    fb_authors = util.readdict(self.dat_files['fb_authors'])
+    fb_groups  = util.readdict(self.dat_files['fb_groups'])
 
-    fb_authors = util.readdict(fb_authors_file)
+    authors_file = self.dat_files['authors']
 
     home = os.environ.get('HOME')
     #db_file = os.path.join(home,'tmp','h.db')
@@ -290,6 +289,9 @@ class ltsAuthor:
 
           # facebook ids corresponding to single author_id
           fb_ids = []
+
+          # facebook group ids corresponding to single author_id
+          fb_group_ids = []
 
           # incoming author string
           author_bare  = m.group('author_bare')
@@ -311,6 +313,10 @@ class ltsAuthor:
 
             if not first_name in names_first:
               author_name = author_plain
+
+          for fb_group_id, a_id in fb_groups.items():
+            if f'fb_group.{a_id}' == author_id:
+              fb_group_ids.append(fb_group_id)
 
           for fb_id, a_id in fb_authors.items():
             if a_id == author_id:
@@ -345,6 +351,20 @@ class ltsAuthor:
               'table'   : 'auth_details',
               'insert'  : d_auth_detail,
               'on_list' : [ 'id', 'fb_id' ]
+            }
+            dbw.insert_update_dict(d)
+
+          for fb_group_id in fb_group_ids:
+            d_auth_detail = {
+              'id'     : author_id,
+              'fb_url' : f'https://www.facebook.com/groups/{fb_group_id}',
+              'fb_group_id'  : fb_group_id,
+            }
+            d = {
+              'db_file' : self.db_file_pages,
+              'table'   : 'auth_details',
+              'insert'  : d_auth_detail,
+              'on_list' : [ 'id' ]
             }
             dbw.insert_update_dict(d)
 
