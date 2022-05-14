@@ -85,7 +85,7 @@ function! projs#url#fb#data (...)
       let author_id = printf('fb_group.%s',fb_group_id)
 
       let author_db = projs#author#get_db({ 'author_id' : author_id })
-      debug let author    = base#x#get(author_db,'name','')
+      let author    = base#x#get(author_db,'name','')
 
       if !len(author)
         let author = projs#author#add_prompt({ 'author_id' : author_id })
