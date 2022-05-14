@@ -397,6 +397,7 @@ if 0
   call tree
     calls
       projs#util#ii_data_from_url
+        projs#url#site#get
 endif
 
 function! projs#insert#ii_url ()

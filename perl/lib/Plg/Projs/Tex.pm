@@ -1065,6 +1065,7 @@ sub fb_format {
 
           || /^\s*See\s+Translation\s*$/
           || /^\s*Reply\s*$/
+          || /^\s*Share\s*$/
           || /^\s*(\d+)(w|d|m|y)\s*$/
         )
         && do { push @new,''; next; };

@@ -64,7 +64,7 @@ function! projs#url#fb#data (...)
       if !len(fb_group_id)
         call base#varset('this',fb_group_list)
 
-        let fb_group_id = base#input_we('New fb_group id:','',{ 'this' : 1 })
+        let fb_group_id = base#input_we('New fb_group id:', '', { 'this' : 1 })
 
         let msg = printf('[%s] fb group name: ',fb_group_id)
         let fb_group_name = base#input_we(msg,'')

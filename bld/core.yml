@@ -260,6 +260,8 @@ sii:
          - titletoc
          - xparse
          - p.core
+         - p.qq
+         - p.zz
          - p.wrapfig
          - p.fancyquote
         #- p.shadequote
