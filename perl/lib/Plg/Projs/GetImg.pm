@@ -275,7 +275,6 @@ sub init {
     return $self;
 }
 
-      
 sub get_opt {
     my ($self) = @_;
     
