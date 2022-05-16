@@ -398,6 +398,7 @@ if 0
     calls
       projs#util#ii_data_from_url
         projs#url#site#get
+        projs#url#fb#data
 endif
 
 function! projs#insert#ii_url ()

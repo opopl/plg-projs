@@ -17,6 +17,8 @@ if 0
   call tree
     called by
       projs#util#ii_data_from_url
+    calls
+      projs#data#dict#update
 endif
 
 function! projs#url#fb#data (...)
@@ -61,6 +63,7 @@ function! projs#url#fb#data (...)
     if len(fb_group)
       let fb_group_id = get(fb_groups,fb_group,'')
 
+      " did not fb group, need to add
       if !len(fb_group_id)
         call base#varset('this',fb_group_list)
 
@@ -68,6 +71,8 @@ function! projs#url#fb#data (...)
 
         let msg = printf('[%s] fb group name: ',fb_group_id)
         let fb_group_name = base#input_we(msg,'')
+
+        let author = fb_group_name
 
         let author_id = printf('fb_group.%s',fb_group_id)
         call projs#data#dict#update({
@@ -82,13 +87,15 @@ function! projs#url#fb#data (...)
 
       echo 'Facebook group id: ' . fb_group_id
 
-      let author_id = printf('fb_group.%s',fb_group_id)
-
-      let author_db = projs#author#get_db({ 'author_id' : author_id })
-      let author    = base#x#get(author_db,'name','')
-
       if !len(author)
-        let author = projs#author#add_prompt({ 'author_id' : author_id })
+	      let author_id = printf('fb_group.%s',fb_group_id)
+	
+	      let author_db = projs#author#get_db({ 'author_id' : author_id })
+	      let author    = base#x#get(author_db,'name','')
+	
+	      if !len(author)
+	        let author = projs#author#add_prompt({ 'author_id' : author_id })
+	      endif
       endif
 
     endif
