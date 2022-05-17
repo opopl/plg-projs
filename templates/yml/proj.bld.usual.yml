@@ -12,6 +12,6 @@ opts_maker:
     - '_base_'
     - 'body'
     - 'defs'
-    'include_with_children @push': 
+    'include_with_children @push':
     - preamble
     - body
