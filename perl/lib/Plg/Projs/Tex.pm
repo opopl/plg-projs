@@ -1067,8 +1067,10 @@ sub fb_format {
           || /^\s*Reply\s*$/
           || /^\s*Share\s*$/
           || /^\s*(\d+)(w|d|m|y)\s*$/
+		  || /^\s*(\d+)(d|w|m|y)Edited\s*/
         )
-        && do { push @new,''; next; };
+        #&& do { push @new,''; next; };
+        && do { next; };
 
         my @utf = keys %fbicons;
         my @fbi;

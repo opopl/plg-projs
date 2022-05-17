@@ -915,6 +915,7 @@ if 0
     called by
       projs#insert#ii
       projs#insert#ii_url
+      projs#new
     calls
       projs#sec#header
       projs#sec#add ( sec_new_sec_add )
@@ -1065,9 +1066,9 @@ function! projs#sec#new(sec,...)
     elseif sec =~ '_bld\.'
       let target = substitute(copy(sec),'^_bld\.\(.*\)$','\1','g')
 
-      let xml_file = base#qw#catpath('plg',printf('projs templates yml proj.bld.%s.yml',target))
-      if filereadable(xml_file)
-        call extend(lines,readfile(xml_file))
+      let yml_file = base#qw#catpath('plg',printf('projs templates yml proj.bld.%s.yml',target))
+      if filereadable(yml_file)
+        call extend(lines,readfile(yml_file))
 
         let nlines = []
         for line in lines

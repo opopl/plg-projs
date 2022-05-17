@@ -79,6 +79,10 @@ if 0
   projs#new()
   projs#new(proj)
   projs#new(proj,{ git_add : 1 })
+
+  call tree
+    calls
+      projs#sec#new
 endif
 
 function! projs#new (...)
