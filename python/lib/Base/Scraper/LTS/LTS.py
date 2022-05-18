@@ -2,6 +2,8 @@
 import os,re,sys
 from pathlib import Path
 
+import hashlib
+
 import Base.DBW as dbw
 import Base.Util as util
 import Base.String as string
@@ -1122,6 +1124,32 @@ class LTS(
          'on_list' : [ 'id' ]
       }
       dbw.insert_update_dict(d)
+
+    return self
+
+  def db_img_md5(self, ref = {}):
+
+    limit = 10
+    q = f'''SELECT inum, img, md5 FROM imgs WHERE md5 IS NOT NULL LIMIT {limit}'''
+    p = []
+
+    r  = dbw.sql_fetchall(q, p, { 'db_file' : self.db_file_img })
+    rows = r.get('rows',[])
+    for rw in rows:
+      inum   = rw.get('inum')
+      img    = rw.get('img')
+      md5_db = rw.get('md5')
+
+      img_file = os.path.join(self.img_root,img)
+      if not os.path.isfile(img_file):
+        continue
+
+      with open(img_file,"rb") as f:
+        b = f.read() # read file as bytes
+        md5 = hashlib.md5(b).hexdigest()
+
+      print(rw)
+      import pdb; pdb.set_trace()
 
     return self
 

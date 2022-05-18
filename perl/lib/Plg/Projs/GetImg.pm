@@ -58,6 +58,7 @@ use Base::DB qw(
     dbh_select
     dbh_select_fetchone
     dbh_insert_hash
+    dbh_update_hash
 );
 
 use Base::Arg qw( 
@@ -257,7 +258,7 @@ sub init_q {
 sub get_yaml {
     my ($self) = @_;
 
-    my $f_yaml = $self->{yaml};
+    my $f_yaml = $self->{f_yaml};
     return $self unless $f_yaml;
 
     my $data = LoadFile($f_yaml);
@@ -515,26 +516,62 @@ sub pic_add {
     my ($self, $ref) = @_;
     $ref ||= {};
 
-    my $file = $ref->{file};
-    return $self unless -f $file;
+    # local file to be imported
+    my $img_file_local = $ref->{file};
+    return $self unless -f $img_file_local;
+
+    my $ftc = $ref->{ftc} || $self->{ftc};
+
+    # pic data
+    my $tags = $ref->{tags};
 
     my $dt = DateTime->now;
     my $t = $dt->strftime('%d_%m_%y.%H.%M.%S');
 
-    my $hex = md5sum($file);
+    my $md5 = md5sum($img_file_local);
+    my $inf = image_info($img_file_local);
+    my $url_tm = sprintf(q{tm://%s@%s}, $t, $md5);
 
-    print Dumper($file) . "\n";
-    print Dumper($hex) . "\n";
-    print Dumper($t) . "\n";
+    my ($width, $height, $ext) = @{$inf}{qw( width height file_ext )};
 
-    my $ins = {};
+    my $r = {
+        t => qq{ imgs },
+        q => q{ SELECT COUNT(*) FROM imgs },
+        w => { md5 => $md5 },
+    };
+    
+    my $cnt = dbh_select_fetchone($r);
+    return $self if $cnt;
 
-    #my $ok = dbh_insert_hash({
-       #t => 'imgs',
-       #i => q{ INSERT OR REPLACE },
-       #h => $ins,
-    #});
-   #    h => {
+    my $inum = dbh_select_fetchone({ q => 'SELECT MAX(inum) FROM imgs' });
+    $inum++;
+
+    my $img = qq{$inum.$ext};
+    my $img_file = catfile($self->{img_root}, $img);
+
+    my $ins = {
+       url    => $url_tm,
+       inum   => $inum,
+       img    => $img,
+       ext    => $ext,
+       md5    => $md5,
+       width  => $width,
+       height => $height,
+    };
+
+    if ($tags) {
+       ref $tags eq 'ARRAY' && do { $ins->{tags} = join(",", @$tags); };
+       !ref $tags && do { $ins->{tags} = $tags };
+    }
+
+    $DB::single = 1;
+
+    my $ok = dbh_insert_hash({
+       t => 'imgs',
+       i => q{ INSERT OR REPLACE },
+       h => $ins,
+    });
+       #h => {
            #proj    => $self->{proj},
            #rootid  => $self->{rootid},
            #sec     => $self->{sec},
@@ -559,39 +596,33 @@ sub cmd_db_add_md5 {
 
     my ($rows, $cols, $q, $p) = dbh_select({
        t => 'imgs',
-       q => q{ SELECT url, md5, inum, img FROM imgs WHERE md5 IS NOT NULL },
-       limit => 1,
+       q => q{ SELECT url, md5, inum, img FROM imgs WHERE md5 IS NULL },
+       limit => 30000,
     });
 
+    my @eq;
     foreach my $rw (@$rows) {
         my ($inum, $img, $md5_db) = @{$rw}{qw(inum img md5)};
         my $img_file = catfile($img_root, $img);
         next unless -f $img_file;
 
-        my $hex = md5sum($img_file);
+        my $md5 = md5sum($img_file);
         my $inf = image_info($img_file);
+        my ($width, $height, $ext) = @{$inf}{qw( width height file_ext )};
 
-        print Dumper(keys %$inf) . "\n";
-
-        if ($hex eq $md5_db) {
-            print Dumper($rw) . "\n";
-        }
-        #print Dumper($hex) . "\n";
+        my $ref = {
+            t => 'imgs',
+            h => {
+                #'md5'    => undef,
+                'md5'    => $md5,
+                'height' => $height,
+                'width'  => $width,
+            },
+            w => { inum => $inum },
+        };
+        dbh_update_hash($ref);
     }
 $DB::single = 1;
-   #    h => {
-           #proj    => $self->{proj},
-           #rootid  => $self->{rootid},
-           #sec     => $self->{sec},
-
-           #inum    => $d->{inum},
-           #url     => $d->{url},
-           #img     => $d->{img},
-           #caption => $d->{caption} || '',
-           #tags    => $d->{tags} || '',
-           #name    => $d->{name} || '',
-           #type    => $d->{type} || '',
-       #},
 
     return $self;
 }
@@ -601,19 +632,48 @@ sub cmd_add_images {
     $ref ||= {};
 
     my $add = $ref->{add} || $self->{add};
-    my @files_add = map { rel2abs($_) } ( ref $add eq 'ARRAY' ? @$add : ( $add ));
+    my (@files_add, @paths_add); 
+    my ($max_files, $tags);
 
+    if (ref $add eq "ARRAY"){
+       @paths_add = @$add;
+    }elsif(ref $add eq "HASH"){
+       @paths_add = @{$add->{dirs} || []};
+
+       $max_files = $add->{max_files};
+       $tags = $add->{tags};
+    # single file
+    }elsif(!ref $add){
+       @paths_add = ( $add );
+    }
+
+    @files_add =  map { s/^~/$ENV{HOME}/g; rel2abs($_) } @paths_add;
+
+    $self->{ftc} = $self->_new_fetcher;
+   
+    my $file_num = 0;
     while (@files_add) {
        my $path = shift @files_add;
 
-       -d $path && do {
-          my @found = File::Find::Rule->name('*.png')->in($path);
-          push @files_add, @found;
+       unless (ref $path) {
+           -d $path && do {
+              my @found = File::Find::Rule->name('*.png', '*.jpg')->in($path);
+              push @files_add, @found;
+    
+              next;
+           };
+           -f $path && do { 
+               $file_num++;
 
-          next;
-       };
-       -f $path && do { $self->pic_add({ file => $path }); };
+               my $r_add = { file => $path };
+               $r_add->{tags} = $tags if $tags;
+
+               $self->pic_add($r_add); 
+               last if $max_files && $file_num == $max_files;
+           };
+       }
     }
+    $DB::single = 1;
 
     return $self;
 }
@@ -664,19 +724,6 @@ sub load_file {
     $self->debug(qq{Reading:\n\t$file_bn});
 ###read_file @lines
     my @lines = read_file $file;
-
-#    my %n = (
-        #file     => $file,
-        #sec      => $sec,
-        #proj     => $self->{proj},
-        #root     => $self->{root},
-        #prj      => $self->{prj},
-        #dbh      => $self->{dbh},
-        ## images
-        #img_root => $self->{img_root},
-        #gi       => $self,
-    #);
-    #my $ftc = Plg::Projs::GetImg::Fetcher->new(%n);
 
     my %n = (
        file => $file,
