@@ -1135,6 +1135,7 @@ class LTS(
 
     r  = dbw.sql_fetchall(q, p, { 'db_file' : self.db_file_img })
     rows = r.get('rows',[])
+
     for rw in rows:
       inum   = rw.get('inum')
       img    = rw.get('img')

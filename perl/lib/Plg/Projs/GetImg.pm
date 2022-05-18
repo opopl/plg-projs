@@ -19,7 +19,7 @@ use Plg::Projs::GetImg::Fetcher;
 
 use File::Spec::Functions qw(catfile rel2abs);
 use File::Path qw( mkpath rmtree );
-use File::Copy qw( move );
+use File::Copy qw( move copy );
 
 use YAML qw(LoadFile);
 
@@ -233,12 +233,17 @@ sub init_q {
                 name TEXT,
                 ext TEXT,
                 type TEXT,
-                md5 TEXT UNIQUE,
+                md5 TEXT,
                 name TEXT,
                 name_uniq TEXT,
                 width INTEGER,
                 height INTEGER,
                 width_tex TEXT
+            );
+
+            CREATE TABLE IF NOT EXISTS _info_imgs_tags (
+                url TEXT NOT NULL,
+                tag TEXT
             );
         },
         drop => qq{
@@ -520,10 +525,13 @@ sub pic_add {
     my $img_file_local = $ref->{file};
     return $self unless -f $img_file_local;
 
-    my $ftc = $ref->{ftc} || $self->{ftc};
+    print Dumper("Import: $img_file_local") . "\n";
 
     # pic data
     my $tags = $ref->{tags};
+
+    # move if 1
+    my $mv = $ref->{mv};
 
     my $dt = DateTime->now;
     my $t = $dt->strftime('%d_%m_%y.%H.%M.%S');
@@ -566,24 +574,21 @@ sub pic_add {
 
     $DB::single = 1;
 
-    my $ok = dbh_insert_hash({
-       t => 'imgs',
-       i => q{ INSERT OR REPLACE },
-       h => $ins,
-    });
-       #h => {
-           #proj    => $self->{proj},
-           #rootid  => $self->{rootid},
-           #sec     => $self->{sec},
+    copy($img_file_local, $img_file);
 
-           #inum    => $d->{inum},
-           #url     => $d->{url},
-           #img     => $d->{img},
-           #caption => $d->{caption} || '',
-           #tags    => $d->{tags} || '',
-           #name    => $d->{name} || '',
-           #type    => $d->{type} || '',
-       #},
+    if (-f $img_file) {
+        my $ok = dbh_insert_hash({
+           t => 'imgs',
+           i => q{ INSERT OR REPLACE },
+           h => $ins,
+        });
+        unless ($ok) {
+           rmtree $img_file;
+
+        }elsif($mv){
+           rmtree $img_file_local;
+        }
+    }
 
     return $self;
 }
@@ -622,7 +627,6 @@ sub cmd_db_add_md5 {
         };
         dbh_update_hash($ref);
     }
-$DB::single = 1;
 
     return $self;
 }
@@ -633,47 +637,47 @@ sub cmd_add_images {
 
     my $add = $ref->{add} || $self->{add};
     my (@files_add, @paths_add); 
-    my ($max_files, $tags);
+    my ($max_files, $tags, $mv);
 
     if (ref $add eq "ARRAY"){
        @paths_add = @$add;
     }elsif(ref $add eq "HASH"){
-       @paths_add = @{$add->{dirs} || []};
+       @paths_add = @{$add->{paths} || []};
 
-       $max_files = $add->{max_files};
-       $tags = $add->{tags};
+       ($max_files, $tags, $mv) = @{$add}{qw( max_files tags mv )};
     # single file
     }elsif(!ref $add){
        @paths_add = ( $add );
     }
 
-    @files_add =  map { s/^~/$ENV{HOME}/g; rel2abs($_) } @paths_add;
+    @files_add = map { s/^~/$ENV{HOME}/g; rel2abs($_) } @paths_add;
 
-    $self->{ftc} = $self->_new_fetcher;
-   
     my $file_num = 0;
     while (@files_add) {
        my $path = shift @files_add;
 
        unless (ref $path) {
            -d $path && do {
-              my @found = File::Find::Rule->name('*.png', '*.jpg')->in($path);
+              my @found = File::Find::Rule->name('*.png', '*.jpg', '*.jpeg')->in($path);
               push @files_add, @found;
     
               next;
            };
+
            -f $path && do { 
                $file_num++;
 
                my $r_add = { file => $path };
                $r_add->{tags} = $tags if $tags;
+               $r_add->{mv} = $mv if $mv;
 
                $self->pic_add($r_add); 
                last if $max_files && $file_num == $max_files;
+
+               next;
            };
        }
     }
-    $DB::single = 1;
 
     return $self;
 }
@@ -776,7 +780,6 @@ sub run {
 
     $self
         ->run_cmd;
-    $DB::single = 1;
 
     return $self;
 }
