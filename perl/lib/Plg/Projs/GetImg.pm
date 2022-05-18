@@ -25,6 +25,8 @@ use FindBin qw($Bin $Script);
 use File::Basename qw(basename dirname);
 use File::Which qw(which);  
 
+use File::Find::Rule;
+
 use URI::Split qw(uri_split);
 
 use LWP::Simple qw(getstore);
@@ -284,9 +286,19 @@ sub get_opt {
 
     @optstr = ( 
         # image file, pattern, or directory
+        #   sets 
+        #       cmd="add_images"
+        #   calls
+        #       cmd_add_images
+        #           pic_add
         "add|a=s@",
+
         # config
         "config|c=s@",
+
+        # yaml control file
+        "yaml|y=s",
+
         # tex file
         "file|f=s",
         "proj|p=s",
@@ -337,6 +349,7 @@ sub print_help {
         LOCATION:
             $0
         OPTIONS:
+            --yaml -y string YAML control file 
             --add -a string (TODO) add image file, pattern or directory
 
             --file -f FILE string TeX file with urls
@@ -372,6 +385,20 @@ sub print_help {
     exit 0;
 
     return $self;
+}
+
+sub _new_fetcher {
+    my ($self, $ref) = @_;
+    $ref ||= {};
+
+    my %n = ( gi => $self );
+    $n{$_} = $self->{$_} for(qw( proj root prj dbh img_root ));
+
+    %n = ( %n, %$ref );
+
+    my $ftc = Plg::Projs::GetImg::Fetcher->new(%n);
+
+    return $ftc;
 }
 
 sub _ok {
@@ -479,15 +506,16 @@ sub pic_add {
     my $hex = md5sum($file);
 
     print Dumper($file) . "\n";
-    print Dumper(length $hex) . "\n";
+    print Dumper($hex) . "\n";
     print Dumper($t) . "\n";
 
     my $ins = {};
 
-    my $ok = dbh_insert_hash({
-       t => 'imgs',
-       i => q{ INSERT OR REPLACE },
-       h => $ins,
+    #my $ok = dbh_insert_hash({
+       #t => 'imgs',
+       #i => q{ INSERT OR REPLACE },
+       #h => $ins,
+    #});
    #    h => {
            #proj    => $self->{proj},
            #rootid  => $self->{rootid},
@@ -501,7 +529,6 @@ sub pic_add {
            #name    => $d->{name} || '',
            #type    => $d->{type} || '',
        #},
-    });
 
     return $self;
 }
@@ -513,9 +540,16 @@ sub cmd_add_images {
     my $add = $ref->{add} || $self->{add};
     my @files_add = map { rel2abs($_) } ( ref $add eq 'ARRAY' ? @$add : ( $add ));
 
-    foreach (@files_add) {
-       -d && do { };
-       -f && do { $self->pic_add({ file => $_ }); };
+    while (@files_add) {
+       my $path = shift @files_add;
+
+       -d $path && do {
+          my @found = File::Find::Rule->name('*.png')->in($path);
+          push @files_add, @found;
+
+          next;
+       };
+       -f $path && do { $self->pic_add({ file => $path }); };
     }
 
     return $self;
@@ -527,17 +561,17 @@ sub load_file {
 
     my ($file, $file_bn, $sec, $root);
 
-    $root = $self->{root};
-
     # objects
     my ($prj);
+
+    $root = $self->{root};
+    $prj  = $self->{prj};
 
     $file = $self->_opt_($ref,'file');
     $sec  = $self->_opt_($ref,'sec');
 
     my $atend = sub { $self->info_ok_fail };
 
-    $prj = $self->{prj};
     unless ($file) {
         my @files = $prj->_files;
 
@@ -568,17 +602,24 @@ sub load_file {
 ###read_file @lines
     my @lines = read_file $file;
 
+#    my %n = (
+        #file     => $file,
+        #sec      => $sec,
+        #proj     => $self->{proj},
+        #root     => $self->{root},
+        #prj      => $self->{prj},
+        #dbh      => $self->{dbh},
+        ## images
+        #img_root => $self->{img_root},
+        #gi       => $self,
+    #);
+    #my $ftc = Plg::Projs::GetImg::Fetcher->new(%n);
+
     my %n = (
-        file     => $file,
-        sec      => $sec,
-        proj     => $proj,
-        root     => $root,
-        prj      => $prj,
-        gi       => $self,
-        dbh      => $self->{dbh},
-        img_root => $self->{img_root},
+       file => $file,
+       sec  => $sec,
     );
-    my $ftc = Plg::Projs::GetImg::Fetcher->new(%n);
+    my $ftc = $self->_new_fetcher(\%n);
     
     $ftc
         ->f_read
@@ -625,6 +666,7 @@ sub run {
 
     $self
         ->run_cmd;
+    $DB::single = 1;
 
     return $self;
 }
