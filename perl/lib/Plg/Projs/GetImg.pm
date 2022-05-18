@@ -21,6 +21,8 @@ use File::Spec::Functions qw(catfile rel2abs);
 use File::Path qw( mkpath rmtree );
 use File::Copy qw( move );
 
+use YAML qw(LoadFile);
+
 use FindBin qw($Bin $Script);
 use File::Basename qw(basename dirname);
 use File::Which qw(which);  
@@ -252,6 +254,21 @@ sub init_q {
     return $self;
 }
 
+sub get_yaml {
+    my ($self) = @_;
+
+    my $f_yaml = $self->{yaml};
+    return $self unless $f_yaml;
+
+    my $data = LoadFile($f_yaml);
+
+    foreach my $k (keys %$data) {
+        $self->{$k} = $$data{$k};
+    }
+
+    return $self;
+}
+
 
 sub init {
     my ($self) = @_;
@@ -266,6 +283,7 @@ sub init {
 
     $self
         ->get_opt
+        ->get_yaml
         ->init_root
         ->init_prj
         ->init_img_root
@@ -297,7 +315,7 @@ sub get_opt {
         "config|c=s@",
 
         # yaml control file
-        "yaml|y=s",
+        "f_yaml|y=s",
 
         # tex file
         "file|f=s",
@@ -349,7 +367,7 @@ sub print_help {
         LOCATION:
             $0
         OPTIONS:
-            --yaml -y string YAML control file 
+            --f_yaml -y string YAML control file 
             --add -a string (TODO) add image file, pattern or directory
 
             --file -f FILE string TeX file with urls
@@ -516,6 +534,51 @@ sub pic_add {
        #i => q{ INSERT OR REPLACE },
        #h => $ins,
     #});
+   #    h => {
+           #proj    => $self->{proj},
+           #rootid  => $self->{rootid},
+           #sec     => $self->{sec},
+
+           #inum    => $d->{inum},
+           #url     => $d->{url},
+           #img     => $d->{img},
+           #caption => $d->{caption} || '',
+           #tags    => $d->{tags} || '',
+           #name    => $d->{name} || '',
+           #type    => $d->{type} || '',
+       #},
+
+    return $self;
+}
+
+sub cmd_db_add_md5 {
+    my ($self, $ref) = @_;
+    $ref ||= {};
+
+    my $img_root = $self->{img_root};
+
+    my ($rows, $cols, $q, $p) = dbh_select({
+       t => 'imgs',
+       q => q{ SELECT url, md5, inum, img FROM imgs WHERE md5 IS NOT NULL },
+       limit => 1,
+    });
+
+    foreach my $rw (@$rows) {
+        my ($inum, $img, $md5_db) = @{$rw}{qw(inum img md5)};
+        my $img_file = catfile($img_root, $img);
+        next unless -f $img_file;
+
+        my $hex = md5sum($img_file);
+        my $inf = image_info($img_file);
+
+        print Dumper(keys %$inf) . "\n";
+
+        if ($hex eq $md5_db) {
+            print Dumper($rw) . "\n";
+        }
+        #print Dumper($hex) . "\n";
+    }
+$DB::single = 1;
    #    h => {
            #proj    => $self->{proj},
            #rootid  => $self->{rootid},
