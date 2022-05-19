@@ -536,8 +536,8 @@ sub pic_add {
     my $dt = DateTime->now;
     my $t = $dt->strftime('%d_%m_%y.%H.%M.%S');
 
-    my $md5 = md5sum($img_file_local);
-    my $inf = image_info($img_file_local);
+    my $md5    = md5sum($img_file_local);
+    my $inf    = image_info($img_file_local);
     my $url_tm = sprintf(q{tm://%s@%s}, $t, $md5);
 
     my ($width, $height, $ext) = @{$inf}{qw( width height file_ext )};
@@ -568,7 +568,7 @@ sub pic_add {
     };
 
     if ($tags) {
-       ref $tags eq 'ARRAY' && do { $ins->{tags} = join(",", @$tags); };
+       ref $tags eq 'ARRAY' && do { $ins->{tags} = join("," => @$tags); };
        !ref $tags && do { $ins->{tags} = $tags };
     }
 

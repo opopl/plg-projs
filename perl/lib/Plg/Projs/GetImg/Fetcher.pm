@@ -158,23 +158,33 @@ sub db_insert_img {
   my $d = $self->{d};
   return $self unless $d;
 
+  $d->{md5} = md5sum($d->{img_file});
+  my $iif = image_info($d->{img_file}) || {};
+  $d->{$_} = $iif->{$_} for(qw( width height));
+
+  my $ins = {};
+
+  my @keys_self = qw( proj rootid sec );
+  my @keys_d = qw( inum url img );
+  my @keys_d_str = qw( caption tags name type md5 width height );
+
+  $ins->{$_} = $self->{$_} for(@keys_self);
+
+  $ins->{$_} = $d->{$_} for(@keys_d);
+  $ins->{$_} = $d->{$_} // '' for(@keys_d_str);
+
   my $ok = dbh_insert_hash({
        t => 'imgs',
        i => q{ INSERT OR REPLACE },
-       h => {
-           proj    => $self->{proj},
-           rootid  => $self->{rootid},
-           sec     => $self->{sec},
-
-           inum    => $d->{inum},
-           url     => $d->{url},
-           img     => $d->{img},
-           caption => $d->{caption} || '',
-           tags    => $d->{tags} || '',
-           name    => $d->{name} || '',
-           type    => $d->{type} || '',
-       },
+       h => $ins
   });
+
+  my @tags = split(',' => $d->{tags});
+  foreach my $tag (@tags) {
+      #$ok &&= dbh_insert_hash({
+           #t => '_info_imgs_tags',
+      #});
+  }
 
   $self->d_push_status('ok') if $ok;
   $DB::single = 1;
@@ -525,6 +535,8 @@ sub _fetch {
 
   return 1;
 }
+# endof: _fetch
+# see also: db_insert_img
 
 
 1;
