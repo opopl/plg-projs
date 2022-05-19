@@ -153,6 +153,36 @@ function! projs#sec#delete_prompt (...)
   call projs#sec#delete(sec,{ 'prompt' : 1})
 endfunction
 
+function! projs#sec#date (...)
+  let ref = get(a:000,0,{})
+  let sec = get(ref,'sec','')
+
+  let lang = get(ref,'lang','en')
+  let repr = get(ref,'repr','short')
+
+  let lst = matchlist(sec, '^\zs\(\d\+\)_\(\d\+\)_\(\d\+\)\ze')
+  let [ date, day, month, year ] = lst[0:3]
+  
+  let day = substitute(day,'^0','','g')
+  let month = substitute(month,'^0','','g')
+
+  let yfile = base#qw#catpath('plg','projs data yaml months.yaml')
+  let map_months = base#yaml#parse_fs({ 'file' : yfile })
+
+  let path = join([lang, repr, month], '.')
+  let month_str = base#x#getpath(map_months, path, '')
+
+  let r = { 
+      \ 'date'  : date,
+      \ 'day'   : day,
+      \ 'month' : month_str,
+      \ 'year'  : year,
+      \ }
+
+  return r
+
+endfunction
+
 "Usage:
 "  call projs#sec#delete (sec)
 "

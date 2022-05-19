@@ -1127,6 +1127,26 @@ class LTS(
 
     return self
 
+  def db_img_base2info(self, ref = {}):
+
+    tbase = 'imgs'
+
+    jcol  = 'url'
+    b2i   = { 'tags' : 'tag' }
+    bcols = [ 'tags' ]
+    where = {}
+
+    dbw.base2info({
+      'db_file' : self.db_file_img,
+      'tbase'   : tbase,
+      'bwhere'  : where,
+      'jcol'    : jcol,
+      'b2i'     : b2i,
+      'bcols'   : bcols
+    })
+
+    return self
+
   def db_img_md5(self, ref = {}):
 
     limit = 10

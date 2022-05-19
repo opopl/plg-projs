@@ -492,8 +492,6 @@ sub _fetch {
         $d->{img_file} = $img_file_new;
      }
 
-  $DB::single = 1;
-
      if (grep { /^$d->{ext}$/ } qw(gif webp bmp)) {
         my $img_jpg = sprintf(q{%s.%s},$d->{inum},'jpg');
         my $img_file_jpg = catfile($self->{img_root},$img_jpg);
@@ -515,7 +513,6 @@ sub _fetch {
         $d->{ext} = 'jpg';
      }
   }
-  $DB::single = 1;
 
   my $fs = -f $d->{img_file} ? 1 : 0;
   $d->{'@'}->{fs} = $fs;
