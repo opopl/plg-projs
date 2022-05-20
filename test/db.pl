@@ -27,13 +27,13 @@ my $b2i = { 'tags' => 'tag' };
 my (@tags, @author_id);
 push @tags,
  '',
- #'two',
- #'four',
+ 'two',
+ 'four',
  ;
 push @author_id,
  '',
- #'igor',
- #'taras',
+ 'igor',
+ 'taras',
  ;
   
 my $tags = join("," => grep { length } map { trim($_)} @tags);
@@ -62,6 +62,5 @@ foreach my $file (@files) {
       'jcol'   => 'file',
       'b2i'    => $b2i,
       'bcols'  => [qw( tags author_id )],
-      #opts => { length => 1, }
     });
 }

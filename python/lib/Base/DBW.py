@@ -417,7 +417,7 @@ def base2info(ref={}):
 
   for bcol in bcols:
      icol = b2i.get(bcol,bcol)
-     sql = _sql_ct_info(tbase=tbase,bcol=bcol,jcol=jcol,icol=icol)
+     sql = _sql_ct_info( tbase=tbase, bcol=bcol, jcol=jcol, icol=icol )
      sql_do({ 
         'db_file' : db_file,
         'sql'     : sql,
