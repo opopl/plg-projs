@@ -49,6 +49,8 @@ use Base::DB qw(
     dbh_select_as_list
     dbh_select_fetchone
     dbh_insert_hash
+
+    dbh_base2info
 );
 
 use Plg::Projs::Tex qw(
@@ -174,9 +176,9 @@ sub db_insert_img {
   $ins->{$_} = $d->{$_} // '' for(@keys_d_str);
 
   my $ok = dbh_insert_hash({
-       t => 'imgs',
-       i => q{ INSERT OR REPLACE },
-       h => $ins
+     t => 'imgs',
+     i => q{ INSERT OR REPLACE },
+     h => $ins
   });
 
   my @tags = split(',' => $d->{tags});

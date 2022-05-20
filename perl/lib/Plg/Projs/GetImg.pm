@@ -572,21 +572,29 @@ sub pic_add {
        !ref $tags && do { $ins->{tags} = $tags };
     }
 
-    $DB::single = 1;
-
     copy($img_file_local, $img_file);
 
     if (-f $img_file) {
-        my $ok = dbh_insert_hash({
-           t => 'imgs',
-           i => q{ INSERT OR REPLACE },
-           h => $ins,
-        });
-        unless ($ok) {
-           rmtree $img_file;
+        my $ok = 1;
+        # do not insert image with the same md5
+        while (1) {
+            my $cnt = dbh_select_fetchone({ q => 'SELECT COUNT(*) FROM imgs WHERE md5 = ?', p => [$md5] });
+            $cnt && do { $ok = 0; };
 
-        }elsif($mv){
-           rmtree $img_file_local;
+            $ok &&= dbh_insert_hash({
+               t => 'imgs',
+               i => q{ INSERT OR REPLACE },
+               h => $ins,
+            });
+
+            unless ($ok) {
+               rmtree $img_file;
+
+            }elsif($mv){
+               rmtree $img_file_local;
+            }
+
+            last;
         }
     }
 
