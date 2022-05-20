@@ -19,6 +19,8 @@ use File::Copy qw( move );
 
 use Clone qw(clone);
 
+use File::stat;
+
 use Image::Info qw(
     image_info
     image_type
@@ -43,9 +45,6 @@ use Base::String qw(
 );
 
 use Base::DB qw( 
-    dbi_connect 
-    dbh_do
-    dbh_select
     dbh_select_as_list
     dbh_select_fetchone
     dbh_insert_hash
@@ -160,20 +159,20 @@ sub db_insert_img {
   my $d = $self->{d};
   return $self unless $d;
 
-  $d->{md5} = md5sum($d->{img_file});
   my $iif = image_info($d->{img_file}) || {};
   $d->{$_} = $iif->{$_} for(qw( width height));
 
   my $ins = {};
 
   my @keys_self = qw( proj rootid sec );
-  my @keys_d = qw( inum url img );
+  my @keys_d = qw( inum url img size );
   my @keys_d_str = qw( caption tags name type md5 width height );
 
   $ins->{$_} = $self->{$_} for(@keys_self);
 
   $ins->{$_} = $d->{$_} for(@keys_d);
   $ins->{$_} = $d->{$_} // '' for(@keys_d_str);
+  $DB::single = 1;
 
   my $ok = 1;
   while (1) {
@@ -203,15 +202,7 @@ sub db_insert_img {
     last;
   }
 
-  my @tags = split(',' => $d->{tags});
-  foreach my $tag (@tags) {
-      #$ok &&= dbh_insert_hash({
-           #t => '_info_imgs_tags',
-      #});
-  }
-
   $self->d_push_status('ok') if $ok;
-  $DB::single = 1;
 
   return $self;
 }
@@ -549,12 +540,19 @@ sub _fetch {
   }
 
   my $fs = -f $d->{img_file} ? 1 : 0;
-  $d->{'@'}->{fs} = $fs;
 
   return unless $fs;
+  $d->{size} = stat($d->{img_file})->size;
+  return unless $d->{size};
+
+  $d->{'@'}->{fs} = 1;
+
+  $d->{md5} = md5sum($d->{img_file});
 
   print '=' x 50 . "\n";
-  print qq{Final image location: } . basename($d->{img_file}) . "\n";
+  print qq{ Final image location: } . basename($d->{img_file}) . "\n";
+  print qq{   Size: } . $d->{size} . "\n";
+  print qq{   MD5:  } . $d->{md5} . "\n";
   print '=' x 50 . "\n";
 
   return 1;

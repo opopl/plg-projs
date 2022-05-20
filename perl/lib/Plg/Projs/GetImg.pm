@@ -419,7 +419,7 @@ sub _new_fetcher {
     $ref ||= {};
 
     my %n = ( gi => $self );
-    $n{$_} = $self->{$_} for(qw( proj root prj dbh img_root ));
+    $n{$_} = $self->{$_} for(qw( proj root rootid prj dbh img_root ));
 
     %n = ( %n, %$ref );
 
@@ -713,7 +713,7 @@ sub load_file {
     my ($self, $ref) = @_;
     $ref ||= {};
 
-    my ($file, $file_bn, $sec, $root);
+    my ($file, $file_bn, $sec, $proj, $root);
 
     # objects
     my ($prj);
@@ -723,8 +723,18 @@ sub load_file {
 
     $file = $self->_opt_($ref,'file');
     $sec  = $self->_opt_($ref,'sec');
+    $proj = $self->_opt_($ref,'proj');
 
     my $atend = sub { $self->info_ok_fail };
+
+    if ($sec) {
+        my $sec_data = $prj->_sec_data({
+            sec  => $sec,
+            proj => $proj,
+        });
+        $file_bn ||= $sec_data->{file};
+        $file = catfile($self->{root}, $file_bn);
+    }
 
     unless ($file) {
         my @files = $prj->_files;
@@ -749,8 +759,6 @@ sub load_file {
     $file_bn = basename($file);
 
     my $img_root = $self->{img_root};
-
-    my $proj = $self->{proj};
 
     $self->debug(qq{Reading:\n\t$file_bn});
 ###read_file @lines
