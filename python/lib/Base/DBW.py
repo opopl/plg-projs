@@ -411,6 +411,10 @@ def base2info(ref={}):
   #   be expanded into 'info' table
   bcols  = ref.get('bcols') or []
 
+  # additional options
+  opts  = ref.get('opts') or {}
+  length = opts.get('length') or 0
+
   for bcol in bcols:
      icol = b2i.get(bcol,bcol)
      sql = _sql_ct_info(tbase=tbase,bcol=bcol,jcol=jcol,icol=icol)
@@ -422,7 +426,9 @@ def base2info(ref={}):
   scols = [ jcol ]
   scols.extend(bcols)
 
-  cond = ' OR '.join(list(map(lambda x: f'LENGTH({x}) > 0',bcols)))
+  cond = ''
+  if length:
+    cond = ' OR '.join(list(map(lambda x: f'LENGTH({x}) > 0',bcols)))
 
   r = select({ 
     'table'   : tbase,

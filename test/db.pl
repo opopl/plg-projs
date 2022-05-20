@@ -13,6 +13,7 @@ use Base::DB qw(
 );
 
 use File::Spec::Functions qw(catfile);
+use String::Util qw(trim);
 
 my $img_root = $ENV{IMG_ROOT};
 my $repos_git = $ENV{REPOSGIT};
@@ -25,40 +26,42 @@ my $b2i = { 'tags' => 'tag' };
 
 my (@tags, @author_id);
 push @tags,
- 'one',
- 'two',
- 'four',
+ '',
+ #'two',
+ #'four',
  ;
 push @author_id,
- 'igor',
- 'taras',
+ '',
+ #'igor',
+ #'taras',
  ;
   
-my $tags = join(",",@tags);
-my $author_id = join(",",@author_id);
+my $tags = join("," => grep { length } map { trim($_)} @tags);
+my $author_id = join("," => grep { length } map { trim($_) } @author_id);
 my @files = qw( git.tex git.preamble.tex );
 
 foreach my $file (@files) {
-	my $h = {
-	    tags      => $tags,
-	    parent    => 'bbb',
-	    author_id => $author_id,
-	    file      => $file,
-	};
-	
-	dbh_insert_update_hash({
-	   dbh     => $dbh,
-	   t       => 'projs',
-	   h       => $h,
-	   on_list => [qw( file )],
-	});
-	
-	dbh_base2info({
-	  'dbfile' => $dbfile,
-	  'tbase'  => 'projs',
-	  'bwhere' => { file => $file },
-	  'jcol'   => 'file',
-	  'b2i'    => $b2i,
-	  'bcols'  => [qw( tags author_id )],
-	});
+    my $h = {
+        tags      => $tags,
+        parent    => '',
+        author_id => $author_id,
+        file      => $file,
+    };
+    
+    dbh_insert_update_hash({
+       dbh     => $dbh,
+       t       => 'projs',
+       h       => $h,
+       on_list => [qw( file )],
+    });
+    
+    dbh_base2info({
+      'dbfile' => $dbfile,
+      'tbase'  => 'projs',
+      'bwhere' => { file => $file },
+      'jcol'   => 'file',
+      'b2i'    => $b2i,
+      'bcols'  => [qw( tags author_id )],
+      #opts => { length => 1, }
+    });
 }
