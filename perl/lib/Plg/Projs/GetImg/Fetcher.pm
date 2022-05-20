@@ -175,11 +175,33 @@ sub db_insert_img {
   $ins->{$_} = $d->{$_} for(@keys_d);
   $ins->{$_} = $d->{$_} // '' for(@keys_d_str);
 
-  my $ok = dbh_insert_hash({
-     t => 'imgs',
-     i => q{ INSERT OR REPLACE },
-     h => $ins
-  });
+  my $ok = 1;
+  while (1) {
+
+    $ok &&= eval {
+      dbh_insert_hash({
+         t => 'imgs',
+         i => q{ INSERT OR REPLACE },
+         h => $ins
+      });
+    };
+    $@ && do { warn $@; $ok = 0; };
+
+    $ok &&= eval {
+      dbh_base2info({
+         'tbase'  => 'imgs',
+         'bwhere' => { url => $d->{url} },
+         'jcol'   => 'url',
+         'b2i'    => { 'tags' => 'tag' },
+         'bcols'  => [qw( tags )],
+      });
+    };
+    $@ && do { $ok = 0; warn $@; };
+
+    rmtree $d->{img_file} unless $ok;
+
+    last;
+  }
 
   my @tags = split(',' => $d->{tags});
   foreach my $tag (@tags) {

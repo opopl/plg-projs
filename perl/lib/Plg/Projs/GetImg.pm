@@ -22,6 +22,7 @@ use File::Path qw( mkpath rmtree );
 use File::Copy qw( move copy );
 
 use YAML qw(LoadFile);
+use String::Util qw(trim);
 
 use FindBin qw($Bin $Script);
 use File::Basename qw(basename dirname);
@@ -59,6 +60,8 @@ use Base::DB qw(
     dbh_select_fetchone
     dbh_insert_hash
     dbh_update_hash
+
+    dbh_base2info
 );
 
 use Base::Arg qw( 
@@ -528,7 +531,11 @@ sub pic_add {
     print Dumper("Import: $img_file_local") . "\n";
 
     # pic data
-    my $tags = $ref->{tags};
+    my ( $tags, @tags, $tags_s );
+
+    $tags = $ref->{tags} || [];
+    @tags = ref $tags eq 'ARRAY' ? @$tags : map { trim($_) } grep { length } split ',' => $tags;
+    $tags_s = join ',' => @tags;
 
     # move if 1
     my $mv = $ref->{mv};
@@ -548,8 +555,13 @@ sub pic_add {
         w => { md5 => $md5 },
     };
     
+    # do not insert image with the same md5
     my $cnt = dbh_select_fetchone($r);
-    return $self if $cnt;
+    if ($cnt) {
+      rmtree $img_file_local if $mv;
+
+      return $self;
+    }
 
     my $inum = dbh_select_fetchone({ q => 'SELECT MAX(inum) FROM imgs' });
     $inum++;
@@ -567,25 +579,32 @@ sub pic_add {
        height => $height,
     };
 
-    if ($tags) {
-       ref $tags eq 'ARRAY' && do { $ins->{tags} = join("," => @$tags); };
-       !ref $tags && do { $ins->{tags} = $tags };
-    }
+    $ins->{tags} = $tags_s if $tags_s;
 
     copy($img_file_local, $img_file);
 
     if (-f $img_file) {
         my $ok = 1;
-        # do not insert image with the same md5
         while (1) {
-            my $cnt = dbh_select_fetchone({ q => 'SELECT COUNT(*) FROM imgs WHERE md5 = ?', p => [$md5] });
-            $cnt && do { $ok = 0; };
+            $ok &&= eval {
+               dbh_insert_hash({
+                   t => 'imgs',
+                   i => q{ INSERT OR REPLACE },
+                   h => $ins,
+               });
+            };
+            $@ && do { $ok = 0; warn $@; };
 
-            $ok &&= dbh_insert_hash({
-               t => 'imgs',
-               i => q{ INSERT OR REPLACE },
-               h => $ins,
-            });
+            $ok &&= eval {
+                dbh_base2info({
+                   'tbase'  => 'imgs',
+                   'bwhere' => { url => $url_tm },
+                   'jcol'   => 'url',
+                   'b2i'    => { 'tags' => 'tag' },
+                   'bcols'  => [qw( tags )],
+                });
+            };
+            $@ && do { $ok = 0; warn $@; };
 
             unless ($ok) {
                rmtree $img_file;
