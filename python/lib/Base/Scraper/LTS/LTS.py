@@ -243,20 +243,16 @@ class LTS(
   def _sec_tex_header(self,ref = {}):
     return t
 
-  def _sec_file_data_fs(self,ref = {}):
-    sec  = ref.get('sec',self.sec)
-    proj = ref.get('proj',self.proj)
-
-    sec_file = self._sec_file_fs({ 'sec' : sec, 'proj' : proj })
-    data = projs_db.get_data(sec_file)
-
-    return data
-
   def _sec_file_data(self,ref = {}):
     sec  = ref.get('sec',self.sec)
     proj = ref.get('proj',self.proj)
+    fs   = ref.get('fs',0)
 
-    sec_file = self._sec_file({ 'sec' : sec, 'proj' : proj })
+    sec_file = self._sec_file({ 
+      'sec'  : sec,
+      'proj' : proj,
+      'fs'   : fs
+    })
     data = projs_db.get_data(sec_file)
 
     return data
@@ -373,26 +369,17 @@ class LTS(
             sec = '_ii_exclude_'
             
     return sec
-
-  # section from file, filesystem
-  def _sec_file_fs(self,ref = {}):
-    sec  = ref.get('sec','')
-    proj = ref.get('proj',self.proj)
-
-    short  = ref.get('short',0)
-
-    if not short:
-      sec_file = os.path.join( self.lts_root, file )
-    #sec_file = os.path.join( self.lts_root, f'{proj}.{sec}.tex' )
-
-    return sec_file
  
   # section from file, database
-  def _sec_file(self,ref = {}):
+  def _sec_file(self, ref = {}):
     sec  = ref.get('sec','')
     proj = ref.get('proj',self.proj)
 
-    short  = ref.get('short',0)
+    # return basename instead of full path
+    short = ref.get('short',0)
+
+    # if no database entry, use filesystem logic
+    fs    = ref.get('fs',0)
 
     db_file = self.db_file_projs
 
@@ -401,7 +388,13 @@ class LTS(
     file = dbw.sql_fetchval(q,p,{ 'db_file' : db_file })
 
     if not file:
-      return ''
+      if not fs:
+        return ''
+      else:
+        file = Section()._file({ 
+          'sec'  : sec, 
+          'proj' : proj 
+        })
 
     sec_file = file
     if not short:
