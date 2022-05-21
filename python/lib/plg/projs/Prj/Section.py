@@ -52,6 +52,9 @@ class Section(
     if not len(file_a):
       return
 
+    file = os.path.join(*file_a)
+    return file
+
   def _file_a(self,ref = {}):
     sec  = ref.get('sec',self.sec)
     proj = ref.get('proj',self.proj)
