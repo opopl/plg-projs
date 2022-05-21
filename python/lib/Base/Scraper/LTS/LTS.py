@@ -243,6 +243,15 @@ class LTS(
   def _sec_tex_header(self,ref = {}):
     return t
 
+  def _sec_file_data_fs(self,ref = {}):
+    sec  = ref.get('sec',self.sec)
+    proj = ref.get('proj',self.proj)
+
+    sec_file = self._sec_file_fs({ 'sec' : sec, 'proj' : proj })
+    data = projs_db.get_data(sec_file)
+
+    return data
+
   def _sec_file_data(self,ref = {}):
     sec  = ref.get('sec',self.sec)
     proj = ref.get('proj',self.proj)
@@ -365,6 +374,20 @@ class LTS(
             
     return sec
 
+  # section from file, filesystem
+  def _sec_file_fs(self,ref = {}):
+    sec  = ref.get('sec','')
+    proj = ref.get('proj',self.proj)
+
+    short  = ref.get('short',0)
+
+    if not short:
+      sec_file = os.path.join( self.lts_root, file )
+    #sec_file = os.path.join( self.lts_root, f'{proj}.{sec}.tex' )
+
+    return sec_file
+ 
+  # section from file, database
   def _sec_file(self,ref = {}):
     sec  = ref.get('sec','')
     proj = ref.get('proj',self.proj)
@@ -1574,8 +1597,6 @@ class LTS(
     self.sec_file2db({ 'sec' : sec, 'proj' : proj })
 
     return self
-
-
 
   def sec_db_update(self, ref = {}):
     sec   = ref.get('sec',self.sec)

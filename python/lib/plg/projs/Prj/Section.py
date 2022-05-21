@@ -47,17 +47,17 @@ class Section(
     return r
 
   def _file(self,ref = {}):
-    if not self.sec:
-      return 
 
-    #sec_file = f'{self.proj}.{sec}.tex'
+    file_a = self._file_a(ref)
+    if not len(file_a):
+      return
 
   def _file_a(self,ref = {}):
-    if not self.sec:
-      return 
+    sec  = ref.get('sec',self.sec)
+    proj = ref.get('proj',self.proj)
 
-    proj = self.proj
-    sec  = self.sec
+    if sec and proj:
+      return []
 
     runext = 'sh' 
 
@@ -75,6 +75,9 @@ class Section(
       
       target = re.sub(r'^_bld\.(.*)$', r'\1', sec)
       sfile_a = [ f'{proj}.bld.{target}.yml' ]
+
+    elif sec == '_yml_':
+      sfile_a = [ f'{proj}.yml' ]
 
     elif re.search(r'^_perl\.', sec):
 
