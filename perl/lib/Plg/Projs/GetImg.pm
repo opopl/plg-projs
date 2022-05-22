@@ -40,6 +40,10 @@ use Base::Util qw(
   md5sum
 );
 
+use Base::Data qw(
+  d_path
+);
+
 use DateTime;
 
 use Image::Info qw(
@@ -113,6 +117,20 @@ sub init_prj {
 
     my ( $sec, $file, $proj, $root, $rootid );
 
+    # cmd - single command
+    # cmds - list of commands
+    my ($cmd, $cmds) = @{$self}{qw(cmd cmds)};
+
+    # need to have proj + root + rootid
+    #   (1) no cmds, cmd = load_file
+    #   (2) cmds, no need (each cmd may have required definitions)
+    my $need_rrp;
+
+    # single command defined
+    unless ($cmds && $cmd) {
+        $need_rrp = 1 if $cmd && $cmd eq 'load_file';
+    }
+
     if ($file = $self->{file}) {
         ($proj, $sec) = ( basename($file)  =~ m/^(\w+)\.(.*)\.tex$/g );
         $root   = dirname($file);
@@ -130,13 +148,15 @@ sub init_prj {
         $self->{rootid} = basename($self->{root});
     }
 
-    if ($self->{cmd} eq 'load_file') {
+    if ($need_rrp) {
         if ($self->{root} && $self->{rootid} && $self->{proj}) {
-            $self->{prj} = Plg::Projs::Prj->new(
-                root   => $self->{root},
-                rootid => $self->{rootid},
-                proj   => $self->{proj},
-            );
+            my %n = map { $_ => $self->{$_} } qw(root rootid proj);
+            $self->{prj} = Plg::Projs::Prj->new(%n);
+
+                #root   => $self->{root},
+                #rootid => $self->{rootid},
+                #proj   => $self->{proj},
+            #);
         }else{
             die qq{
                 NOT DEFINED TOGETHER: 
@@ -662,7 +682,12 @@ sub cmd_add_images {
     my ($self, $ref) = @_;
     $ref ||= {};
 
-    my $add = $ref->{add} || $self->{add};
+    my $data = $self->{data};
+
+    my ($cmd, $cmd_full, $cmd_spec) = @{$self}{qw( cmd cmd_full cmd_spec )};
+
+    my $add = $ref->{add} || d_path($data,[ $cmd_full ] ) || $self->{add};
+
     my (@files_add, @paths_add); 
     my ($max_files, $tags, $mv);
 
@@ -806,15 +831,27 @@ sub info_ok_fail {
         print join("\n",@m) . "\n";
     }
 
-
     return $self;
 }
 
 sub run {
     my ($self) = @_;
 
-    $self
-        ->run_cmd;
+    my $cmds = $self->{cmds} || [ $self->{cmd} ];
+
+    foreach my $cmd (@$cmds) {
+        local $_ = $cmd;
+
+        my ($cmd_short, $cmd_spec) = (/^(\w+)(?:|\s+(.*))$/);
+
+        hash_update($self, {
+           cmd      => $cmd_short,
+           cmd_full => $cmd,
+           cmd_spec => $cmd_spec,
+        });
+
+        $self->run_cmd;
+    }
 
     return $self;
 }
