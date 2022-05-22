@@ -40,6 +40,10 @@ use Base::Util qw(
   md5sum
 );
 
+use Base::Arg qw(
+  dict_update
+);
+
 use Base::Data qw(
   d_path
 );
@@ -548,8 +552,6 @@ sub pic_add {
     my $img_file_local = $ref->{file};
     return $self unless -f $img_file_local;
 
-    print Dumper("Import: $img_file_local") . "\n";
-
     # pic data
     my ( $tags, @tags, $tags_s );
 
@@ -603,38 +605,46 @@ sub pic_add {
 
     copy($img_file_local, $img_file);
 
-    if (-f $img_file) {
-        my $ok = 1;
-        while (1) {
-            $ok &&= eval {
-               dbh_insert_hash({
-                   t => 'imgs',
-                   i => q{ INSERT OR REPLACE },
-                   h => $ins,
-               });
-            };
-            $@ && do { $ok = 0; warn $@; };
+    my ($ok, $fs_ok) = (1, 1);
 
-            $ok &&= eval {
-                dbh_base2info({
-                   'tbase'  => 'imgs',
-                   'bwhere' => { url => $url_tm },
-                   'jcol'   => 'url',
-                   'b2i'    => { 'tags' => 'tag' },
-                   'bcols'  => [qw( tags )],
-                });
-            };
-            $@ && do { $ok = 0; warn $@; };
+    while (1) {
+       $fs_ok &&= -f $img_file;
 
-            unless ($ok) {
-               rmtree $img_file;
+       $ok &&= $fs_ok;
+       last unless $fs_ok;
 
-            }elsif($mv){
-               rmtree $img_file_local;
-            }
+       $ok &&= eval {
+          dbh_insert_hash({
+              t => 'imgs',
+              i => q{ INSERT OR REPLACE },
+              h => $ins,
+          });
+       };
+       $@ && do { $ok = 0; warn $@; };
 
-            last;
-        }
+       $ok &&= eval {
+           dbh_base2info({
+              'tbase'  => 'imgs',
+              'bwhere' => { url => $url_tm },
+              'jcol'   => 'url',
+              'b2i'    => { 'tags' => 'tag' },
+              'bcols'  => [qw( tags )],
+           });
+       };
+       $@ && do { $ok = 0; warn $@; };
+
+       unless ($ok) {
+          rmtree $img_file;
+
+       }elsif($mv){
+          rmtree $img_file_local;
+       }
+
+       last;
+    }
+
+    if ($ok) {
+      print "(pic_add) OK: Import: $img_file_local" . "\n";
     }
 
     return $self;
@@ -682,24 +692,36 @@ sub cmd_add_images {
     my ($self, $ref) = @_;
     $ref ||= {};
 
+    # ---------------------------------------------------
     my $data = $self->{data};
 
     my ($cmd, $cmd_full, $cmd_spec) = @{$self}{qw( cmd cmd_full cmd_spec )};
+    my @cmd_spec = split(' ' => $cmd_spec);
 
-    my $add = $ref->{add} || d_path($data,[ $cmd_full ] ) || $self->{add};
+    my $cmd_data = $ref->{add} || d_path($data,[ $cmd_full ] ) || $self->{add};
+
+    if (grep { /^\@vars$/ } @cmd_spec) {
+       my $d = $self->{'vars'}->{$cmd} ||= {};
+       dict_update($d, $cmd_data);
+       return $self;
+    }
+
+    my $vars = $self->{vars} || {};
+    dict_update($cmd_data, d_path( $vars, $cmd ));
+    # ---------------------------------------------------
 
     my (@files_add, @paths_add); 
     my ($max_files, $tags, $mv);
 
-    if (ref $add eq "ARRAY"){
-       @paths_add = @$add;
-    }elsif(ref $add eq "HASH"){
-       @paths_add = @{$add->{paths} || []};
+    if (ref $cmd_data eq "ARRAY"){
+       @paths_add = @$cmd_data;
+    }elsif(ref $cmd_data eq "HASH"){
+       @paths_add = @{$cmd_data->{paths} || []};
 
-       ($max_files, $tags, $mv) = @{$add}{qw( max_files tags mv )};
+       ($max_files, $tags, $mv) = @{$cmd_data}{qw( max_files tags mv )};
     # single file
-    }elsif(!ref $add){
-       @paths_add = ( $add );
+    }elsif(!ref $cmd_data){
+       @paths_add = ( $cmd_data );
     }
 
     @files_add = map { s/^~/$ENV{HOME}/g; rel2abs($_) } @paths_add;
