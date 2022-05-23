@@ -475,6 +475,29 @@ sub _fail {
     return @{$self->{fail}};
 }
 
+sub _find_imgs {
+    my ($self, $ref) = @_;
+    $ref ||= {};
+
+    my $exts = $ref->{exts} || [qw( jpg jpeg png )];
+    my $dirs = $ref->{dirs} || [];
+    return () unless $dirs && @$dirs;
+
+    my $find_opts = $ref->{find} || {};
+    my $max_depth = $find_opts->{max_depth} || 0;
+
+    my @glob = map { "*.$_" } @$exts;
+
+    my $rule = File::Find::Rule->new;
+    $rule->name(@glob);
+    $rule->maxdepth($max_depth) if $max_depth;
+
+    my @imgs = $rule->in(@$dirs);
+    @imgs = sort { stat($a)->mtime <=> stat($b)->mtime } @imgs;
+
+    return @imgs;
+}
+
 sub _subs_url {
     my ($self, $ref) = @_;
     $ref||={};
@@ -580,10 +603,41 @@ sub pre_cmd {
 sub cmd_load_file {
     my ($self) = @_;
 
-    my ($cmd, $cmd_data, $cmd_full, $cmd_spec) = @{$self}{qw( cmd cmd_data cmd_full cmd_spec )};
+    my ($cmd_data) = @{$self}{qw( cmd_data )};
 
     $self->load_file($cmd_data);
 
+    return $self;
+}
+
+sub cmd_load_sec {
+    my ($self) = @_;
+
+    my ($cmd_data) = @{$self}{qw( cmd_data )};
+
+    my ($root, $rootid) = @{$self}{qw( root rootid )};
+
+    my ($sec, $proj) = @{$cmd_data}{qw( sec proj)};
+
+    my $prj = $self->_new_prj;
+
+    # current cmd data
+    my $lts_data = catfile($ENV{LTS_DATA});
+    my $new_dir = catfile($lts_data,qw(new));
+
+    my $dir_sec_new = catfile($new_dir,$sec);
+    return $self unless -d $dir_sec_new;
+
+    my $exts = [qw( jpg jpeg png )];
+    my $find_opts = { max_depth => 1 };
+
+    my @scr = $self->_find_imgs({
+       'exts'  => $exts,
+       'find'  => $find_opts,
+       'dirs'  => [ $dir_sec_new ],
+    });
+
+    $DB::single = 1;
     return $self;
 }
 
@@ -740,15 +794,6 @@ sub cmd_db_add_md5 {
     return $self;
 }
 
-sub cmd_load_sec {
-    my ($self, $ref) = @_;
-    $ref ||= {};
-
-    my ($cmd, $cmd_data, $cmd_full, $cmd_spec) = @{$self}{qw( cmd cmd_data cmd_full cmd_spec )};
-    # current cmd data
-    $DB::single = 1;
-    return $self;
-}
 
 sub cmd_add_images {
     my ($self, $ref) = @_;
@@ -791,14 +836,14 @@ sub cmd_add_images {
 
        unless (ref $path) {
            -d $path && do {
-              my $rule = File::Find::Rule->new;
-              my @glob = map { "*.$_" } @$exts;
-              $rule->name(@glob);
-              $rule->maxdepth($max_depth) if $max_depth;
 
-              my @found = $rule->in($path);
-              @found = sort { stat($a)->mtime <=> stat($b)->mtime } @found;
-              push @files_add, @found;
+              my @imgs = $self->_find_imgs({
+                 'exts'  => $exts,
+                 'find'  => $find_opts,
+                 'dirs'  => [ $path ],
+              });
+
+              push @files_add, @imgs;
 
               next;
            };
