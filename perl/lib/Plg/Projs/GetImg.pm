@@ -28,6 +28,8 @@ use FindBin qw($Bin $Script);
 use File::Basename qw(basename dirname);
 use File::Which qw(which);  
 
+use File::stat;
+
 use File::Find::Rule;
 
 use URI::Split qw(uri_split);
@@ -54,6 +56,7 @@ use Image::Info qw(
     image_info
     image_type
 );
+use Image::ExifTool qw(ImageInfo);
 
 use base qw(
     Base::Opt
@@ -112,6 +115,7 @@ sub init_root {
     my ($self) = @_;
 
     $self->{root} ||= getcwd();
+    $self->{rootid} ||= basename($self->{root});
 
     return $self;
 }
@@ -154,13 +158,7 @@ sub init_prj {
 
     if ($need_rrp) {
         if ($self->{root} && $self->{rootid} && $self->{proj}) {
-            my %n = map { $_ => $self->{$_} } qw(root rootid proj);
-            $self->{prj} = Plg::Projs::Prj->new(%n);
-
-                #root   => $self->{root},
-                #rootid => $self->{rootid},
-                #proj   => $self->{proj},
-            #);
+            $self->_new_prj;
         }else{
             die qq{
                 NOT DEFINED TOGETHER: 
@@ -265,7 +263,9 @@ sub init_q {
                 name_uniq TEXT,
                 width INTEGER,
                 height INTEGER,
-                width_tex TEXT
+                width_tex TEXT,
+                size INTEGER,
+                mtime INTEGER
             );
 
             CREATE TABLE IF NOT EXISTS _info_imgs_tags (
@@ -438,6 +438,17 @@ sub print_help {
     return $self;
 }
 
+sub _new_prj {
+    my ($self, $ref) = @_;
+    $ref ||= {};
+
+    my %n = map { $_ => $self->{$_} } qw(root rootid proj);
+    %n = ( %n, %$ref );
+    my $prj = $self->{prj} = Plg::Projs::Prj->new(%n);
+
+    return $prj;
+}
+
 sub _new_fetcher {
     my ($self, $ref) = @_;
     $ref ||= {};
@@ -543,12 +554,11 @@ sub pre_cmd {
     my $data = $self->{data} || {};
 
     my ($cmd, $cmd_full, $cmd_spec) = @{$self}{qw( cmd cmd_full cmd_spec )};
-    my @cmd_spec = split(' ' => $cmd_spec);
 
     $data->{$cmd_full} ||= {};
     my $cmd_data = {};
 
-    if (grep { /^\@vars$/ } @cmd_spec) {
+    if (grep { /^\@vars$/ } @$cmd_spec) {
        my $d = $self->{'vars'}->{$cmd} ||= {};
        dict_update($d, $cmd_data);
        return $self;
@@ -566,7 +576,16 @@ sub pre_cmd {
 sub cmd_load_file {
     my ($self) = @_;
 
-    $self->load_file;
+    my ($cmd, $cmd_data, $cmd_full, $cmd_spec) = @{$self}{qw( cmd cmd_data cmd_full cmd_spec )};
+
+    my $in ||= {};
+
+    dict_update($in, $cmd_data);
+    for(@$cmd_spec){
+        /^\@(\w+)\{(.*)\}/ && do { $in->{$1} = $2; };
+    }
+
+    $self->load_file($in);
 
     return $self;
 }
@@ -578,6 +597,10 @@ sub pic_add {
     # local file to be imported
     my $img_file_local = $ref->{file};
     return $self unless -f $img_file_local;
+
+    my $stat_local = stat($img_file_local);
+    my $mtime_local = $stat_local->mtime;
+    my $size = $stat_local->size;
 
     # pic data
     my ( $tags, @tags, $tags_s );
@@ -593,10 +616,12 @@ sub pic_add {
     my $t = $dt->strftime('%d_%m_%y.%H.%M.%S');
 
     my $md5    = md5sum($img_file_local);
-    my $inf    = image_info($img_file_local);
+    my $inf_local    = image_info($img_file_local);
     my $url_tm = sprintf(q{tm://%s@%s}, $t, $md5);
 
-    my ($width, $height, $ext) = @{$inf}{qw( width height file_ext )};
+    my $exif_local = ImageInfo($img_file_local);
+
+    my ($width, $height, $ext) = @{$inf_local}{qw( width height file_ext )};
 
     my $r = {
         t => qq{ imgs },
@@ -626,6 +651,8 @@ sub pic_add {
        md5    => $md5,
        width  => $width,
        height => $height,
+       size   => $size,
+       mtime  => $mtime_local,
     };
 
     $ins->{tags} = $tags_s if $tags_s;
@@ -672,6 +699,7 @@ sub pic_add {
 
     if ($ok) {
       print "(pic_add) OK: Import: $img_file_local" . "\n";
+      print "(pic_add) " . Dumper({ inum => $inum, size => $size }) . "\n";
     }
 
     return $self;
@@ -762,10 +790,9 @@ sub cmd_add_images {
               $rule->maxdepth($max_depth) if $max_depth;
 
               my @found = $rule->in($path);
+              @found = sort { stat($a)->mtime <=> stat($b)->mtime } @found;
               push @files_add, @found;
 
-              $DB::single = 1;
-    
               next;
            };
 
@@ -797,7 +824,7 @@ sub load_file {
     my ($prj);
 
     $root = $self->{root};
-    $prj  = $self->{prj};
+    $prj  = $self->{prj} || $self->_new_prj;
 
     $file = $self->_opt_($ref,'file');
     $sec  = $self->_opt_($ref,'sec');
@@ -845,6 +872,7 @@ sub load_file {
     my %n = (
        file => $file,
        sec  => $sec,
+       proj  => $proj,
     );
     my $ftc = $self->_new_fetcher(\%n);
     
@@ -895,7 +923,9 @@ sub run {
     foreach my $cmd (@$cmds) {
         local $_ = $cmd;
 
-        my ($cmd_short, $cmd_spec) = (/^(\w+)(?:|\s+(.*))$/);
+        my ($cmd_short, $cmd_spec_str) = (/^(\w+)(?:|\s+(.*))$/);
+        $cmd_spec_str ||= '';
+        my $cmd_spec = [ split ' ' => $cmd_spec_str ];
 
         hash_update($self, {
            cmd      => $cmd_short,
