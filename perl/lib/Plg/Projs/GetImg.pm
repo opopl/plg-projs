@@ -569,7 +569,11 @@ sub pre_cmd {
     dict_update($cmd_data, $data->{$cmd_full} );
     $self->{cmd_data} = $cmd_data;
     # ---------------------------------------------------
-    #
+
+    for(@$cmd_spec){
+        /^\@(\w+)\{(.*)\}/ && do { $cmd_data->{$1} = $2; };
+    }
+
     return $self;
 }
 
@@ -578,14 +582,7 @@ sub cmd_load_file {
 
     my ($cmd, $cmd_data, $cmd_full, $cmd_spec) = @{$self}{qw( cmd cmd_data cmd_full cmd_spec )};
 
-    my $in ||= {};
-
-    dict_update($in, $cmd_data);
-    for(@$cmd_spec){
-        /^\@(\w+)\{(.*)\}/ && do { $in->{$1} = $2; };
-    }
-
-    $self->load_file($in);
+    $self->load_file($cmd_data);
 
     return $self;
 }
@@ -740,6 +737,16 @@ sub cmd_db_add_md5 {
         dbh_update_hash($ref);
     }
 
+    return $self;
+}
+
+sub cmd_load_sec {
+    my ($self, $ref) = @_;
+    $ref ||= {};
+
+    my ($cmd, $cmd_data, $cmd_full, $cmd_spec) = @{$self}{qw( cmd cmd_data cmd_full cmd_spec )};
+    # current cmd data
+    $DB::single = 1;
     return $self;
 }
 
