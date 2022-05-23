@@ -536,6 +536,33 @@ sub cmd_query {
     return $self;
 }
 
+sub pre_cmd {
+    my ($self) = @_;
+
+    # ---------------------------------------------------
+    my $data = $self->{data} || {};
+
+    my ($cmd, $cmd_full, $cmd_spec) = @{$self}{qw( cmd cmd_full cmd_spec )};
+    my @cmd_spec = split(' ' => $cmd_spec);
+
+    $data->{$cmd_full} ||= {};
+    my $cmd_data = {};
+
+    if (grep { /^\@vars$/ } @cmd_spec) {
+       my $d = $self->{'vars'}->{$cmd} ||= {};
+       dict_update($d, $cmd_data);
+       return $self;
+    }
+
+    my $vars = $self->{vars} || {};
+    dict_update($cmd_data, d_path( $vars, $cmd ));
+    dict_update($cmd_data, $data->{$cmd_full} );
+    $self->{cmd_data} = $cmd_data;
+    # ---------------------------------------------------
+    #
+    return $self;
+}
+
 sub cmd_load_file {
     my ($self) = @_;
 
@@ -692,26 +719,18 @@ sub cmd_add_images {
     my ($self, $ref) = @_;
     $ref ||= {};
 
-    # ---------------------------------------------------
-    my $data = $self->{data};
+    my ($cmd, $cmd_data, $cmd_full, $cmd_spec) = @{$self}{qw( cmd cmd_data cmd_full cmd_spec )};
+    # current cmd data
+    $cmd_data ||= $ref->{add} || $self->{add};
 
-    my ($cmd, $cmd_full, $cmd_spec) = @{$self}{qw( cmd cmd_full cmd_spec )};
-    my @cmd_spec = split(' ' => $cmd_spec);
-
-    my $cmd_data = $ref->{add} || d_path($data,[ $cmd_full ] ) || $self->{add};
-
-    if (grep { /^\@vars$/ } @cmd_spec) {
-       my $d = $self->{'vars'}->{$cmd} ||= {};
-       dict_update($d, $cmd_data);
-       return $self;
-    }
-
-    my $vars = $self->{vars} || {};
-    dict_update($cmd_data, d_path( $vars, $cmd ));
-    # ---------------------------------------------------
+    # image file extensions
+    my $exts = [qw( jpg jpeg png )];
 
     my (@files_add, @paths_add); 
     my ($max_files, $tags, $mv);
+
+    my $find_opts ||= {};
+    my $max_depth;
 
     if (ref $cmd_data eq "ARRAY"){
        @paths_add = @$cmd_data;
@@ -719,6 +738,11 @@ sub cmd_add_images {
        @paths_add = @{$cmd_data->{paths} || []};
 
        ($max_files, $tags, $mv) = @{$cmd_data}{qw( max_files tags mv )};
+
+       $exts = $cmd_data->{exts} || $exts;
+
+       $find_opts = $cmd_data->{find} || {};
+       $max_depth = $find_opts->{max_depth} || 0;
     # single file
     }elsif(!ref $cmd_data){
        @paths_add = ( $cmd_data );
@@ -732,8 +756,15 @@ sub cmd_add_images {
 
        unless (ref $path) {
            -d $path && do {
-              my @found = File::Find::Rule->name('*.png', '*.jpg', '*.jpeg')->in($path);
+              my $rule = File::Find::Rule->new;
+              my @glob = map { "*.$_" } @$exts;
+              $rule->name(@glob);
+              $rule->maxdepth($max_depth) if $max_depth;
+
+              my @found = $rule->in($path);
               push @files_add, @found;
+
+              $DB::single = 1;
     
               next;
            };
@@ -872,7 +903,9 @@ sub run {
            cmd_spec => $cmd_spec,
         });
 
-        $self->run_cmd;
+        $self
+            ->pre_cmd
+            ->run_cmd;
     }
 
     return $self;
