@@ -68,6 +68,7 @@ use Base::DB qw(
     dbi_connect 
     dbh_do
     dbh_select
+    dbh_select_join
     dbh_select_fetchone
     dbh_insert_hash
     dbh_update_hash
@@ -483,6 +484,8 @@ sub _find_imgs {
     my $dirs = $ref->{dirs} || [];
     return () unless $dirs && @$dirs;
 
+    my $limit = $ref->{limit} || 0;
+
     my $find_opts = $ref->{find} || {};
     my $max_depth = $find_opts->{max_depth} || 0;
 
@@ -494,6 +497,8 @@ sub _find_imgs {
 
     my @imgs = $rule->in(@$dirs);
     @imgs = sort { stat($a)->mtime <=> stat($b)->mtime } @imgs;
+
+    @imgs = splice(@imgs, 0 => $limit) if $limit;
 
     return @imgs;
 }
@@ -618,23 +623,62 @@ sub cmd_load_sec {
     my ($root, $rootid) = @{$self}{qw( root rootid )};
 
     my ($sec, $proj) = @{$cmd_data}{qw( sec proj)};
+    $self->{proj} = $proj;
+    return $self unless $sec && $proj;
 
-    my $prj = $self->_new_prj;
+    # array
+    my ($tags) = @{$cmd_data}{qw( tags )};
+    $tags ||= [];
 
-    # current cmd data
-    my $lts_data = catfile($ENV{LTS_DATA});
-    my $new_dir = catfile($lts_data,qw(new));
-
-    my $dir_sec_new = catfile($new_dir,$sec);
-    return $self unless -d $dir_sec_new;
-
+    my $prj = $self->_new_prj({ proj => $proj });
     my $sec_data = $prj->_sec_data({ 
         proj => $proj,
         sec  => $sec,
     });
+    my $sec_url = $sec_data->{url};
+
+    # current cmd data
+    my $lts_data = catfile($ENV{LTS_DATA});
+    my $new_dir  = catfile($lts_data,qw(new));
+
+    my $dir_sec_new = catfile($new_dir,$sec);
+    return $self unless -d $dir_sec_new;
+
+    my @imgs = $self->_find_imgs({
+       find  => { max_depth => 1 },
+       dirs  => [ $dir_sec_new ],
+    });
+
+    my $img_urls = [];
+    foreach my $img_path (@imgs) {
+        $self->pic_add({ 
+            file => $img_path,
+            tags => [ 'orig.post', 'scrn', @$tags ],
+
+            img_urls => $img_urls,
+
+            proj   => $proj,
+            sec    => $sec,
+            rootid => $rootid,
+            url_parent => $sec_url,
+
+            mv => 0,
+        });
+    }
+
+    my $r = {
+       keys => [qw( tags )],
+    };
+    my $list = dbh_select_join($r);
+
     my $sec_orig = sprintf(qq{%s.orig},$sec);
-    $prj->sec_new({ sec => $sec_orig });
+    $prj->sec_new({ 
+        sec => $sec_orig, 
+        parent => $sec,
+        append => [ '', '\qqSecOrig', '' ]
+    });
     $DB::single = 1;
+    1;
 
    # my $ss = $prj->_secs_select({ 
         ##tags => { 'and' => [qw( rashizm ok_ru )]}
@@ -681,6 +725,9 @@ sub pic_add {
     my $stat_local = stat($img_file_local);
     my $mtime_local = $stat_local->mtime;
     my $size = $stat_local->size;
+
+    # list of saved img urls
+    my $img_urls = $ref->{img_urls};
 
     # pic data
     my ( $tags, @tags, $tags_s );
@@ -737,6 +784,12 @@ sub pic_add {
 
     $ins->{tags} = $tags_s if $tags_s;
 
+    foreach my $x (qw( proj sec rootid url_parent )) {
+       next unless defined $ref->{$x};
+
+       $ins->{$x} = $ref->{$x};
+    }
+
     copy($img_file_local, $img_file);
 
     my ($ok, $fs_ok) = (1, 1);
@@ -778,6 +831,9 @@ sub pic_add {
     }
 
     if ($ok) {
+      if ($img_urls && ref $img_urls eq 'ARRAY') {
+         push @$img_urls, $url_tm;
+      }
       print "(pic_add) OK: Import: $img_file_local" . "\n";
       print "(pic_add) " . Dumper({ inum => $inum, size => $size }) . "\n";
     }

@@ -228,17 +228,109 @@ sub sec_new {
     my ($self, $ref) = @_;
     $ref ||= {};
 
-    my ($sec, $parent) = @{$ref}{qw( sec parent)};
+    my ($sec, $parent) = @{$ref}{qw( sec parent )};
 
-    my ($proj) = @{$self}{qw( proj )};
+    # ARRAY, section lines to be appended
+    my ($append) = @{$ref}{qw( append)};
+
+    my ($proj, $root) = @{$self}{qw( proj root )};
 
     my $sd = $self->_sec_data({ sec => $sec });
-    unless ($sd) {
-       my $sfile = $self->_sec_file({ sec => $sec });
-    }
-    $DB::single = 1;
+
+    my $file    = $sd && $sd->{file};
+    my $file_path = $self->_sec_file_path({ file => $file });
+    my $file_ex = $file_path && -f $file_path;
+
+    return $self if $file_ex;
+
+    $file = $self->_sec_file({ sec => $sec });
+    $file_path = $self->_sec_file_path({ file => $file });
+
+    my @lines = $self->_sec_new_lines($ref);
+    $DB::single = 1; 1;
 
     return $self;
+}
+
+# projs#sec#header
+sub _sec_head {
+    my ($self, $ref) = @_;
+    $ref ||= {};
+
+    foreach my $k (qw( parent url author_id date tags title keymap )) {
+        $ref->{$k} //= '';
+    }
+    $ref->{ext} //= 'tex';
+
+    my ($sec, $parent, $ext) = @{$ref}{qw( sec parent ext )};
+    my ($url, $author_id, $date) = @{$ref}{qw( url author_id date )};
+    my ($tags, $title, $keymap) = @{$ref}{qw( tags title keymap )};
+
+    my @head;
+
+    if ($ext eq 'tex') {
+        push @head,
+            $keymap ? '% vim: keymap=' . $keymap : (),
+            '%%beginhead ',
+            ' ',
+            '%%file ' . $sec,
+            '%%parent ' . $parent,
+            ' ',
+            '%%url ' . $url,
+            ' ',
+            '%%author_id ' . $author_id,
+            '%%date ' . $date,
+            ' ',
+            '%%tags ' . $tags,
+            '%%title ' . $title,
+            ' ',
+            '%%endhead ',
+            ;
+    }
+
+    return @head;
+}
+
+sub _sec_new_lines {
+    my ($self, $ref) = @_;
+    $ref ||= {};
+
+    my ($sec) = @{$ref}{qw(sec)};
+    my ($seccmd, $title) = @{$ref}{qw(seccmd title)};
+    my ($do) = @{$ref}{qw(do)};
+    $do ||= {};
+    my $label_str = sprintf(q|\label{%s}|,$sec);
+
+    # array to be appended at the end
+    my ($append) = @{$ref}{qw(append)};
+    $append ||= [];
+
+    my @lines;
+    push @lines, 
+       $self->_sec_head($ref);
+
+    if ($seccmd && $title){
+       push @lines, 
+         ' ',
+         sprintf(q|\%s{%s}|,$seccmd, $title),
+         $label_str,
+         ;
+    }
+
+    push @lines, @$append;
+
+    return @lines;
+}
+
+sub _sec_file_path {
+    my ($self, $ref) = @_;
+    $ref ||= {};
+    my $root = $ref->{root} || $self->{root};
+    my $file = $ref->{file};
+    return '' unless $file;
+
+    my $file_path = catfile($root, $file);
+    return $file_path;
 }
 
 # projs#sec#file
