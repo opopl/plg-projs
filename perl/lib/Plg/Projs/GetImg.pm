@@ -681,7 +681,22 @@ sub cmd_load_sec {
        dirs  => [ $dir_sec_new ],
     });
 
-    # first, we grab all screenshots already in the database
+    # first, we import into database all screenshots on the filesystem
+    foreach my $img_path (@imgs) {
+        $self->pic_add({ 
+            file => $img_path,
+            tags => [ 'orig.post', 'scrn', @$tags ],
+
+            proj   => $proj,
+            sec    => $sec,
+            rootid => $rootid,
+            url_parent => $sec_url,
+
+            mv => 0,
+        });
+    }
+
+    # then, we grab all screenshots already in the database
     my $img_urls = $self->_db_imgs({ 
        tags => { 
          and => [qw( orig.post scrn )]
@@ -693,23 +708,6 @@ sub cmd_load_sec {
          url_parent => $sec_url,
        }
     });
-
-    # then, we import into database all screenshots on the filesystem
-    foreach my $img_path (@imgs) {
-        $self->pic_add({ 
-            file => $img_path,
-            tags => [ 'orig.post', 'scrn', @$tags ],
-
-            img_urls => $img_urls,
-
-            proj   => $proj,
-            sec    => $sec,
-            rootid => $rootid,
-            url_parent => $sec_url,
-
-            mv => 0,
-        });
-    }
 
     if (@$img_urls) {
         my $sec_orig = sprintf(qq{%s.orig},$sec);
@@ -726,22 +724,10 @@ sub cmd_load_sec {
             append => [ '', '\qqSecOrig', '' ]
         });
 
-        my $ncols = 3;
-        my @cmt_lines;
-        push @cmt_lines,
-           '%orig.post',
-           '% ',
-           '\ifcmt',
-           sprintf('  tab_begin cols=%s,no_fig,center',$ncols),
-           ( map { ' pic ' . $_ } @$img_urls ),
-           '  tab_end',
-           '\fi',
-           ;
-
-        $prj->sec_insert({ 
-            sec => $sec_orig, 
-            proj => $proj,
-            lines => \@cmt_lines,
+        $prj->sec_import_imgs({ 
+            sec    => $sec_orig,
+            proj   => $proj,
+            imgs   => $img_urls,
         });
 
         $DB::single = 1;

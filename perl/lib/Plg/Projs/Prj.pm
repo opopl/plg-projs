@@ -265,6 +265,33 @@ sub sec_insert {
     return $self;
 }
 
+sub sec_import_imgs {
+    my ($self, $ref) = @_;
+    $ref ||= {};
+
+    my ($sec, $proj, $imgs) = @{$ref}{qw( sec proj imgs )};
+
+    my $ncols = 3;
+    my @cmt_lines;
+    push @cmt_lines,
+       '%orig.post',
+       '% ',
+       '\ifcmt',
+       sprintf('  tab_begin cols=%s,no_fig,center',$ncols),
+       ( map { ' pic ' . $_ } @$imgs ),
+       '  tab_end',
+       '\fi',
+       ;
+
+    $self->sec_insert({ 
+        sec => $sec, 
+        proj => $proj,
+        lines => \@cmt_lines,
+    });
+
+    return $self;
+}
+
 sub sec_delete {
     my ($self, $ref) = @_;
     $ref ||= {};
@@ -286,7 +313,7 @@ sub sec_delete {
        }
     });
 
-    rmtree $file_path -f $file_path;
+    rmtree $file_path if -f $file_path;
 
     return $self;
 }
