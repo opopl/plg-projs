@@ -224,6 +224,40 @@ sub _secs_select {
     wantarray ? @$list : $list ;
 }
 
+sub sec_new_child {
+    my ($self, $ref) = @_;
+    $ref ||= {};
+
+    my ($sec, $child) = @{$ref}{qw( sec child )};
+
+    return $self;
+}
+
+sub sec_insert {
+    my ($self, $ref) = @_;
+    $ref ||= {};
+
+    my ($sec, $proj) = @{$ref}{qw( sec proj )};
+
+    # array, lines to be inserted
+    my ($lines) = @{$ref}{qw( lines )};
+    $lines ||= [];
+    return $self unless @$lines;
+
+    my $sd = $self->_sec_data({ sec => $sec, proj => $proj });
+
+    my $file    = $sd && $sd->{file};
+    my $file_path = $self->_sec_file_path({ file => $file });
+    return $self unless $file_path && -f $file_path;
+
+    my @file_lines = read_file $file_path;
+    push @file_lines, @$lines;
+
+    write_file($file_path,join("\n",@file_lines) . "\n");
+
+    return $self;
+}
+
 sub sec_new {
     my ($self, $ref) = @_;
     $ref ||= {};
@@ -231,11 +265,11 @@ sub sec_new {
     my ($sec, $parent) = @{$ref}{qw( sec parent )};
 
     # ARRAY, section lines to be appended
-    my ($append) = @{$ref}{qw( append)};
+    my ($append) = @{$ref}{qw( append )};
 
     my ($proj, $root) = @{$self}{qw( proj root )};
 
-    my $sd = $self->_sec_data({ sec => $sec });
+    my $sd = $self->_sec_data({ sec => $sec, proj => $proj });
 
     my $file    = $sd && $sd->{file};
     my $file_path = $self->_sec_file_path({ file => $file });
@@ -250,6 +284,25 @@ sub sec_new {
     $DB::single = 1; 1;
 
     return $self;
+}
+
+sub _sec_exist {
+    my ($self, $ref) = @_;
+    $ref ||= {};
+
+    my ($sec, $proj) = @{$ref}{qw( sec proj )};
+
+    my $sd = $self->_sec_data({ sec => $sec, proj => $proj });
+
+    my $ok = 1;
+
+    my $file  = $sd && $sd->{file};
+    my $file_path = $self->_sec_file_path({ file => $file });
+    my $file_ex = $file_path && -f $file_path;
+
+    $ok = 0 unless $file_ex;
+
+    return $ok;
 }
 
 # projs#sec#header

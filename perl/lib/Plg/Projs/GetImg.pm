@@ -476,7 +476,38 @@ sub _fail {
     return @{$self->{fail}};
 }
 
-sub _find_imgs {
+sub _db_imgs {
+    my ($self, $ref) = @_;
+    $ref ||= {};
+
+    my $tags  = $ref->{tags} || {};
+    my $where = $ref->{where} || {};
+
+    my $limit = $ref->{limit};
+
+    my $r = {
+       tbase => 'imgs',
+       tbase_alias => 'i',
+
+       on_key => 'url',
+
+       keys => [qw( tags )],
+       key2col => { tags => 'tag' },
+
+       f => [qw( url )],
+
+       tags => $tags,
+
+       where => $where,
+    };
+    $r->{limit} = $limit if $limit;
+
+    my $list = dbh_select_join($r);
+
+    return $list;
+}
+
+sub _fs_find_imgs {
     my ($self, $ref) = @_;
     $ref ||= {};
 
@@ -644,12 +675,25 @@ sub cmd_load_sec {
     my $dir_sec_new = catfile($new_dir,$sec);
     return $self unless -d $dir_sec_new;
 
-    my @imgs = $self->_find_imgs({
+    my @imgs = $self->_fs_find_imgs({
        find  => { max_depth => 1 },
        dirs  => [ $dir_sec_new ],
     });
 
-    my $img_urls = [];
+    # first, we grab all screenshots already in the database
+    my $img_urls = $self->_db_imgs({ 
+       tags => { 
+         and => [qw( orig.post scrn )]
+       },
+       where => {
+         sec        => $sec,
+         proj       => $proj,
+         rootid     => $rootid,
+         url_parent => $sec_url,
+       }
+    });
+
+    # then, we import into database all screenshots on the filesystem
     foreach my $img_path (@imgs) {
         $self->pic_add({ 
             file => $img_path,
@@ -666,51 +710,15 @@ sub cmd_load_sec {
         });
     }
 
-    my $r = {
-       keys => [qw( tags )],
-    };
-    my $list = dbh_select_join($r);
+    if (@$img_urls) {
+        my $sec_orig = sprintf(qq{%s.orig},$sec);
+        $prj->sec_new({ 
+            sec => $sec_orig, 
+            parent => $sec,
+            append => [ '', '\qqSecOrig', '' ]
+        });
+    }
 
-    my $sec_orig = sprintf(qq{%s.orig},$sec);
-    $prj->sec_new({ 
-        sec => $sec_orig, 
-        parent => $sec,
-        append => [ '', '\qqSecOrig', '' ]
-    });
-    $DB::single = 1;
-    1;
-
-   # my $ss = $prj->_secs_select({ 
-        ##tags => { 'and' => [qw( rashizm ok_ru )]}
-        #tags => { 'and' => [qw( donbass vojna )] },
-        #author_id => { 'and' => [qw()] },
-        #limit => 10,
-    #});
-    
-    #my $r = {
-        #t => qq{ imgs },
-        #q => q{ SELECT COUNT(*) FROM imgs },
-        #w => { md5 => $md5 },
-    #};
-    
-    # do not insert image with the same md5
-    #my $cnt = dbh_select_fetchone($r);
-
-    my $exts = [qw( jpg jpeg png )];
-    my $find_opts = { max_depth => 1 };
-
-    my @orig = $self->_find_imgs({
-       'exts'  => $exts,
-       'find'  => $find_opts,
-       'dirs'  => [ $dir_sec_new ],
-    });
-    my @orig_cmt = $self->_find_imgs({
-       'exts'  => $exts,
-       'find'  => $find_opts,
-       'dirs'  => [ catfile($dir_sec_new, qw(cmt) ) ],
-    });
-
-    $DB::single = 1;
     return $self;
 }
 
@@ -922,7 +930,7 @@ sub cmd_add_images {
        unless (ref $path) {
            -d $path && do {
 
-              my @imgs = $self->_find_imgs({
+              my @imgs = $self->_fs_find_imgs({
                  'exts'  => $exts,
                  'find'  => $find_opts,
                  'dirs'  => [ $path ],
