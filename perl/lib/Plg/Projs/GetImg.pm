@@ -676,61 +676,86 @@ sub cmd_load_sec {
     my $dir_sec_new = catfile($new_dir,$sec);
     return $self unless -d $dir_sec_new;
 
-    my @imgs = $self->_fs_find_imgs({
-       find  => { max_depth => 1 },
-       dirs  => [ $dir_sec_new ],
-    });
-
-    # first, we import into database all screenshots on the filesystem
-    foreach my $img_path (@imgs) {
-        $self->pic_add({ 
-            file => $img_path,
-            tags => [ 'orig.post', 'scrn', @$tags ],
-
-            proj   => $proj,
-            sec    => $sec,
-            rootid => $rootid,
-            url_parent => $sec_url,
-
-            mv => 0,
-        });
-    }
-
-    # then, we grab all screenshots already in the database
-    my $img_urls = $self->_db_imgs({ 
-       tags => { 
-         and => [qw( orig.post scrn )]
+    my $map = { 
+       orig => { 
+         tex_head => [ '', '\qqSecOrig', '' ],
+         dir => $dir_sec_new,
+         tgx => [qw( orig.post scrn )],
+         sec_suffix => 'orig',
        },
-       where => {
-         sec        => $sec,
-         proj       => $proj,
-         rootid     => $rootid,
-         url_parent => $sec_url,
-       }
-    });
+       cmt => { 
+         tex_head => [ '', '\qqSecCmtScr', '' ],
+         dir => catfile($dir_sec_new, qw(cmt)),
+         tgx => [qw( orig.cmt scrn )],
+         sec_suffix => 'cmt',
+       },
+    };
 
-    if (@$img_urls) {
-        my $sec_orig = sprintf(qq{%s.orig},$sec);
+    foreach my $x (qw( orig cmt )) {
+        my $mapx = $map->{$x};
 
+        my $dir = $mapx->{dir};
+        next unless -d $dir;
+
+        my $tgx   = $mapx->{tgx} || [];
+        my $secx  = $mapx->{sec_suffix} || [];
+        my $headx = $mapx->{tex_head} || [];
+    
+        my @imgs = $self->_fs_find_imgs({
+           find  => { max_depth => 1 },
+           dirs  => [ $dir ],
+        });
+    
+        # first, we import into database all screenshots on the filesystem
+        foreach my $img_path (@imgs) {
+            $self->pic_add({ 
+                file => $img_path,
+                tags => [ @$tgx, @$tags ],
+    
+                proj   => $proj,
+                sec    => $sec,
+                rootid => $rootid,
+                url_parent => $sec_url,
+    
+                mv => 0,
+            });
+        }
+    
+        # then, we grab all screenshots already in the database
+        my $img_urls = $self->_db_imgs({ 
+           tags => { and => $tgx },
+           where => {
+             sec        => $sec,
+             proj       => $proj,
+             rootid     => $rootid,
+             url_parent => $sec_url,
+           }
+        });
+    
+        next unless @$img_urls;
+
+        my $sec_child = sprintf(qq{%s.%s}, $sec, $secx);
+ 
         $prj->sec_delete({ 
-            sec    => $sec_orig,
+            sec    => $sec_child,
             proj   => $proj,
         });
-
+ 
         $prj->sec_new({ 
-            sec    => $sec_orig,
+            sec    => $sec_child,
             proj   => $proj,
             parent => $sec,
-            append => [ '', '\qqSecOrig', '' ]
+            append => $headx
         });
-
+ 
         $prj->sec_import_imgs({ 
-            sec    => $sec_orig,
+            sec    => $sec_child,
             proj   => $proj,
             imgs   => $img_urls,
         });
-
+ 
         $DB::single = 1;
+
     }
 
     return $self;
