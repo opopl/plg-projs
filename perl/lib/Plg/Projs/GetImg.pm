@@ -18,6 +18,7 @@ use DateTime;
 
 use File::Basename qw(basename dirname);
 use File::Which qw(which);  
+use File::Path qw(mkpath rmtree);
 
 use File::stat;
 use File::Find::Rule;
@@ -712,11 +713,38 @@ sub cmd_load_sec {
 
     if (@$img_urls) {
         my $sec_orig = sprintf(qq{%s.orig},$sec);
+
+        $prj->sec_delete({ 
+            sec    => $sec_orig,
+            proj   => $proj,
+        });
+
         $prj->sec_new({ 
-            sec => $sec_orig, 
+            sec    => $sec_orig,
+            proj   => $proj,
             parent => $sec,
             append => [ '', '\qqSecOrig', '' ]
         });
+
+        my $ncols = 3;
+        my @cmt_lines;
+        push @cmt_lines,
+           '%orig.post',
+           '% ',
+           '\ifcmt',
+           sprintf('  tab_begin cols=%s,no_fig,center',$ncols),
+           ( map { ' pic ' . $_ } @$img_urls ),
+           '  tab_end',
+           '\fi',
+           ;
+
+        $prj->sec_insert({ 
+            sec => $sec_orig, 
+            proj => $proj,
+            lines => \@cmt_lines,
+        });
+
+        $DB::single = 1;
     }
 
     return $self;

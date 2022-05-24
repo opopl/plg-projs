@@ -26,7 +26,11 @@ use Base::DB qw(
     dbi_connect
     dbh_select_as_list
     dbh_select
+    dbh_select_join
     dbh_select_first
+
+    dbh_insert_hash
+    dbh_delete
 
     jcond
     cond_where
@@ -253,10 +257,36 @@ sub sec_insert {
     my $file_path = $self->_sec_file_path({ file => $file });
     return $self unless $file_path && -f $file_path;
 
-    my @file_lines = read_file $file_path;
+    my @file_lines = map { chomp; $_ } read_file $file_path;
     push @file_lines, @$lines;
 
     write_file($file_path,join("\n",@file_lines) . "\n");
+
+    return $self;
+}
+
+sub sec_delete {
+    my ($self, $ref) = @_;
+    $ref ||= {};
+
+    my ($sec, $proj) = @{$ref}{qw( sec proj )};
+
+    my $sd = $self->_sec_data({ sec => $sec, proj => $proj });
+    return $self unless $sd;
+
+    my $file    = $sd && $sd->{file};
+    my $file_path = $self->_sec_file_path({ file => $file });
+
+    dbh_delete({
+       dbh => $self->{dbh},
+       t => 'projs',
+       w => { 
+         sec  => $sec,
+         proj => $proj,
+       }
+    });
+
+    rmtree $file_path -f $file_path;
 
     return $self;
 }
@@ -301,7 +331,6 @@ sub sec_new {
         i => q{INSERT OR IGNORE},
         h => $ins,
     };
-    $DB::single = 1; 1;
     
     dbh_insert_hash($r_ins);
 
