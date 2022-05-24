@@ -628,13 +628,42 @@ sub cmd_load_sec {
     my $dir_sec_new = catfile($new_dir,$sec);
     return $self unless -d $dir_sec_new;
 
+    my $sec_data = $prj->_sec_data({ 
+        proj => $proj,
+        sec  => $sec,
+    });
+    my $sec_orig = sprintf(qq{%s.orig},$sec);
+    $prj->sec_new({ sec => $sec_orig });
+    $DB::single = 1;
+
+   # my $ss = $prj->_secs_select({ 
+        ##tags => { 'and' => [qw( rashizm ok_ru )]}
+        #tags => { 'and' => [qw( donbass vojna )] },
+        #author_id => { 'and' => [qw()] },
+        #limit => 10,
+    #});
+    
+    #my $r = {
+        #t => qq{ imgs },
+        #q => q{ SELECT COUNT(*) FROM imgs },
+        #w => { md5 => $md5 },
+    #};
+    
+    # do not insert image with the same md5
+    #my $cnt = dbh_select_fetchone($r);
+
     my $exts = [qw( jpg jpeg png )];
     my $find_opts = { max_depth => 1 };
 
-    my @scr = $self->_find_imgs({
+    my @orig = $self->_find_imgs({
        'exts'  => $exts,
        'find'  => $find_opts,
        'dirs'  => [ $dir_sec_new ],
+    });
+    my @orig_cmt = $self->_find_imgs({
+       'exts'  => $exts,
+       'find'  => $find_opts,
+       'dirs'  => [ catfile($dir_sec_new, qw(cmt) ) ],
     });
 
     $DB::single = 1;

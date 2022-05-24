@@ -6,30 +6,30 @@ use warnings;
 
 sub new
 {
-	my ($class, %opts) = @_;
-	my $self = bless (\%opts, ref ($class) || $class);
+    my ($class, %opts) = @_;
+    my $self = bless (\%opts, ref ($class) || $class);
 
-	$self->init if $self->can('init');
+    $self->init if $self->can('init');
 
-	return $self;
+    return $self;
 }
 
 use Base::Arg qw( 
-	hash_inject
+    hash_inject
 );
 
 sub init {
-	my ($self) = @_;
-	
-	#$self->SUPER::init();
-	
-	my $h = {
-		# Plg::Projs::Prj instance
-		prj => undef,
-	};
-		
-	hash_inject($self, $h);
-	return $self;
+    my ($self) = @_;
+    
+    #$self->SUPER::init();
+    
+    my $h = {
+        # Plg::Projs::Prj instance
+        prj => undef,
+    };
+        
+    hash_inject($self, $h);
+    return $self;
 }
 
 1;

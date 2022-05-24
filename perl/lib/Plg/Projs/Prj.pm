@@ -234,7 +234,7 @@ sub sec_new {
 
     my $sd = $self->_sec_data({ sec => $sec });
     unless ($sd) {
-        # body...
+       my $sfile = $self->_sec_file({ sec => $sec });
     }
     $DB::single = 1;
 
@@ -248,10 +248,17 @@ sub _sec_file {
     $ref ||= {};
 
     my $sec = $ref->{sec} || '';
-    my $proj = $ref->{proj} || $self->{proj};
+
+    my $proj   = $ref->{proj} || $self->{proj};
+    my $rootid = $ref->{rootid} || $self->{rootid};
     return unless $sec && $proj;
 
-    my $file;
+    my @file_a = $self->_sec_file_a({
+            sec    => $sec,
+            proj   => $proj,
+            rootid => $rootid
+    });
+    my $file = catfile(@file_a);
 
     return $file;
 }
