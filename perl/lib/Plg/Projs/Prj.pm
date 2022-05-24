@@ -29,7 +29,6 @@ use Base::DB qw(
     cond_where
 );
 
-
 use base qw(
     Base::Opt
     Plg::Projs::Prj::Author
@@ -66,7 +65,7 @@ sub prj_load_yml {
     my ($self) = @_;
 
     return $self if $self->{prj_skip_load_yml};
-    
+
     my $proj = $self->{proj};
     my $root = $self->{root};
 
@@ -93,11 +92,11 @@ sub cnf_trg_list {
 
     my @t;
     my $pat = qr/^$proj\.bld\.(.*)\.yml$/;
-    find({ 
-        wanted => sub { 
+    find({
+        wanted => sub {
             return unless /$pat/;
             push @t,$1;
-        } 
+        }
     },$root
     );
     my $inc_all = 0;
@@ -129,7 +128,7 @@ sub fill_files {
 
     $self->{files} = {};
     foreach my $ext (qw( tex pl dat )) {
-        my $r = { 
+        my $r = {
             'exts' => [ $ext ],
         };
         $self->{files}->{$ext} = $self->_files($r);
@@ -150,7 +149,7 @@ sub _secs_select {
     my $ops = $select->{'@op'} || 'and';
     my $limit = $select->{limit} || '';
     my $where = $select->{where} || {};
-  
+
     my @keys = qw( tags author_id );
     my %key2col = (
        'tags' => 'tag'
@@ -159,27 +158,27 @@ sub _secs_select {
     foreach my $key (@keys) {
         # alias index for joined tables, e.g. t0, t1, ...
         my $ia = 0;
-  
+
         my @cond_k;
-  
+
         my $wk = $wh{$key} = $select->{$key};
         next unless $wk;
-  
+
         my $colk = $key2col{$key} || $key;
         my $tk = '_info_projs_' . $key;
-        
+
         if (ref $wk eq 'HASH') {
           foreach my $op (qw( or and )) {
             my $vals = $wk->{$op};
             next unless $vals;
             next unless ref $vals eq 'ARRAY';
-  
+
             my @cond_op;
-  
+
             foreach my $v (@$vals) {
               $ia++;
               my $tka = $key . $ia;
-              push @ij, { 
+              push @ij, {
                  'tbl'       => $tk,
                  'tbl_alias' => $tka,
                  'on'        => 'file',
@@ -196,19 +195,18 @@ sub _secs_select {
     }
 
     my ($q_where, $p_where) = cond_where($where);
-    $DB::single = 1;
     if ($q_where) {
         $q_where =~ s/^\s*WHERE//g;
         push @cond, $q_where;
         push @params, @$p_where;
     }
-  
+
     my $cond;
     if (@cond) {
       $cond = 'WHERE ';
       $cond .= jcond($ops => \@cond, braces => 1);
     }
-  
+
     my $ref = {
         dbh     => $self->{dbh},
         t       => 'projs',
@@ -224,6 +222,161 @@ sub _secs_select {
     $DB::single = 1 if $select->{dbg};
 
     wantarray ? @$list : $list ;
+}
+
+sub sec_new {
+    my ($self, $ref) = @_;
+    $ref ||= {};
+
+    my ($sec, $parent) = @{$ref}{qw( sec parent)};
+
+    my ($proj) = @{$self}{qw( proj )};
+
+    my $sd = $self->_sec_data({ sec => $sec });
+    unless ($sd) {
+        # body...
+    }
+    $DB::single = 1;
+
+    return $self;
+}
+
+# projs#sec#file
+
+sub _sec_file {
+    my ($self, $ref) = @_;
+    $ref ||= {};
+
+    my $sec = $ref->{sec} || '';
+    my $proj = $ref->{proj} || $self->{proj};
+    return unless $sec && $proj;
+
+    my $file;
+
+    return $file;
+}
+
+sub _sec_file_a {
+    my ($self, $ref) = @_;
+    $ref ||= {};
+
+    my $sec = $ref->{sec} || '';
+
+    my $proj   = $ref->{proj} || $self->{proj};
+    my $rootid = $ref->{rootid} || $self->{rootid};
+
+    return () unless $sec && $proj;
+
+    my @file_a;
+
+    my $run_ext = $^O eq 'MSWin32' ? 'bat' : 'sh';
+
+    for($sec){
+      /^_main_$/ && do {
+          push @file_a, sprintf(q{%s.tex},$proj);
+          last;
+      };
+
+      /^_main_htlatex_$/ && do {
+          push @file_a, sprintf(q{%s.main_htlatex.tex},$proj);
+          last;
+      };
+
+      for my $k (qw( vim pl zlan sql yml )){
+          my $kk = sprintf(q{_%s_},$k);
+          /^$kk$/ && do {
+              push @file_a, sprintf(q{%s.%s}, $proj, $k);
+              last;
+          };
+      }
+
+      /^_bib_$/ && do {
+          push @file_a, sprintf(q{%s.refs.bib},$proj);
+          last;
+      };
+
+      /^_bld\.(.*)$/ && do {
+          my $target = $1;
+          push @file_a, sprintf(q{%s.bld.%s.yml}, $proj, $target);
+          last;
+      };
+
+      /^_perl\.(.*)$/ && do {
+          my $sec_pl = $1;
+          push @file_a, sprintf(q{%s.%s.pl}, $proj, $sec_pl);
+          last;
+      };
+
+      /^_pm\.(.*)$/ && do {
+          my $sec_pm = $1;
+          push @file_a,
+            qw( perl lib projs ), $rootid, $proj, sprintf(q{%s.pm},$sec_pm);
+          last;
+      };
+
+      /^_osecs_$/ && do {
+          push @file_a, sprintf(q{%s.secorder.i.dat}, $proj);
+          last;
+      };
+
+      /^_dat_$/ && do {
+          push @file_a, sprintf(q{%s.secs.i.dat}, $proj);
+          last;
+      };
+
+      /^_dat_defs_$/ && do {
+          push @file_a, sprintf(q{%s.defs.i.dat}, $proj);
+          last;
+      };
+
+      /^_dat_citn_$/ && do {
+          push @file_a, sprintf(q{%s.citn.i.dat}, $proj);
+          last;
+      };
+
+      /^_dat_files_$/ && do {
+          push @file_a, sprintf(q{%s.files.i.dat}, $proj);
+          last;
+      };
+
+      /^_dat_files_ext_$/ && do {
+          push @file_a, sprintf(q{%s.files_ext.i.dat}, $proj);
+          last;
+      };
+
+      # _ii_include_ _ii_exclude_
+      foreach my $k (qw( include exclude)) {
+          my $kk = sprintf(q{_ii_%s_},$k);
+          /^$kk$/ && do {
+              push @file_a, sprintf(q{%s.ii_%s.i.dat}, $proj, $k);
+              last;
+          };
+      }
+
+      /^_tex_jnd_$/ && do {
+          push @file_a, qw(builds), $proj, qw(src jnd.tex);
+          last;
+      };
+
+      /^_join_$/ && do {
+          push @file_a, qw(joins), sprintf('%s.tex',$proj);
+          last;
+      };
+
+      foreach my $k (qw( pdflatex perltex htlatex )) {
+          my $kk = sprintf(q{_build_%s_},$k);
+          /^$kk$/ && do {
+              push @file_a, sprintf(q{b_%s_%s_%s}, $proj, $k, $run_ext);
+              last;
+          };
+      }
+
+      push @file_a, sprintf(q{%s.%s.tex},$proj, $sec);
+      last;
+
+    }
+
+    return @file_a;
 }
 
 sub _sec_data {
@@ -332,5 +485,5 @@ sub _files {
 }
 
 1;
- 
+
 
