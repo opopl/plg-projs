@@ -14,6 +14,7 @@ use File::Slurp::Unicode;
 use File::Basename qw(basename dirname);
 use File::Spec::Functions qw(catfile);
 use File::Find qw(find);
+use File::Path qw(mkpath rmtree);
 
 use Data::Dumper qw(Dumper);
 
@@ -269,19 +270,25 @@ sub sec_import_imgs {
     my ($self, $ref) = @_;
     $ref ||= {};
 
-    my ($sec, $proj, $imgs) = @{$ref}{qw( sec proj imgs )};
+    my ($sec, $proj, $imgs, $ncols) = @{$ref}{qw( sec proj imgs ncols )};
+    $ncols ||= 3;
 
-    my $ncols = 3;
     my @cmt_lines;
-    push @cmt_lines,
-       '%orig.post',
-       '% ',
-       '\ifcmt',
-       sprintf('  tab_begin cols=%s,no_fig,center',$ncols),
-       ( map { ' pic ' . $_ } @$imgs ),
-       '  tab_end',
-       '\fi',
-       ;
+
+    while (@$imgs) {
+        my @col = splice(@$imgs,0,$ncols);
+
+	    push @cmt_lines,
+	       '',
+	       '\ifcmt',
+	       sprintf('  tab_begin cols=%s,no_fig,center',scalar @col),
+	       ( map { ' pic ' . $_ } @col ),
+	       '  tab_end',
+	       '\fi',
+	       '',
+	       ;
+
+    }
 
     $self->sec_insert({ 
         sec => $sec, 

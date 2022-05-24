@@ -691,7 +691,7 @@ sub cmd_load_sec {
        },
     };
 
-    foreach my $x (qw( orig cmt )) {
+    foreach my $x (qw( cmt )) {
         my $mapx = $map->{$x};
 
         my $dir = $mapx->{dir};
@@ -704,6 +704,7 @@ sub cmd_load_sec {
         my @imgs = $self->_fs_find_imgs({
            find  => { max_depth => 1 },
            dirs  => [ $dir ],
+           #limit => 5,
         });
     
         # first, we import into database all screenshots on the filesystem
@@ -754,8 +755,6 @@ sub cmd_load_sec {
             imgs   => $img_urls,
         });
  
-        $DB::single = 1;
-
     }
 
     return $self;
