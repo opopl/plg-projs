@@ -11,32 +11,38 @@ binmode STDOUT,':encoding(utf8)';
 #use POSIX qw(locale_h);
 #use locale;
 #setlocale(LC_CTYPE,'UTF-8');
+#
 
-use Plg::Projs::Prj;
-use Cwd qw(getcwd);
+use FindBin qw($Bin $Script);
+use DateTime;
 
-use Plg::Projs::GetImg::Fetcher;
+use File::Basename qw(basename dirname);
+use File::Which qw(which);  
+
+use File::stat;
+use File::Find::Rule;
+use File::Slurp::Unicode;
 
 use File::Spec::Functions qw(catfile rel2abs);
 use File::Path qw( mkpath rmtree );
 use File::Copy qw( move copy );
 
-use YAML qw(LoadFile);
-use String::Util qw(trim);
-
-use FindBin qw($Bin $Script);
-use File::Basename qw(basename dirname);
-use File::Which qw(which);  
-
-use File::stat;
-
-use File::Find::Rule;
+use Data::Dumper::AutoEncode;
+use Data::Dumper qw(Dumper);
 
 use URI::Split qw(uri_split);
 
 use LWP::Simple qw(getstore);
 use LWP::UserAgent;
 use Getopt::Long qw(GetOptions);
+
+use YAML qw(LoadFile);
+use String::Util qw(trim);
+
+use Plg::Projs::Prj;
+use Cwd qw(getcwd);
+
+use Plg::Projs::GetImg::Fetcher;
 
 use Base::Util qw(
   md5sum
@@ -49,8 +55,6 @@ use Base::Arg qw(
 use Base::Data qw(
   d_path
 );
-
-use DateTime;
 
 use Image::Info qw(
     image_info
@@ -80,10 +84,6 @@ use Base::Arg qw(
     hash_inject
     hash_update
 );
-
-use Data::Dumper::AutoEncode;
-use Data::Dumper qw(Dumper);
-use File::Slurp::Unicode;
 
 sub new
 {

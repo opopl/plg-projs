@@ -5,14 +5,17 @@ use utf8;
 use strict;
 use warnings;
 
+use FindBin qw($Bin $Script);
+
 use Deep::Hash::Utils qw( deepvalue );
 
-use FindBin qw($Bin $Script);
+use File::Slurp::Unicode;
+
 use File::Basename qw(basename dirname);
 use File::Spec::Functions qw(catfile);
-use Data::Dumper qw(Dumper);
-
 use File::Find qw(find);
+
+use Data::Dumper qw(Dumper);
 
 use YAML::XS qw( LoadFile Load Dump DumpFile );
 
@@ -267,7 +270,7 @@ sub sec_new {
     # ARRAY, section lines to be appended
     my ($append) = @{$ref}{qw( append )};
 
-    my ($proj, $root) = @{$self}{qw( proj root )};
+    my ($proj, $root, $rootid) = @{$self}{qw( proj root rootid )};
 
     my $sd = $self->_sec_data({ sec => $sec, proj => $proj });
 
@@ -280,8 +283,27 @@ sub sec_new {
     $file = $self->_sec_file({ sec => $sec });
     $file_path = $self->_sec_file_path({ file => $file });
 
-    my @lines = $self->_sec_new_lines($ref);
+    my @lines = $self->_sec_new_lines({ %$ref });
+
+    write_file($file_path,join("\n",@lines) . "\n");
+
+    my $ins = {
+        sec    => $sec,
+        file   => $file,
+        proj   => $proj,
+        rootid => $rootid,
+
+        ( map { defined $ref->{$_} ? ($_ => $ref->{$_}) : () } qw( parent title tags author_id ) ),
+    };
+    my $r_ins = {
+        dbh => $self->{dbh},
+        t => 'projs',
+        i => q{INSERT OR IGNORE},
+        h => $ins,
+    };
     $DB::single = 1; 1;
+    
+    dbh_insert_hash($r_ins);
 
     return $self;
 }
