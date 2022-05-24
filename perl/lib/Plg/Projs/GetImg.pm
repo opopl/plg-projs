@@ -17,7 +17,7 @@ use FindBin qw($Bin $Script);
 use DateTime;
 
 use File::Basename qw(basename dirname);
-use File::Which qw(which);  
+use File::Which qw(which);
 use File::Path qw(mkpath rmtree);
 
 use File::stat;
@@ -69,8 +69,8 @@ use base qw(
     Base::Logging
 );
 
-use Base::DB qw( 
-    dbi_connect 
+use Base::DB qw(
+    dbi_connect
     dbh_do
     dbh_select
     dbh_select_join
@@ -81,7 +81,7 @@ use Base::DB qw(
     dbh_base2info
 );
 
-use Base::Arg qw( 
+use Base::Arg qw(
     hash_inject
     hash_update
 );
@@ -100,7 +100,7 @@ sub init_lwp {
     my ($self) = @_;
 
     my $lwp = LWP::UserAgent->new(
-        agent      => ' Mozilla/5.0 (Windows NT 6.1; WOW64; rv:24.0) Gecko/20100101 Firefox/24.0', 
+        agent      => ' Mozilla/5.0 (Windows NT 6.1; WOW64; rv:24.0) Gecko/20100101 Firefox/24.0',
         cookie_jar => {}
     );
 
@@ -163,10 +163,10 @@ sub init_prj {
             $self->_new_prj;
         }else{
             die qq{
-                NOT DEFINED TOGETHER: 
+                NOT DEFINED TOGETHER:
                     root && rootid && proj
             } . "\n";
-            
+
         }
     }
 
@@ -177,15 +177,15 @@ sub init_db {
     my ($self) = @_;
 
     my $img_root = $self->{img_root};
-    
+
     my $dbfile = catfile($img_root,qw(img.db));
-    
+
     my $ref = {
         dbfile => $dbfile,
         attr   => {
         },
     };
-    
+
     my $dbh = dbi_connect($ref);
 
     my $h = {
@@ -203,7 +203,7 @@ sub init_db {
             #->db_create
             #;
     #}
-    
+
     $self;
 }
 
@@ -227,7 +227,7 @@ sub db_drop {
     dbh_do({
         q      => $self->{q}->{drop},
     });
-    
+
     $self;
 }
 
@@ -245,7 +245,7 @@ sub db_create {
 sub init_q {
     my ($self) = @_;
 
-    my %q = ( 
+    my %q = (
         create => qq{
             CREATE TABLE IF NOT EXISTS imgs (
                 url TEXT UNIQUE,
@@ -283,7 +283,7 @@ sub init_q {
     my $h = {
         q  => \%q,
     };
-        
+
     hash_inject($self, $h);
 
     return $self;
@@ -332,14 +332,14 @@ sub init {
 
 sub get_opt {
     my ($self) = @_;
-    
+
     Getopt::Long::Configure(qw(bundling no_getopt_compat no_auto_abbrev no_ignore_case_always));
-    
+
     my (@optstr, %opt);
 
-    @optstr = ( 
+    @optstr = (
         # image file, pattern, or directory
-        #   sets 
+        #   sets
         #       cmd="add_images"
         #   calls
         #       cmd_add_images
@@ -366,8 +366,8 @@ sub get_opt {
         "query|q=s",
         "param=s@",
     );
-    
-    unless( @ARGV ){ 
+
+    unless( @ARGV ){
         $self->print_help;
         exit 0;
     }else{
@@ -381,7 +381,7 @@ sub get_opt {
         $self->{cmd} = 'add_images';
     }
 
-    return $self;    
+    return $self;
 }
 
 sub print_help {
@@ -394,7 +394,7 @@ sub print_help {
             HTML_ROOT  $ENV{HTML_ROOT}
             PLG        $ENV{PLG}
         SEE ALSO:
-            base#bufact#tex#list_img 
+            base#bufact#tex#list_img
             BufAct list_img
         PACKAGES:
             $pack
@@ -402,7 +402,7 @@ sub print_help {
         LOCATION:
             $0
         OPTIONS:
-            --f_yaml -y string YAML control file 
+            --f_yaml -y string YAML control file
             --add -a string (TODO) add image file, pattern or directory
 
             --file -f FILE string TeX file with urls
@@ -416,23 +416,23 @@ sub print_help {
             --reload
 
             --debug -d
-        
+
             # queries to img.db
             --query -q QUERY string
             --param PARAMS
         USAGE:
             PROCESS SINGLE TEX-FILE:
-                perl $Script -f TEXFILE 
-                perl $Script --file TEXFILE 
+                perl $Script -f TEXFILE
+                perl $Script --file TEXFILE
             PROCESS WHOLE PROJECT:
-                perl $Script -p PROJ -r ROOT 
+                perl $Script -p PROJ -r ROOT
             DEBUGGING:
                 perl $Script -p PROJ -r ROOT -d
                 perl $Script -p PROJ -r ROOT --debug
             QUERY IMAGE DATABASE:
-                perl $Script --cmd query -q "select count(*) from imgs" 
-                perl $Script --cmd query 
-                    --query "select count(*) from imgs where url = ? " 
+                perl $Script --cmd query -q "select count(*) from imgs"
+                perl $Script --cmd query
+                    --query "select count(*) from imgs where url = ? "
                     --param URL
     } . "\n";
     exit 0;
@@ -543,22 +543,22 @@ sub _subs_url {
     my $lwp  = $self->{lwp};
 
     my @subs = (
-        sub { 
+        sub {
             my $curl = which 'curl';
             return unless $curl;
-    
+
             print qq{try: curl} . "\n";
-    
+
             my $url_s = $^O eq 'MSWin32' ? qq{"$url"} : qq{"$url"};
-    
+
             my $cmd = qq{ $curl -o "$img_file" $url_s };
             my $x = qx{ $cmd 2>&1 };
             $self->debug(["Command:", $x]);
             return 'curl';
         },
-        sub { 
+        sub {
             print qq{try: lwp} . "\n";
-    
+
             my $res = $lwp->mirror($url,$img_file);
             unless ($res->is_success) {
                 my $r = {
@@ -601,7 +601,7 @@ sub cmd_query {
         q => $q,
         p => [],
     };
-    
+
     my ($rows, $cols) = dbh_select($ref);
 
     return $self;
@@ -663,7 +663,7 @@ sub cmd_load_sec {
     $tags ||= [];
 
     my $prj = $self->_new_prj({ proj => $proj });
-    my $sec_data = $prj->_sec_data({ 
+    my $sec_data = $prj->_sec_data({
         proj => $proj,
         sec  => $sec,
     });
@@ -676,22 +676,22 @@ sub cmd_load_sec {
     my $dir_sec_new = catfile($new_dir,$sec);
     return $self unless -d $dir_sec_new;
 
-    my $map = { 
-       orig => { 
+    my $map = {
+       orig => {
          tex_head => [ '', '\qqSecOrig', '' ],
          dir => $dir_sec_new,
          tgx => [qw( orig.post scrn )],
          sec_suffix => 'orig',
        },
-       cmt => { 
+       cmtx => {
          tex_head => [ '', '\qqSecCmtScr', '' ],
-         dir => catfile($dir_sec_new, qw(cmt)),
+         dir => catfile($dir_sec_new, qw(cmtx)),
          tgx => [qw( orig.cmt scrn )],
          sec_suffix => 'cmt',
        },
     };
 
-    foreach my $x (qw( cmt )) {
+    foreach my $x (qw( orig cmtx )) {
         my $mapx = $map->{$x};
 
         my $dir = $mapx->{dir};
@@ -700,30 +700,30 @@ sub cmd_load_sec {
         my $tgx   = $mapx->{tgx} || [];
         my $secx  = $mapx->{sec_suffix} || [];
         my $headx = $mapx->{tex_head} || [];
-    
+
         my @imgs = $self->_fs_find_imgs({
            find  => { max_depth => 1 },
            dirs  => [ $dir ],
            #limit => 5,
         });
-    
+
         # first, we import into database all screenshots on the filesystem
         foreach my $img_path (@imgs) {
-            $self->pic_add({ 
+            $self->pic_add({
                 file => $img_path,
                 tags => [ @$tgx, @$tags ],
-    
+
                 proj   => $proj,
                 sec    => $sec,
                 rootid => $rootid,
                 url_parent => $sec_url,
-    
+
                 mv => 0,
             });
         }
-    
+
         # then, we grab all screenshots already in the database
-        my $img_urls = $self->_db_imgs({ 
+        my $img_urls = $self->_db_imgs({
            tags => { and => $tgx },
            where => {
              sec        => $sec,
@@ -732,29 +732,29 @@ sub cmd_load_sec {
              url_parent => $sec_url,
            }
         });
-    
+
         next unless @$img_urls;
 
         my $sec_child = sprintf(qq{%s.%s}, $sec, $secx);
- 
-        $prj->sec_delete({ 
+
+        $prj->sec_delete({
             sec    => $sec_child,
             proj   => $proj,
         });
- 
-        $prj->sec_new({ 
+
+        $prj->sec_new({
             sec    => $sec_child,
             proj   => $proj,
             parent => $sec,
             append => $headx
         });
- 
-        $prj->sec_import_imgs({ 
+
+        $prj->sec_import_imgs({
             sec    => $sec_child,
             proj   => $proj,
             imgs   => $img_urls,
         });
- 
+
     }
 
     return $self;
@@ -801,7 +801,7 @@ sub pic_add {
         q => q{ SELECT COUNT(*) FROM imgs },
         w => { md5 => $md5 },
     };
-    
+
     # do not insert image with the same md5
     my $cnt = dbh_select_fetchone($r);
     if ($cnt) {
@@ -937,7 +937,7 @@ sub cmd_add_images {
     # image file extensions
     my $exts = [qw( jpg jpeg png )];
 
-    my (@files_add, @paths_add); 
+    my (@files_add, @paths_add);
     my ($max_files, $tags, $mv);
 
     my $find_opts ||= {};
@@ -979,14 +979,14 @@ sub cmd_add_images {
               next;
            };
 
-           -f $path && do { 
+           -f $path && do {
                $file_num++;
 
                my $r_add = { file => $path };
                $r_add->{tags} = $tags if $tags;
                $r_add->{mv} = $mv if $mv;
 
-               $self->pic_add($r_add); 
+               $self->pic_add($r_add);
                last if $max_files && $file_num == $max_files;
 
                next;
@@ -1058,11 +1058,11 @@ sub load_file {
        proj  => $proj,
     );
     my $ftc = $self->_new_fetcher(\%n);
-    
+
     $ftc
         ->f_read
         ->loop;
-    
+
     $atend->() unless $ref->{skip_atend};
 
     return $self;
@@ -1077,7 +1077,7 @@ sub info_ok_fail {
         push @m,
             sprintf('SUCCESS: %s images', $cnt)
             ;
-        
+
         print join("\n",@m) . "\n";
 
     } elsif ($self->_fail) {
@@ -1087,7 +1087,7 @@ sub info_ok_fail {
             Dumper([ map { { url => $_->{url}, sec => $_->{sec} } } $self->_fail ]),
             sprintf('FAIL: %s images', $cnt),
             ;
-    
+
         warn join("\n",@m) . "\n";
     }else{
         push @m,
@@ -1126,5 +1126,5 @@ sub run {
 
 1;
 
- 
+
 
