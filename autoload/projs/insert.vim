@@ -560,6 +560,23 @@ function! projs#insert#figure ()
 
 endfunction
 
+function! projs#insert#label (...)
+  let ref = get(a:000,0,{})
+
+  "let file = b:file
+  "let file = get(ref,'file',file)
+  "let proj = projs#proj#name()
+  "let proj = get(ref,'proj',proj)
+
+  let sec  = projs#buf#sec()
+  let sec  = get(ref,'sec',sec)
+
+  let label = printf('\label{sec:%s}',sec)
+
+  call append(line('.'),label)
+
+endfunction
+
 function! projs#insert#secname ()
   let sec = projs#proj#secname()
   call append(line('.'),sec)
