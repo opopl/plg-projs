@@ -80,12 +80,12 @@ class LTS(
        'arr' : '-a --act',
        'kwd' : { 'help'    : 'Actions' }
     },
-    { 
-       'arr' : '-y --f_yaml', 
-       'kwd' : { 
+    {
+       'arr' : '-y --f_yaml',
+       'kwd' : {
            'help'    : 'input YAML file',
            'default' : '',
-       } 
+       }
     },
   ]
 
@@ -136,7 +136,7 @@ class LTS(
        }
     }
 
-    self.prj = Prj({ 
+    self.prj = Prj({
       'proj'     : self.proj,
       'rootid'   : self.rootid,
       'root'     : self.lts_root,
@@ -170,7 +170,7 @@ class LTS(
       dat_path = os.path.join(self.lts_root, 'data', 'dict', f'{dat_name}.i.dat')
       self.dat_files.update({ dat_name : dat_path })
 
-    self.dat_files.update({ 
+    self.dat_files.update({
       'fb_groups' : os.path.join(self.lts_root,'data', 'dict', 'fb_groups.i.dat'),
       'names' : os.path.join(self.lts_root,'scrape','bs','in','lists','names_first.i.dat'),
     })
@@ -180,8 +180,8 @@ class LTS(
   def init_dirs(self):
 
     plg = os.environ.get('PLG')
-    self.dirs.update({ 
-      'plg' : plg 
+    self.dirs.update({
+      'plg' : plg
     })
 
     if not self._dir('bin'):
@@ -246,7 +246,7 @@ class LTS(
     proj = ref.get('proj',self.proj)
     fs   = ref.get('fs',0)
 
-    sec_file = self._sec_file({ 
+    sec_file = self._sec_file({
       'sec'  : sec,
       'proj' : proj,
       'fs'   : fs
@@ -258,7 +258,7 @@ class LTS(
   def db_import_fs(self,ref = {}):
     proj = ref.get('proj',self.proj)
     exts = ref.get('exts',[])
-    
+
     exts.append('yml')
     #exts.append('tex')
 
@@ -365,9 +365,9 @@ class LTS(
             sec = '_ii_include_'
           elif sec_m == 'ii_exclude.i':
             sec = '_ii_exclude_'
-            
+
     return sec
- 
+
   # section from file, database
   def _sec_file(self, ref = {}):
     sec  = ref.get('sec','')
@@ -389,9 +389,9 @@ class LTS(
       if not fs:
         return ''
       else:
-        file = Section()._file({ 
-          'sec'  : sec, 
-          'proj' : proj 
+        file = Section()._file({
+          'sec'  : sec,
+          'proj' : proj
         })
 
     sec_file = file
@@ -441,7 +441,7 @@ class LTS(
 
 
   def ln_if_head(self,ref={}):
-    ok = 1 
+    ok = 1
     ok = ok and not self.flags.get('eof')
     ok = ok and self.flags.get('head')
     if not ok:
@@ -508,7 +508,7 @@ class LTS(
     return self
 
   def ln_match_seccmd(self):
-    ok = 1 
+    ok = 1
     ok = ok and not self.flags.get('eof')
     ok = ok and not self.flags.get('seccmd')
     if not ok:
@@ -608,7 +608,7 @@ class LTS(
     tlines = []
 
     q = f'''SELECT sec, file FROM {tb} WHERE proj = ? ORDER BY sec '''
-    proj = self.proj 
+    proj = self.proj
 
     r = dbw.sql_fetchall(q,[ proj ],{ 'db_file' : db_file })
     rows = r.get('rows')
@@ -622,7 +622,7 @@ class LTS(
       file_path = os.path.join(self.lts_root,file)
       if not os.path.isfile(file_path):
         print(file_path)
-        dbw.delete({ 
+        dbw.delete({
           'where'   : { 'sec' : sec, 'proj' : proj },
           'db_file' : db_file,
           'table'   : tb
@@ -685,7 +685,7 @@ class LTS(
     ext  = ref.get('ext','')
 
     pat = 'aa'
-    listsecs = self.prj._listsecs({ 
+    listsecs = self.prj._listsecs({
       'pat' : pat,
       'ext' : ext,
     })
@@ -696,7 +696,7 @@ class LTS(
 
   def _tex_preamble_names(self, ref = {}):
     dir = self._dir('tex.preambles','')
-    names = util.find({ 
+    names = util.find({
       'dirs'    : [dir],
       'inc'     : 'dir',
       'relpath' : 1,
@@ -996,8 +996,22 @@ class LTS(
        'proj' : proj,
        'sec'  : new,
     })
-    if (not sd_old) or (sd_new):
+    # old should exist in db and fs
+    # new is absent
+    ok = 1
+    ok = ok and sd_old
+    ok = ok and sd_old.get('@file_ex')
+    ok = ok and not sd_new
+
+    if not ok:
       return self
+
+    old_path = sd_old.get('@file_path')
+    new_path = self._sec_file({
+       'proj' : proj,
+       'sec'  : new,
+       'fs'   : 1,
+    })
 
     import pdb; pdb.set_trace()
 
@@ -1029,13 +1043,13 @@ class LTS(
   def _fbicons_db(self):
     db_file  = self.db_file_img
 
-    names = dbw.select({ 
+    names = dbw.select({
       'table'   : 'imgs',
       'db_file' : db_file,
       'select' : 'name',
       'orderby' : { 'name' : 'asc' },
       'output' : 'list',
-      'where' : { 
+      'where' : {
          '@like' : { 'name' : 'fbicon%' }
       }
     })
@@ -1045,7 +1059,7 @@ class LTS(
       if m:
         fbi = m.group(1)
         fbicons.append(fbi)
-        
+
     return fbicons
 
   def _fbicon_db(self, ref = {}):
@@ -1053,7 +1067,7 @@ class LTS(
 
     name = ref.get('name')
 
-    rw = dbw.select({ 
+    rw = dbw.select({
       'table'   : 'imgs',
       'db_file' : db_file,
       'output' : 'first_row',
@@ -1062,7 +1076,7 @@ class LTS(
 
     img = rw.get('img')
     if img:
-      rw.update({ 
+      rw.update({
          'img_file' : self._dir('img_root',[ img ])
       })
 
@@ -1091,11 +1105,11 @@ class LTS(
 
     fbicons = self._fbicons_db()
 
-    tex_preamble = self._tex_preamble({ 
-      'name' : 'core' 
+    tex_preamble = self._tex_preamble({
+      'name' : 'core'
     })
 
-    tex_head = self._tex_head({ 
+    tex_head = self._tex_head({
       'sec' : sec
     })
     tex_lines = []
@@ -1109,7 +1123,7 @@ class LTS(
       fbi_data = self._fbicon_db({ 'name' : name })
       img_file  = fbi_data.get('img_file','')
       wt = fbi_data.get('width_tex',width_tex)
-      ig = self._tex_ig({ 
+      ig = self._tex_ig({
         'file'  : img_file,
         'width' : wt,
       })
@@ -1135,7 +1149,7 @@ class LTS(
     rows = r.get('rows',[])
     for rw in rows:
       name = rw.get('name')
-      dbw.update_dict({ 
+      dbw.update_dict({
          'db_file' : db_file,
          'table' : 'imgs',
          'update' : { 'width_tex' : width_tex },
@@ -1208,7 +1222,6 @@ class LTS(
         md5 = hashlib.md5(b).hexdigest()
 
       print(rw)
-      import pdb; pdb.set_trace()
 
     return self
 
@@ -1257,8 +1270,8 @@ class LTS(
     post_id = None
 
     if rgx.match('url.facebook.permalink',u['path']):
-      fb_id   = u['query_p'].get('id','') 
-      post_id = u['query_p'].get('story_fbid','') 
+      fb_id   = u['query_p'].get('id','')
+      post_id = u['query_p'].get('story_fbid','')
 
       if fb_id and post_id:
          url = util.url_join('https://www.facebook.com',f'/{fb_id}/posts/{post_id}')
@@ -1271,7 +1284,7 @@ class LTS(
         fb_id = m_path.group(1)
         post_id = m_path.group(2)
 
-    fb_data = { 
+    fb_data = {
       'fb_id'   : fb_id,
       'post_id' : post_id,
     }
@@ -1294,7 +1307,7 @@ class LTS(
         auth = self._auth_data({ 'fb_id' : fb_id })
         if auth:
           author_id = auth.get('id')
-    
+
     if author_id:
       ii_prefix = f'{ii_prefix}fb.{author_id}.'
 
@@ -1325,7 +1338,7 @@ class LTS(
 
     seccmd    = ref.get('seccmd','')
 
-    ii_prefix = self._sec_ii_prefix({ 
+    ii_prefix = self._sec_ii_prefix({
       'parent' : parent,
       'url'    : url,
     })
@@ -1428,7 +1441,7 @@ class LTS(
       'file'   : Path(sec_file).name,
     }
 
-    dbw.insert_dict({ 
+    dbw.insert_dict({
       'db_file' : self.db_file_projs,
       'table'  : 'projs',
       'insert' : insert
@@ -1493,7 +1506,7 @@ class LTS(
           if not div:
             break
           div.unwrap()
-  
+
       html = self.soup.prettify()
       with open('p_w.html', 'w') as f:
         f.write(self.soup.prettify())
@@ -1543,7 +1556,7 @@ class LTS(
     fields = [ 'sec', 'url' ]
     for k in fields:
       if k in ref:
-        v = ref.get(k)  
+        v = ref.get(k)
         where.update({ k : v })
 
     sec = where.get('sec','')
@@ -1668,9 +1681,9 @@ class LTS(
     })
 
     if sec and len(data):
-      self.sec_db_update({ 
-        'sec'  : sec, 
-        'data' : data, 
+      self.sec_db_update({
+        'sec'  : sec,
+        'data' : data,
       })
 
     return self
@@ -1737,7 +1750,7 @@ class LTS(
       act = d_act
       args = []
       if type(d_act) in [dict]:
-        act  = d_act.get('act','') 
+        act  = d_act.get('act','')
         args = d_act.get('args',[])
 
       util.call(self, act, args)

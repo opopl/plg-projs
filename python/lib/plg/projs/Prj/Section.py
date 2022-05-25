@@ -59,7 +59,7 @@ class Section(
     sec  = ref.get('sec',self.sec)
     proj = ref.get('proj',self.proj)
 
-    if sec and proj:
+    if not (sec and proj):
       return []
 
     runext = 'sh' 
