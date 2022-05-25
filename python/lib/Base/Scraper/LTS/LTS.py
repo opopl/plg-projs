@@ -989,13 +989,17 @@ class LTS(
 
     sd_old = self.prj._sec_data({
        'proj' : proj,
-       'old'  : old,
+       'sec'  : old,
     })
 
     sd_new = self.prj._sec_data({
        'proj' : proj,
-       'new'  : new,
+       'sec'  : new,
     })
+    if (not sd_old) or (sd_new):
+      return self
+
+    import pdb; pdb.set_trace()
 
     return self
 

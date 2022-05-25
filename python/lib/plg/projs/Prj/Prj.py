@@ -36,6 +36,12 @@ class Prj(
     }
   }
 
+  root = None
+  rootid = None
+
+  proj = None
+  sec = None
+
   def __init__(self,args={}):
 
     CoreClass.__init__(self,args)
@@ -118,15 +124,15 @@ class Prj(
     })
 
     if not rw:
-      return self
+      return
 
     file      = rw.get('file')
     file_path = self._sec_file_path({ 'file' : file })
     file_ex   = 1 if os.path.isfile(file_path) else 0
 
     rw.update({
-       '@file_path' => file_path,
-       '@file_ex'   => file_ex,
+      '@file_path' : file_path,
+      '@file_ex'   : file_ex,
     })
 
     return rw
@@ -134,7 +140,7 @@ class Prj(
 # same as in Prj.pm
   def _sec_file_path(self, ref={}):
     root = ref.get('root',self.root)
-    file = ref.get('file',self.file)
+    file = ref.get('file','')
 
     if not (file and root):
       return ''

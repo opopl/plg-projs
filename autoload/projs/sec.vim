@@ -739,10 +739,18 @@ function! projs#sec#select (...)
   let pat  = get(ref,'pat','')
   let ext  = get(ref,'ext','')
 
+  let header = [ 'projs section selection dialog' ]
+  let header = get(ref,'header',header)
+
   let secs = projs#db#secnames(ref)
 
-  call base#varset('this',secs)
-  let sec = input('section: ','','custom,base#complete#this')
+  let r = {
+    \ 'list'   : secs,
+    \ 'thing'  : 'section',
+    \ 'prefix' : 'select',
+    \ 'header' : header,
+    \ }
+  let sec = base#inpx#ctl(r)
 
   return sec
 
