@@ -73,10 +73,10 @@ def dict2list(dct={}, keys=[]):
   return lst
 
 def dictnew(path='', val='', sep='.'):
-  ''' 
+  '''
     d = dictnew('a.b.c.d',value)
     d = dictnew('a/b/c/d',value,sep='/')
-  ''' 
+  '''
   def _dictnew(dct, path, val):
     while path.startswith(sep):
       path = path[1:]
@@ -150,7 +150,7 @@ def url_parse(url,opts={}):
     m = re.match(r'^(?P<scheme>\w+://)(?P<login>\w+):(?P<pwd>\S+)@(?P<host>[^\s/]+)(?P<end>.*)$',url)
     if m:
       url = ''.join([ m.group('scheme'), m.group('host'), m.group('end') ])
-      d.update({ 
+      d.update({
          'login' : m.group('login'),
          'pwd'   : m.group('pwd'),
       })
@@ -159,7 +159,7 @@ def url_parse(url,opts={}):
 
   host = u.netloc.split(':')[0]
 
-  scheme = u.scheme 
+  scheme = u.scheme
   if not u.scheme:
     scheme = 'http'
     m = re.match(r'^[/]+(.*)$', url)
@@ -219,7 +219,7 @@ def obj_update(**kwargs):
   for k in keys:
     df      = get(defaults,k,default)
     dest[k] = get(source,k,df)
-  
+
   return dest
 
 def dict_none_rm(obj):
@@ -270,8 +270,34 @@ def obj_has_method(obj, method):
 # p = subprocess.Popen(['git', 'ls', old_path], stdout=PIPE, stderr=PIPE)
 # stdout, stderr = p.communicate()
 
-def git_has(ref={}):
-  file = ref.get('file','')
+def git_move(old='',new=''):
+  if not git_has(old):
+    return
+
+  cmd = f'git mv {old} {new}'
+  r = shell({ 'cmd' : cmd })
+  out  = r.get('out')
+  code = r.get('code')
+  if code:
+    return
+
+  return True
+
+def git_add(file=''):
+  if not file:
+    return
+
+  cmd = f'git add {file}'
+
+  r = shell({ 'cmd' : cmd })
+  out  = r.get('out')
+  code = r.get('code')
+  if code or len(out):
+    return
+
+  return True
+
+def git_has(file=''):
   if not file:
     return False
 
@@ -289,7 +315,7 @@ def git_has(ref={}):
   #cmd = ref.get('cmd','')
 
   #p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT )
-  #out = [] 
+  #out = []
   #for line_raw in p.stdout.readlines():
     #line = line_raw.decode('utf-8').strip()
     #out.append(line)
@@ -303,14 +329,14 @@ def shell(ref={}):
 
   p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT )
 
-  out = [] 
+  out = []
   for line_raw in p.stdout.readlines():
     line = line_raw.decode('utf-8').strip()
     out.append(line)
 
   code = p.wait()
 
-  return { 
+  return {
     'out'  : out,
     'code' : code,
   }
@@ -349,7 +375,7 @@ def find(ref={}):
   found = []
 
   dirs    = ref.get('dirs',[])
-  
+
   relpath = ref.get('relpath',0)
   ext     = ref.get('ext',[])
 
@@ -364,14 +390,14 @@ def find(ref={}):
       f = full_path
       if relpath:
         f = os.path.relpath(full_path,dir)
-  
+
       ok = False
       for i in inc:
         ok = ok or (i == 'dir' and os.path.isdir(full_path))
         ok = ok or (i == 'file' and os.path.isfile(full_path))
         if ok:
           break
-  
+
       if f and ok:
         found.append(f)
 
@@ -432,7 +458,7 @@ def x_bare(code,globs={},locs={}):
     except SyntaxError as e:
       print(f'SyntaxError: {e}')
       return
-  
+
   return result
 
 def x(code,globs={},locs={}):

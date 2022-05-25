@@ -1,5 +1,5 @@
 
-import os,re,sys
+import os,re,sys,shutil
 from pathlib import Path
 
 import hashlib
@@ -1010,12 +1010,30 @@ class LTS(
        'fs'   : 1,
     })
 
-    git_old = util.git_has({ 'file' : old_path })
-    git_new = util.git_has({ 'file' : new_path })
+    if not new_path:
+      return self
 
-    #retval = p.wait()
+    git_old = util.git_has(old_path)
 
-    import pdb; pdb.set_trace()
+    ok = dbw.update_dict({
+      'db_file' : self.db_file_projs,
+      'table' : 'projs',
+      'where' : {
+         'proj' : proj,
+         'sec'  : old,
+      },
+      'update' : {
+         'sec'  : new,
+         'file' : Path(new_path).name,
+      }
+    })
+    if not ok:
+      return self
+
+    if git_old:
+      util.git_move(old_path, new_path)
+    else:
+      shutil.move(old_path, new_path)
 
     return self
 

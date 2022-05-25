@@ -51,10 +51,13 @@ def update_dict(ref):
     print(e)
     print(q)
     print(values)
+    return 0
 
   if db_close:
     conn.commit()
     conn.close()
+
+  return 1
 
 def rw2dict(rw):
   d = {}
