@@ -18,6 +18,10 @@ from url_normalize import url_normalize
 import datetime
 import shutil
 
+import subprocess
+import shlex
+from subprocess import Popen, PIPE
+
 import re
 
 MATCH_ALL = r'.*'
@@ -260,6 +264,56 @@ def obj_methods(obj):
 def obj_has_method(obj, method):
   has = 1 if method in obj_methods(obj) else 0
   return has
+
+# https://stackoverflow.com/questions/11495783/redirect-subprocess-stderr-to-stdout
+
+# p = subprocess.Popen(['git', 'ls', old_path], stdout=PIPE, stderr=PIPE)
+# stdout, stderr = p.communicate()
+
+def git_has(ref={}):
+  file = ref.get('file','')
+  if not file:
+    return False
+
+  cmd = f'git ls {file}'
+
+  r = shell({ 'cmd' : cmd })
+  out  = r.get('out')
+  code = r.get('code')
+  if code or not len(out):
+    return False
+
+  return True
+
+#def shell_join(ref={}):
+  #cmd = ref.get('cmd','')
+
+  #p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT )
+  #out = [] 
+  #for line_raw in p.stdout.readlines():
+    #line = line_raw.decode('utf-8').strip()
+    #out.append(line)
+
+  #rtval = p.wait()
+
+  #return { 'out' : out, 'code' : rtval }
+
+def shell(ref={}):
+  cmd = ref.get('cmd','')
+
+  p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT )
+
+  out = [] 
+  for line_raw in p.stdout.readlines():
+    line = line_raw.decode('utf-8').strip()
+    out.append(line)
+
+  code = p.wait()
+
+  return { 
+    'out'  : out,
+    'code' : code,
+  }
 
 def which(name):
   return shutil.which(name)

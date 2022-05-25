@@ -28,9 +28,6 @@ import yaml
 #import lxml.html
 import lxml
 
-import subprocess
-
-
 
 from io import StringIO, BytesIO
 
@@ -1012,6 +1009,11 @@ class LTS(
        'sec'  : new,
        'fs'   : 1,
     })
+
+    git_old = util.git_has({ 'file' : old_path })
+    git_new = util.git_has({ 'file' : new_path })
+
+    #retval = p.wait()
 
     import pdb; pdb.set_trace()
 

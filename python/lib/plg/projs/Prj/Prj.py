@@ -128,7 +128,6 @@ class Prj(
 
     file      = rw.get('file')
     file_path = self._sec_file_path({ 'file' : file })
-    file_ex   = 1 if os.path.isfile(file_path) else 0
 
     rw.update({
       '@file_path' : file_path,
