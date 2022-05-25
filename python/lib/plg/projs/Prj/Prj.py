@@ -101,6 +101,48 @@ class Prj(
 
     return self
 
+# same as in Prj.pm
+#   retrieve database data for section
+  def _sec_data(self, ref={}):
+    proj = ref.get('proj',self.proj)
+    sec  = ref.get('sec',self.sec)
+
+    rw = dbw.select({
+      'db_file' : self.db_file,
+      'table' : 'projs',
+      'where' : {
+        'sec'  : sec,
+        'proj' : proj,
+      },
+      'output' : 'first_row'
+    })
+
+    if not rw:
+      return self
+
+    file      = rw.get('file')
+    file_path = self._sec_file_path({ 'file' : file })
+    file_ex   = 1 if os.path.isfile(file_path) else 0
+
+    rw.update({
+       '@file_path' => file_path,
+       '@file_ex'   => file_ex,
+    })
+
+    return rw
+
+# same as in Prj.pm
+  def _sec_file_path(self, ref={}):
+    root = ref.get('root',self.root)
+    file = ref.get('file',self.file)
+
+    if not (file and root):
+      return ''
+
+    file_path = os.path.join(root, file)
+
+    return file_path
+
   def init_db(self):
     plg = os.environ.get('PLG')
     sql_dir = os.path.join(plg,'projs','data','sql')

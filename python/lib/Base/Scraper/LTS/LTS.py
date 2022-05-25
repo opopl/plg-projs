@@ -136,8 +136,6 @@ class LTS(
        }
     }
 
-
-
     self.prj = Prj({ 
       'proj'     : self.proj,
       'rootid'   : self.rootid,
@@ -978,6 +976,26 @@ class LTS(
       }
     }
     self.sec_data.update(ref)
+
+    return self
+
+  def sec_rename(self, ref = {}):
+    proj = ref.get('proj',self.proj)
+
+    old = ref.get('old','')
+    new = ref.get('new','')
+    if not (old and new and proj):
+      return self
+
+    sd_old = self.prj._sec_data({
+       'proj' : proj,
+       'old'  : old,
+    })
+
+    sd_new = self.prj._sec_data({
+       'proj' : proj,
+       'new'  : new,
+    })
 
     return self
 
