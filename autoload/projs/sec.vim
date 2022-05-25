@@ -57,7 +57,7 @@ function! projs#sec#rename_adjust (...)
   call extend(pats,{ '^\(\\label{sec:\)'.old.'\(}\s*\)$' : '\1'.new.'\2' })
   
   for line in lines
-    for [pat,subpat] in items(pats)
+    for [ pat, subpat ] in items(pats)
       if line =~ pat
         let line = substitute(line,pat,subpat,'g')
       endif

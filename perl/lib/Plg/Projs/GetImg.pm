@@ -363,7 +363,6 @@ sub get_opt {
         "reload",
         "debug|d",
         # queries to img.db
-        "query|q=s",
         "param=s@",
     );
 
@@ -417,9 +416,6 @@ sub print_help {
 
             --debug -d
 
-            # queries to img.db
-            --query -q QUERY string
-            --param PARAMS
         USAGE:
             PROCESS SINGLE TEX-FILE:
                 perl $Script -f TEXFILE
@@ -429,11 +425,6 @@ sub print_help {
             DEBUGGING:
                 perl $Script -p PROJ -r ROOT -d
                 perl $Script -p PROJ -r ROOT --debug
-            QUERY IMAGE DATABASE:
-                perl $Script --cmd query -q "select count(*) from imgs"
-                perl $Script --cmd query
-                    --query "select count(*) from imgs where url = ? "
-                    --param URL
     } . "\n";
     exit 0;
 

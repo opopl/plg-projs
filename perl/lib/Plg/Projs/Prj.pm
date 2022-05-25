@@ -278,15 +278,15 @@ sub sec_import_imgs {
     while (@$imgs) {
         my @col = splice(@$imgs,0,$ncols);
 
-	    push @cmt_lines,
-	       '',
-	       '\ifcmt',
-	       sprintf('  tab_begin cols=%s,no_fig,center',scalar @col),
-	       ( map { ' pic ' . $_ } @col ),
-	       '  tab_end',
-	       '\fi',
-	       '',
-	       ;
+        push @cmt_lines,
+           '',
+           '\ifcmt',
+           sprintf('  tab_begin cols=%s,no_fig,center',scalar @col),
+           ( map { ' pic ' . $_ } @col ),
+           '  tab_end',
+           '\fi',
+           '',
+           ;
 
     }
 
@@ -308,7 +308,7 @@ sub sec_delete {
     my $sd = $self->_sec_data({ sec => $sec, proj => $proj });
     return $self unless $sd;
 
-    my $file    = $sd && $sd->{file};
+    my $file      = $sd && $sd->{file};
     my $file_path = $self->_sec_file_path({ file => $file });
 
     dbh_delete({
