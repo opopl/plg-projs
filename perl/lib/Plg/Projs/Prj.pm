@@ -45,6 +45,8 @@ use base qw(
 
 use Base::Arg qw(
     hash_inject
+    hash_update
+
     dict_update
 );
 
@@ -299,6 +301,19 @@ sub sec_import_imgs {
     return $self;
 }
 
+# see also projs#sec#rename
+sub sec_move {
+    my ($self, $ref) = @_;
+    $ref ||= {};
+
+    my ($sec, $proj) = @{$ref}{qw( sec proj )};
+
+    my $sd = $self->_sec_data({ sec => $sec, proj => $proj });
+    return $self unless $sd;
+
+    return $self;
+}
+
 sub sec_delete {
     my ($self, $ref) = @_;
     $ref ||= {};
@@ -308,10 +323,10 @@ sub sec_delete {
     my $sd = $self->_sec_data({ sec => $sec, proj => $proj });
     return $self unless $sd;
 
-    my $file      = $sd && $sd->{file};
-    my $file_path = $self->_sec_file_path({ file => $file });
+    my $file      = $sd->{file};
+    my $file_path = $sd->{'@file_path'};
 
-    dbh_delete({
+    my $ok = dbh_delete({
        dbh => $self->{dbh},
        t => 'projs',
        w => { 
@@ -320,7 +335,9 @@ sub sec_delete {
        }
     });
 
-    rmtree $file_path if -f $file_path;
+    if ($ok) {
+       rmtree $file_path if -f $file_path;
+    }
 
     return $self;
 }
@@ -465,7 +482,7 @@ sub _sec_file_path {
     $ref ||= {};
     my $root = $ref->{root} || $self->{root};
     my $file = $ref->{file};
-    return '' unless $file;
+    return '' unless $file && $root;
 
     my $file_path = catfile($root, $file);
     return $file_path;
@@ -623,12 +640,23 @@ sub _sec_data {
     my ($proj, $sec) = @{$ref}{qw(proj sec)};
     $proj ||= $self->{proj};
 
-    my ($rows,$cols,$q,$p) = dbh_select({
+    my ($rows, $cols, $q, $p) = dbh_select({
         dbh     => $self->{dbh},
         q       => q{ SELECT * FROM projs },
         w       => { proj => $proj, sec => $sec }
     });
     my $rw = $rows->[0];
+    return unless $rw;
+
+    my $file      = $rw->{file};
+    my $file_path = $self->_sec_file_path({ file => $file });
+    my $file_ex   = $file_path ? -f $file_path : 0;
+
+    hash_update($rw,{
+       '@file_path' => $file_path,
+       '@file_ex'   => $file_ex,
+    });
+
     return $rw;
 }
 
