@@ -820,6 +820,23 @@ class LTS(
     recursive_update(
       self.sec_data['head_keyval'], update
     )
+    self.sec_data_gen_head()
+
+    head         = copy(self.sec_data['head_lines'])
+    save         = util.get(self,'sec_data.save',{})
+    sv_beginhead = save.get('beginhead','%%beginhead')
+    sv_endhead   = save.get('endhead','%%endhead')
+
+    head.append(sv_endhead)
+    head.insert(0, sv_beginhead)
+
+    while(len(head)):
+      hline = head.pop()
+      nlines.insert(0, hline)
+
+    txt = '\n'.join(nlines) + '\n'
+    with open(path, 'w', encoding='utf8') as f:
+      f.write(txt)
 
     import pdb; pdb.set_trace()
 
@@ -841,8 +858,11 @@ class LTS(
     head = self.sec_data.get('head_lines')
     kv   = self.sec_data.get('head_keyval')
 
-    sv_beginhead = save.get('beginhead',['%%beginhead'])
-    sv_endhead = save.get('endhead',['%%endhead'])
+    # saved lines
+    save     = util.get(self,'sec_data.save',{})
+
+    sv_beginhead = save.get('beginhead','%%beginhead')
+    sv_endhead = save.get('endhead','%%endhead')
 
     for i in range(0,len(head)):
       m = rgx.match('tex.projs.head.@key', head[i])
@@ -871,8 +891,8 @@ class LTS(
     # saved lines
     save     = util.get(self,'sec_data.save',{})
 
-    sv_beginhead = save.get('beginhead',['%%beginhead'])
-    sv_endhead = save.get('endhead',['%%endhead'])
+    sv_beginhead = save.get('beginhead','%%beginhead')
+    sv_endhead = save.get('endhead','%%endhead')
     sv_before_seccmd = save.get('before_seccmd',[])
 
     for i in range(0,len(head)):
