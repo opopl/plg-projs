@@ -292,8 +292,8 @@ sub sec_import_imgs {
 
     }
 
-    $self->sec_insert({ 
-        sec => $sec, 
+    $self->sec_insert({
+        sec => $sec,
         proj => $proj,
         lines => \@cmt_lines,
     });
@@ -329,7 +329,7 @@ sub sec_delete {
     my $ok = dbh_delete({
        dbh => $self->{dbh},
        t => 'projs',
-       w => { 
+       w => {
          sec  => $sec,
          proj => $proj,
        }
@@ -368,13 +368,13 @@ sub sec_new {
 
     write_file($file_path,join("\n",@lines) . "\n");
 
+    my %other = ( map { defined $ref->{$_} ? ($_ => $ref->{$_}) : () } qw( parent title tags author_id ) );
     my $ins = {
         sec    => $sec,
         file   => $file,
         proj   => $proj,
         rootid => $rootid,
-
-        ( map { defined $ref->{$_} ? ($_ => $ref->{$_}) : () } qw( parent title tags author_id ) ),
+        %other,
     };
     my $r_ins = {
         dbh => $self->{dbh},
@@ -382,7 +382,7 @@ sub sec_new {
         i => q{INSERT OR IGNORE},
         h => $ins,
     };
-    
+
     dbh_insert_hash($r_ins);
 
     return $self;
@@ -461,11 +461,11 @@ sub _sec_new_lines {
     $append ||= [];
 
     my @lines;
-    push @lines, 
+    push @lines,
        $self->_sec_head($ref);
 
     if ($seccmd && $title){
-       push @lines, 
+       push @lines,
          ' ',
          sprintf(q|\%s{%s}|,$seccmd, $title),
          $label_str,
@@ -664,10 +664,31 @@ sub _sec_data_pics {
     my ($self, $ref) = @_;
     $ref ||= {};
 
-    my ($proj, $sec) = @{$ref}{qw(proj sec)};
+    my ($proj, $sec, $cols) = @{$ref}{qw(proj sec cols)};
     $proj ||= $self->{proj};
+    my $rootid = $self->{rootid};
 
-    #return $rw;
+    # columns to be selected from imgs database, [] for all
+    $cols ||= [];
+
+    my $imgman = $self->{imgman};
+    my $dbh = $imgman->{dbh};
+    return unless $imgman && $dbh;
+
+    my $r_pics = {
+        dbh => $dbh,
+        t => 'imgs',
+        f => $cols,
+        w => {
+           sec    => $sec,
+           proj   => $proj,
+           rootid => $rootid,
+        }
+    };
+
+    my ($rows) = dbh_select($r_pics);
+
+    return $rows;
 }
 
 sub _projects {

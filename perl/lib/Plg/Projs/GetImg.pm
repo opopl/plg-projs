@@ -676,9 +676,9 @@ sub cmd_load_sec {
        },
        cmtx => {
          tex_head => [ '', '\qqSecCmtScr', '' ],
-         dir => catfile($dir_sec_new, qw(cmtx)),
+         dir => catfile($dir_sec_new, qw(cmt)),
          tgx => [qw( orig.cmt scrn )],
-         sec_suffix => 'cmt',
+         sec_suffix => 'cmtx',
        },
     };
 
@@ -689,8 +689,10 @@ sub cmd_load_sec {
         next unless -d $dir;
 
         my $tgx   = $mapx->{tgx} || [];
-        my $secx  = $mapx->{sec_suffix} || [];
         my $headx = $mapx->{tex_head} || [];
+
+        my $secx  = $mapx->{sec_suffix} || [];
+        my $sec_child = sprintf(qq{%s.%s}, $sec, $secx);
 
         my @imgs = $self->_fs_find_imgs({
            find  => { max_depth => 1 },
@@ -698,7 +700,14 @@ sub cmd_load_sec {
            #limit => 5,
         });
 
-        # first, we import into database all screenshots on the filesystem
+        # does child section have any pictures already in database?
+        my $child_pics = $prj->_sec_data_pics({
+           proj => $proj,
+           sec => $sec_child,
+           cols => [qw( md5 size )],
+        });
+
+        # we import into database all screenshots on the filesystem
         foreach my $img_path (@imgs) {
             $self->pic_add({
                 file => $img_path,
@@ -713,7 +722,7 @@ sub cmd_load_sec {
             });
         }
 
-        # then, we grab all screenshots already in the database
+        # we grab all screenshots already in the database
         my $img_urls = $self->_db_imgs({
            tags => { and => $tgx },
            where => {
@@ -725,8 +734,6 @@ sub cmd_load_sec {
         });
 
         next unless @$img_urls;
-
-        my $sec_child = sprintf(qq{%s.%s}, $sec, $secx);
 
         $prj->sec_delete({
             sec    => $sec_child,
