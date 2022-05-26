@@ -38,6 +38,8 @@ use Base::DB qw(
     dbh_select_first
 
     dbh_insert_hash
+    dbh_insert_update_hash
+
     dbh_delete
 
     jcond
@@ -540,6 +542,27 @@ sub sec_load {
        proj => $proj,
        list => $ii_list
     });
+
+    foreach my $ii_sec (@$ii_list) {
+       my $sd_ii = $self->_sec_data({
+           sec  => $ii_sec,
+           proj => $proj,
+       });
+       next unless $sd_ii;
+
+       # todo
+       dbh_insert_update_hash({
+          dbh => $self->{dbh},
+          t => 'tree_children',
+          h => {
+             proj => $proj,
+             file => $file,
+             sec  => $sec,
+             child => $ii_sec,
+          },
+          on_list => [qw(file)],
+       });
+    }
 
     return $self;
 }
