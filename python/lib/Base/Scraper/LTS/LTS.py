@@ -788,6 +788,11 @@ class LTS(
 
     return self
 
+  # update body lines with callback
+  def sec_update_body(self, ref = {}):
+
+    return self
+
   # update head, only file, no db
   def sec_update_head(self, ref = {}):
     # full file path
@@ -837,8 +842,6 @@ class LTS(
     txt = '\n'.join(nlines) + '\n'
     with open(path, 'w', encoding='utf8') as f:
       f.write(txt)
-
-    import pdb; pdb.set_trace()
 
     return self
 
@@ -1105,11 +1108,9 @@ class LTS(
         'path' : old_path,
         'update' : {
            # file key in head means sec
-           'file' : new
+           'file' : new,
         }
     })
-
-    import pdb; pdb.set_trace()
 
     ok = dbw.update_dict({
       'db_file' : self.db_file_projs,
@@ -1124,14 +1125,17 @@ class LTS(
       }
     })
     if not ok:
+      # rollback head section
+      self.sec_update_head({
+          'path' : old_path,
+          'update' : { 'file' : old }
+      })
       return self
 
     if git_old:
       util.git_move(old_path, new_path)
     else:
       shutil.move(old_path, new_path)
-
-
 
     return self
 
