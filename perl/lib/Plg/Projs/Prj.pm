@@ -280,15 +280,23 @@ sub sec_import_imgs {
     while (@$imgs) {
         my @col = splice(@$imgs,0,$ncols);
 
-        push @cmt_lines,
-           '',
-           '\ifcmt',
-           sprintf('  tab_begin cols=%s,no_fig,center',scalar @col),
-           ( map { ' pic ' . $_ } @col ),
-           '  tab_end',
-           '\fi',
-           '',
-           ;
+        my @pic;
+        if (@col > 1) {
+            push @pic,
+                sprintf('  tab_begin cols=%s,no_fig,center',scalar @col),
+                ( map { '    pic ' . $_ } @col ),
+                        '  tab_end'
+               ;
+        }else{
+            my $url = shift @col;
+            push @pic,
+               '  ig ' . $url,
+               '  @wrap center',
+               '  @width 0.8',
+               ;
+        }
+
+        push @cmt_lines, '', '\ifcmt', @pic, '\fi', '' ;
 
     }
 
