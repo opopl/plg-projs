@@ -677,12 +677,14 @@ sub cmd_load_sec {
          dir => $dir_sec_new,
          tgx => [qw( orig.post scrn )],
          sec_suffix => 'orig',
+         scheme => { last => 2 },
        },
        cmtx => {
          tex_head => [ '', '\qqSecCmtScr', '' ],
          dir => catfile($dir_sec_new, qw(cmt)),
          tgx => [qw( orig.cmt scrn )],
          sec_suffix => 'cmtx',
+         scheme => { last => 2 },
        },
     };
 
@@ -694,6 +696,7 @@ sub cmd_load_sec {
 
         my $tgx   = $mapx->{tgx} || [];
         my $headx = $mapx->{tex_head} || [];
+        my $scheme = $mapx->{scheme} || {};
 
         my $secx  = $mapx->{sec_suffix} || [];
         my $sec_child = sprintf(qq{%s.%s}, $sec, $secx);
@@ -755,6 +758,7 @@ sub cmd_load_sec {
             sec    => $sec_child,
             proj   => $proj,
             imgs   => $img_urls,
+            scheme => $scheme,
         });
 
         $prj->sec_insert_child({

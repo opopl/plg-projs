@@ -351,13 +351,29 @@ sub sec_import_imgs {
     my ($self, $ref) = @_;
     $ref ||= {};
 
+    my $scheme = $ref->{scheme} || {};
+
     my ($sec, $proj, $imgs, $ncols) = @{$ref}{qw( sec proj imgs ncols )};
     $ncols ||= 3;
 
     my @cmt_lines;
+    my $do_last = 1;
 
+    my @col;
     while (@$imgs) {
-        my @col = splice(@$imgs, 0, $ncols);
+        # number of pics in the last row
+        my $last = $scheme->{last};
+        if ($last && $do_last) {
+           if (@$imgs == $ncols + $last - 1){
+               # ncols and last even, e.g. 3 + 2
+               if (($ncols % 2 == 1) && ($last % 2 == 0)) {
+                   $ncols--;
+                   $do_last = 0;
+               }
+           }
+        }
+
+        @col = splice(@$imgs, 0, $ncols);
 
         my @pic;
         if (@col > 1) {
