@@ -32,6 +32,7 @@ use Plg::Projs::Tex qw(
 
 use Base::DB qw(
     dbi_connect
+
     dbh_select_as_list
     dbh_select
     dbh_select_join
@@ -252,6 +253,54 @@ sub sec_new_child {
     return $self;
 }
 
+sub sec_insert_child {
+    my ($self, $ref) = @_;
+    $ref ||= {};
+
+    my ($sec, $proj, $child) = @{$ref}{qw( sec proj child )};
+
+    my $sd = $self->_sec_data({
+        sec  => $sec,
+        proj => $proj,
+    });
+    return $self unless $sd && $sd->{'@file_ex'};
+
+    my $file = $sd->{file};
+
+    my $children = $self->_sec_children({
+        sec  => $sec,
+        proj => $proj,
+    });
+    return $self unless grep { /^$child$/ } @$children;
+
+    my @ii_lines;
+    push @ii_lines,
+        sprintf('\ii{\s%}',$child);
+
+    $self->sec_insert({
+        sec  => $sec,
+        proj => $proj,
+        lines => @ii_lines,
+    });
+
+    # insert children
+    my $ins_child = {
+       proj => $proj,
+       file => $file,
+       sec  => $sec,
+       child => $child,
+    };
+    dbh_insert_update_hash({
+       dbh  => $self->{dbh},
+       t    => 'tree_children',
+       h    => $ins_child,
+       uniq => 1,
+    });
+
+
+    return $self;
+}
+
 sub sec_insert {
     my ($self, $ref) = @_;
     $ref ||= {};
@@ -405,6 +454,27 @@ sub sec_new {
     return $self;
 }
 
+sub _sec_children {
+    my ($self, $ref) = @_;
+    $ref ||= {};
+
+    my $proj  = $ref->{proj} || $self->{proj};
+    my $sec  = $ref->{sec};
+
+    my $children = {
+        dbh   => $self->{dbh},
+        t     => 'tree_children',
+        f     => [qw( child )],
+        w     => {
+            sec => $sec,
+            proj => $proj,
+        }
+    };
+    my $children = dbh_select_as_list($ref);
+
+    return $children;
+}
+
 sub _sec_in_db {
     my ($self, $ref) = @_;
     $ref ||= {};
@@ -550,18 +620,34 @@ sub sec_load {
        });
        next unless $sd_ii;
 
-       # todo
-       my $ins = {
+       my $ii_file = $sd_ii->{file};
+
+       # insert children
+       my $ins_child = {
              proj => $proj,
              file => $file,
              sec  => $sec,
              child => $ii_sec,
        };
        dbh_insert_update_hash({
-          dbh => $self->{dbh},
-          t => 'tree_children',
-          h => $ins,
-          on_list => [ keys %$ins ],
+          dbh  => $self->{dbh},
+          t    => 'tree_children',
+          h    => $ins_child,
+          uniq => 1,
+       });
+
+       # insert parent for each child
+       my $ins_parent = {
+             proj => $proj,
+             file => $ii_file,
+             sec  => $ii_sec,
+             parent => $sec,
+       };
+       dbh_insert_update_hash({
+          dbh  => $self->{dbh},
+          t    => 'tree_parents',
+          h    => $ins_parent,
+          uniq => 1,
        });
     }
 

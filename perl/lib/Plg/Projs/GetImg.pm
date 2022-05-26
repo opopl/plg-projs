@@ -660,8 +660,8 @@ sub cmd_load_sec {
     });
     my $sec_url = $sec_data->{url};
 
+    # update database with child/parents info from \ii{...} lines
     $prj->sec_load({ proj => $proj, sec => $sec });
-    $DB::single = 1;
 
     # current cmd data
     my $lts_data = catfile($ENV{LTS_DATA});
@@ -754,6 +754,12 @@ sub cmd_load_sec {
             sec    => $sec_child,
             proj   => $proj,
             imgs   => $img_urls,
+        });
+
+        $prj->sec_insert_child({
+            sec   => $sec,
+            proj  => $proj,
+            child => $sec_child,
         });
 
     }
