@@ -38,14 +38,15 @@ our(@lines,@new);
 # JSON-decoded input data
 our($data_input);
 
-our($texify_tmp);
+our($texify_in, $texify_out);
 
 our(@split,@before,@after,@center);
 
 our ($s, $s_full);
 
 my @ex_vars_scalar=qw(
-    $texify_tmp
+    $texify_in
+    $texify_out
 );
 my @ex_vars_hash=qw(
     %fbicons
@@ -1043,7 +1044,7 @@ sub ii_list {
        /^\s*\\ii\{([^{}]*)\}/ && do { push @$ii_list, $1; };
     }
 
-    $texify_tmp->{ii_list} = $ii_list;
+    $texify_out->{ii_list} = $ii_list;
 
     _new2s();
 }

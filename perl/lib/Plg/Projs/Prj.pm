@@ -26,7 +26,8 @@ use XML::LibXML::Cache;
 use Plg::Projs::Tex qw(
     texify
     texify_ref
-    $texify_tmp
+    $texify_in
+    $texify_out
 );
 
 use Base::DB qw(
@@ -402,6 +403,18 @@ sub sec_new {
     return $self;
 }
 
+sub _sec_in_db {
+    my ($self, $ref) = @_;
+    $ref ||= {};
+
+    my $proj  = $ref->{proj} || $self->{proj};
+    my $sec  = $ref->{sec};
+
+    my $secs_db = $self->_secs({ proj => $proj });
+
+    return (grep { /^$sec$/ } @$secs_db ) ? 1 : 0;
+}
+
 sub _sec_exist {
     my ($self, $ref) = @_;
     $ref ||= {};
@@ -517,13 +530,16 @@ sub sec_load {
 
     my $txt = read_file $file_path;
 
-    texify_ref({ 
+    texify_ref({
        ss  => $txt,
        cmd => 'ii_list'
     });
-    my $ii_list = $texify_tmp->{ii_list};
+    my $ii_list = $texify_out->{ii_list} || [];
 
-    $DB::single = 1;
+    $self->secs_filter({
+       proj => $proj,
+       list => $ii_list
+    });
 
     return $self;
 }
@@ -790,9 +806,47 @@ sub init_db {
     return $self;
 }
 
+sub secs_filter {
+    my ($self, $ref) = @_;
+    $ref ||= {};
+
+    my $list = $ref->{list};
+    my $proj = $ref->{proj} || $self->{proj};
+    return $self unless $list && @$list;
+
+    my @nlist;
+    my $secs_db = $self->_secs({ proj => $proj });
+
+    foreach my $x (@$list) {
+        next unless ( grep { /^$x$/ } @$secs_db );
+
+        push @nlist, $x;
+    }
+    @$list = @nlist;
+
+    return $self;
+}
+
+sub _secs {
+    my ($self, $ref) = @_;
+    $ref ||= {};
+
+    my $proj  = $ref->{proj} || $self->{proj};
+
+    my $r = {
+        dbh => $self->{dbh},
+        t   => 'projs',
+        f   => [qw(sec)],
+        w   => { proj => $proj },
+    };
+
+    my $secs = dbh_select_as_list($r);
+
+    wantarray ? @$secs : $secs;
+}
+
 sub _files {
     my ($self, $ref) = @_;
-
     $ref ||= {};
 
     my $pat  = $ref->{pat} || '';
