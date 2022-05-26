@@ -366,7 +366,7 @@ sub sec_import_imgs {
                 ( map { '    pic ' . $_ } @col ),
                         '  tab_end'
                ;
-        }else{
+        } else {
             my $url = shift @col;
             push @pic,
                '  ig ' . $url,
