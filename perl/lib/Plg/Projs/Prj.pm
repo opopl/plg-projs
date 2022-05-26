@@ -263,37 +263,58 @@ sub sec_insert_child {
         sec  => $sec,
         proj => $proj,
     });
+
+    my $sdc = $self->_sec_data({
+        sec  => $child,
+        proj => $proj,
+    });
+
     return $self unless $sd && $sd->{'@file_ex'};
+    return $self unless $sdc && $sdc->{'@file_ex'};
 
     my $file = $sd->{file};
+    my $file_child = $sdc->{file};
 
     my $children = $self->_sec_children({
         sec  => $sec,
         proj => $proj,
     });
-    return $self unless grep { /^$child$/ } @$children;
+    return $self if grep { /^$child$/ } @$children;
 
     my @ii_lines;
     push @ii_lines,
-        sprintf('\ii{\s%}',$child);
+        sprintf('\ii{%s}',$child);
 
     $self->sec_insert({
         sec  => $sec,
         proj => $proj,
-        lines => @ii_lines,
+        lines => \@ii_lines,
     });
 
     # insert children
     my $ins_child = {
-       proj => $proj,
-       file => $file,
-       sec  => $sec,
+       proj  => $proj,
+       file  => $file,
+       sec   => $sec,
        child => $child,
     };
     dbh_insert_update_hash({
        dbh  => $self->{dbh},
        t    => 'tree_children',
        h    => $ins_child,
+       uniq => 1,
+    });
+    # insert parent
+    my $ins_parent = {
+       proj  => $proj,
+       file  => $file_child,
+       sec   => $child,
+       parent => $sec,
+    };
+    dbh_insert_update_hash({
+       dbh  => $self->{dbh},
+       t    => 'tree_parents',
+       h    => $ins_parent,
        uniq => 1,
     });
 
@@ -461,7 +482,7 @@ sub _sec_children {
     my $proj  = $ref->{proj} || $self->{proj};
     my $sec  = $ref->{sec};
 
-    my $children = {
+    my $r = {
         dbh   => $self->{dbh},
         t     => 'tree_children',
         f     => [qw( child )],
@@ -470,7 +491,7 @@ sub _sec_children {
             proj => $proj,
         }
     };
-    my $children = dbh_select_as_list($ref);
+    my $children = dbh_select_as_list($r);
 
     return $children;
 }

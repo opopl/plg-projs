@@ -670,6 +670,7 @@ sub cmd_load_sec {
     my $dir_sec_new = catfile($new_dir,$sec);
     return $self unless -d $dir_sec_new;
 
+
     my $map = {
        orig => {
          tex_head => [ '', '\qqSecOrig', '' ],
