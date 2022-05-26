@@ -357,7 +357,7 @@ sub sec_import_imgs {
     my @cmt_lines;
 
     while (@$imgs) {
-        my @col = splice(@$imgs,0,$ncols);
+        my @col = splice(@$imgs, 0, $ncols);
 
         my @pic;
         if (@col > 1) {
@@ -380,8 +380,8 @@ sub sec_import_imgs {
     }
 
     $self->sec_insert({
-        sec => $sec,
-        proj => $proj,
+        sec   => $sec,
+        proj  => $proj,
         lines => \@cmt_lines,
     });
 
