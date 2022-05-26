@@ -507,7 +507,7 @@ sub cmd_print_ii_tree {
 
     $mkr
         ->tree_fill
-        ->tree_write
+        ->tree_write_fs
         ;
 
     #my $f_bn = basename($file_tree);

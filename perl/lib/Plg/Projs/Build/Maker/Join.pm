@@ -339,7 +339,7 @@ sub ii_insert_updown {
 
     return $mkr unless ($ii_updown);
     $mkr
-        ->tree_import
+        ->tree_import_fs
         #->tree_dump
         ;
 

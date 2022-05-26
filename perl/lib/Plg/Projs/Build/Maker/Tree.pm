@@ -46,6 +46,14 @@ sub tree_import {
     my ($mkr, $ref) = @_;
     $ref ||= {};
 
+    return $mkr;
+}
+
+
+sub tree_import_fs {
+    my ($mkr, $ref) = @_;
+    $ref ||= {};
+
     my $file_tree = $mkr->_file_tree;
     my @lines     = read_file $file_tree;
 
@@ -95,7 +103,7 @@ sub tree_dump {
     return $mkr;
 }
 
-sub tree_write {
+sub tree_write_fs {
     my ($mkr,$ref) = @_;
     $ref ||= {};
 
