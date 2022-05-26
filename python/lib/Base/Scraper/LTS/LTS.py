@@ -14,6 +14,8 @@ import plg.projs.db as projs_db
 
 from bs4 import BeautifulSoup, Comment
 
+from dict_recursive_update import recursive_update
+
 from copy import copy
 
 from plg.projs.Prj.Prj import Prj
@@ -786,6 +788,43 @@ class LTS(
 
     return self
 
+  # update head, only file, no db
+  def sec_update_head(self, ref = {}):
+    # full file path
+    path = ref.get('path','')
+
+    # update self.sec_data['head_keyval'] dict
+    update = ref.get('update',{})
+
+    with open(path,'r') as f:
+      self.lines = f.readlines()
+
+      self.flags = {}
+      self.flags['eof'] = 0
+
+      #self.ln_loop()
+      nlines = []
+      while len(self.lines):
+        if self.flags.get('head_done'):
+          # extra line to catch from ln_shift() in ln_match_head()
+          nlines.append(self.line)
+          nlines.extend(util.list_strip(self.lines))
+          break
+
+        self.ln_shift()
+
+        self.ln_match_head()
+        self.ln_if_head()
+        self.ln_if_top()
+
+    recursive_update(
+      self.sec_data['head_keyval'], update
+    )
+
+    import pdb; pdb.set_trace()
+
+    return self
+
   def sec_update_title(self, ref = {}):
     self.sec_key('set','title',ref)
 
@@ -793,6 +832,27 @@ class LTS(
 
   def sec_update_url(self, ref = {}):
     self.sec_key('set','url',ref)
+
+    return self
+
+  # self.sec_data.head_keyval => self.sec_data.head_lines
+  def sec_data_gen_head(self):
+
+    head = self.sec_data.get('head_lines')
+    kv   = self.sec_data.get('head_keyval')
+
+    sv_beginhead = save.get('beginhead',['%%beginhead'])
+    sv_endhead = save.get('endhead',['%%endhead'])
+
+    for i in range(0,len(head)):
+      m = rgx.match('tex.projs.head.@key', head[i])
+      if m:
+        hval = m.group('value')
+        hkey = m.group('key')
+        if hkey in kv:
+          new = kv.get(hkey)
+          if not new == None:
+            head[i] = f'%%{hkey} {new}'
 
     return self
 
@@ -1021,22 +1081,13 @@ class LTS(
 
     git_old = util.git_has(old_path)
 
-    import pdb; pdb.set_trace()
-    with open(old_path,'r') as f:
-      self.lines = f.readlines()
-
-      self.flags = {}
-      self.flags['eof'] = 0
-
-      self.ln_loop()
-      while len(self.lines):
-        self.ln_shift()
-  
-        self.ln_match_head()
-        self.ln_if_head()
-
-      #for line in lines:
-        #print(line)
+    self.sec_update_head({
+        'path' : old_path,
+        'update' : {
+           # file key in head means sec
+           'file' : new
+        }
+    })
 
     import pdb; pdb.set_trace()
 

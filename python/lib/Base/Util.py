@@ -204,6 +204,10 @@ def url_parse(url,opts={}):
 
   return d
 
+def list_strip(lst=[]):
+
+  return list(map(lambda x: x.strip(), lst))
+
 def strip(s):
   s = s.strip("\'\"\n\t ")
   return s
