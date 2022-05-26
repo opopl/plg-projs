@@ -1035,6 +1035,11 @@ class LTS(
     else:
       shutil.move(old_path, new_path)
 
+    with open(new_path,'r') as f:
+      lines = f.readlines()
+      for line in lines:
+        print(line)
+
     return self
 
   # given section name, simply create it:
