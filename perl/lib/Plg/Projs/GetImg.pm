@@ -436,7 +436,7 @@ sub _new_prj {
     $ref ||= {};
 
     my %n = map { $_ => $self->{$_} } qw(root rootid proj);
-    %n = ( %n, %$ref );
+    %n = ( %n, imgman => $self, %$ref );
     my $prj = $self->{prj} = Plg::Projs::Prj->new(%n);
 
     return $prj;
@@ -446,7 +446,7 @@ sub _new_fetcher {
     my ($self, $ref) = @_;
     $ref ||= {};
 
-    my %n = ( gi => $self );
+    my %n = ( imgman => $self );
     $n{$_} = $self->{$_} for(qw( proj root rootid prj dbh img_root ));
 
     %n = ( %n, %$ref );

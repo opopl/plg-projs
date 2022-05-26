@@ -652,12 +652,22 @@ sub _sec_data {
     my $file_path = $self->_sec_file_path({ file => $file });
     my $file_ex   = $file_path ? -f $file_path : 0;
 
-    hash_update($rw,{
+    hash_update($rw, {
        '@file_path' => $file_path,
        '@file_ex'   => $file_ex,
     });
 
     return $rw;
+}
+
+sub _sec_data_pics {
+    my ($self, $ref) = @_;
+    $ref ||= {};
+
+    my ($proj, $sec) = @{$ref}{qw(proj sec)};
+    $proj ||= $self->{proj};
+
+    #return $rw;
 }
 
 sub _projects {

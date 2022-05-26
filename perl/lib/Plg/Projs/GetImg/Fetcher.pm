@@ -420,11 +420,11 @@ sub d_push_status {
   my ($self, $key) = @_;
 
   my $d  = $self->{d};
-  my $gi = $self->{gi};
+  my $imgman = $self->{imgman};
 
-  return $self unless $d && $gi;
+  return $self unless $d && $imgman;
   
-  push @{$gi->{$key}}, clone($d);
+  push @{$imgman->{$key}}, clone($d);
 
   return $self;
 }
@@ -441,7 +441,7 @@ sub _fetch {
 
   $self->d_rm_file;
 
-  my $gi  = $self->{gi};
+  my $imgman  = $self->{imgman};
 
   my $sec = $self->{sec};
 
