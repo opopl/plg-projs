@@ -551,16 +551,17 @@ sub sec_load {
        next unless $sd_ii;
 
        # todo
-       dbh_insert_update_hash({
-          dbh => $self->{dbh},
-          t => 'tree_children',
-          h => {
+       my $ins = {
              proj => $proj,
              file => $file,
              sec  => $sec,
              child => $ii_sec,
-          },
-          on_list => [qw(file)],
+       };
+       dbh_insert_update_hash({
+          dbh => $self->{dbh},
+          t => 'tree_children',
+          h => $ins,
+          on_list => [ keys %$ins ],
        });
     }
 
