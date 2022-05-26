@@ -101,6 +101,12 @@ class LTS(
     'head_keyval'  : {},
     'seccmd'     : '',
     'sectitle'   : '',
+    'save' : {
+        'beginhead' : '',
+        'endhead'   : '',
+        'before_seccmd' : [],
+        'before_securl' : [],
+    }
   }
 
   line = None
@@ -1015,6 +1021,25 @@ class LTS(
 
     git_old = util.git_has(old_path)
 
+    import pdb; pdb.set_trace()
+    with open(old_path,'r') as f:
+      self.lines = f.readlines()
+
+      self.flags = {}
+      self.flags['eof'] = 0
+
+      self.ln_loop()
+      while len(self.lines):
+        self.ln_shift()
+  
+        self.ln_match_head()
+        self.ln_if_head()
+
+      #for line in lines:
+        #print(line)
+
+    import pdb; pdb.set_trace()
+
     ok = dbw.update_dict({
       'db_file' : self.db_file_projs,
       'table' : 'projs',
@@ -1035,10 +1060,7 @@ class LTS(
     else:
       shutil.move(old_path, new_path)
 
-    with open(new_path,'r') as f:
-      lines = f.readlines()
-      for line in lines:
-        print(line)
+
 
     return self
 
