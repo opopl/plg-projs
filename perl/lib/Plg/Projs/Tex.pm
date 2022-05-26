@@ -38,11 +38,14 @@ our(@lines,@new);
 # JSON-decoded input data
 our($data_input);
 
+our($texify_tmp);
+
 our(@split,@before,@after,@center);
 
 our ($s, $s_full);
 
 my @ex_vars_scalar=qw(
+    $texify_tmp
 );
 my @ex_vars_hash=qw(
     %fbicons
@@ -1029,6 +1032,22 @@ sub fbb {
     _new2s();
 }
 
+sub ii_list {
+    _lines();
+
+    my $ii_list = [];
+
+    for(@lines){
+       next if /^\s*%/;
+
+       /^\s*\\ii\{([^{}]*)\}/ && do { push @$ii_list, $1; };
+    }
+
+    $texify_tmp->{ii_list} = $ii_list;
+
+    _new2s();
+}
+
 sub hyp2ii {
     _lines();
 
@@ -1067,7 +1086,7 @@ sub fb_format {
           || /^\s*Reply\s*$/
           || /^\s*Share\s*$/
           || /^\s*(\d+)(w|d|m|y)\s*$/
-		  || /^\s*(\d+)(d|w|m|y)Edited\s*/
+          || /^\s*(\d+)(d|w|m|y)Edited\s*/
         )
         #&& do { push @new,''; next; };
         && do { next; };

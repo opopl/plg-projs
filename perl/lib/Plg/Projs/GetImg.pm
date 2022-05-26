@@ -660,6 +660,9 @@ sub cmd_load_sec {
     });
     my $sec_url = $sec_data->{url};
 
+    $prj->sec_load({ proj => $proj, sec => $sec });
+    $DB::single = 1;
+
     # current cmd data
     my $lts_data = catfile($ENV{LTS_DATA});
     my $new_dir  = catfile($lts_data,qw(new));
@@ -703,7 +706,7 @@ sub cmd_load_sec {
         # does child section have any pictures already in database?
         my $child_pics = $prj->_sec_data_pics({
            proj => $proj,
-           sec => $sec_child,
+           sec  => $sec_child,
            cols => [qw( md5 size )],
         });
 

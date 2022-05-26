@@ -23,6 +23,12 @@ use YAML::XS qw( LoadFile Load Dump DumpFile );
 use Base::XML::Dict qw(xml2dict);
 use XML::LibXML::Cache;
 
+use Plg::Projs::Tex qw(
+    texify
+    texify_ref
+    $texify_tmp
+);
+
 use Base::DB qw(
     dbi_connect
     dbh_select_as_list
@@ -494,6 +500,32 @@ sub _sec_file_path {
 
     my $file_path = catfile($root, $file);
     return $file_path;
+}
+
+sub sec_load {
+    my ($self, $ref) = @_;
+    $ref ||= {};
+
+    my $root = $ref->{root} || $self->{root};
+    my ($sec, $proj) = @{$ref}{qw( sec proj )};
+
+    my $sd = $self->_sec_data({ sec => $sec, proj => $proj });
+    return $self unless $sd && $sd->{'@file_ex'};
+
+    my $file = $sd->{file};
+    my $file_path = $sd->{'@file_path'};
+
+    my $txt = read_file $file_path;
+
+    texify_ref({ 
+       ss  => $txt,
+       cmd => 'ii_list'
+    });
+    my $ii_list = $texify_tmp->{ii_list};
+
+    $DB::single = 1;
+
+    return $self;
 }
 
 # projs#sec#file
