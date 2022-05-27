@@ -777,7 +777,6 @@ sub cmd_load_sec {
     my $dir_sec_new = catfile($new_dir,$sec);
     return $self unless -d $dir_sec_new;
 
-
     my $map = {
        orig => {
          tex_head => [ '', '\qqSecOrig', '' ],
@@ -849,16 +848,17 @@ sub cmd_load_sec {
 
         next unless @$img_urls;
 
-        $prj->sec_delete({
-            sec    => $sec_child,
-            proj   => $proj,
-        });
+        #$prj->sec_delete({
+            #sec    => $sec_child,
+            #proj   => $proj,
+        #});
 
         $prj->sec_new({
             sec    => $sec_child,
             proj   => $proj,
             parent => $sec,
-            append => $headx
+            append => $headx,
+            rw     => 1,
         });
 
         $prj->sec_import_imgs({

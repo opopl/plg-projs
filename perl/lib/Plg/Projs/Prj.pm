@@ -427,20 +427,19 @@ sub sec_delete {
 
     foreach my $parent (@$parents) {
        my $sd_parent = $self->_sec_data({
-	       sec  => $parent,
-	       proj => $proj,
+           sec  => $parent,
+           proj => $proj,
        });
        my $file_parent = $sd_parent->{file};
        my $txt = read_file $file_parent;
 
        $texify_in = { 'ii_remove' => [ $sec ] };
-	   texify_ref({
-	       ss  => \$txt,
-	       cmd => 'ii_remove'
-	   });
+       texify_ref({
+           ss  => \$txt,
+           cmd => 'ii_remove'
+       });
        write_file($file_parent,$txt);
     }
-    $DB::single = 1;
 
     my $ok = dbh_delete({
        dbh => $self->{dbh},
@@ -460,7 +459,6 @@ sub sec_delete {
        }
     }
 
-
     return $self;
 }
 
@@ -468,7 +466,7 @@ sub sec_new {
     my ($self, $ref) = @_;
     $ref ||= {};
 
-    my ($sec, $parent) = @{$ref}{qw( sec parent )};
+    my ($sec, $parent, $rw) = @{$ref}{qw( sec parent rw )};
 
     # ARRAY, section lines to be appended
     my ($append) = @{$ref}{qw( append )};
@@ -481,7 +479,7 @@ sub sec_new {
     my $file_path = $self->_sec_file_path({ file => $file });
     my $file_ex = $file_path && -f $file_path;
 
-    return $self if $file_ex;
+    return $self if $file_ex && !$rw;
 
     $file = $self->_sec_file({ sec => $sec });
     $file_path = $self->_sec_file_path({ file => $file });
@@ -493,21 +491,24 @@ sub sec_new {
     git_add($file_path);
 
     my %other = ( map { defined $ref->{$_} ? ($_ => $ref->{$_}) : () } qw( parent title tags author_id ) );
-    my $ins = {
-        sec    => $sec,
-        file   => $file,
-        proj   => $proj,
-        rootid => $rootid,
-        %other,
-    };
-    my $r_ins = {
-        dbh => $self->{dbh},
-        t => 'projs',
-        i => q{INSERT OR IGNORE},
-        h => $ins,
-    };
 
-    dbh_insert_hash($r_ins);
+    if (! $sd) {
+        my $ins = {
+            sec    => $sec,
+            file   => $file,
+            proj   => $proj,
+            rootid => $rootid,
+            %other,
+        };
+        my $r_ins = {
+            dbh => $self->{dbh},
+            t => 'projs',
+            i => q{INSERT OR IGNORE},
+            h => $ins,
+        };
+
+        dbh_insert_hash($r_ins);
+    }
 
     return $self;
 }
