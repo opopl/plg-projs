@@ -642,7 +642,58 @@ sub cmd_load_file {
     return $self;
 }
 
-sub cmd_db_foreign_key_check {
+sub cmd_db_fk_create {
+    my ($self) = @_;
+
+    my ($cmd_data) = @{$self}{qw( cmd_data )};
+
+    my ($sec, $proj) = @{$cmd_data}{qw( sec proj)};
+    $self->{proj} = $proj;
+
+    my $prj = $self->_new_prj({ proj => $proj });
+
+    my $fk = q{ FOREIGN KEY(file) REFERENCES projs(file) ON DELETE CASCADE ON UPDATE CASCADE };
+    my $q_tree = qq{
+        CREATE TEMPORARY TABLE temp_tree AS
+        SELECT *
+        FROM tree_children;
+
+        DROP TABLE IF EXISTS tree_children;
+
+        CREATE TABLE tree_children (
+            proj TEXT NOT NULL,
+            file TEXT NOT NULL,
+            sec TEXT NOT NULL,
+            child TEXT NOT NULL,
+            FOREIGN KEY(file) REFERENCES projs(file) ON DELETE CASCADE ON UPDATE CASCADE
+        );
+
+        INSERT INTO tree_children (proj, file, sec, child)
+        SELECT proj, file, sec, child
+        FROM temp_tree;
+    };
+
+    my $q_tags = qq{
+        CREATE TEMPORARY TABLE temp_tags AS
+        SELECT *
+        FROM _info_projs_tags;
+
+        DROP TABLE IF EXISTS _info_projs_tags;
+
+        CREATE TABLE _info_projs_tags (
+            file TEXT NOT NULL,
+            tag TEXT NOT NULL,
+            FOREIGN KEY(file) REFERENCES projs(file) ON DELETE CASCADE ON UPDATE CASCADE
+        );
+
+        INSERT INTO _info_projs_tags (file, tag)
+        SELECT file, tag FROM temp_tags;
+    };
+
+    return $self;
+}
+
+sub cmd_db_fk_check {
     my ($self) = @_;
 
     my ($cmd_data) = @{$self}{qw( cmd_data )};

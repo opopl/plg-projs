@@ -83,7 +83,7 @@ def sql_fetchlist(q, p=[], ref={}):
 def sql_fetchone_list(q, p=[], ref={}):
   r = sql_fetchone(q,p,ref)
   if not r:
-    return 
+    return
   row  = r.get('row',{})
   cols = r.get('cols',[])
   lst = []
@@ -148,7 +148,7 @@ def sql_fetchone(q, p = [], ref = {}):
 
   row = rw2dict(rw)
 
-  cols = list(row.keys()) 
+  cols = list(row.keys())
   cols.sort()
 
   return { 'row' : row, 'cols' : cols }
@@ -164,13 +164,13 @@ def _tb_list(ref={}):
   db_file = ref.get('db_file','')
 
   q = f'''
-    SELECT 
+    SELECT
         name
-    FROM 
-        sqlite_master 
-    WHERE 
+    FROM
+        sqlite_master
+    WHERE
         type IN ( 'table' , 'view' )
-            AND 
+            AND
         name NOT LIKE 'sqlite_%'
     UNION ALL
     SELECT
@@ -216,7 +216,7 @@ def cond_where(ref={}):
   where = ref.get('where',{})
 
   where_keys    = list(where.keys())
-  where_values  = [] 
+  where_values  = []
 
   cond_a = []
   for k in where_keys:
@@ -233,7 +233,7 @@ def cond_where(ref={}):
         for key, pat in regexp.items():
           if pat:
             cond_a.append(f' RGX("{pat}",{key}) IS NOT NULL ')
-      
+
       continue
 
     cond_k = ''
@@ -244,7 +244,7 @@ def cond_where(ref={}):
     elif type(v) in [ list ]:
       if len(v):
         where_values.extend(v)
-  
+
         cond_k = ' OR '.join(list(map(lambda x: f' {k} = ? ', v)))
         cond_k = f'( {cond_k} )'
 
@@ -290,7 +290,7 @@ def select(ref={}):
     select_a = [select_a]
 
   if len(select_a):
-    select_s = ','.join(select_a) 
+    select_s = ','.join(select_a)
 
   q = f'SELECT {select_s} FROM {table}'
   if cond:
@@ -316,7 +316,7 @@ def select(ref={}):
 
   elif output == 'first_row':
     rw = rows_all[0] if len(rows_all) else {}
-    result = rw 
+    result = rw
 
   return result
 
@@ -364,7 +364,7 @@ def sql_fetchall(q, p=[], ref={}):
 
   rws = c.fetchall()
   lastrowid = c.lastrowid
-    
+
   if not rws:
     return { 'err' : 'zero result' }
 
@@ -385,7 +385,7 @@ def sql_fetchall(q, p=[], ref={}):
     conn.commit()
     conn.close()
 
-  return { 
+  return {
     'rows'      : rows,
     'count'     : len(rows),
     'rows_a'    : rows_a,
@@ -410,7 +410,7 @@ def base2info(ref={}):
   # 'base' => 'info' columns mapping
   b2i  = ref.get('b2i') or {}
 
-  # columns in 'base' table which have to 
+  # columns in 'base' table which have to
   #   be expanded into 'info' table
   bcols  = ref.get('bcols') or []
 
@@ -421,7 +421,7 @@ def base2info(ref={}):
   for bcol in bcols:
      icol = b2i.get(bcol,bcol)
      sql = _sql_ct_info( tbase=tbase, bcol=bcol, jcol=jcol, icol=icol )
-     sql_do({ 
+     sql_do({
         'db_file' : db_file,
         'sql'     : sql,
      })
@@ -433,7 +433,7 @@ def base2info(ref={}):
   if length:
     cond = ' OR '.join(list(map(lambda x: f'LENGTH({x}) > 0',bcols)))
 
-  r = select({ 
+  r = select({
     'table'   : tbase,
     'db_file' : db_file,
     'select'  : scols,
@@ -449,7 +449,7 @@ def base2info(ref={}):
       icol = b2i.get(bcol,bcol)
 
       # 'info' table name
-      itb = f'_info_{tbase}_{bcol}' 
+      itb = f'_info_{tbase}_{bcol}'
 
       # comma-separated value
       bval = rw.get(bcol) or ''
@@ -493,7 +493,7 @@ def sql_do(ref={}):
 
   if len(sql_files):
     for sql_file in sql_files:
-      sql_do({ 
+      sql_do({
         'sql_file' : sql_file,
         'db_file'  : db_file
       })
@@ -502,8 +502,8 @@ def sql_do(ref={}):
   if sql_file and os.path.isfile(sql_file):
     with open(sql_file,'r') as f:
       sql = f.read()
-  
-      sql_do({ 
+
+      sql_do({
         'sql'     : sql,
         'p'       : p,
         'db_file' : db_file
@@ -574,7 +574,7 @@ def insert_update_dict(ref={}):
     }
     q = f'''SELECT * FROM {table} WHERE {w_cond}'''
     r = sql_fetchone(q,w_values,r_db)
-  
+
   if not r:
      d = {
         'db_file' : db_file,
@@ -632,7 +632,7 @@ def delete(ref={}):
   try:
     c.execute(q,values)
   except sqlite3.IntegrityError as e:
-    raise Exception(f'[ERROR] SQlite error, query: {q}, params: {values}')    
+    raise Exception(f'[ERROR] SQlite error, query: {q}, params: {values}')
     print(e)
 
   if db_close:
@@ -648,7 +648,7 @@ def _sql_ct_info(
      # join column
      jcol='',
      # 'base' column
-     bcol='', 
+     bcol='',
      # 'info' column
      icol=''
   ):
@@ -659,7 +659,7 @@ def _sql_ct_info(
   q = f'''
     CREATE TABLE IF NOT EXISTS _info_{tbase}_{bcol} (
         {jcol} TEXT NOT NULL,
-        {icol} TEXT, 
+        {icol} TEXT NOT NULL,
         FOREIGN KEY({jcol}) REFERENCES {tbase}({jcol})
             ON DELETE CASCADE
             ON UPDATE CASCADE
@@ -681,7 +681,7 @@ def insert_dict(ref={}):
   fields   = list(insert.keys())
 
   if ( len(fields) == 0 ) or not table:
-    return 
+    return
 
   if not conn:
     if db_file:
@@ -703,7 +703,7 @@ def insert_dict(ref={}):
   try:
     c.execute(q,values)
   except sqlite3.IntegrityError as e:
-    raise Exception(f'[ERROR] SQlite error, query: {q}, params: {values}')    
+    raise Exception(f'[ERROR] SQlite error, query: {q}, params: {values}')
     print(e)
 
   if db_close:
@@ -719,7 +719,7 @@ def sql_file_exec(db_file, sql_file):
 
   conn = sqlite3.connect(db_file)
   c = conn.cursor()
-  
+
   sql = open(sql_file, 'r').read()
   for q in sqlparse.split(sql):
     try:
@@ -729,7 +729,7 @@ def sql_file_exec(db_file, sql_file):
       print(e)
     except:
       print("Errors ", sys.exc_info()[0], " for sqlite query: " + q )
-  
+
   conn.commit()
   conn.close()
 
