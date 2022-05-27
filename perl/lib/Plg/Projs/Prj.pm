@@ -30,6 +30,13 @@ use Plg::Projs::Tex qw(
     $texify_out
 );
 
+use Base::Git qw(
+    git_add
+    git_rm
+    git_mv
+    git_has
+);
+
 use Base::DB qw(
     dbi_connect
 
@@ -484,16 +491,29 @@ sub _sec_children {
     my $proj  = $ref->{proj} || $self->{proj};
     my $sec  = $ref->{sec};
 
+    my $sd = $self->_sec_data({
+        sec  => $sec,
+        proj => $proj,
+    });
+    my $file = $sd->{file};
+
     my $r = {
         dbh   => $self->{dbh},
         t     => 'tree_children',
-        f     => [qw( child )],
-        w     => {
-            sec => $sec,
-            proj => $proj,
-        }
+        q => q{
+            SELECT
+                projs.sec
+            FROM
+                projs
+            INNER JOIN tree_children
+            ON
+                projs.file = tree_children.file_child
+            WHERE
+                tree_children.file_parent = ?
+        },
+        p     => [ $file ],
     };
-    my $children = dbh_select_as_list($r);
+    my $children = dbh_select($r);
 
     return $children;
 }
