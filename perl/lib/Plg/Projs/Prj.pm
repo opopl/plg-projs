@@ -432,7 +432,12 @@ sub sec_delete {
     });
 
     if ($ok) {
-       rmtree $file_path if -f $file_path;
+       if (git_has($file_path)) {
+          git_rm($file_path);
+
+       }elsif(-f $file_path){
+          rmtree $file_path;
+       }
     }
 
     return $self;
@@ -463,6 +468,8 @@ sub sec_new {
     my @lines = $self->_sec_new_lines({ %$ref });
 
     write_file($file_path,join("\n",@lines) . "\n");
+
+    git_add($file_path);
 
     my %other = ( map { defined $ref->{$_} ? ($_ => $ref->{$_}) : () } qw( parent title tags author_id ) );
     my $ins = {
@@ -663,14 +670,12 @@ sub sec_load {
        });
        next unless $sd_ii;
 
-       my $ii_file = $sd_ii->{file};
+       my $file_child = $sd_ii->{file};
 
        # insert children
        my $ins_child = {
-          proj => $proj,
-          file => $file,
-          sec  => $sec,
-          child => $ii_sec,
+          file_parent => $file,
+          file_child  => $file_child,
        };
        dbh_insert_update_hash({
           dbh  => $self->{dbh},
