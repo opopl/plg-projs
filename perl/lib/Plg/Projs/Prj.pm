@@ -304,20 +304,6 @@ sub sec_insert_child {
        h    => $ins_child,
        uniq => 1,
     });
-    # insert parent
-    my $ins_parent = {
-       proj  => $proj,
-       file  => $file_child,
-       sec   => $child,
-       parent => $sec,
-    };
-    dbh_insert_update_hash({
-       dbh  => $self->{dbh},
-       t    => 'tree_parents',
-       h    => $ins_parent,
-       uniq => 1,
-    });
-
 
     return $self;
 }
@@ -661,10 +647,10 @@ sub sec_load {
 
        # insert children
        my $ins_child = {
-             proj => $proj,
-             file => $file,
-             sec  => $sec,
-             child => $ii_sec,
+          proj => $proj,
+          file => $file,
+          sec  => $sec,
+          child => $ii_sec,
        };
        dbh_insert_update_hash({
           dbh  => $self->{dbh},
@@ -673,19 +659,6 @@ sub sec_load {
           uniq => 1,
        });
 
-       # insert parent for each child
-       my $ins_parent = {
-             proj => $proj,
-             file => $ii_file,
-             sec  => $ii_sec,
-             parent => $sec,
-       };
-       dbh_insert_update_hash({
-          dbh  => $self->{dbh},
-          t    => 'tree_parents',
-          h    => $ins_parent,
-          uniq => 1,
-       });
     }
 
     return $self;

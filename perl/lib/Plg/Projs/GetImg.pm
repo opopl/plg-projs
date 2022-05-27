@@ -71,10 +71,14 @@ use base qw(
 
 use Base::DB qw(
     dbi_connect
+
     dbh_do
+    dbh_delete
+
     dbh_select
     dbh_select_join
     dbh_select_fetchone
+
     dbh_insert_hash
     dbh_update_hash
 
@@ -634,6 +638,60 @@ sub cmd_load_file {
     my ($cmd_data) = @{$self}{qw( cmd_data )};
 
     $self->load_file($cmd_data);
+
+    return $self;
+}
+
+sub cmd_db_foreign_key_check {
+    my ($self) = @_;
+
+    my ($cmd_data) = @{$self}{qw( cmd_data )};
+
+    my ($sec, $proj) = @{$cmd_data}{qw( sec proj)};
+    $self->{proj} = $proj;
+
+    my $prj = $self->_new_prj({ proj => $proj });
+
+    my ($rows, $cols) = dbh_select({
+        dbh => $prj->{dbh},
+        q => q{ PRAGMA foreign_key_check; },
+    });
+    my( @secs, @files);
+    foreach my $rw (@$rows) {
+        my $fkid = $rw->{fkid};
+        next if $fkid;
+
+        my $sec;
+        my ($rowid, $table, $parent) = @{$rw}{qw(rowid table parent)};
+
+      #  my $r = {
+            #dbh => $prj->{dbh},
+            #q => qq( SELECT p.sec FROM projs p INNER JOIN $table i ON p.file = i.file WHERE i.rowid = ?),
+            #p => [$rowid],
+        #};
+        #my $sec = dbh_select_fetchone($r);
+
+        my $r = {
+            dbh => $prj->{dbh},
+            q => qq( SELECT file FROM $table WHERE rowid = ?),
+            p => [$rowid],
+        };
+        my $file = dbh_select_fetchone($r);
+        my $file_path = catfile($prj->{root},$file);
+        unless (-f $file_path) {
+           dbh_delete({
+              dbh => $prj->{dbh},
+              t => $table,
+              w => { rowid => $rowid },
+           });
+           next;
+        }
+
+        push @files, $file;
+
+    }
+
+    $DB::single = 1;
 
     return $self;
 }
