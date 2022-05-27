@@ -287,7 +287,6 @@ sub sec_insert_child {
         proj => $proj,
     });
     return $self if grep { /^$child$/ } @$children;
-    $DB::single = 1;
 
     my @ii_lines;
     push @ii_lines,
@@ -421,6 +420,28 @@ sub sec_delete {
     my $file      = $sd->{file};
     my $file_path = $sd->{'@file_path'};
 
+    my $parents = $self->_sec_parents({
+       sec  => $sec,
+       proj => $proj,
+    });
+
+    foreach my $parent (@$parents) {
+       my $sd_parent = $self->_sec_data({
+	       sec  => $parent,
+	       proj => $proj,
+       });
+       my $file_parent = $sd_parent->{file};
+       my $txt = read_file $file_parent;
+
+       $texify_in = { 'ii_remove' => [ $sec ] };
+	   texify_ref({
+	       ss  => \$txt,
+	       cmd => 'ii_remove'
+	   });
+       write_file($file_parent,$txt);
+    }
+    $DB::single = 1;
+
     my $ok = dbh_delete({
        dbh => $self->{dbh},
        t => 'projs',
@@ -438,6 +459,7 @@ sub sec_delete {
           rmtree $file_path;
        }
     }
+
 
     return $self;
 }
@@ -488,6 +510,39 @@ sub sec_new {
     dbh_insert_hash($r_ins);
 
     return $self;
+}
+
+sub _sec_parents {
+    my ($self, $ref) = @_;
+    $ref ||= {};
+
+    my $proj  = $ref->{proj} || $self->{proj};
+    my $sec   = $ref->{sec};
+
+    my $sd = $self->_sec_data({
+        sec  => $sec,
+        proj => $proj,
+    });
+    my $file = $sd->{file};
+
+    my $r = {
+        dbh   => $self->{dbh},
+        q => q{
+            SELECT
+                projs.sec
+            FROM
+                projs
+            INNER JOIN tree_children
+            ON
+                projs.file = tree_children.file_parent
+            WHERE
+                tree_children.file_child = ?
+        },
+        p     => [ $file ],
+    };
+    my $parents = dbh_select_as_list($r);
+
+    return $parents;
 }
 
 sub _sec_children {
