@@ -742,8 +742,6 @@ sub cmd_db_fk_check {
 
     }
 
-    $DB::single = 1;
-
     return $self;
 }
 

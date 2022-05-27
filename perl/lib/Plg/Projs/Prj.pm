@@ -287,6 +287,7 @@ sub sec_insert_child {
         proj => $proj,
     });
     return $self if grep { /^$child$/ } @$children;
+    $DB::single = 1;
 
     my @ii_lines;
     push @ii_lines,
@@ -300,10 +301,8 @@ sub sec_insert_child {
 
     # insert children
     my $ins_child = {
-       proj  => $proj,
-       file  => $file,
-       sec   => $sec,
-       child => $child,
+       file_parent => $file,
+       file_child  => $file_child,
     };
     dbh_insert_update_hash({
        dbh  => $self->{dbh},
@@ -428,7 +427,7 @@ sub sec_delete {
        w => {
          sec  => $sec,
          proj => $proj,
-       }
+       },
     });
 
     if ($ok) {
@@ -496,7 +495,7 @@ sub _sec_children {
     $ref ||= {};
 
     my $proj  = $ref->{proj} || $self->{proj};
-    my $sec  = $ref->{sec};
+    my $sec   = $ref->{sec};
 
     my $sd = $self->_sec_data({
         sec  => $sec,
@@ -506,7 +505,6 @@ sub _sec_children {
 
     my $r = {
         dbh   => $self->{dbh},
-        t     => 'tree_children',
         q => q{
             SELECT
                 projs.sec
@@ -520,7 +518,7 @@ sub _sec_children {
         },
         p     => [ $file ],
     };
-    my $children = dbh_select($r);
+    my $children = dbh_select_as_list($r);
 
     return $children;
 }
@@ -677,13 +675,13 @@ sub sec_load {
           file_parent => $file,
           file_child  => $file_child,
        };
+
        dbh_insert_update_hash({
           dbh  => $self->{dbh},
           t    => 'tree_children',
           h    => $ins_child,
           uniq => 1,
        });
-
     }
 
     return $self;
