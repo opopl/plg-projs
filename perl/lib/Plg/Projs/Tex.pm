@@ -55,7 +55,7 @@ my @ex_vars_array=qw(
 );
 
 %EXPORT_TAGS = (
-    'funcs' => [qw( 
+    'funcs' => [qw(
         q2quotes
         texify
         texify_ref
@@ -154,7 +154,7 @@ our %fbicons_all = (
   '⚠️' =>  'warning',
   '🛡' => 'shield',
   '🚨' => 'police.car.light',
-  '👐' => 'open.hands', 
+  '👐' => 'open.hands',
   '📢' => 'loudspeaker',
   '🧠' => 'brain',
   '🩸' => 'drop.blood',
@@ -514,8 +514,8 @@ our %fbicons_face = (
 );
 
 ###fbicons
-our %fbicons = ( 
-  %fbicons_all, 
+our %fbicons = (
+  %fbicons_all,
   %fbicons_face,
   %fbicons_weak,
   %fbicons_heart,
@@ -549,8 +549,8 @@ sub texify {
         $data_input = $coder->decode($data_js);
     }
 
-    my @cmds; 
-    push @cmds, 
+    my @cmds;
+    push @cmds,
         str_split($cmd),
         #'trim_eol'
         ;
@@ -595,15 +595,15 @@ sub _str {
     $s_start //= $l_start;
     $s_end //= $l_end;
 
-    if (ref $ss eq 'SCALAR'){ 
+    if (ref $ss eq 'SCALAR'){
         $s = $$ss;
         @split = split("\n" => $s);
 
-    } elsif (ref $ss eq 'ARRAY'){ 
+    } elsif (ref $ss eq 'ARRAY'){
         @split = @$ss;
-        $s = join("\n",@split);
+        $s = join("\n",@split) . "\n";
     }
-    elsif (! ref $ss){ 
+    elsif (! ref $ss){
         $s = $ss;
         @split = split("\n" => $s);
     }
@@ -623,7 +623,7 @@ sub _str {
     }else{
         @center = @split;
     }
-    $s = join("\n",@center);
+    $s = join("\n",@center) . "\n";
 
 }
 
@@ -642,7 +642,7 @@ sub _back {
     @center = split("\n",$s);
     @split = (@before,@center,@after);
 
-    $s_full = join("\n",@split);
+    $s_full = join("\n",@split) . "\n";
 
     if (ref $ss eq 'SCALAR'){
         $$ss = $s_full;
@@ -777,7 +777,7 @@ sub empty_to_smallskip {
     for(@lines){
         next if _ln_push($_);
 
-        /^\s*$/ && do { 
+        /^\s*$/ && do {
             push @new,q{\smallskip};
             next;
         };
@@ -815,7 +815,7 @@ sub _fbicon_igg {
 
     my $rpl = ' ' . join(" ",@rpl) . ' ';
     $rpl .= $str if $str;
-   
+
     return $rpl;
 }
 
@@ -831,54 +831,54 @@ sub trim_eol {
     $s = join("\n",@new);
 }
 
-sub _reset { 
+sub _reset {
     @new = ();
     $flag{$_} = undef for keys %flag;
 }
 
-sub _lines { 
+sub _lines {
     @lines = split "\n" => $s;
 
     _reset();
 }
 
-sub _new2s { 
-    $s = join("\n",@new);
+sub _new2s {
+    $s = join("\n",@new) . "\n";
 
     _reset();
 }
 
-sub _ln_flag { 
+sub _ln_flag {
     my ($line) = @_;
     local $_ = $line;
 
-    /^%%%fbauth/ && do { 
-        @flag{qw(fbauth)} = ( 1 ); 
+    /^%%%fbauth/ && do {
+        @flag{qw(fbauth)} = ( 1 );
     };
 
-    /^%%%endfbauth/ && do { 
-        @flag{qw(endfbauth)} = ( undef ); 
+    /^%%%endfbauth/ && do {
+        @flag{qw(endfbauth)} = ( undef );
     };
 
-    /^%%beginhead/ && do { 
-        @flag{qw(head push)} = ( 1, 1 ); 
+    /^%%beginhead/ && do {
+        @flag{qw(head push)} = ( 1, 1 );
     };
 
-    /^%%endhead/ && do { 
-        @flag{qw(head push)} = ( undef, 1 ); 
+    /^%%endhead/ && do {
+        @flag{qw(head push)} = ( undef, 1 );
     };
-    /^\\ifcmt\s*$/ && do { 
-        @flag{qw(cmt push)} = ( 1, 1 ); 
+    /^\\ifcmt\s*$/ && do {
+        @flag{qw(cmt push)} = ( 1, 1 );
     };
-    /^\\fi\s*$/ && do { 
-        @flag{qw(cmt push)} = ( undef, 1 ); 
+    /^\\fi\s*$/ && do {
+        @flag{qw(cmt push)} = ( undef, 1 );
     };
     foreach my $k (qw(head cmt)) {
         $flag{push} = 1 if $flag{$k};
     }
 }
 
-sub _ln_push { 
+sub _ln_push {
     my ($line) = @_;
     local $_ = $line;
 
@@ -897,8 +897,8 @@ sub rpl_urls {
     for(@lines){
         next if _ln_push($_);
 
-        my $pat_cmd = sub { 
-            my ($ref) = @_; 
+        my $pat_cmd = sub {
+            my ($ref) = @_;
             $ref ||= {};
             my $cmd = $ref->{cmd} || 'url';
 
@@ -924,13 +924,13 @@ sub rpl_urls {
             last unless $cond;
         }
 
-        $cond && do { 
-           my $cmd_url = sub { 
+        $cond && do {
+           my $cmd_url = sub {
                my $m = $1;
                my @ms = ($m =~ /^(.*)([,]+)$/);
                @ms ? sprintf('\url{%s}%s',@ms) :
                      sprintf('\url{%s}',$m);
-           };  
+           };
 
            s/$pat_sub/$cmd_url->()/ge;
         };
@@ -943,7 +943,7 @@ sub rpl_urls {
 }
 
 sub fb_auth {
-    my (@lines, @new); 
+    my (@lines, @new);
     @lines = split "\n" => $s;
 
     for(@lines){
@@ -963,7 +963,7 @@ sub fb_iusr {
     for(@lines){
         next if _ln_push($_);
 
-        !$flag{fbauth} && /^\\iusr\{(.*)\}\s*$/ && do { 
+        !$flag{fbauth} && /^\\iusr\{(.*)\}\s*$/ && do {
             my $iusr = $1;
 
             my $t = q{
@@ -987,7 +987,7 @@ sub fb_iusr {
                 %%%fbauth_pubs
                 %%%endfbauth
             };
-            push @new, map { trim($_) } 
+            push @new, map { trim($_) }
                 split "\n" => named_sprintf($t,{ iusr => $iusr })
                 ;
             next;
@@ -1023,11 +1023,30 @@ sub fbb {
            next;
         }
 
-        /^\s*·.*/ && do { 
-           $f{au}=1; push @new,''; next; 
+        /^\s*·.*/ && do {
+           $f{au}=1; push @new,''; next;
         };
 
         push @new,$_;
+    }
+
+    _new2s();
+}
+
+sub ii_remove {
+    _lines();
+
+    my $ii_remove = $texify_in->{ii_remove} || [];
+
+    for(@lines){
+       next if _ln_push($_);
+
+       /^\s*\\ii\{([^{}]*)\}/ && do {
+           my $ii = $1;
+           next if grep { /^$ii$/ } @$ii_remove;
+       };
+
+       push @new, $_;
     }
 
     _new2s();
@@ -1069,12 +1088,12 @@ sub fb_format {
         next if _ln_push($_);
 
         #next if /^\s+· Reply ·/;
-        ( /^\s+· Reply ·/ 
-          || /^\s+· (\d+)\s+(?:д|ч|г|н)./ 
-          || /^\s+· Ответить ·.*/ 
-          || /^\s+· Поделиться ·.*/ 
+        ( /^\s+· Reply ·/
+          || /^\s+· (\d+)\s+(?:д|ч|г|н)./
+          || /^\s+· Ответить ·.*/
+          || /^\s+· Поделиться ·.*/
           || /^\s+· Показать перевод.*/
-          || /^\s+·\s*$/ 
+          || /^\s+·\s*$/
           || /^Ответить(\d+)/
           || /^ОтветитьПоделиться/
           || /^(\d+)\s*(д|ч|нед|мин|г)\./
@@ -1105,7 +1124,7 @@ sub fb_format {
         #s/^\\iusr\{(.*)\}\\par\s*$/\\iusr{$1}/g;
         #s/^\\emph\{(.*)\}\s*$/\\iusr{$1}/g;
 
-        /^\\emph\{(.*)\}\s*$/ && do { 
+        /^\\emph\{(.*)\}\s*$/ && do {
 
             push @new, "\\iusr{$1}" ;
             next;
@@ -1176,10 +1195,10 @@ sub rpl_dashes {
     local $_ = $s;
 
     s/\s+(-|–)\s+/ \\dshM /g;
-    
+
     $s = $_;
 }
 
 1;
- 
+
 
