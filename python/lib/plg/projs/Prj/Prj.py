@@ -61,7 +61,8 @@ class Prj(
         'proj' : proj,
     });
 
-    if not sd and sd.get('@file_ex'):
+    ok = ok and sd and sd.get('@file_ex')
+    if not ok:
       return self
 
     file = sd.get('file')
@@ -72,14 +73,14 @@ class Prj(
           'proj' : proj,
         })
 
-        if not sdc and sdc.get('@file_ex'):
+        if not (sdc and sdc.get('@file_ex')):
            continue
 
         file_child = sdc.get('file')
 
         ins_child = {
            'file_parent' : file,
-           'file_child' : file_child,
+           'file_child'  : file_child,
         }
 
         dbw.insert_update_dict({
@@ -120,6 +121,10 @@ class Prj(
     if not ok:
       return self
 
+    sec  = d.get('sec')
+    file = d.get('file')
+    proj = d.get('proj')
+
     dbw.insert_update_dict({
       'db_file' : self.db_file,
       'table'   : tbase,
@@ -128,7 +133,12 @@ class Prj(
     })
 
     parent_sec = d.get('parent','')
-    #if parent_sec:
+    if parent_sec:
+      self.db_sec_insert_children({
+         'proj'     : proj,
+         'sec'      : sec,
+         'children' : [ parent_sec ]
+      })
 
     b2i = self.b2i.get(tbase,{})
 
