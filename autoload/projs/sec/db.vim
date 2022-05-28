@@ -11,6 +11,11 @@ function! projs#sec#db#add_children (...)
 
   let children = get(ref,'children',[])
 
+  for child in children
+    let sdc = projs#sec#db#data({ 'sec' : sec, 'proj' : proj })
+    let file_child = get(sdc,'file','')
+  endfor
+
 endfunction
 "} end:
 "
@@ -31,6 +36,7 @@ perl << eof
   use Vim::Perl qw(VimVar VimLet);
 
   my ($proj, $sec, $root, $rootid) = map { VimVar($_) } qw(proj sec root rootid);
+  return unless $proj && $root && $rootid;
 
   my %n = (
      proj   => $proj,
@@ -40,8 +46,12 @@ perl << eof
   );
   our $prj ||= Plg::Projs::Prj->new(%n);
 
+  my $prev;
+  $prev->{rootid} = $prj->{rootid};
+  my $force = ($prev->{rootid} && ($prev->{rootid} ne $rootid)) ? 1 : 0;
+
   $prj->{$_} = $n{$_} for keys %n;
-  $prj->init_db;
+  $prj->init_db({ force => 1 });
 
   my $sd = $prj->_sec_data({
      sec  => $sec,

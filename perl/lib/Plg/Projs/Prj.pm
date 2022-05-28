@@ -313,6 +313,16 @@ sub sec_insert_child {
     return $self;
 }
 
+sub db_sec_insert_child {
+    my ($self, $ref) = @_;
+    $ref ||= {};
+
+    my $child = $ref->{child} || '';
+    return $self unless $child;
+
+    return $self;
+}
+
 sub sec_insert {
     my ($self, $ref) = @_;
     $ref ||= {};
@@ -990,9 +1000,16 @@ sub init_proj {
 }
 
 sub init_db {
-    my ($self) = @_;
+    my ($self, $ref) = @_;
+    $ref ||= {};
 
-    return $self if $self->{prj_skip_db} || $self->{dbh};
+    my $force = $self->{force};
+    return $self if $self->{prj_skip_db} || ($self->{dbh} && !$force);
+
+    if ($force && $self->{dbh}) {
+       eval { $self->{dbh}->disconnect; undef $self->{dbh}; };
+       if ($@) { warn $@; }
+    }
 
     $self->{db_file} ||= catfile($self->{root},'projs.sqlite');
     my $db_file = $self->{db_file};
