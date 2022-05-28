@@ -32,7 +32,7 @@ class Prj(
 
   b2i = {
     'projs' : {
-       'tags' : 'tag' 
+       'tags' : 'tag'
     }
   }
 
@@ -46,6 +46,50 @@ class Prj(
 
     CoreClass.__init__(self,args)
     self.init_db()
+
+  def db_sec_insert_children(self,ref={}):
+    sec      = ref.get('sec','')
+    proj     = ref.get('proj',self.proj)
+    children = ref.get('children',[])
+
+    ok = 1 and sec and proj and len(children)
+    if not ok:
+      return self
+
+    sd = self._sec_data({
+        'sec'  : sec,
+        'proj' : proj,
+    });
+
+    if not sd and sd.get('@file_ex'):
+      return self
+
+    file = sd.get('file')
+
+    for child in children:
+        sdc = self._sec_data({
+          'sec'  : child,
+          'proj' : proj,
+        })
+
+        if not sdc and sdc.get('@file_ex'):
+           continue
+
+        file_child = sdc.get('file')
+
+        ins_child = {
+           'file_parent' : file,
+           'file_child' : file_child,
+        }
+
+        dbw.insert_update_dict({
+           'db_file' : self.db_file,
+           'table'   : 'tree_children',
+           'insert'  : ins_child,
+           'uniq'    : 1,
+        })
+
+    return $self
 
   # add section to database
   def add(self,section={}):
@@ -69,7 +113,7 @@ class Prj(
     ok = True
     for k in ['sec','file','proj']:
       v = d.get(k)
-      ok = ok and v not in [ None, '' ] 
+      ok = ok and v not in [ None, '' ]
       if not ok:
         break
 
@@ -84,6 +128,7 @@ class Prj(
     })
 
     parent_sec = d.get('parent','')
+    #if parent_sec:
 
     b2i = self.b2i.get(tbase,{})
 
@@ -98,7 +143,7 @@ class Prj(
 
         icol = b2i.get(bcol,bcol)
 
-        itb = f'_info_{tbase}_{bcol}' 
+        itb = f'_info_{tbase}_{bcol}'
 
         for ival in ivals:
           dbw.insert_dict({
@@ -158,7 +203,7 @@ class Prj(
     ff = Path(sql_dir).glob('create_table_*.sql')
     for f in ff:
       sql_file = f.as_posix()
-      dbw.sql_do({ 
+      dbw.sql_do({
         'sql_file' : sql_file,
         'db_file'  : self.db_file
       })
@@ -185,13 +230,13 @@ class Prj(
 
     return self
 
-  # return 
+  # return
   def _section(self, ref = {}):
     proj = ref.get('proj',self.proj)
 
     w = {}
     for k in ['sec','file','url']:
-      v = ref.get(k) 
+      v = ref.get(k)
       if v not in ['',None]:
         w.update({ k : v })
 
@@ -214,7 +259,7 @@ class Prj(
       if icol:
         q = f'''SELECT DISTINCT {icol} FROM {itb} ORDER BY {icol} ASC'''
         p = []
-  
+
         lst = dbw.sql_fetchlist(q,p, { 'db_file' : self.db_file })
 
     return lst
@@ -238,7 +283,7 @@ class Prj(
       where.update({ '@regexp' : regexp })
     where.update(iwhere)
 
-    r = dbw.select({ 
+    r = dbw.select({
       'table'   : 'projs',
       'db_file' : self.db_file,
       'orderby' : { 'sec' : 'asc' },
