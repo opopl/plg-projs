@@ -59,7 +59,7 @@ function! projs#insert#cmt_author ()
 
   if !len(author_id)
     let a_data    = projs#author#select()
-  
+
     let author_id = get(a_data,'author_id','')
     let author    = get(a_data,'author','')
   endif
@@ -142,7 +142,7 @@ date = ''
 m = re.match(r'^(\d+_\d+_\d+)\..*$',sec)
 if m:
   date = m.group(1)
- 
+
 if len(date):
   tags = ','.join([ tags, date ])
 
@@ -399,15 +399,20 @@ if 0
       projs#author#get
 endif
 
-"""pin_ii_url {
-
 if 0
+  name
+    projs#insert#ii_url
+
   call tree
     calls
       projs#util#ii_data_from_url
         projs#url#site#get
         projs#url#fb#data
+
+      projs#sec#new
 endif
+
+"""pin_ii_url {
 
 function! projs#insert#ii_url ()
   let proj   = projs#proj#name()
@@ -517,12 +522,12 @@ function! projs#insert#ii_url ()
 
   call projs#sec#new(ii_sec, r_new)
 
-  let r_children = {
-      \  'proj'     : proj,
-      \  'sec'      : sec,
-      \  'children' : [ ii_sec ],
-      \  }
-  call projs#sec#db#add_children(r_children)
+"  let r_children = {
+      "\  'proj'     : proj,
+      "\  'sec'      : sec,
+      "\  'children' : [ ii_sec ],
+      "\  }
+  "call projs#sec#db#add_children(r_children)
 
   call base#tg#update('projs_this')
 

@@ -18,7 +18,7 @@ function! projs#sec#append (...)
   let sec   = get(ref,'sec','')
   let lines = get(ref,'lines',[])
   let text  = get(ref,'text','')
-  
+
   call extend(lines, split(text,"\n") )
 
   let file = projs#sec#file(sec)
@@ -55,7 +55,7 @@ function! projs#sec#rename_adjust (...)
   let pats = {}
   call extend(pats,{ '^\(%%file\s\+\)\(\w\+\)\s*$' : '\1'.new  })
   call extend(pats,{ '^\(\\label{sec:\)'.old.'\(}\s*\)$' : '\1'.new.'\2' })
-  
+
   for line in lines
     for [ pat, subpat ] in items(pats)
       if line =~ pat
@@ -82,9 +82,9 @@ function! projs#sec#rename_adjust (...)
     endif
   endfor
 
-  let f_listfiles = projs#sec#file('_dat_files_') 
+  let f_listfiles = projs#sec#file('_dat_files_')
 
-  call base#file#write_lines({ 
+  call base#file#write_lines({
       \ 'lines' : pfiles,
       \ 'file'  : f_listfiles,
       \})
@@ -120,13 +120,13 @@ function! projs#sec#rename (...)
   let newf_base = projs#sec#file_base(new)
 
   let msg_a = [
-    \ " ",  
-    \ "Old: " . oldf, 
-    \ "New: " . newf, 
     \ " ",
-    \ "This will rename sections, old => new",  
-    \ " ",  
-    \ "Are you sure? (1/0): ",  
+    \ "Old: " . oldf,
+    \ "New: " . newf,
+    \ " ",
+    \ "This will rename sections, old => new",
+    \ " ",
+    \ "Are you sure? (1/0): ",
     \ ]
   let msg = join(msg_a,"\n")
   let do_rename = base#input_we(msg,0,{ })
@@ -135,7 +135,7 @@ function! projs#sec#rename (...)
     echohl MoreMsg
     echo 'Rename aborted'
     echohl None
-    return 
+    return
   endif
 
   call rename(oldf,newf)
@@ -144,7 +144,7 @@ function! projs#sec#rename (...)
 
   call projs#proj#secnames()
   call base#fileopen({ 'files' : [newf]})
-  
+
 endfunction
 
 function! projs#sec#delete_prompt (...)
@@ -162,7 +162,7 @@ function! projs#sec#date (...)
 
   let lst = matchlist(sec, '^\zs\(\d\+\)_\(\d\+\)_\(\d\+\)\ze')
   let [ date, day, month, year ] = lst[0:3]
-  
+
   let day = substitute(day,'^0','','g')
   let month = substitute(month,'^0','','g')
 
@@ -172,7 +172,7 @@ function! projs#sec#date (...)
   let path = join([lang, repr, month], '.')
   let month_str = base#x#getpath(map_months, path, '')
 
-  let r = { 
+  let r = {
       \ 'date'  : date,
       \ 'day'   : day,
       \ 'month' : month_str,
@@ -221,7 +221,7 @@ function! projs#sec#delete (...)
 endfunction
 
 function! projs#sec#delete_from_vcs (sec,...)
-  let sec = a:sec 
+  let sec = a:sec
 
   let secfile   = projs#sec#file(sec)
 
@@ -230,7 +230,7 @@ function! projs#sec#delete_from_vcs (sec,...)
     let bname   = fnamemodify(secfile,':p:t')
     call base#cd(dirname)
     let cmd = 'git rm ' . bname . ' --cached '
-    let ok = base#sys({ 
+    let ok = base#sys({
       \ "cmds"         : [cmd],
       \ "split_output" : 0,
       \ "skip_errors"  : 1,
@@ -244,7 +244,7 @@ endfunction
 
 
 function! projs#sec#delete_from_fs (sec,...)
-  let sec = a:sec 
+  let sec = a:sec
 
   let secfile   = projs#sec#file(sec)
 
@@ -253,7 +253,7 @@ function! projs#sec#delete_from_fs (sec,...)
 endfunction
 
 function! projs#sec#delete_from_db (sec,...)
-  let sec = a:sec 
+  let sec = a:sec
 
   let ref = get(a:000,0,{})
 
@@ -336,7 +336,7 @@ if 0
 endif
 
 function! projs#sec#file_base_a (...)
-    
+
     let sec = projs#proj#secname()
     let sec = get(a:000,0,sec)
 
@@ -348,7 +348,7 @@ function! projs#sec#file_base_a (...)
 
     let sfile_a = []
 
-    let runext = (has('win32')) ? 'bat' : 'sh' 
+    let runext = (has('win32')) ? 'bat' : 'sh'
 
     if sec == '_main_'
         let sfile_a = [ proj.'.tex']
@@ -431,7 +431,7 @@ function! projs#sec#file_base_a (...)
     endif
 
     return sfile_a
-    
+
 endfunction
 
 "call tree
@@ -439,7 +439,7 @@ endfunction
 "    projs#sec#add
 
 function! projs#sec#add_to_secnames (sec)
-  let sec = a:sec 
+  let sec = a:sec
 
   if ! projs#sec#exists(sec)
     let secnames    = base#varref('projs_secnames',[])
@@ -456,7 +456,7 @@ endfunction
 function! projs#sec#add_to_dat (sec,...)
   let ref = get(a:000,0,{})
 
-  let sec = a:sec 
+  let sec = a:sec
 
   let sfile = projs#sec#file(sec)
   let sfile = fnamemodify(sfile,':p:t')
@@ -464,11 +464,11 @@ function! projs#sec#add_to_dat (sec,...)
   let pfiles =  projs#proj#files()
   if !base#inlist(sfile, pfiles)
     call add(pfiles,sfile)
-  
+
     let f_listfiles = projs#sec#file('_dat_files_')
-    call base#file#write_lines({ 
-      \ 'lines' : pfiles, 
-      \ 'file'  : f_listfiles, 
+    call base#file#write_lines({
+      \ 'lines' : pfiles,
+      \ 'file'  : f_listfiles,
       \})
   endif
 endfunction
@@ -510,7 +510,7 @@ for col in cols:
 
 for e in root.findall('.//proj[@name={}]'.format(proj))
   e.append(e_sec)
- 
+
 xml = prettify(root)
 eof
   let xml = py3eval('xml')
@@ -546,7 +546,7 @@ function! projs#sec#add_to_db (sec,...)
   let sfile = fnamemodify(sfile,':p:t')
 
   let proj = projs#proj#name()
-  
+
   let t = "projs"
   let h = {
     \ "proj"   : proj,
@@ -569,7 +569,7 @@ sec     = vim.eval('sec')
 
 section = Section(h)
 
-prj = Prj({ 
+prj = Prj({
   'db_file' : db_file,
   'proj'    : proj,
 })
@@ -638,10 +638,10 @@ function! projs#sec#count_ii (...)
     \ }
 
   let [rows,cols] = pymy#sqlite#query(ref)
-  let nums = [] 
+  let nums = []
   "for rw in rows
     ""let sec = get(rw,'sec','')
-    ""let num = 
+    ""let num =
   "endfor
 
   debug let rwh  = get(rows,0,{})
@@ -655,19 +655,19 @@ endfunction
 
 if 0
   projs#sec#add
- 
+
   Purpose:
     - add sec to the list of sections in dat-file: _dat_files_
     - add sec to var: projs_secnames
     - add sec to var: projs_secnamesall
     - add sec to db
-    
+
   Usage:
     call projs#sec#add (sec)
 
     call projs#sec#add (sec, { 'db_data' : db_data })
   Returns:
-    1 
+    1
   Call tree:
     calls:
       projs#sec#add_to_secnames
@@ -801,10 +801,10 @@ is_head = 0
 url_cmt_done = 0
 url_tex_done = 0
 
-url_cmt = '%%url ' + url 
+url_cmt = '%%url ' + url
 
 url_tex = [ r'\Purl{%s}' % url ]
-#url_tex = [ 
+#url_tex = [
 #  r'{ \small'          ,
 #  r'\vspace{0.5cm}'    ,
 #  r'\url{' + url + '}' ,
@@ -845,13 +845,13 @@ b    = vim.current.buffer
 b[:] = []
 b[:] = lines_w
 
-dbw.update_dict({ 
+dbw.update_dict({
   'db_file' : db_file,
   'table'   : 'projs',
   'update'  : {
     'url' : url
   },
-  'where' : { 
+  'where' : {
     'sec'  : sec,
     'proj' : proj,
   },
@@ -972,6 +972,14 @@ if 0
     calls
       projs#sec#header
       projs#sec#add ( sec_new_sec_add )
+        projs#sec#add_to_secnames
+        projs#sec#add_to_dat
+        projs#sec#add_to_db
+          from plg.projs.Prj.Prj import Prj
+          from plg.projs.Prj.Section import Section
+
+          s = Section({ ..., db_data })
+          Prj.add(s)
 endif
 
 """sec_new_start {
@@ -992,7 +1000,7 @@ function! projs#sec#new(sec,...)
 
     let parent_sec = get(ref,'parent_sec','')
 
-    " e.g. section, subsection 
+    " e.g. section, subsection
     let sec_type   = get(ref,'sec_type','')
 
     let url        = get(ref,'url','')
@@ -1018,7 +1026,7 @@ function! projs#sec#new(sec,...)
     let sec_ext  = fnamemodify(sec_file,':p:e')
 
 """head_newsec
-    let rh = { 
+    let rh = {
       \ 'sec'        : sec,
       \ 'ext'        : sec_ext,
       \ 'parent_sec' : parent_sec,
@@ -1042,7 +1050,7 @@ function! projs#sec#new(sec,...)
     if sec_ext == 'tex'
         if len(sec_type)
           if len(title)
-            let l_title = [ 
+            let l_title = [
               \ ' ',
               \ printf('\%s{%s}' , sec_type, title),
               \ printf('\label{sec:%s}' , sec),
@@ -1059,7 +1067,7 @@ function! projs#sec#new(sec,...)
       call extend(lines, [ printf('\Purl{%s}',url) ])
     endif
     if len(author_id)
-      call extend(lines, [ 
+      call extend(lines, [
           \ '\ifcmt',
           \ ' author_begin',
           \ '   ' . printf('author_id %s',author_id),
@@ -1079,7 +1087,7 @@ function! projs#sec#new(sec,...)
 
     try
       exe printf('call extend(lines,%s(r))',sub)
-    catch 
+    catch
       call projs#warn('Problems while executing:'."\n\t".sub)
     endtry
 
@@ -1106,7 +1114,7 @@ function! projs#sec#new(sec,...)
       let xml_file = base#qw#catpath('plg','projs templates xml proj.xml')
       if filereadable(xml_file)
         call extend(lines,readfile(xml_file))
-  
+
         let nlines = []
         for line in lines
           let line = substitute(line,'_proj_',proj,'g')
@@ -1153,7 +1161,7 @@ function! projs#sec#new(sec,...)
 
       if filereadable(pl_file)
         call extend(lines,readfile(pl_file))
-  
+
         let nlines=[]
         for line in lines
           let line = substitute(line,'_proj_',proj,'g')
@@ -1202,10 +1210,10 @@ function! projs#sec#new(sec,...)
       call extend(lines, projs#newseclines#_build_tex_(r))
 
     else
-      if prompt 
+      if prompt
         call extend(lines, projs#sec#lines_prompt(r))
       endif
- 
+
     endif
 
     call extend(lines,get(ref,'add_lines_after',[]))
@@ -1223,7 +1231,7 @@ function! projs#sec#new(sec,...)
 """sec_new_sec_add
     call projs#sec#add(sec,{ 'db_data' : db_data })
 
-    let rx = (sec =~ '^_perl\.') 
+    let rx = (sec =~ '^_perl\.')
     if rx
       call system(printf("chmod +rx %s",shellescape(sec_file)))
     endif
@@ -1251,7 +1259,7 @@ function! projs#sec#new(sec,...)
     if get(ref,'p_tree')
       call projs#bld#do#print_ii_tree({ 'target' : 'usual' })
     endif
-    
+
     return 1
 endfunction
 """sec_new_end }
@@ -1263,7 +1271,7 @@ function! projs#sec#perl_open (sec,...)
   let proj = projs#proj#name()
 
   let file = base#file#catfile([ root, printf('%s.%s.pl',proj,sec) ])
-  call base#fileopen({ 
+  call base#fileopen({
     \ 'files'    : [file],
     \ 'load_buf' : 1,
     \ })
@@ -1320,7 +1328,7 @@ function! projs#sec#open (...)
   if projs#varget('secdirexists',0)
     let vfile = projs#path([ proj, sec . '.tex' ])
   else
-    let vfile = projs#sec#file(sec) 
+    let vfile = projs#sec#file(sec)
   endif
 
   if sec == '_main_'
@@ -1354,7 +1362,7 @@ function! projs#sec#open (...)
     let vfile = projs#sec#file(sec)
   endif
 
-  if strlen(vfile) 
+  if strlen(vfile)
     call add(vfiles,vfile)
   endif
 
@@ -1371,7 +1379,7 @@ function! projs#sec#open (...)
 
     let ext = fnamemodify(vfile,':e')
 
-    let s:obj = { 
+    let s:obj = {
       \ 'sec'  : sec ,
       \ 'proj' : proj ,
       \ }
@@ -1379,13 +1387,13 @@ function! projs#sec#open (...)
       let b:sec  = self.sec
       let b:proj = self.proj
     endfunction
-    
+
     let Fc = s:obj.init
-    let res = base#fileopen({ 
+    let res = base#fileopen({
       \ 'files'    : [ vfile ],
       \ 'load_buf' : load_buf,
       \ 'Fc'       : Fc,
-      \ }) 
+      \ })
 
     if load_maps
       call projs#maps({ 'exts' : [ext] })
@@ -1394,7 +1402,7 @@ function! projs#sec#open (...)
     let buf_nums = get(res,'buf_nums',[])
     let bufnr    = get(buf_nums,0,'')
 
-    call projs#sec#bufnr({ 
+    call projs#sec#bufnr({
       \ 'sec'    : sec,
       \ 'proj'   : proj,
       \ 'bufnr'  : bufnr
@@ -1411,7 +1419,7 @@ function! projs#sec#open (...)
     setlocal keymap=
   endif
 
-  return 
+  return
 endf
 
 function! projs#sec#bufnr (...)
@@ -1467,14 +1475,14 @@ function! projs#sec#header (...)
   let author_id  = get(ref,'author_id','')
 
   let title      = get(ref,'title','')
-  
+
   let header = []
 
   if ext == 'tex'
     if strlen(keymap)
       call add(header,'% vim: keymap=' . keymap )
     endif
-  
+
     call extend(header,[ '%%beginhead '])
     call extend(header,[ ' ' ])
     call extend(header,[ '%%file '   . sec])
@@ -1535,15 +1543,15 @@ function! projs#sec#lines_prompt (...)
   let cnt = input('Continue adding? (1/0):',1)
 
   let lines = []
-  
+
   if cnt
     let addsec = input('Add sectioning? (1/0):',1)
     if addsec
       let seccmd = input('Sectioning command: ','section','custom,tex#complete#seccmds')
-      
+
       let title = input('Title: ',sec)
       let label = input('Label: ','sec:' . sec)
-      
+
       call add(lines,'\' . seccmd . '{'.title.'}')
       call add(lines,'\label{'.label.'}')
       call add(lines,' ')
