@@ -277,10 +277,8 @@ sub sec_insert_child {
     });
 
     return $self unless $sd && $sd->{'@file_ex'};
-    return $self unless $sdc && $sdc->{'@file_ex'};
 
     my $file = $sd->{file};
-    my $file_child = $sdc->{file};
 
     my $children = $self->_sec_children({
         sec  => $sec,
@@ -298,11 +296,15 @@ sub sec_insert_child {
         lines => \@ii_lines,
     });
 
+    my $file_child = $sdc->{file};
+    return $self unless $sdc && $sdc->{'@file_ex'};
+
     # insert children
     my $ins_child = {
        file_parent => $file,
        file_child  => $file_child,
     };
+
     dbh_insert_update_hash({
        dbh  => $self->{dbh},
        t    => 'tree_children',
@@ -317,8 +319,35 @@ sub db_sec_insert_child {
     my ($self, $ref) = @_;
     $ref ||= {};
 
-    my $child = $ref->{child} || '';
+    my ($sec, $proj, $child) = @{$ref}{qw( sec proj child )};
     return $self unless $child;
+
+    my $sd = $self->_sec_data({
+        sec  => $sec,
+        proj => $proj,
+    });
+    my $sdc = $self->_sec_data({
+        sec  => $child,
+        proj => $proj,
+    });
+
+    my $file_child = $sdc->{file};
+    my $file = $sd->{file};
+    return $self unless $sdc && $sdc->{'@file_ex'};
+    return $self unless $sd && $sd->{'@file_ex'};
+
+    # insert children
+    my $ins_child = {
+       file_parent => $file,
+       file_child  => $file_child,
+    };
+
+    dbh_insert_update_hash({
+       dbh  => $self->{dbh},
+       t    => 'tree_children',
+       h    => $ins_child,
+       uniq => 1,
+    });
 
     return $self;
 }

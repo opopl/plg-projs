@@ -43,6 +43,38 @@ function! projs#init#root (...)
   
 endfunction
 
+function! projs#init#prj_perl ()
+  let root = projs#root()
+  let rootid = projs#rootid()
+
+  let proj = projs#proj#name()
+
+perl << eof
+  use Plg::Projs::Prj;
+  use Vim::Perl qw(VimVar VimLet);
+
+  my ($proj, $root, $rootid) = map { VimVar($_) } qw(proj root rootid);
+  return unless $proj && $root && $rootid;
+
+  my %n = (
+     proj   => $proj,
+     root   => $root,
+     rootid => $rootid,
+  );
+  our $prj ||= Plg::Projs::Prj->new(%n);
+
+  my $prev;
+  $prev->{rootid} = $prj->{rootid};
+  my $force = ($prev->{rootid} && ($prev->{rootid} ne $rootid)) ? 1 : 0;
+
+  $prj->{$_} = $n{$_} for keys %n;
+
+  $prj->{$_} = $n{$_} for keys %n;
+  $prj->init_db({ force => 1 });
+eof
+
+endfunction
+
 function! projs#init#templates (...)
   "xxxxxxxxxxxxxxxxxxxxxxxx
   let msg = ['start']
