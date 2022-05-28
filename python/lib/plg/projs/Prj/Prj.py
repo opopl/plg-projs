@@ -90,7 +90,7 @@ class Prj(
            'uniq'    : 1,
         })
 
-    return $self
+    return self
 
   # add section to database
   def add(self,section={}):
