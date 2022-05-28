@@ -10,9 +10,9 @@ function! projs#sec#db#add_children (...)
   let sec = get(ref,'sec',sec)
 
   let children = get(ref,'children',[])
-  
+
 endfunction
-"} end: 
+"} end:
 "
 function! projs#sec#db#data (...)
   let ref = get(a:000,0,{})
@@ -43,7 +43,7 @@ perl << eof
   $prj->{$_} = $n{$_} for keys %n;
   $prj->init_db;
 
-  my $sd = $prj->_sec_data({ 
+  my $sd = $prj->_sec_data({
      sec  => $sec,
      proj => $proj,
   });
