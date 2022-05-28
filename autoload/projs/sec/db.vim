@@ -9,13 +9,22 @@ function! projs#sec#db#add_children (...)
   let sec = projs#buf#sec()
   let sec = get(ref,'sec',sec)
 
-  let children = get(ref,'children',[])
+  let children = get(ref, 'children', [])
 
-"  for child in children
-"perl << eof
-  
-"eof
-  "endfor
+  call projs#init#prj_perl()
+perl << eof
+  my $children = VimVar('children') || [];
+  my $proj     = VimVar('proj') || '';
+  my $sec      = VimVar('sec') || '';
+
+  return unless $proj && $sec;
+
+  $prj->db_sec_insert_children({
+    proj     => $proj,
+    sec      => $sec,
+    children => $children,
+  });
+eof
 
 endfunction
 "} end:

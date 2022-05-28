@@ -248,7 +248,7 @@ function! projs#insert#ii ()
 
   let lines = []
   call add(lines,printf('\ii{%s}',ii_sec))
-  call append('.',lines)
+  call append('.', lines)
 
   let r_new = {
       \ 'view'       : 'edit',
@@ -259,6 +259,14 @@ function! projs#insert#ii ()
   " see also:
   "   projs#bld#do#print_ii_tree
   call projs#sec#new(ii_sec,r_new)
+
+  let r_children = {
+      \  'proj'     : proj,
+      \  'sec'      : sec,
+      \  'children' : [ ii_sec ],
+      \  }
+  call projs#sec#db#add_children(r_children)
+
   call base#tg#update('projs_this')
 
 endfunction
@@ -489,9 +497,9 @@ function! projs#insert#ii_url ()
         \ '1' : line('$'),
         \ '2' : line('.'),
         \ }
-    let pos = get(map,a_choice,line('$'))
+    let pos = get(map, a_choice, line('$'))
 
-    call append(pos,lines)
+    call append(pos, lines)
   endif
 
   let r_new = {
@@ -507,11 +515,12 @@ function! projs#insert#ii_url ()
       \  'parent_sec' : sec,
       \  }
 
-  call projs#sec#new(ii_sec,r_new)
+  call projs#sec#new(ii_sec, r_new)
 
   let r_children = {
+      \  'proj'     : proj,
+      \  'sec'      : sec,
       \  'children' : [ ii_sec ],
-      \  'sec' : sec,
       \  }
   call projs#sec#db#add_children(r_children)
 
