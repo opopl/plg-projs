@@ -31,22 +31,24 @@ use Text::Sprintf::Named qw(named_sprintf);
 $VERSION = '0.01';
 
 ###our
-our($l_start,$l_end);
+our( $l_start, $l_end );
 
-our(@lines,@new);
+our( @lines, @new );
 
 # JSON-decoded input data
-our($data_input);
+our( $data_input );
 
-our($texify_in, $texify_out);
+our( $texify_in, $texify_out );
+our $texify_config = {};
 
-our(@split,@before,@after,@center);
+our( @split, @before, @after, @center );
 
 our ($s, $s_full);
 
 my @ex_vars_scalar=qw(
     $texify_in
     $texify_out
+    $texify_config
 );
 my @ex_vars_hash=qw(
     %fbicons
@@ -536,6 +538,9 @@ sub texify_ref {
     return texify(@args);
 }
 
+# $ss initial full input text
+# $s  text to be edited
+
 sub texify {
     my ($ss, $cmd, $s_start, $s_end, $data_js, $sub) = @_;
 
@@ -599,6 +604,8 @@ sub _str {
         $s = $$ss;
         @split = split("\n" => $s);
 
+        $texify_config->{n_end_input} = ( $s =~ /\n$/ ) ? 1 : 0; 
+
     } elsif (ref $ss eq 'ARRAY'){
         @split = @$ss;
         $s = join("\n",@split) . "\n";
@@ -606,6 +613,8 @@ sub _str {
     elsif (! ref $ss){
         $s = $ss;
         @split = split("\n" => $s);
+
+        $texify_config->{n_end_input} = ( $s =~ /\n$/ ) ? 1 : 0; 
     }
 
     if (defined $s_start && defined $s_end) {
@@ -625,6 +634,7 @@ sub _str {
     }
     $s = join("\n",@center) . "\n";
 
+
 }
 
 sub strip_comments {
@@ -642,7 +652,7 @@ sub _back {
     @center = split("\n",$s);
     @split = (@before,@center,@after);
 
-    $s_full = join("\n",@split) . "\n";
+    $s_full = join("\n",@split) . _end_input();
 
     if (ref $ss eq 'SCALAR'){
         $$ss = $s_full;
@@ -836,14 +846,29 @@ sub _reset {
     $flag{$_} = undef for keys %flag;
 }
 
-sub _lines {
-    @lines = split "\n" => $s;
+
+
+sub _config {
+}
+
+sub _end_input {
+    $texify_config->{n_end_input} ? "\n" : '';
+}
+
+sub _end_tmp {
+    $texify_config->{n_end_tmp} ? "\n" : '';
+}
+
+sub _new2s {
+    $s = join("\n",@new) . _end_tmp();
 
     _reset();
 }
 
-sub _new2s {
-    $s = join("\n",@new) . "\n";
+sub _lines {
+    $texify_config->{n_end_tmp} = ( $s =~ /\n$/ ) ? 1 : 0;
+
+    @lines = split "\n" => $s;
 
     _reset();
 }

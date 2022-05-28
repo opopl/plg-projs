@@ -256,6 +256,7 @@ sub _join_lines {
 
     if ( $sec eq '_main_' && !$ref->{skip_write} ) {
         write_file($jfile,join("\n",@lines) . "\n");
+		$DB::single = 1;
     }
 
     return @lines;

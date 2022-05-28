@@ -743,7 +743,6 @@ sub ldo_no_cmt {
   my $sec       = $r_sec->{sec} || '';
   my $author_id = $r_sec->{author_id} || '';
   my $date      = $r_sec->{date} || '';
-  $DB::single = 1;
 
   my ($date_s, @date);
   my $date_fmt = "%d %B %Y, %A";
