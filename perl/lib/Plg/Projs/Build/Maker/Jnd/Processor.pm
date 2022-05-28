@@ -743,6 +743,7 @@ sub ldo_no_cmt {
   my $sec       = $r_sec->{sec} || '';
   my $author_id = $r_sec->{author_id} || '';
   my $date      = $r_sec->{date} || '';
+  $DB::single = 1;
 
   my ($date_s, @date);
   my $date_fmt = "%d %B %Y, %A";
@@ -1268,13 +1269,12 @@ sub f_write {
   my $file = $ref->{file} || $self->{jfile};
 
   unshift @{$self->{nlines}},
-        ' ',
-        sprintf(q{\def\imgroot{%s}}, $mkr->{img_root_unix} ),
-        ' '
-        ;
+     ' ',
+     sprintf(q{\def\imgroot{%s}}, $mkr->{img_root_unix} ),
+     ' '
+     ;
 
   my $nlines = $self->{nlines};
-  $DB::single = 1;
   write_file($file,join("\n",@$nlines) . "\n");
 
   return $self;

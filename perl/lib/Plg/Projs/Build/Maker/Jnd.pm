@@ -13,7 +13,7 @@ use File::Spec::Functions qw(catfile);
 
 use Plg::Projs::Tex::Gen;
 use Plg::Projs::Tex qw(
-    texify 
+    texify
 );
 
 use String::Util qw(trim);
@@ -85,7 +85,7 @@ sub cmd_jnd_compose {
 
 =head3 cmd_jnd_build
 
-=head4 Calls 
+=head4 Calls
 
 cmd_jnd_compose
 
@@ -112,7 +112,7 @@ sub cmd_jnd_build {
     system($cmd);
 
     my @dest;
-    push @dest, 
+    push @dest,
         $mkr->{out_dir_pdf}
         ;
 
@@ -124,15 +124,15 @@ sub cmd_jnd_build {
                 die "Zero File Size: $pdf_file" . "\n";
                 last;
             }
-    
+
             foreach(@dest) {
                 mkpath $_ unless -d;
-    
+
                 my $d = catfile($_, $proj_pdf_name . '.pdf');
-    
+
                 print "Copied PDF File to:" . "\n";
                 print "     " . $d . "\n";
-    
+
                 copy($pdf_file, $d);
             }
 
@@ -148,5 +148,5 @@ sub cmd_jnd_build {
 
 
 1;
- 
+
 

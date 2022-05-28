@@ -70,7 +70,7 @@ sub _join_lines {
     my @include = $mkr->_ii_include;
 
     my @exclude = $mkr->_ii_exclude;
-    
+
     my $ii_include_all = $mkr->_opt_($ref,'ii_include_all',0);
 
     my $include_below = $mkr->_val_list_ref_('join_lines include below');
@@ -99,8 +99,8 @@ sub _join_lines {
                 }
             }
         }
-            
-        return () unless -f $file; 
+
+        return () unless -f $file;
         @f_lines = read_file $file;
 
         last;
@@ -108,7 +108,7 @@ sub _join_lines {
 
     my $pats = $mkr->_pats;
 
-    my $delim = '%' x 50;  
+    my $delim = '%' x 50;
 
     my ($date) = ( $sec =~ m/^(\d+_\d+_\d+)\..*$/ );
     my $prj = $mkr->{prj};
@@ -174,7 +174,7 @@ sub _join_lines {
 
             s|$pats->{sect}|\\$1\{$title_tex\}|g;
 
-            $mkr->_line_process_pat_sect({ 
+            $mkr->_line_process_pat_sect({
                sect    => $sect,
                root_id => $root_id,
                proj    => $proj,
@@ -192,7 +192,7 @@ sub _join_lines {
         m/$pats->{input}/ && do {
             my $fname   = $1;
 
-            $mkr->_line_process_pat_input({ 
+            $mkr->_line_process_pat_input({
                 fname         => $fname,
                 delim         => $delim,
                 include_below => $include_below,
@@ -200,7 +200,7 @@ sub _join_lines {
                 lines         => \@lines,
                 line          => $_,
             });
-    
+
             next;
         };
 
@@ -214,7 +214,7 @@ sub _join_lines {
                 ->tree_add_child({ sec => $sec, child => $ii_sec })
                 ;
 
-            $mkr->_line_process_pat_ii({ 
+            $mkr->_line_process_pat_ii({
                 delim          => $delim,
 
                 sect           => $sect,
@@ -237,7 +237,7 @@ sub _join_lines {
             my $fig_sec   = 'fig.' . $1;
             my @fig_lines = $mkr->_join_lines($fig_sec,{ proj => $proj });
 
-            push @lines, 
+            push @lines,
                 $delim,
                 '%% ' . $_,
                 $delim,
@@ -291,7 +291,7 @@ sub _ii_include {
 
     _all_ _base_
 
-=head4 Call tree 
+=head4 Call tree
 
 Used in:
 
@@ -415,20 +415,20 @@ sub _ii_base {
 
 sub _file_ii_exclude {
     my ($mkr) = @_;
-            
+
     catfile(
       $mkr->{root},
-      join("." => ( $mkr->{proj}, 'ii_exclude.i.dat' )) 
+      join("." => ( $mkr->{proj}, 'ii_exclude.i.dat' ))
     );
 
 }
 
 sub _file_ii_include {
     my ($mkr) = @_;
-            
+
     catfile(
       $mkr->{root},
-      join("." => ( $mkr->{proj}, 'ii_include.i.dat' )) 
+      join("." => ( $mkr->{proj}, 'ii_include.i.dat' ))
     );
 
 }
@@ -436,5 +436,5 @@ sub _file_ii_include {
 
 
 1;
- 
+
 

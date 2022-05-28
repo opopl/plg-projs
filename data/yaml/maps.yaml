@@ -11,7 +11,7 @@ nnoremap :
   # projs#action#bld_join
   ';bj'   : 'PrjAct bld_join'  
   ';bl'   : 'BLD last_compile'  
-  ';bt'   : 'BLD print_ii_tree'  
+  #';bt'   : 'BLD print_ii_tree'  
   #';e'    : 'PrjAct edt'  
 # projs#sec#picture#fetch
   ';gi'   : 'call lts#buf#pic#fetch()'  
