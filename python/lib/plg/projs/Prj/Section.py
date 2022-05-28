@@ -62,7 +62,7 @@ class Section(
     if not (sec and proj):
       return []
 
-    runext = 'sh' 
+    runext = 'sh'
 
     sfile_a = []
     if sec == '_main_':
@@ -75,7 +75,7 @@ class Section(
       sfile_a = [ f'{proj}.zlan' ]
 
     elif re.search(r'^_bld\.', sec):
-      
+
       target = re.sub(r'^_bld\.(.*)$', r'\1', sec)
       sfile_a = [ f'{proj}.bld.{target}.yml' ]
 

@@ -1762,6 +1762,18 @@ class LTS(
 
     return self
 
+  # work via Section.py
+  def sec_db_add_section(self, ref = {}):
+    sec   = ref.get('sec',self.sec)
+    proj  = ref.get('proj',self.proj)
+
+    section = Section(ref)
+    prj = self.prj
+
+    prj.add(section)
+
+    return self
+
   def sec_db_update(self, ref = {}):
     sec   = ref.get('sec',self.sec)
     proj  = ref.get('proj',self.proj)
