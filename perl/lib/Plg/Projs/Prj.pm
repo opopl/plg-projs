@@ -992,7 +992,7 @@ sub init_proj {
 sub init_db {
     my ($self) = @_;
 
-    return $self if $self->{prj_skip_db};
+    return $self if $self->{prj_skip_db} || $self->{dbh};
 
     $self->{db_file} ||= catfile($self->{root},'projs.sqlite');
     my $db_file = $self->{db_file};

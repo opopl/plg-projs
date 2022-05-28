@@ -5,10 +5,10 @@ CREATE TABLE IF NOT EXISTS projs (
     -- file id
     fid INTEGER PRIMARY KEY,
     -- project name
-    proj TEXT NOT NULL, 
+    proj TEXT NOT NULL,
     file TEXT NOT NULL UNIQUE,
-    sec TEXT, 
-    tags TEXT, 
+    sec TEXT NOT NULL,
+    tags TEXT,
     -- parent section name
     parent TEXT,
     projtype TEXT,
@@ -21,8 +21,3 @@ CREATE TABLE IF NOT EXISTS projs (
     title TEXT,
     date TEXT
 );
-
--- ALTER TABLE projs ADD COLUMN url TEXT;
--- ALTER TABLE projs ADD COLUMN fid INTEGER;
--- ALTER TABLE projs ADD COLUMN pid INTEGER;
--- ALTER TABLE projs ADD COLUMN projtype TEXT;

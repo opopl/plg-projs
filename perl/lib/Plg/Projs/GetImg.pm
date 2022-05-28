@@ -5,7 +5,6 @@ use strict;
 use warnings;
 
 use utf8;
-
 binmode STDOUT,':encoding(utf8)';
 
 #use POSIX qw(locale_h);

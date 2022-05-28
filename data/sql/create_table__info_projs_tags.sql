@@ -1,0 +1,6 @@
+
+CREATE TABLE IF NOT EXISTS _info_projs_tags (
+    file TEXT NOT NULL,
+    tag TEXT NOT NULL,
+    FOREIGN KEY(file) REFERENCES projs(file) ON DELETE CASCADE ON UPDATE CASCADE
+);

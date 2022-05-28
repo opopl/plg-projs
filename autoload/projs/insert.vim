@@ -504,10 +504,16 @@ function! projs#insert#ii_url ()
       \  'view'       : 'edit',
       \  'p_tree'     : 1,
       \  'rewrite'    : 1,
-      \  'parent_sec' : projs#buf#sec(),
+      \  'parent_sec' : sec,
       \  }
 
   call projs#sec#new(ii_sec,r_new)
+
+  let r_children = {
+      \  'children' : [ ii_sec ],
+      \  'sec' : sec,
+      \  }
+  call projs#sec#db#add_children(r_children)
 
   call base#tg#update('projs_this')
 
