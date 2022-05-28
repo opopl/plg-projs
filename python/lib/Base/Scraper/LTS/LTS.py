@@ -1748,6 +1748,20 @@ class LTS(
 
     return self
 
+  def sec_db_children_push(self, ref = {}):
+    sec      = ref.get('sec',self.sec)
+    proj     = ref.get('proj',self.proj)
+    children = ref.get('children',[])
+
+    prj = self.prj
+    prj.db_sec_insert_children({
+       'proj'     : proj,
+       'sec'      : sec,
+       'children' : children,
+    })
+
+    return self
+
   def sec_db_update(self, ref = {}):
     sec   = ref.get('sec',self.sec)
     proj  = ref.get('proj',self.proj)

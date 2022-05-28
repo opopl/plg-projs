@@ -136,8 +136,8 @@ class Prj(
     if parent_sec:
       self.db_sec_insert_children({
          'proj'     : proj,
-         'sec'      : sec,
-         'children' : [ parent_sec ]
+         'sec'      : parent_sec,
+         'children' : [ sec ]
       })
 
     b2i = self.b2i.get(tbase,{})

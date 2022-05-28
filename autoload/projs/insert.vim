@@ -247,25 +247,25 @@ function! projs#insert#ii ()
   if !do_ii | return | endif
 
   let lines = []
-  call add(lines,printf('\ii{%s}',ii_sec))
+  call add(lines, printf('\ii{%s}',ii_sec))
   call append('.', lines)
 
   let r_new = {
       \ 'view'       : 'edit',
       \ 'p_tree'     : 1,
-      \ 'parent_sec' : projs#buf#sec(),
+      \ 'parent_sec' : sec,
       \  }
 
   " see also:
   "   projs#bld#do#print_ii_tree
   call projs#sec#new(ii_sec,r_new)
 
-  let r_children = {
-      \  'proj'     : proj,
-      \  'sec'      : sec,
-      \  'children' : [ ii_sec ],
-      \  }
-  call projs#sec#db#add_children(r_children)
+"  let r_children = {
+      "\  'proj'     : proj,
+      "\  'sec'      : sec,
+      "\  'children' : [ ii_sec ],
+      "\  }
+  "call projs#sec#db#add_children(r_children)
 
   call base#tg#update('projs_this')
 
