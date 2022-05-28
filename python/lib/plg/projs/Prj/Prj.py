@@ -83,12 +83,14 @@ class Prj(
       'on_list' : ['file'],
     })
 
+    parent_sec = d.get('parent','')
+
     b2i = self.b2i.get(tbase,{})
 
     jcol = 'file'
     jval = d.get(jcol)
 
-    for bcol in ['tags','author_id']:
+    for bcol in ['tags', 'author_id']:
       bval = d.get(bcol) or ''
 
       if bval:

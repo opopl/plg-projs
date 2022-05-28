@@ -680,6 +680,21 @@ if 0
       projs#sec#new
 endif
 
+if 0
+  Usage
+    projs#sec#add(sec, { ... })
+  Call tree
+    calls
+      projs#sec#add_to_secnames
+      projs#sec#add_to_dat
+      projs#sec#add_to_db
+        from plg.projs.Prj.Prj import Prj
+        from plg.projs.Prj.Section import Section
+
+        s = Section({ ..., db_data })
+        Prj.add(s)
+endif
+
 function! projs#sec#add (sec,...)
   let ref = get(a:000,0,{})
 
