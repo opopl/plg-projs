@@ -549,6 +549,10 @@ def insert_update_dict(ref={}):
   insert = ref.get('insert',{})
 
   on_list     = ref.get('on_list',[])
+  uniq = ref.get('uniq')
+  if uniq:
+    on_list = list(insert.keys())
+
   on_w = {}
   if len(on_list):
     for on in on_list:
@@ -588,14 +592,15 @@ def insert_update_dict(ref={}):
      for on in on_list:
        del insert[on]
 
-     d = {
-        'db_file' : db_file,
-        'conn'    : conn,
-        'table'   : table,
-        'update'  : insert,
-        'where'   : on_w
-     }
-     update_dict(d)
+     if len(insert):
+       d = {
+          'db_file' : db_file,
+          'conn'    : conn,
+          'table'   : table,
+          'update'  : insert,
+          'where'   : on_w
+       }
+       update_dict(d)
 
   return 1
 
