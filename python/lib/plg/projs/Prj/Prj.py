@@ -78,20 +78,19 @@ class Prj(
 
     sec = where.get('sec','')
     url = where.get('url','')
-    while not sec:
-      if url:
-        q = 'SELECT sec FROM projs WHERE url = ?'
-        sec =  dbw.sql_fetchval(q, [url], { 'db_file' : db_file })
+    if url:
+      q = 'SELECT sec FROM projs WHERE url = ?'
+      sec =  dbw.sql_fetchval(q, [url], { 'db_file' : db_file })
 
-      break
-
-    db_file = self.db_file
-    tb = 'projs'
+    sd = self._sec_data({ 
+      'proj' : proj, 
+      'sec'  : sec 
+    })
 
     dbw.delete({
       'where'   : { 'sec' : sec },
-      'db_file' : db_file,
-      'table'   : tb
+      'db_file' : self.db_file,
+      'table'   : 'projs'
     })
 
     sec_file = self._sec_file({

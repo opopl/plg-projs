@@ -24,8 +24,7 @@ def update_dict(ref):
 
   if not conn:
     if db_file:
-      conn = sqlite3.connect(db_file)
-      conn_cfg(conn)
+      conn = conn_get(db_file)
 
       db_close = 1
     else:
@@ -116,8 +115,7 @@ def sql_fetchone(q, p = [], ref = {}):
 
   if not conn:
     if db_file:
-      conn = sqlite3.connect(db_file)
-      conn_cfg(conn)
+      conn = conn_get(db_file)
       db_close = 1
     else:
       return
@@ -321,14 +319,21 @@ def select(ref={}):
 
   return result
 
+def conn_get(db_file):
+
+  conn = sqlite3.connect(db_file)
+  conn_cfg(conn)
+
+  return conn
+
 def conn_cfg(conn):
   conn.row_factory = sqlite3.Row
+
   conn.create_function("REGEXP", 2, rgx.rgx_match)
   conn.create_function("RGX", 2, rgx.rgx_match)
   conn.create_function("RGX_SUB", 3, rgx.rgx_sub)
 
-  c = conn.cursor()
-  c.execute("PRAGMA foreign_keys = ON")
+  conn.cursor().execute("PRAGMA foreign_keys = ON")
 
   return 1
 
@@ -350,8 +355,7 @@ def sql_fetchall(q, p = [], ref={}):
 
   if not conn:
     if db_file:
-      conn = sqlite3.connect(db_file)
-      conn_cfg(conn)
+      conn = conn_get(db_file)
       db_close = 1
     else:
       return { 'err' : 'no db_file' }
@@ -518,12 +522,11 @@ def sql_do(ref={}):
 
   if not conn:
     if db_file:
-      conn = sqlite3.connect(db_file)
+      conn = conn_get(db_file)
       db_close = 1
     else:
       return
 
-  conn_cfg(conn)
   c = conn.cursor()
 
   if fk:
@@ -620,8 +623,7 @@ def delete(ref={}):
 
   if not conn:
     if db_file:
-      conn = sqlite3.connect(db_file)
-      conn_cfg(conn)
+      conn = conn_get(db_file)
       db_close = 1
     else:
       return
@@ -695,8 +697,7 @@ def insert_dict(ref={}):
 
   if not conn:
     if db_file:
-      conn = sqlite3.connect(db_file)
-      conn_cfg(conn)
+      conn = conn_get(db_file)
       db_close = 1
     else:
       return
@@ -727,8 +728,7 @@ def sql_file_exec(db_file, sql_file):
   if not (os.path.isfile(db_file) and os.path.isfile(sql_file)):
     return
 
-  conn = sqlite3.connect(db_file)
-  conn_cfg(conn)
+  conn = conn_get(db_file)
   c = conn.cursor()
 
   sql = open(sql_file, 'r').read()
