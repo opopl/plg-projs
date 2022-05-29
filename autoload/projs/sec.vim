@@ -1011,6 +1011,8 @@ function! projs#sec#new(sec,...)
     " e.g. section, subsection
     let sec_type   = get(ref,'sec_type','')
 
+    let git_add    = get(ref,'git_add',0)
+
     let url        = get(ref,'url','')
 
     let author_id  = get(ref,'author_id','')
@@ -1244,7 +1246,7 @@ function! projs#sec#new(sec,...)
       call system(printf("chmod +rx %s",shellescape(sec_file)))
     endif
 
-    if get(ref,'git_add')
+    if git_add
       let dir   = fnamemodify(sec_file,':p:h')
       let bname = fnamemodify(sec_file,':p:t')
 

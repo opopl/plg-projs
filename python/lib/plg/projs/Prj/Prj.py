@@ -139,7 +139,19 @@ class Prj(
 
     return self
 
-  def db_sec_insert_children(self,ref={}):
+  # fill tree_children database for the list of sections
+  #     and for selected project
+  def db_children_fill(self,ref={}):
+    proj     = ref.get('proj',self.proj)
+
+    secs     = ref.get('secs',[])
+
+    if not secs:
+      secs = self._listsecs()._names()
+
+    return self
+
+  def db_sec_insert_children(self, ref={}):
     sec      = ref.get('sec','')
     proj     = ref.get('proj',self.proj)
     children = ref.get('children',[])

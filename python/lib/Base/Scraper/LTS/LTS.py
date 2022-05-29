@@ -443,7 +443,6 @@ class LTS(
     self.sec_data['top_lines'].append(self.line)
     return self
 
-
   def ln_if_head(self,ref={}):
     ok = 1
     ok = ok and not self.flags.get('eof')
@@ -676,6 +675,11 @@ class LTS(
   def init_db(self):
 
     self.prj.init_db()
+
+    return self
+
+  def db_children_fill(self, ref = {}):
+    prj = self.prj
 
     return self
 
