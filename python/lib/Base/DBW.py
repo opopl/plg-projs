@@ -25,6 +25,8 @@ def update_dict(ref):
   if not conn:
     if db_file:
       conn = sqlite3.connect(db_file)
+      conn_cfg(conn)
+
       db_close = 1
     else:
       return
@@ -115,6 +117,7 @@ def sql_fetchone(q, p = [], ref = {}):
   if not conn:
     if db_file:
       conn = sqlite3.connect(db_file)
+      conn_cfg(conn)
       db_close = 1
     else:
       return
@@ -128,8 +131,6 @@ def sql_fetchone(q, p = [], ref = {}):
   if cond:
     q += ' WHERE ' + cond
     p.extend(values)
-
-  conn_cfg(conn)
 
   c = conn.cursor()
 
@@ -326,7 +327,12 @@ def conn_cfg(conn):
   conn.create_function("RGX", 2, rgx.rgx_match)
   conn.create_function("RGX_SUB", 3, rgx.rgx_sub)
 
-def sql_fetchall(q, p=[], ref={}):
+  c = conn.cursor()
+  c.execute("PRAGMA foreign_keys = ON")
+
+  return 1
+
+def sql_fetchall(q, p = [], ref={}):
   conn     = ref.get('conn')
   db_close = ref.get('db_close')
 
@@ -345,11 +351,10 @@ def sql_fetchall(q, p=[], ref={}):
   if not conn:
     if db_file:
       conn = sqlite3.connect(db_file)
+      conn_cfg(conn)
       db_close = 1
     else:
       return { 'err' : 'no db_file' }
-
-  conn_cfg(conn)
 
   c = conn.cursor()
 
@@ -616,11 +621,11 @@ def delete(ref={}):
   if not conn:
     if db_file:
       conn = sqlite3.connect(db_file)
+      conn_cfg(conn)
       db_close = 1
     else:
       return
 
-  conn_cfg(conn)
   c = conn.cursor()
 
   r      = cond_where({ 'where' : where })
@@ -691,11 +696,11 @@ def insert_dict(ref={}):
   if not conn:
     if db_file:
       conn = sqlite3.connect(db_file)
+      conn_cfg(conn)
       db_close = 1
     else:
       return
 
-  conn_cfg(conn)
   c = conn.cursor()
 
   fields_s = ",".join(fields)
@@ -723,6 +728,7 @@ def sql_file_exec(db_file, sql_file):
     return
 
   conn = sqlite3.connect(db_file)
+  conn_cfg(conn)
   c = conn.cursor()
 
   sql = open(sql_file, 'r').read()

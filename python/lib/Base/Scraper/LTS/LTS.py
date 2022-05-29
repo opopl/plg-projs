@@ -1762,6 +1762,20 @@ class LTS(
 
     return self
 
+  # remove from database and filesystem
+  def sec_children_remove(self, ref = {}):
+    prj = self.prj
+
+    sec   = ref.get('sec',self.sec)
+    proj  = ref.get('proj',self.proj)
+
+    prj.sec_remove_children({
+       'proj' : proj,
+       'sec'  : sec,
+    })
+    
+    return self
+
   # work via Section.py
   def sec_db_add_section(self, ref = {}):
     sec   = ref.get('sec',self.sec)

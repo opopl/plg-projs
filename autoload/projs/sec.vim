@@ -555,7 +555,8 @@ function! projs#sec#add_to_db (sec,...)
     \ "rootid" : projs#rootid(),
     \ "tags"   : tags,
     \ }
-  call extend(h,db_data)
+  call extend(h, db_data)
+	debug 1
 python3 << eof
 import vim
 from plg.projs.Prj.Prj import Prj
@@ -1218,7 +1219,7 @@ function! projs#sec#new(sec,...)
 
     call extend(lines,get(ref,'add_lines_after',[]))
 
-    call writefile(lines,sec_file)
+    call writefile(lines, sec_file)
 
     let db_data = {
       \ 'url'        : url,

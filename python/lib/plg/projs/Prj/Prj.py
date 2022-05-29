@@ -47,6 +47,24 @@ class Prj(
     CoreClass.__init__(self,args)
     self.init_db()
 
+  def sec_remove_children(self, ref={}):
+    sec      = ref.get('sec','')
+    proj     = ref.get('proj',self.proj)
+
+    children = self._sec_children_db({
+       'proj' : proj,
+       'sec'  : sec,
+    })
+
+    import pdb; pdb.set_trace()
+    for child in children:
+       self.sec_delete({
+         'proj' : proj,
+         'sec'  : child,
+       })
+
+    return self
+
   def db_sec_insert_children(self,ref={}):
     sec      = ref.get('sec','')
     proj     = ref.get('proj',self.proj)
@@ -164,6 +182,30 @@ class Prj(
           })
 
     return self
+
+  # get children from database
+  def _sec_children_db(self, ref={}):
+    proj = ref.get('proj',self.proj)
+    sec  = ref.get('sec',self.sec)
+
+    p = [ sec ]
+    q = f'''SELECT
+                projs.sec
+            FROM
+                projs
+            INNER JOIN tree_children
+            ON
+                projs.file = tree_children.file_child
+            WHERE
+                tree_children.file_parent IN
+                ( SELECT file FROM projs WHERE sec = ? )
+         '''
+
+    children = dbw.sql_fetchlist(q,p,{
+      'db_file' : self.db_file,
+    })
+
+    return children
 
 # same as in Prj.pm
 #   retrieve database data for section
