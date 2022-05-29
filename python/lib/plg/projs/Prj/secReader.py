@@ -44,6 +44,7 @@ class secReader:
       self.ln_match_head()
       self.ln_match_seccmd()
       self.ln_match_purl()
+
       self.ln_if_head()
       self.ln_if_top()
       self.ln_if_body()
@@ -125,6 +126,11 @@ class secReader:
     ok = ok and not self.flags.get('head')
 
     if not ok:
+      return self
+
+    # simply grab into 'body' section
+    if ref.get('body'):
+      self.sec_data['body_lines'].append(self.line)
       return self
 
     if not self.flags.get('seccmd'):

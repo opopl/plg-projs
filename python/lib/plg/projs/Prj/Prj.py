@@ -87,8 +87,13 @@ class Prj(
     with open(file_path,'r') as f:
       self.lines = f.readlines()
       for line in self.lines:
-        self.line = self.lines.pop(0)
-        self.line = self.line.strip('\n')
+        self.ln_shift()
+
+        self.ln_match_head()
+
+        self.ln_if_head()
+        self.ln_if_top()
+        self.ln_if_body({ 'body' : 1 })
 
     return self
 
