@@ -47,7 +47,7 @@ class Prj(
     CoreClass.__init__(self,args)
     self.init_db()
 
-  def sec_remove_children(self, ref={}):
+  def sec_children_delete(self, ref={}):
     sec      = ref.get('sec','')
     proj     = ref.get('proj',self.proj)
 
@@ -56,7 +56,6 @@ class Prj(
        'sec'  : sec,
     })
 
-    import pdb; pdb.set_trace()
     for child in children:
        self.sec_delete({
          'proj' : proj,
@@ -86,23 +85,24 @@ class Prj(
       'proj' : proj, 
       'sec'  : sec 
     })
+    file_ex = sd.get('@file_ex')
+    file_path = sd.get('@file_path')
+
+    ok = sd and file_ex and file_path
+    if not ok:
+      return self
 
     dbw.delete({
-      'where'   : { 'sec' : sec },
+      'where'   : { 'sec' : sec, 'proj' : proj },
       'db_file' : self.db_file,
       'table'   : 'projs'
     })
 
-    sec_file = self._sec_file({
-        'sec'   : sec,
-        'proj'  : proj,
-        'short' : 1
-    })
+    if util.git_has(file_path):
+      util.git_rm(file_path)
 
-    # https://stackoverflow.com/questions/89228/how-to-execute-a-program-or-call-a-system-command
-    if os.path.isfile(sec_file):
-      Path.unlink(sec_file)
-
+    elif os.path.isfile(file_path):
+      os.remove(file_path)
 
     return self
 

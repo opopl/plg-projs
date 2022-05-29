@@ -1729,13 +1729,13 @@ class LTS(
     return self
 
   # remove from database and filesystem
-  def sec_children_remove(self, ref = {}):
+  def sec_children_delete(self, ref = {}):
     prj = self.prj
 
     sec   = ref.get('sec',self.sec)
     proj  = ref.get('proj',self.proj)
 
-    prj.sec_remove_children({
+    prj.sec_children_delete({
        'proj' : proj,
        'sec'  : sec,
     })
