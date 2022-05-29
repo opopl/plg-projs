@@ -19,6 +19,8 @@ from Base.Mix.mixLoader import mixLoader
 from Base.Mix.mixGetOpt import mixGetOpt
 from Base.Mix.mixFileSys import mixFileSys
 
+#from plg.projs.Prj.SecLines import SecLines
+
 from plg.projs.Prj.Section import Section
 from plg.projs.Prj.ListSections import ListSections
 
@@ -64,6 +66,29 @@ class Prj(
 
     return self
 
+  # get children from 'ii' statements and then fill
+  #     tree_children database
+  def sec_children_from_ii(self, ref = {}):
+    proj = ref.get('proj',self.proj)
+    sec  = ref.get('sec','')
+
+    sd = self._sec_data({
+      'proj' : proj,
+      'sec'  : sec
+    })
+    file_path = sd.get('@file_path')
+    file_ex   = sd.get('@file_ex')
+    if not file_ex:
+      return self
+
+    with open(file_path,'r') as f:
+      self.lines = f.readlines()
+      for line in self.lines:
+        self.line = self.lines.pop(0)
+        self.line = self.line.strip('\n')
+
+    return self
+
   def sec_delete(self,ref={}):
     proj = ref.get('proj',self.proj)
 
@@ -81,9 +106,9 @@ class Prj(
       q = 'SELECT sec FROM projs WHERE url = ?'
       sec =  dbw.sql_fetchval(q, [url], { 'db_file' : db_file })
 
-    sd = self._sec_data({ 
-      'proj' : proj, 
-      'sec'  : sec 
+    sd = self._sec_data({
+      'proj' : proj,
+      'sec'  : sec
     })
     file_ex = sd.get('@file_ex')
     file_path = sd.get('@file_path')

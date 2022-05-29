@@ -30,7 +30,6 @@ import yaml
 #import lxml.html
 import lxml
 
-
 from io import StringIO, BytesIO
 
 from Extern.Pylatex import Package
@@ -1725,6 +1724,12 @@ class LTS(
        'sec'      : sec,
        'children' : children,
     })
+
+    return self
+
+  # get children from 'ii' statements and then fill
+  #     tree_children database
+  def sec_children_from_ii(self, ref = {}):
 
     return self
 

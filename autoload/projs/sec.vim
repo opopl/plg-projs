@@ -545,24 +545,29 @@ function! projs#sec#add_to_db (sec,...)
   let sfile = projs#sec#file(sec)
   let sfile = fnamemodify(sfile,':p:t')
 
+  let root   = projs#root()
+  let rootid = projs#rootid()
+
   let proj = projs#proj#name()
 
   let t = "projs"
   let h = {
+    \ "rootid" : rootid,
     \ "proj"   : proj,
     \ "sec"    : sec,
     \ "file"   : sfile,
-    \ "rootid" : projs#rootid(),
     \ "tags"   : tags,
     \ }
   call extend(h, db_data)
-	debug 1
 python3 << eof
 import vim
 from plg.projs.Prj.Prj import Prj
 from plg.projs.Prj.Section import Section
 
 h = vim.eval('h')
+
+root    = vim.eval('root')
+rootid  = vim.eval('rootid')
 
 db_file = vim.eval('dbfile')
 proj    = vim.eval('proj')
@@ -573,6 +578,8 @@ section = Section(h)
 prj = Prj({
   'db_file' : db_file,
   'proj'    : proj,
+  'root'    : root,
+  'rootid'  : rootid,
 })
 
 prj.add(h)
