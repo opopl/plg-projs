@@ -19,6 +19,7 @@ pats = {
       'body' : {
          'purl'      : r'^\s*\\Purl\{(.*)\}\s*$',
          'label_sec' : r'^\s*\\label\{sec:(.*)\}\s*$',
+         'ii'        : r'^\s*\\ii\{(?P<ii_child>[^{}]+)\}\s*$',
       },
       ###
       'ifcmt'     : r'^\\ifcmt\s*$',

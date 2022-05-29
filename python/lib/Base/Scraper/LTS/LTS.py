@@ -682,14 +682,15 @@ class LTS(
     proj = ref.get('proj',self.proj)
 
     secs  = ref.get('secs',[])
-    limit = ref.get('limit')
 
     prj = self.prj
 
     prj.db_children_fill({
         'proj'  : proj,
         'secs'  : secs,
-        'limit' : limit,
+
+        'limit' : ref.get('limit'),
+        'log'   : ref.get('log'),
     })
 
     return self

@@ -157,6 +157,12 @@ class secReader:
 
     return self
 
+  def _sec_info(self,path='',default=''):
+    si = self.sec_info
+    val = util.get(si, path, default)
+
+    return val
+
   def ln_if_body(self,ref={}):
     ok = 1
     ok = ok and self.flags.get('head_done')

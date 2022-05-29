@@ -84,9 +84,14 @@ class Prj(
     if not file_ex:
       return self
 
+    #print(f'[sec_children_from_ii] {sec}')
+
+    self.sec_info_reset()
     with open(file_path,'r') as f:
       self.lines = f.readlines()
-      for line in self.lines:
+
+      self.flags = { 'eof' : 0 }
+      while len(self.lines):
         self.ln_shift()
 
         self.ln_match_head()
@@ -95,7 +100,19 @@ class Prj(
         self.ln_if_top()
         self.ln_if_body({ 'body' : 1 })
 
-    import pdb; pdb.set_trace()
+    body_lines = self._sec_info('body_lines',[])
+    for line in body_lines:
+      m = rgx.match('tex.projs.body.ii',line)
+      if not m:
+        continue
+
+      ii_child = m.group('ii_child')
+
+      self.db_sec_insert_children({
+        'proj'     : proj,
+        'sec'      : sec,
+        'children' : [ ii_child ]
+      })
 
     return self
 
@@ -146,8 +163,9 @@ class Prj(
   def db_children_fill(self,ref={}):
     proj     = ref.get('proj',self.proj)
 
-    secs    = ref.get('secs',[])
-    limit   = ref.get('limit')
+    secs  = ref.get('secs',[])
+    limit = ref.get('limit')
+    log   = ref.get('log')
 
     if not len(secs):
       secs = self._listsecs()._names()
@@ -156,6 +174,9 @@ class Prj(
       secs = secs[0:limit]
 
     for sec in secs:
+      if log:
+        print(f'[db_children_fill] processing: {sec}')
+
       self.sec_children_from_ii({
         'proj' : proj,
         'sec'  : sec,
