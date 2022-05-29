@@ -14,5 +14,5 @@ class mixCmdRunner:
         continue
 
       util.call(self, sub)
-  
+
     return self
