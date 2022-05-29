@@ -679,7 +679,18 @@ class LTS(
     return self
 
   def db_children_fill(self, ref = {}):
+    proj = ref.get('proj',self.proj)
+
+    secs  = ref.get('secs',[])
+    limit = ref.get('limit')
+
     prj = self.prj
+
+    prj.db_children_fill({
+        'proj'  : proj,
+        'secs'  : secs,
+        'limit' : limit,
+    })
 
     return self
 
@@ -1748,7 +1759,7 @@ class LTS(
        'proj' : proj,
        'sec'  : sec,
     })
-    
+
     return self
 
   # work via Section.py

@@ -17,7 +17,7 @@ class secReader:
   flags = {}
 
   # current sec data
-  sec_data = {
+  sec_info = {
     'top_lines'  : [],
     'body_lines' : [],
     'head_lines' : [],
@@ -49,9 +49,47 @@ class secReader:
       self.ln_if_top()
       self.ln_if_body()
 
-    self.sec_data.update({ 'done' : 1 })
+    self.sec_info.update({ 'done' : 1 })
 
     return self
+
+  def sec_info_reset(self,ref={}):
+    self.sec_info = {
+      # section name
+      'sec'  : '',
+      # full path sec_file
+      'file'  : '',
+      # project name
+      'proj' : '',
+      # section data has been imported into sec_info?
+      'done' : 0,
+      # lines before head block
+      'top_lines' : [],
+      # lines after head block
+      'body_lines' : [],
+      # beginhead ... endhead lines
+      'head_lines' : [],
+      # keys from head block
+      'head_keyval' : {},
+      # e.g. subsection
+      'seccmd' : '',
+      'securl' : '',
+      # title inside seccmd command
+      'sectitle' : '',
+      # all lines
+      'all_lines' : [],
+      # saved
+      'save' : {
+        'beginhead' : '',
+        'endhead'   : '',
+        'before_seccmd' : [],
+        'before_securl' : [],
+      }
+    }
+    self.sec_info.update(ref)
+
+    return self
+
 
   def ln_shift(self):
     if not len(self.lines):
@@ -69,11 +107,11 @@ class secReader:
 
     if rgx.match('tex.projs.beginhead', self.line):
       self.flags['head'] = 1
-      self.sec_data['save']['beginhead'] = self.line
+      self.sec_info['save']['beginhead'] = self.line
       self.ln_shift()
 
     if rgx.match('tex.projs.endhead', self.line):
-      self.sec_data['save']['endhead'] = self.line
+      self.sec_info['save']['endhead'] = self.line
       if 'head' in self.flags:
         del self.flags['head']
       self.ln_shift()
@@ -96,7 +134,7 @@ class secReader:
 
     self.flags['securl'] = 1
 
-    self.sec_data['securl'] = m.group(1)
+    self.sec_info['securl'] = m.group(1)
 
     return self
 
@@ -114,8 +152,8 @@ class secReader:
 
     self.flags['seccmd'] = 1
 
-    self.sec_data['seccmd']   = m.group(1)
-    self.sec_data['sectitle'] = m.group(2)
+    self.sec_info['seccmd']   = m.group(1)
+    self.sec_info['sectitle'] = m.group(2)
 
     return self
 
@@ -130,17 +168,17 @@ class secReader:
 
     # simply grab into 'body' section
     if ref.get('body'):
-      self.sec_data['body_lines'].append(self.line)
+      self.sec_info['body_lines'].append(self.line)
       return self
 
     if not self.flags.get('seccmd'):
-      self.sec_data['save']['before_seccmd'].append(self.line)
+      self.sec_info['save']['before_seccmd'].append(self.line)
 
     else:
       if not self.flags.get('securl'):
-        self.sec_data['save']['before_securl'].append(self.line)
+        self.sec_info['save']['before_securl'].append(self.line)
       else:
-        self.sec_data['body_lines'].append(self.line)
+        self.sec_info['body_lines'].append(self.line)
 
     return self
 
@@ -153,7 +191,7 @@ class secReader:
     if not ok:
       return self
 
-    self.sec_data['top_lines'].append(self.line)
+    self.sec_info['top_lines'].append(self.line)
     return self
 
   def ln_if_head(self,ref={}):
@@ -163,7 +201,7 @@ class secReader:
     if not ok:
       return self
 
-    self.sec_data['head_lines'].append(self.line)
+    self.sec_info['head_lines'].append(self.line)
 
     m = rgx.match('tex.projs.head.@key',self.line)
     if not m:
@@ -172,7 +210,7 @@ class secReader:
     m_value = m.group('value')
     m_key   = m.group('key')
 
-    self.sec_data['head_keyval'].update({ m_key : m_value })
+    self.sec_info['head_keyval'].update({ m_key : m_value })
 
     return self
 

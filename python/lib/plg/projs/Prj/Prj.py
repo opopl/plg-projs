@@ -95,6 +95,8 @@ class Prj(
         self.ln_if_top()
         self.ln_if_body({ 'body' : 1 })
 
+    import pdb; pdb.set_trace()
+
     return self
 
   def sec_delete(self,ref={}):
@@ -144,10 +146,20 @@ class Prj(
   def db_children_fill(self,ref={}):
     proj     = ref.get('proj',self.proj)
 
-    secs     = ref.get('secs',[])
+    secs    = ref.get('secs',[])
+    limit   = ref.get('limit')
 
-    if not secs:
+    if not len(secs):
       secs = self._listsecs()._names()
+
+    if limit:
+      secs = secs[0:limit]
+
+    for sec in secs:
+      self.sec_children_from_ii({
+        'proj' : proj,
+        'sec'  : sec,
+      })
 
     return self
 
