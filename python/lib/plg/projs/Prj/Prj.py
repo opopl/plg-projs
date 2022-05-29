@@ -65,6 +65,48 @@ class Prj(
 
     return self
 
+  def sec_delete(self,ref={}):
+    proj = ref.get('proj',self.proj)
+
+    where  = { 'proj' : proj }
+
+    fields = [ 'sec', 'url' ]
+    for k in fields:
+      if k in ref:
+        v = ref.get(k)
+        where.update({ k : v })
+
+    sec = where.get('sec','')
+    url = where.get('url','')
+    while not sec:
+      if url:
+        q = 'SELECT sec FROM projs WHERE url = ?'
+        sec =  dbw.sql_fetchval(q, [url], { 'db_file' : db_file })
+
+      break
+
+    db_file = self.db_file
+    tb = 'projs'
+
+    dbw.delete({
+      'where'   : { 'sec' : sec },
+      'db_file' : db_file,
+      'table'   : tb
+    })
+
+    sec_file = self._sec_file({
+        'sec'   : sec,
+        'proj'  : proj,
+        'short' : 1
+    })
+
+    # https://stackoverflow.com/questions/89228/how-to-execute-a-program-or-call-a-system-command
+    if os.path.isfile(sec_file):
+      Path.unlink(sec_file)
+
+
+    return self
+
   def db_sec_insert_children(self,ref={}):
     sec      = ref.get('sec','')
     proj     = ref.get('proj',self.proj)

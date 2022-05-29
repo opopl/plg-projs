@@ -1671,48 +1671,14 @@ class LTS(
     return self
 
   def sec_delete(self, ref = {}):
-    proj = ref.get('proj',self.proj)
+    proj = ref.get('proj', self.proj)
 
-    where  = { 'proj' : proj }
+    prj = self.prj
 
-    fields = [ 'sec', 'url' ]
-    for k in fields:
-      if k in ref:
-        v = ref.get(k)
-        where.update({ k : v })
+    refin = copy(ref)
+    refin.update({ 'proj' : proj })
 
-    sec = where.get('sec','')
-    url = where.get('url','')
-    while not sec:
-      if url:
-        q = 'SELECT sec FROM projs WHERE url = ?'
-        sec =  dbw.sql_fetchval(q, [url], { 'db_file' : db_file })
-
-      break
-
-    db_file = self.db_file_projs
-    tb = 'projs'
-
-    dbw.delete({
-      'where'   : { 'sec' : sec },
-      'db_file' : db_file,
-      'table'   : tb
-    })
-
-    sec_file = self._sec_file({
-        'sec'   : sec,
-        'proj'  : proj,
-        'short' : 1
-    })
-
-    # https://stackoverflow.com/questions/89228/how-to-execute-a-program-or-call-a-system-command
-    if os.path.isfile(sec_file):
-      Path.unlink(sec_file)
-
-      #p = subprocess.Popen(f'git rm -f {sec_file}', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-      #for line in p.stdout.readlines():
-        #print(line)
-      #retval = p.wait()
+    prj.sec_delete(refin)
 
     return self
 

@@ -301,6 +301,21 @@ def git_add(file=''):
 
   return True
 
+def git_rm(file=''):
+  ok = 1 and file and git_has(file)
+  if not ok:
+    return False
+
+  cmd = f'git rm {file}'
+
+  r = shell({ 'cmd' : cmd })
+  out  = r.get('out')
+  code = r.get('code')
+  if code:
+    return False
+
+  return True
+
 def git_has(file=''):
   if not file:
     return False
