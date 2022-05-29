@@ -24,12 +24,15 @@ from Base.Mix.mixFileSys import mixFileSys
 from plg.projs.Prj.Section import Section
 from plg.projs.Prj.ListSections import ListSections
 
+from plg.projs.Prj.secReader import secReader
+
 from Base.Zlan import Zlan
 from Base.Core import CoreClass
 
 class Prj(
      CoreClass,
      mixFileSys,
+     secReader
   ):
 
   b2i = {
