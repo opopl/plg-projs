@@ -791,6 +791,14 @@ sub cmd_load_sec {
          sec_suffix => 'cmtx',
          scheme => { last => 2 },
        },
+       video => {
+         tex_head => [ '', '\qqSecVideo', '' ],
+         dir => catfile($dir_sec_new, qw( video )),
+         sub_dirs => 1,
+         tgx => [qw( orig.video scrn )],
+         sec_suffix => 'video',
+         scheme => { last => 2 },
+       },
     };
 
     foreach my $x (qw( orig cmtx )) {
@@ -804,7 +812,25 @@ sub cmd_load_sec {
         my $scheme = $mapx->{scheme} || {};
 
         my $secx  = $mapx->{sec_suffix} || [];
+
+        my $sub_dirs = $mapx->{sub_dirs};
+
         my $sec_child = sprintf(qq{%s.%s}, $sec, $secx);
+
+        $prj->sec_import_x({ 
+            proj => $proj,
+            sec => $sec,
+            dir => $dir,
+            child => $sec_child,
+
+            sec_url => $sec_url,
+
+            tgx => $tgx,
+            tags => $tags,
+
+            headx => $headx,
+            scheme => $scheme,
+        });
 
         my @imgs = $self->_fs_find_imgs({
            find  => { max_depth => 1 },

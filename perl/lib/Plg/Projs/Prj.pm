@@ -357,6 +357,86 @@ sub db_sec_insert_children {
     return $self;
 }
 
+sub sec_import_x {
+    my ($self, $ref) = @_;
+    $ref ||= {};
+
+    my $imgman = $ref->{imgman};
+    return $self unless $imgman;
+
+    my $rootid = $ref->{rootid} || $self->{rootid};
+    my $proj   = $ref->{proj} || $self->{proj};
+
+    my ( $sec, $sec_url, $child )   = @{$ref}{qw( sec sec_url child )};
+    my ( $tgx, $tags, $headx, $scheme )   = @{$ref}{qw( tgx tags headx scheme )};
+
+    my $dir = $ref->{dir};
+
+    my @imgs = $imgman->_fs_find_imgs({
+        find  => { max_depth => 1 },
+        dirs  => [ $dir ],
+        #limit => 5,
+    });
+
+    # does child section have any pictures already in database?
+    my $child_pics = $self->_sec_data_pics({
+       proj => $proj,
+       sec  => $child,
+       cols => [qw( md5 size )],
+    });
+
+    # we import into database all screenshots on the filesystem
+    foreach my $img_path (@imgs) {
+        $imgman->pic_add({
+            file => $img_path,
+            tags => [ @$tgx, @$tags ],
+
+            proj   => $proj,
+            sec    => $sec,
+            rootid => $rootid,
+            url_parent => $sec_url,
+
+            mv => 0,
+        });
+    }
+
+    # we grab all screenshots already in the database
+    my $img_urls = $imgman->_db_imgs({
+        tags => { and => $tgx },
+        where => {
+          sec        => $sec,
+          proj       => $proj,
+          rootid     => $rootid,
+          url_parent => $sec_url,
+        }
+    });
+
+    return $self unless @$img_urls;
+
+    $self->sec_new({
+        sec    => $child,
+        proj   => $proj,
+        parent => $sec,
+        append => $headx,
+        rw     => 1,
+    });
+
+    $self->sec_import_imgs({
+        sec    => $child,
+        proj   => $proj,
+        imgs   => $img_urls,
+        scheme => $scheme,
+    });
+
+    $self->sec_insert_child({
+        sec   => $sec,
+        proj  => $proj,
+        child => $child,
+    });
+
+    return $self;
+}
+
 sub sec_insert {
     my ($self, $ref) = @_;
     $ref ||= {};
