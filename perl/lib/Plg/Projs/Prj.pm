@@ -361,7 +361,7 @@ sub sec_import_x {
     my ($self, $ref) = @_;
     $ref ||= {};
 
-    my $imgman = $ref->{imgman};
+    my $imgman = $ref->{imgman} || $self->{imgman};
     return $self unless $imgman;
 
     my $rootid = $ref->{rootid} || $self->{rootid};
@@ -379,11 +379,11 @@ sub sec_import_x {
     });
 
     # does child section have any pictures already in database?
-    my $child_pics = $self->_sec_data_pics({
-       proj => $proj,
-       sec  => $child,
-       cols => [qw( md5 size )],
-    });
+    #my $child_pics = $self->_sec_data_pics({
+       #proj => $proj,
+       #sec  => $child,
+       #cols => [qw( md5 size )],
+    #});
 
     # we import into database all screenshots on the filesystem
     foreach my $img_path (@imgs) {

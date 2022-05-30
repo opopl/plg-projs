@@ -23,7 +23,7 @@ use File::stat;
 use File::Find::Rule;
 use File::Slurp::Unicode;
 
-use File::Spec::Functions qw(catfile rel2abs);
+use File::Spec::Functions qw( catfile rel2abs abs2rel splitpath );
 use File::Path qw( mkpath rmtree );
 use File::Copy qw( move copy );
 
@@ -755,6 +755,8 @@ sub cmd_load_sec {
     $self->{proj} = $proj;
     return $self unless $sec && $proj;
 
+    my $keys = $cmd_data->{keys} || [qw(orig cmtx video )];
+
     # array
     my ($tags) = @{$cmd_data}{qw( tags )};
     $tags ||= [];
@@ -801,7 +803,7 @@ sub cmd_load_sec {
        },
     };
 
-    foreach my $x (qw( orig cmtx )) {
+    foreach my $x (@$keys) {
         my $mapx = $map->{$x};
 
         my $dir = $mapx->{dir};
@@ -813,16 +815,9 @@ sub cmd_load_sec {
 
         my $secx  = $mapx->{sec_suffix} || [];
 
-        my $sub_dirs = $mapx->{sub_dirs};
-
-        my $sec_child = sprintf(qq{%s.%s}, $sec, $secx);
-
-        $prj->sec_import_x({ 
+        my $xin = {
             proj => $proj,
             sec => $sec,
-            dir => $dir,
-            child => $sec_child,
-
             sec_url => $sec_url,
 
             tgx => $tgx,
@@ -830,75 +825,41 @@ sub cmd_load_sec {
 
             headx => $headx,
             scheme => $scheme,
-        });
+        };
 
-        my @imgs = $self->_fs_find_imgs({
-           find  => { max_depth => 1 },
-           dirs  => [ $dir ],
-           #limit => 5,
-        });
+        my $sub_dirs = $mapx->{sub_dirs};
+        if ($sub_dirs) {
+            my $rule = File::Find::Rule->new;
+            $rule->mindepth(1);
+            $rule->directory();
+            my @dirs = $rule->in($dir);
+            foreach my $df (@dirs) {
+               my $rel = abs2rel($df, $dir);
+               next if $rel eq '.';
 
-        # does child section have any pictures already in database?
-        my $child_pics = $prj->_sec_data_pics({
-           proj => $proj,
-           sec  => $sec_child,
-           cols => [qw( md5 size )],
-        });
+               ( my $suffix_rel = $rel ) =~ s/\//\./g;
 
-        # we import into database all screenshots on the filesystem
-        foreach my $img_path (@imgs) {
-            $self->pic_add({
-                file => $img_path,
-                tags => [ @$tgx, @$tags ],
+               my $cc = join('.' => $sec, $secx, $suffix_rel);
+               $DB::single = 1;
 
-                proj   => $proj,
-                sec    => $sec,
-                rootid => $rootid,
-                url_parent => $sec_url,
+               $prj->sec_import_x({ 
+                   %$xin,
+                   dir => $df,
+                   child => $cc,
+               });
+            }
 
-                mv => 0,
-            });
+            next;
         }
 
-        # we grab all screenshots already in the database
-        my $img_urls = $self->_db_imgs({
-           tags => { and => $tgx },
-           where => {
-             sec        => $sec,
-             proj       => $proj,
-             rootid     => $rootid,
-             url_parent => $sec_url,
-           }
-        });
+        my $sec_child = sprintf(qq{%s.%s}, $sec, $secx);
 
-        next unless @$img_urls;
-
-        #$prj->sec_delete({
-            #sec    => $sec_child,
-            #proj   => $proj,
-        #});
-
-        $prj->sec_new({
-            sec    => $sec_child,
-            proj   => $proj,
-            parent => $sec,
-            append => $headx,
-            rw     => 1,
-        });
-
-        $prj->sec_import_imgs({
-            sec    => $sec_child,
-            proj   => $proj,
-            imgs   => $img_urls,
-            scheme => $scheme,
-        });
-
-        $prj->sec_insert_child({
-            sec   => $sec,
-            proj  => $proj,
+        $prj->sec_import_x({ 
+            %$xin,
+            dir => $dir,
             child => $sec_child,
         });
-
+        
     }
 
     return $self;
