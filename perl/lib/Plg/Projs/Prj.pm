@@ -168,6 +168,34 @@ sub _secs_select {
     my ($self, $select) = @_;
     $select ||= {};
 
+    my $keys = [qw( tags author_id )];
+
+    my $list = dbh_select_join({
+        dbh => $self->{dbh},
+
+        tbase       => 'projs',
+        tbase_alias => 'p',
+
+        f => [qw( p.sec )],
+
+        keys => $keys,
+        key2col => { tags => 'tag' },
+
+        on_key => 'file',
+
+        map { $_ => $select->{$_} } ( @$keys, qw( @op limit where )),
+    });
+
+    $DB::single = 1 if $select->{dbg};
+
+    wantarray ? @$list : $list ;
+}
+
+
+sub _secs_select_old {
+    my ($self, $select) = @_;
+    $select ||= {};
+
     my $list = [];
 
     my (%wh, %conds, %tbls);

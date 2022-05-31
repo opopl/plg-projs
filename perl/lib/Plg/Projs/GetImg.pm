@@ -840,7 +840,6 @@ sub cmd_load_sec {
                ( my $suffix_rel = $rel ) =~ s/\//\./g;
 
                my $cc = join('.' => $sec, $secx, $suffix_rel);
-               $DB::single = 1;
 
                $prj->sec_import_x({ 
                    %$xin,
