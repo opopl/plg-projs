@@ -268,6 +268,9 @@ class ltsAuthor:
   def author_import_dat2db(self, ref = {}):
     names_first = util.readarr(self.dat_files['names'])
 
+    # disable fk
+    fk = ref.get('fk',0)
+
     fb_authors = util.readdict(self.dat_files['fb_authors'])
     fb_groups  = util.readdict(self.dat_files['fb_groups'])
 
@@ -333,7 +336,8 @@ class ltsAuthor:
             'db_file' : self.db_file_pages,
             'table'   : 'authors',
             'insert'  : d_auth,
-            'on_list' : [ 'id' ]
+            'on_list' : [ 'id' ],
+            'fk'      : fk,
           }
 
           dbw.insert_update_dict(d)
@@ -350,7 +354,8 @@ class ltsAuthor:
               'db_file' : self.db_file_pages,
               'table'   : 'auth_details',
               'insert'  : d_auth_detail,
-              'on_list' : [ 'id', 'fb_id' ]
+              'on_list' : [ 'id', 'fb_id' ],
+              'fk'      : fk,
             }
             dbw.insert_update_dict(d)
 
@@ -364,7 +369,8 @@ class ltsAuthor:
               'db_file' : self.db_file_pages,
               'table'   : 'auth_details',
               'insert'  : d_auth_detail,
-              'on_list' : [ 'id' ]
+              'on_list' : [ 'id' ],
+              'fk'      : fk,
             }
             dbw.insert_update_dict(d)
 

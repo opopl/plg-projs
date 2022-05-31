@@ -22,9 +22,11 @@ def update_dict(ref):
   db_file   = ref.get('db_file')
   db_close  = ref.get('db_close')
 
+  fk       = ref.get('fk',1)
+
   if not conn:
     if db_file:
-      conn = conn_get(db_file)
+      conn = conn_get(db_file,{ 'fk' : fk })
 
       db_close = 1
     else:
@@ -113,9 +115,11 @@ def sql_fetchone(q, p = [], ref = {}):
   db_file  = ref.get('db_file')
   db_close = ref.get('db_close')
 
+  fk = ref.get('fk',1)
+
   if not conn:
     if db_file:
-      conn = conn_get(db_file)
+      conn = conn_get(db_file,{ 'fk' : fk })
       db_close = 1
     else:
       return
@@ -319,27 +323,31 @@ def select(ref={}):
 
   return result
 
-def conn_get(db_file):
+def conn_get(db_file,ref={}):
 
   conn = sqlite3.connect(db_file)
-  conn_cfg(conn)
+  conn_cfg(conn,ref)
 
   return conn
 
-def conn_cfg(conn):
+def conn_cfg(conn,ref={}):
   conn.row_factory = sqlite3.Row
 
   conn.create_function("REGEXP", 2, rgx.rgx_match)
   conn.create_function("RGX", 2, rgx.rgx_match)
   conn.create_function("RGX_SUB", 3, rgx.rgx_sub)
 
-  conn.cursor().execute("PRAGMA foreign_keys = ON")
+  fk = ref.get('fk',1)
+  if fk:
+    conn.cursor().execute("PRAGMA foreign_keys = ON")
 
   return 1
 
 def sql_fetchall(q, p = [], ref={}):
   conn     = ref.get('conn')
   db_close = ref.get('db_close')
+
+  fk       = ref.get('fk',1)
 
   db_file  = ref.get('db_file')
 
@@ -355,7 +363,7 @@ def sql_fetchall(q, p = [], ref={}):
 
   if not conn:
     if db_file:
-      conn = conn_get(db_file)
+      conn = conn_get(db_file,{ 'fk' : fk })
       db_close = 1
     else:
       return { 'err' : 'no db_file' }
@@ -412,6 +420,9 @@ def base2info(ref={}):
   # database file
   db_file = ref.get('db_file') or ''
 
+  # foreign keys pragma
+  fk = ref.get('fk',1)
+
   # 'join' column, i.e. foreign key field
   #   which 'joins' 'base' and 'info' tables
   jcol  = ref.get('jcol') or ''
@@ -433,6 +444,7 @@ def base2info(ref={}):
      sql_do({
         'db_file' : db_file,
         'sql'     : sql,
+        'fk'      : fk,
      })
 
   scols = [ jcol ]
@@ -448,6 +460,7 @@ def base2info(ref={}):
     'select'  : scols,
     'cond'    : cond,
     'where'   : bwhere,
+    'fk'      : fk,
   })
   rows_base = r.get('rows',[])
 
@@ -469,6 +482,7 @@ def base2info(ref={}):
         'db_file' : db_file,
         'table'   : itb,
         'where'   : { jcol : jval },
+        'fk'      : fk,
       })
 
       for ival in ivals:
@@ -477,6 +491,7 @@ def base2info(ref={}):
           'db_file' : db_file,
           'table'   : itb,
           'where'   : ins,
+          'fk'      : fk,
         })
         rows = r.get('rows',[])
         if not len(rows):
@@ -484,6 +499,7 @@ def base2info(ref={}):
             'db_file' : db_file,
             'table'   : itb,
             'insert'  : ins,
+            'fk'      : fk,
           })
 
   return 1
@@ -504,7 +520,8 @@ def sql_do(ref={}):
     for sql_file in sql_files:
       sql_do({
         'sql_file' : sql_file,
-        'db_file'  : db_file
+        'db_file'  : db_file,
+        'fk'      : fk,
       })
     return 1
 
@@ -515,24 +532,20 @@ def sql_do(ref={}):
       sql_do({
         'sql'     : sql,
         'p'       : p,
-        'db_file' : db_file
+        'db_file' : db_file,
+        'fk'      : fk,
       })
 
     return 1
 
   if not conn:
     if db_file:
-      conn = conn_get(db_file)
+      conn = conn_get(db_file, { 'fk' : fk })
       db_close = 1
     else:
       return
 
   c = conn.cursor()
-
-  if fk:
-    c.execute("PRAGMA foreign_keys = ON")
-  else:
-    c.execute("PRAGMA foreign_keys = OFF")
 
   for q in sqlparse.split(sql):
     try:
@@ -552,6 +565,8 @@ def insert_update_dict(ref={}):
   db_file  = ref.get('db_file')
   db_close = ref.get('db_close')
   conn     = ref.get('conn')
+
+  fk = ref.get('fk',1)
 
   table  = ref.get('table')
   insert = ref.get('insert',{})
@@ -593,6 +608,7 @@ def insert_update_dict(ref={}):
         'conn'    : conn,
         'table'   : table,
         'insert'  : insert,
+        'fk'      : fk,
      }
      insert_dict(d)
 
@@ -606,7 +622,8 @@ def insert_update_dict(ref={}):
           'conn'    : conn,
           'table'   : table,
           'update'  : insert,
-          'where'   : on_w
+          'where'   : on_w,
+          'fk'      : fk,
        }
        update_dict(d)
 
@@ -618,12 +635,14 @@ def delete(ref={}):
   conn     = ref.get('conn')
   table    = ref.get('table')
 
+  fk = ref.get('fk',1)
+
   db_file   = ref.get('db_file')
   db_close  = ref.get('db_close')
 
   if not conn:
     if db_file:
-      conn = conn_get(db_file)
+      conn = conn_get(db_file,{ 'fk' : fk })
       db_close = 1
     else:
       return
@@ -687,6 +706,8 @@ def insert_dict(ref={}):
   db_file   = ref.get('db_file')
   db_close  = ref.get('db_close')
 
+  fk = ref.get('fk',1)
+
   insert     = ref.get('insert',{})
   sql_insert = ref.get('sql_insert') or 'INSERT OR REPLACE'
 
@@ -697,7 +718,7 @@ def insert_dict(ref={}):
 
   if not conn:
     if db_file:
-      conn = conn_get(db_file)
+      conn = conn_get(db_file,{ 'fk' : fk })
       db_close = 1
     else:
       return
