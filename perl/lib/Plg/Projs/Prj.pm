@@ -176,7 +176,7 @@ sub _secs_select {
         tbase       => 'projs',
         tbase_alias => 'p',
 
-        f => [qw( p.sec )],
+        f => [qw( sec )],
 
         keys => $keys,
         key2col => { tags => 'tag' },
@@ -185,94 +185,6 @@ sub _secs_select {
 
         map { $_ => $select->{$_} } ( @$keys, qw( @op limit where )),
     });
-
-    $DB::single = 1 if $select->{dbg};
-
-    wantarray ? @$list : $list ;
-}
-
-
-sub _secs_select_old {
-    my ($self, $select) = @_;
-    $select ||= {};
-
-    my $list = [];
-
-    my (%wh, %conds, %tbls);
-    my (@cond, @params);
-
-    my $ops = $select->{'@op'} || 'and';
-    my $limit = $select->{limit} || '';
-    my $where = $select->{where} || {};
-
-    my @keys = qw( tags author_id );
-    my %key2col = (
-       'tags' => 'tag'
-    );
-    my @ij;
-    foreach my $key (@keys) {
-        # alias index for joined tables, e.g. t0, t1, ...
-        my $ia = 0;
-
-        my @cond_k;
-
-        my $wk = $wh{$key} = $select->{$key};
-        next unless $wk;
-
-        my $colk = $key2col{$key} || $key;
-        my $tk = '_info_projs_' . $key;
-
-        if (ref $wk eq 'HASH') {
-          foreach my $op (qw( or and )) {
-            my $vals = $wk->{$op};
-            next unless $vals;
-            next unless ref $vals eq 'ARRAY';
-
-            my @cond_op;
-
-            foreach my $v (@$vals) {
-              $ia++;
-              my $tka = $key . $ia;
-              push @ij, {
-                 'tbl'       => $tk,
-                 'tbl_alias' => $tka,
-                 'on'        => 'file',
-              };
-              push @cond_op, sprintf('%s.%s = ?', $tka, $colk);
-              push @params, $v;
-            }
-            push @cond_k, jcond($op => \@cond_op);
-          }
-        }
-
-        my $opk = $wk->{'@op'} || 'and';
-        push @cond, jcond($opk => \@cond_k, braces => 1);
-    }
-
-    my ($q_where, $p_where) = cond_where($where);
-    if ($q_where) {
-        $q_where =~ s/^\s*WHERE//g;
-        push @cond, $q_where;
-        push @params, @$p_where;
-    }
-
-    my $cond;
-    if (@cond) {
-      $cond = 'WHERE ';
-      $cond .= jcond($ops => \@cond, braces => 1);
-    }
-
-    my $ref = {
-        dbh     => $self->{dbh},
-        t       => 'projs',
-        t_alias => 'p',
-        f       => [qw( p.sec )],
-        ij      => \@ij,
-        p       => \@params,
-        cond    => $cond,
-        limit   => $limit,
-    };
-    push @$list, dbh_select_as_list($ref);
 
     $DB::single = 1 if $select->{dbg};
 
