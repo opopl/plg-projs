@@ -40,8 +40,8 @@ class Zlan(CoreClass):
     super().__init__(args)
 
     self.reset()
-  
-    self.pats = { 
+
+    self.pats = {
       'set'      : rf'^set\s+(\w+)(?:\s+(.*)|\s*)$',
       'setlist'  : rf'^setlist\s+(\w+)\s*$',
       'listpush' : rf'^listpush\s+(\w+)\s*$',
@@ -74,14 +74,14 @@ class Zlan(CoreClass):
     }
 
     self.off = None
-    
-    self.end = 0 
-    self.eof = 0 
-    
+
+    self.end = 0
+    self.eof = 0
+
     self.shift = '\t'
-  
+
     self.d_page = None
-  
+
     self.d_global = {
         'listpush' : {},
         'dictex'   : {},
@@ -99,7 +99,7 @@ class Zlan(CoreClass):
 
   def _lst_read(self):
     lst = []
-  
+
     line = self.lines[0]
     while 1:
       if len(self.lines) == 0:
@@ -107,20 +107,20 @@ class Zlan(CoreClass):
 
       self.line = self.lines.pop(0).strip("\n")
       self.line_add_main()
-  
+
       if self._is_cmt():
         continue
-  
+
       mm = re.match(r'\t\t(\w+)',self.line)
       if not mm:
         self.lines.insert(0,self.line)
         self.data['lines_main'].pop()
         break
-  
+
       item = mm.group(1)
       item = item.strip()
       lst.append(item)
-  
+
     return lst
 
   def read_file(self,ref={}):
@@ -129,11 +129,11 @@ class Zlan(CoreClass):
 
     if not (file and os.path.isfile(file)):
       return self
-  
+
     plg       = os.environ.get('PLG','')
     dat_file  = os.path.join(plg,'projs','data','list','zlan_keys.i.dat')
     self.keys = util.readarr(dat_file)
-  
+
     with open(file,'r') as f:
       self.lines = f.readlines()
 
@@ -167,10 +167,10 @@ class Zlan(CoreClass):
         continue
 
       self.data[url] = itm
-  
+
       lines_page = []
       lines_page.append('page')
-  
+
       keys_o = util.qw('url tag')
       keys = []
       keys.extend(keys_o)
@@ -179,14 +179,14 @@ class Zlan(CoreClass):
         if k in keys_o:
           continue
         keys.append(k)
-  
+
       for k in keys:
         v = itm.get(k)
         if v == None or v == '':
           continue
-  
+
         lines_page.append(f'\tset {k} {v}')
-      
+
       if len(lines_page):
         self.data['lines_main'].extend(lines_page)
 
@@ -234,7 +234,7 @@ class Zlan(CoreClass):
       f.write(ztext)
 
     return self
-  
+
   def get_data(self,ref={}):
     file = util.get(ref,'file','')
     if file:
@@ -246,18 +246,20 @@ class Zlan(CoreClass):
       return self
 
     self.reset()
-  
-    # loop variables
-    self                              \
-        .read_file({ 'file' : file }) \
-        .init_pc()                    \
-        .loop()                       \
-          
+
+    acts = [
+      [ 'read_file', [  { 'file' : file } ] ],
+      'init_pc',
+      'loop',
+    ]
+
+    util.call(self,acts)
+
     #print(d_global)
-    self.data.update({ 
-      'order' : self.order 
+    self.data.update({
+      'order' : self.order
     })
-  
+
     return self
 
   def _has_url(self, url):
@@ -318,12 +320,12 @@ class Zlan(CoreClass):
       value = m.group(2)
       value = self._value_process(var, value)
       self.d_page.update({ var : value })
-  
+
     m = re.match(self.pc['setlist'], self.line_t)
     if m:
       var = m.group(1)
       var_lst_read = self._lst_read()
-  
+
       if len(var_lst_read):
         #self.d_page.update({ var : var_lst_read })
         var_lst = util.get( self.d_page, [ var ], [] )
@@ -340,7 +342,7 @@ class Zlan(CoreClass):
       k = m.group(1)
       if k in self.d_global:
         del self.d_global[k]
-  
+
     m = re.match(self.pc['set'], self.line_t)
     if m:
       var = m.group(1)
@@ -348,13 +350,13 @@ class Zlan(CoreClass):
       if value:
         value = self._value_process(var, value)
         self.d_global['set'].update({ var : value })
-  
+
     for j in util.qw('listpush setlist'):
       m = re.match(self.pc[j], self.line_t)
       if m:
         var = m.group(1)
         var_lst_read = self._lst_read()
-  
+
         if len(var_lst_read):
           var_lst = util.get( self.d_global, [ j, var ], [] )
           var_lst.extend(var_lst_read)
@@ -381,7 +383,7 @@ class Zlan(CoreClass):
     elif word == 'on':
       self.off = 0
 
-    self.flg = { 
+    self.flg = {
        'block' : word,
        'save'  : prev
     }
@@ -397,15 +399,15 @@ class Zlan(CoreClass):
 
     self.line_t = m.group(1)
     self.end = 0
- 
+
     if self._block_in('global'):
       self.b_global()
-    
+
     elif self._block_in('page pic'):
       self.b_page()
 
     return self
-  
+
   def process_end(self):
     '''
       call tree
@@ -419,7 +421,7 @@ class Zlan(CoreClass):
         dd = deepcopy(self.d_page)
 
         dd['category'] = self.flg.get('save')
-    
+
         if self.d_global:
           dg = deepcopy(self.d_global)
           for k, v in dg.items():
@@ -428,24 +430,24 @@ class Zlan(CoreClass):
               for kk in g_set.keys():
                   if not kk in dd:
                     dd[kk] = g_set.get(kk)
-    
+
           for w in dg['listpush'].keys():
             l_push = dg['listpush'].get(w,[])
             w_lst = dd.get(w,[])
             w_lst.extend(l_push)
             dd[w] = w_lst
-    
+
         url = dd.get('url')
         if url:
           if not dd.get('off'):
             self.order['on'].append(url)
           self.order['all'].append(url)
-    
+
           u = util.url_parse(url)
-    
+
           dd['host'] = u['host']
           self.data[url] = dd
-    
+
     self.d_page = None
     self.end = 0
 
@@ -468,7 +470,7 @@ class Zlan(CoreClass):
     return self
 
   def loop(self):
-  
+
     while 1:
         if len(self.lines):
           self.line = self.lines.pop(0).strip("\n")
@@ -492,12 +494,12 @@ class Zlan(CoreClass):
           #print(f'off => {self.off}')
 
           if self.end:
-            self.process_end()  
+            self.process_end()
             self.end = 0
 
           continue
 
-        self.process_end()  
+        self.process_end()
 
         break
 
