@@ -159,6 +159,7 @@ class Author(CoreClass):
         'db_file' : app.dbfile.pages,
         'table'   : 'authors',
         'insert'  : auth,
+        'fk' : 0,
       }
       dbw.insert_dict(d)
 

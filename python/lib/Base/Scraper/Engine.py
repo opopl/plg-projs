@@ -191,6 +191,9 @@ class BS(CoreClass,
   # need to run npm? see init_npm(), init_npm_run()
   wp_run = None
 
+  # enforce foreign key constraint
+  db_opt_fk = 0
+
   # code, e.g. html, tex
   code = {
     'tex' : None,
@@ -466,6 +469,7 @@ class BS(CoreClass,
 ###npm
   def init_npm(self):
     f = self._file('package_json.prod')
+
     if not os.path.isfile(f):
       os.chdir(self._dir('html_out'))
 
@@ -499,8 +503,9 @@ class BS(CoreClass,
 
   # vcs => prod
   def init_npm_cp_vcs_prod(self):
-    kk = util.qw('webpack_config_js')
+    kk = util.qw('webpack_config_js package_json')
 
+    # js, css
     for ext in self.asset_exts:
       subpath = self.bin_subpaths.get(ext,'')
 
@@ -510,7 +515,7 @@ class BS(CoreClass,
     for k in kk:
       w_vcs   = self._file(f'{k}.vcs')
       w_prod  = self._file(f'{k}.prod')
-  
+      
       cp = 1
       if os.path.isfile(w_prod):
         cp = cp and not filecmp.cmp(w_prod,w_vcs)
@@ -1896,7 +1901,6 @@ class BS(CoreClass,
       div_attrs = util.get(div, 'attrs', {})
       div_attr_list = list(div_attrs.keys())
       #if 'dir' in div_attr_list:
-        #import pdb; pdb.set_trace()
 
 #      for sk in skips:
         #attr_eq = sk.get('attr_eq',{})
@@ -2486,6 +2490,7 @@ class BS(CoreClass,
         'db_file' : db_file,
         'table'   : 'page_tags',
         'insert'  : ins_tags,
+        'fk'      : self.db_opt_fk,
       }
       dbw.insert_dict(d)
 
@@ -2560,7 +2565,9 @@ class BS(CoreClass,
       'db_file' : self.dbfile.pages,
       'table'   : 'pages',
       'insert'  : insert,
+      'fk'      : self.db_opt_fk,
     }
+
     dbw.insert_dict(d)
 
     self                  \
@@ -2989,7 +2996,12 @@ r_bs.py -c html_parse -i cache.html $*
             break
 
       s = str(el)
-      se = jinja2.escape(s).rstrip()
+      se = s
+      try:
+        se = jinja2.escape(s).rstrip()
+      except:
+        pass
+
       code = str(se)
       itm['code'] = code
       itms.append(itm)
