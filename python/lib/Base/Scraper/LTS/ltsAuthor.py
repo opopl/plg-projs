@@ -17,6 +17,38 @@ import Base.Rgx as rgx
 
 class ltsAuthor:
 
+  def author_db_pages_util(self, ref = {}):
+
+    db_file = self.db_file_pages
+    q = f'''SELECT
+                auth_id, rids
+            FROM
+                auth_stats
+            WHERE
+                auth_id NOT IN (SELECT id FROM authors)'''
+    p = []
+
+    r = dbw.sql_fetchall(q,p,{ 'db_file' : db_file })
+    rows = r.get('rows',[])
+    for rw in rows:
+      rids_s = rw.get('rids')
+      rids = rids_s.split(',')
+      for rid in rids:
+        r = dbw.select({
+          'db_file'  : db_file,
+          'table'  : 'pages',
+          'where'  : { 'rid'  : rid },
+          'select' : [ 'url', 'author_id' ],
+          'output' : 'first_row',
+        })
+        if not len(r):
+          continue
+
+        url = r.get('url','')
+        import pdb; pdb.set_trace()
+
+    return self
+
   def author_move_db_pages(self, ref = {}):
     old       = ref.get('old','')
     new       = ref.get('new','')
