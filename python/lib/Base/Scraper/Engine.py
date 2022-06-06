@@ -1170,6 +1170,9 @@ class BS(CoreClass,
     tipe = util.get(ref,'tipe','clean')
     ext  = util.get(ref,'ext','html')
 
+    rid = self.page.rid
+    self.log(f'[{rid}][page_save] start')
+
     sv = self._file_rid({ 'tipe' : tipe })
     if tipe == 'clean':
        self.ii_clean = sv
@@ -2914,6 +2917,9 @@ r_bs.py -c html_parse -i cache.html $*
 ###db_save
   def page_save_db_record(self,ref={}):
     file = self._file_rid({ 'tipe' : 'dbrid', 'ext' : 'html' })
+
+    rid = self.page.rid
+    self.log(f'[{rid}][page_save_db_record] start')
 
     q = '''SELECT * FROM pages WHERE url = ? '''
     p = [ self.page.url ]
