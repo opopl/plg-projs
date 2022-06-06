@@ -34,11 +34,16 @@ class ltsAuthor:
 
     plg = os.environ.get('PLG')
     dirr = os.path.join(plg,'projs','web_scraping','py3')
+
     r = {
-      'files' : { 'script' : 'r_bs.py' },
+      'files' : {
+          'script' : 'r_bs.py',
+          #'yaml'   : os.path.join(self.lts_root,'scrape','bs','mix.yaml'),
+          'yaml'   : self._dir('lts_root','scrape bs mix.yaml')
+      },
       'dirs' : {
-        'bin' : dirr,
-        'sql' : os.path.join(dirr,'bs','sql')
+          'bin' : dirr,
+          'sql' : os.path.join(dirr,'bs','sql')
       },
       'skip_get_opt' : 1,
     }
@@ -46,7 +51,7 @@ class ltsAuthor:
     car = BS(r)
     car.main()
 
-    r = dbw.sql_fetchall(q,p,{ 'db_file' : db_file })
+    r = dbw.sql_fetchall(q, p, { 'db_file' : db_file })
     rows = r.get('rows',[])
     cols = util.qw('url tags date')
 

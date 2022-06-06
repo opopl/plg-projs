@@ -51,6 +51,7 @@ from Base.Core import CoreClass
 
 class LTS(
      CoreClass,
+
      mixLogger,
      mixCmdRunner,
      mixGetOpt,
