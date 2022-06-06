@@ -46,6 +46,7 @@ class ltsAuthor:
           'sql' : os.path.join(dirr,'bs','sql')
       },
       'skip_get_opt' : 1,
+      'in_dir' : self._dir('lts_root','scrape bs in')
     }
 
     car = BS(r)
