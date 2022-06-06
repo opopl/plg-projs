@@ -15,6 +15,8 @@ import Base.Const as const
 
 import Base.Rgx as rgx
 
+from dict_recursive_update import recursive_update
+
 from Base.Scraper.Engine import BS
 from Base.Scraper.Engine import Page
 from Base.Scraper.Pic import Pic
@@ -46,8 +48,10 @@ class ltsAuthor:
           'sql' : os.path.join(dirr,'bs','sql')
       },
       'skip_get_opt' : 1,
-      'in_dir' : self._dir('lts_root','scrape bs in')
+      'in_dir' : self._dir('lts_root','scrape bs in'),
     }
+    cmds = ['run']
+    recursive_update(r, util.dictnew('vars.mixCmdRunner.cmds',cmds))
 
     car = BS(r)
     car.main()
