@@ -97,62 +97,62 @@ class BS(CoreClass,
   '''
 
   opts_argparse = [
-    { 
-       'arr' : '-y --f_yaml', 
-       'kwd' : { 
+    {
+       'arr' : '-y --f_yaml',
+       'kwd' : {
            'help'    : 'input YAML file',
            'default' : '',
-       } 
+       }
     },
-    { 
+    {
        'arr' : '-z --f_zlan',
-       'kwd' : { 
+       'kwd' : {
            'help'    : 'input ZLAN file',
            'default' : '',
-       } 
+       }
     },
-    { 
-       'arr' : '-i --f_input_html', 
-       'kwd' : { 
+    {
+       'arr' : '-i --f_input_html',
+       'kwd' : {
            'help'    : 'input HTML file',
            'default' : '',
-       } 
+       }
     },
-    { 
-       'arr' : '-f --find', 
-       'kwd' : { 
+    {
+       'arr' : '-f --find',
+       'kwd' : {
            'help'    : 'Find elements via XPATH/CSS',
            'default' : '',
-       } 
+       }
     },
-    { 
-       'arr' : '-g --grep', 
-       'kwd' : { 
+    {
+       'arr' : '-g --grep',
+       'kwd' : {
            'help'    : 'Grep in input file(s)',
            'default' : '',
-       } 
+       }
     },
-    { 
-       'arr' : '--gs', 
-       'kwd' : { 
+    {
+       'arr' : '--gs',
+       'kwd' : {
            'help'    : 'Grep scope',
            'default' : 10,
-       } 
+       }
     },
-    { 
-       'arr' : '-p --print', 
-       'kwd' : { 
+    {
+       'arr' : '-p --print',
+       'kwd' : {
            'help'    : 'Print field value and exit',
            'default' : '',
-       } 
+       }
     },
-    { 
-       'arr' : '-c --cmd', 
-       'kwd' : { 'help'    : 'Run command(s)' } 
+    {
+       'arr' : '-c --cmd',
+       'kwd' : { 'help'    : 'Run command(s)' }
     },
-    { 
-       'arr' : '-l --log', 
-       'kwd' : { 'help' : 'Enable logging' } 
+    {
+       'arr' : '-l --log',
+       'kwd' : { 'help' : 'Enable logging' }
     },
   ]
 
@@ -171,7 +171,7 @@ class BS(CoreClass,
   globals = {}
 
   # loaded python modules
-  modules = { 
+  modules = {
     'sites' : {}
   }
 
@@ -259,7 +259,7 @@ class BS(CoreClass,
   parsed = []
 
   # order of keys for parsed
-  keys_parsed = [ 
+  keys_parsed = [
     'url'         ,
     'site'        ,
     'rid'         ,
@@ -404,7 +404,7 @@ class BS(CoreClass,
         CREATE TABLE IF NOT EXISTS imgs (
                 caption TEXT,
                 ext TEXT,
-                height INTEGER, 
+                height INTEGER,
                 img TEXT,
                 inum INTEGER,
                 name TEXT,
@@ -412,15 +412,15 @@ class BS(CoreClass,
                 rootid TEXT,
                 sec TEXT,
                 tags TEXT,
-                type TEXT, 
+                type TEXT,
                 url TEXT UNIQUE,
-                url_parent TEXT, 
+                url_parent TEXT,
                 width INTEGER,
                 md5 TEXT UNIQUE
         )
     '''
 
-    dbw.sql_do({ 
+    dbw.sql_do({
       'sql'     : sql,
       'db_file' : self.dbfile.images
     })
@@ -445,7 +445,7 @@ class BS(CoreClass,
 
     sql_files.append(f_after)
 
-    dbw.sql_do({ 
+    dbw.sql_do({
       'sql_files' : sql_files,
       'db_file'   : self.dbfile.pages
     })
@@ -457,11 +457,11 @@ class BS(CoreClass,
   def init_logging(self):
     # log = logging.getLogger('requests.packages.urllib3')  # useless
     #log = logging.getLogger('urllib3')  # works
-    
+
     #log.setLevel(logging.DEBUG)  # needed
     #fh = logging.FileHandler("requests.log")
     #log.addHandler(fh)
-    
+
     #requests.get('http://httpbin.org/')
 
     return self
@@ -496,7 +496,7 @@ class BS(CoreClass,
       if os.path.isfile(w_prod):
         cp = cp and not filecmp.cmp(w_prod,w_vcs)
 
-        if cp: 
+        if cp:
           shutil.copy(w_prod, w_vcs)
 
     return self
@@ -515,12 +515,12 @@ class BS(CoreClass,
     for k in kk:
       w_vcs   = self._file(f'{k}.vcs')
       w_prod  = self._file(f'{k}.prod')
-      
+
       cp = 1
       if os.path.isfile(w_prod):
         cp = cp and not filecmp.cmp(w_prod,w_vcs)
 
-      if cp: 
+      if cp:
         self.wp_run = True
 
         pp = Path(w_prod).parent.as_posix()
@@ -557,14 +557,14 @@ class BS(CoreClass,
     for lid in util.qw('log log_short log_need'):
       f_log = self._dir('out',f'{lid}.txt')
 
-      self.files.update({ 
+      self.files.update({
           lid : f_log,
       })
 
       if os.path.isfile(f_log):
         Path(f_log).unlink()
 
-    self.files.update({ 
+    self.files.update({
         'package_json.prod'      : self._dir('html_out','package.json'),
         'package_json.vcs'       : self._dir('srv','js package.json'),
         'webpack_config_js.vcs'  : self._dir('srv','js webpack.config.js'),
@@ -579,12 +579,12 @@ class BS(CoreClass,
       for stem in self._bin_ext_stems(ext,subpath):
 
         rel = f'{ext_dir} {subpath} {stem}.{ext}'
-        self.files.update({ 
+        self.files.update({
             f'{stem}_{ext}.vcs'  : self._dir('srv',rel),
             f'{stem}_{ext}.prod' : self._dir('html_out',rel),
         })
-  
-    self.files.update({ 
+
+    self.files.update({
         'bundle_js.dist'    : self._dir('html_out','js dist bundle.js'),
         'bundle_js.final'   : self._dir('html_root','bs dist bundle.js'),
     })
@@ -654,7 +654,7 @@ class BS(CoreClass,
     self.dirs.update({
       'app_root'        : self._dir('bin' , 'bs'),
     })
-    
+
     if not util.get(self,'dirs.tmpl'):
       self.dirs['tmpl'] = self._dir('app_root','tmpl')
 
@@ -662,7 +662,7 @@ class BS(CoreClass,
 
     self.init_dirs_f_yaml()
 
-    self.dirs.update({ 
+    self.dirs.update({
       'srv'        : self._dir('app_root' , 'srv'),
       'html'       : self._dir('out' , 'html'),
       'html_out'   : self._dir('out' , 'html'),
@@ -681,7 +681,7 @@ class BS(CoreClass,
         d = yaml.full_load(f)
         return d
 
-    return 
+    return
 
 
   def load_lists(self):
@@ -744,20 +744,20 @@ class BS(CoreClass,
       #if self._site_skip():
         #need = False
         #break
-  
+
       if ref.get('redo',0):
         need = True
         break
-  
+
       if dwr:
         ok_db = dwr.get('ok')
-  
+
         if not ( ok_db == None ):
           if ok_db == 0:
              need = True
              self.page.listadd('acts','db_update')
              break
-    
+
         if not self._opt('no_date'):
           date_db = dwr.get('date')
           if not date_db:
@@ -765,7 +765,7 @@ class BS(CoreClass,
             self.page.listadd('acts','db_update')
             break
 
-      need = need and not self._url_saved_fs() 
+      need = need and not self._url_saved_fs()
 
       break
 
@@ -806,7 +806,7 @@ class BS(CoreClass,
      'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.3'
     }
 
-    args = { 
+    args = {
       'headers' : headers,
       'verify'  : True,
     }
@@ -890,8 +890,8 @@ class BS(CoreClass,
     if tipes_in:
       tipes    = tipes_in
       if type(tipes_in) is str:
-        tipes = tipes_in.split(',') 
-  
+        tipes = tipes_in.split(',')
+
       if len(tipes):
         del ref['tipes']
         for tipe in tipes:
@@ -914,7 +914,7 @@ class BS(CoreClass,
   def load_soup(self,ref={}):
     '''
       call tree
-        calls 
+        calls
           url_load_content
             url_fetch
               _requests_get
@@ -954,7 +954,7 @@ class BS(CoreClass,
 
     self.log(f'[load_soup] rid: {self.page.rid}, title: {self.page.title}')
     self.log(f'[load_soup] rid: {self.page.rid}, title_h: {title_h}')
-    
+
     return self
 
   def _sel_clean_core(self):
@@ -975,7 +975,7 @@ class BS(CoreClass,
     keep = []
     keep.extend( util.get(self,[ 'sites', site, 'sel', 'keep' ],[]) )
     return keep
-     
+
   def _sel_clean(self, site=None):
     if not site:
       site = self.page.site
@@ -986,7 +986,7 @@ class BS(CoreClass,
     clean_site = util.get(self,[ 'sites', site, 'sel', 'clean' ],[])
     if clean_site:
       clean.extend( clean_site )
-    
+
     return clean
 
   def _sel_only(self, site=None):
@@ -998,7 +998,7 @@ class BS(CoreClass,
     only_site = util.get(self,[ 'sites', site, 'sel', 'only' ],[])
     if only_site:
       only.extend( only_site )
-    
+
     return only
 
   def page_clean_core(self):
@@ -1036,7 +1036,7 @@ class BS(CoreClass,
         els = copy(self.soup.select(css))
         els = [ els[index] ]
 
-      if els and len(els): 
+      if els and len(els):
         found = 1
         for el in els:
           self.soup.body.append(el)
@@ -1057,10 +1057,10 @@ class BS(CoreClass,
 
     act    = util.get(ref,'act','display')
 
-    file_html = self._file_rid({ 
-      'rid'  : rid, 
-      'tipe' : tipe, 
-      'ext'  : ext, 
+    file_html = self._file_rid({
+      'rid'  : rid,
+      'tipe' : tipe,
+      'ext'  : ext,
     })
 
     src_code = ''
@@ -1081,14 +1081,14 @@ class BS(CoreClass,
           txt = []
           for el in els:
             txt.append(str(el))
-     
+
           src_code = '\n'.join(txt)
           src_html = '<br>\n'.join(txt)
-  
+
         elif act == 'remove':
           for el in els:
             el.decompose()
-  
+
           src_code = str(bs)
           src_html = src_code
 
@@ -1120,7 +1120,7 @@ class BS(CoreClass,
 
     #html = encodeURIComponent(html);
 
-    return { 
+    return {
         # iframe
         'src_html' : src_html,
 
@@ -1192,7 +1192,7 @@ class BS(CoreClass,
         'url' : self.page.url,
     }
 
-    tipe_map = { 
+    tipe_map = {
       'html' : util.qw('log cache core clean img img_clean dbrid'),
       'txt'  : util.qw('meta script'),
     }
@@ -1200,7 +1200,7 @@ class BS(CoreClass,
     for ext in tipe_map.keys():
       tipes = tipe_map.get(ext,[])
       for tipe in tipes:
-        uri_dict.update({ 
+        uri_dict.update({
           tipe : self._file_rid_uri({ 'tipe' : tipe, 'ext' : ext }),
         })
 
@@ -1291,7 +1291,7 @@ class BS(CoreClass,
     [ lib, mod ] = self._site_libdir(site)
 
     # create files + dirs, if not exist
-    self.site_init_fs({ 
+    self.site_init_fs({
         'site' : site,
         'lib'  : lib,
         'mod'  : mod,
@@ -1309,7 +1309,7 @@ class BS(CoreClass,
 
     if m:
       self.log(f'[in_load_site_module] loaded module for site: {site}' )
-      p = self.page_parser = m.PageParser({ 
+      p = self.page_parser = m.PageParser({
         'soup' : self.soup,
         'app'  : self,
       })
@@ -1335,15 +1335,15 @@ class BS(CoreClass,
 
 ###sl
   def page_save_log(self):
-    log_file = self._file_rid({ 
-      'tipe' : 'log', 
-      'ext'  : 'html' 
+    log_file = self._file_rid({
+      'tipe' : 'log',
+      'ext'  : 'html'
     })
 
     q = '''SELECT * FROM log WHERE url = ?'''
     p = [self.page.url]
 
-    dw = dbw.sql_fetchall(q,p,{ 
+    dw = dbw.sql_fetchall(q,p,{
         'db_file' : self.dbfile.pages
     })
     if not dw:
@@ -1363,7 +1363,7 @@ class BS(CoreClass,
   def update_ii(self):
     self.page_ii_from_title()
     self.log(f'[load_soup] ii: {self.page.ii}')
-    
+
     return self
 
   def page_save_data_txt(self):
@@ -1392,7 +1392,7 @@ class BS(CoreClass,
             continue
           if re.match(r'^/\*\]\]>\*/$',ln):
             continue
-          
+
           e_data_new.append(ln)
 
         e_new = '\n'.join(e_data_new)
@@ -1477,9 +1477,9 @@ class BS(CoreClass,
       [ 'page_store_links' ],
       [ 'load_soup_file_rid', [{ 'tipes' : tipes_img }] ],
       [ 'ii_replace_links', [
-          { 
-            'tipes' : tipes_img, 
-            'act' : 'remote_to_db' 
+          {
+            'tipes' : tipes_img,
+            'act' : 'remote_to_db'
           }
       ] ],
       [ 'page_save' ],
@@ -1499,7 +1499,7 @@ class BS(CoreClass,
   def site_init_fs(self,ref={}):
     '''
     purpose
-      create site *.py *.yaml files 
+      create site *.py *.yaml files
       create tree of site directories
     call tree
       called by
@@ -1536,23 +1536,23 @@ class BS(CoreClass,
     return self
 
   def site_extract(self):
-    
+
     hsts = self.hosts
     try:
       for pat in hsts.keys():
         for k in pat.split(','):
           if self.page.host.find(k) != -1:
-            site = util.get(hsts,[ pat, 'site' ]) 
+            site = util.get(hsts,[ pat, 'site' ])
             if site:
               self.page.set({ 'site' : site })
               raise StopIteration
-  
+
     except StopIteration:
       pass
-  
+
     if not self.page.site:
       self.die(f'[WARN] no site for url: {self.page.url}', { 'on_fail' : 0 })
-  
+
     return self
 
   def page_set_lst(self,ref={}):
@@ -1565,14 +1565,14 @@ class BS(CoreClass,
           lst_a = lst
         elif type(lst) is str:
           lst_a = lst.split(',')
-  
+
         if lst_a:
           self.page.set({ id :  lst_a })
 
     self.page.set({ 'tags' : ref.get('tags') })
 
     return self
-  
+
 ###pu
   def parse_url(self,ref={}):
     url = ref.get('url','')
@@ -1580,7 +1580,7 @@ class BS(CoreClass,
     if not url or url == const.plh:
       return self
 
-    self.page = Page({ 
+    self.page = Page({
         'ok'  : 0,
         'app' : self,
     })
@@ -1673,7 +1673,7 @@ class BS(CoreClass,
       return self
 
     p.get_date()
-    date = self.page.date 
+    date = self.page.date
 
     if not date:
       if not self._opt('no_date'):
@@ -1688,13 +1688,13 @@ class BS(CoreClass,
 
       fmt = '%d_%m_%Y'
       d = datetime.datetime.strptime(date,fmt)
-  
-      dd = { 
+
+      dd = {
           'day'   : d.day,
           'year'  : d.year,
           'month' : d.month,
       }
-  
+
       self.page.set(dd)
     #date = d.strftime()
 
@@ -1758,15 +1758,15 @@ class BS(CoreClass,
     if tipes_in:
       tipes    = tipes_in
       if type(tipes_in) is str:
-        tipes = tipes_in.split(',') 
-  
+        tipes = tipes_in.split(',')
+
       if not len(tipes):
         return self
 
       for tipe in tipes:
 
         self.log(f'[{rid}][ii_insert_js_css] {tipe}')
-      
+
         svf = self._file_rid({ 'tipe' : tipe, 'ext' : ext })
         self.load_soup_file_rid({                           \
             'tipe' : tipe,
@@ -1778,10 +1778,10 @@ class BS(CoreClass,
 
         body = ii_soup.body
         script = ii_soup.new_tag('script')
-      
+
         #script['src'] = os.path.relpath(self._file('bundle_js.dist'),self._dir_ii())
         #body.append(script)
-      
+
         #with open(svf, 'w') as f:
           #f.write(ii_soup.prettify())
 
@@ -1798,8 +1798,8 @@ class BS(CoreClass,
     if tipes_in:
       tipes    = tipes_in
       if type(tipes_in) is str:
-        tipes = tipes_in.split(',') 
-  
+        tipes = tipes_in.split(',')
+
       if len(tipes):
         del ref['tipes']
         for tipe in tipes:
@@ -1810,16 +1810,16 @@ class BS(CoreClass,
 
     self.log(f'[{rid}][ii_replace_links] {tipe}')
 
-    file = self._file_rid({ 
-      'tipe' : tipe, 
-      'ext'  : ext 
+    file = self._file_rid({
+      'tipe' : tipe,
+      'ext'  : ext
     })
     soup = self.soups.get(file)
 
     if soup:
-      self.page_replace_links({ 
-        'soup' : soup, 
-        'act'  : act  
+      self.page_replace_links({
+        'soup' : soup,
+        'act'  : act
       })
       with open(file, 'w') as f:
         f.write(soup.prettify())
@@ -1844,10 +1844,10 @@ class BS(CoreClass,
         if u['netloc'] == self.page.host:
           links_site.append(d_href)
 
-    self.page.set({ 
+    self.page.set({
         'links' : {
-            'site' : links_site 
-        } 
+            'site' : links_site
+        }
     })
 
     return self
@@ -1861,7 +1861,7 @@ class BS(CoreClass,
     next = soup.html
     while 1:
       if not next:
-        break 
+        break
       j+=1
       next = next.find_next()
       if hasattr(next,'name') and next.name == 'a':
@@ -1876,7 +1876,7 @@ class BS(CoreClass,
             next['target'] = '_blank'
 
           elif act == 'remote_to_db':
-            pic = Pic({ 
+            pic = Pic({
               'app' : self,
               'url' : href,
             })
@@ -1943,11 +1943,11 @@ class BS(CoreClass,
 
     q = '''SELECT * FROM pages WHERE url = ?'''
     p = [ url ]
-    dw = dbw.sql_fetchone(q,p,{ 
-      'db_file' : self.dbfile.pages 
+    dw = dbw.sql_fetchone(q,p,{
+      'db_file' : self.dbfile.pages
     })
 
-    return dw 
+    return dw
 
   def _rid_last(self, ref={}):
     db_file = self.dbfile.pages
@@ -2034,7 +2034,7 @@ class BS(CoreClass,
 
     authors = n
 
-    r = { 
+    r = {
       'authors' : authors,
       'cols'    : cols,
       'count'   : len(authors),
@@ -2062,7 +2062,7 @@ class BS(CoreClass,
 
       urls_db = dbw.sql_fetchlist(q,[],{
         'db_file' : db_file,
-        'where'   : { 
+        'where'   : {
           'auth_id' : auth_id,
         }
       })
@@ -2078,7 +2078,7 @@ class BS(CoreClass,
             ok = 0
 
           break
-        
+
         if ok:
           urls_f.append(url)
 
@@ -2101,7 +2101,7 @@ class BS(CoreClass,
 
       urls_db = dbw.sql_fetchlist(q,[],{
         'db_file' : db_file,
-        'where'   : { 
+        'where'   : {
           'tag' : tag,
         }
       })
@@ -2117,7 +2117,7 @@ class BS(CoreClass,
             ok = 0
 
           break
-        
+
         if ok:
           urls_f.append(url)
 
@@ -2164,8 +2164,8 @@ class BS(CoreClass,
         pages.append(rh)
     else:
       pages = rows
-    
-    r = { 
+
+    r = {
       'pages' : pages,
       'cols'  : cols,
       'count' : len(pages),
@@ -2257,18 +2257,18 @@ class BS(CoreClass,
 
     for tag in tag_list:
       rids = dbw.sql_fetchlist(
-        '''SELECT 
-             DISTINCT CAST(rid AS TEXT) 
-           FROM 
-             page_tags 
+        '''SELECT
+             DISTINCT CAST(rid AS TEXT)
+           FROM
+             page_tags
            WHERE tag = ? ORDER BY rid ASC''',[ tag ],
         { 'db_file' : db_file }
       )
       rids_j = ','.join(rids)
-      dbw.insert_dict({ 
+      dbw.insert_dict({
         'db_file' : db_file,
         'table'   : 'tag_stats',
-        'insert'  : { 
+        'insert'  : {
           'rids' : rids_j,
           'tag'  : tag,
           'rank' : len(rids),
@@ -2298,18 +2298,18 @@ class BS(CoreClass,
 
     for auth_id in auth_ids_all:
       rids = dbw.sql_fetchlist(
-        '''SELECT 
-             DISTINCT CAST(rid AS TEXT) 
-           FROM 
+        '''SELECT
+             DISTINCT CAST(rid AS TEXT)
+           FROM
              page_authors
            WHERE auth_id = ? ORDER BY rid ASC''',[ auth_id ],
         { 'db_file' : db_file }
       )
       rids_j = ','.join(rids)
-      dbw.insert_dict({ 
+      dbw.insert_dict({
         'db_file' : db_file,
         'table'   : 'auth_stats',
-        'insert'  : { 
+        'insert'  : {
           'rids'    : rids_j,
           'auth_id' : auth_id,
           'rank'    : len(rids),
@@ -2326,8 +2326,8 @@ class BS(CoreClass,
     return self
 
   def c_srv_start(self):
-#    self.srv = Srv({ 
-      #'engine' : self 
+#    self.srv = Srv({
+      #'engine' : self
     #})
     #self.srv.start()
 
@@ -2524,7 +2524,7 @@ class BS(CoreClass,
     return self
 
 ###db_save
-# self.page => pages table 
+# self.page => pages table
 # self.page.tags => page_tags table
 #   see: db_save_tags()
   def db_save_page(self,ins = {}):
@@ -2535,7 +2535,7 @@ class BS(CoreClass,
     if not rid:
       rid = self._rid_new()
 
-    self.page.rid = rid 
+    self.page.rid = rid
 
     if not len(ins):
       if self._url_saved_db():
@@ -2573,7 +2573,7 @@ class BS(CoreClass,
     self                  \
         .db_save_tags()   \
         .db_save_author() \
-    
+
     self.log(f'[db_save_page] url saved with rid {self.page.rid}')
 
     return self
@@ -2705,7 +2705,7 @@ class BS(CoreClass,
 
     page = None
     if len(row):
-      page = Page(row) 
+      page = Page(row)
       page.app = self
 
     return page
@@ -2732,7 +2732,7 @@ class BS(CoreClass,
     }
     ext = map.get(imgobj.format,'jpg')
     return ext
-     
+
   def _ii_full(self):
     date = self.page.get('date')
     site = self.page.site
@@ -2766,12 +2766,12 @@ class BS(CoreClass,
     #conn.row_factory = sqlite3.Row
     c = conn.cursor()
 
-    q = f'''SELECT 
-                MAX(ii_num) 
-            FROM pages 
+    q = f'''SELECT
+                MAX(ii_num)
+            FROM pages
                 WHERE ( NOT url = ? ) AND ii_full LIKE "{pattern}%"
          '''
-    c.execute(q,[ self.page.url ])    
+    c.execute(q,[ self.page.url ])
     rw = c.fetchone()
     if rw[0] is not None:
       ii_num = rw[0] + 1
@@ -2851,7 +2851,7 @@ class BS(CoreClass,
 
         if url:
           author_urls_a.append(url)
-  
+
       author_line = '; '.join(author_line_a)
       author_urls = '\n'.join(author_urls_a)
 
@@ -2882,7 +2882,7 @@ class BS(CoreClass,
 
     pics = self._pics_from_rid(rid)
     piccount = len(pics)
-    p.update({ 
+    p.update({
       'piccount'    : len(pics),
       'author_line' : author_line,
       'author_urls' : author_urls,
@@ -2959,33 +2959,33 @@ r_bs.py -c html_parse -i cache.html $*
   def page_save_data_img(self,ref={}):
     tipe = ref.get('tipe','img')
 
-    data_file_img = self._file_rid({ 
-      'tipe' : tipe, 
-      'ext'  : 'html' 
+    data_file_img = self._file_rid({
+      'tipe' : tipe,
+      'ext'  : 'html'
     })
     data = {}
 
     itms = []
     for el in self.soup.find_all("img"):
-      itm = { 
+      itm = {
         'uri'       : {},
         'uri_local' : {},
-        'next' : None 
+        'next' : None
       }
 
       for k in [ 'data-src', 'src' ]:
         if el.has_attr(k):
-           img_remote_rel = el[k] 
+           img_remote_rel = el[k]
            img_remote = util.url_join(self.page.baseurl, img_remote_rel)
            img_local = self._img_local_uri(img_remote)
-  
+
            itm['uri'][k] = img_remote_rel
            if img_local:
              itm['uri_local'][k] = img_local
 
       for k in [ 'alt' ]:
         if el.has_attr(k):
-            itm[k] = el[k] 
+            itm[k] = el[k]
 
       for ee in el.next_elements:
         s = ee.string
@@ -3006,7 +3006,7 @@ r_bs.py -c html_parse -i cache.html $*
       itm['code'] = code
       itms.append(itm)
 
-    data.update({ 
+    data.update({
       'itms'  : itms,
     })
 
@@ -3044,7 +3044,7 @@ r_bs.py -c html_parse -i cache.html $*
       #if el_img.has_attr('alt'):
         #caption = el_img['alt']
 
-      self.pic = pic = Pic({ 
+      self.pic = pic = Pic({
         'app' : self,
         'el'  : el_img,
       })
@@ -3097,7 +3097,7 @@ r_bs.py -c html_parse -i cache.html $*
     '''
     if not len(self.parsed):
       return self
-    
+
     page_count = len(self.parsed)
     rids = list(map(lambda x: str(x['rid']), self.parsed))
     rids_s = ','.join(rids)
@@ -3143,7 +3143,7 @@ r_bs.py -c html_parse -i cache.html $*
           parsed_report
     '''
     if not len(urldata):
-      urldata = getattr(self,'urldata',[]) 
+      urldata = getattr(self,'urldata',[])
 
     self.page_index = 0
     while len(urldata):

@@ -48,6 +48,8 @@ class ltsAuthor:
 
     r = dbw.sql_fetchall(q,p,{ 'db_file' : db_file })
     rows = r.get('rows',[])
+    cols = util.qw('url tags date')
+
     for rw in rows:
       rids_s = rw.get('rids')
       rids = rids_s.split(',')
@@ -56,14 +58,20 @@ class ltsAuthor:
           'db_file'  : db_file,
           'table'  : 'pages',
           'where'  : { 'rid'  : rid },
-          'select' : [ 'url', 'author_id' ],
+          'select' : cols,
           'output' : 'first_row',
         })
         if not len(r):
           continue
 
         url = r.get('url','')
+        if not url:
+          continue
+
+        urldata = [ r ]
         import pdb; pdb.set_trace()
+        car.parse(urldata=urldata)
+        1
 
     return self
 
@@ -260,8 +268,6 @@ class ltsAuthor:
     id = dbw.sql_fetchval('SELECT id FROM authors WHERE id = ?',[ id ],
       { 'db_file' : self.db_file_pages })
     return id
-
-
 
   def _auth_data(self, ref = {}):
     fb_id     = ref.get('fb_id','')
