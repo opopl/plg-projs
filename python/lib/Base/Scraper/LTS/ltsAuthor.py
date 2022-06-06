@@ -15,6 +15,10 @@ import Base.Const as const
 
 import Base.Rgx as rgx
 
+from Base.Scraper.Engine import BS
+from Base.Scraper.Engine import Page
+from Base.Scraper.Pic import Pic
+
 class ltsAuthor:
 
   def author_db_pages_util(self, ref = {}):
@@ -27,6 +31,20 @@ class ltsAuthor:
             WHERE
                 auth_id NOT IN (SELECT id FROM authors)'''
     p = []
+
+    plg = os.environ.get('PLG')
+    dirr = os.path.join(plg,'projs','web_scraping','py3')
+    r = {
+      'files' : { 'script' : 'r_bs.py' },
+      'dirs' : {
+        'bin' : dirr,
+        'sql' : os.path.join(dirr,'bs','sql')
+      },
+      'skip_get_opt' : 1,
+    }
+
+    car = BS(r)
+    car.main()
 
     r = dbw.sql_fetchall(q,p,{ 'db_file' : db_file })
     rows = r.get('rows',[])
@@ -254,17 +272,17 @@ class ltsAuthor:
 
     if not author_id:
       if fb_id:
-        cols_d = dbw._cols({ 
+        cols_d = dbw._cols({
             'table'   : 'auth_details',
             'db_file' : self.db_file_pages
         })
-  
+
         author_id = dbw.sql_fetchval('''SELECT id FROM auth_details WHERE fb_id = ? ''',[ fb_id ],
            { 'db_file' : self.db_file_pages })
 
     if author_id:
-      auth = { 
-        'id' : author_id 
+      auth = {
+        'id' : author_id
       }
 
       rw = dbw.sql_fetchone('''SELECT * FROM authors WHERE id = ? ''',

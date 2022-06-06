@@ -3118,7 +3118,7 @@ r_bs.py -c html_parse -i cache.html $*
 
     return self
 
-  def parse(self,urldata=[]):
+  def parse(self, urldata = []):
     '''
       Usage
         self.parse()
@@ -3174,7 +3174,7 @@ r_bs.py -c html_parse -i cache.html $*
       [ 'load_zlan' ],
     ]
 
-    util.call(self,acts)
+    util.call(self, acts)
 
     return self
 
