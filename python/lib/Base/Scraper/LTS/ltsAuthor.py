@@ -48,9 +48,9 @@ class ltsAuthor:
           'sql' : os.path.join(dirr,'bs','sql')
       },
       'skip_get_opt' : 1,
-      'in_dir' : self._dir('lts_root','scrape bs in'),
+      'in_dir'       : self._dir('lts_root','scrape bs in'),
     }
-    cmds = ['run']
+    cmds = [ 'run' ]
     recursive_update(r, util.dictnew('vars.mixCmdRunner.cmds',cmds))
 
     car = BS(r)
@@ -78,10 +78,9 @@ class ltsAuthor:
         if not url:
           continue
 
+        r.update({ 'redo' : 1 })
         urldata = [ r ]
-        import pdb; pdb.set_trace()
-        car.parse(urldata=urldata)
-        1
+        car.parse(urldata)
 
     return self
 

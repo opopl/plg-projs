@@ -389,6 +389,8 @@ class BS(CoreClass,
     exit(0)
 
   def init_tmpl(self):
+    self.log('[init_tmpl]')
+
     self.template_loader = jinja2.FileSystemLoader(searchpath=self._dir('tmpl','html'))
     env  = jinja2.Environment(loader=self.template_loader)
     env.globals['url_join'] = util.url_join
@@ -2283,7 +2285,7 @@ class BS(CoreClass,
     db_file = self.dbfile.pages
 
     r = dbw.sql_fetchall(
-        'SELECT rid,url,author_id FROM pages',[],
+        'SELECT rid, url, author_id FROM pages', [],
         { 'db_file' : db_file }
     )
     rows = r.get('rows',[])
@@ -3149,6 +3151,7 @@ r_bs.py -c html_parse -i cache.html $*
     while len(urldata):
       d = urldata.pop(0)
       self.parse_url(d)
+      import pdb; pdb.set_trace()
 
       if self.page.limit:
         if self.page_index == self.page.limit:
