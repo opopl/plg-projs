@@ -3157,7 +3157,6 @@ r_bs.py -c html_parse -i cache.html $*
     while len(urldata):
       d = urldata.pop(0)
       self.parse_url(d)
-      import pdb; pdb.set_trace()
 
       if self.page.limit:
         if self.page_index == self.page.limit:

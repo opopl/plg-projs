@@ -15,6 +15,7 @@ use Data::Dumper qw(Dumper);
 use File::Spec::Functions qw(catfile);
 use File::Slurp::Unicode;
 use File::Path qw(mkpath);
+use File::Copy qw(copy);
 
 use Plg::Projs::Tex qw(
     texify
@@ -33,6 +34,14 @@ sub _file_joined {
     my $jfile = catfile($mkr->{src_dir},'jnd.tex');
 
     return $jfile;
+}
+
+sub _file_joined_ht {
+    my ($mkr) = @_;
+
+    my $jfile_ht = catfile($mkr->{src_dir},'jnd_ht.tex');
+
+    return $jfile_ht;
 }
 
 =head3 _join_lines
@@ -60,6 +69,7 @@ sub _join_lines {
     my (@f_lines);
 
     my $jfile = $mkr->_file_joined;
+    my $jfile_ht = $mkr->_file_joined_ht;
 
     my $file = $ref->{file} || '';
 
@@ -256,7 +266,8 @@ sub _join_lines {
 
     if ( $sec eq '_main_' && !$ref->{skip_write} ) {
         write_file($jfile,join("\n",@lines) . "\n");
-		$DB::single = 1;
+        copy($jfile, $jfile_ht);
+        $DB::single = 1;
     }
 
     return @lines;
