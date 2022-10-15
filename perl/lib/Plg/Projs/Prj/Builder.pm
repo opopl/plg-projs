@@ -122,6 +122,7 @@ sub init {
         ->act_exe
         ->init_maker
         ;
+    $DB::single = 1;
 
     #my $data = LoadFile($file);
     my $s = Dump($bld->{opts_maker});
@@ -372,8 +373,7 @@ sub init_maker {
     my $act     = $bld->{act};
     my $act_cmd = $bld->{maps_act}->{$act} || '';
 
-    my $target = $bld->{target};
-    my $proj   = $bld->{proj};
+    my ($target, $proj) = @{$bld}{qw( target proj )};
 
     my $pdf_name = join(".", $proj, $target);
 

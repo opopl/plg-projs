@@ -93,8 +93,7 @@ sub prj_load_yml {
 
     return $self if $self->{prj_skip_load_yml};
 
-    my $proj = $self->{proj};
-    my $root = $self->{root};
+    my ($proj, $root) = @{$self}{qw( proj root )};
 
     my $yfile = $self->_prj_yfile;
     return $self unless -f $yfile;
