@@ -751,11 +751,11 @@ sub cmd_load_sec {
 
     my ($root, $rootid) = @{$self}{qw( root rootid )};
 
-    my ($sec, $proj) = @{$cmd_data}{qw( sec proj)};
+    my ($sec, $proj) = @{$cmd_data}{qw( sec proj )};
     $self->{proj} = $proj;
     return $self unless $sec && $proj;
 
-    my $keys = $cmd_data->{keys} || [qw(orig cmtx video )];
+    my $keys = $cmd_data->{keys} || [qw( orig cmtx video )];
 
     # array
     my ($tags) = @{$cmd_data}{qw( tags )};
@@ -773,33 +773,33 @@ sub cmd_load_sec {
 
     # current cmd data
     my $lts_data = catfile($ENV{LTS_DATA});
-    my $new_dir  = catfile($lts_data,qw(new));
+    my $new_dir  = catfile($lts_data, qw(new));
 
-    my $dir_sec_new = catfile($new_dir,$sec);
+    my $dir_sec_new = catfile($new_dir, $sec);
     return $self unless -d $dir_sec_new;
 
     my $map = {
        orig => {
-         tex_head => [ '', '\qqSecOrig', '' ],
-         dir => $dir_sec_new,
-         tgx => [qw( orig.post scrn )],
+         tex_head   => [ '', '\qqSecOrig', '' ],
+         dir        => $dir_sec_new,
+         tgx        => [qw( orig.post scrn )],
          sec_suffix => 'orig',
-         scheme => { last => 2 },
+         scheme     => { last => 2 },
        },
        cmtx => {
-         tex_head => [ '', '\qqSecCmtScr', '' ],
-         dir => catfile($dir_sec_new, qw(cmt)),
-         tgx => [qw( orig.cmt scrn )],
+         tex_head   => [ '', '\qqSecCmtScr', '' ],
+         dir        => catfile($dir_sec_new, qw(cmt)),
+         tgx        => [qw( orig.cmt scrn )],
          sec_suffix => 'cmtx',
-         scheme => { last => 2 },
+         scheme     => { last => 2 },
        },
        video => {
-         tex_head => [ '', '\qqSecVideo', '' ],
-         dir => catfile($dir_sec_new, qw( video )),
-         sub_dirs => 1,
-         tgx => [qw( orig.video scrn )],
+         tex_head   => [ '', '\qqSecVideo', '' ],
+         dir        => catfile($dir_sec_new, qw( video )),
+         sub_dirs   => 1,
+         tgx        => [qw( orig.video scrn )],
          sec_suffix => 'video',
-         scheme => { last => 2 },
+         scheme     => { last => 2 },
        },
     };
 
@@ -809,11 +809,11 @@ sub cmd_load_sec {
         my $dir = $mapx->{dir};
         next unless -d $dir;
 
-        my $tgx   = $mapx->{tgx} || [];
-        my $headx = $mapx->{tex_head} || [];
+        my $tgx    = $mapx->{tgx} || [];
+        my $headx  = $mapx->{tex_head} || [];
         my $scheme = $mapx->{scheme} || {};
 
-        my $secx  = $mapx->{sec_suffix} || [];
+        my $secx   = $mapx->{sec_suffix} || [];
 
         my $xin = {
             proj => $proj,
