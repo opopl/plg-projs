@@ -377,8 +377,8 @@ function! projs#sec#file_base_a (...)
     elseif sec == '_sql_'
         let sfile_a = [ proj.'.sql']
 
-    elseif sec == '_xml_'
-        let sfile_a = [ proj.'.xml' ]
+    elseif sec == '_yml_'
+        let sfile_a = [ proj.'.yml' ]
 
     elseif sec == '_osecs_'
         let sfile_a = [ proj.'.secorder.i.dat']

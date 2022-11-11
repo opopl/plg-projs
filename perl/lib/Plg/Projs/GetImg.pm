@@ -213,13 +213,12 @@ sub init_db {
 sub init_img_root {
     my ($self) = @_;
 
-    my $img_root = $ENV{IMG_ROOT} // catfile($ENV{HOME},qw(img_root));
-    #if ($self->{reset}) {
-        #rmtree $img_root if -d $img_root;
-    #}
-    mkpath $img_root unless -d $img_root;
+    $self->{img_root} ||= $ENV{IMG_ROOT} // catfile($ENV{HOME},qw(img_root));
+        #if ($self->{reset}) {
+            #rmtree $img_root if -d $img_root;
+        #}
 
-    $self->{img_root} = $img_root;
+    mkpath $self->{img_root} unless -d $self->{img_root};
 
     $self;
 }
@@ -360,9 +359,10 @@ sub get_opt {
         "proj|p=s",
         "root|r=s",
         "sec|s=s",
-        # e.g. load_file
+        # command to run e.g. load_file
         "cmd|c=s",
-        "reset",
+        # img_root location
+        "img_root=s",
         "reload",
         "debug|d",
         # queries to img.db
@@ -418,6 +418,8 @@ sub print_help {
             --reload
 
             --debug -d
+
+            --img_root IMG_ROOT
 
         USAGE:
             PROCESS SINGLE TEX-FILE:
@@ -531,7 +533,7 @@ sub _fs_find_imgs {
 
 sub _subs_url {
     my ($self, $ref) = @_;
-    $ref||={};
+    $ref ||= {};
 
     my ($url, $img_file, $sec) = @{$ref}{qw( url img_file sec )};
     my $lwp  = $self->{lwp};
@@ -770,7 +772,7 @@ sub cmd_load_sec {
 
     # update database with child/parents info from \ii{...} lines
     $prj->sec_load({ proj => $proj, sec => $sec });
-	$DB::single = 1;
+    $DB::single = 1;
 
     # current cmd data
     my $lts_data = catfile($ENV{LTS_DATA});
@@ -1163,6 +1165,7 @@ sub load_file {
        proj  => $proj,
     );
     my $ftc = $self->_new_fetcher(\%n);
+    $DB::single = 1;
 
     $ftc
         ->f_read
