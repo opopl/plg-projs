@@ -90,6 +90,7 @@ sub d_process {
         ->d_get_file
         ;
 
+    $DB::single = 1;
     my $fetch_ok = $self->_fetch;
 
     $self->db_insert_img if $fetch_ok;

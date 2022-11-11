@@ -40,7 +40,6 @@ function! projs#sec#picture#fetch (...)
   let cmd  = join(cmd_a, ' ')
   call extend(env,{ 'cmd' : cmd })
   "call base#buf#open_split({ 'lines' : [cmd] })
-	debug echo 1
 
   function env.get(temp_file) dict
     let temp_file = a:temp_file
