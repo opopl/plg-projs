@@ -181,13 +181,15 @@ sub init_db {
 
     my $img_root = $self->{img_root};
 
-    my $dbfile = catfile($img_root,qw(img.db));
+    my $dbfile = catfile($img_root, qw(img.db));
 
     my $ref = {
         dbfile => $dbfile,
         attr   => {
         },
     };
+
+    my $anew = -f $dbfile ? 0 : 1;
 
     my $dbh = dbi_connect($ref);
 
@@ -199,6 +201,8 @@ sub init_db {
     hash_inject($self, $h);
     $self->{dbh} = $dbh;
     $Base::DB::DBH = $dbh;
+
+    $self->db_create if $anew;
 
 #    if ($self->{reset}) {
         #$self
@@ -213,10 +217,13 @@ sub init_db {
 sub init_img_root {
     my ($self) = @_;
 
-    $self->{img_root} ||= $ENV{IMG_ROOT} // catfile($ENV{HOME},qw(img_root));
-        #if ($self->{reset}) {
-            #rmtree $img_root if -d $img_root;
-        #}
+    # img_root is an env variable
+    $DB::single = 1;
+    if ($self->{img_root} && $self->{img_root} =~ m/^(\w+)$/) {
+       $self->{img_root} = $ENV{$1} || $ENV{uc $1} || '';
+    }
+
+    $self->{img_root} ||= $ENV{IMG_ROOT} // catfile($ENV{HOME}, qw(img_root));
 
     mkpath $self->{img_root} unless -d $self->{img_root};
 
@@ -259,7 +266,6 @@ sub init_q {
                 sec TEXT,
                 img TEXT,
                 caption TEXT,
-                name TEXT,
                 ext TEXT,
                 type TEXT,
                 md5 TEXT,

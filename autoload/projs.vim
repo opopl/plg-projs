@@ -1036,7 +1036,7 @@ function! projs#init (...)
 
     let ifile = projs#path([ '_init_.vim' ])
     if filereadable(ifile)
-      exe 'so '.ifile
+      exe 'so ' . ifile
     endif
 
     let vars = projs#varget('init_vars',[])
