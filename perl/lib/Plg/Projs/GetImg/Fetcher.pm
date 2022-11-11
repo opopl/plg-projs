@@ -245,7 +245,7 @@ sub _inum_max {
   my ($self) = @_;
 
   my $ref = { q => 'SELECT MAX(inum) FROM imgs' };
-  my $max  = dbh_select_fetchone($ref);
+  my $max  = dbh_select_fetchone($ref) // 0;
 
   return $max;
 }
