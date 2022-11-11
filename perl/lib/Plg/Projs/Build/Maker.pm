@@ -188,11 +188,15 @@ sub init_prj {
 sub init_img {
     my ($mkr) = @_;
 
-    my $img_root = $ENV{IMG_ROOT} // catfile($ENV{HOME},qw(img_root));
+    my $bld = $mkr->{bld};
+
+    my $img_root   = $bld->_bld_var('img_root') || $ENV{IMG_ROOT} // catfile($ENV{HOME}, qw(img_root));
+    my $dbfile_img = $bld->_bld_var('dbfile_img') || catfile($img_root, qw(img.db));
+
     my $h = {
         img_root      => $img_root,
         img_root_unix => win2unix($img_root),
-        dbfile_img    => catfile($img_root,qw(img.db)),
+        dbfile_img    => $dbfile_img,
     };
 
     hash_inject($mkr, $h);

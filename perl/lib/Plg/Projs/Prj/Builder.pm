@@ -123,14 +123,22 @@ sub init {
         ->process_ii_updown               
         ->process_config
         ->act_exe
+        ->expand_env
         ->init_maker
         ;
 
-    dict_expand_env($bld->{vars});
     $DB::single = 1;
 
     #my $data = LoadFile($file);
     my $s = Dump($bld->{opts_maker});
+
+    return $bld;
+}
+
+sub expand_env {
+    my ($bld) = @_;
+
+    dict_expand_env($bld->{vars});
 
     return $bld;
 }
