@@ -57,6 +57,8 @@ use Base::Arg qw(
 
     dict_update
     dict_new
+
+    dict_expand_env
 );
 
 use Plg::Projs::Build::Maker;
@@ -112,6 +114,7 @@ sub init {
         ->trg_load_yml({ 'target' => 'core' })  # load into targets/core 
         ->trg_load_yml                          # load into targets/$target
         ->trg_apply('core')                     # apply 'core' target data into $bld instance
+        ->cnf_apply                             # $bld->{cnf}->{vars} => $bld 
         ->trg_apply                             # apply $target data into $bld instance
         ->trg_adjust
         ->load_yaml
@@ -122,13 +125,14 @@ sub init {
         ->act_exe
         ->init_maker
         ;
+
+    dict_expand_env($bld->{vars});
     $DB::single = 1;
 
     #my $data = LoadFile($file);
     my $s = Dump($bld->{opts_maker});
 
     return $bld;
-
 }
 
 sub load_decs {

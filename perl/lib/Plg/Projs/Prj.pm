@@ -65,6 +65,7 @@ use Base::Arg qw(
     hash_update
 
     dict_update
+    dict_expand_env
 );
 
 sub new
@@ -99,10 +100,22 @@ sub prj_load_yml {
     return $self unless -f $yfile;
 
     my $d = LoadFile($yfile) // {};
+
     $self->{cnf} //= {};
     dict_update($self->{cnf}, $d);
 
     $self->cnf_trg_list;
+
+    return $self;
+}
+
+sub cnf_apply {
+    my ($self) = @_;
+
+    my $vars = $self->_val_('cnf vars') // {};
+
+    $self->{vars} //= {};
+    dict_update($self->{vars}, $vars);
 
     return $self;
 }

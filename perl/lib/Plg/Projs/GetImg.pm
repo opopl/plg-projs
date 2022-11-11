@@ -770,6 +770,7 @@ sub cmd_load_sec {
 
     # update database with child/parents info from \ii{...} lines
     $prj->sec_load({ proj => $proj, sec => $sec });
+	$DB::single = 1;
 
     # current cmd data
     my $lts_data = catfile($ENV{LTS_DATA});
