@@ -51,9 +51,9 @@ function! projs#url#fb#data (...)
 
   if path_front == 'permalink.php'
     let fb_auth = ''
-    let post_id = get(query_p,'story_fbid','')
-    if post_id
-      let fb_auth = get(query_p,'id',)
+    let post_id = get(query_p, 'story_fbid', '')
+    if len(post_id)
+      let fb_auth = get(query_p, 'id', '')
     endif
 
   elseif path_front =~ 'groups'
@@ -88,24 +88,26 @@ function! projs#url#fb#data (...)
       echo 'Facebook group id: ' . fb_group_id
 
       if !len(author)
-	      let author_id = printf('fb_group.%s',fb_group_id)
-	
-	      let author_db = projs#author#get_db({ 'author_id' : author_id })
-	      let author    = base#x#get(author_db,'name','')
-	
-	      if !len(author)
-	        let author = projs#author#add_prompt({ 'author_id' : author_id })
-	      endif
+        let author_id = printf('fb_group.%s',fb_group_id)
+  
+        let author_db = projs#author#get_db({ 'author_id' : author_id })
+        let author    = base#x#get(author_db,'name','')
+  
+        if !len(author)
+          let author = projs#author#add_prompt({ 'author_id' : author_id })
+        endif
       endif
 
     endif
   endif
 
+  "debug echo 'fb_auth => ' . fb_auth
+
   if len(fb_auth)
-    let author_id = get(fb_authors,fb_auth,'')
+    let author_id = get(fb_authors, fb_auth, '')
 
     if !len(author_id) && prompt
-      call base#varset('this',projs#author#ids_db())
+      call base#varset('this', projs#author#ids_db())
       let author_id = input(printf('[ facebook auth: %s ] Enter new author_id: ',fb_auth), '', 'custom,base#complete#this')
   
       "let author_db = projs#author#get_db({ 'author_id' : author_id })
