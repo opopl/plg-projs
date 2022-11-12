@@ -851,7 +851,7 @@ sub cmd_load_sec {
 
                my $cc = join('.' => $sec, $secx, $suffix_rel);
 
-               $prj->sec_import_x({ 
+               $prj->sec_import_x({
                    %$xin,
                    dir => $df,
                    child => $cc,
@@ -1169,7 +1169,7 @@ sub load_file {
     my %n = (
        file => $file,
        sec  => $sec,
-       proj  => $proj,
+       proj => $proj,
     );
     my $ftc = $self->_new_fetcher(\%n);
     $DB::single = 1;

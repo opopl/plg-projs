@@ -100,6 +100,7 @@ sub d_process {
     return $self;
 }
 
+# process previosly collected block
 sub process_block {
     my ($self) = @_;
 
@@ -138,6 +139,7 @@ sub init {
 
        file  => undef,
        flines => [],
+       flines_new => [],
 
        img      => undef,
        img_path => undef,
@@ -298,11 +300,15 @@ sub loop {
   my ($self) = @_;
 
   my @flines = @{$self->{flines} || []};
+  $self->{flines_new} ||= [];
 
-  foreach(@flines) {
+  while(@flines) {
+    local $_ = shift @flines;
+
     $self->{lnum}++; chomp;
-
     $self->{line} = $_;
+
+    push @{$self->{flines_new}}, $_;
 
     next if /^\s*%/;
 
@@ -312,6 +318,7 @@ sub loop {
         $self->{locals} = {}; 
         next; 
     };
+
     m/^\\fi\s*$/g && do { 
        $self->process_block;
        $self->{is_cmt} = undef; 
@@ -326,11 +333,22 @@ sub loop {
 
        my $k = trim($1);
 
+       # is_local => 1
+       # or is_global => 1
        $self->{'is_' . $k} = 1; 
        $self->{block} = $k;
     };
 
+###m_import
+    m/^\s*(import)\s*$/g && do {
+       $self->process_block;
+
+       my $k = $1;
+       $self->{block} = $k;
+    };
+
 ###m_pair
+    # (prefix @, optional)key value
     m/^\s*(@|)(\w+)\s+(\S+.*)$/g && do {
        my ($d, $locals, $globals) = @{$self}{qw(d locals globals)};
 
