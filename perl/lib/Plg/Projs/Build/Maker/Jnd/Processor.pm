@@ -855,6 +855,21 @@ sub lpush_tab_start {
   return $self;
 }
 
+sub lpush_tab_end {
+  my ($self) = @_;
+
+  my $tab = $self->{tab};
+  return $self unless $tab && $tab->{started};
+
+  push @{$tab->{store}},
+     $self->_tab_end,
+     #$self->_tex_caption_tab,
+     $self->_fig_end,
+     ;
+
+  return $self;
+}
+
 sub globals_update {
   my ($self, %update) = @_;
 
@@ -1060,7 +1075,11 @@ sub _d2tex_import {
 
   #$self->{tab} = {};
   #hash_update( $self->{tab}, $self->_opts_dict($tab_opts) );
-  $self->match_tab_begin($tab_opts);
+  $self
+      ->match_tab_begin($tab_opts)
+      ->lpush_tab_start;
+
+  my $tab = $self->{tab};
 
   my $tags = $d->{tags} || '';
   my @tags_a = str_split_trim($tags => ",");
@@ -1093,9 +1112,11 @@ sub _d2tex_import {
   my @tx;
   foreach my $url (@$img_urls) {
      my $du = { url => $url, type => 'ig' };
-     push @tx, $self->_d2tex($du);
+     $self->lpush_d($du);
   }
-  $DB::single = 1;
+  $self->lpush_tab_end;
+  push @tx, @{$tab->{store} || []};
+
   $self->{tab} = undef;
 
   return @tx;
