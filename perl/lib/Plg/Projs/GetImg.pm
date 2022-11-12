@@ -340,6 +340,8 @@ sub init {
 sub get_opt {
     my ($self) = @_;
 
+    return $self if $self->{skip_get_opt};
+
     Getopt::Long::Configure(qw(bundling no_getopt_compat no_auto_abbrev no_ignore_case_always));
 
     my (@optstr, %opt);

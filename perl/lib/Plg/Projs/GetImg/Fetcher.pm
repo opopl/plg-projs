@@ -103,7 +103,7 @@ sub d_block_import {
             dirs  => [ $path ],
             exts  => $exts,
             match  => $match ? [ split (',' => $match) ] : [],
-            limit => 1,
+            #limit => 5,
         });
         $DB::single = 1;
         #we import into database all screenshots on the filesystem
