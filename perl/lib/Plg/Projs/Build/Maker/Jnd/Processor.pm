@@ -897,14 +897,15 @@ sub globals_update {
 
 # push content of d => nlines (no tab), tab store (if tab)
 sub lpush_d {
-  my ($self) = @_;
+  my ($self, $d, $tab) = @_;
 
-  my $d = $self->{d};
+  my $d_custom = 1 if $d;
+  $d ||= $self->{d};
   return $self unless $d;
 
-  my $tab = $self->{tab};
+  $tab ||= $self->{tab};
 
-  my @d_tex = $self->_d2tex;
+  my @d_tex = $self->_d2tex($d, $tab);
   if ($tab) {
     push @{$tab->{store}}, @d_tex;
   }else{
@@ -944,7 +945,7 @@ sub lpush_d {
      push @{$tab->{store}},@s;
   }
 
-  $self->{d} = undef;
+  $self->{d} = undef unless $d_custom;
 
   return $self;
 }
