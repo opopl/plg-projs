@@ -1048,6 +1048,50 @@ sub _d_db_data {
   return $r;
 }
 
+sub _d2tex_import {
+  my ($self, $d) = @_;
+  $d ||= $self->{d};
+  return () unless $d && $d->{type} eq 'import';
+
+  my $mkr = $self->{mkr};
+
+  my $tags = $d->{tags} || '';
+  my @tags_a = str_split_trim($tags => ",");
+
+  my $d_yaml = $self->{d_yaml} || {};
+  my $r_sec  = $d_yaml->{r_sec} || {};
+  my ($sec, $rootid) = @{$r_sec}{qw( sec rootid )};
+
+  my ($proj, $root) = @{$self}{qw( proj root )};
+  my $img_root = $mkr->{img_root};
+
+  my $imgman = Plg::Projs::GetImg->new(
+     skip_get_opt => 1,
+     img_root => $img_root,
+     sec    => $sec,
+     proj   => $proj,
+     root   => $root,
+     rootid => $rootid,
+  );
+
+  my $img_urls = $imgman->_db_imgs({
+      tags => { and => \@tags_a },
+      where => {
+        sec        => $sec,
+        proj       => $proj,
+        rootid     => $rootid,
+      }
+  });
+
+  my @tx;
+  foreach my $url (@$img_urls) {
+     push @tx, $self->_d2tex({ url => $url, type => 'ig' });
+  }
+  $DB::single = 1;
+
+  return @tx;
+}
+
 sub _d2tex {
   my ($self, $d) = @_;
 
@@ -1056,42 +1100,7 @@ sub _d2tex {
   $d ||= $self->{d};
   return () unless $d;
 
-  if ($d->{type} eq 'import'){
-    my $tags = $d->{tags} || '';
-    my @tags_a = str_split_trim($tags => ",");
-
-    my $d_yaml = $self->{d_yaml} || {};
-    my $r_sec  = $d_yaml->{r_sec} || {};
-    my ($sec, $rootid) = @{$r_sec}{qw(sec rootid)};
-
-    my ($proj, $root) = @{$self}{qw(proj root)};
-    my $img_root = $mkr->{img_root};
-
-    my $imgman = Plg::Projs::GetImg->new(
-       skip_get_opt => 1,
-       img_root => $img_root,
-       sec    => $sec,
-       proj   => $proj,
-       root   => $root,
-       rootid => $rootid,
-    );
-
-    my $img_urls = $imgman->_db_imgs({
-        tags => { and => \@tags_a },
-        where => {
-          sec        => $sec,
-          proj       => $proj,
-          rootid     => $rootid,
-        }
-    });
-
-    my @tx;
-    foreach my $url (@$img_urls) {
-        push @tx, $self->_d2tex({ url => $url, type => 'ig' });
-    }
-    $DB::single = 1;
-    1;
-  }
+  return $self->_d2tex_import($d) if $d->{type} eq 'import';
 
   my ($tab, $locals, $globals) = @{$self}{qw( tab locals globals )};
 
