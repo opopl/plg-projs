@@ -805,10 +805,11 @@ sub cmd_load_sec {
        video => {
          tex_head   => [ '', '\qqSecVideo', '' ],
          dir        => catfile($dir_sec_new, qw( video )),
-         sub_dirs   => 1,
          tgx        => [qw( orig.video scrn )],
          sec_suffix => 'video',
          scheme     => { last => 2 },
+
+         sub_dirs   => 1,
        },
     };
 
