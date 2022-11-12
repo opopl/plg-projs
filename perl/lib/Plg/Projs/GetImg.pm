@@ -218,7 +218,6 @@ sub init_img_root {
     my ($self) = @_;
 
     # img_root is an env variable
-    $DB::single = 1;
     if ($self->{img_root} && $self->{img_root} =~ m/^(\w+)$/) {
        $self->{img_root} = $ENV{$1} || $ENV{uc $1} || '';
     }
@@ -516,6 +515,7 @@ sub _fs_find_imgs {
 
     my $exts = $ref->{exts} || [qw( jpg jpeg png )];
     my $dirs = $ref->{dirs} || [];
+    my $match = $ref->{match} || [];
     return () unless $dirs && @$dirs;
 
     my $limit = $ref->{limit} || 0;
@@ -523,7 +523,10 @@ sub _fs_find_imgs {
     my $find_opts = $ref->{find} || {};
     my $max_depth = $find_opts->{max_depth} || 0;
 
-    my @glob = map { "*.$_" } @$exts;
+    my @glob;
+    push @glob,
+        ( map { "*.$_" } @$exts ),
+        @$match;
 
     my $rule = File::Find::Rule->new;
     $rule->name(@glob);
@@ -882,6 +885,8 @@ sub pic_add {
     my $img_file_local = $ref->{file};
     return $self unless -f $img_file_local;
 
+    my ($name_orig) = ( basename($img_file_local)  =~ m/^(.*)\.(\w+)$/g );
+
     my $stat_local = stat($img_file_local);
     my $mtime_local = $stat_local->mtime;
     my $size = $stat_local->size;
@@ -940,6 +945,7 @@ sub pic_add {
        height => $height,
        size   => $size,
        mtime  => $mtime_local,
+       name_orig => $name_orig,
     };
 
     $ins->{tags} = $tags_s if $tags_s;
@@ -949,6 +955,7 @@ sub pic_add {
 
        $ins->{$x} = $ref->{$x};
     }
+    $DB::single = 1;
 
     copy($img_file_local, $img_file);
 

@@ -14,6 +14,7 @@ use Data::Dumper qw(Dumper);
 use File::Which qw(which);  
 
 use URI::Split qw(uri_split);
+use String::Util qw(trim);
 
 use File::Copy qw( move );
 
@@ -42,6 +43,7 @@ use String::Util qw(trim);
 
 use Base::String qw(
   str_split
+  str_split_trim
 );
 
 use Base::DB qw( 
@@ -77,6 +79,54 @@ sub d_rm_file {
   return $self;
 }
 
+sub d_block_import {
+    my ($self) = @_;
+
+    my ($d, $block) = @{$self}{qw(d block)};
+    return $self unless ( $d && $block && $block eq 'import');
+
+    my ($imgman) = $self->{imgman};
+    return $self unless $imgman;
+
+    my ($path, $match, $insert, $tags) = @{$d}{qw( path match insert tags )};
+    my $exts = [];
+
+    my $tags_a = [];
+    push @$tags_a, 
+        $tags ? str_split_trim($tags => ",") : (); 
+
+    my ($proj, $sec, $rootid) = @{$self}{qw( proj sec rootid )};
+
+    if (-d $path) {
+        my @imgs = $imgman->_fs_find_imgs({
+            find  => { max_depth => 1 },
+            dirs  => [ $path ],
+            exts  => $exts,
+            match  => $match ? [ split (',' => $match) ] : [],
+            limit => 1,
+        });
+        $DB::single = 1;
+        #we import into database all screenshots on the filesystem
+        foreach my $img_path (@imgs) {
+            $imgman->pic_add({
+                file => $img_path,
+                tags => $tags_a,
+    
+                proj   => $proj,
+                sec    => $sec,
+                rootid => $rootid,
+    
+                mv => 0,
+            });
+        }
+        1;
+    }
+
+    $self->{d} = undef;
+
+    return $self;
+}
+
 sub d_process {
     my ($self) = @_;
 
@@ -108,7 +158,10 @@ sub process_block {
 
     $self->{$_} = undef for qw(is_local is_global);
 
-    $self->d_process;
+    $DB::single = 1;
+    $self
+       ->d_process
+       ->d_block_import; 
 
     $self->{block} = undef;
 
@@ -302,7 +355,7 @@ sub loop {
   my @flines = @{$self->{flines} || []};
   $self->{flines_new} ||= [];
 
-  while(@flines) {
+  while(@flines){
     local $_ = shift @flines;
 
     $self->{lnum}++; chomp;
@@ -343,8 +396,8 @@ sub loop {
     m/^\s*(import)\s*$/g && do {
        $self->process_block;
 
-       my $k = $1;
-       $self->{block} = $k;
+       $self->{d} = {};
+       $self->{block} = $1;
     };
 
 ###m_pair
