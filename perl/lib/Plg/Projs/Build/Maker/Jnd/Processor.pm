@@ -1055,6 +1055,12 @@ sub _d2tex_import {
 
   my $mkr = $self->{mkr};
 
+  my $tab_opts  = $d->{tab} || '';
+
+  #$self->{tab} = {};
+  #hash_update( $self->{tab}, $self->_opts_dict($tab_opts) );
+  $self->match_tab_begin($tab_opts);
+
   my $tags = $d->{tags} || '';
   my @tags_a = str_split_trim($tags => ",");
 
@@ -1085,24 +1091,28 @@ sub _d2tex_import {
 
   my @tx;
   foreach my $url (@$img_urls) {
-     push @tx, $self->_d2tex({ url => $url, type => 'ig' });
+     my $du = { url => $url, type => 'ig' };
+     push @tx, $self->_d2tex($du);
   }
   $DB::single = 1;
+  $self->{tab} = undef;
 
   return @tx;
 }
 
 sub _d2tex {
-  my ($self, $d) = @_;
+  my ($self, $d, $tab) = @_;
 
   my $mkr = $self->{mkr};
 
   $d ||= $self->{d};
+  $tab ||= $self->{tab};
+
   return () unless $d;
 
   return $self->_d2tex_import($d) if $d->{type} eq 'import';
 
-  my ($tab, $locals, $globals) = @{$self}{qw( tab locals globals )};
+  my ($locals, $globals) = @{$self}{qw( locals globals )};
 
   my $d_db = $self->_d_db_data($d);
   my ($img_file, $img_path, $rw)  = @{$d_db}{qw( img_file img_path rw )};
