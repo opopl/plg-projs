@@ -207,7 +207,26 @@ sub sec_new_child {
     my ($self, $ref) = @_;
     $ref ||= {};
 
-    my ($sec, $child) = @{$ref}{qw( sec child )};
+    my ($proj, $sec, $child, $lines) = @{$ref}{qw( proj sec child lines )};
+    $proj ||= $self->{proj};
+
+    $self->sec_new({
+        proj   => $proj,
+        parent => $sec,
+        sec    => $child,
+    });
+
+    $self->sec_insert_child({
+        proj  => $proj,
+        sec   => $sec,
+        child => $child,
+    });
+
+    $self->sec_insert({
+        proj  => $proj,
+        sec   => $child,
+        lines => $lines,
+    });
 
     return $self;
 }
