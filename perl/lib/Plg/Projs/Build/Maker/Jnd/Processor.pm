@@ -1068,10 +1068,17 @@ sub _d2tex_import {
   my $mkr = $self->{mkr};
 
   my $tab_opts  = $d->{tab} || '';
-  $DB::single = 1;
 
-  my $tags = $d->{tags} || '';
-  my @tags_a = str_split_trim($tags => ",");
+  my $tags = $d->{'@tags'} || $d->{tags} || '';
+  my @tags_a;
+  if (!ref $tags) {
+     push @tags_a, str_split_trim($tags => ",");
+
+  } elsif (ref $tags eq 'ARRAY') {
+     foreach my $tg (@$tags) {
+        push @tags_a, str_split_trim($tg => ",");
+     }
+  }
 
   my $limit = $d->{limit} || 0;
 
