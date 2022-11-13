@@ -92,7 +92,7 @@ sub d_block_import {
     my $exts = [];
 
     my $tags_a = [];
-    push @$tags_a, 
+    push @$tags_a,
         $tags ? str_split_trim($tags => ",") : (); 
 
     my ($proj, $sec, $rootid) = @{$self}{qw( proj sec rootid )};
