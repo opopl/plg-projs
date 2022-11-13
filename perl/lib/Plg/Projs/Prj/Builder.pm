@@ -23,6 +23,8 @@ use Base::String qw(
     str_split_sn
 );
 
+use Plg::Projs::GetImg;
+
 use base qw(
     Plg::Projs::Prj
 
@@ -123,9 +125,10 @@ sub init {
         ->load_patch
         ->process_ii_updown               
         ->process_config
-        ->act_exe
         ->expand_env
+        ->init_imgman
         ->init_maker
+        ->act_exe
         ;
 
     $DB::single = 1;
@@ -135,6 +138,27 @@ sub init {
 
     return $bld;
 }
+
+sub init_imgman {
+  my ($bld) = @_;
+
+  my $img_root = $bld->_bld_var('img_root');
+  my ($proj, $root, $rootid) = @{$bld}{qw( proj root root_id )};
+
+  my $imgman = Plg::Projs::GetImg->new(
+     skip_get_opt => 1,
+     img_root => $img_root,
+     proj   => $proj,
+     root   => $root,
+     rootid => $rootid,
+  );
+
+  $bld->{imgman} = $imgman;
+
+
+  return $bld;
+}
+
 
 sub expand_env {
     my ($bld) = @_;
@@ -405,7 +429,7 @@ sub init_maker {
         proj         => $bld->{proj},
         root         => $bld->{root},
         root_id      => $bld->{root_id},
-        cmd          => $act_cmd,
+        cmd          => !ref $act_cmd ? $act_cmd : 'compile',
         %$om,
         tex_exe      => $bld->{tex_exe},
         bld          => $bld,

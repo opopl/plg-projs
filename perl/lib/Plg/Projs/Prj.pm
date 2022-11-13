@@ -671,9 +671,10 @@ sub _sec_exist {
     my ($self, $ref) = @_;
     $ref ||= {};
 
-    my ($sec, $proj) = @{$ref}{qw( sec proj )};
+    my ($sec, $proj, $sd) = @{$ref}{qw( sec proj sd )};
 
-    my $sd = $self->_sec_data({ sec => $sec, proj => $proj });
+    $sd ||= $self->_sec_data({ sec => $sec, proj => $proj });
+    return 0 unless $sd;
 
     my $ok = 1;
 
