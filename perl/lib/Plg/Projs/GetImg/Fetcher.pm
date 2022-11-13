@@ -96,14 +96,15 @@ sub d_block_import {
         $tags ? str_split_trim($tags => ",") : (); 
 
     my ($proj, $sec, $rootid) = @{$self}{qw( proj sec rootid )};
+    my $limit = $d->{limit} || 0;
 
     if (-d $path) {
         my @imgs = $imgman->_fs_find_imgs({
             find  => { max_depth => 1 },
             dirs  => [ $path ],
             exts  => $exts,
-            match  => $match ? [ split (',' => $match) ] : [],
-            #limit => 5,
+            match => $match ? [ split (',' => $match) ] : [],
+            limit => $limit,
         });
         $DB::single = 1;
         #we import into database all screenshots on the filesystem
@@ -420,7 +421,13 @@ sub loop {
           next;
        }
 
-       $d->{$k} = $v if $d;
+       if ($d) {
+           if ($d->{$k}) {
+              $d->{$k} .= ',' . $v;
+           }else{
+              $d->{$k} = $v;
+           }
+       }
 
        $locals->{$k}  = $v if $self->{is_local};
        $globals->{$k} = $v if $self->{is_global};

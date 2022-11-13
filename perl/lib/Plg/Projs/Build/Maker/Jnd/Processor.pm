@@ -1068,8 +1068,7 @@ sub _d2tex_import {
   my $mkr = $self->{mkr};
 
   my $tab_opts  = $d->{tab} || '';
-
-
+  $DB::single = 1;
 
   my $tags = $d->{tags} || '';
   my @tags_a = str_split_trim($tags => ",");
