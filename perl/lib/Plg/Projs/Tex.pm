@@ -5,7 +5,8 @@ use strict;
 use warnings;
 use utf8;
 
-use Plg::Projs::Build::Maker::Jnd::Processor;
+# todo: circular use!
+# use Plg::Projs::Build::Maker::Jnd::Processor;
 
 use Data::Dumper qw(Dumper);
 use Base::String qw(
