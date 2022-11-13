@@ -703,10 +703,6 @@ sub match_tab_begin {
   my $tab_cols = $tab->{cols};
   $tab->{width} ||= ( $self->{img_width_default} / $tab_cols );
   
-  #push @{$self->{nlines}},
-     #$self->_fig_start,
-     #$self->_tab_start;
-
   return $self;
 }
 
@@ -1073,16 +1069,12 @@ sub _d2tex_import {
 
   my $tab_opts  = $d->{tab} || '';
 
-  #$self->{tab} = {};
-  #hash_update( $self->{tab}, $self->_opts_dict($tab_opts) );
-  $self
-      ->match_tab_begin($tab_opts)
-      ->lpush_tab_start;
 
-  my $tab = $self->{tab};
 
   my $tags = $d->{tags} || '';
   my @tags_a = str_split_trim($tags => ",");
+
+  my $limit = $d->{limit} || 0;
 
   my $d_yaml = $self->{d_yaml} || {};
   my $r_sec  = $d_yaml->{r_sec} || {};
@@ -1100,24 +1092,55 @@ sub _d2tex_import {
      rootid => $rootid,
   );
 
-  my $img_urls = $imgman->_db_imgs({
+  my $imgs = $imgman->_db_imgs({
       tags => { and => \@tags_a },
+      fields => [qw( url name_orig )],
+      mode => 'rows',
       where => {
-        sec        => $sec,
-        proj       => $proj,
-        rootid     => $rootid,
-      }
+        #sec        => $sec,
+        #proj       => $proj,
+        #rootid     => $rootid,
+      },
+      limit => $limit
   });
 
-  my @tx;
-  foreach my $url (@$img_urls) {
-     my $du = { url => $url, type => 'ig' };
-     $self->lpush_d($du);
-  }
-  $self->lpush_tab_end;
-  push @tx, @{$tab->{store} || []};
+  my $tab_dict = $self->_opts_dict($tab_opts) || {};
+  my $cols = $tab_dict->{cols} || 1;
 
-  $self->{tab} = undef;
+  my @tx;
+  my $tab;
+  my $n_imgs = scalar @$imgs;
+
+  my $j = 0;
+  foreach my $img (@$imgs) {
+     $j++;
+
+     if($j % $cols == 1){
+        $self
+          ->match_tab_begin($tab_opts)
+          ->lpush_tab_start;
+
+        $tab = $self->{tab};
+     }
+
+     my $url       = $img->{url};
+     my $name_orig = $img->{name_orig};
+     my $caption   = $name_orig;
+
+     my $du = { 
+         url     => $url,
+         type    => 'ig',
+         caption => $caption
+     };
+     $self->lpush_d($du);
+
+     if($j % $cols == 0 || $j == $n_imgs){
+         $self->lpush_tab_end;
+         push @tx, @{$tab->{store} || []};
+         $self->{tab} = undef;
+     }
+  }
+  $DB::single = 1;
 
   return @tx;
 }

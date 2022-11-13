@@ -486,10 +486,14 @@ sub _db_imgs {
 
     my $tags  = $ref->{tags} || {};
     my $where = $ref->{where} || {};
+    my $fields = $ref->{fields} || [qw( url )];
 
     my $limit = $ref->{limit};
+    my $mode  = $ref->{mode} || 'list';
 
     my $r = {
+       mode => 'rows',
+
        tbase => 'imgs',
        tbase_alias => 'i',
 
@@ -498,7 +502,7 @@ sub _db_imgs {
        keys => [qw( tags )],
        key2col => { tags => 'tag' },
 
-       f => [qw( url )],
+       f => $fields,
 
        tags => $tags,
 
