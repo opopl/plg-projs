@@ -1074,7 +1074,6 @@ sub _d2tex_import {
   $globals ||= {};
   
   my $opts_import = $globals->{'opts_import'};
-  $DB::single = 1;
 
   my $tab_opts  = $d->{tab} || '';
 
@@ -1134,6 +1133,7 @@ sub _d2tex_import {
   my $n_imgs = scalar @$imgs;
 
   my $j = 0;
+  $DB::single = 1;
   foreach my $img (@$imgs) {
      $j++;
 
@@ -1155,7 +1155,11 @@ sub _d2tex_import {
          type    => 'ig',
          caption => $caption
      };
-     $self->lpush_d($du);
+     if ($use_tab) {
+        $self->lpush_d($du);
+     }else{
+        push @tx, $self->_d2tex($du);
+     }
 
      if ($use_tab) {
          if($j % $cols == 0 || $j == $n_imgs){
