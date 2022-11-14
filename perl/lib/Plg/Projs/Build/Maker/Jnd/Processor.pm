@@ -1127,6 +1127,7 @@ sub _d2tex_import {
 
   my $tab_dict = $self->_opts_dict($tab_opts) || {};
   my $cols = $tab_dict->{cols} || 1;
+  my $use_tab = $tab_opts ? 1 : 0;
 
   my @tx;
   my $tab;
@@ -1136,12 +1137,13 @@ sub _d2tex_import {
   foreach my $img (@$imgs) {
      $j++;
 
-     if($j % $cols == 1){
-        $self
-          ->match_tab_begin($tab_opts)
-          ->lpush_tab_start;
-
-        $tab = $self->{tab};
+     if ($use_tab) {
+        if($j % $cols == 1){
+            $self
+              ->match_tab_begin($tab_opts)
+              ->lpush_tab_start;
+            $tab = $self->{tab};
+        }
      }
 
      my $url       = $img->{url};
@@ -1155,10 +1157,12 @@ sub _d2tex_import {
      };
      $self->lpush_d($du);
 
-     if($j % $cols == 0 || $j == $n_imgs){
-         $self->lpush_tab_end;
-         push @tx, @{$tab->{store} || []};
-         $self->{tab} = undef;
+     if ($use_tab) {
+         if($j % $cols == 0 || $j == $n_imgs){
+             $self->lpush_tab_end;
+             push @tx, @{$tab->{store} || []};
+             $self->{tab} = undef;
+         }
      }
   }
   $DB::single = 1;
