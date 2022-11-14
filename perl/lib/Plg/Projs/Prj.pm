@@ -114,10 +114,18 @@ sub prj_load_yml {
 sub cnf_apply {
     my ($self) = @_;
 
-    my $vars = $self->_val_('cnf vars') // {};
+    my $cnf = $self->{cnf};
+    return $self unless $cnf;
 
-    $self->{vars} //= {};
-    dict_update($self->{vars}, $vars);
+    foreach my $x (keys %$cnf) {
+        next if $x eq 'targets';
+
+        my $v = $cnf->{$x};
+
+        $self->{$x} //= {};
+        dict_update($self->{$x}, $v);
+    }
+    $DB::single = 1;
 
     return $self;
 }

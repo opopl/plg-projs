@@ -18,7 +18,7 @@ use Base::Arg qw(
   dict_update
 
   opts2dict
-  d2dict
+  d2dict d2list
 );
 
 #use Date::Manip;
@@ -1077,16 +1077,7 @@ sub _d2tex_import {
 
   my $tab_opts  = $d->{tab} || '';
 
-  my $tags = $d->{'@tags'} || $d->{tags} || '';
-  my @tags_a;
-  if (!ref $tags) {
-     push @tags_a, str_split_trim($tags => ",");
-
-  } elsif (ref $tags eq 'ARRAY') {
-     foreach my $tg (@$tags) {
-        push @tags_a, str_split_trim($tg => ",");
-     }
-  }
+  my @tags_a = d2list($d,'tags');
 
   my $limit = $d->{limit} || 0;
 
@@ -1126,11 +1117,13 @@ sub _d2tex_import {
 
   my $tab_dict = $self->_opts_dict($tab_opts) || {};
   my $cols = $tab_dict->{cols} || 1;
-  my $use_tab = $tab_opts ? 1 : 0;
 
   my @tx;
   my $tab;
   my $n_imgs = scalar @$imgs;
+
+  my $use_tab = $tab_opts ? 1 : 0;
+  $use_tab = 0 if $n_imgs == 1;
 
   my $j = 0;
   $DB::single = 1;
@@ -1146,18 +1139,18 @@ sub _d2tex_import {
         }
      }
 
-     my $url       = $img->{url};
-     my $name_orig = $img->{name_orig};
-     my $caption   = $img->{caption} || $name_orig;
+     my ($url, $name_orig, $caption) = @{$img}{qw(url name_orig caption)};
+     $caption ||= $name_orig;
 
      my $du = { 
          url     => $url,
          type    => 'ig',
-         caption => $caption
+         caption => $caption,
      };
      if ($use_tab) {
         $self->lpush_d($du);
      }else{
+        $du->{width} = $d->{width} || 0.8;
         push @tx, $self->_d2tex($du);
      }
 
