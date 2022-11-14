@@ -15,7 +15,10 @@ use Base::Arg qw(
   hash_inject
   hash_update
 
+  dict_update
+
   opts2dict
+  d2dict
 );
 
 #use Date::Manip;
@@ -1090,7 +1093,7 @@ sub _d2tex_import {
 
   my $d_yaml = $self->{d_yaml} || {};
   my $r_sec  = $d_yaml->{r_sec} || {};
-  my ($sec, $rootid) = @{$r_sec}{qw( sec rootid )};
+  my ($sec, $rootid, $parent) = @{$r_sec}{qw( sec rootid parent )};
 
   my ($proj, $root) = @{$self}{qw( proj root )};
   my $img_root = $mkr->{img_root};
@@ -1103,20 +1106,22 @@ sub _d2tex_import {
      root   => $root,
      rootid => $rootid,
   );
-  $DB::single = 1;
-  my $w = {};
-  foreach my $x (qw(proj sec)) {
+  my $w = d2dict($d,'where') || {};
+  while( my($k,$v) = each %$w ){
+     if ($k eq 'proj') {
+        $v =~ s/\@this/$proj/g;
+     } elsif ($k eq 'sec') {
+        (my $sec_minus = $sec) =~ s/\.\w+$//g;
+        $v =~ s/\@this.minus/$sec_minus/g;
+     }
+     $w->{$k} = $v;
   }
 
   my $imgs = $imgman->_db_imgs({
       tags => { and => \@tags_a },
       fields => [qw( url name_orig caption )],
       mode => 'rows',
-      where => {
-        #sec        => $sec,
-        #proj       => $proj,
-        #rootid     => $rootid,
-      },
+      where => $w,
       limit => $limit
   });
 
