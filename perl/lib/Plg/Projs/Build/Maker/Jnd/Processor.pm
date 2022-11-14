@@ -14,6 +14,8 @@ use YAML qw( LoadFile Load Dump DumpFile );
 use Base::Arg qw(
   hash_inject
   hash_update
+
+  opts2dict
 );
 
 #use Date::Manip;
@@ -1065,7 +1067,11 @@ sub _d2tex_import {
   $d ||= $self->{d};
   return () unless $d && $d->{type} eq 'import';
 
-  my $mkr = $self->{mkr};
+  my ($mkr, $globals) = @{$self}{qw( mkr globals )};
+  $globals ||= {};
+  
+  my $opts_import = $globals->{'opts_import'};
+  $DB::single = 1;
 
   my $tab_opts  = $d->{tab} || '';
 
@@ -1097,6 +1103,10 @@ sub _d2tex_import {
      root   => $root,
      rootid => $rootid,
   );
+  $DB::single = 1;
+  my $w = {};
+  foreach my $x (qw(proj sec)) {
+  }
 
   my $imgs = $imgman->_db_imgs({
       tags => { and => \@tags_a },

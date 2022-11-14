@@ -66,6 +66,8 @@ use Base::Arg qw(
 
     dict_update
     dict_expand_env
+
+    opts2dict
 );
 
 sub new
