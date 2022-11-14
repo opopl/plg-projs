@@ -374,7 +374,7 @@ sub sec_import_x {
     }
 
     # we grab all screenshots already in the database
-    my $img_urls = $imgman->_db_imgs({
+    my $imgs_db = $imgman->_db_imgs({
         tags => { and => $tgx },
         where => {
           sec        => $sec,
@@ -384,7 +384,7 @@ sub sec_import_x {
         }
     });
 
-    return $self unless @$img_urls;
+    return $self unless @$imgs_db;
 
     $self->sec_new({
         sec    => $child,
@@ -397,7 +397,7 @@ sub sec_import_x {
     $self->sec_import_imgs({
         sec    => $child,
         proj   => $proj,
-        imgs   => $img_urls,
+        imgs   => $imgs_db,
         scheme => $scheme,
     });
 
@@ -467,13 +467,13 @@ sub sec_import_imgs {
         if (@col > 1) {
             push @pic,
                 sprintf('  tab_begin cols=%s,no_fig,center',scalar @col),
-                ( map { '    pic ' . $_ } @col ),
+                ( map { '    pic ' . $_->{url} } @col ),
                         '  tab_end'
                ;
         } else {
-            my $url = shift @col;
+            my $img = shift @col;
             push @pic,
-               '  ig ' . $url,
+               '  ig ' . $img->{url},
                '  @wrap center',
                '  @width 0.8',
                ;
