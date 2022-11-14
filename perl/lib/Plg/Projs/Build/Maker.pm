@@ -582,6 +582,8 @@ sub create_bat_in_src {
                 'rm *.mw',
                 'rm *.tmp',
                 'rm *.xref',
+                'rm *.idv',
+                'rm *.lg',
                 'latexmk -C',
             ];
         },

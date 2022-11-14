@@ -63,7 +63,8 @@ sub cmd_jnd_compose {
     my $root = $mkr->{root};
     my $proj = $mkr->{proj};
 
-    my $jfile  = $mkr->_file_joined;
+    my $jfile     = $mkr->_file_joined;
+    my $jfile_ht  = $mkr->_file_joined_ht;
 
     my $prc = Plg::Projs::Build::Maker::Jnd::Processor->new(
         jfile => $jfile,
@@ -77,6 +78,8 @@ sub cmd_jnd_compose {
         ->loop
         ->f_write
         ;
+
+    copy($jfile, $jfile_ht);
 
     return $mkr;
 }

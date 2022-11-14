@@ -1100,7 +1100,7 @@ sub _d2tex_import {
 
   my $imgs = $imgman->_db_imgs({
       tags => { and => \@tags_a },
-      fields => [qw( url name_orig )],
+      fields => [qw( url name_orig caption )],
       mode => 'rows',
       where => {
         #sec        => $sec,
@@ -1131,7 +1131,7 @@ sub _d2tex_import {
 
      my $url       = $img->{url};
      my $name_orig = $img->{name_orig};
-     my $caption   = $name_orig;
+     my $caption   = $img->{caption} || $name_orig;
 
      my $du = { 
          url     => $url,
