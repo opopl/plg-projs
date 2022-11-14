@@ -50,6 +50,7 @@ use Base::DB qw(
 
 use Plg::Projs::Tex qw(
     texify 
+    escape_latex
 );
 
 use Base::List qw(
@@ -1151,7 +1152,7 @@ sub _d2tex_import {
         $self->lpush_d($du);
      }else{
         $du->{width} = $d->{width} || 0.8;
-        push @tx, $self->_d2tex($du);
+        push @tx, $self->_d2tex($du), '';
      }
 
      if ($use_tab) {
@@ -1203,7 +1204,10 @@ sub _d2tex {
   }
 
   my $caption = $d->{caption};
-  Plg::Projs::Tex::texify(\$caption) if $caption;
+  if ($caption){
+    Plg::Projs::Tex::texify(\$caption);
+    $caption = escape_latex($caption);
+  }
 
   # current graphic width
   my $wd = $d->{width} || $rw->{width_tex};

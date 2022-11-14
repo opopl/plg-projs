@@ -62,6 +62,8 @@ my @ex_vars_array=qw(
         q2quotes
         texify
         texify_ref
+
+        escape_latex
     )],
     'vars'  => [ @ex_vars_scalar,@ex_vars_array,@ex_vars_hash ]
 );

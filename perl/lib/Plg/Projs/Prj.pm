@@ -125,7 +125,6 @@ sub cnf_apply {
         $self->{$x} //= {};
         dict_update($self->{$x}, $v);
     }
-    $DB::single = 1;
 
     return $self;
 }
