@@ -496,9 +496,9 @@ sub _subs_url {
 }
 
 sub d_push_status {
-  my ($self, $key) = @_;
+  my ($self, $key, $d) = @_;
 
-  my $d  = $self->{d};
+  $d ||= $self->{d};
   my $imgman = $self->{imgman};
 
   return $self unless $d && $imgman;

@@ -42,6 +42,8 @@ use String::Util qw(trim);
 use Plg::Projs::Prj;
 use Cwd qw(getcwd);
 
+use Clone qw(clone);
+
 use Plg::Projs::GetImg::Fetcher;
 
 use Base::Util qw(
@@ -1003,12 +1005,22 @@ sub pic_add {
        last;
     }
 
+    my $d_pic = {
+        %$ins,
+        img_file => $img_file
+    };
+
     if ($ok) {
       if ($img_urls && ref $img_urls eq 'ARRAY') {
          push @$img_urls, $url_tm;
       }
       print "(pic_add) OK: Import: $img_file_local" . "\n";
       print "(pic_add) " . Dumper({ inum => $inum, size => $size }) . "\n";
+
+      push @{$self->{'ok'}}, clone($d_pic);
+
+    }else{
+      push @{$self->{'fail'}}, clone($d_pic);
     }
 
     return $self;
