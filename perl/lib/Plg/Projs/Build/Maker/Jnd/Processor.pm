@@ -1097,6 +1097,7 @@ sub _d2tex_import {
      root   => $root,
      rootid => $rootid,
   );
+
   my $w = d2dict($d,'where') || {};
   while( my($k,$v) = each %$w ){
      if ($k eq 'proj') {
@@ -1148,7 +1149,7 @@ sub _d2tex_import {
          type    => 'ig',
          caption => $caption,
      };
-     if ($use_tab) {
+     if ($use_tab){
         $self->lpush_d($du);
      }else{
         $du->{width} = $d->{width} || 0.8;
