@@ -7,6 +7,8 @@ function! projs#sec#picture#fetch (...)
 
   let sec  = get(ref,'sec','')
 
+  let with_children  = get(ref,'with_children',0)
+
   let file = strlen(sec) ? projs#sec#file(sec) : ''
 
   let cfile = projs#sec#file('_yml_')
@@ -29,16 +31,17 @@ function! projs#sec#picture#fetch (...)
   call add(lines_sh,'#!/bin/sh')
 
   let cmd_a = [ 'perl', pl_e, '-p', proj ]
-  if len(file)
-    if !filereadable(file) | return | endif
+  if (!len(file) || !filereadable(file)) | return | endif
 
-    call extend(cmd_a,[ '-f' , file ])
-    call extend(cmd_a,[ '--img_root' , shellescape(img_root) ])
-    call extend(env,{ 'file' : file })
+  call extend(cmd_a,[ '-f' , file ])
+  call extend(cmd_a,[ '--img_root' , shellescape(img_root) ])
+  if with_children
+    call extend(cmd_a,[ '--with_children' ])
   endif
-
   let cmd  = join(cmd_a, ' ')
-  call extend(env,{ 'cmd' : cmd })
+
+  call extend(env,{ 'file' : file })
+  call extend(env,{ 'cmd'  : cmd })
   "call base#buf#open_split({ 'lines' : [cmd] })
 
   function env.get(temp_file) dict

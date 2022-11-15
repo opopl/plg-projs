@@ -15,6 +15,7 @@ nnoremap :
   #';e'    : 'PrjAct edt'  
 # projs#sec#picture#fetch
   ';gi'   : 'call lts#buf#pic#fetch()'  
+  ';gc'   : 'call lts#buf#pic#fetch({ "with_children" : 1 })'
   ';kr'   : 'KEYMAP russian_jcukenwin'  
   ';ku'   : 'KEYMAP ukrainian_jcuken'  
   ';aa'   : 'PA author_add'
