@@ -997,13 +997,18 @@ sub _sec_data {
     my ($self, $ref) = @_;
     $ref ||= {};
 
-    my ($proj, $sec) = @{$ref}{qw(proj sec)};
+    my ($proj) = @{$ref}{qw(proj)};
     $proj ||= $self->{proj};
+
+    my $w = { proj => $proj };
+    foreach my $x (qw( sec file )) {
+        $w->{$x} = $ref->{$x} if $ref->{$x};
+    }
 
     my ($rows, $cols, $q, $p) = dbh_select({
         dbh     => $self->{dbh},
         q       => q{ SELECT * FROM projs },
-        w       => { proj => $proj, sec => $sec }
+        w       => $w,
     });
     my $rw = $rows->[0];
     return unless $rw;

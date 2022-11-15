@@ -1159,6 +1159,7 @@ sub load_file {
     my $atend = sub { $self->info_ok_fail };
     my @files;
 
+    # get file from section
     if (!$file && $sec) {
         my $sec_data = $prj->_sec_data({
             sec  => $sec,
@@ -1186,6 +1187,7 @@ sub load_file {
         }
     }
 
+    # no section, no file
     unless ($file) {
         @files = $prj->_files unless @files;
 
@@ -1204,11 +1206,19 @@ sub load_file {
         }
     
         $atend->();
-    
+   
         return $self;
     }
 
-    $file_bn = basename($file);
+    unless ($sec) {
+        $file_bn = basename($file);
+
+        my $sec_data = $prj->_sec_data({
+            proj => $proj,
+            file => $file_bn,
+        });
+        $sec = $sec_data->{'sec'};
+    }
 
     my $img_root = $self->{img_root};
 
