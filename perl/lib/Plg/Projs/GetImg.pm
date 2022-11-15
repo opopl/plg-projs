@@ -836,6 +836,7 @@ sub cmd_load_sec {
         my $scheme = $mapx->{scheme} || {};
 
         my $secx   = $mapx->{sec_suffix} || '';
+        my $ncols   = $mapx->{ncols} || 3;
 
         my $xin = {
             proj => $proj,
@@ -847,6 +848,7 @@ sub cmd_load_sec {
 
             headx => $headx,
             scheme => $scheme,
+            ncols => $ncols,
         };
 
         my $xdir = $mapx->{dir};

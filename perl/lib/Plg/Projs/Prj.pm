@@ -350,6 +350,9 @@ sub sec_import_x {
     my ( $sec, $sec_url, $child )   = @{$ref}{qw( sec sec_url child )};
     my ( $tgx, $tags, $headx, $scheme )   = @{$ref}{qw( tgx tags headx scheme )};
 
+    # number of columns for table of images
+    my $ncols = @{$ref}{qw( ncols )};
+
     my $dir = $ref->{dir};
 
     my @imgs = $imgman->_fs_find_imgs({
@@ -406,6 +409,7 @@ sub sec_import_x {
         proj   => $proj,
         imgs   => $imgs_db,
         scheme => $scheme,
+        ncols  => $ncols,
     });
 
     $self->sec_insert_child({
