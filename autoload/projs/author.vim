@@ -21,7 +21,8 @@ endfunction
 function! projs#author#get_db (...)
   let ref = get(a:000,0,{})
 
-  let author_id = get(ref,'author_id','bilchenko_evgenia')
+  let author_id = get(ref,'author_id','')
+  if !len(author_id) | return {} | endif
 
   let dbfile = projs#bs#db_file()
 

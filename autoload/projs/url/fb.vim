@@ -110,10 +110,11 @@ function! projs#url#fb#data (...)
       call base#varset('this', projs#author#ids_db())
       let author_id = input(printf('[ facebook auth: %s ] Enter new author_id: ',fb_auth), '', 'custom,base#complete#this')
   
-      "let author_db = projs#author#get_db({ 'author_id' : author_id })
-      "if !len(author)
-        "let author = projs#author#add_prompt({ 'author_id' : author_id })
-      "endif
+      let author_db = projs#author#get_db({ 'author_id' : author_id })
+      let author = get(author_db,'name','')
+      if !len(author)
+        let author = projs#author#add_prompt({ 'author_id' : author_id })
+      endif
   
       call projs#facebook#add_author_id({ 
         \ 'author_id' : author_id ,
