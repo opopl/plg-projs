@@ -376,6 +376,9 @@ sub get_opt {
         "debug|d",
         # queries to img.db
         "param=s@",
+
+        # load_file - include children
+        "with_children",
     );
 
     unless( @ARGV ){
@@ -1173,13 +1176,8 @@ sub load_file {
                     sec => $sec,
             });
             foreach my $child (@$children) {
-                my $sdc = $prj->_sec_data({
-                    proj => $proj,
-                    sec => $child,
-                });
-
                 $self->load_file({
-                    sec        => $sec,
+                    sec        => $child,
                     skip_atend => 1,
                     with_children => $with_children,
                 });
