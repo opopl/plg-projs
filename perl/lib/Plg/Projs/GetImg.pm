@@ -1152,37 +1152,62 @@ sub load_file {
     $sec  = $self->_opt_($ref,'sec');
     $proj = $self->_opt_($ref,'proj');
 
-    my $atend = sub { $self->info_ok_fail };
+    # if section provided, iterate also over all children
+    #   stored in tree_children table
+    my $with_children = $self->_opt_($ref,'with_children');
 
-    if ($sec) {
+    my $atend = sub { $self->info_ok_fail };
+    my @files;
+
+    if (!$file && $sec) {
         my $sec_data = $prj->_sec_data({
             sec  => $sec,
             proj => $proj,
         });
-        $file_bn ||= $sec_data->{file};
-        $file = catfile($self->{root}, $file_bn);
+        $file = $sec_data->{'@file_path'};
+        $file_bn = $sec_data->{'file'};
+        if ($with_children) {
+            my $children = $prj->_sec_children({
+                    proj => $proj,
+                    sec => $sec,
+            });
+            foreach my $child (@$children) {
+                my $sdc = $prj->_sec_data({
+                    proj => $proj,
+                    sec => $child,
+                });
+
+                $self->load_file({
+                    sec        => $sec,
+                    skip_atend => 1,
+                    with_children => $with_children,
+                });
+            }
+        }
     }
 
     unless ($file) {
-        my @files = $prj->_files;
+        @files = $prj->_files unless @files;
 
         foreach(@files){
             my $file = catfile($root,$_->{file});
             my $sec  = $_->{sec};
-
+    
             next unless -f $file;
-
+    
             $self->load_file({
                 file       => $file,
                 sec        => $sec,
                 skip_atend => 1,
+                with_children => $with_children,
             });
         }
-
+    
         $atend->();
-
+    
         return $self;
     }
+
     $file_bn = basename($file);
 
     my $img_root = $self->{img_root};
@@ -1211,11 +1236,14 @@ sub load_file {
 sub info_ok_fail {
     my ($self) = @_;
 
+    my $img_root = $self->{img_root};
+    my $irb = basename($img_root);
+
     my @m;
     if ($self->_ok) {
         my $cnt = scalar $self->_ok;
         push @m,
-            sprintf('SUCCESS: %s images', $cnt)
+            sprintf('SUCCESS: %s images; img_root: %s', $cnt, $irb)
             ;
 
         print join("\n",@m) . "\n";
@@ -1231,7 +1259,7 @@ sub info_ok_fail {
         warn join("\n",@m) . "\n";
     }else{
         push @m,
-            sprintf('NO IMAGES! %s',$self->{proj} ? 'proj: ' . $self->{proj} : '');
+            sprintf('NO IMAGES! %s img_root: %s',$self->{proj} ? 'proj: ' . $self->{proj} . ';' : '', $irb);
         print join("\n",@m) . "\n";
     }
 
