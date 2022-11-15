@@ -801,24 +801,25 @@ sub cmd_load_sec {
     my $dir_sec_new = catfile($new_dir, $sec);
     return $self unless -d $dir_sec_new;
 
+    my $root_dir = $dir_sec_new;
     my $map = {
        orig => {
          tex_head   => [ '', '\qqSecOrig', '' ],
-         dir        => $dir_sec_new,
+         dir        => [ qw( . orig )],
          tgx        => [qw( orig.post scrn )],
          sec_suffix => 'orig',
          scheme     => { last => 2 },
        },
        cmtx => {
          tex_head   => [ '', '\qqSecCmtScr', '' ],
-         dir        => catfile($dir_sec_new, qw(cmt)),
+         dir        => 'cmt',
          tgx        => [qw( orig.cmt scrn )],
          sec_suffix => 'cmtx',
          scheme     => { last => 2 },
        },
        video => {
          tex_head   => [ '', '\qqSecVideo', '' ],
-         dir        => catfile($dir_sec_new, qw( video )),
+         dir        => 'video',
          tgx        => [qw( orig.video scrn )],
          sec_suffix => 'video',
          scheme     => { last => 2 },
@@ -830,14 +831,11 @@ sub cmd_load_sec {
     foreach my $x (@$keys) {
         my $mapx = $map->{$x};
 
-        my $dir = $mapx->{dir};
-        next unless -d $dir;
-
         my $tgx    = $mapx->{tgx} || [];
         my $headx  = $mapx->{tex_head} || [];
         my $scheme = $mapx->{scheme} || {};
 
-        my $secx   = $mapx->{sec_suffix} || [];
+        my $secx   = $mapx->{sec_suffix} || '';
 
         my $xin = {
             proj => $proj,
@@ -851,37 +849,48 @@ sub cmd_load_sec {
             scheme => $scheme,
         };
 
-        my $sub_dirs = $mapx->{sub_dirs};
-        if ($sub_dirs) {
-            my $rule = File::Find::Rule->new;
-            $rule->mindepth(1);
-            $rule->directory();
-            my @dirs = $rule->in($dir);
-            foreach my $df (@dirs) {
-               my $rel = abs2rel($df, $dir);
-               next if $rel eq '.';
-
-               ( my $suffix_rel = $rel ) =~ s/\//\./g;
-
-               my $cc = join('.' => $sec, $secx, $suffix_rel);
-
-               $prj->sec_import_x({
-                   %$xin,
-                   dir => $df,
-                   child => $cc,
-               });
-            }
-
-            next;
+        my $xdir = $mapx->{dir};
+        my @search_dirs;
+        unless(ref $xdir) {
+           push @search_dirs, catfile($root_dir, $xdir);
+        } elsif(ref $xdir eq 'ARRAY') {
+           push @search_dirs, map { catfile($root_dir, $_) } @$xdir;
         }
 
-        my $sec_child = sprintf(qq{%s.%s}, $sec, $secx);
+        foreach my $search_dir (@search_dirs) {
+            next unless -d $search_dir;
 
-        $prj->sec_import_x({ 
-            %$xin,
-            dir => $dir,
-            child => $sec_child,
-        });
+            my $sub_dirs = $mapx->{sub_dirs};
+            if ($sub_dirs) {
+                my $rule = File::Find::Rule->new;
+                $rule->mindepth(1);
+                $rule->directory();
+                my @dirs = $rule->in($search_dir);
+                foreach my $df (@dirs) {
+                   my $rel = abs2rel($df, $search_dir);
+                   next if $rel eq '.';
+
+                   ( my $suffix_rel = $rel ) =~ s/\//\./g;
+                   my $cc = join('.' => $sec, $secx, $suffix_rel);
+
+                   $prj->sec_import_x({
+                       %$xin,
+                       dir => $df,
+                       child => $cc,
+                   });
+                }
+
+                next;
+            }
+
+            my $sec_child = sprintf(qq{%s.%s}, $sec, $secx);
+
+            $prj->sec_import_x({
+                %$xin,
+                dir => $search_dir,
+                child => $sec_child,
+            });
+        }
         
     }
 
