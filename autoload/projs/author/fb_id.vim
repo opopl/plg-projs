@@ -14,6 +14,24 @@ function! projs#author#fb_id#list_db ()
 
 endfunction
 
+function! projs#author#fb_id#get_dat (...)
+  let ref = get(a:000,0,{})
+
+  let author_id = get(ref,'author_id','')
+  if !len(author_id) | return [] | endif
+  let fb_ids = []
+
+  let fb_authors   = projs#data#dict({ 'id' : 'fb_authors' })
+  for [fb_id, a_id] in items(fb_authors)
+     if a_id == author_id
+       call add(fb_ids, fb_id)
+     endif
+  endfor
+
+  return fb_ids
+
+endfunction
+
 function! projs#author#fb_id#select_db (...)
   let ref = get(a:000,0,{})
 
