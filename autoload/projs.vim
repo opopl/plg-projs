@@ -138,8 +138,8 @@ function! projs#new (...)
   let texfiles =  projs#update#texfiles()
 
   let nsecs_h = {
-      \ "single_file"   : "_main_",
-      \ "regular"       : join(base#varget('projs_secs_regular',[]),' '),
+      \ "single_file" : "_main_",
+      \ "regular"     : join(base#varget('projs_secs_regular',[]),' '),
       \ }
   let nsecs_s = get(nsecs_h,projtype,'')
   let nsecs_s .= ' _vim_ '
@@ -147,7 +147,7 @@ function! projs#new (...)
   let nsecs_s = input('Sections to be created:',nsecs_s)
   let nsecs = base#qw(nsecs_s)
 
-	debug echo 1
+  debug echo 1
   for sec in nsecs
      call projs#sec#new(sec)
   endfor

@@ -14,6 +14,8 @@ use base qw(
     Plg::Projs::Prj::Builder
 );
 
+use Base::Arg qw( hash_inject );
+
 sub init {
     my ($bld) = @_;
     
