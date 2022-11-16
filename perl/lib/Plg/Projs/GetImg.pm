@@ -836,7 +836,7 @@ sub cmd_load_sec {
         my $scheme = $mapx->{scheme} || {};
 
         my $secx   = $mapx->{sec_suffix} || '';
-        my $ncols   = $mapx->{ncols} || 3;
+        my $ncols  = $mapx->{ncols} || 3;
 
         my $xin = {
             proj => $proj,
@@ -1077,7 +1077,6 @@ sub cmd_db_add_md5 {
 
     return $self;
 }
-
 
 sub cmd_add_images {
     my ($self, $ref) = @_;

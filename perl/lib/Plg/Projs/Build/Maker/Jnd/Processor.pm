@@ -19,6 +19,7 @@ use Base::Arg qw(
 
   opts2dict
   d2dict d2list
+  dict_update_kv
 );
 
 #use Date::Manip;
@@ -374,21 +375,6 @@ sub _expand_kv {
   };
 
   return $val;
-}
-
-sub _dict_update {
-  my ($self, $dict, $k, $v) = @_;
-
-  $dict ||= {};
-
-  if (defined $dict->{$k}) {
-     my $ka = '@' . $k;
-     $dict->{$ka} ||= [ $dict->{$k} ];
-     push @{$dict->{$ka}}, $v;
-  }
-  $dict->{$k} = $v;
-
-  return $dict;
 }
 
 sub _wrapped {
@@ -906,7 +892,7 @@ sub globals_update {
        };
      }
 
-     $globals->{$k} = $v;
+     dict_update_kv($globals, $k, $v);
   }
 
   return $self;
@@ -1652,17 +1638,17 @@ sub loop {
       my ($d, $tab, $locals, $globals) = @{$self}{qw( d tab locals globals )};
 
       if($d){
-         $self->_dict_update($d, $k => $v);
+         dict_update_kv($d, $k => $v);
 
       }elsif($tab){
-         $self->_dict_update($tab, $k => $v);
+         dict_update_kv($tab, $k => $v);
 
       }elsif($globals && $self->{globals_block}){
          $self->globals_update($k => $v);
 
       # variables within ifcmt ... fi block
       }elsif($locals){
-         $self->_dict_update($locals, $k => $v);
+         dict_update_kv($locals, $k => $v);
       }
 
       next;

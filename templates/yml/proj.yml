@@ -1,0 +1,31 @@
+
+vars:
+  img_root: '@env{IMG_ROOT_PC}'
+
+targets:
+  exclude:
+  include:
+  - '_all_'
+
+tex4ht:
+  cfg:
+    preamble:
+    - xhtml
+    - frames
+    - 4,index=2,next
+    - charset=utf-8
+    - javascript
+    content:
+    - '@preamble'
+    - '\begin{document}'
+    - '\EndPreamble'
+
+sii:
+  scts:
+    'preamble.fancyhdr':
+       contents:
+       - '\pagestyle{fancy}'
+    'preamble':
+       doc:
+         class: extreport
+         opts: 'a4paper,11pt,landscape'

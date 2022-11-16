@@ -147,6 +147,7 @@ function! projs#new (...)
   let nsecs_s = input('Sections to be created:',nsecs_s)
   let nsecs = base#qw(nsecs_s)
 
+	debug echo 1
   for sec in nsecs
      call projs#sec#new(sec)
   endfor

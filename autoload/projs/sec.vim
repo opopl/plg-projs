@@ -1119,11 +1119,11 @@ function! projs#sec#new(sec,...)
       endfor
       let lines = nlines
 
-"""newsec__xml_
-    elseif sec =~ '_xml_'
-      let xml_file = base#qw#catpath('plg','projs templates xml proj.xml')
-      if filereadable(xml_file)
-        call extend(lines,readfile(xml_file))
+"""newsec__yml_
+    elseif sec =~ '_yml_'
+      let yml_file = base#qw#catpath('plg','projs templates yml proj.yml')
+      if filereadable(yml_file)
+        call extend(lines,readfile(yml_file))
 
         let nlines = []
         for line in lines
@@ -1163,6 +1163,7 @@ function! projs#sec#new(sec,...)
       endfor
       let lines = nlines
 
+"""newsec__perl
     elseif sec =~ '_perl\.'
       let sec_name = substitute(copy(sec),'^_perl\.\(.*\)','\1','g')
 
@@ -1183,6 +1184,7 @@ function! projs#sec#new(sec,...)
       endif
 
 """newsec__pm.
+    " _pm.bld _pm.edt
     elseif sec =~ '_pm\.'
       let sec_name = substitute(copy(sec),'^_pm.\(.*\)','\1','g')
 

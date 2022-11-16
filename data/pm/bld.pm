@@ -14,5 +14,28 @@ use base qw(
     Plg::Projs::Prj::Builder
 );
 
+sub init {
+    my ($bld) = @_;
+    
+    my $h = {
+        trg_list => [qw(usual)],
+        tex_exe  => 'pdflatex',
+        callbacks => {
+          maker => {
+          }
+        },
+        custom => {
+           maps_act => {
+           }
+        },
+    };
+
+    hash_inject($bld, $h);
+
+    $bld->SUPER::init();
+
+    return $bld;
+}
+
 1;
 
