@@ -161,6 +161,10 @@ function! projs#sec#date (...)
   let repr = get(ref,'repr','short')
 
   let lst = matchlist(sec, '^\zs\(\d\+\)_\(\d\+\)_\(\d\+\)\ze')
+
+  " no match for dates
+  if !len(lst) | return {} | endif
+
   let [ date, day, month, year ] = lst[0:3]
 
   let day = substitute(day,'^0','','g')

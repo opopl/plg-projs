@@ -795,8 +795,8 @@ sub cmd_load_sec {
     $DB::single = 1;
 
     # current cmd data
-    my $lts_data = catfile($ENV{LTS_DATA});
-    my $new_dir  = catfile($lts_data, qw(new));
+    my $pic_data = catfile($ENV{PIC_DATA},$rootid,$proj);
+    my $new_dir  = catfile($pic_data, qw(new));
 
     my $dir_sec_new = catfile($new_dir, $sec);
     return $self unless -d $dir_sec_new;
