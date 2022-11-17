@@ -862,6 +862,14 @@ sub cmd_load_sec {
         foreach my $search_dir (@search_dirs) {
             next unless -d $search_dir;
 
+            my $sec_child = sprintf(qq{%s.%s}, $sec, $secx);
+
+            $prj->sec_import_x({
+                %$xin,
+                dir => $search_dir,
+                child => $sec_child,
+            });
+
             my $sub_dirs = $mapx->{sub_dirs};
             if ($sub_dirs) {
                 my $rule = File::Find::Rule->new;
@@ -885,13 +893,6 @@ sub cmd_load_sec {
                 next;
             }
 
-            my $sec_child = sprintf(qq{%s.%s}, $sec, $secx);
-
-            $prj->sec_import_x({
-                %$xin,
-                dir => $search_dir,
-                child => $sec_child,
-            });
         }
         
     }
