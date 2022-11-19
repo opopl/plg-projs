@@ -766,21 +766,26 @@ sub _sec_new_lines {
     my ($seccmd, $title) = @{$ref}{qw(seccmd title)};
     my ($do) = @{$ref}{qw(do)};
     $do ||= {};
-    my $label_str = sprintf(q|\label{%s}|,$sec);
+    my $label_str = sprintf(q|\label{sec:%s}|,$sec);
 
-    # array to be appended at the end
-    my ($append) = @{$ref}{qw(append)};
+    # append - array to be appended at the end
+    # prepend - array to be inserted at the top
+    my ($append, $prepend) = @{$ref}{qw(append prepend)};
     $append ||= [];
+    $prepend ||= [];
 
     my @lines;
     push @lines,
-       $self->_sec_head($ref);
+       $self->_sec_head($ref),
+       @$prepend
+       ;
 
     if ($seccmd && $title){
        push @lines,
-         ' ',
+         '',
          sprintf(q|\%s{%s}|,$seccmd, $title),
          $label_str,
+         '',
          ;
     }
 

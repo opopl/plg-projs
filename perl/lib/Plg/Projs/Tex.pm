@@ -152,6 +152,9 @@ our %fbicons_heart = (
 ###fbicons_all
 ###all
 our %fbicons_all = (
+  '👑' => 'crown',
+  '🥦' => 'broccoli',
+  '🐝' => 'honeybee',
   '🟦' => 'blue.square',
   '💊' => 'pill',
   '🚛' => 'lorry.articulated',

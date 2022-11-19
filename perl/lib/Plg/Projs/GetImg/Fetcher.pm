@@ -98,6 +98,8 @@ sub d_block_import {
     my ($proj, $sec, $rootid) = @{$self}{qw( proj sec rootid )};
     my $limit = $d->{limit} || 0;
 
+    my $dir_sec_new = catfile($ENV{PIC_DATA}, $rootid, $proj, qw(new), $sec);
+
     if (-d $path) {
         my @imgs = $imgman->_fs_find_imgs({
             find  => { max_depth => 1 },
