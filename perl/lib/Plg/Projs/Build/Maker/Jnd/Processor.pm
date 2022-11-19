@@ -1090,10 +1090,12 @@ sub _d2tex_import {
         $v =~ s/\@this/$proj/g;
      } elsif ($k eq 'sec') {
         (my $sec_minus = $sec) =~ s/\.\w+$//g;
-        $v =~ s/\@this.minus/$sec_minus/g;
+        $v =~ s/\@this\.minus/$sec_minus/g;
+        $v =~ s/\@this/$sec/g;
      }
      $w->{$k} = $v;
   }
+  $DB::single = 1;
 
   my $imgs = $imgman->_db_imgs({
       tags => { and => \@tags_a },
@@ -1129,6 +1131,8 @@ sub _d2tex_import {
 
      my ($url, $name_orig, $caption) = @{$img}{qw(url name_orig caption)};
      $caption ||= $name_orig;
+
+     $caption = undef if ($tab && $tab->{no_caption});
 
      my $du = { 
          url     => $url,
