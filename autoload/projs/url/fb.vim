@@ -120,6 +120,9 @@ function! projs#url#fb#data (...)
         \ 'author_id' : author_id ,
         \ 'fb_auth'   : fb_auth ,
         \ })
+
+      call lts#cmd#mk#author_import_dat2db ()
+
     endif
   endif
 

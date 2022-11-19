@@ -1173,9 +1173,11 @@ sub load_file {
     my $atend = sub { $self->info_ok_fail };
     my @files;
 
+    my $sec_data;
+
     # get file from section
     if (!$file && $sec) {
-        my $sec_data = $prj->_sec_data({
+        $sec_data = $prj->_sec_data({
             sec  => $sec,
             proj => $proj,
         });
@@ -1222,7 +1224,7 @@ sub load_file {
     unless ($sec) {
         $file_bn = basename($file);
 
-        my $sec_data = $prj->_sec_data({
+        $sec_data = $prj->_sec_data({
             proj => $proj,
             file => $file_bn,
         });
@@ -1239,6 +1241,8 @@ sub load_file {
        file => $file,
        sec  => $sec,
        proj => $proj,
+
+       sec_data  => $sec_data,
     );
     my $ftc = $self->_new_fetcher(\%n);
     $DB::single = 1;

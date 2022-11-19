@@ -95,10 +95,15 @@ sub d_block_import {
     push @$tags_a,
         $tags ? str_split_trim($tags => ",") : (); 
 
-    my ($proj, $sec, $rootid) = @{$self}{qw( proj sec rootid )};
+    my ($proj, $sec, $rootid, $sec_data) = @{$self}{qw( proj sec rootid sec_data )};
+
     my $limit = $d->{limit} || 0;
 
     my $dir_sec_new = catfile($ENV{PIC_DATA}, $rootid, $proj, qw(new), $sec);
+    $path =~ s/\@new/$dir_sec_new/g;
+
+    my $url_parent = $sec_data->{url} if $sec_data;
+    $DB::single = 1;
 
     if (-d $path) {
         my @imgs = $imgman->_fs_find_imgs({
@@ -114,6 +119,7 @@ sub d_block_import {
             $imgman->pic_add({
                 file => $img_path,
                 tags => $tags_a,
+                url_parent => $url_parent,
     
                 proj   => $proj,
                 sec    => $sec,
