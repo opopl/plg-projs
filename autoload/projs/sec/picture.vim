@@ -40,7 +40,7 @@ function! projs#sec#picture#fetch (...)
   endif
   let cmd  = join(cmd_a, ' ')
 
-  call extend(env,{ 'file' : file })
+  debug call extend(env,{ 'file' : file })
   call extend(env,{ 'cmd'  : cmd })
   "call base#buf#open_split({ 'lines' : [cmd] })
 

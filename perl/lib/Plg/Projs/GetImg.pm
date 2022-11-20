@@ -1177,26 +1177,15 @@ sub load_file {
     my $sec_data;
 
     # get file from section
-    if (!$file && $sec) {
+    #   section overrides file
+    if ($sec) {
         $sec_data = $prj->_sec_data({
             sec  => $sec,
             proj => $proj,
         });
         $file = $sec_data->{'@file_path'};
         $file_bn = $sec_data->{'file'};
-        if ($with_children) {
-            my $children = $prj->_sec_children({
-                    proj => $proj,
-                    sec => $sec,
-            });
-            foreach my $child (@$children) {
-                $self->load_file({
-                    sec        => $child,
-                    skip_atend => 1,
-                    with_children => $with_children,
-                });
-            }
-        }
+        
     }
 
     # no section, no file
@@ -1210,7 +1199,6 @@ sub load_file {
             next unless -f $file;
     
             $self->load_file({
-                file       => $file,
                 sec        => $sec,
                 skip_atend => 1,
                 with_children => $with_children,
@@ -1222,14 +1210,28 @@ sub load_file {
         return $self;
     }
 
+    $file_bn = basename($file) unless $file_bn;
     unless ($sec) {
-        $file_bn = basename($file);
-
         $sec_data = $prj->_sec_data({
             proj => $proj,
             file => $file_bn,
         });
         $sec = $sec_data->{'sec'};
+    }
+
+    $DB::single = 1;
+    if ($with_children) {
+        my $children = $prj->_sec_children({
+                proj => $proj,
+                sec => $sec,
+        });
+        foreach my $child (@$children) {
+            $self->load_file({
+                sec        => $child,
+                skip_atend => 1,
+                with_children => $with_children,
+            });
+        }
     }
 
     my $img_root = $self->{img_root};
