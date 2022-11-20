@@ -795,10 +795,7 @@ sub cmd_load_sec {
     $DB::single = 1;
 
     # current cmd data
-    my $pic_data = catfile($ENV{PIC_DATA},$rootid,$proj);
-    my $new_dir  = catfile($pic_data, qw(new));
-
-    my $dir_sec_new = catfile($new_dir, $sec);
+    my $dir_sec_new = $prj->_dir_sec_new({ sec => $sec });
     return $self unless -d $dir_sec_new;
 
     my $root_dir = $dir_sec_new;
@@ -827,6 +824,7 @@ sub cmd_load_sec {
          sub_dirs   => 1,
        },
     };
+    my $insert_mode = $cmd_data->{insert_mode};
 
     foreach my $x (@$keys) {
         my $mapx = $map->{$x};
@@ -849,6 +847,9 @@ sub cmd_load_sec {
             headx => $headx,
             scheme => $scheme,
             ncols => $ncols,
+
+            root_dir => $root_dir,
+            insert_mode => $insert_mode,
         };
 
         my $xdir = $mapx->{dir};

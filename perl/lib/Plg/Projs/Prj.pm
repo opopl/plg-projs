@@ -347,6 +347,8 @@ sub sec_import_x {
     my $rootid = $ref->{rootid} || $self->{rootid};
     my $proj   = $ref->{proj} || $self->{proj};
 
+    my $insert_mode   = $ref->{insert_mode} || 'imgs';
+
     my ( $sec, $sec_url, $child )   = @{$ref}{qw( sec sec_url child )};
     my ( $tgx, $tags, $headx, $scheme )   = @{$ref}{qw( tgx tags headx scheme )};
 
@@ -404,13 +406,17 @@ sub sec_import_x {
         rw     => 1,
     });
 
-    $self->sec_import_imgs({
-        sec    => $child,
-        proj   => $proj,
-        imgs   => $imgs_db,
-        scheme => $scheme,
-        ncols  => $ncols,
-    });
+    if ($insert_mode eq 'imgs') {
+        $self->sec_import_imgs({
+            sec    => $child,
+            proj   => $proj,
+            imgs   => $imgs_db,
+            scheme => $scheme,
+            ncols  => $ncols,
+        });
+    }
+    elsif ($insert_mode eq 'import') {
+    }
 
     $self->sec_insert_child({
         sec   => $sec,
@@ -1000,6 +1006,23 @@ sub _sec_file_a {
     }
 
     return @file_a;
+}
+
+sub _dir_sec_new {
+    my ($self, $ref) = @_;
+    $ref ||= {};
+
+    my $sec    = $ref->{sec};
+    my $proj   = $ref->{proj} || $self->{proj};
+    my $rootid = $self->{rootid};
+
+    # current cmd data
+    my $pic_data = catfile($ENV{PIC_DATA}, $rootid, $proj);
+    my $new_dir  = catfile($pic_data, qw(new));
+
+    my $dir_sec_new = catfile($new_dir, $sec);
+
+    return $dir_sec_new;
 }
 
 sub _sec_data {
