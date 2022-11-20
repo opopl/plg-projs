@@ -689,7 +689,11 @@ sub match_tab_begin {
 
   $self->tab_init;
 
-  hash_update( $self->{tab}, $self->_opts_dict($opts_s) );
+  if (ref $opts_s eq 'HASH') {
+    hash_update( $self->{tab}, $opts_s );
+  }elsif(!ref $opts_s){
+    hash_update( $self->{tab}, $self->_opts_dict($opts_s) );
+  }
 
   my $tab = $self->{tab};
   my $tab_cols = $tab->{cols};
@@ -1062,7 +1066,7 @@ sub _d2tex_import {
   
   my $opts_import = $globals->{'opts_import'};
 
-  my $tab_opts  = $d->{tab} || '';
+  #my $tab_opts  = $d->{tab} || '';
 
   my @tags_a = d2list($d,'tags');
 
@@ -1105,14 +1109,15 @@ sub _d2tex_import {
       limit => $limit
   });
 
-  my $tab_dict = $self->_opts_dict($tab_opts) || {};
+  #my $tab_dict = opts2dict($tab_opts) || {};
+  my $tab_dict = d2dict($d, 'tab') || {};
   my $cols = $tab_dict->{cols} || 1;
 
   my @tx;
   my $tab;
   my $n_imgs = scalar @$imgs;
 
-  my $use_tab = $tab_opts ? 1 : 0;
+  my $use_tab = (keys %$tab_dict) ? 1 : 0;
   $use_tab = 0 if $n_imgs == 1;
 
   my $j = 0;
@@ -1123,7 +1128,7 @@ sub _d2tex_import {
      if ($use_tab) {
         if($j % $cols == 1){
             $self
-              ->match_tab_begin($tab_opts)
+              ->match_tab_begin($tab_dict)
               ->lpush_tab_start;
             $tab = $self->{tab};
         }
