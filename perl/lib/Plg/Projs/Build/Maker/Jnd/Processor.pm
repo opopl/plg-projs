@@ -18,7 +18,8 @@ use Base::Arg qw(
   dict_update
 
   opts2dict
-  d2dict d2list
+  d2dict
+  d2list
   dict_update_kv
 );
 
@@ -1109,23 +1110,21 @@ sub _d2tex_import {
       limit => $limit
   });
 
-  #my $tab_dict = opts2dict($tab_opts) || {};
-  my $tab_dict = d2dict($d, 'tab') || {};
-  my $cols = $tab_dict->{cols} || 1;
+  my $tab_dict = d2dict($d, 'tab');
+  my $cols = ($tab_dict->{cols} || 1) if $tab_dict;
 
   my @tx;
   my $tab;
   my $n_imgs = scalar @$imgs;
 
-  my $use_tab = (keys %$tab_dict) ? 1 : 0;
-  $use_tab = 0 if $n_imgs == 1;
+  $tab_dict = undef if $n_imgs == 1;
 
   my $j = 0;
   $DB::single = 1;
   foreach my $img (@$imgs) {
      $j++;
 
-     if ($use_tab) {
+     if ($tab_dict) {
         if($j % $cols == 1){
             $self
               ->match_tab_begin($tab_dict)
@@ -1144,14 +1143,14 @@ sub _d2tex_import {
          type    => 'ig',
          caption => $caption,
      };
-     if ($use_tab){
+     if ($tab_dict){
         $self->lpush_d($du);
      }else{
         $du->{width} = $d->{width} || 0.8;
         push @tx, $self->_d2tex($du), '';
      }
 
-     if ($use_tab) {
+     if ($tab_dict) {
          if($j % $cols == 0 || $j == $n_imgs){
              $self->lpush_tab_end;
              push @tx, @{$tab->{store} || []};
