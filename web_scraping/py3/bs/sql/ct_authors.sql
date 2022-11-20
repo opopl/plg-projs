@@ -4,5 +4,6 @@ CREATE TABLE IF NOT EXISTS authors (
     url TEXT,
     name TEXT,
     plain TEXT,
-    description TEXT
+    description TEXT,
+    uid INTEGER NOT NULL DEFAULT 1 UNIQUE
 );
