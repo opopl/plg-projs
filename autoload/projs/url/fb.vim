@@ -83,6 +83,8 @@ function! projs#url#fb#data (...)
             \ 'id'  : 'authors',
             \ 'upd' : { author_id : fb_group_name },
             \ })
+        call lts#cmd#mk#author_import_dat2db ()
+
       endif
 
       echo 'Facebook group id: ' . fb_group_id
