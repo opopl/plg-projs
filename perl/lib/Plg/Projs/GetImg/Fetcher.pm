@@ -106,10 +106,10 @@ sub d_block_import {
 
     if (-d $path) {
         my $imgs_db = $imgman->_db_imgs({
-          tags => { and => $tags_a },
-          fields => [qw( url name_orig caption md5 )],
-          mode => 'rows',
-          where => { proj => $proj, sec => $sec },
+            tags => { and => $tags_a },
+            fields => [qw( url name_orig caption md5 )],
+            mode => 'rows',
+            where => { proj => $proj, sec => $sec },
         });
         my @imgs_db_md5 = map { $_->{md5} } @$imgs_db;
 
