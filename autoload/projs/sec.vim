@@ -1273,7 +1273,7 @@ function! projs#sec#new(sec,...)
     endif
 
     if get(ref,'p_tree')
-      call projs#bld#do#print_ii_tree({ 'target' : 'usual' })
+      "call projs#bld#do#print_ii_tree({ 'target' : 'usual' })
     endif
 
     return 1

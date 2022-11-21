@@ -527,6 +527,8 @@ sub _fs_find_imgs {
     my $exts = $ref->{exts} || [qw( jpg jpeg png )];
     my $dirs = $ref->{dirs} || [];
     my $match = $ref->{match} || [];
+    my $filter = $ref->{filter} || {};
+
     return () unless $dirs && @$dirs;
 
     my $limit = $ref->{limit} || 0;
@@ -542,6 +544,23 @@ sub _fs_find_imgs {
     my $rule = File::Find::Rule->new;
     $rule->name(@glob);
     $rule->maxdepth($max_depth) if $max_depth;
+
+    my $execs = $filter->{exec} || [];
+
+    my $md5_list   = $filter->{md5} || [];
+    if (@$md5_list) {
+        push @$execs,
+            sub {
+                my ($short, $path, $full_path) = @_;
+                my $md5    = md5sum($full_path);
+                ! grep { /^$md5$/ } @$md5_list;
+            }
+    }
+
+    foreach my $exec (@$execs) {
+        next unless ref $exec eq 'CODE';
+        $rule->exec($exec);
+    }
 
     my @imgs = $rule->in(@$dirs);
     @imgs = sort { stat($a)->mtime <=> stat($b)->mtime } @imgs;

@@ -103,19 +103,29 @@ sub d_block_import {
     $path =~ s/\@new/$dir_sec_new/g;
 
     my $url_parent = $sec_data->{url} if $sec_data;
-    $DB::single = 1;
 
     if (-d $path) {
-        my @imgs = $imgman->_fs_find_imgs({
+        my $imgs_db = $imgman->_db_imgs({
+          tags => { and => $tags_a },
+          fields => [qw( url name_orig caption md5 )],
+          mode => 'rows',
+          where => { proj => $proj, sec => $sec },
+        });
+        my @imgs_db_md5 = map { $_->{md5} } @$imgs_db;
+
+        my @imgs_fs = $imgman->_fs_find_imgs({
             find  => { max_depth => 1 },
             dirs  => [ $path ],
+            filter => {
+               md5 => [@imgs_db_md5]
+            },
             exts  => $exts,
             match => $match ? [ split (',' => $match) ] : [],
             limit => $limit,
         });
         $DB::single = 1;
         #we import into database all screenshots on the filesystem
-        foreach my $img_path (@imgs) {
+        foreach my $img_path (@imgs_fs) {
             $imgman->pic_add({
                 file => $img_path,
                 tags => $tags_a,
