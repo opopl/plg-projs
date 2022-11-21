@@ -876,9 +876,9 @@ sub _sec_file {
     return unless $sec && $proj;
 
     my @file_a = $self->_sec_file_a({
-            sec    => $sec,
-            proj   => $proj,
-            rootid => $rootid
+        sec    => $sec,
+        proj   => $proj,
+        rootid => $rootid
     });
     my $file = catfile(@file_a);
 

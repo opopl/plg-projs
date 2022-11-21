@@ -80,6 +80,11 @@ sub cmd_jnd_compose {
         ;
 
     copy($jfile, $jfile_ht);
+    my $cfg = $mkr->{bld}->_sec_file({ 'sec' => 'cfg' });
+    if (-f $cfg) {
+        my $cfg_ht = catfile($mkr->{src_dir},'jnd_ht.cfg');
+        copy($cfg, $cfg_ht);
+    }
 
     return $mkr;
 }
