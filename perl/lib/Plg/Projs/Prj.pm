@@ -357,9 +357,25 @@ sub sec_import_x {
 
     my $dir = $ref->{dir};
 
+    my $w_db = {
+         sec        => $sec,
+         proj       => $proj,
+         rootid     => $rootid,
+         url_parent => $sec_url,
+    };
+
+    my $imgs_db = $imgman->_db_imgs({
+         tags => { and => [ @$tgx, @$tags ] },
+         fields => [qw( url name_orig caption md5 )],
+         mode  => 'rows',
+         where => $w_db,
+    });
+    my @imgs_db_md5 = map { $_->{md5} } @$imgs_db;
+
     my @imgs = $imgman->_fs_find_imgs({
         find  => { max_depth => 1 },
         dirs  => [ $dir ],
+        filter => { md5 => [ @imgs_db_md5 ] },
         #limit => 5,
     });
 
@@ -376,11 +392,7 @@ sub sec_import_x {
             file => $img_path,
             tags => [ @$tgx, @$tags ],
 
-            proj   => $proj,
-            sec    => $sec,
-            rootid => $rootid,
-            url_parent => $sec_url,
-
+            %$w_db,
             mv => 0,
         });
     }
@@ -388,12 +400,7 @@ sub sec_import_x {
     # we grab all screenshots already in the database
     my $imgs_db = $imgman->_db_imgs({
         tags => { and => $tgx },
-        where => {
-          sec        => $sec,
-          proj       => $proj,
-          rootid     => $rootid,
-          url_parent => $sec_url,
-        }
+        where => $w_db,
     });
 
     return $self unless @$imgs_db;
