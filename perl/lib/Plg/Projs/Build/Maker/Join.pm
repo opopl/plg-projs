@@ -237,6 +237,7 @@ sub _join_lines {
                 line  => $_,
 
                 proj => $proj,
+                parent_info => [@yaml],
             });
 
             next;

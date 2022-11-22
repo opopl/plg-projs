@@ -88,10 +88,10 @@ sub _line_process_pat_ii {
     my $ii_sec = $ref->{ii_sec} || '';
     my $sect   = $ref->{sect} || '';
 
-
     my $proj   = $ref->{proj} || '';
 
     my $delim  = $ref->{delim} || '';
+    my $parent_info  = $ref->{parent_info} || [];
 
     my $lines         = $ref->{lines} || [];
     my $include_below = $ref->{include_below} || [];
@@ -116,7 +116,7 @@ sub _line_process_pat_ii {
 
     return $mkr unless $inc;
 
-    my @ii_lines = $mkr->_join_lines($ii_sec,{ 
+    my @ii_lines = $mkr->_join_lines($ii_sec,{
         proj           => $proj,
         ii_include_all => $iall,
         include_below  => $include_below,
@@ -126,9 +126,9 @@ sub _line_process_pat_ii {
         $delim,
         '%% ' . $line,
         $delim,
-        @ii_lines
+        @ii_lines,
+        @$parent_info
     ;
-
 
     return $mkr;
 }
