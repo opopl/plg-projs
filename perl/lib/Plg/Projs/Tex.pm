@@ -152,6 +152,7 @@ our %fbicons_heart = (
 ###fbicons_all
 ###all
 our %fbicons_all = (
+  '🥐' => 'croissant',
   '🔗' => 'link',
   '🟡' => 'yellow.circle',
   '💳' => 'credit.card',
