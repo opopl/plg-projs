@@ -262,6 +262,34 @@ snippet igfb
 	@utfname
 snippet fbicm
 	@igg{fbicon.check.mark}
+snippet impo
+	\qqSecOrig
+	
+	\ifcmt
+	  import
+	    @path @new/orig
+	    @match *.png
+	
+	    @tags scrn,orig.post
+	
+	    @where sec=@this,proj=@this
+	  
+	    @tab cols=2,no_fig,center,no_caption
+	\fi
+	
+	\qqSecCmtScr
+	
+	\ifcmt
+	  import
+	    @path @new/cmt
+	    @match *.png
+	
+	    @tags scrn,orig.cmt
+	
+	    @where sec=@this,proj=@this
+	  
+	    @tab cols=2,no_fig,center,no_caption
+	\fi
 snippet imp
 	\ifcmt
 	  import

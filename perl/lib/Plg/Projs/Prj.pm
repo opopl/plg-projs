@@ -398,7 +398,7 @@ sub sec_import_x {
     }
 
     # we grab all screenshots already in the database
-    my $imgs_db = $imgman->_db_imgs({
+    $imgs_db = $imgman->_db_imgs({
         tags => { and => $tgx },
         where => $w_db,
     });
