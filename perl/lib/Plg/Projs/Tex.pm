@@ -152,6 +152,9 @@ our %fbicons_heart = (
 ###fbicons_all
 ###all
 our %fbicons_all = (
+  '🔗' => 'link',
+  '🟡' => 'yellow.circle',
+  '💳' => 'credit.card',
   '🚑' => 'ambulance',
   '🔰' => 'japanese.symbol.for.beginner',
   '✍️'  => 'writing.hand',
