@@ -80,6 +80,7 @@ sub inj_base {
         maps_act => {
             # Plg::Projs::Build::Maker::Jnd cmd_jnd_build
             'compile'          => 'jnd_build',
+            'compile_box'      => 'jnd_build_box',
             # Plg::Projs::Build::Maker::Jnd cmd_jnd_compose
             'join'             => 'jnd_compose',
             # Plg::Projs::Build::Maker::Jnd cmd_jnd_compose_box
