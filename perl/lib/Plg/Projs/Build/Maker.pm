@@ -311,12 +311,16 @@ sub init {
     };
 
     hash_inject($mkr, $h);
+
+    if ($mkr->{box}) {
+        mkpath $mkr->{src_dir_box};
+        $mkr->{src_dir} = $mkr->{src_dir_box};
+    }
+
     mkpath $mkr->{src_dir};
 
     return $mkr;
 }
-
-
 
 sub _find_ {
     my ($mkr, $dirs, $exts) = @_;

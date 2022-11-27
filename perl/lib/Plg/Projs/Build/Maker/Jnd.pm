@@ -37,35 +37,6 @@ use Base::DB qw(
 
 use Plg::Projs::Build::Maker::Jnd::Processor;
 
-sub cmd_jnd_build_box {
-    my ($mkr) = @_;
-
-    $mkr
-        ->cmd_jnd_set_box
-        ->cmd_jnd_build;
-
-    return $mkr;
-}
-
-sub cmd_jnd_compose_box {
-    my ($mkr) = @_;
-
-    $mkr
-        ->cmd_jnd_set_box
-        ->cmd_jnd_compose;
-
-    return $mkr;
-}
-
-sub cmd_jnd_set_box {
-    my ($mkr) = @_;
-
-    mkpath $mkr->{src_dir_box};
-    $mkr->{src_dir} = $mkr->{src_dir_box};
-    $mkr->{box} = 1;
-
-    return $mkr;
-}
 
 sub cmd_jnd_compose {
     my ($mkr) = @_;
