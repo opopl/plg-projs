@@ -261,6 +261,7 @@ sii:
          - titletoc
          - xparse
          - p.core
+         - p.unicode
          - p.qq
          - p.zz
          - p.wrapfig
