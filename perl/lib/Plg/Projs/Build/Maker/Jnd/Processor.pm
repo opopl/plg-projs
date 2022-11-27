@@ -1,8 +1,12 @@
 
 package Plg::Projs::Build::Maker::Jnd::Processor;
 
+use utf8;
+
 use strict;
 use warnings;
+
+#binmode STDOUT, ":encoding(UTF-8)";
 
 use File::Slurp::Unicode;
 use File::Spec::Functions qw(catfile);
@@ -827,6 +831,7 @@ sub ldo_no_cmt {
     unshift @push, $_;
     push @{$self->{nlines}}, @push;
   }
+#U+FE0F
 
   return $self;
 }
