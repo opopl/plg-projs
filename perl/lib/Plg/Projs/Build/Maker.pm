@@ -304,7 +304,7 @@ sub init {
 
     $h = { %$h,
         src_dir       => catfile($h->{build_dir},qw( .. src ),$target),
-        src_dir_box   => catfile($h->{build_dir},qw( .. src_box ),$target),
+        src_dir_box   => catfile($ENV{BOX}, $root_id, $proj, $target),
         tex_opts      => $tex_opts,
         tex_opts_a    => $tex_opts_a,
         out_dir_pdf_b => catfile($h->{out_dir_pdf}, qw(b_pdflatex) )

@@ -10,6 +10,8 @@ use File::Spec::Functions qw(catfile);
 use Plg::Projs::GetImg;
 
 use YAML qw( LoadFile Load Dump DumpFile );
+use File::Copy qw(copy move);
+use File::Path qw(mkpath rmtree);
 
 use Base::Arg qw(
   hash_inject
@@ -1024,7 +1026,7 @@ sub _d_db_data {
     $rw = shift @$rows;
 
     # latex representation of the image file path
-    $img_path = sprintf(q{\imgroot/%s},$rw->{img});
+    $img_path = $mkr->{box} ? join("/" => 'imgs', $rw->{img}) : sprintf(q{\imgroot/%s},$rw->{img});
 
     # filesystem image file path
     $img_file = catfile($mkr->{img_root},$rw->{img});
@@ -1041,7 +1043,10 @@ sub _d_db_data {
     }
 
     if ($mkr->{box}) {
-       my $src_dir = $mkr->{src_dir};
+       $mkr->{img_dir} ||= catfile($mkr->{src_dir},qw(imgs));
+       mkpath $mkr->{img_dir} unless -d $mkr->{img_dir};
+       my $img_file_box = catfile($mkr->{img_dir}, $rw->{img});
+       copy($img_file, $img_file_box) unless -e $img_file_box;
     }
 
     last;
@@ -1392,11 +1397,13 @@ sub f_write {
 
   my $file = $ref->{file} || $self->{jfile};
 
-  unshift @{$self->{nlines}},
-     ' ',
-     sprintf(q{\def\imgroot{%s}}, $mkr->{img_root_unix} ),
-     ' '
-     ;
+  unless ($mkr->{box}) {
+      unshift @{$self->{nlines}},
+         ' ',
+         sprintf(q{\def\imgroot{%s}}, $mkr->{img_root_unix} ),
+         ' '
+         ;
+  }
 
   my $nlines = $self->{nlines};
   write_file($file,join("\n",@$nlines) . "\n");
