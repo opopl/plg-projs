@@ -157,7 +157,7 @@ sub cmd_jnd_build {
               mkpath $dst unless -d $dst;
 
               my @dst_ht_files = File::Find::Rule
-                 ->new->name('*.html')->in($dst);
+                 ->new->name('*.html', '*.css')->in($dst);
               map { rmtree($_) } @dst_ht_files;
 
               my $dst_img_dir = catfile($dst,qw(imgs));
@@ -171,7 +171,7 @@ sub cmd_jnd_build {
               }
 
               my @ht_files = File::Find::Rule
-                 ->new->name('*.html')->in($src_dir);
+                 ->new->name('*.html', '*.css')->in($src_dir);
               map { move($_, $dst) } @ht_files;
               if ($do_box && $img_dir && -d $img_dir) {
                  my @imgs = File::Find::Rule
