@@ -47,6 +47,7 @@ use JSON::Dumper::Compact;
 
 use FindBin qw($Bin $Script);
 use File::Find qw(find);
+#use File::Find::Rule;
 
 use Plg::Projs::Prj;
 
@@ -266,7 +267,8 @@ sub init {
     my $root    = $mkr->{root} || '';
     my $root_id = $mkr->{root_id} || '';
 
-    my $pdfout = $ENV{PDFOUT};
+    my $pdfout  = $ENV{PDFOUT} || catfile($ENV{HOME},qw(out pdf));
+    my $htmlout = $ENV{HTMLOUT} || catfile($ENV{HOME},qw(out html));
 
     my $bld    = $mkr->{bld} || {};
     my $target = $bld->{target} || '';
@@ -276,11 +278,13 @@ sub init {
     my $h = {
         proj            => $proj,
         pdfout          => $pdfout,
+        htmlout         => $htmlout,
         tex_exe         => 'pdflatex',
         build_dir_unix  => join("/",@build_dir_a),
         build_dir       => catfile($root, @build_dir_a),
         bib_file        => catfile($root, qq{$proj.refs.bib}),
         out_dir_pdf     => catfile($pdfout, $root_id, $proj),
+        out_dir_html    => catfile($htmlout, $root_id, $proj),
         dbfile          => catfile($root,'projs.sqlite'),
         cmd             => 'bare',
         ii_tree         => {},           # see _join_lines 
@@ -304,19 +308,23 @@ sub init {
 
     $h = { %$h,
         src_dir       => catfile($h->{build_dir},qw( .. src ),$target),
-        src_dir_box   => catfile($h->{build_dir},qw( .. src_box ),$target),
+        src_dir_box   => catfile($ENV{BOX}, $root_id, $proj, $target),
         tex_opts      => $tex_opts,
         tex_opts_a    => $tex_opts_a,
         out_dir_pdf_b => catfile($h->{out_dir_pdf}, qw(b_pdflatex) )
     };
 
     hash_inject($mkr, $h);
+
+    if ($mkr->{box}) {
+        mkpath $mkr->{src_dir_box};
+        $mkr->{src_dir} = $mkr->{src_dir_box};
+    }
+
     mkpath $mkr->{src_dir};
 
     return $mkr;
 }
-
-
 
 sub _find_ {
     my ($mkr, $dirs, $exts) = @_;
@@ -344,6 +352,24 @@ sub _cmd_bibtex {
     my $cmd = sprintf('bibtex %s',$proj);
 
     return $cmd;
+}
+
+sub _sub_clean {
+    my ($mkr, $ref) = @_;
+    $ref ||= {};
+
+    my $dir = $ref->{dir} || getcwd();
+    my $exts = $ref->{exts} || [qw()];
+
+    my $sub = sub {
+        my $rule = File::Find::Rule->new;
+        $rule->name(map { "*.$_" } @$exts);
+        #$rule->maxdepth($max_depth) if $max_depth;
+        
+        #my @imgs = $rule->in(@$dirs);
+    };
+
+    return $sub;
 }
 
 sub _cmd_tex {

@@ -1,8 +1,15 @@
 
 package Plg::Projs::Build::Maker::Jnd::Processor;
 
+use utf8;
+
 use strict;
 use warnings;
+
+# binmode STDOUT, ":encoding(UTF-8)";
+# use open ':std', ':encoding(UTF-8)'; 
+#
+use Encode;
 
 use File::Slurp::Unicode;
 use File::Spec::Functions qw(catfile);
@@ -10,6 +17,8 @@ use File::Spec::Functions qw(catfile);
 use Plg::Projs::GetImg;
 
 use YAML qw( LoadFile Load Dump DumpFile );
+use File::Copy qw(copy move);
+use File::Path qw(mkpath rmtree);
 
 use Base::Arg qw(
   hash_inject
@@ -774,7 +783,7 @@ sub ldo_no_cmt {
        last;
     };
 
-    $DB::single = 1 if /subsection/;
+    #$DB::single = 1 if /subsection/;
 
     m/$pats->{sect}/ && do {
        my $seccmd = $1;
@@ -821,9 +830,44 @@ sub ldo_no_cmt {
   }
 
   if ($ok) {
+
     $self->{line} = $_;
     unshift @push, $_;
+
+    for(@push){
+       # variation selector 16
+       s/\N{U+FE0F}//g;
+
+       # Combining Breve
+       #s/\N{U+0306}//g;
+       s/\x{0438}\x{0306}/й/g;
+
+       s/\N{U+02BC}/'/g;
+
+       # ≤
+       s/\N{U+2264}/\$\\le\$/g;
+
+       s/\N{U+1FAE1}/+/g;
+
+       # georgian
+       s/\N{U+10E1}/\\hcode{&\\#x10E1;}/g;
+       s/\N{U+10D0}/\\hcode{&\\#x10D0;}/g;
+       s/\N{U+10E5}/\\hcode{&\\#x10E5;}/g;
+       s/\N{U+10E0}/\\hcode{&\\#x10E0;}/g;
+       s/\N{U+10D7}/\\hcode{&\\#x10D7;}/g; # თ
+       s/\N{U+10D5}/\\hcode{&\\#x10D5;}/g; # ვ
+       s/\N{U+10D4}/\\hcode{&\\#x10D4;}/g; # ე
+       s/\N{U+10DA}/\\hcode{&\\#x10DA;}/g; # ლ 
+       s/\N{U+10DD}/\\hcode{&\\#x10DD;}/g; # ო
+       s/\N{U+10E4}/\\hcode{&\\#x10E4;}/g; # ფ
+       s/\N{U+10E2}/\\hcode{&\\#x10E2;}/g; # ტ
+    }
     push @{$self->{nlines}}, @push;
+
+###unicode_U+FE0F
+    #$DB::single = 1 if /\N{U+FE0F}/;
+    #$DB::single = 1 if grep { /\N{U+0306}/ } @push;
+    $DB::single = 1 if grep { /\\HCode/ } @push;
   }
 
   return $self;
@@ -1024,7 +1068,7 @@ sub _d_db_data {
     $rw = shift @$rows;
 
     # latex representation of the image file path
-    $img_path = sprintf(q{\imgroot/%s},$rw->{img});
+    $img_path = $mkr->{box} ? join("/" => 'imgs', $rw->{img}) : sprintf(q{\imgroot/%s},$rw->{img});
 
     # filesystem image file path
     $img_file = catfile($mkr->{img_root},$rw->{img});
@@ -1041,7 +1085,10 @@ sub _d_db_data {
     }
 
     if ($mkr->{box}) {
-       my $src_dir = $mkr->{src_dir};
+       $mkr->{img_dir} ||= catfile($mkr->{src_dir},qw(imgs));
+       mkpath $mkr->{img_dir} unless -d $mkr->{img_dir};
+       my $img_file_box = catfile($mkr->{img_dir}, $rw->{img});
+       copy($img_file, $img_file_box) unless -e $img_file_box;
     }
 
     last;
@@ -1392,11 +1439,13 @@ sub f_write {
 
   my $file = $ref->{file} || $self->{jfile};
 
-  unshift @{$self->{nlines}},
-     ' ',
-     sprintf(q{\def\imgroot{%s}}, $mkr->{img_root_unix} ),
-     ' '
-     ;
+  unless ($mkr->{box}) {
+      unshift @{$self->{nlines}},
+         ' ',
+         sprintf(q{\def\imgroot{%s}}, $mkr->{img_root_unix} ),
+         ' '
+         ;
+  }
 
   my $nlines = $self->{nlines};
   write_file($file,join("\n",@$nlines) . "\n");

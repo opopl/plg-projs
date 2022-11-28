@@ -100,6 +100,7 @@ our $secs = {
 
 ###fbicons_weak
 our %fbicons_weak = (
+  '©️ ' => 'copyright',
   '☀️'  => 'sun',
   '☝️'  => 'index.pointing.up',
   '☎️' => 'telephone',

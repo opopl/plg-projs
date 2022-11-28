@@ -10,6 +10,7 @@ binmode STDOUT,':encoding(utf8)';
 
 use File::Slurp::Unicode;
 use File::Spec::Functions qw(catfile);
+use Cwd;
 
 use Plg::Projs::Tex::Gen;
 use Plg::Projs::Tex qw(
@@ -27,7 +28,7 @@ use Capture::Tiny qw(
 );
 use File::stat;
 use File::Path qw( mkpath rmtree );
-use File::Copy qw( copy );
+use File::Copy qw( copy move );
 use Data::Dumper qw(Dumper);
 
 use Base::DB qw(
@@ -37,17 +38,6 @@ use Base::DB qw(
 
 use Plg::Projs::Build::Maker::Jnd::Processor;
 
-sub cmd_jnd_compose_box {
-    my ($mkr) = @_;
-
-    mkpath $mkr->{src_dir_box};
-    $mkr->{src_dir} = $mkr->{src_dir_box};
-    $mkr->{box} = 1;
-
-    $mkr->cmd_jnd_compose;
-
-    return $mkr;
-}
 
 sub cmd_jnd_compose {
     my ($mkr) = @_;
@@ -106,6 +96,10 @@ sub cmd_jnd_build {
     my $proj    = $mkr->{proj};
     my $src_dir = $mkr->{src_dir};
 
+    my $bld = $mkr->{bld};
+    my $do_htlatex = $bld->{do_htlatex};
+    my $target = $bld->{target};
+
     my $proj_pdf_name = $mkr->{pdf_name} || $proj;
 
     mkpath $mkr->{src_dir} unless -d $mkr->{src_dir};
@@ -113,40 +107,80 @@ sub cmd_jnd_build {
     $mkr->cmd_jnd_compose;
 
     my $pdf_file = catfile($src_dir,'jnd.pdf');
+    my $ht_file  = catfile($src_dir,'jnd_ht.html');
 
     chdir $src_dir;
     my $ext = $^O eq 'MSWin32' ? 'bat' : 'sh';
     my $cmd = sprintf(q{_run_tex.%s -x %s},$ext, $mkr->{tex_exe});
-    system($cmd);
+
+    my $run_tex = eval {
+        require Plg::Projs::Scripts::RunTex;
+        my %n = (
+            skip_init => 1,
+            proj    => $do_htlatex ? 'jnd_ht' : 'jnd',
+            root    => getcwd(),
+            tex_exe => $mkr->{tex_exe},
+
+            obj_bld => $bld,
+            obj_mkr => $mkr,
+        );
+        Plg::Projs::Scripts::RunTex
+            ->new(%n)
+            ->init_mkx;
+    };
+
+    if ($run_tex) {
+       $run_tex->run;
+    }else{
+       system($cmd);
+    }
 
     my @dest;
     push @dest,
-        $mkr->{out_dir_pdf}
+        $do_htlatex ? (
+           catfile($mkr->{out_dir_html},$target)
+        ) : ( 
+           $mkr->{out_dir_pdf} 
+        )
         ;
 
-    if (-e $pdf_file) {
-        while (1) {
-            my $st = stat($pdf_file);
+    $DB::single = 1;
+    if ($do_htlatex) {
+        if (-e $ht_file) {
+           foreach my $dst (@dest) {
+              mkpath $dst unless -d $dst;
 
-            unless ($st->size) {
-                die "Zero File Size: $pdf_file" . "\n";
+              my @ht_files = File::Find::Rule
+                 ->new->name('*.html')->in($src_dir);
+              map { move($_, $dst) } @ht_files;
+           }
+        }
+    }else{
+        if (-e $pdf_file) {
+            while (1) {
+                my $st = stat($pdf_file);
+    
+                unless ($st->size) {
+                    die "Zero File Size: $pdf_file" . "\n";
+                    last;
+                }
+    
+                foreach(@dest) {
+                    mkpath $_ unless -d;
+    
+                    my $d = catfile($_, $proj_pdf_name . '.pdf');
+    
+                    print "Copied PDF File to:" . "\n";
+                    print "     " . $d . "\n";
+    
+                    copy($pdf_file, $d);
+                }
+    
                 last;
             }
-
-            foreach(@dest) {
-                mkpath $_ unless -d;
-
-                my $d = catfile($_, $proj_pdf_name . '.pdf');
-
-                print "Copied PDF File to:" . "\n";
-                print "     " . $d . "\n";
-
-                copy($pdf_file, $d);
-            }
-
-            last;
         }
     }
+
     chdir $mkr->{root};
 
     return $mkr;

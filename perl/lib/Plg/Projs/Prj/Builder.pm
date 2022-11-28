@@ -82,8 +82,6 @@ sub inj_base {
             'compile'          => 'jnd_build',
             # Plg::Projs::Build::Maker::Jnd cmd_jnd_compose
             'join'             => 'jnd_compose',
-            # Plg::Projs::Build::Maker::Jnd cmd_jnd_compose_box
-            'join_box'         => 'jnd_compose_box',
             'relax'            => 'relax',
             'show_trg'         => sub { $bld->act_show_trg; },
             'show_acts'        => sub { $bld->act_show_acts; },
@@ -255,6 +253,15 @@ sub process_config {
             $bld->{tex_exe} = 'xelatex';
             next;
         };
+        /^box$/ && do {
+            $bld->{box} = 1;
+            next;
+        };
+
+        /^htx$/ && do {
+            $bld->{do_htlatex} = 1;
+            next;
+        };
     }
 
     return $bld;
@@ -294,6 +301,7 @@ sub print_help {
              -d --data DATA #TODO
              -c --config CONFIG e.g. 'xelatex' (comma-separated list)
              -y --yfile YAML FILE
+
         USAGE:
              perl $Script ACT 
              perl $Script ACT -t TARGET
@@ -433,6 +441,7 @@ sub init_maker {
         %$om,
         tex_exe      => $bld->{tex_exe},
         bld          => $bld,
+        box          => $bld->{box},
     );
 
     $bld->{maker} = $mkr;
