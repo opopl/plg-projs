@@ -267,7 +267,8 @@ sub init {
     my $root    = $mkr->{root} || '';
     my $root_id = $mkr->{root_id} || '';
 
-    my $pdfout = $ENV{PDFOUT};
+    my $pdfout  = $ENV{PDFOUT} || catfile($ENV{HOME},qw(out pdf));
+    my $htmlout = $ENV{HTMLOUT} || catfile($ENV{HOME},qw(out html));
 
     my $bld    = $mkr->{bld} || {};
     my $target = $bld->{target} || '';
@@ -277,11 +278,13 @@ sub init {
     my $h = {
         proj            => $proj,
         pdfout          => $pdfout,
+        htmlout         => $htmlout,
         tex_exe         => 'pdflatex',
         build_dir_unix  => join("/",@build_dir_a),
         build_dir       => catfile($root, @build_dir_a),
         bib_file        => catfile($root, qq{$proj.refs.bib}),
         out_dir_pdf     => catfile($pdfout, $root_id, $proj),
+        out_dir_html    => catfile($htmlout, $root_id, $proj),
         dbfile          => catfile($root,'projs.sqlite'),
         cmd             => 'bare',
         ii_tree         => {},           # see _join_lines 

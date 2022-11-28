@@ -28,7 +28,7 @@ use Capture::Tiny qw(
 );
 use File::stat;
 use File::Path qw( mkpath rmtree );
-use File::Copy qw( copy );
+use File::Copy qw( copy move );
 use Data::Dumper qw(Dumper);
 
 use Base::DB qw(
@@ -97,6 +97,8 @@ sub cmd_jnd_build {
     my $src_dir = $mkr->{src_dir};
 
     my $bld = $mkr->{bld};
+    my $do_htlatex = $bld->{do_htlatex};
+    my $target = $bld->{target};
 
     my $proj_pdf_name = $mkr->{pdf_name} || $proj;
 
@@ -105,12 +107,12 @@ sub cmd_jnd_build {
     $mkr->cmd_jnd_compose;
 
     my $pdf_file = catfile($src_dir,'jnd.pdf');
+    my $ht_file  = catfile($src_dir,'jnd_ht.html');
 
     chdir $src_dir;
     my $ext = $^O eq 'MSWin32' ? 'bat' : 'sh';
     my $cmd = sprintf(q{_run_tex.%s -x %s},$ext, $mkr->{tex_exe});
 
-    my $do_htlatex = $bld->{do_htlatex};
     my $run_tex = eval {
         require Plg::Projs::Scripts::RunTex;
         my %n = (
@@ -135,32 +137,50 @@ sub cmd_jnd_build {
 
     my @dest;
     push @dest,
-        $mkr->{out_dir_pdf}
+        $do_htlatex ? (
+           catfile($mkr->{out_dir_html},$target)
+        ) : ( 
+           $mkr->{out_dir_pdf} 
+        )
         ;
 
-    if (-e $pdf_file) {
-        while (1) {
-            my $st = stat($pdf_file);
+    $DB::single = 1;
+    if ($do_htlatex) {
+        if (-e $ht_file) {
+           foreach my $dst (@dest) {
+              mkpath $dst unless -d $dst;
 
-            unless ($st->size) {
-                die "Zero File Size: $pdf_file" . "\n";
+              my @ht_files = File::Find::Rule
+                 ->new->name('*.html')->in($src_dir);
+              map { move($_, $dst) } @ht_files;
+           }
+        }
+    }else{
+        if (-e $pdf_file) {
+            while (1) {
+                my $st = stat($pdf_file);
+    
+                unless ($st->size) {
+                    die "Zero File Size: $pdf_file" . "\n";
+                    last;
+                }
+    
+                foreach(@dest) {
+                    mkpath $_ unless -d;
+    
+                    my $d = catfile($_, $proj_pdf_name . '.pdf');
+    
+                    print "Copied PDF File to:" . "\n";
+                    print "     " . $d . "\n";
+    
+                    copy($pdf_file, $d);
+                }
+    
                 last;
             }
-
-            foreach(@dest) {
-                mkpath $_ unless -d;
-
-                my $d = catfile($_, $proj_pdf_name . '.pdf');
-
-                print "Copied PDF File to:" . "\n";
-                print "     " . $d . "\n";
-
-                copy($pdf_file, $d);
-            }
-
-            last;
         }
     }
+
     chdir $mkr->{root};
 
     return $mkr;

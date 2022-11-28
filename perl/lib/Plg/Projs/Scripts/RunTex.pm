@@ -234,7 +234,7 @@ sub run {
     push @cmds, 
         -f './_clean.sh' ? './_clean.sh' : (),
         $do_htlatex ? (
-            sprintf('htlatex %s %s', $proj, $proj)
+            #sprintf('htlatex %s %s', $proj, $proj)
         ) : (
             $mkx->_cmd_tex,
             $mkx->_cmd_bibtex,
