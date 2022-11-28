@@ -156,15 +156,27 @@ sub cmd_jnd_build {
            foreach my $dst (@dest) {
               mkpath $dst unless -d $dst;
 
+              my @dst_ht_files = File::Find::Rule
+                 ->new->name('*.html')->in($dst);
+              map { rmtree($_) } @dst_ht_files;
+
+              my $dst_img_dir = catfile($dst,qw(imgs));
+              unless(-d $dst_img_dir){
+                 mkpath $dst_img_dir;
+              }else{
+                 my @imgs_dst = File::Find::Rule->new
+                    ->name('*.png', '*.jpg', '*.jpeg')
+                    ->in($dst_img_dir);
+                 map { rmtree($_) } @imgs_dst;
+              }
+
               my @ht_files = File::Find::Rule
                  ->new->name('*.html')->in($src_dir);
               map { move($_, $dst) } @ht_files;
               if ($do_box && $img_dir && -d $img_dir) {
                  my @imgs = File::Find::Rule
-                    ->new->name('*.png', '*.jpg', '*.jpeg')->in($img_dir);
-
-                 my $dst_img_dir = catfile($dst,qw(imgs));
-                 mkpath $dst_img_dir unless -d $dst_img_dir;
+                    ->new->name('*.png', '*.jpg', '*.jpeg')
+                    ->in($img_dir);
 
                  map { copy($_, $dst_img_dir) } @imgs;
               }
