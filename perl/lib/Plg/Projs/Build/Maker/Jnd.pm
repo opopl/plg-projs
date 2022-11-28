@@ -10,6 +10,7 @@ binmode STDOUT,':encoding(utf8)';
 
 use File::Slurp::Unicode;
 use File::Spec::Functions qw(catfile);
+use Cwd;
 
 use Plg::Projs::Tex::Gen;
 use Plg::Projs::Tex qw(
@@ -111,14 +112,17 @@ sub cmd_jnd_build {
         require Plg::Projs::Scripts::RunTex;
         my %n = (
             skip_init => 1,
-            proj => $proj,
-            mkx  => $mkr,
+            proj    => 'jnd',
+            root    => getcwd(),
+            tex_exe => $mkr->{tex_exe},
+
             obj_bld => $mkr->{bld},
         );
-        Plg::Projs::Scripts::RunTex->new(%n);
+        Plg::Projs::Scripts::RunTex
+            ->new(%n)
+            ->init_mkx;
     };
 
-    $DB::single = 1;
     if ($run_tex) {
        $run_tex->run;
     }else{

@@ -235,6 +235,8 @@ sub run {
         $mkx->_cmd_tex,
         ;
 
+    $DB::single = 1;
+
     my $i = 1;
     while (@cmds) {
         my $cmd = shift @cmds;
