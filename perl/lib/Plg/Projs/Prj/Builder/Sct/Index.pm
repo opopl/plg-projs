@@ -43,7 +43,7 @@ sub _bld_ind_makeindex {
 sub _bld_ind_printindex {
     my ($bld) = @_;
 
-    my $sub_ind_pr = sub { 
+    my $sub_ind_pr = sub {
         my ($bld, $x) = @_;
 
         my $name  = $x->{name};

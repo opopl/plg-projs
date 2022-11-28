@@ -256,8 +256,7 @@ sub run {
             my $code = system("$_");
             $ok &&= $code ? 0 : 1;
         }elsif(ref $cmd eq 'CODE'){
-            $DB::single = 1;
-            $ok &&= $cmd->();
+            $cmd->();
             next;
         }
 
