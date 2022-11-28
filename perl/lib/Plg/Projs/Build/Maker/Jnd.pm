@@ -97,7 +97,13 @@ sub cmd_jnd_build {
     my $src_dir = $mkr->{src_dir};
 
     my $bld = $mkr->{bld};
+
     my $do_htlatex = $bld->{do_htlatex};
+    my $do_box = $bld->{box};
+
+    my $img_dir = $do_box ? catfile($src_dir,qw(imgs)) : '';
+    $DB::single = 1;
+
     my $target = $bld->{target};
 
     my $proj_pdf_name = $mkr->{pdf_name} || $proj;
@@ -153,6 +159,15 @@ sub cmd_jnd_build {
               my @ht_files = File::Find::Rule
                  ->new->name('*.html')->in($src_dir);
               map { move($_, $dst) } @ht_files;
+              if ($do_box && $img_dir && -d $img_dir) {
+                 my @imgs = File::Find::Rule
+                    ->new->name('*.png', '*.jpg', '*.jpeg')->in($img_dir);
+
+                 my $dst_img_dir = catfile($dst,qw(imgs));
+                 mkpath $dst_img_dir unless -d $dst_img_dir;
+
+                 map { copy($_, $dst_img_dir) } @imgs;
+              }
            }
         }
     }else{
