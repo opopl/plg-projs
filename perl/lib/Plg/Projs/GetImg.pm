@@ -272,6 +272,7 @@ sub init_q {
                 md5 TEXT,
                 name TEXT,
                 name_uniq TEXT,
+                name_orig TEXT,
                 width INTEGER,
                 height INTEGER,
                 width_tex TEXT,

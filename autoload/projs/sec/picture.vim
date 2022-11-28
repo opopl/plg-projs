@@ -54,10 +54,14 @@ function! projs#sec#picture#fetch (...)
       let out  = readfile(temp_file)
       let last = get(out,-1,'')
 
+      call base#varset('projs_gi_out',out)
+
       if last =~ 'SUCCESS:\s\+\(\d\+\)\s\+images' 
+        let last .= ' ; check projs_git_out for output'
         call base#rdw(last)
 
       elseif last =~ 'NO IMAGES'
+        let last .= ' ; check projs_git_out for output'
         call base#rdw(last,'Conditional')
 
       else
