@@ -47,6 +47,7 @@ use JSON::Dumper::Compact;
 
 use FindBin qw($Bin $Script);
 use File::Find qw(find);
+#use File::Find::Rule;
 
 use Plg::Projs::Prj;
 
@@ -348,6 +349,24 @@ sub _cmd_bibtex {
     my $cmd = sprintf('bibtex %s',$proj);
 
     return $cmd;
+}
+
+sub _sub_clean {
+    my ($mkr, $ref) = @_;
+    $ref ||= {};
+
+    my $dir = $ref->{dir} || getcwd();
+    my $exts = $ref->{exts} || [qw()];
+
+    my $sub = sub {
+        my $rule = File::Find::Rule->new;
+        $rule->name(map { "*.$_" } @$exts);
+        #$rule->maxdepth($max_depth) if $max_depth;
+        
+        #my @imgs = $rule->in(@$dirs);
+    };
+
+    return $sub;
 }
 
 sub _cmd_tex {

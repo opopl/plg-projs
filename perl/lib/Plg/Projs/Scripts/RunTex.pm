@@ -230,6 +230,7 @@ sub run {
     };
     my @cmds; 
     push @cmds, 
+        -f './_clean.sh' ? './_clean.sh' : (),
         $mkx->_cmd_tex,
         $mkx->_cmd_bibtex,
         $mkx->_cmd_tex,
