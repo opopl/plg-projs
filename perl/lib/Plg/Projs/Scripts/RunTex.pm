@@ -228,13 +228,19 @@ sub run {
     my $r = { 
         dir  => $root,
     };
+    my $do_htlatex = $self->{do_htlatex} || $self->{obj_bld}->{do_htlatex};
+
     my @cmds; 
     push @cmds, 
         -f './_clean.sh' ? './_clean.sh' : (),
-        $mkx->_cmd_tex,
-        $mkx->_cmd_bibtex,
-        $mkx->_cmd_tex,
-        $mkx->_cmd_tex,
+        $do_htlatex ? (
+            sprintf('htlatex %s %s', $proj, $proj)
+        ) : (
+            $mkx->_cmd_tex,
+            $mkx->_cmd_bibtex,
+            $mkx->_cmd_tex,
+            $mkx->_cmd_tex,
+        )
         ;
 
     $DB::single = 1;

@@ -96,6 +96,8 @@ sub cmd_jnd_build {
     my $proj    = $mkr->{proj};
     my $src_dir = $mkr->{src_dir};
 
+    my $bld = $mkr->{bld};
+
     my $proj_pdf_name = $mkr->{pdf_name} || $proj;
 
     mkpath $mkr->{src_dir} unless -d $mkr->{src_dir};
@@ -108,15 +110,17 @@ sub cmd_jnd_build {
     my $ext = $^O eq 'MSWin32' ? 'bat' : 'sh';
     my $cmd = sprintf(q{_run_tex.%s -x %s},$ext, $mkr->{tex_exe});
 
+    my $do_htlatex = $bld->{do_htlatex};
     my $run_tex = eval {
         require Plg::Projs::Scripts::RunTex;
         my %n = (
             skip_init => 1,
-            proj    => 'jnd',
+            proj    => $do_htlatex ? 'jnd_ht' : 'jnd',
             root    => getcwd(),
             tex_exe => $mkr->{tex_exe},
 
-            obj_bld => $mkr->{bld},
+            obj_bld => $bld,
+            obj_mkr => $mkr,
         );
         Plg::Projs::Scripts::RunTex
             ->new(%n)

@@ -256,7 +256,12 @@ sub process_config {
         /^box$/ && do {
             $bld->{box} = 1;
             next;
-        }
+        };
+
+        /^htx$/ && do {
+            $bld->{do_htlatex} = 1;
+            next;
+        };
     }
 
     return $bld;
