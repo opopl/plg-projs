@@ -106,7 +106,24 @@ sub cmd_jnd_build {
     chdir $src_dir;
     my $ext = $^O eq 'MSWin32' ? 'bat' : 'sh';
     my $cmd = sprintf(q{_run_tex.%s -x %s},$ext, $mkr->{tex_exe});
-    system($cmd);
+
+    my $run_tex = eval {
+        require Plg::Projs::Scripts::RunTex;
+        my %n = (
+            skip_init => 1,
+            proj => $proj,
+            mkx  => $mkr,
+            obj_bld => $mkr->{bld},
+        );
+        Plg::Projs::Scripts::RunTex->new(%n);
+    };
+
+    $DB::single = 1;
+    if ($run_tex) {
+       $run_tex->run;
+    }else{
+       system($cmd);
+    }
 
     my @dest;
     push @dest,
