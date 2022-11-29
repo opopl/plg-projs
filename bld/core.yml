@@ -368,10 +368,11 @@ sii:
 
 ###tex4ht
 tex4ht:
+  run_tex:
   cfg:
     vars:
        'gin_base' : '\csname Gin@base\endcsname'
-       #'frames' : 1
+       'frames' : 1
     '@@preamble':
       '@sprintf' :
         string: '\Preamble{%s}'

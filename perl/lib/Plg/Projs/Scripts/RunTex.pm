@@ -241,13 +241,16 @@ sub run {
 
        my $ht_file = $proj . '.cfg';
        write_file($ht_file,join("\n",@ht_txt) . "\n");
+
+       $tex = $self->{tex_exe} = $mkx->{tex_exe} = 'latex';
     }
 
     my @cmds; 
     push @cmds, 
         -f './_clean.sh' ? './_clean.sh' : (),
         $do_htlatex ? (
-            sprintf('htlatex %s %s', $proj, $proj)
+            $mkx->_cmd_tex,
+            #sprintf('htlatex %s %s', $proj, $proj)
         ) : (
             $mkx->_cmd_tex,
             $mkx->_cmd_bibtex,
@@ -279,6 +282,7 @@ sub run {
             #next unless ($i == 1);
             my @texindy = $mkx->_cmds_texindy({ dir => $root });
             unshift @cmds, @texindy;
+            $DB::single = 1; 1;
         };
 
         /^\s*bibtex\s+/  && do { 
