@@ -369,10 +369,15 @@ sii:
 ###tex4ht
 tex4ht:
   run_tex:
+    htlatex:
   cfg:
     vars:
-       'gin_base' : '\csname Gin@base\endcsname'
-       'frames' : 0
+       'preamble':
+         'frames' : 0
+
+       'tex':
+         'gin_base' : '\csname Gin@base\endcsname'
+
     '@@preamble':
       '@sprintf' :
         string: '\Preamble{%s}'
@@ -381,7 +386,7 @@ tex4ht:
             sep : ','
             list :
             - xhtml
-            - '$ifvar{frames} frames'
+            - '$ifvar{preamble.frames} frames'
             #- 4,index=2,next
             - charset=utf-8
             - javascript
@@ -416,13 +421,13 @@ tex4ht:
         'png' :
           'base' :
           - '\Configure{graphics*}{png}{'
-          - '\Picture[\HCode{\thealt}]{$var{gin_base}.png}}'
+          - '\Picture[\HCode{\thealt}]{$var{tex.gin_base}.png}}'
           'link' :
           - '\Configure{graphics*}%'
           - '  {png}%'
           - '  {'
-          - '    \Link[$var{gin_base} .png target="_blank"]{}{}%'
-          - '       \Picture[pict]{$var{gin_base} .png'
+          - '    \Link[$var{tex.gin_base} .png target="_blank"]{}{}%'
+          - '       \Picture[pict]{$var{tex.gin_base} .png'
           - '          \space width="300px" }%'
           - '    \EndLink'
           - '}'
@@ -430,7 +435,7 @@ tex4ht:
         'jpg' :
           'base' :
           - '\Configure{graphics*}{jpg}{'
-          - '\Picture[\HCode{\thealt}]{$var{gin_base}.jpg}}'
+          - '\Picture[\HCode{\thealt}]{$var{tex.gin_base}.jpg}}'
 
       'fonts':
       - '\NoFonts'
@@ -466,7 +471,7 @@ tex4ht:
     - '@@css{verb}'
     - '@@css{pic}'
     - ''
-    - '$ifvar{frames} @@conf{frames}'
+    - '$ifvar{preamble.frames} @@conf{frames}'
     - ''
     - '\begin{document}'
     - ''

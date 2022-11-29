@@ -170,7 +170,7 @@ sub varexp {
 
     local $_ = $val;
 
-    my $ifvar = qr/^\$ifvar\{(\w+)\}\s*/;
+    my $ifvar = qr/^\$ifvar\{([^{}]+)\}\s*/;
     /$ifvar/ && do {
        my $val = varval($1, $vars);
        return unless $val;
@@ -178,7 +178,7 @@ sub varexp {
        s/$ifvar//g;
     };
 
-    s|\$var\{(\w+)\}|varval($1, $vars, '')|ge;
+    s|\$var\{([^{}]+)\}|varval($1, $vars, '')|ge;
 
     return $_;
 }
