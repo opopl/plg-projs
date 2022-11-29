@@ -48,7 +48,7 @@ sub ht_cnf2txt {
     my @txt;
     my @preamble_line;
 
-    my $vars = $cnf->{vars} || [];
+    my $vars = $cnf->{vars} || {};
     my $content = $cnf->{content} || [];
     my ($open, $close) = qw( { } );
 
