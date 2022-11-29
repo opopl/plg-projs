@@ -442,6 +442,7 @@ sub init_maker {
         tex_exe      => $bld->{tex_exe},
         bld          => $bld,
         box          => $bld->{box},
+        tex4ht       => $bld->{tex4ht},
     );
 
     $bld->{maker} = $mkr;

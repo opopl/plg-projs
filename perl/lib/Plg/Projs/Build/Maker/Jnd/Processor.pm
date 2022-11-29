@@ -804,7 +804,6 @@ sub ldo_no_cmt {
        }
        # $_ becomes undef for unknown reason in limited cases
        $_ = $self->{line} unless defined;
-       $DB::single = 1;
        last;
     };
   
@@ -870,7 +869,7 @@ sub ldo_no_cmt {
 ###unicode_U+FE0F
     #$DB::single = 1 if /\N{U+FE0F}/;
     #$DB::single = 1 if grep { /\N{U+0306}/ } @push;
-    $DB::single = 1 if grep { /\\HCode/ } @push;
+    #$DB::single = 1 if grep { /\\HCode/ } @push;
   }
 
   return $self;
@@ -1150,7 +1149,6 @@ sub _d2tex_import {
      }
      $w->{$k} = $v;
   }
-  $DB::single = 1;
 
   my $imgs = $imgman->_db_imgs({
       tags => { and => \@tags_a },
@@ -1170,7 +1168,6 @@ sub _d2tex_import {
   $tab_dict = undef if $n_imgs == 1;
 
   my $j = 0;
-  $DB::single = 1;
   foreach my $img (@$imgs) {
      $j++;
 
@@ -1208,7 +1205,6 @@ sub _d2tex_import {
          }
      }
   }
-  $DB::single = 1;
 
   return @tx;
 }
