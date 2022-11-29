@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+script="$PLG/projs/scripts/bufact/tex/get_img.pl"
+
+proj=shift
+
+if [[ $PERLDB ]]; then
+  perl -d $proj.bld.pl $*
+else
+  perl $proj.bld.pl $*
+fi

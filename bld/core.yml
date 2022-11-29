@@ -366,6 +366,47 @@ sii:
         - '\def\ii#1{\InputIfFileExists{\PROJ.#1.tex}{}{}}'
         - ''
 
+###tex4ht
+tex4ht:
+  cfg:
+    '@@preamble':
+    - xhtml
+    - frames
+    - 4,index=2,next
+    - charset=utf-8
+    - javascript
+
+    '@@conf':
+      'top':
+      - '\Configure{VERSION}{}'
+      - '\Configure{DOCTYPE}{\HCode{<!DOCTYPE html>\Hnewline}}'
+      - '\Configure{HTML}{\HCode{<html>\Hnewline}}{\HCode{\Hnewline</html>}}'
+      'pic':
+      - '\Configure{Gin-dim}{}'
+
+    '@@conf':
+      'fonts':
+      - '\NoFonts'
+
+    '@@css':
+      'verb' :
+         '.verbatim,.verb' :
+            'font-weight'      : bold
+            'background-color' : gray
+            'color'            : white
+
+    content:
+    - '@@preamble'
+    - ''
+    - '@@conf{top}'
+    - '@@conf{fonts}'
+    - '@@conf{pic}'
+    - '@@css{verb}'
+    - ''
+    - '\begin{document}'
+    - '\EndPreamble'
+
+
 
 #Package fancyhdr Warning: \headheight is too small (12.0pt): 
 #(fancyhdr)                Make it at least 20.29706pt, for example:
