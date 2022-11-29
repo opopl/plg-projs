@@ -249,8 +249,9 @@ sub run {
     push @cmds, 
         -f './_clean.sh' ? './_clean.sh' : (),
         $do_htlatex ? (
-            $mkx->_cmd_tex,
-            #sprintf('htlatex %s %s', $proj, $proj)
+            #$mkx->_cmd_tex,
+            #$mkx->_cmd_bibtex,
+            sprintf('htlatex %s %s', $proj, $proj) . qq{ '-cunihtf -utf8'} 
         ) : (
             $mkx->_cmd_tex,
             $mkx->_cmd_bibtex,
@@ -282,7 +283,6 @@ sub run {
             #next unless ($i == 1);
             my @texindy = $mkx->_cmds_texindy({ dir => $root });
             unshift @cmds, @texindy;
-            $DB::single = 1; 1;
         };
 
         /^\s*bibtex\s+/  && do { 
