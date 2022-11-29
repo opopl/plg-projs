@@ -370,11 +370,17 @@ sii:
 tex4ht:
   cfg:
     '@@preamble':
-    - xhtml
-    - frames
-    - 4,index=2,next
-    - charset=utf-8
-    - javascript
+      '@sprintf' :
+        string: '\Preamble{%s}'
+        values:
+        - join :
+            sep : ','
+            list :
+            - xhtml
+            - frames
+            - 4,index=2,next
+            - charset=utf-8
+            - javascript
 
     '@@conf':
       'top':

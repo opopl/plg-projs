@@ -119,6 +119,8 @@ sub cmd_jnd_build {
     my $ext = $^O eq 'MSWin32' ? 'bat' : 'sh';
     my $cmd = sprintf(q{_run_tex.%s -x %s},$ext, $mkr->{tex_exe});
 
+    my $tex4ht = $bld->{tex4ht};
+
     my $run_tex = eval {
         require Plg::Projs::Scripts::RunTex;
         my %n = (
@@ -129,6 +131,8 @@ sub cmd_jnd_build {
 
             obj_bld => $bld,
             obj_mkr => $mkr,
+
+            tex4ht  => $tex4ht,
         );
         Plg::Projs::Scripts::RunTex
             ->new(%n)

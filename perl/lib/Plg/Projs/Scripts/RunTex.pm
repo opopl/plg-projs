@@ -18,6 +18,10 @@ use File::stat;
 use File::Path qw(rmtree);
 use File::Slurp::Unicode;
 
+use Plg::Projs::Tex::Tex4ht qw(
+    ht_cnf2txt
+);
+
 use Getopt::Long qw(GetOptions);
 use JSON::XS;
 
@@ -229,6 +233,12 @@ sub run {
         dir  => $root,
     };
     my $do_htlatex = $self->{do_htlatex} || $self->{obj_bld}->{do_htlatex};
+
+    if ($do_htlatex) {
+       my $ht = $self->{tex4ht} || {};
+       my $ht_cfg = $ht->{cfg} || {};
+       my @ht_txt = ht_cnf2txt($ht_cfg);
+    }
 
     my @cmds; 
     push @cmds, 
