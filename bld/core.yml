@@ -16,18 +16,18 @@ vars:
   prevpage: 'Попередня'
   nextpage: 'Наступна'
   ii_base:
-  - body 
-  - preamble 
-  - index 
+  - body
+  - preamble
+  - index
   - bib
   - titlepage
   - defs
-  - listfigs 
+  - listfigs
   - listtabs
   - tabcont
-  - preamble.index 
-  - preamble.packages 
-  - preamble.acrobat_menu 
+  - preamble.index
+  - preamble.packages
+  - preamble.acrobat_menu
   - preamble.filecontents
   - preamble.fancyhdr
 
@@ -40,7 +40,7 @@ opts_maker:
     get_opt: 1
 # Plg::Projs::Build::Maker::Join _join_lines
   join_lines:
-    include: 
+    include:
       below: 'section'
   load_dat:
     ii_exclude : 0
@@ -402,6 +402,10 @@ tex4ht:
             'font-weight'      : bold
             'background-color' : gray
             'color'            : white
+      'pic' :
+         'img' :
+            'max-width': '100%'
+            'height': 'auto'
 
     content:
     - '@@preamble'
@@ -413,6 +417,7 @@ tex4ht:
     - '@@conf{pic.gin_dim_empty}'
     - ''
     - '@@css{verb}'
+    - '@@css{pic}'
     - ''
     - '\begin{document}'
     - ''
@@ -420,7 +425,7 @@ tex4ht:
 
 
 
-#Package fancyhdr Warning: \headheight is too small (12.0pt): 
+#Package fancyhdr Warning: \headheight is too small (12.0pt):
 #(fancyhdr)                Make it at least 20.29706pt, for example:
 #(fancyhdr)                \setlength{\headheight}{20.29706pt}.
 #(fancyhdr)                You might also make \topmargin smaller to compensate:
