@@ -387,14 +387,16 @@ tex4ht:
       - '\Configure{VERSION}{}'
       - '\Configure{DOCTYPE}{\HCode{<!DOCTYPE html>\Hnewline}}'
       - '\Configure{HTML}{\HCode{<html>\Hnewline}}{\HCode{\Hnewline</html>}}'
-      'pic':
-      - '\Configure{Gin-dim}{}'
 
-    '@@conf':
+      'pic':
+        'gin_dim_empty' :
+        - '\Configure{Gin-dim}{}'
+
       'fonts':
       - '\NoFonts'
 
     '@@css':
+      '@type' : 'css'
       'verb' :
          '.verbatim,.verb' :
             'font-weight'      : bold
@@ -405,11 +407,15 @@ tex4ht:
     - '@@preamble'
     - ''
     - '@@conf{top}'
+    - ''
     - '@@conf{fonts}'
-    - '@@conf{pic}'
+    - ''
+    - '@@conf{pic.gin_dim_empty}'
+    - ''
     - '@@css{verb}'
     - ''
     - '\begin{document}'
+    - ''
     - '\EndPreamble'
 
 
