@@ -50,6 +50,7 @@ sub ht_cnf2txt {
 
     my $vars = $cnf->{vars} || [];
     my $content = $cnf->{content} || [];
+    my ($open, $close) = qw( { } );
 
     foreach my $x (@$content) {
         local $_ = trim($x);
@@ -106,9 +107,9 @@ sub ht_cnf2txt {
                           push @rule_css, $indent_rule . sprintf('%s : %s;', $k, $v);
                         }
                         push @css, $indent_css
-                              . $selector . ' : {' . "\n"
+                              . $selector . ' : ' . $open . "\n"
                               . join("\n" => @rule_css) . "\n"
-                              . $indent_css . '}';
+                              . $indent_css . $close;
                     }
                     push @txt, sprintf('\Css{%s}',"\n" . join("\n" => @css) . "\n") if @css;
                 }
@@ -128,7 +129,6 @@ sub ht_cnf2txt {
 
         push @txt, $_;
     }
-    $DB::single = 1;
 
     return @txt;
 

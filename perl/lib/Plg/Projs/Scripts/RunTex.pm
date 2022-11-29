@@ -238,6 +238,9 @@ sub run {
        my $ht = $self->{tex4ht} || {};
        my $ht_cfg = $ht->{cfg} || {};
        my @ht_txt = ht_cnf2txt($ht_cfg);
+
+       my $ht_file = $proj . '.cfg';
+       write_file($ht_file,join("\n",@ht_txt) . "\n");
     }
 
     my @cmds; 

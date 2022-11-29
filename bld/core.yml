@@ -425,6 +425,11 @@ tex4ht:
           - '    \EndLink'
           - '}'
 
+        'jpg' :
+          'base' :
+          - '\Configure{graphics*}{jpg}{'
+          - '\Picture[\HCode{\thealt}]{$var{gin_base}.jpg}}'
+
       'fonts':
       - '\NoFonts'
 
@@ -450,7 +455,10 @@ tex4ht:
     - ''
     - '@@conf{graphics.gin_dim_empty}'
     - '@@conf{graphics.cmd}'
+    - ''
     - '@@conf{graphics.png.base}'
+    - '@@conf{graphics.jpg.base}'
+    - ''
     - '@@conf{graphics.png.link}'
     - ''
     - '@@css{verb}'
