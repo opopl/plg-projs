@@ -374,6 +374,9 @@ tex4ht:
     vars:
        'preamble':
          'frames' : 0
+         #'next' : 'next'
+         #'sectioning' : 4
+         #'index' : 'index=2'
 
        'tex':
          'gin_base' : '\csname Gin@base\endcsname'
@@ -387,7 +390,9 @@ tex4ht:
             list :
             - xhtml
             - '$ifvar{preamble.frames} frames'
-            #- 4,index=2,next
+            - '$var{preamble.sectioning}'
+            - '$var{preamble.index}'
+            - '$var{preamble.next}'
             - charset=utf-8
             - javascript
 

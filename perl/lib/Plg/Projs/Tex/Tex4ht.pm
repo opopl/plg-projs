@@ -170,15 +170,21 @@ sub varexp {
 
     local $_ = $val;
 
-    my $ifvar = qr/^\$ifvar\{([^{}]+)\}\s*/;
-    /$ifvar/ && do {
+    my $re_ifvar = qr/^\$ifvar\{([^{}]+)\}\s*/;
+    my $re_var = qr/\$var\{([^{}]+)\}/;
+
+    /$re_ifvar/ && do {
        my $val = varval($1, $vars);
        return unless $val;
 
-       s/$ifvar//g;
+       s/$re_ifvar//g;
     };
 
-    s|\$var\{([^{}]+)\}|varval($1, $vars, '')|ge;
+    if (/^$re_var$/) {
+        $_ = varval($1, $vars);
+    }elsif(/$re_var/){
+        s|$re_var|varval($1, $vars, '')|ge;
+    }
 
     return $_;
 }
