@@ -144,6 +144,15 @@ sub ht_cnf2txt {
 
 }
 
+sub varval {
+    my ($path, $vars, $default) = @_;
+    $vars ||= {};
+
+    my @path_a = split('\.', $path);
+    my $val = deepvalue($vars, @path_a ) // $default;
+    return $val;
+}
+
 sub varexp {
     my ($val, $vars) = @_;
     $vars ||= {};
@@ -163,13 +172,13 @@ sub varexp {
 
     my $ifvar = qr/^\$ifvar\{(\w+)\}\s*/;
     /$ifvar/ && do {
-       my $val = $vars->{$1};
+       my $val = varval($1, $vars);
        return unless $val;
 
        s/$ifvar//g;
     };
 
-    s|\$var\{(\w+)\}|$vars->{$1} // ''|ge;
+    s|\$var\{(\w+)\}|varval($1, $vars, '')|ge;
 
     return $_;
 }

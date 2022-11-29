@@ -372,7 +372,7 @@ tex4ht:
   cfg:
     vars:
        'gin_base' : '\csname Gin@base\endcsname'
-       'frames' : 1
+       'frames' : 0
     '@@preamble':
       '@sprintf' :
         string: '\Preamble{%s}'
