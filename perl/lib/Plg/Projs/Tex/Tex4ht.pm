@@ -53,6 +53,9 @@ sub ht_cnf2txt {
     my ($open, $close) = qw( { } );
 
     foreach my $x (@$content) {
+        $x = varexp($x, $vars);
+        next unless defined $x;
+
         local $_ = trim($x);
 
         /^\@\@(?<key>\w+)(|\{(?<path>.*)\})$/ && do {
@@ -77,6 +80,7 @@ sub ht_cnf2txt {
                         if ($join && ref $join eq 'HASH') {
                            my ($list, $sep) = @{$join}{qw( list sep )};
                            if ($list && ref $list eq 'ARRAY' && $sep) {
+                              $list = varexp($list, $vars);
                               push @values, join($sep, @$list);
                            }
                         }
@@ -120,10 +124,12 @@ sub ht_cnf2txt {
             }
 
             unless(ref $wal){
-                push @txt, varexp($wal, $vars);
+                my $exp = varexp($wal, $vars);
+                push @txt, $exp if defined $exp;
             }elsif (ref $wal eq 'ARRAY') {
                 foreach my $ww (@$wal) {
-                    push @txt, varexp($ww, $vars);
+                    my $exp = varexp($ww, $vars);
+                    push @txt, $exp if defined $exp;
                 }
             }
 
@@ -142,7 +148,27 @@ sub varexp {
     my ($val, $vars) = @_;
     $vars ||= {};
 
+    if(ref $val eq 'ARRAY'){
+       my $list = $val;
+       my $new = [];
+       foreach my $x (@$list) {
+           $x = varexp($x, $vars);
+           next unless defined $x;
+           push @$new,$x;
+       }
+       return $new;
+    }
+
     local $_ = $val;
+
+    my $ifvar = qr/^\$ifvar\{(\w+)\}\s*/;
+    /$ifvar/ && do {
+       my $val = $vars->{$1};
+       return unless $val;
+
+       s/$ifvar//g;
+    };
+
     s|\$var\{(\w+)\}|$vars->{$1} // ''|ge;
 
     return $_;

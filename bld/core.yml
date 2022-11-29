@@ -371,6 +371,7 @@ tex4ht:
   cfg:
     vars:
        'gin_base' : '\csname Gin@base\endcsname'
+       #'frames' : 1
     '@@preamble':
       '@sprintf' :
         string: '\Preamble{%s}'
@@ -379,8 +380,8 @@ tex4ht:
             sep : ','
             list :
             - xhtml
-            #- frames
-            - 4,index=2,next
+            - '$ifvar{frames} frames'
+            #- 4,index=2,next
             - charset=utf-8
             - javascript
 
@@ -464,7 +465,7 @@ tex4ht:
     - '@@css{verb}'
     - '@@css{pic}'
     - ''
-    - '@@conf{frames}'
+    - '$ifvar{frames} @@conf{frames}'
     - ''
     - '\begin{document}'
     - ''
