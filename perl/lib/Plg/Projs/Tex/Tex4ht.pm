@@ -48,6 +48,7 @@ sub ht_cnf2txt {
     my @txt;
     my @preamble_line;
 
+    my $vars = $cnf->{vars} || [];
     my $content = $cnf->{content} || [];
 
     foreach my $x (@$content) {
@@ -115,10 +116,10 @@ sub ht_cnf2txt {
             }
 
             unless(ref $wal){
-                push @txt, $wal;
+                push @txt, varexp($wal, $vars);
             }elsif (ref $wal eq 'ARRAY') {
                 foreach my $ww (@$wal) {
-                    push @txt, $ww;
+                    push @txt, varexp($ww, $vars);
                 }
             }
 
@@ -131,6 +132,16 @@ sub ht_cnf2txt {
 
     return @txt;
 
+}
+
+sub varexp {
+    my ($val, $vars) = @_;
+    $vars ||= {};
+
+    local $_ = $val;
+    s|\$var\{(\w+)\}|$vars->{$1} // ''|ge;
+
+    return $_;
 }
 
 1;
