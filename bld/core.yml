@@ -379,7 +379,7 @@ tex4ht:
             sep : ','
             list :
             - xhtml
-            - frames
+            #- frames
             - 4,index=2,next
             - charset=utf-8
             - javascript

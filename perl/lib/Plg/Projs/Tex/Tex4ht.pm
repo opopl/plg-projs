@@ -104,12 +104,15 @@ sub ht_cnf2txt {
 
                         my @rule_css;
                         while(my($k,$v)=each %{$rule}){
+                          $v =~ s/%/\\%/g;
                           push @rule_css, $indent_rule . sprintf('%s : %s;', $k, $v);
                         }
-                        push @css, $indent_css
-                              . $selector . ' : ' . $open . "\n"
-                              . join("\n" => @rule_css) . "\n"
-                              . $indent_css . $close;
+                        if (@rule_css) {
+                          push @css, $indent_css
+                                . $selector . $open . "\n"
+                                . join("\n" => @rule_css) . "\n"
+                                . $indent_css . $close;
+                        }
                     }
                     push @txt, sprintf('\Css{%s}',"\n" . join("\n" => @css) . "\n") if @css;
                 }
@@ -129,6 +132,7 @@ sub ht_cnf2txt {
 
         push @txt, $_;
     }
+    $DB::single = 1;
 
     return @txt;
 
