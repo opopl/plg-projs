@@ -482,8 +482,6 @@ tex4ht:
     - ''
     - '\EndPreamble'
 
-
-
 #Package fancyhdr Warning: \headheight is too small (12.0pt):
 #(fancyhdr)                Make it at least 20.29706pt, for example:
 #(fancyhdr)                \setlength{\headheight}{20.29706pt}.

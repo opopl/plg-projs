@@ -276,6 +276,35 @@ sub ht_pretty_print {
     my $dom = $parser->load_html($inp);
     my $node = $dom;
 
+    $DB::single = 1;
+    my $j = 0;
+    $dom->findnodes('//pre/text()')->map(
+        sub { my ($node) = @_;
+            my $parent = $node->parentNode;
+            local $_ = $node->getData();
+            #s/^\s*$//g;
+            #$parent->removeChild($node) unless $data;
+            print qq{$_} . "\n" if /\n\n/;
+        }
+    );
+
+    $dom->findnodes('//pre/span')->map(
+        sub { 
+            my ($node) = @_;
+            $j++;
+
+            my $parent = $node->parentNode;
+            my $text   = $node->textContent || '';
+
+            my $new    = $dom->createTextNode($text);
+            
+            #$parent->replaceChild( $new, $node );
+
+            #return if $j == 10;
+            #print qq{$text} . "\n" if $text;
+        }
+    );
+
     #my @block = qw/table tables columns entry latex_table options/;
     my @block = qw//;
     my %cb = (
