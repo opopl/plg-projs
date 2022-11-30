@@ -277,7 +277,6 @@ sub ht_pretty_print {
     my $node = $dom;
 
     $DB::single = 1;
-    my $j = 0;
     $dom->findnodes('//pre/text()')->map(
         sub { my ($node) = @_;
             my $parent = $node->parentNode;
@@ -288,22 +287,42 @@ sub ht_pretty_print {
         }
     );
 
-    $dom->findnodes('//pre/span')->map(
+    $dom->findnodes('//pre[contains(@class,"fancyvrb")]/a')->map(
+        sub { my ($node) = @_;
+            my $parent = $node->parentNode;
+            $parent->removeChild($node);
+        }
+    );
+
+    $dom->findnodes('//pre[contains(@class,"verbatim")]/span')->map(
         sub { 
             my ($node) = @_;
-            $j++;
 
             my $parent = $node->parentNode;
             my $text   = $node->textContent || '';
 
             my $new    = $dom->createTextNode($text);
             
-            #$parent->replaceChild( $new, $node );
-
-            #return if $j == 10;
-            #print qq{$text} . "\n" if $text;
+            $parent->replaceChild( $new, $node );
         }
     );
+
+    my $txt;
+    $dom->findnodes('(//pre[contains(@class,"fancyvrb")])')->map(
+        sub {
+            my ($node) = @_;
+            $txt = $node->textContent;
+            $node->findnodes('./text()')->map(
+                sub { my ($t) = @_; 
+                    my $p = $t->parentNode;
+                    $p->removeChild($t);
+                }
+            );
+            my $tt = $dom->createTextNode($txt);
+            $node->addChild($tt);
+        }
+    );
+    $DB::single = 1;
 
     #my @block = qw/table tables columns entry latex_table options/;
     my @block = qw//;

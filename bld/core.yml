@@ -293,6 +293,7 @@ sii:
          - nameref
          #- p.fancyhdr
          - fancyhdr
+         - fancyvrb
          - p.fig.caption
          'pack_opts':
            adjustbox: export
@@ -402,6 +403,11 @@ tex4ht:
       - '\Configure{DOCTYPE}{\HCode{<!DOCTYPE html>\Hnewline}}'
       - '\Configure{HTML}{\HCode{<html>\Hnewline}}{\HCode{\Hnewline</html>}}'
 
+      'verbatim':
+#https://tex.stackexchange.com/questions/561158/make4ht-is-removing-blank-lines-from-verbatim-environment#561167
+      - '\Configure{verbatim}{\HCode{}}{\csname a:sp\endcsname}'
+      #- '\Configure{Verbatim}{\HCode{}}{\csname a:sp\endcsname}'
+
       'frames':
       - '\ifOption{frames}{%'
       - '  \Configure{frames}%'
@@ -452,6 +458,10 @@ tex4ht:
             'font-weight'      : bold
             'background-color' : gray
             'color'            : white
+         '.fancyvrb' :
+            'font-weight'      : bold
+            'background-color' : gray
+            'color'            : white
       'pic' :
          'img' :
             'max-width': '100%'
@@ -462,6 +472,7 @@ tex4ht:
     - '@@preamble'
     - ''
     - '@@conf{top}'
+    - '@@conf{verbatim}'
     - ''
     - '@@conf{fonts}'
     - ''
