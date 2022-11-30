@@ -255,6 +255,7 @@ sub ht_pretty_print {
 
     $XML::LibXML::skipXMLDeclaration = 
         $ref->{libxml_skip_xml_decl} || $self->{libxml_skip_xml_decl};
+    my $opts_prettyprint = $ref->{opts_prettyprint} || {};
 
     my $defs = {
         expand_entities => 0,
@@ -273,6 +274,32 @@ sub ht_pretty_print {
         suppress_errors => 1,
     };
     my $dom = $parser->load_html($inp);
+    my $node = $dom;
+
+    #my @block = qw/table tables columns entry latex_table options/;
+    my @block = qw//;
+    my %cb = (
+        compact =>  sub {
+            my $node = shift;
+            my $name = $node->nodeName;
+            return 0 if grep { /^$name$/ } @block;
+            return 1;
+        },
+    );
+    my $pp = XML::LibXML::PrettyPrint->new(
+        indent_string => "  ",
+        element => {
+            inline   => [qw/span/],
+            block    => [@block],
+            #compact  => [qw//,$cb{compact}],
+            preserves_whitespace => [qw/pre/],
+        },
+        %$opts_prettyprint,
+    );
+    $pp->pretty_print($node); 
+
+    my $text = $dom->toStringHTML;
+    write_file($file,$text);
 
     return $self;
 }
