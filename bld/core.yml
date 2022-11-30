@@ -170,6 +170,7 @@ sii:
        - '@txt.core'
        txt:
          core:
+         - '\ifdefined\HCode\relax\else%'
          - '\cleardoublepage'
          - '\phantomsection'
          - '\addcontentsline{toc}{chapter}{@var{contname}}'
@@ -178,6 +179,7 @@ sii:
          - '%\setcounter{tocdepth}{1}'
          - '\addtocontents{toc}{\setcounter{tocdepth}{@var{toc_depth}}}'
          - '\newpage'
+         - '\fi'
 
 ###sct_preamble.index
     'preamble.index':
@@ -397,6 +399,7 @@ tex4ht:
             - charset=utf-8
             - javascript
 
+###tex4ht_@@conf_top
     '@@conf':
       'top':
       - '\Configure{VERSION}{}'
@@ -407,6 +410,11 @@ tex4ht:
 #https://tex.stackexchange.com/questions/561158/make4ht-is-removing-blank-lines-from-verbatim-environment#561167
       - '\Configure{verbatim}{\HCode{}}{\csname a:sp\endcsname}'
       #- '\Configure{Verbatim}{\HCode{}}{\csname a:sp\endcsname}'
+
+###tex4ht_@@conf_cmd
+      'cmd':
+      - '\NewConfigure{enquote}{2}'
+      - '\Configure{enquote}{\HCode{<strong>}}{\HCode{</strong>}}'
 
       'frames':
       - '\ifOption{frames}{%'
@@ -473,6 +481,7 @@ tex4ht:
     - ''
     - '@@conf{top}'
     - '@@conf{verbatim}'
+    - '@@conf{cmd}'
     - ''
     - '@@conf{fonts}'
     - ''

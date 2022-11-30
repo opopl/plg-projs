@@ -846,6 +846,8 @@ sub ldo_no_cmt {
 
        s/\N{U+02BC}/'/g;
 
+       s/«([^«»]+)»/\\enquote{$1}/g;
+
        # ≤
        s/\N{U+2264}/\$\\le\$/g;
 
@@ -1513,8 +1515,12 @@ sub loop {
 
 ###m_\fi
     m/^\\fi\s*$/g && do { 
-       $self->lpush_d;
-       $self->{$_} = undef for(qw( is_cmt locals globals_block ));
+       if ($self->{is_cmt}) {
+           $self->lpush_d;
+           $self->{$_} = undef for(qw( is_cmt locals globals_block ));
+       }else{
+           $self->ldo_no_cmt;
+       }
        #push @{$self->{nlines}},'}';
        next; 
     };
