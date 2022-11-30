@@ -12,6 +12,8 @@ use File::Slurp::Unicode;
 use File::Spec::Functions qw(catfile);
 use Cwd;
 
+use File::Find::Rule;
+
 use Plg::Projs::Tex::Gen;
 use Plg::Projs::Tex qw(
     texify
@@ -140,7 +142,7 @@ sub cmd_jnd_build {
     };
 
     if ($run_tex) {
-       $run_tex->run;
+       $run_tex->run->run_after;
     }else{
        system($cmd);
     }

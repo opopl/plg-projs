@@ -10,4 +10,6 @@ use base qw(
     Plg::Projs::Scripts::RunTex
 );
 
-__PACKAGE__->new->run;
+__PACKAGE__->new
+    ->run
+    ->run_after;
