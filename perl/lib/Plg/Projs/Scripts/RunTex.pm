@@ -13,6 +13,10 @@ use Plg::Projs::Prj::Builder;
 use FindBin qw($Bin $Script);
 use Cwd;
 use Data::Dumper qw(Dumper);
+use Base::Enc qw( unc_decode );
+
+use XML::LibXML;
+use XML::LibXML::PrettyPrint;
 
 use File::stat;
 use File::Path qw(rmtree);
@@ -221,13 +225,54 @@ sub run_after {
     my ($self) = @_;
 
     my $do_htlatex = $self->_do_htlatex;
-	return $self unless $do_htlatex;
+    return $self unless $do_htlatex;
 
     my $ht = $self->{tex4ht} || {};
 
-    my @ht_files = File::Find::Rule
-        ->new->name('*.html')->in('.');
-	$DB::single = 1;
+    $self->ht_pretty_print;
+
+    return $self;
+}
+
+sub ht_pretty_print {
+    my ($self,$ref) = @_;
+    $ref ||= {};
+
+    my $file = $ref->{file};
+
+    my $ht = $self->{tex4ht} || {};
+
+    unless ($file) {
+        my @ht_files = File::Find::Rule
+            ->new->name('*.html')->in('.');
+        foreach my $ht_file (@ht_files) {
+            $self->ht_pretty_print({ file => $ht_file });
+        }
+        return $self;
+    }
+
+    my $html = read_file $file;
+
+    $XML::LibXML::skipXMLDeclaration = 
+        $ref->{libxml_skip_xml_decl} || $self->{libxml_skip_xml_decl};
+
+    my $defs = {
+        expand_entities => 0,
+        load_ext_dtd    => 1,
+        no_blanks       => 1,
+        no_cdata        => 1,
+        line_numbers    => 1,
+    };
+
+    my $parser = XML::LibXML->new(%$defs);
+
+    my $string = $ref->{decode} ? unc_decode($html) : $html;
+    my $inp = {
+        string          => $string,
+        recover         => 1,
+        suppress_errors => 1,
+    };
+    my $dom = $parser->load_html($inp);
 
     return $self;
 }
@@ -236,7 +281,7 @@ sub _do_htlatex {
     my ($self) = @_;
 
     my $do_htlatex = $self->{do_htlatex} || $self->{obj_bld}->{do_htlatex};
-	return $do_htlatex;
+    return $do_htlatex;
 }
 
 sub run {
@@ -281,7 +326,7 @@ sub run {
         )
         ;
 
-	$DB::single = 1;
+    $DB::single = 1;
 
     my $i = 1;
     my $ok = 1;
