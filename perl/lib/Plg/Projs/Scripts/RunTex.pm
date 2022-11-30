@@ -308,7 +308,7 @@ sub ht_pretty_print {
     );
 
     my $txt;
-    $dom->findnodes('(//pre[contains(@class,"fancyvrb")])')->map(
+    $dom->findnodes('//pre[contains(@class,"fancyvrb")]')->map(
         sub {
             my ($node) = @_;
             $txt = $node->textContent;
@@ -323,6 +323,14 @@ sub ht_pretty_print {
         }
     );
     $DB::single = 1;
+
+    $dom->findnodes('//pre/text()')->map(
+        sub { my ($node) = @_;
+            local $_ = $node->getData();
+            s/’/'/g;
+            $node->setData($_);
+        }
+    );
 
     #my @block = qw/table tables columns entry latex_table options/;
     my @block = qw//;
