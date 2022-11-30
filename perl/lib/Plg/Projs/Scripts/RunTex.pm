@@ -283,7 +283,7 @@ sub ht_pretty_print {
             local $_ = $node->getData();
             #s/^\s*$//g;
             #$parent->removeChild($node) unless $data;
-            print qq{$_} . "\n" if /\n\n/;
+            #print qq{$_} . "\n" if /\n\n/;
         }
     );
 
