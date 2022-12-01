@@ -652,7 +652,7 @@ sub _opts_dict {
 
   return unless defined $opts_s;
 
-  my @opts = grep { length } map { defined ? trim($_) : () } split("," => $opts_s);
+  my @opts = grep { length $_ } map { defined $_ ? trim($_) : () } split("," => $opts_s);
 
   return unless @opts;
   my $dict = {};
