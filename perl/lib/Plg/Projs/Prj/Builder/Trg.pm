@@ -60,7 +60,7 @@ sub trg_list_add {
 sub _trg_list {
     my ($bld) = @_;
 
-    @{ $bld->{trg_list} || [] };
+    sort @{ $bld->{trg_list} || [] };
 }
 
 sub trg_inject {

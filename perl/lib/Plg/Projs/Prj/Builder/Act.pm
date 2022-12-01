@@ -40,8 +40,25 @@ sub act_show_acts {
     exit 0;
 }
 
+sub act_db_pull {
+    my ($bld, $ref) = @_;
+
+    $bld->act_db_sync({ pull => 1 });
+    return $bld;
+}
+
+sub act_db_push {
+    my ($bld, $ref) = @_;
+
+    $bld->act_db_sync({ push => 1 });
+    return $bld;
+}
+
 sub act_db_sync {
-    my ($bld) = @_;
+    my ($bld, $ref) = @_;
+    $ref ||= {};
+
+    my ($push, $pull) = @{$ref}{qw( push pull )};
 
     my $root_id = $bld->{root_id};
 
@@ -70,13 +87,18 @@ sub act_db_sync {
             -f $f ? stat($f)->mtime : 0
         } qw(local remote);
 
-    if ($m_local > $m_remote) {
+    unless($push || $pull) {
+        $push = ( $m_local > $m_remote ) ? 1 : 0;
+        $pull = !$push ? 1 : 0;
+    }
+    $DB::single = 1;
+
+    if ($push ) {
         print qq{ db PUSH: local => remote } . "\n";
         copy(@dbf{qw(local remote)});
-    }
-    elsif ($m_local < $m_remote) {
-        copy(@dbf{qw( remote local )});
+    } elsif ($pull) {
         print qq{ db PULL: remote => local } . "\n";
+        copy(@dbf{qw( remote local )});
     }
 
     return $bld;
