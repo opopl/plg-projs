@@ -10,6 +10,8 @@ use warnings;
 
 use File::Path qw(mkpath rmtree);
 use File::Spec::Functions qw(catfile);
+use File::Copy qw(copy move);
+use File::stat;
 
 sub _acts {
     my ($bld) = @_;
@@ -41,6 +43,8 @@ sub act_show_acts {
 sub act_db_push {
     my ($bld) = @_;
 
+    my $root_id = $bld->{root_id};
+
     my $rmt = $ENV{rmt};
     unless ($rmt) {
         warn 'no rmt!' . "\n";
@@ -54,8 +58,26 @@ sub act_db_push {
         return $bld;
     }
     my $rmt_db_dir = catfile($rmt_dir,qw(db));
-    unless (-d $rmt_db_dir) {
-        mkpath $rmt_db_dir;
+    mkpath $rmt_db_dir unless -d $rmt_db_dir;
+
+    my %dbf = (
+        'local'  => $bld->_db_file,
+        'remote' => catfile($rmt_db_dir, $root_id . '.db')
+    );
+
+    unless (-f $dbf{local}) {
+        warn 'no local db! ' . "\n";
+        return $bld;
+    }
+
+    my ($m_local, $m_remote) = map {
+            my $f = $dbf{$_};
+            -f $f ? stat($f)->mtime : 0
+        } qw(local remote);
+
+    if ($m_local > $m_remote) {
+        print qq{ copy db: local => remote } . "\n";
+        copy(@dbf{qw(local remote)});
     }
 
     return $bld;
