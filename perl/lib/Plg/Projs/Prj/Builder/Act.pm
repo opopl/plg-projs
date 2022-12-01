@@ -52,7 +52,7 @@ sub act_db_sync {
     }
     my $rmt_dir;
     $rmt_dir = catfile(qw(/mnt usb),$rmt) if $^O eq 'linux';
-    $rmt_dir = catfile(qw(/Volumes),$rmt) if $^O eq 'darwin';
+    $rmt_dir = catfile(qw(/Volumes),uc $rmt) if $^O eq 'darwin';
     unless (-d $rmt_dir) {
         warn 'rmt not mounted: ' . $rmt . "\n";
         return $bld;
