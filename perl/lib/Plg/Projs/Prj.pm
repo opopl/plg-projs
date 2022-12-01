@@ -1138,6 +1138,14 @@ sub init_proj {
     return $self;
 }
 
+sub _db_file {
+    my ($self) = @_;
+
+    $self->{db_file} ||= catfile($self->{root},'projs.sqlite');
+
+    return $self->{db_file};
+}
+
 sub init_db {
     my ($self, $ref) = @_;
     $ref ||= {};
@@ -1150,8 +1158,7 @@ sub init_db {
        if ($@) { warn $@; }
     }
 
-    $self->{db_file} ||= catfile($self->{root},'projs.sqlite');
-    my $db_file = $self->{db_file};
+    my $db_file = $self->_db_file;
 
     my $dbh = dbi_connect({
         dbfile => $db_file
