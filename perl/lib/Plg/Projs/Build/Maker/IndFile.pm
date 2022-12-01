@@ -55,13 +55,13 @@ sub ind_ins_bmk {
                m/^\s*\\item\s+(\w+)/ && do { $ind_items{$1} = []; };
         
                m/^\s*\\lettergroup\{(.+)\}$/ && do {
-                   s{
-                       ^\s*\\lettergroup{(.+)}$
-                   }{
+                   s/
+                       ^\s*\\lettergroup\{(.+)\}$
+                   /
                     \\hypertarget{$dest}{}\n
                     \\bookmark[level=$level,dest=$dest]{$1}\n 
                     \\lettergroup{$1}
-                   }gmx;
+                   /gmx;
         
                    $i++;
                };
