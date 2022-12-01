@@ -40,7 +40,7 @@ sub act_show_acts {
     exit 0;
 }
 
-sub act_db_push {
+sub act_db_sync {
     my ($bld) = @_;
 
     my $root_id = $bld->{root_id};
@@ -65,19 +65,18 @@ sub act_db_push {
         'remote' => catfile($rmt_db_dir, $root_id . '.db')
     );
 
-    unless (-f $dbf{local}) {
-        warn 'no local db! ' . "\n";
-        return $bld;
-    }
-
     my ($m_local, $m_remote) = map {
             my $f = $dbf{$_};
             -f $f ? stat($f)->mtime : 0
         } qw(local remote);
 
     if ($m_local > $m_remote) {
-        print qq{ copy db: local => remote } . "\n";
+        print qq{ db PUSH: local => remote } . "\n";
         copy(@dbf{qw(local remote)});
+    }
+    elsif ($m_local < $m_remote) {
+        copy(@dbf{qw( remote local )});
+        print qq{ db PULL: remote => local } . "\n";
     }
 
     return $bld;
