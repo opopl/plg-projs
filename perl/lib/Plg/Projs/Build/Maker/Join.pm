@@ -245,9 +245,11 @@ sub _join_lines {
                     #$DB::single = 1 if $sect && $sect eq 'section';
 
                     if (@ii_title_href) {
-                        push @lines,
-                           sprintf('\href{/prj/sec/html?sec=%s}{%s}\par',
-                               $ii_sec, join(", " => @ii_title_href));
+                        my $htitle = join(", " => @ii_title_href);
+                        push @lines, $mkr->_sec_link_html({ 
+                            sec => $ii_sec,
+                            link_title => $htitle,
+                        });
                         next;
                     }
                 }
