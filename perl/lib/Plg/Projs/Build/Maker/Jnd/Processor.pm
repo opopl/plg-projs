@@ -795,12 +795,20 @@ sub ldo_no_cmt {
        if($seccmd eq 'subsection'){
            push @top, sprintf('\ifdefined\HCode\NextFile{%s.html}\fi',$sec);
 
-           push @push, (
-             $url    ? sprintf(q{\Purl{%s}},$url) : (),
-             $date_s ? sprintf(q{\Pdate{%s}},$date_s) : (),
-             $self->_tex_author($author_id) 
-           )
-           ;
+           if ($mkr->{do_srv}) {
+               push @push, (
+                 $url    ? sprintf(q{\Purl{%s}},$url) : (),
+                 $date_s ? sprintf(q'\href{/prj/sec/html?sec=%s}{%s}',$date, $date_s) : (),
+                 $self->_tex_author($author_id)
+               )
+           }else{
+               push @push, (
+                 $url    ? sprintf(q{\Purl{%s}},$url) : (),
+                 $date_s ? sprintf(q{\Pdate{%s}},$date_s) : (),
+                 $self->_tex_author($author_id)
+               )
+               ;
+           }
        }
        # $_ becomes undef for unknown reason in limited cases
        $_ = $self->{line} unless defined;
