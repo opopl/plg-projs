@@ -1280,4 +1280,6 @@ sub rpl_dashes {
 #tn;language=dflt;!
 #Missing character: There is no  (U+E206) in font Times New Roman/OT:script=lat
 #n;language=dflt;!
+#Missing character: There is no ❤ (U+2764) in font Times New Roman/OT:script=lat
+#n;language=dflt;!
 
