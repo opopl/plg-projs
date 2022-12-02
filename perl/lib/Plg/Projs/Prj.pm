@@ -1061,6 +1061,19 @@ sub _sec_data {
        '@file_ex'   => $file_ex,
     });
 
+    my $get = $ref->{'@get'} || [];
+    my $wx = { file => $file  };
+    my %m = ( 'tags' => 'tag' );
+    foreach my $x (@$get) {
+        my $f = $m{$x} || $x;
+        my $list = dbh_select_as_list({
+            dbh     => $self->{dbh},
+            q       => qq{ SELECT $f FROM _info_projs_$x },
+            w       => $wx,
+        });
+        hash_update($rw, { '@' . $x => $list });
+    }
+
     return $rw;
 }
 

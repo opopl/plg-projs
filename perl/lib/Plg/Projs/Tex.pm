@@ -1241,4 +1241,43 @@ sub rpl_dashes {
 
 1;
 
+#Missing character: There is no ア (U+30A2) in font Times New Roman Italic/OT:scr
+#ipt=latn;language=dflt;!
+#Missing character: There is no レ (U+30EC) in font Times New Roman Italic/OT:scr
+#ipt=latn;language=dflt;!
+#Missing character: There is no ッ (U+30C3) in font Times New Roman Italic/OT:scr
+#ipt=latn;language=dflt;!
+#Missing character: There is no ク (U+30AF) in font Times New Roman Italic/OT:scr
+#ipt=latn;language=dflt;!
+#Missing character: There is no ス (U+30B9) in font Times New Roman Italic/OT:scr
+#ipt=latn;language=dflt;!
+#Missing character: There is no ア (U+30A2) in font Times New Roman Bold/OT:scrip
+#t=latn;language=dflt;!
+#Missing character: There is no レ (U+30EC) in font Times New Roman Bold/OT:scrip
+#t=latn;language=dflt;!
+#Missing character: There is no ッ (U+30C3) in font Times New Roman Bold/OT:scrip
+#t=latn;language=dflt;!
+#Missing character: There is no ク (U+30AF) in font Times New Roman Bold/OT:scrip
+#t=latn;language=dflt;!
+#Missing character: There is no ス (U+30B9) in font Times New Roman Bold/OT:scrip
+#
+#Missing character: There is no ☹ (U+2639) in font Times New Roman/OT:script=lat
+#n;language=dflt;!
+#[116] (./jnd.mw) [117] (./jnd.mw) [118] (./jnd.mw)
+#Missing character: There is no ？ (U+FF1F) in font Times New Roman/OT:script=lat
+#n;language=dflt;!
+#Missing character: There is no ！ (U+FF01) in font Times New Roman/OT:script=lat
+#n;language=dflt;!
+#Missing character: There is no ⚘ (U+2698) in font Times New Roman/OT:script=lat
+#n;language=dflt;!
+#Missing character: There is no � (U+1F609) in font Times New Roman/OT:script=la
+#tn;language=dflt;!
+#Missing character: There is no � (U+1F609) in font Times New Roman/OT:script=la
+#tn;language=dflt;!
+#Missing character: There is no � (U+1F60A) in font Times New Roman/OT:script=la
+#tn;language=dflt;!
+#Missing character: There is no � (U+1F609) in font Times New Roman/OT:script=la
+#tn;language=dflt;!
+#Missing character: There is no  (U+E206) in font Times New Roman/OT:script=lat
+#n;language=dflt;!
 

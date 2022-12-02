@@ -26,6 +26,8 @@ sub _author_get {
     my ($self, $ref) = @_;
     $ref ||= {};
 
+    my $f = $ref->{f} || [qw(name)];
+
     my $author_id = $ref->{author_id} || '';
 
     my $db_file = catfile($ENV{HTML_ROOT},'h.db');
@@ -33,7 +35,7 @@ sub _author_get {
     my $author = dbh_select_fetchone({
         dbfile => $db_file,
         t => 'authors',
-        f => [qw( name )],
+        f => $f,
         w => { id => $author_id },
     });
 

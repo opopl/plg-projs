@@ -225,13 +225,32 @@ sub _join_lines {
                 ;
 
             if ($bld->{do_srv}) {
-                $DB::single = 1 if $sect && $sect eq 'section';
                 my $url = $r_sec->{url};
                 #if (!$sect || ($sect && grep { /^$sect$/ } qw( chapter section part ))) {
                 if (($sect && grep { /^$sect$/ } qw( section ))) {
-                    push @lines,
-                       sprintf('\url{/prj/sec/html?sec=%s}',$ii_sec);
-                    next;
+                    my $ii_data = $bld->_sec_data({
+                        sec => $ii_sec,
+                        proj => $proj,
+                        '@get' => [qw( author_id tags )],
+                    });
+                    my @author_ids = @{$ii_data->{'@author_id'} || []};
+                    my @authors = map {
+                        $bld->_author_get({ author_id => $_, f => [qw(plain)] })
+                    } @author_ids;
+                    $DB::single = 1;
+
+                    my ($title, $url) = @{$ii_data}{qw(title url)};
+                    my @ii_title_href;
+                    push @ii_title_href, $title, @authors;
+
+                    #$DB::single = 1 if $sect && $sect eq 'section';
+
+                    if (@ii_title_href) {
+                        push @lines,
+                           sprintf('\href{/prj/sec/html?sec=%s}{%s}\par',
+                               $ii_sec, join(", " => @ii_title_href));
+                        next;
+                    }
                 }
             }
 
