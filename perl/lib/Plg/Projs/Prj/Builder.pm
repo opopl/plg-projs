@@ -257,13 +257,23 @@ sub process_config {
             $bld->{tex_exe} = 'xelatex';
             next;
         };
+
+        # compile in box environment with all
+        #   images copied locally 
         /^box$/ && do {
             $bld->{box} = 1;
             next;
         };
 
+        # compile with htlatex
         /^htx$/ && do {
             $bld->{do_htlatex} = 1;
+            next;
+        };
+
+        # implies htx - prepare html files for server
+        /^srv$/ && do {
+            $bld->{do_srv} = 1;
             next;
         };
     }
