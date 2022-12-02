@@ -7,7 +7,7 @@ use strict;
 use warnings;
 
 # binmode STDOUT, ":encoding(UTF-8)";
-# use open ':std', ':encoding(UTF-8)'; 
+# use open ':std', ':encoding(UTF-8)';
 #
 use Encode;
 
@@ -60,7 +60,7 @@ use Base::DB qw(
 );
 
 use Plg::Projs::Tex qw(
-    texify 
+    texify
     escape_latex
 );
 
@@ -100,7 +100,7 @@ sub ctl_end {
 
 sub init {
     my ($self) = @_;
-    
+
     #$self->SUPER::init();
     #
     my $h = {
@@ -146,7 +146,7 @@ sub init {
        prj => undef,
 
     };
- 
+
     hash_inject($self, $h);
     return $self;
 }
@@ -279,16 +279,16 @@ sub tab_init {
 sub _tab_start {
   my ($self) = @_;
   my $tab = $self->{tab};
-  
+
   return () unless $tab;
   my @tex;
 
-  my %w = ( 
+  my %w = (
       resizebox => $self->_len2tex($tab->{resizebox}),
       minipage  => $self->_len2tex($tab->{minipage}),
   );
 
-  push @tex, 
+  push @tex,
     $tab->{center} ? '\begin{center}%' : (),
     $tab->{resizebox} ? sprintf('\resizebox{%s}{!}{%% start_resizebox',$w{resizebox}) : (),
     $tab->{minipage} ? sprintf('\begin{minipage}{%s}%%',$w{minipage}) : (),
@@ -309,7 +309,7 @@ sub _tab_end {
 
   my $env = $tab->{env};
 
-  push @tex, 
+  push @tex,
     sprintf(q| \end{%s}|,$env),
     $tab->{caption} ? sprintf('\captionof{table}{%s}%%',$tab->{caption}) : (),
     $tab->{minipage} ? '\end{minipage}' : (),
@@ -321,7 +321,7 @@ sub _tab_end {
 
 }
 
-sub _tex_caption_tab { 
+sub _tex_caption_tab {
   my ($self) = @_;
 
   my $tab = $self->{tab};
@@ -332,10 +332,10 @@ sub _tex_caption_tab {
 
   my $i_cap = 0;
   my @caps;
-    
+
   for(@{$tab->{cap_list}}){
      $i_cap++;
-     push @caps, 
+     push @caps,
         sprintf('\textbf{(%s)} %s', $i_cap, @{$_}{qw(caption)});
   }
   my $c_long = join(" ", $c, @caps );
@@ -347,10 +347,10 @@ sub _tex_caption_tab {
 # _width <=> $get_width
 sub _width {
   my ($self, $wd) = @_;
-  my $w = $wd 
-            // $self->_val_('d width') 
-            // $self->_val_('tab width') 
-            // $self->_val_('locals width') 
+  my $w = $wd
+            // $self->_val_('d width')
+            // $self->_val_('tab width')
+            // $self->_val_('locals width')
             // $self->{img_width_default};
 
   return $w;
@@ -567,7 +567,7 @@ sub match_author_id {
 
   $self->{d_author}->{author_id} ||= [];
 
-  push @{$self->{d_author}->{author_id}}, 
+  push @{$self->{d_author}->{author_id}},
      str_split($author_id,{ 'sep' => ',', uniq => 1 });
 
   return $self;
@@ -626,7 +626,7 @@ sub _tex_author {
 
      if ($mkr->{do_htlatex}) {
         my $sec_auth = sprintf('_auth.%s',$id);
-        push @tex, 
+        push @tex,
             $mkr->_sec_link_html({ sec => $sec_auth, link_title => $author }),
      }else{
         push @tex, sprintf(q{\Pauthor{%s}}, $author);
@@ -645,7 +645,7 @@ sub match_author_end {
   return $self unless @$author_ids;
 
   $author_ids = uniq($author_ids);
- 
+
   push @{$self->{nlines}}, $self->_tex_author($author_ids);
 
   $self->{d_author} = undef;
@@ -714,7 +714,7 @@ sub match_tab_begin {
   my $tab = $self->{tab};
   my $tab_cols = $tab->{cols};
   $tab->{width} ||= ( $self->{img_width_default} / $tab_cols );
-  
+
   return $self;
 }
 
@@ -774,7 +774,7 @@ sub ldo_no_cmt {
   my (@push, @top);
   while (1) {
     $_ = $self->_expand_igg($_);
-  
+
     m/^\s*%%\s*\\ii\{(.*)\}\s*$/ && do {
        $self->{sec_info} = {};
        $self->{sec_info}->{sec} =  $1;
@@ -820,24 +820,24 @@ sub ldo_no_cmt {
        $_ = $self->{line} unless defined;
        last;
     };
-  
+
     m/\@(pic|ig|doc)\{([^{}]+)\}/ && do {
        my $type = $1;
        last;
     };
-  
+
     m/^\s*\\begin\{multicols\}\{(\d+)\}/g && do {
       $self->{multicols} = {
          cols => $1,
       };
       last;
     };
-  
+
     m/^\s*\\end\{multicols\}/g && do {
       $self->{multicols} = undef;
       last;
     };
-  
+
     if ($url) {
        /^\s*\\Purl\Q{$url}\E/ && do { $ok = 0; last; };
     }
@@ -876,7 +876,7 @@ sub ldo_no_cmt {
        s/\N{U+10D7}/\\hcode{&\\#x10D7;}/g; # თ
        s/\N{U+10D5}/\\hcode{&\\#x10D5;}/g; # ვ
        s/\N{U+10D4}/\\hcode{&\\#x10D4;}/g; # ე
-       s/\N{U+10DA}/\\hcode{&\\#x10DA;}/g; # ლ 
+       s/\N{U+10DA}/\\hcode{&\\#x10DA;}/g; # ლ
        s/\N{U+10DD}/\\hcode{&\\#x10DD;}/g; # ო
        s/\N{U+10E4}/\\hcode{&\\#x10E4;}/g; # ფ
        s/\N{U+10E2}/\\hcode{&\\#x10E2;}/g; # ტ
@@ -989,7 +989,7 @@ sub lpush_d {
 
      if ($d->{caption}) {
         push @{$tab->{cap_list}},
-        { 
+        {
              i_col   => $tab->{i_col},
              i_row   => $tab->{i_row},
              caption => $d->{caption},
@@ -1012,7 +1012,7 @@ sub lpush_d {
         push @s, q{&};
         $tab->{i_col}++;
      }
-  
+
      #push @{$self->{nlines}}, @s;
      push @{$tab->{store}},@s;
   }
@@ -1131,7 +1131,7 @@ sub _d2tex_import {
 
   my ($mkr, $globals) = @{$self}{qw( mkr globals )};
   $globals ||= {};
-  
+
   my $opts_import = $globals->{'opts_import'};
 
   #my $tab_opts  = $d->{tab} || '';
@@ -1203,7 +1203,7 @@ sub _d2tex_import {
 
      $caption = undef if ($tab && $tab->{no_caption});
 
-     my $du = { 
+     my $du = {
          url     => $url,
          type    => 'ig',
          caption => $caption,
@@ -1247,7 +1247,7 @@ sub _d2tex {
   unless ($img_file && $img_path) {
     my $err = $d_db->{err} || [];
     return  @$err;
-    #push @err, 
+    #push @err,
       #'image file not found ',
       #Dumper($d);
     #return ( map { '%' . $_ } @err );
@@ -1314,7 +1314,7 @@ sub _d2tex {
     $wd ? sprintf('\setlength{\cellWidth}{%s}',$self->_len2tex($wd)) : ();
 
   my @o;
-  push @o, 
+  push @o,
     q{ keepaspectratio },
     $wd ? q{ width=\cellWidth } : (),
     ;
@@ -1326,13 +1326,13 @@ sub _d2tex {
 
   my $o = join(",",@o);
 
-  my (@ig, $ig_cmd); 
+  my (@ig, $ig_cmd);
   $ig_cmd = sprintf(q|  \includegraphics[%s]{%s} |, $o, $img_path );
   if ($mkr->{box}) {
     # body...
   }
 
-  push @ig, 
+  push @ig,
     $ig_cmd;
 
   my $repeat = $d->{repeat};
@@ -1479,7 +1479,7 @@ sub _macro_igg {
 
   $ref ||= {};
 
-  my @ignames = 
+  my @ignames =
      grep { !/^(\d+)$/ }
      split ' ' => $igname;
 
@@ -1495,8 +1495,8 @@ sub _macro_igg {
   $igname = trim($igname);
 
   my $d = {
-     name => $igname, 
-     type => 'ig' 
+     name => $igname,
+     type => 'ig'
   };
 
   hash_update( $d, $self->_opts_dict($opts_s) );
@@ -1523,14 +1523,14 @@ sub loop {
 
 ###m_\ifcmt
     m/^\\ifcmt\s*$/g && do {
-        $self->{is_cmt} = 1; 
+        $self->{is_cmt} = 1;
         $self->{locals} = {};
         #push @{$self->{nlines}},'{';
-        next; 
+        next;
     };
 
 ###m_\fi
-    m/^\\fi\s*$/g && do { 
+    m/^\\fi\s*$/g && do {
        if ($self->{is_cmt}) {
            $self->lpush_d;
            $self->{$_} = undef for(qw( is_cmt locals globals_block ));
@@ -1538,7 +1538,7 @@ sub loop {
            $self->ldo_no_cmt;
        }
        #push @{$self->{nlines}},'}';
-       next; 
+       next;
     };
 
     if ($self->{is_cmt} && $self->{is_key}) {
@@ -1577,8 +1577,8 @@ sub loop {
 
           $DB::single = 1 if $k eq 'dbg';
 
-          my @block_end = qw( 
-            tex tex_start 
+          my @block_end = qw(
+            tex tex_start
             tab_begin tab_end
             pic doc
             ig igc
@@ -1634,7 +1634,7 @@ sub loop {
     m/^\s*author_end\s*$/g && do { $self->match_author_end; next; };
     m/^\s*author_begin\s*$/g && do { $self->match_author_begin; next; };
     m/^\s*author_id\s*(.*)\s*$/g && do { $self->match_author_id($1); next; };
-   
+
 ###m_tab
     m/^\s*tab_begin\b(.*)/g && do { $self->match_tab_begin($1); next; };
     m/^\s*tab_end\s*$/g && do { $self->match_tab_end; next; };
@@ -1646,7 +1646,7 @@ sub loop {
 
        next unless $v;
 
-       my $opts = $self->_opts_dict($v);   
+       my $opts = $self->_opts_dict($v);
        next unless $opts;
 
        $self->{d} = { type => $1 };
@@ -1739,5 +1739,5 @@ sub loop {
 }
 
 1;
- 
+
 
