@@ -869,6 +869,24 @@ sub ldo_no_cmt {
     }
     push @{$self->{nlines}}, @push;
 
+#Missing character: There is no ☹ (U+2639) in font Times New Roman/OT:script=lat
+#n;language=dflt;!
+#[116] (./jnd.mw) [117] (./jnd.mw) [118] (./jnd.mw)
+#Missing character: There is no ？ (U+FF1F) in font Times New Roman/OT:script=lat
+#n;language=dflt;!
+#Missing character: There is no ！ (U+FF01) in font Times New Roman/OT:script=lat
+#n;language=dflt;!
+#Missing character: There is no ⚘ (U+2698) in font Times New Roman/OT:script=lat
+#n;language=dflt;!
+#Missing character: There is no � (U+1F609) in font Times New Roman/OT:script=la
+#tn;language=dflt;!
+#Missing character: There is no � (U+1F609) in font Times New Roman/OT:script=la
+#tn;language=dflt;!
+#Missing character: There is no � (U+1F60A) in font Times New Roman/OT:script=la
+#tn;language=dflt;!
+#Missing character: There is no � (U+1F609) in font Times New Roman/OT:script=la
+#tn;language=dflt;!
+
 ###unicode_U+FE0F
     #$DB::single = 1 if /\N{U+FE0F}/;
     #$DB::single = 1 if grep { /\N{U+0306}/ } @push;
