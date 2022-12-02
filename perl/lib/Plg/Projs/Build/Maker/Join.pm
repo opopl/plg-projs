@@ -224,9 +224,8 @@ sub _join_lines {
                 ->tree_add_child({ sec => $sec, child => $ii_sec })
                 ;
 
-            if ($bld->{do_srv}) {
+            if ($bld->{do_htlatex}) {
                 my $url = $r_sec->{url};
-                #if (!$sect || ($sect && grep { /^$sect$/ } qw( chapter section part ))) {
                 if (($sect && grep { /^$sect$/ } qw( section ))) {
                     my $ii_data = $bld->_sec_data({
                         sec => $ii_sec,

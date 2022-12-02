@@ -793,12 +793,12 @@ sub ldo_no_cmt {
        $self->{sec_info}->{label} = 1;
        push @push, $lb;
        if($seccmd eq 'subsection'){
-           push @top, sprintf('\ifdefined\HCode\NextFile{%s.html}\fi',$sec);
+           if ($mkr->{do_htlatex}) {
+               push @top, sprintf('\ifdefined\HCode\NextFile{%s.html}\fi',$sec);
 
-           if ($mkr->{do_srv}) {
                push @push, (
                  $url    ? sprintf(q{\Purl{%s}},$url) : (),
-                 $date_s ? sprintf(q'\href{/prj/sec/html?sec=%s}{%s}',$date, $date_s) : (),
+                 $date_s ? sprintf(q'\href{../_buf.%s/jnd_ht.html}{%s}', $date, $date_s) : (),
                  $self->_tex_author($author_id)
                )
            }else{
