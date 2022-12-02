@@ -249,6 +249,7 @@ sub _join_lines {
                         push @lines, $mkr->_sec_link_html({ 
                             sec => $ii_sec,
                             link_title => $htitle,
+                            par => 1,
                         });
                         next;
                     }
