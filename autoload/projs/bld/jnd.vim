@@ -22,8 +22,9 @@ function! projs#bld#jnd#tex (...)
   let target = get(ref,'target',target)
 
   let target_ext = get(ref,'target_ext','pdf')
+  let suffix = ( target_ext == 'pdf' ) ? '' : '_ht'
 
-  let rel = printf('builds %s src %s %s jnd.tex', proj, target_ext, target)
+  let rel = printf('builds %s src %s %s jnd%s.tex', proj, target_ext, target, suffix)
   let jnd_tex = base#qw#catpath( projs#rootid(),rel)
   return jnd_tex
 endfunction
