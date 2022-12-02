@@ -58,11 +58,30 @@ sub act_db_sync {
     my ($bld, $ref) = @_;
     $ref ||= {};
 
-    my ($push, $pull) = @{$ref}{qw( push pull )};
+    my ($push, $pull, $rmt) = @{$ref}{qw( push pull rmt )};
 
     my $root_id = $bld->{root_id};
 
-    my $rmt = $ENV{rmt};
+    unless ($rmt) {
+        my @rmt;
+        my @df = `df`;
+        for(@df){
+            chomp;
+            my @line = split /\s+/;
+            my $last = pop @line;
+            if ($^O eq 'linux') {
+                next unless $last =~ m|^\/mnt\/usb\/(\w+)|;
+                push @rmt, $1;
+            }
+        }
+    
+        if (@rmt) {
+            $bld->act_db_sync({ %$ref, rmt => $_ }) for(@rmt);
+            return $bld;
+        }
+    }
+
+    $DB::single = 1;
     unless ($rmt) {
         warn 'no rmt!' . "\n";
         return $bld;
