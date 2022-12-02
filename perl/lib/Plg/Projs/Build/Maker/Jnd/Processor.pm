@@ -886,6 +886,8 @@ sub ldo_no_cmt {
 #tn;language=dflt;!
 #Missing character: There is no � (U+1F609) in font Times New Roman/OT:script=la
 #tn;language=dflt;!
+#Missing character: There is no  (U+E206) in font Times New Roman/OT:script=lat
+#n;language=dflt;!
 
 ###unicode_U+FE0F
     #$DB::single = 1 if /\N{U+FE0F}/;
