@@ -624,7 +624,13 @@ sub _tex_author {
      }
      Plg::Projs::Tex::texify(\$author);
 
-     push @tex, sprintf(q{\Pauthor{%s}}, $author);
+     if ($mkr->{do_htlatex}) {
+        my $sec_auth = sprintf('_auth.%s',$id);
+        push @tex, 
+            $mkr->_sec_link_html({ sec => $sec_auth, link_title => $author }),
+     }else{
+        push @tex, sprintf(q{\Pauthor{%s}}, $author);
+     }
   }
 
   return @tex;
