@@ -26,6 +26,7 @@ use base qw(
 
     Plg::Projs::Build::Maker::Jnd
     Plg::Projs::Build::Maker::Tree
+    Plg::Projs::Build::Maker::Html
 );
 
 use File::stat;

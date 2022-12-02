@@ -270,12 +270,6 @@ sub process_config {
             $bld->{do_htlatex} = 1;
             next;
         };
-
-        # implies htx - prepare html files for server
-        /^srv$/ && do {
-            $bld->{do_srv} = 1;
-            next;
-        };
     }
 
     return $bld;
@@ -458,7 +452,7 @@ sub init_maker {
 
         map { $_ => $bld->{$_} } qw(
             box
-            do_htlatex do_srv
+            do_htlatex
             tex4ht
         )
     );
