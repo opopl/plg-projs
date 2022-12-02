@@ -267,14 +267,14 @@ function! projs#action#git_add_texfiles ()
   call base#cd(root)
 
   " list untracked files
-	let cmd_a = []
-	if has('mac') || has('unix')
-	  let cmd_a = [
-	      \ 'git ls-files --others --exclude-standard',
-	      \ printf("perl -lane 'print if /%s.*\\.tex$/'",proj),
-	      \ 'xargs git add',
-	      \ ]
-	endif
+  let cmd_a = []
+  if has('mac') || has('unix')
+    let cmd_a = [
+        \ 'git ls-files --others --exclude-standard',
+        \ printf("perl -lane 'print if /%s.*\\.tex$/'",proj),
+        \ 'xargs git add',
+        \ ]
+  endif
 
   let cmd = join(cmd_a, '|')
 
@@ -986,6 +986,8 @@ function! projs#action#bld_join (...)
 
   let async = base#x#get(ref,'async',1)
 
+  let target_ext = base#x#get(ref,'target_ext','pdf')
+
   let view = base#x#get(ref,'view',0)
 
   let target  = base#x#get(ref,'target','')
@@ -1002,7 +1004,8 @@ function! projs#action#bld_join (...)
 
   let act = 'join'
 
-  let a = [ 'perl', bfile, act, '-t', target ]
+  let cnf = ( target_ext == 'pdf' ) ? '' : '-c htx'
+  let a = [ 'perl', bfile, act, cnf, '-t', target ]
   let cmd = join(a, ' ' )
 
   call base#varset('projs_bld_last',{
