@@ -10,7 +10,7 @@ endfunction
 
 if 0
   call tree
-    calls 
+    calls
       projs#pdf#view
 endif
 
@@ -47,7 +47,7 @@ function! projs#bld#do#jnd_view (...)
   let proj    = projs#proj#name()
 
   "let jnd_tex = join([ projs#root(), 'builds', proj, 'src', target, 'jnd.tex' ],"/")
-  let jnd_tex = projs#bld#jnd#tex({ 
+  let jnd_tex = projs#bld#jnd#tex({
       \ 'proj'       : proj,
       \ 'target'     : target
       \ 'target_ext' : target_ext
