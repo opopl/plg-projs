@@ -35,7 +35,9 @@ endif
 function! projs#bld#do#jnd_view (...)
   let ref = get(a:000,0,{})
 
-  let target  = base#x#get(ref,'target','')
+  let target     = base#x#get(ref,'target','')
+  let target_ext = base#x#get(ref,'target_ext','pdf')
+
   if !len(target)
     let target = projs#bld#target()
   else
@@ -45,7 +47,11 @@ function! projs#bld#do#jnd_view (...)
   let proj    = projs#proj#name()
 
   "let jnd_tex = join([ projs#root(), 'builds', proj, 'src', target, 'jnd.tex' ],"/")
-  let jnd_tex = projs#bld#jnd#tex({ 'proj' : proj, 'target' : target })
+  let jnd_tex = projs#bld#jnd#tex({ 
+      \ 'proj'       : proj,
+      \ 'target'     : target
+      \ 'target_ext' : target_ext
+      \ })
 
   let i = 0
   " wait for 10 secs
@@ -55,8 +61,9 @@ function! projs#bld#do#jnd_view (...)
     if !filereadable(jnd_tex)
       if !jcall
         call projs#action#bld_join({
-          \ 'proj'   : proj,
-          \ 'target' : target
+          \ 'proj'       : proj,
+          \ 'target'     : target,
+          \ 'target_ext' : target_ext,
           \ })
         let jcall = 1
       endif
