@@ -232,8 +232,9 @@ sub _join_lines {
                     '@get' => [qw( author_id tags )],
                 });
                 my $ii_link;
-                $ii_link ||= $ii_data->{url} ? 1 : 0;
                 $ii_link ||= ($sect && grep { /^$sect$/ } qw( section )) ? 1 : 0;
+                $ii_link ||= $ii_data->{url} ? 1 : 0;
+                $ii_link &&= ($bld->{target} eq "_buf.$ii_sec") ? 0 : 1;
 
                 if ($ii_link) {
                     my @author_ids = @{$ii_data->{'@author_id'} || []};

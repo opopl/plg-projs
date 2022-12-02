@@ -625,9 +625,13 @@ sub _tex_author {
      Plg::Projs::Tex::texify(\$author);
 
      if ($mkr->{do_htlatex}) {
-        my $sec_auth = sprintf('_auth.%s',$id);
+        my $t_auth = sprintf('_auth.%s',$id);
         push @tex,
-            $mkr->_sec_link_html({ sec => $sec_auth, link_title => $author }),
+            $mkr->_sec_link_html({
+                 target => $t_auth,
+                 link_title => $author,
+                 par => 1,
+            }),
      }else{
         push @tex, sprintf(q{\Pauthor{%s}}, $author);
      }
@@ -804,7 +808,11 @@ sub ldo_no_cmt {
 
                push @push, (
                  $url    ? sprintf(q{\Purl{%s}},$url) : (),
-                 $date_s ? $mkr->_sec_link_html({ sec => $date, link_title => $date_s }) : (),
+                 $date_s ? $mkr->_sec_link_html({
+                         sec => $date,
+                         link_title => $date_s,
+                         par => 1,
+                 }) : (),
                  $self->_tex_author($author_id)
                )
            }else{
