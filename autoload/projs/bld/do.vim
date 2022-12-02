@@ -49,7 +49,7 @@ function! projs#bld#do#jnd_view (...)
   "let jnd_tex = join([ projs#root(), 'builds', proj, 'src', target, 'jnd.tex' ],"/")
   let jnd_tex = projs#bld#jnd#tex({
       \ 'proj'       : proj,
-      \ 'target'     : target
+      \ 'target'     : target,
       \ 'target_ext' : target_ext
       \ })
 
