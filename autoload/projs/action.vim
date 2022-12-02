@@ -1,5 +1,5 @@
 if 0
-BaseDatView 
+BaseDatView
 endif
 
 function! projs#action#thisproj_cd_src (...)
@@ -76,7 +76,7 @@ function! projs#action#thisproj_tags_replace (...)
   call extend(ref,ref_a)
 
   let proj = get(ref,'proj',proj)
-  
+
   let files = projs#proj#files({ 'proj' : proj })
   let pdir  = projs#root()
 
@@ -103,7 +103,7 @@ function! projs#action#thisproj_tags_replace (...)
     endfor
 
     if !done
-      let sec = matchstr(f, '^\w\+\.\zs\(\w\+\)\ze\..*\.tex$')    
+      let sec = matchstr(f, '^\w\+\.\zs\(\w\+\)\ze\..*\.tex$')
       " insert before the first item
       if strlen(sec)
         call extend(nlines,[ ' ', '%%file ' . sec , ' ' ],0)
@@ -250,7 +250,7 @@ function! projs#action#git_commit ()
   call add(cmds,'git add '.proj.'.tex')
   call add(cmds,'git commit -m "'.msg.'"')
 
-  let ok = base#sys({ 
+  let ok = base#sys({
     \ "cmds"         : cmds,
     \ "split_output" : 1,
     \ })
@@ -288,10 +288,10 @@ function! projs#action#git_add_texfiles ()
     endif
     call base#rdw('OK: Git Add Untracked Tex Files')
   endfunction
-  
-  call asc#run({ 
-    \ 'cmd' : cmd, 
-    \ 'Fn'  : asc#tab_restore(env) 
+
+  call asc#run({
+    \ 'cmd' : cmd,
+    \ 'Fn'  : asc#tab_restore(env)
     \ })
 
 endfunction
@@ -314,7 +314,7 @@ for proj in projs:
         if re.match(p,line):
           line = re.sub(p,r'"""\1 \2',line)
         f.write(line)
-  
+
 eof
 endfunction
 
@@ -341,7 +341,7 @@ function! projs#action#url_view_html ()
     endif
   endif
 
-  let s:obj = { 
+  let s:obj = {
     \ 'proj' : b:proj ,
     \ 'sec'  : b:sec  ,
     \ 'url'  : url,
@@ -352,9 +352,9 @@ function! projs#action#url_view_html ()
     let b:sec  = self.sec
     let b:url  = self.url
   endfunction
-  
+
   let Fc = s:obj.init
-  let r = { 
+  let r = {
     \ 'files'    : [ ofile ],
     \ 'load_buf' : 1,
     \ 'Fc'       : Fc,
@@ -395,9 +395,9 @@ function! projs#action#url_insert ()
     let url = base#input_we('url: ','')
   endif
 
-  call projs#sec#insert_url({ 
-        \ 'url' : url, 
-        \ 'sec' : projs#buf#sec() 
+  call projs#sec#insert_url({
+        \ 'url' : url,
+        \ 'sec' : projs#buf#sec()
         \ })
   let y = input('fetch URL? (1/0): ',1)
   if y
@@ -410,7 +410,7 @@ endfunction
 function! projs#action#url_fetch (...)
   let ref = get(a:000,0,{})
 
-  let proj = b:proj 
+  let proj = b:proj
   let file = b:basename
 
   "let url = projs#action#url_fetch#url()
@@ -425,12 +425,12 @@ function! projs#action#url_fetch (...)
 
   let Fc =  projs#action#url_fetch#Fc ()
 
-  let Fc_args = [{ 
+  let Fc_args = [{
     \ 'ofile'     : ofile,
     \ 'old_mtime' : old_mtime,
     \ }]
 
-  call idephp#curl#run({ 
+  call idephp#curl#run({
     \ 'url'         : url,
     \ 'insecure'    : 1 ,
     \ 'output_file' : ofile,
@@ -466,8 +466,8 @@ perl << eof
     csv_class        => "Text::CSV_XS",
     csv_null         => 1,
     csv_tables       => {
-      info => { 
-        f_file => "info.csv" 
+      info => {
+        f_file => "info.csv"
       }
     },
     RaiseError       => 1,
@@ -483,11 +483,11 @@ function! projs#action#pics_convert_to_jpg ()
   let picdir = projs#proj#dir_pics()
 
   let exts=base#qw('jpg png')
-  
+
   let pics={}
   for ext in exts
-    call extend(pics,{ 
-        \ ext   : base#find({ 
+    call extend(pics,{
+        \ ext   : base#find({
             \ "dirs"    : [picdir],
             \ "exts"    : base#qw(ext),
             \ "relpath" : 1,
@@ -542,7 +542,7 @@ function! projs#action#prjfiles_add_file_tag (...)
   let files = projs#proj#files({ "exts" : base#qw('tex') })
 endfunction
 
-function! projs#action#info (...) 
+function! projs#action#info (...)
   let lines = []
 
   call add(lines,'PROJS INFO')
@@ -561,7 +561,7 @@ function! projs#action#info (...)
 endfunction
 
 
-function! projs#action#append_label (...) 
+function! projs#action#append_label (...)
   let sec = projs#proj#secname()
   let lines = []
 
@@ -569,27 +569,27 @@ function! projs#action#append_label (...)
   call append(line('.'),lines)
 endfunction
 
-function! projs#action#append_section (...) 
+function! projs#action#append_section (...)
   let sec = projs#proj#secname()
   call append(line('.'),[sec])
 
 endfunction
 
-function! projs#action#pdf_view (...) 
+function! projs#action#pdf_view (...)
   call projs#pdf#view()
 
 endfunction
 
-function! projs#action#pdf_delete (...) 
+function! projs#action#pdf_delete (...)
   call projs#pdf#delete()
 
 endfunction
 
-function! projs#action#help (...) 
+function! projs#action#help (...)
   call projs#help()
 endfunction
 
-function! projs#action#append_thisproj (...)  
+function! projs#action#append_thisproj (...)
   let proj = projs#proj#name()
   call append(line('.'),[proj])
 
@@ -604,7 +604,7 @@ if 0
 endif
 
 
-function! projs#action#async_build_bare_Fc (self,temp_file) 
+function! projs#action#async_build_bare_Fc (self,temp_file)
   let self      = a:self
   let temp_file = a:temp_file
 
@@ -617,14 +617,14 @@ function! projs#action#async_build_bare_Fc (self,temp_file)
   let end      = localtime()
   let duration = end - start
   let s_dur    = ' ' . string(duration) . ' (secs)'
-  
+
   if filereadable(a:temp_file)
     call tex#efm#latex()
     exe 'cd ' . root
     exe 'cgetfile ' . a:temp_file
-    
+
     let err = getqflist()
-    
+
     redraw!
     if len(err)
       let msg = printf('BUILD FAIL: %s %s, mode: %s',proj,s_dur,mode)
@@ -645,7 +645,7 @@ if 0
       projs#action#async_build_pwg
 endif
 
-function! projs#action#async_build_pwg_Fc (self,temp_file) 
+function! projs#action#async_build_pwg_Fc (self,temp_file)
   let self      = a:self
   let temp_file = a:temp_file
 
@@ -661,7 +661,7 @@ function! projs#action#async_build_pwg_Fc (self,temp_file)
   let end      = localtime()
   let duration = end - start
   let s_dur    = ' ' . string(duration) . ' (secs)'
-  
+
   let pdf_file = projs#pdf#path(proj,'pwg')
 
   let log = get(build_files,'log','')
@@ -671,7 +671,7 @@ function! projs#action#async_build_pwg_Fc (self,temp_file)
     "call tex#efm#latex()
     "exe 'cd ' . src_dir
     "exe 'cgetfile ' . log_bn
-    
+
     let err = []
 
     call tex#efm#latex()
@@ -698,7 +698,7 @@ function! projs#action#async_build_pwg_Fc (self,temp_file)
   "endif
 endfunction
 
-function! projs#action#excel_import (...) 
+function! projs#action#excel_import (...)
   let ref = get(a:000,0,{})
 
   let proj     = get(ref,'proj',projs#proj#name())
@@ -707,7 +707,7 @@ function! projs#action#excel_import (...)
   let xdir = projs#path([ 'data' , proj, 'sht' ])
 
   if !strlen(file_sht)
-    let files = base#find({ 
+    let files = base#find({
       \  "dirs"        : [xdir],
       \  "exts"        : ['xls'],
       \  "cwd"         : 1,
@@ -715,12 +715,12 @@ function! projs#action#excel_import (...)
       \  "subdirs"     : 1,
       \  "fnamemodify" : '',
       \  })
-  
+
     for file in files
       call projs#action#excel_import({ 'file' : file })
     endfor
 
-    return 
+    return
   endif
 
   let file_base = fnamemodify(file_sht,':r')
@@ -742,14 +742,14 @@ app = Dispatch("Excel.Application")
 app.Visible = True
 ws = app.Workbooks.Open(file_sht).Sheets(0)
 
-exceldata = [[ ws.Cells(row, col).Value 
-              for col in xrange(COL_SPAN[0], COL_SPAN[1])] 
+exceldata = [[ ws.Cells(row, col).Value
+              for col in xrange(COL_SPAN[0], COL_SPAN[1])]
              for row in xrange(ROW_SPAN[0], ROW_SPAN[1])]
-  
+
 eof
 endfunction
 
-function! projs#action#xls_render (...) 
+function! projs#action#xls_render (...)
   let ref = get(a:000,0,{})
 
   let proj = get(ref,'proj',projs#proj#name())
@@ -758,23 +758,23 @@ function! projs#action#xls_render (...)
   let xdir   = projs#path([ 'data' , proj, 'xls' ])
 
   if !strlen(file)
-    let files = base#find({ 
+    let files = base#find({
       \  "dirs"    : [xdir],
       \  "exts"    : ['xls'],
       \  "relpath" : 0,
       \  "subdirs" : 1,
       \  "fnamemodify" : '',
       \  })
-  
+
     for file in files
       call projs#action#xls_render({ 'file' : file })
     endfor
 
-    return 
+    return
   endif
 
   if !filereadable(file)
-    return 
+    return
   endif
 
   let file_base = fnamemodify(file,':r')
@@ -808,7 +808,7 @@ eof
 endfunction
 
 """pwg_insert_img
-function! projs#action#pwg_insert_img (...) 
+function! projs#action#pwg_insert_img (...)
   let ref = get(a:000,0,{})
 
   let root    = projs#root()
@@ -818,8 +818,8 @@ function! projs#action#pwg_insert_img (...)
   let proj = get(ref,'proj',proj)
 
   call chdir(root)
-  let cmd = join([ 
-      \ 'bb_pdflatex.bat', 
+  let cmd = join([
+      \ 'bb_pdflatex.bat',
       \ proj, root_id,
       \ '-c','insert_pwg' ], ' ' )
 
@@ -845,9 +845,9 @@ function! projs#action#pwg_insert_img (...)
     call base#rdw('OK: pwg_insert_img')
   endfunction
 
-  call asc#run({ 
-    \ 'cmd' : cmd, 
-    \ 'Fn'  : asc#tab_restore(env) 
+  call asc#run({
+    \ 'cmd' : cmd,
+    \ 'Fn'  : asc#tab_restore(env)
     \ })
   return 1
 endf
@@ -855,7 +855,7 @@ endf
 
 """prjact_async_build_pwg
 
-function! projs#action#async_build_pwg (...) 
+function! projs#action#async_build_pwg (...)
   let ref = get(a:000,0,{})
 
   let root    = projs#root()
@@ -868,8 +868,8 @@ function! projs#action#async_build_pwg (...)
 
   let start = localtime()
   call chdir(root)
-  let cmd = join([ 
-      \ 'bb_tex.bat', 
+  let cmd = join([
+      \ 'bb_tex.bat',
       \ proj,
       \ '-c','build_pwg' ], ' ' )
 
@@ -877,17 +877,17 @@ function! projs#action#async_build_pwg (...)
 
   let build_files = {}
   for ext in base#qw('log aux')
-    let ff = base#find({ 
+    let ff = base#find({
         \  "dirs"    : [src_dir],
         \  "exts"    : [ext],
         \  "relpath" : 0,
         \  })
-    call extend(build_files,{ 
+    call extend(build_files,{
       \ ext : get(ff,0,'')
       \ })
 
   endfor
-  
+
   let env = {
     \ 'proj'        : proj,
     \ 'root'        : root,
@@ -904,14 +904,14 @@ function! projs#action#async_build_pwg (...)
   let msg = printf('async_build_pwg: %s, mode: %s', proj, mode)
   call base#rdw(msg,'WildMenu')
 
-  call asc#run({ 
-    \ 'cmd' : cmd, 
-    \ 'Fn'  : asc#tab_restore(env) 
+  call asc#run({
+    \ 'cmd' : cmd,
+    \ 'Fn'  : asc#tab_restore(env)
     \ })
   return 1
 endf
 
-function! projs#action#edt (...) 
+function! projs#action#edt (...)
   let ref = get(a:000,0,{})
 
   let root    = projs#root()
@@ -939,9 +939,9 @@ function! projs#action#edt (...)
   let msg = printf('edt: %s', proj)
   call base#rdw(msg)
 
-  call asc#run({ 
-    \ 'cmd' : cmd, 
-    \ 'Fn'  : asc#tab_restore(env) 
+  call asc#run({
+    \ 'cmd' : cmd,
+    \ 'Fn'  : asc#tab_restore(env)
     \ })
   return 1
 
@@ -953,7 +953,7 @@ if 0
       projs#action#edt
 endif
 
-function! projs#action#edt_Fc (self,temp_file) 
+function! projs#action#edt_Fc (self,temp_file)
   let self      = a:self
   let temp_file = a:temp_file
 
@@ -964,7 +964,7 @@ function! projs#action#edt_Fc (self,temp_file)
   let end      = localtime()
   let duration = end - start
   let s_dur    = ' ' . string(duration) . ' (secs)'
-  
+
   let out = []
   if filereadable(a:temp_file)
     call extend(out, readfile(temp_file))
@@ -975,7 +975,7 @@ function! projs#action#edt_Fc (self,temp_file)
   call base#rdw('DONE: EDT')
 endf
 
-function! projs#action#bld_join (...) 
+function! projs#action#bld_join (...)
   let ref = get(a:000,0,{})
 
   let root    = projs#root()
@@ -1005,8 +1005,8 @@ function! projs#action#bld_join (...)
   let a = [ 'perl', bfile, act, '-t', target ]
   let cmd = join(a, ' ' )
 
-  call base#varset('projs_bld_last',{ 
-    \ 'cmd' : cmd, 
+  call base#varset('projs_bld_last',{
+    \ 'cmd' : cmd,
     \ 'act' : act })
 
   if async
@@ -1040,20 +1040,20 @@ function! projs#action#bld_join (...)
 endf
 
 """PA_out_bld
-function! projs#action#out_bld (...) 
+function! projs#action#out_bld (...)
   let out = base#varget('projs_bld_compile_output',[])
-  call base#buf#open_split({ 
+  call base#buf#open_split({
     \  'lines' : out,
     \  })
 
 endf
 
-function! projs#action#view_bld_log (...) 
+function! projs#action#view_bld_log (...)
   let proj   = projs#proj#name()
   let bdir   = projs#path([ 'builds', proj, 'src' ])
-  
+
   let log = base#file#catfile([ bdir, 'jnd.log' ])
-  call base#fileopen({ 
+  call base#fileopen({
     \ 'files'    : [log],
     \ 'load_buf' : 1,
     \ })
@@ -1069,8 +1069,8 @@ if 0
       projs#action#bld_compile({ ... })
 
       projs#action#bld_compile({ 'proj' : proj })
-  
-      projs#action#bld_compile({ 
+
+      projs#action#bld_compile({
         \ 'proj'   : proj,
         \ 'config' : 'xelatex',
         \ 'target' : 'usual',
@@ -1078,7 +1078,7 @@ if 0
   Call tree
     called by
       projs#action#bld_compile_xelatex
-      
+
     calls
       projs#proj#name
       projs#root
@@ -1089,7 +1089,7 @@ if 0
 endif
 
 """PA_bld_compile {
-function! projs#action#bld_compile (...) 
+function! projs#action#bld_compile (...)
   let ref = get(a:000,0,{})
 
   let root    = projs#root()
@@ -1129,12 +1129,12 @@ function! projs#action#bld_compile (...)
   endif
   let cmd = join(a, ' ' )
 
-  call base#varset('projs_bld_last_compile',{ 
+  call base#varset('projs_bld_last_compile',{
     \ 'cmd'    : cmd,
     \ 'config' : config, })
 
-  let jnd_pdf = projs#bld#jnd_pdf({ 'target' : target }) 
-  let jnd_tex = projs#bld#jnd_tex({ 'target' : target }) 
+  let jnd_pdf = projs#bld#jnd_pdf({ 'target' : target })
+  let jnd_tex = projs#bld#jnd_tex({ 'target' : target })
 
   let env = {
     \ 'proj'    : proj,
@@ -1155,9 +1155,9 @@ function! projs#action#bld_compile (...)
   let msg = printf('bld_compile: %s; target: %s; config: %s', proj, target_short, config)
   call base#rdw(msg)
 
-  call asc#run({ 
-    \ 'cmd' : cmd, 
-    \ 'Fn'  : asc#tab_restore(env) 
+  call asc#run({
+    \ 'cmd' : cmd,
+    \ 'Fn'  : asc#tab_restore(env)
     \ })
 
   return 1
@@ -1167,10 +1167,10 @@ endf
 
 if 0
   usage
-    call projs#action#bld_compile_xelatex () 
-    call projs#action#bld_compile_xelatex ({ 'target' : 'usual' }) 
+    call projs#action#bld_compile_xelatex ()
+    call projs#action#bld_compile_xelatex ({ 'target' : 'usual' })
   call tree
-    calls 
+    calls
       projs#action#bld_compile
         projs#proj#name
         projs#root
@@ -1180,7 +1180,7 @@ if 0
         projs#sec#file
 endif
 
-function! projs#action#bld_compile_xelatex (...) 
+function! projs#action#bld_compile_xelatex (...)
   let ref = get(a:000,0,{})
 
   let r = {
@@ -1188,7 +1188,7 @@ function! projs#action#bld_compile_xelatex (...)
       \ }
   call extend(r,ref)
 
-  call projs#action#bld_compile(r) 
+  call projs#action#bld_compile(r)
 
 endf
 
@@ -1197,7 +1197,7 @@ if 0
     projs#action#bld_compile
 endif
 
-function! projs#action#bld_compile_Fc (self,temp_file) 
+function! projs#action#bld_compile_Fc (self,temp_file)
   let self      = a:self
   let temp_file = a:temp_file
 
@@ -1224,10 +1224,10 @@ function! projs#action#bld_compile_Fc (self,temp_file)
   let jnd_size = 0
   try
     let jnd_size = base#file#size(jnd_pdf)
-  catch 
+  catch
     "call base#rdwe('base#file#size error: ' . jnd_pdf,'NonText')
   endtry
-  
+
   let err = []
   if filereadable(a:temp_file)
     let lines = readfile(a:temp_file)
@@ -1268,17 +1268,17 @@ function! projs#action#bld_compile_Fc (self,temp_file)
       if len(err)
         BaseAct copen
       else
-        call base#buf#open_split({ 
+        call base#buf#open_split({
           \ 'lines'   : lines,
           \ 'cmds_after' : [],
-          \ 'stl_add' : [ 
+          \ 'stl_add' : [
               \ 'Command: %1*',
               \ cmd ,
               \ '%0*' ,
               \ ],
           \ })
       endif
-      
+
 
       "\ 'V[ %1* v - view, %2* a - append %0* ]',
   else
@@ -1298,7 +1298,7 @@ if 0
       projs#action#bld_join
 endif
 
-function! projs#action#bld_join_Fc (self,temp_file) 
+function! projs#action#bld_join_Fc (self,temp_file)
   let self      = a:self
   let temp_file = a:temp_file
 
@@ -1309,7 +1309,7 @@ function! projs#action#bld_join_Fc (self,temp_file)
   let end      = localtime()
   let duration = end - start
   let s_dur    = ' ' . string(duration) . ' (secs)'
-  
+
   if filereadable(a:temp_file)
     let out = readfile(temp_file)
     call base#buf#open_split({ 'lines' : out })
@@ -1318,7 +1318,7 @@ function! projs#action#bld_join_Fc (self,temp_file)
   call base#rdw(printf('OK: bld_join (project: %s)', proj))
 endf
 
-function! projs#action#fig_view (...) 
+function! projs#action#fig_view (...)
   let r = {
       \ 'ext'    : 'pl',
       \ 'pat'    : 'fig',
@@ -1327,7 +1327,7 @@ function! projs#action#fig_view (...)
   call projs#db_cmd#list_secs(r)
 endf
 
-function! projs#action#fig_create (...) 
+function! projs#action#fig_create (...)
   let bsec = projs#buf#sec()
 
   let fsec  = printf('_perl.fig.%s',bsec)
@@ -1357,7 +1357,7 @@ if 0
 endif
 
 
-function! projs#action#async_build_bare (...) 
+function! projs#action#async_build_bare (...)
   let ref = get(a:000,0,{})
 
   let root    = projs#root()
@@ -1375,7 +1375,7 @@ function! projs#action#async_build_bare (...)
 
   let bat = has('win32') ? 'bb_tex.bat' : 'bb_tex.sh'
   let cmd = join([ bat, proj, '-c bare' ], ' ' )
-  
+
   let env = {
     \ 'proj'  : proj,
     \ 'root'  : root,
@@ -1389,15 +1389,15 @@ function! projs#action#async_build_bare (...)
 
   echo printf('async_build_bare: %s, mode: %s', proj, mode)
 
-  call asc#run({ 
-    \ 'cmd' : cmd, 
-    \ 'Fn'  : asc#tab_restore(env) 
+  call asc#run({
+    \ 'cmd' : cmd,
+    \ 'Fn'  : asc#tab_restore(env)
     \ })
   return 1
 
 endfunction
 
-function! projs#action#async_build_htlatex () 
+function! projs#action#async_build_htlatex ()
   call projs#action#async_build({ 'sec_bat' : '_build_htlatex_' })
 endfunction
 
@@ -1406,8 +1406,8 @@ function! projs#action#create_sec_tab (...)
 
   let lines = []
 
-  call projs#sec#new(sec,{ 
-    \ "prompt" : 0, 
+  call projs#sec#new(sec,{
+    \ "prompt" : 0,
     \ 'seccmd' : '',
     \ 'add_lines_after' : lines,
     \ })
@@ -1419,7 +1419,7 @@ function! projs#action#create_sec_fig (...)
 
   let lines = []
 
-  call projs#sec#new(sec,{ 
+  call projs#sec#new(sec,{
     \ "prompt"          : 0,
     \ 'seccmd'          : '',
     \ 'add_lines_after' : lines,
@@ -1430,15 +1430,15 @@ endfunction
 
 function! projs#action#buildmode_set ()
   let buildmode=input('PROJS buildmode:','','custom,projs#complete#buildmodes')
-  
+
   call projs#varset('buildmode',buildmode)
   call projs#echo('Build mode set: ' . buildmode)
 
 endfunction
 
 function! projs#action#joinlines ()
-    let jlines = projs#filejoinlines({ 
-      \ 'write_jfile' : 1 
+    let jlines = projs#filejoinlines({
+      \ 'write_jfile' : 1
       \ })
     VSEC _join_
 endfunction
@@ -1457,17 +1457,17 @@ function! projs#action#get_img ()
   let cmd  = join([ 'perl', pl_e, '-p', proj ], ' ')
 
   call base#rdw('Getting images: ' . proj)
-  
+
   let env = { 'proj' : proj }
   function env.get(temp_file) dict
     let temp_file = a:temp_file
     let code      = self.return_code
 
-    if filereadable(a:temp_file) 
+    if filereadable(a:temp_file)
       let out  = readfile(a:temp_file)
       let last = get(out,-1,'')
 
-      if last =~ 'SUCCESS:\s\+\(\d\+\)\s\+images' 
+      if last =~ 'SUCCESS:\s\+\(\d\+\)\s\+images'
         call base#rdw(last)
 
       elseif last =~ 'NO IMAGES'
@@ -1480,8 +1480,8 @@ function! projs#action#get_img ()
     else
     endif
   endfunction
-  
-  call asc#run({ 
+
+  call asc#run({
     \ 'path' : projs#root(),
     \ 'cmd'  : cmd,
     \ 'Fn'   : asc#tab_restore(env)
@@ -1513,16 +1513,16 @@ function! projs#action#add_to_db ()
     \ "pid"    : pid,
     \ "fid"    : fid,
     \ }
-  
+
   let ref = {
     \ "dbfile" : projs#db#file(),
     \ "i"      : "INSERT OR REPLACE",
     \ "t"      : t,
     \ "h"      : h,
     \ }
-    
+
   call pymy#sqlite#insert_hash(ref)
-  
+
 endfunction
 
 function! projs#action#verb_new ()
@@ -1559,9 +1559,9 @@ function! projs#action#list_projs ()
     call add(data,[proj,''])
   endfor
 
-  let lines = [ 
+  let lines = [
       \ 'Current project:' , "\t" . proj,
-      \ '   List of Projects: ' 
+      \ '   List of Projects: '
       \ ]
 
   call extend(lines, pymy#data#tabulate({
@@ -1576,10 +1576,10 @@ function! projs#action#list_projs ()
       call matchadd(hl,'\s\+'.proj.'\s\+')
       call matchadd(hl,proj)
   endfunction
-    
+
   let Fc = s:obj.init
 
-  call base#buf#open_split({ 
+  call base#buf#open_split({
       \ 'lines'    : lines ,
       \ 'cmds_pre' : ['resize 99'] ,
       \ 'Fc'       : Fc,
@@ -1599,21 +1599,21 @@ function! projs#action#tex_show_command ()
   let macro   = input('TeX macro: ','','custom,projs#complete#tex_macros')
 
   let cmd_bat = join([ bat, macro, class ], ' ')
-  
+
   let env = {}
   function env.get(temp_file) dict
     let temp_file = a:temp_file
     let code      = self.return_code
-  
+
     if filereadable(a:temp_file)
       let out = readfile(a:temp_file)
       call base#buf#open_split({ 'lines' : out })
     endif
   endfunction
-  
-  call asc#run({ 
-    \ 'cmd' : cmd_bat, 
-    \ 'Fn'  : asc#tab_restore(env) 
+
+  call asc#run({
+    \ 'cmd' : cmd_bat,
+    \ 'Fn'  : asc#tab_restore(env)
     \ })
 
 endfunction
@@ -1631,7 +1631,7 @@ function! projs#action#author_add (...)
   let author    = get(a_data,'author','')
   let author_id = get(a_data,'author_id','')
 
-  call projs#author#add({ 
+  call projs#author#add({
      \  'author_id' : author_id,
      \  'author'    : author })
 
@@ -1668,7 +1668,7 @@ endfunction
 function! projs#action#tree_view ()
   let file = projs#tree#file()
 
-  call base#fileopen({ 
+  call base#fileopen({
     \ 'files'    : [file] ,
     \ 'load_buf' : 1,
     \ })
@@ -1685,7 +1685,7 @@ function! projs#action#_plg_tex_view ()
   let ln = ['dir:',"  " . dir]
 
   call base#find#open_split({
-      \ 'opts_find' : { 
+      \ 'opts_find' : {
             \ "dirs"    : [dir],
             \ "dirids"  : [],
             \ "exts"    : base#qw('tex sty'),
@@ -1711,7 +1711,7 @@ function! projs#action#tex4ht_mk_dirs ()
     let dir = projs#proj#dir_tex4ht(dir)
     call base#mkdir(dir)
   endfor
-  
+
 endfunction
 
 function! projs#action#tex4ht_css_view ()
@@ -1725,11 +1725,11 @@ endfunction
 
 function! projs#action#_xmlfile_view()
   let xmlfile = projs#xmlfile()
-  call base#fileopen({ 
+  call base#fileopen({
     \ 'files'    : [xmlfile] ,
     \ 'load_buf' : 1,
     \ })
-  
+
 endfunction
 
 function! projs#action#_xml_update_col()
@@ -1745,7 +1745,7 @@ function! projs#action#_xml_update_col()
   call base#varset('this',secs)
 
   let msg_a = [
-    \ printf("[proj=%s]select section:",proj),  
+    \ printf("[proj=%s]select section:",proj),
     \ ]
   let msg = join(msg_a,"\n")
   let sec = base#input_we(msg,'',{ 'complete' : 'custom,base#complete#this' })
@@ -1768,7 +1768,7 @@ endfunction
 
 function! projs#action#view_db_fill_tags_py3()
   let file = base#qw#catpath('plg projs scripts db_fill_tags.py3')
-  call base#fileopen({ 
+  call base#fileopen({
     \ 'files'    : [file] ,
     \ 'load_buf' : 1,
     \ })
