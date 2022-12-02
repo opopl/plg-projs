@@ -798,7 +798,7 @@ sub ldo_no_cmt {
 
                push @push, (
                  $url    ? sprintf(q{\Purl{%s}},$url) : (),
-                 $date_s ? sprintf(q'\href{../_buf.%s/jnd_ht.html}{%s}', $date, $date_s) : (),
+                 $date_s ? $mkr->_sec_link_html({ sec => $date, link_title => $date_s }) : (),
                  $self->_tex_author($author_id)
                )
            }else{

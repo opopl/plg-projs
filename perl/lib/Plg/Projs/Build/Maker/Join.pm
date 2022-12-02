@@ -226,12 +226,16 @@ sub _join_lines {
 
             if ($bld->{do_htlatex}) {
                 my $url = $r_sec->{url};
-                if (($sect && grep { /^$sect$/ } qw( section ))) {
-                    my $ii_data = $bld->_sec_data({
-                        sec => $ii_sec,
-                        proj => $proj,
-                        '@get' => [qw( author_id tags )],
-                    });
+                my $ii_data = $bld->_sec_data({
+                    sec => $ii_sec,
+                    proj => $proj,
+                    '@get' => [qw( author_id tags )],
+                });
+                my $ii_link;
+                $ii_link ||= $ii_data->{url} ? 1 : 0;
+                $ii_link ||= ($sect && grep { /^$sect$/ } qw( section )) ? 1 : 0;
+
+                if ($ii_link) {
                     my @author_ids = @{$ii_data->{'@author_id'} || []};
                     my @authors = map {
                         $bld->_author_get({ author_id => $_, f => [qw(plain)] })

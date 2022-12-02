@@ -459,7 +459,6 @@ sub init_maker {
 
     $bld->{maker} = $mkr;
 
-
     return $bld;
 }
 

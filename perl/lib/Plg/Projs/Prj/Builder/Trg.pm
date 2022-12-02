@@ -77,6 +77,8 @@ sub trg_adjust {
 
     $target //= $bld->{target};
 
+    my $proj = $bld->{proj};
+
     local $_ = $bld->{target};
     if (/^_buf\.(\S+)$/) {
       my $sec = $1;
@@ -95,6 +97,29 @@ sub trg_adjust {
        },
       };
       dict_update($bld, $h);
+
+    }elsif(/^_auth\.(\S+)$/){
+      my $author_id = $1;
+
+      my $secs = $bld->_secs_select({
+         where => { proj => $proj },
+         author_id => { 'and' => [$author_id] }
+      });
+
+      my $h = {
+       'decs'  => {
+          'om_iall'  => 1
+       },
+       'vars'  => {
+          'toc_depth' => 3,
+       },
+       'patch'  => {
+          'sii.scts._main_.ii.inner.body'  => $secs,
+       },
+      };
+      dict_update($bld, $h);
+      $DB::single = 1;1;
+
     }
 
     return $bld;
