@@ -291,6 +291,8 @@ sub init {
     };
     hash_inject($mkr, $h);
 
+    my $target_ext = $mkr->{do_htlatex} ? 'html' : 'pdf';
+
     $mkr
        ->init_img
        ->init_prj
@@ -307,8 +309,8 @@ sub init {
     my $tex_opts = join(" ", @$tex_opts_a);
 
     $h = { %$h,
-        src_dir       => catfile($h->{build_dir},qw( .. src ),$target),
-        src_dir_box   => catfile($ENV{BOX}, $root_id, $proj, $target),
+        src_dir       => catfile($h->{build_dir},qw( .. src ), $target_ext, $target),
+        src_dir_box   => catfile($ENV{BOX}, $root_id, $proj, $target_ext, $target),
         tex_opts      => $tex_opts,
         tex_opts_a    => $tex_opts_a,
         out_dir_pdf_b => catfile($h->{out_dir_pdf}, qw(b_pdflatex) )

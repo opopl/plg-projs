@@ -68,10 +68,10 @@ use Plg::Projs::Build::Maker;
 sub inj_base {
     my ($bld) = @_;
 
-    my %print = map { my $a = $_; ( $a => $a ) } qw( 
-        print_ii_include 
-        print_ii_base 
-        print_ii_exclude 
+    my %print = map { my $a = $_; ( $a => $a ) } qw(
+        print_ii_include
+        print_ii_base
+        print_ii_exclude
         print_ii_tree
     );
 
@@ -116,16 +116,16 @@ sub init {
         ->get_act
         ->get_opt
         ->set_target                            # set $bld->{target} from --target switch
-        ->trg_load_yml({ 'target' => 'core' })  # load into targets/core 
+        ->trg_load_yml({ 'target' => 'core' })  # load into targets/core
         ->trg_load_yml                          # load into targets/$target
         ->trg_apply('core')                     # apply 'core' target data into $bld instance
-        ->cnf_apply                             # $bld->{cnf}->{vars} => $bld 
+        ->cnf_apply                             # $bld->{cnf}->{vars} => $bld
         ->trg_apply                             # apply $target data into $bld instance
         ->trg_adjust
         ->load_yaml
         ->load_decs
         ->load_patch
-        ->process_ii_updown               
+        ->process_ii_updown
         ->process_config
         ->expand_env
         ->init_imgman
@@ -179,7 +179,7 @@ sub load_decs {
     }
 
     foreach(@$decs) {
-        /^om_iall$/ && do { 
+        /^om_iall$/ && do {
             dict_update($bld, dict_new('patch.opts_maker.ii_include_all',1));
             next;
         };
@@ -259,7 +259,7 @@ sub process_config {
         };
 
         # compile in box environment with all
-        #   images copied locally 
+        #   images copied locally
         /^box$/ && do {
             $bld->{box} = 1;
             next;
@@ -293,7 +293,7 @@ sub _config {
 sub _config_set {
     my ($bld, $cfg) = @_;
 
-    grep { /^$cfg$/ } @{$bld->{config} || []}; 
+    grep { /^$cfg$/ } @{$bld->{config} || []};
 
 }
 
@@ -317,7 +317,7 @@ sub print_help {
              -y --yfile YAML FILE
 
         USAGE:
-             perl $Script ACT 
+             perl $Script ACT
              perl $Script ACT -t TARGET
              perl $Script ACT -c CONFIG
              perl $Script ACT -c CONFIG -t TARGET
@@ -334,12 +334,12 @@ $acts_s
             perl $Script compile -c xelatex
             perl $Script compile -c xelatex -t usual
             perl $Script compile -c xelatex -t usual -y a.yaml -y b.yaml
-            perl $Script show_trg 
+            perl $Script show_trg
             perl $Script show_acts
-            perl $Script dump_bld -d 'opts_maker sections' 
+            perl $Script dump_bld -d 'opts_maker sections'
             perl $Script join
             perl $Script print_ii_include
-            perl $Script -i a.zc 
+            perl $Script -i a.zc
         DEBUG:
             perl -d $Script join
     } . "\n";
@@ -358,14 +358,14 @@ sub get_act {
 
     return $bld;
 }
-      
+
 sub get_opt {
     my ($bld) = @_;
-    
+
     Getopt::Long::Configure(qw(bundling no_getopt_compat no_auto_abbrev no_ignore_case_always));
-    
+
     my %opt;
-    my @optstr = ( 
+    my @optstr = (
         "config|c=s",
         "target|t=s",
         "data|d=s",
@@ -375,13 +375,13 @@ sub get_opt {
 
     GetOptions(\%opt,@optstr);
     $bld->{opt} = \%opt;
-    
-    $bld->{config} = [ 
+
+    $bld->{config} = [
         map { s/'//g; s/'$//g; $_ }
-        split(',' => ($opt{config} || '')) 
+        split(',' => ($opt{config} || ''))
     ];
 
-    return $bld;   
+    return $bld;
 }
 
 sub run_maker {
@@ -455,8 +455,12 @@ sub init_maker {
         %$om,
         tex_exe      => $bld->{tex_exe},
         bld          => $bld,
-        box          => $bld->{box},
-        tex4ht       => $bld->{tex4ht},
+
+        map { $_ => $bld->{$_} } qw(
+            box
+            do_htlatex do_srv
+            tex4ht
+        )
     );
 
     $bld->{maker} = $mkr;
@@ -466,5 +470,5 @@ sub init_maker {
 }
 
 1;
- 
+
 
