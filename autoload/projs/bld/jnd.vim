@@ -7,7 +7,8 @@ function! projs#bld#jnd#pdf (...)
 
   let proj  = projs#proj#name()
 
-  let jnd_pdf = base#qw#catpath( projs#rootid(),printf('builds %s src %s jnd.pdf',proj,target))
+  let rel = printf('builds %s src pdf %s jnd.pdf', proj, target)
+  let jnd_pdf = base#qw#catpath( projs#rootid(),rel)
   return jnd_pdf
 endfunction
 
@@ -20,6 +21,10 @@ function! projs#bld#jnd#tex (...)
   let target = base#varget('projs_bld_target','')
   let target = get(ref,'target',target)
 
-  let jnd_tex = base#qw#catpath( projs#rootid(),printf('builds %s src %s jnd.tex',proj,target))
+  let target_ext = get(ref,'target_ext','pdf')
+
+  let rel = printf('builds %s src %s %s jnd.tex', proj, target_ext, target)
+  let jnd_tex = base#qw#catpath( projs#rootid(),rel)
   return jnd_tex
 endfunction
+
