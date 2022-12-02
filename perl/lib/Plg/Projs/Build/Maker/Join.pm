@@ -224,6 +224,17 @@ sub _join_lines {
                 ->tree_add_child({ sec => $sec, child => $ii_sec })
                 ;
 
+            if ($bld->{do_srv}) {
+                $DB::single = 1 if $sect && $sect eq 'section';
+                my $url = $r_sec->{url};
+                #if (!$sect || ($sect && grep { /^$sect$/ } qw( chapter section part ))) {
+                if (($sect && grep { /^$sect$/ } qw( section ))) {
+                    push @lines,
+                       sprintf('\url{/prj/sec/html?sec=%s}',$ii_sec);
+                    next;
+                }
+            }
+
             $mkr->_line_process_pat_ii({
                 delim          => $delim,
 

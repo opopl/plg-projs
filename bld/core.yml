@@ -384,6 +384,11 @@ tex4ht:
        'tex':
          'gin_base' : '\csname Gin@base\endcsname'
 
+       graphics:
+          png:
+             link: 0
+
+###tex4ht_@@preamble
     '@@preamble':
       '@sprintf' :
         string: '\Preamble{%s}'
@@ -499,7 +504,7 @@ tex4ht:
     - '@@conf{graphics.png.base}'
     - '@@conf{graphics.jpg.base}'
     - ''
-    - '@@conf{graphics.png.link}'
+    - '$ifvar{graphics.png.link} @@conf{graphics.png.link}'
     - ''
     - '@@css{verb}'
     - '@@css{text}'
