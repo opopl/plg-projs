@@ -419,6 +419,27 @@ sub process_ii_updown {
     return $bld;
 }
 
+sub _obj2dict_order {
+    my ($bld, $obj) = @_;
+
+    my (%dict, @order);
+
+    if (ref $obj eq 'HASH') {
+        push @order, keys %$obj;
+        %dict = %$obj;
+    }elsif(ref $obj eq 'ARRAY'){
+        foreach my $x (@$obj) {
+            my ($dict_key) = keys %$x;
+            my $dict_value = $x->{$dict_key};
+
+            push @order, $dict_key;
+            $dict{$dict_key} = $dict_value;
+        }
+    }
+
+    return (\%dict, \@order);
+}
+
 sub run_plans {
     my ($bld, $ref) = @_;
     $ref ||= {};
@@ -427,28 +448,15 @@ sub run_plans {
     my $plan_seq = $ref->{plan_seq} || $plans->{seq} || [];
 
     my $define = $plans->{define} || {};
+
+    my ($def_dict, $def_order) = $bld->_obj2dict_order($define);
     $DB::single = 1;
-
-    my (%def_dict, @def_order);
-
-    if (ref $define eq 'HASH') {
-        push @def_order, keys %$define;
-        %def_dict = %$define;
-    }elsif(ref $define eq 'ARRAY'){
-        foreach my $x (@$define) {
-            my ($def_key) = keys %$x;
-            my $def_value = $x->{$def_key};
-
-            push @def_order, $def_key;
-            $def_dict{$def_key} = $def_value;
-        }
-    }
 
     foreach my $plan_name (@$plan_seq) {
         my $plan_def = {};
 
-        MATCH: foreach my $def_key (@def_order){
-            my $def_value = $def_dict{$def_key};
+        MATCH: foreach my $def_key (@$def_order){
+            my $def_value = $def_dict->{$def_key};
 
             my @m = ($plan_name =~ m/$def_key/);
             next unless @m;
@@ -481,9 +489,6 @@ sub run_plans {
             dict_update($plan_def, { sec => $+{'sec'} }) if $+{'sec'};
         }
 
-        print '[BUILDER] Running plan: ' . $plan_name . "\n";
-        print Dumper($plan_def) . "\n";
-
         my ($sec, $do_children) = @{$plan_def}{qw( sec do_children )};
         if ($sec) {
             my ($pref) = ($plan_name =~ m/^(.*)$sec/);
@@ -494,6 +499,9 @@ sub run_plans {
                 $bld->run_plans({ plan_seq => \@child_seq });
             }
         }
+
+        print '[BUILDER] Running plan: ' . $plan_name . "\n";
+        print Dumper($plan_def) . "\n";
 
         #local @ARGV = split ' ' => ($plan_def->{argv} || '');
         #$bld->init({ anew => 1 });
