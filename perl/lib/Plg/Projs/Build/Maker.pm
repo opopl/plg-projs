@@ -375,6 +375,28 @@ sub _sub_clean {
     return $sub;
 }
 
+sub _cmd_ht_run {
+    my ($mkr, $ref) = @_;
+    $ref ||= {};
+
+    my $proj = $ref->{proj} || $mkr->{proj};
+    my $run  = $ref->{run} || 'htlatex';
+
+    my $cmd;
+    for($run){
+        /^htlatex$/ && do {
+            $cmd = sprintf('htlatex %s %s', $proj, $proj) . qq{ '-cunihtf -utf8'};
+            last;
+        };
+        /^make4ht$/ && do {
+            $cmd = sprintf('make4ht %s -c %s', $proj, $proj);
+            last;
+        };
+    }
+
+    return $cmd;
+}
+
 sub _cmd_tex {
     my ($mkr, $ref) = @_;
 
