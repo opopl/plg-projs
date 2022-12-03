@@ -427,11 +427,31 @@ sub run_plans {
     my $plan_seq = $plans->{seq} || [];
 
     my $define = $plans->{define} || {};
+    $DB::single = 1;
 
     foreach my $plan_name (@$plan_seq) {
         my $plan_def = $plans->{define}->{$plan_name} || {};
         unless(keys %$plan_def){
-            MATCH: while( my($k, $v) = each %$define ){
+            my (%def_dict, @def_order);
+
+            if (ref $define eq 'HASH') {
+                push @def_order, keys %$define;
+                %def_dict = %$define;
+            }elsif(ref $define eq 'ARRAY'){
+                foreach my $x (@$define) {
+                    my ($def_key) = keys %$x;
+                    my $def_value = $x->{$def_key};
+
+                    push @def_order, $def_key;
+                    $def_dict{$def_key} = $def_value;
+                }
+                #push @$def_order, map { } @$define;
+            }
+
+            MATCH: while(1){
+            #MATCH: while( my($k, $v) = each %$define ){
+                my ($k, $v);
+
                 my @m = ($plan_name =~ m/$k/);
                 next unless @m;
                 # matched vars
@@ -449,17 +469,19 @@ sub run_plans {
                     }
                     return $_;
                 };
-                $plan_def = clone($v);
-                dict_exe_cb($plan_def, $cb);
-                last MATCH;
+                my $vv = clone($v);
+                dict_exe_cb($vv, $cb);
+                dict_update($plan_def, $vv);
+                #last MATCH;
             }
         }
         print '[BUILDER] Running plan: ' . $plan_name . "\n";
+        $DB::single = 1;1;
 
-        local @ARGV = split ' ' => ($plan_def->{argv} || '');
-        $bld->init({ anew => 1 });
-        $bld->{plans} = undef;
-        $bld->run;
+        #local @ARGV = split ' ' => ($plan_def->{argv} || '');
+        #$bld->init({ anew => 1 });
+        #$bld->{plans} = undef;
+        #$bld->run;
     }
 
 
