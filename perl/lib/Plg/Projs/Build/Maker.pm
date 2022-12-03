@@ -379,17 +379,19 @@ sub _cmd_ht_run {
     my ($mkr, $ref) = @_;
     $ref ||= {};
 
-    my $proj = $ref->{proj} || $mkr->{proj};
     my $run  = $ref->{run} || 'htlatex';
+
+    my $proj = $ref->{proj} || $mkr->{proj};
+    my $cfg  = $ref->{cfg} || $proj;
 
     my $cmd;
     for($run){
         /^htlatex$/ && do {
-            $cmd = sprintf('htlatex %s %s', $proj, $proj) . qq{ '-cunihtf -utf8'};
+            $cmd = sprintf('htlatex %s %s', $proj, $cfg) . qq{ '-cunihtf -utf8'};
             last;
         };
         /^make4ht$/ && do {
-            $cmd = sprintf('make4ht -u %s -c %s', $proj, $proj) . qq{ '-cunihtf -utf8'};
+            $cmd = sprintf('make4ht %s %s', $proj, $cfg) . qq{ '-cunihtf -utf8'};
             last;
         };
     }
