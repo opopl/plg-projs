@@ -103,7 +103,12 @@ sub inj_base {
 }
 
 sub init {
-    my ($bld) = @_;
+    my ($bld, $ref) = @_;
+    $ref ||= {};
+
+    if ($ref->{anew}) {
+       delete $bld->{$_} for keys %$bld;
+    }
 
     $bld->Plg::Projs::Prj::init();
 
@@ -415,17 +420,22 @@ sub process_ii_updown {
 sub run {
     my ($bld) = @_;
 
-    my $plan = $bld->{plan} || {};
-    my $plan_seq = $plan->{seq} || [];
+    my $plans = $bld->{plans} || {};
+    my $plan_seq = $plans->{seq} || [];
 
-    unless(@$plan_seq) {
+    if(!@$plan_seq) {
         $bld->run_maker;
         return $bld;
     }
 
-    foreach my $plan (@$plan_seq) {
-        local @ARGV = @{$plan->{argv} || []};
-        $bld->init->run;
+    foreach my $plan_name (@$plan_seq) {
+        my $plan_def = $plans->{define}->{$plan_name} || {};
+        next unless keys %$plan_def;
+
+        local @ARGV = split ' ' => ($plan_def->{argv} || '');
+        $bld->init({ anew => 1 });
+        $bld->{plans} = undef;
+        $bld->run;
     }
 
     return $bld;
