@@ -419,16 +419,12 @@ sub process_ii_updown {
     return $bld;
 }
 
-sub run {
-    my ($bld) = @_;
+sub run_plans {
+    my ($bld, $ref) = @_;
+    $ref ||= {};
 
-    my $plans = $bld->{plans} || {};
+    my $plans    = $ref->{plans} || $bld->{plans} || {};
     my $plan_seq = $plans->{seq} || [];
-
-    if(!@$plan_seq) {
-        $bld->run_maker;
-        return $bld;
-    }
 
     my $define = $plans->{define} || {};
 
@@ -465,6 +461,23 @@ sub run {
         $bld->{plans} = undef;
         $bld->run;
     }
+
+
+    return $bld;
+}
+
+sub run {
+    my ($bld) = @_;
+
+    my $plans = $bld->{plans} || {};
+    my $plan_seq = $plans->{seq} || [];
+
+    if(!@$plan_seq) {
+        $bld->run_maker;
+        return $bld;
+    }
+
+    $bld->run_plans;
 
     return $bld;
 }

@@ -371,8 +371,9 @@ sii:
 
 ###tex4ht
 tex4ht:
-  #run: htlatex
-  run: make4ht
+  # options: htlatex, make4ht
+  run: htlatex
+
   cfg:
     vars:
        'preamble':

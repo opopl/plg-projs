@@ -389,7 +389,7 @@ sub _cmd_ht_run {
             last;
         };
         /^make4ht$/ && do {
-            $cmd = sprintf('make4ht %s -c %s', $proj, $proj);
+            $cmd = sprintf('make4ht -u %s -c %s', $proj, $proj) . qq{ '-cunihtf -utf8'};
             last;
         };
     }
