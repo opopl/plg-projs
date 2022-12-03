@@ -424,7 +424,7 @@ sub run_plans {
     $ref ||= {};
 
     my $plans    = $ref->{plans} || $bld->{plans} || {};
-    my $plan_seq = $plans->{seq} || [];
+    my $plan_seq = $ref->{plan_seq} || $plans->{seq} || [];
 
     my $define = $plans->{define} || {};
     $DB::single = 1;
@@ -456,9 +456,8 @@ sub run_plans {
 
                 my @m = ($plan_name =~ m/$def_key/);
                 next unless @m;
-                # matched vars
-                $DB::single = 1;
 
+                # matched vars
                 my @mv = eval {
                     local $SIG{__WARN__} = sub {};
                     ( @m == 1 && $m[0] == 1 ) ? 1 : 0;
@@ -488,11 +487,16 @@ sub run_plans {
         }
         print '[BUILDER] Running plan: ' . $plan_name . "\n";
         print Dumper($plan_def) . "\n";
-        $DB::single = 1;1;
 
-        my $do_children = $plan_def->{do_children};
-        if ($do_children) {
-            # body...
+        my ($sec, $do_children) = @{$plan_def}{qw( sec do_children )};
+        if ($sec) {
+            my ($pref) = ($plan_name =~ m/^(.*)$sec/);
+
+            if ($do_children) {
+                my $children = $bld->_sec_children({ sec => $sec });
+                my @child_seq = map { $pref . $_ } @$children;
+                $bld->run_plans({ plan_seq => \@child_seq });
+            }
         }
 
         #local @ARGV = split ' ' => ($plan_def->{argv} || '');
@@ -500,7 +504,6 @@ sub run_plans {
         #$bld->{plans} = undef;
         #$bld->run;
     }
-
 
     return $bld;
 }
