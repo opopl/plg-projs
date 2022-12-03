@@ -486,7 +486,9 @@ sub run_plans {
             dict_exe_cb($vv, $cb);
             dict_update($plan_def, $vv);
 
-            dict_update($plan_def, { sec => $+{'sec'} }) if $+{'sec'};
+            foreach my $pp (qw( sec author_id)) {
+                dict_update($plan_def, { $pp => $+{$pp} }) if $+{$pp};
+            }
         }
 
         my ($sec, $do_children) = @{$plan_def}{qw( sec do_children )};
@@ -500,13 +502,20 @@ sub run_plans {
             }
         }
 
+        my $argv = $plan_def->{argv} || '';
+        $argv =~ /\s+-t\s+(?<target>\S+)/ && do {
+           $plan_def->{target} = $+{target};
+        };
+
         print '[BUILDER] Running plan: ' . $plan_name . "\n";
         print Dumper($plan_def) . "\n";
 
-        #local @ARGV = split ' ' => ($plan_def->{argv} || '');
-        #$bld->init({ anew => 1 });
-        #$bld->{plans} = undef;
-        #$bld->run;
+        next if $plans->{dry} || $plan_def->{dry};
+
+        local @ARGV = split ' ' => $argv;
+        $bld->init({ anew => 1 });
+        $bld->{plans} = undef;
+        $bld->run;
     }
 
     return $bld;
