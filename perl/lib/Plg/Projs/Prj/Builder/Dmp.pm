@@ -2,11 +2,18 @@
 package Plg::Projs::Prj::Builder::Dmp;
 
 use utf8;
+use strict;
+use warnings;
+
+use JSON::Dumper::Compact 'jdc';
+use Clone qw(clone);
+
+use Base::Arg qw(
+    obj_exe_cb
+);
 
 binmode STDOUT,':encoding(utf8)';
 
-use strict;
-use warnings;
 
 use Data::Dumper qw(Dumper);
 
@@ -23,14 +30,44 @@ sub dump_bld {
     my ($bld, $path) = @_;
 
     my $h = $bld->_vals_($path);
-	$DB::single = 1;
+    $DB::single = 1;
     my $data = ref $h eq 'HASH' ? { map { $_ => $h->{$_} } keys %$h } : $h;
-    print $path . "\n";
-    print Dumper($data) . "\n";
+    my $format = $bld->{opt}->{format} || 'perl';
+
+    my $subs = {
+        'perl' => sub {
+            print sprintf('path: %s',$path) . "\n";
+            print Dumper($data) . "\n";
+        },
+        'json' => sub {
+            require JSON::XS;
+            my $coder = JSON::XS->new->ascii->pretty->allow_nonref;
+
+            my $cdata = clone($data);
+            my $cb = sub {
+                my ($val) = @_;
+                $val = '@CODE@' if ref $val eq 'CODE';
+                return $val;
+            };
+            $cdata = obj_exe_cb($cdata, $cb);
+            my $j_data;
+            #$j_data = eval { #$coder->encode($cdata); #};
+            #warn $@ if $@;
+            $j_data = eval { jdc($cdata); };
+            my @out;
+            if ($j_data) {
+                push @out, 'begin_json', $j_data, 'end_json';
+                print join("\n",@out) . "\n";
+            }
+        }
+    };
+    my $sub = $subs->{$format};
+    $sub->() if $sub;
+
     return $bld;
 }
 
 
 1;
- 
+
 

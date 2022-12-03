@@ -372,9 +372,12 @@ sub get_opt {
         "data|d=s",
         "ii_updown=s",
         "yfile|y=s@",
+
+        # output format e.g. json, yaml for dump_bld command 
+        'format|f=s',
     );
 
-    GetOptions(\%opt,@optstr);
+    GetOptions(\%opt, @optstr);
     $bld->{opt} = \%opt;
 
     $bld->{config} = [
@@ -491,7 +494,7 @@ sub run_plans {
             }
         }
 
-        my ($sec, $do_children) = @{$plan_def}{qw( sec do_children )};
+        my ($sec, $author_id, $target, $do_children) = @{$plan_def}{qw( sec author_id target do_children )};
         if ($sec) {
             my ($pref) = ($plan_name =~ m/^(.*)$sec/);
 
@@ -500,6 +503,11 @@ sub run_plans {
                 my @child_seq = map { $pref . $_ } @$children;
                 $bld->run_plans({ plan_seq => \@child_seq });
             }
+        }
+
+        if ($author_id) {
+            my ($pref) = ($plan_name =~ m/^(.*)$author_id/);
+            my $cmd = qq{ dump_bld -t $target -d 'sii.scts._main_.ii.inner.body' -f json };
         }
 
         my $argv = $plan_def->{argv} || '';
@@ -512,14 +520,24 @@ sub run_plans {
 
         next if $plans->{dry} || $plan_def->{dry};
 
-        local @ARGV = split ' ' => $argv;
-        $bld->init({ anew => 1 });
-        $bld->{plans} = undef;
-        $bld->run;
+        $bld->run_argv($argv);
     }
 
     return $bld;
 }
+
+sub run_argv {
+    my ($bld, $argv) = @_;
+    $argv ||= '';
+
+    local @ARGV = split ' ' => $argv;
+    $bld->init({ anew => 1 });
+    $bld->{plans} = undef;
+    $bld->run;
+
+    return $bld;
+}
+
 
 sub run {
     my ($bld) = @_;
