@@ -15,6 +15,7 @@ use XML::Simple qw( XMLout XMLin );
 use Deep::Hash::Utils qw(reach);
 
 use Scalar::Util qw(blessed reftype);
+use Clone qw(clone);
 
 use YAML qw( LoadFile Load Dump DumpFile );
 
@@ -58,6 +59,7 @@ use Base::Arg qw(
     hash_inject
 
     dict_update
+    dict_exe_cb
     dict_new
 
     dict_expand_env
@@ -428,9 +430,35 @@ sub run {
         return $bld;
     }
 
+    my $define = $plans->{define} || {};
+
     foreach my $plan_name (@$plan_seq) {
         my $plan_def = $plans->{define}->{$plan_name} || {};
-        next unless keys %$plan_def;
+        unless(keys %$plan_def){
+            MATCH: while( my($k, $v) = each %$define ){
+                my @m = ($plan_name =~ m/$k/);
+                next unless @m;
+                # matched vars
+                my @mv = eval {
+                    local $SIG{__WARN__} = sub {};
+                    ( @m == 1 && $m[0] == 1 ) ? 1 : 0;
+                } ? () : @m;
+
+                my $cb = sub {
+                    local $_ = shift;
+                    my $j = 0;
+                    for my $w (@mv){
+                       $j++;
+                       s/\$$j/$w/g;
+                    }
+                    return $_;
+                };
+                $plan_def = clone($v);
+                dict_exe_cb($plan_def, $cb);
+                last MATCH;
+            }
+        }
+        print '[BUILDER] Running plan: ' . $plan_name . "\n";
 
         local @ARGV = split ' ' => ($plan_def->{argv} || '');
         $bld->init({ anew => 1 });
