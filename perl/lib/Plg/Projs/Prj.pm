@@ -123,7 +123,12 @@ sub cnf_apply {
         my $v = $cnf->{$x};
 
         $self->{$x} //= {};
-        dict_update($self->{$x}, $v);
+        if (ref $v eq 'HASH' && ref $self->{$x} eq 'HASH') {
+            dict_update($self->{$x}, $v);
+
+        } elsif (ref $v eq 'ARRAY') {
+            $self->{$x} = $v;
+        }
     }
 
     return $self;

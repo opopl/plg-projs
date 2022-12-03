@@ -119,7 +119,7 @@ sub init {
         ->trg_load_yml({ 'target' => 'core' })  # load into targets/core
         ->trg_load_yml                          # load into targets/$target
         ->trg_apply('core')                     # apply 'core' target data into $bld instance
-        ->cnf_apply                             # $bld->{cnf}->{vars} => $bld
+        ->cnf_apply                             # $bld->{cnf} => $bld except 'targets' section
         ->trg_apply                             # apply $target data into $bld instance
         ->trg_adjust
         ->load_yaml
@@ -415,7 +415,18 @@ sub process_ii_updown {
 sub run {
     my ($bld) = @_;
 
-    $bld->run_maker;
+    my $plan = $bld->{plan} || {};
+    my $plan_seq = $plan->{seq} || [];
+
+    unless(@$plan_seq) {
+        $bld->run_maker;
+        return $bld;
+    }
+
+    foreach my $plan (@$plan_seq) {
+        local @ARGV = @{$plan->{argv} || []};
+        $bld->init->run;
+    }
 
     return $bld;
 }

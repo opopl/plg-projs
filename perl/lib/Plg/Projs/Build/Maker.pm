@@ -62,7 +62,7 @@ use Base::Arg qw(
     hash_inject
 );
 
-use utf8; 
+use utf8;
 use Encode;
 #use open qw(:utf8 :std);
 binmode STDOUT, ":utf8";
@@ -93,7 +93,7 @@ use Plg::Projs::Map qw(
 );
 
 
-#use open IO => ":raw:utf8"; 
+#use open IO => ":raw:utf8";
 #docstore.mik.ua/orelly/perl4/cook/ch08_20.htm
 
 sub new
@@ -106,24 +106,24 @@ sub new
     return $mkr;
 }
 
-      
+
 sub get_opt {
     my ($mkr) = @_;
 
     return $mkr if $mkr->_val_('skip get_opt');
 
     my (%opt, @optstr, $cmdline);
-    
+
     Getopt::Long::Configure(qw(bundling no_getopt_compat no_auto_abbrev no_ignore_case_always));
-    
-    @optstr = ( 
+
+    @optstr = (
         "cmd|c=s",
     );
 
     $mkr->{root}    ||= getcwd();
     $mkr->{root_id} = basename($mkr->{root});
 
-    unless( @ARGV ){ 
+    unless( @ARGV ){
         $mkr->dhelp;
         exit 0;
     }else{
@@ -138,7 +138,7 @@ sub get_opt {
         $mkr->{$x} = $mkr->{opt}->{$x};
     }
 
-    return $mkr;    
+    return $mkr;
 }
 
 sub dhelp {
@@ -150,7 +150,7 @@ sub dhelp {
     PACKAGE:
         $pack
     USED BY:
-        projs#action#async_build_bare 
+        projs#action#async_build_bare
         PA async_build_bare ;;ab
     SCRIPT:
         $0
@@ -161,16 +161,16 @@ sub dhelp {
     USAGE
         $Script PROJ OPTIONS
     OPTIONS
-        --cmd -c CMD 
+        --cmd -c CMD
 
     EXAMPLES
-        perl $Script aa 
+        perl $Script aa
         perl $Script aa -c copy_to_builds
     };
 
     print $s . "\n";
 
-    return $mkr;    
+    return $mkr;
 }
 
 sub init_prj {
@@ -184,7 +184,7 @@ sub init_prj {
         );
     }
 
-    return $mkr;    
+    return $mkr;
 }
 
 sub init_img {
@@ -214,10 +214,10 @@ sub init_img {
         dbfile => $mkr->{dbfile_img},
         attr   => {},
     };
-    
+
     $mkr->{dbh_img} = dbi_connect($ref);
 
-    return $mkr;    
+    return $mkr;
 }
 
 sub init_ii_include {
@@ -234,18 +234,18 @@ sub init_ii_include {
 
     while(1){
         last unless $load_dat;
-    
+
         if (-e $f_in) {
             push @include, readarr($f_in);
         }else{
             $mkr->{ii_include_all} = 1;
         }
-    
+
         last;
     }
 
     $mkr->{ii_include} = \@include;
-    
+
     $mkr
         ->ii_filter             # check for _base_ _all_
         ->ii_insert_updown      # handle ii_updown
@@ -255,7 +255,7 @@ sub init_ii_include {
     #print Dumper($mkr->_val_('join_lines')) . "\n";
     #print Dumper($mkr->{ii_include}) . "\n";
 
-    return $mkr;    
+    return $mkr;
 }
 
 sub init {
@@ -288,7 +288,7 @@ sub init {
         out_dir_html    => catfile($htmlout, $root_id, $proj),
         dbfile          => catfile($root,'projs.sqlite'),
         cmd             => 'bare',
-        ii_tree         => {},           # see _join_lines 
+        ii_tree         => {},           # see _join_lines
     };
     hash_inject($mkr, $h);
 
@@ -301,7 +301,7 @@ sub init {
        ;
 
     my $tex_opts_a = [];
-    push @$tex_opts_a, 
+    push @$tex_opts_a,
         '-file-line-error',
         '-interaction nonstopmode',
         sprintf(qq{ -output-directory=./%s}, $h->{build_dir_unix}),
@@ -333,14 +333,14 @@ sub _find_ {
     my ($mkr, $dirs, $exts) = @_;
 
     my @files;
-    find({ 
-            wanted => sub { 
+    find({
+            wanted => sub {
                 foreach my $ext (@$exts) {
                     if (/\.$ext$/) {
                         push @files,$File::Find::name;
                     }
                 }
-            } 
+            }
     },@$dirs
     );
 
@@ -368,7 +368,7 @@ sub _sub_clean {
         my $rule = File::Find::Rule->new;
         $rule->name(map { "*.$_" } @$exts);
         #$rule->maxdepth($max_depth) if $max_depth;
-        
+
         #my @imgs = $rule->in(@$dirs);
     };
 
@@ -418,7 +418,7 @@ sub _cmds_texindy {
 
           my @lines = read_file $idx;
           for(@lines){
-             /^\\indexentry\{(.*)\|hyperpage\}\{(\d+)\}\s*$/ &&  do { 
+             /^\\indexentry\{(.*)\|hyperpage\}\{(\d+)\}\s*$/ &&  do {
                 my $entry = $1;
                 my $page = $2;
                 while(my($k,$v)=each %tex_syms){
@@ -436,11 +436,11 @@ sub _cmds_texindy {
 
         my $M_xdy = ( -e $xdy ) ? qq{ -M $xdy } : '';
         my ($cmd_idx, $cmd_ind);
-        
+
         $cmd_idx = sprintf(qq{texindy $M_xdy $idx });
-        $cmd_ind = ( $^O eq 'MSWin32' ) ? 
-            qq{call ind_ins_bmk.bat $proj.ind 1 } : 
-            qq{ind_ins_bmk.sh $proj.ind 1 }  
+        $cmd_ind = ( $^O eq 'MSWin32' ) ?
+            qq{call ind_ins_bmk.bat $proj.ind 1 } :
+            qq{ind_ins_bmk.sh $proj.ind 1 }
             ;
 
         m/^(?<name>(?:|(?<pref>.*)\.)(?<lng>\w+))\.idx$/ && do {
@@ -460,14 +460,14 @@ sub _cmds_texindy {
             my $ind_file = "$name.ind";
 
             $cmd_idx = sprintf(qq{texindy $enc -L $lang $M_xdy $idx });
-            $cmd_ind = ( $^O eq 'MSWin32' ) ? 
-                qq{call ind_ins_bmk.bat $ind_file 1 } : 
-                qq{ind_ins_bmk.sh $ind_file 1 }  
+            $cmd_ind = ( $^O eq 'MSWin32' ) ?
+                qq{call ind_ins_bmk.bat $ind_file 1 } :
+                qq{ind_ins_bmk.sh $ind_file 1 }
             ;
         };
 
-        push @cmds, 
-            $cmd_idx, 
+        push @cmds,
+            $cmd_idx,
             $cmd_ind
             ;
     }
@@ -581,9 +581,9 @@ sub create_bat_in_src {
     my $root_id = $mkr->{root_id};
 
     my %f = (
-        'latexmkrc' => sub { 
+        'latexmkrc' => sub {
             my @cmds;
-            push @cmds, 
+            push @cmds,
                     ' ',
                     q{$makeindex = "mkind jnd";},
                     ' ',
@@ -597,7 +597,7 @@ sub create_bat_in_src {
 
 ###f_bat
     my %f_bat = (
-        '_clean' => sub { 
+        '_clean' => sub {
             [
                 'rm *.xdy',
                 'rm *.ind',
@@ -616,9 +616,9 @@ sub create_bat_in_src {
                 'latexmk -C',
             ];
         },
-        '_latexmk_pdf' => sub { 
+        '_latexmk_pdf' => sub {
             my @cmds;
-            push @cmds, 
+            push @cmds,
                     ' ',
                     sprintf('latexmk -pdf jnd'),
                     ' '
@@ -626,9 +626,9 @@ sub create_bat_in_src {
 
             return [@cmds];
         },
-        '_mkind' => sub { 
+        '_mkind' => sub {
             my @cmds;
-            push @cmds, 
+            push @cmds,
                     ' ',
                     q{mkind jnd},
                     ' '
@@ -636,7 +636,7 @@ sub create_bat_in_src {
 
             return [@cmds];
         },
-        '_view' => sub { 
+        '_view' => sub {
             my $pdf   = 'jnd.pdf';
             my $cmd   = ( $^O eq 'MSWin32' ) ? 'call' : 'evince';
             my $after = ( $^O eq 'MSWin32' ) ? '' : ' &';
@@ -645,16 +645,16 @@ sub create_bat_in_src {
             return [ $s ];
         },
 ##_bat_xelatex
-        '_xelatex' => $mkr->_bat_sub_tex({ 
+        '_xelatex' => $mkr->_bat_sub_tex({
             times => 2,
-            exe   => 'xelatex' 
+            exe   => 'xelatex'
         }),
-        '_pdflatex' => $mkr->_bat_sub_tex({ 
+        '_pdflatex' => $mkr->_bat_sub_tex({
             times => 2,
-            exe   => 'pdflatex' 
+            exe   => 'pdflatex'
         }),
 ##_bat__run_tex
-        '_run_tex' => sub { 
+        '_run_tex' => sub {
             my $call = ( $^O eq 'MSWin32' ) ? 'call ' : '';
             my $dir = ( $^O eq 'MSWin32' ) ? q{} : q{./};
             my $args = ( $^O eq 'MSWin32' ) ? q{%*} : q{$*};
@@ -665,7 +665,7 @@ sub create_bat_in_src {
             }else{
                 push @cmds, '#!/bin/sh',' ';
             }
-            push @cmds, 
+            push @cmds,
                 sprintf('%s%s%s',$call, $dir, $mkr->_bat_file('_clean')),
                 sprintf('%s jnd %s', $mkr->_bat_file('run_tex'), $args),
                 ;
@@ -705,8 +705,8 @@ sub copy_bib_to_src {
 
     my $root = $mkr->{root};
 
-    my @bib; 
-    push @bib, 
+    my @bib;
+    push @bib,
         $mkr->_file_sec('_bib_');
 
     foreach(@bib) {
@@ -724,8 +724,8 @@ sub copy_sty_to_src {
 
     my $root = $mkr->{root};
 
-    my @sty; 
-    push @sty, 
+    my @sty;
+    push @sty,
         qw(projs.sty);
 
     mkpath $mkr->{src_dir};
@@ -796,7 +796,7 @@ sub run {
     my ($mkr) = @_;
 
     $mkr->run_cmd;
-    
+
     return $mkr;
 }
 
@@ -808,9 +808,9 @@ sub cmd_bare {
     my $proj = $mkr->{proj};
     my $root = $mkr->{root};
 
-    my @dirids = qw( 
-        out_dir_pdf 
-        out_dir_pdf_b 
+    my @dirids = qw(
+        out_dir_pdf
+        out_dir_pdf_b
     );
 
     foreach my $dirid (@dirids) {
@@ -819,14 +819,14 @@ sub cmd_bare {
     }
 
     my $proj_bib = catfile( $mkr->{build_dir}, "$proj.bib" );
-    copy( $mkr->{bib_file}, $proj_bib ) 
+    copy( $mkr->{bib_file}, $proj_bib )
         if -e $mkr->{bib_file};
-    
+
     my $cmd_tex = join(" ", @$mkr{qw( tex_exe tex_opts )}, $proj );
     system($cmd_tex);
 
     chdir $mkr->{build_dir};
-    
+
     system(qq{ bibtex $proj } ) if -e $proj_bib;
 
     my $idx = "$proj.idx";
@@ -851,7 +851,7 @@ sub cmd_bare {
     }
 
     my @pdf_files;
-    push @pdf_files, 
+    push @pdf_files,
         catfile($mkr->{out_dir_pdf_b},"$proj.pdf"),
         catfile($mkr->{out_dir_pdf},"$proj.pdf"),
         ;
