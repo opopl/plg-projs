@@ -494,6 +494,11 @@ sub run_plans {
             }
         }
 
+        my $argv = $plan_def->{argv} || '';
+        $argv =~ /\s+-t\s+(?<target>\S+)/ && do {
+           $plan_def->{target} = $+{target};
+        };
+
         my ($sec, $author_id, $target, $do_children) = @{$plan_def}{qw( sec author_id target do_children )};
         if ($sec) {
             my ($pref) = ($plan_name =~ m/^(.*)$sec/);
@@ -508,12 +513,9 @@ sub run_plans {
         if ($author_id) {
             my ($pref) = ($plan_name =~ m/^(.*)$author_id/);
             my $cmd = qq{ dump_bld -t $target -d 'sii.scts._main_.ii.inner.body' -f json };
+            print qq{$cmd} . "\n";
+            $bld->run_argv($cmd);
         }
-
-        my $argv = $plan_def->{argv} || '';
-        $argv =~ /\s+-t\s+(?<target>\S+)/ && do {
-           $plan_def->{target} = $+{target};
-        };
 
         print '[BUILDER] Running plan: ' . $plan_name . "\n";
         print Dumper($plan_def) . "\n";
