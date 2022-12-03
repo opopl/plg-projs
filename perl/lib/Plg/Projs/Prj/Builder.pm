@@ -429,32 +429,36 @@ sub run_plans {
     my $define = $plans->{define} || {};
     $DB::single = 1;
 
+    my (%def_dict, @def_order);
+
+    if (ref $define eq 'HASH') {
+        push @def_order, keys %$define;
+        %def_dict = %$define;
+    }elsif(ref $define eq 'ARRAY'){
+        foreach my $x (@$define) {
+            my ($def_key) = keys %$x;
+            my $def_value = $x->{$def_key};
+
+            push @def_order, $def_key;
+            $def_dict{$def_key} = $def_value;
+        }
+    }
+
     foreach my $plan_name (@$plan_seq) {
-        my $plan_def = $plans->{define}->{$plan_name} || {};
-        unless(keys %$plan_def){
-            my (%def_dict, @def_order);
+        my $plan_def;
+        $plan_def = $define->{$plan_name} if ref $define eq 'HASH';
 
-            if (ref $define eq 'HASH') {
-                push @def_order, keys %$define;
-                %def_dict = %$define;
-            }elsif(ref $define eq 'ARRAY'){
-                foreach my $x (@$define) {
-                    my ($def_key) = keys %$x;
-                    my $def_value = $x->{$def_key};
+        unless($plan_def){
+            $plan_def ||= {};
 
-                    push @def_order, $def_key;
-                    $def_dict{$def_key} = $def_value;
-                }
-                #push @$def_order, map { } @$define;
-            }
+            MATCH: foreach my $def_key (@def_order){
+                my $def_value = $def_dict{$def_key};
 
-            MATCH: while(1){
-            #MATCH: while( my($k, $v) = each %$define ){
-                my ($k, $v);
-
-                my @m = ($plan_name =~ m/$k/);
+                my @m = ($plan_name =~ m/$def_key/);
                 next unless @m;
                 # matched vars
+                $DB::single = 1;
+
                 my @mv = eval {
                     local $SIG{__WARN__} = sub {};
                     ( @m == 1 && $m[0] == 1 ) ? 1 : 0;
@@ -463,20 +467,33 @@ sub run_plans {
                 my $cb = sub {
                     local $_ = shift;
                     my $j = 0;
+                    # un-named matches
                     for my $w (@mv){
                        $j++;
                        s/\$$j/$w/g;
                     }
+                    # named matches
+                    for my $k (keys %+){
+                       my $v = $+{$k};
+                       s/\$\+\{$k\}/$v/g;
+                    }
                     return $_;
                 };
-                my $vv = clone($v);
+                my $vv = clone($def_value);
                 dict_exe_cb($vv, $cb);
                 dict_update($plan_def, $vv);
-                #last MATCH;
+
+                dict_update($plan_def, { sec => $+{'sec'} }) if $+{'sec'};
             }
         }
         print '[BUILDER] Running plan: ' . $plan_name . "\n";
+        print Dumper($plan_def) . "\n";
         $DB::single = 1;1;
+
+        my $do_children = $plan_def->{do_children};
+        if ($do_children) {
+            # body...
+        }
 
         #local @ARGV = split ' ' => ($plan_def->{argv} || '');
         #$bld->init({ anew => 1 });
