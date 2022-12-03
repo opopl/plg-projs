@@ -445,46 +445,42 @@ sub run_plans {
     }
 
     foreach my $plan_name (@$plan_seq) {
-        my $plan_def;
-        $plan_def = $define->{$plan_name} if ref $define eq 'HASH';
+        my $plan_def = {};
 
-        unless($plan_def){
-            $plan_def ||= {};
+        MATCH: foreach my $def_key (@def_order){
+            my $def_value = $def_dict{$def_key};
 
-            MATCH: foreach my $def_key (@def_order){
-                my $def_value = $def_dict{$def_key};
+            my @m = ($plan_name =~ m/$def_key/);
+            next unless @m;
 
-                my @m = ($plan_name =~ m/$def_key/);
-                next unless @m;
+            # matched vars
+            my @mv = eval {
+                local $SIG{__WARN__} = sub {};
+                ( @m == 1 && $m[0] == 1 ) ? 1 : 0;
+            } ? () : @m;
 
-                # matched vars
-                my @mv = eval {
-                    local $SIG{__WARN__} = sub {};
-                    ( @m == 1 && $m[0] == 1 ) ? 1 : 0;
-                } ? () : @m;
+            my $cb = sub {
+                local $_ = shift;
+                my $j = 0;
+                # un-named matches
+                for my $w (@mv){
+                   $j++;
+                   s/\$$j/$w/g;
+                }
+                # named matches
+                for my $k (keys %+){
+                   my $v = $+{$k};
+                   s/\$\+\{$k\}/$v/g;
+                }
+                return $_;
+            };
+            my $vv = clone($def_value);
+            dict_exe_cb($vv, $cb);
+            dict_update($plan_def, $vv);
 
-                my $cb = sub {
-                    local $_ = shift;
-                    my $j = 0;
-                    # un-named matches
-                    for my $w (@mv){
-                       $j++;
-                       s/\$$j/$w/g;
-                    }
-                    # named matches
-                    for my $k (keys %+){
-                       my $v = $+{$k};
-                       s/\$\+\{$k\}/$v/g;
-                    }
-                    return $_;
-                };
-                my $vv = clone($def_value);
-                dict_exe_cb($vv, $cb);
-                dict_update($plan_def, $vv);
-
-                dict_update($plan_def, { sec => $+{'sec'} }) if $+{'sec'};
-            }
+            dict_update($plan_def, { sec => $+{'sec'} }) if $+{'sec'};
         }
+
         print '[BUILDER] Running plan: ' . $plan_name . "\n";
         print Dumper($plan_def) . "\n";
 
