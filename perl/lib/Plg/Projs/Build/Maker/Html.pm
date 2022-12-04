@@ -31,6 +31,8 @@ sub _sec_link_html {
 
     $link .= '\par' if $ref->{par};
 
+    $link .= '\par\textcolor{blue}{aaaaaaaaaaaaaa}\par';
+
     $DB::single = 1;1;
 
     return $link;
