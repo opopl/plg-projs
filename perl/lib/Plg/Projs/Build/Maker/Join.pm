@@ -238,11 +238,6 @@ sub _join_lines {
                 $ii_link &&= $mkr->_vals_('join_lines.htlatex.ii_link');
 
                 if ($ii_link) {
-                    my $output = $bld->_trg_output({
-                        target => "_buf.$ii_sec"
-                    });
-                    my $output_ex = -f $output ? 1 : 0;
-
                     my @author_ids = @{$ii_data->{'@author_id'} || []};
                     my @authors = map {
                         $bld->_author_get({ author_id => $_, f => [qw(plain)] })
@@ -260,7 +255,6 @@ sub _join_lines {
                             sec => $ii_sec,
                             link_title => $htitle,
                             par => 1,
-                            color => $output_ex ? 'green' : 'red',
                         });
                         next;
                     }
