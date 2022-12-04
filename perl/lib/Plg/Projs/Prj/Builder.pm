@@ -376,7 +376,7 @@ sub get_opt {
         "ii_updown=s",
         "yfile|y=s@",
 
-        # output format e.g. json, yaml for dump_bld command 
+        # output format e.g. json, yaml for dump_bld command
         'format|f=s',
     );
 
@@ -450,6 +450,10 @@ sub run_plans {
     my ($bld, $ref) = @_;
     $ref ||= {};
 
+    my $proj = $bld->{proj};
+
+    my $mkr = $bld->{maker};
+
     my $plans    = $ref->{plans} || $bld->{plans} || {};
     my $plan_seq = $ref->{plan_seq} || $plans->{seq} || [];
 
@@ -461,10 +465,10 @@ sub run_plans {
     foreach my $plan_name (@$plan_seq) {
         my $plan_def = {};
 
-        print Dumper($define) . "\n";
-        print Dumper($def_dict) . "\n";
-        print Dumper($def_order) . "\n";
-        print Dumper($plan_name) . "\n";
+        #print Dumper($define) . "\n";
+        #print Dumper($def_dict) . "\n";
+        #print Dumper($def_order) . "\n";
+        #print Dumper($plan_name) . "\n";
 
         MATCH: foreach my $def_key (@$def_order){
             my $def_value = $def_dict->{$def_key};
@@ -508,21 +512,33 @@ sub run_plans {
         };
 
         my ($sec, $author_id, $target, $do_children) = @{$plan_def}{qw( sec author_id target do_children )};
+
         if ($sec) {
             my ($pref) = ($plan_name =~ m/^(.*)$sec/);
             $plan_def->{$_} = $pref for(qw( pref pref_ci ));
 
-            $plan_def->{children} =  $bld->_sec_children({ sec => $sec });
+            if ($do_children) {
+               $plan_def->{children} =  $bld->_sec_children({ sec => $sec });
+            }
+        }
+
+        if($target){
+            my $output = catfile($mkr->{out_dir_html},$target,'jnd_ht.html');
+            dict_update($plan_def, {
+                output => $output,
+                output_ex => -f $output,
+            });
         }
 
         if ($author_id) {
             my ($pref) = ($plan_name =~ m/^(.*)$author_id/);
             $plan_def->{pref} = $pref;
 
-            my $cmd = qq{ dump_bld -t $target -d 'sii.scts._main_.ii.inner.body' -f json };
+            my $cmd = qq{ prj-bld $proj dump_bld -t $target -d 'sii.scts._main_.ii.inner.body' -f json };
 
             my ($stdout, $stderr) = capture {
-               $bld->run_argv($cmd);
+               system("$cmd");
+               #$bld->run_argv($cmd);
             };
             $stdout ||= '';
 
@@ -535,7 +551,7 @@ sub run_plans {
             }
             $js_txt = join("\n",@js_data);
             my $coder = JSON::XS->new->utf8->pretty->allow_nonref;
-            $plan_def->{children} = $coder->decode($js_txt);
+            $plan_def->{children} = $coder->decode($js_txt) if $do_children;
         }
 
         if ($do_children) {
@@ -543,14 +559,19 @@ sub run_plans {
             my $pref_ci = $plan_def->{pref_ci} || '';
 
             my @child_seq = map { $pref_ci . $_ } @$children;
-            print Dumper(\@child_seq) . "\n";
             $bld->run_plans({ plan_seq => \@child_seq });
         }
 
         print '[BUILDER] Running plan: ' . $plan_name . "\n";
-        print Dumper($plan_def) . "\n";
+        #print Dumper($plan_def) . "\n";
 
-        next if $plans->{dry} || $plan_def->{dry};
+        my $dry = $plans->{dry} || $plan_def->{dry};
+        next if $dry;
+
+        my $rw = $plans->{rw} || $plan_def->{rw};
+        my $output_ex = $plan_def->{output_ex};
+
+        next if !$rw && $output_ex;
 
         $bld->run_argv($argv);
     }
