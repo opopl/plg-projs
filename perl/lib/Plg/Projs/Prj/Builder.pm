@@ -532,7 +532,7 @@ sub run_argv {
     my ($bld, $argv) = @_;
     $argv ||= '';
 
-    local @ARGV = split ' ' => $argv;
+    local @ARGV = grep { length $_ } split ' ' => $argv;
     $bld->init({ anew => 1 });
     $bld->{plans} = undef;
     $bld->run;

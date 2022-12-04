@@ -14,7 +14,6 @@ use Base::Arg qw(
 
 binmode STDOUT,':encoding(utf8)';
 
-
 use Data::Dumper qw(Dumper);
 
 sub dump_trg {
@@ -29,8 +28,10 @@ sub dump_trg {
 sub dump_bld {
     my ($bld, $path) = @_;
 
+    $path =~ s/^['"]*//g;
+    $path =~ s/['"]*$//g;
+
     my $h = $bld->_vals_($path);
-    $DB::single = 1;
     my $data = ref $h eq 'HASH' ? { map { $_ => $h->{$_} } keys %$h } : $h;
     my $format = $bld->{opt}->{format} || 'perl';
 
