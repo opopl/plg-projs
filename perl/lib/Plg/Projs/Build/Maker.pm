@@ -567,6 +567,19 @@ sub cmd_print_ii_base {
     return $mkr;
 }
 
+sub cmd_print_ii_body {
+    my ($mkr) = @_;
+
+    my $bld = $mkr->{bld};
+
+    my $path = 'sii.scts._main_.ii.inner.body';
+    my $ii_body = $bld->_vals_($path);
+
+    print Dumper($ii_body) . "\n";
+
+    return $mkr;
+}
+
 ###print_ii_tree
 sub cmd_print_ii_tree {
     my ($mkr) = @_;
