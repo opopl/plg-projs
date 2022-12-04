@@ -168,9 +168,9 @@ sub _trg_output {
     my ($root_id, $proj) = @{$bld}{qw( root_id proj )};
 
     if ($bld->{do_htlatex}) {
-       $output = catfile($mkr->{htmlout}, $root_id, $proj, $target, qw(jnd_ht.html));
+       $output = catfile($mkr->{out_dir_html}, $target, qw(jnd_ht.html));
     }else{
-       $output = catfile($mkr->{pdfout}, $root_id, $proj, $target . '.pdf' );
+       $output = catfile($mkr->{out_dir_pdf}, join("." => ($proj,$target,'pdf')) );
     }
 
     return $output;

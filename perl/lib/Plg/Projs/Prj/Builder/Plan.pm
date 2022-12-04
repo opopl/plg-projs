@@ -100,7 +100,7 @@ sub run_plans {
         }
 
         if($target){
-            my $output = catfile($mkr->{out_dir_html},$target,'jnd_ht.html');
+            my $output = $bld->_trg_output({ target => $target });
             dict_update($plan_def, {
                 output => $output,
                 output_ex => -f $output,
