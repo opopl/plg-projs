@@ -13,6 +13,8 @@ use utf8;
 use strict;
 use warnings;
 
+use YAML::XS qw();
+
 use base qw(
     Base::Obj
     Base::Opt
@@ -574,8 +576,11 @@ sub cmd_print_ii_body {
 
     my $path = 'sii.scts._main_.ii.inner.body';
     my $ii_body = $bld->_vals_($path);
+    my $yaml = YAML::XS::Dump($ii_body);
 
-    print Dumper($ii_body) . "\n";
+    my @out;
+    push @out, 'begin_yaml', $yaml, 'end_yaml';
+    print join("\n",@out) . "\n";
 
     return $mkr;
 }
