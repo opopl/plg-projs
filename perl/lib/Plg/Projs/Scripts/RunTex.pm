@@ -429,16 +429,17 @@ sub run {
 
         unless(ref $cmd){
             my ($stdout, $stderr, $code);
-            
+
             $DB::single = 1;
             if ($shell eq 'system') {
                 $code = system("$_");
             }else{
                 print '[RUNTEX] start cmd: ' . $cmd . "\n";
-                ($stdout, $stderr, $code) = capture { 
+                ($stdout, $stderr, $code) = capture {
                     system("$_");
                 };
                 print '[RUNTEX] end cmd: ' . $cmd . "\n";
+                print '[RUNTEX] exit code: ' . $code . "\n";
             }
             $ok &&= $code ? 0 : 1;
         }elsif(ref $cmd eq 'CODE'){

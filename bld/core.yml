@@ -6,6 +6,9 @@
 
 tex_exe: xelatex
 
+run_tex:
+  shell: system
+
 vars:
   img_root: '@env{IMG_ROOT}'
   pagestyle: fancy
