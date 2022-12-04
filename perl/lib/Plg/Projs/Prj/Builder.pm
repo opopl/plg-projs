@@ -280,6 +280,11 @@ sub process_config {
             $bld->{do_htlatex} = 1;
             next;
         };
+
+        /^capture$/ && do {
+            dict_update($bld, dict_new('run_tex.shell','capture'));
+            next;
+        };
     }
 
     return $bld;
