@@ -7,6 +7,7 @@ use warnings;
 
 use JSON::Dumper::Compact 'jdc';
 use Clone qw(clone);
+use JSON::XS;
 
 use Base::Arg qw(
     obj_exe_cb
@@ -41,7 +42,6 @@ sub dump_bld {
             print Dumper($data) . "\n";
         },
         'json' => sub {
-            require JSON::XS;
             my $coder = JSON::XS->new->ascii->pretty->allow_nonref;
 
             my $cdata = clone($data);
@@ -52,9 +52,9 @@ sub dump_bld {
             };
             $cdata = obj_exe_cb($cdata, $cb);
             my $j_data;
-            #$j_data = eval { #$coder->encode($cdata); #};
+            $j_data = eval { $coder->encode($cdata); };
             #warn $@ if $@;
-            $j_data = eval { jdc($cdata); };
+            #$j_data = eval { jdc($cdata); };
             my @out;
             if ($j_data) {
                 push @out, 'begin_json', $j_data, 'end_json';

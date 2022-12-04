@@ -453,13 +453,18 @@ sub run_plans {
     my $plans    = $ref->{plans} || $bld->{plans} || {};
     my $plan_seq = $ref->{plan_seq} || $plans->{seq} || [];
 
-    my $define = $plans->{define} || {};
+    my $define = clone( $plans->{define} || {} );
 
     my ($def_dict, $def_order) = $bld->_obj2dict_order($define);
     $DB::single = 1;
 
     foreach my $plan_name (@$plan_seq) {
         my $plan_def = {};
+
+        print Dumper($define) . "\n";
+        print Dumper($def_dict) . "\n";
+        print Dumper($def_order) . "\n";
+        print Dumper($plan_name) . "\n";
 
         MATCH: foreach my $def_key (@$def_order){
             my $def_value = $def_dict->{$def_key};
@@ -505,16 +510,15 @@ sub run_plans {
         my ($sec, $author_id, $target, $do_children) = @{$plan_def}{qw( sec author_id target do_children )};
         if ($sec) {
             my ($pref) = ($plan_name =~ m/^(.*)$sec/);
+            $plan_def->{$_} = $pref for(qw( pref pref_ci ));
 
-            if ($do_children) {
-                my $children = $bld->_sec_children({ sec => $sec });
-                my @child_seq = map { $pref . $_ } @$children;
-                $bld->run_plans({ plan_seq => \@child_seq });
-            }
+            $plan_def->{children} =  $bld->_sec_children({ sec => $sec });
         }
 
         if ($author_id) {
             my ($pref) = ($plan_name =~ m/^(.*)$author_id/);
+            $plan_def->{pref} = $pref;
+
             my $cmd = qq{ dump_bld -t $target -d 'sii.scts._main_.ii.inner.body' -f json };
 
             my ($stdout, $stderr) = capture {
@@ -530,8 +534,17 @@ sub run_plans {
                 $js && do { push @js_data, $_; next; };
             }
             $js_txt = join("\n",@js_data);
+            my $coder = JSON::XS->new->utf8->pretty->allow_nonref;
+            $plan_def->{children} = $coder->decode($js_txt);
+        }
 
-            print Dumper($js_txt) . "\n";
+        if ($do_children) {
+            my $children = $plan_def->{children} || [];
+            my $pref_ci = $plan_def->{pref_ci} || '';
+
+            my @child_seq = map { $pref_ci . $_ } @$children;
+            print Dumper(\@child_seq) . "\n";
+            $bld->run_plans({ plan_seq => \@child_seq });
         }
 
         print '[BUILDER] Running plan: ' . $plan_name . "\n";
