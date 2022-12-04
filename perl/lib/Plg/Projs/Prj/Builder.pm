@@ -9,7 +9,7 @@ use warnings;
 binmode STDOUT,':encoding(utf8)';
 
 use Capture::Tiny qw(capture);
-
+use File::stat;
 
 use File::Slurp::Unicode;
 
@@ -446,6 +446,37 @@ sub _obj2dict_order {
     return (\%dict, \@order);
 }
 
+my $plan_stat = {};
+
+sub run_plans_after {
+    my ($bld, $ref) = @_;
+    $ref ||= {};
+
+    print Dumper($plan_stat) . "\n";
+    my (@ok, @fail);
+    while(my($plan_name, $stat)=each %{$plan_stat}){
+        my $is_ok = $stat->{ok};
+        if ($is_ok) {
+           push @ok, $plan_name;
+        }else{
+           push @fail, $plan_name;
+        }
+    }
+
+    # no plans executed at all
+    return $bld unless @ok || @fail;
+
+    my $delim = '-' x 50;
+    my @info;
+    push @info, 
+        $delim, '[BUILDER] plan execution report', $delim,
+        ;
+
+    print $_ . "\n" for(@info);
+
+    return $bld;
+}
+
 sub run_plans {
     my ($bld, $ref) = @_;
     $ref ||= {};
@@ -527,6 +558,7 @@ sub run_plans {
             dict_update($plan_def, {
                 output => $output,
                 output_ex => -f $output,
+                output_mtime => -f $output ? stat($output)->mtime : 0,
             });
         }
 
@@ -569,11 +601,22 @@ sub run_plans {
         next if $dry;
 
         my $rw = $plans->{rw} || $plan_def->{rw};
-        my $output_ex = $plan_def->{output_ex};
+        my ($output, $output_ex, $output_mtime) = @{$plan_def}{qw( output output_ex output_mtime )};
 
         next if !$rw && $output_ex;
+        next if exists $plan_stat->{$plan_name};
 
         $bld->run_argv($argv);
+
+        my $plan_ok;
+        $plan_ok ||= !$rw && !$output_ex && -f $output;
+        $plan_ok ||= $rw && -f $output && ( stat($output)->mtime > $output_mtime );
+
+        dict_update($plan_stat,{ 
+           $plan_name => { 
+              ok => $plan_ok,
+           } 
+        });
     }
 
     return $bld;
@@ -605,7 +648,9 @@ sub run {
         return $bld;
     }
 
-    $bld->run_plans;
+    $bld
+        ->run_plans
+        ->run_plans_after;
 
     return $bld;
 }

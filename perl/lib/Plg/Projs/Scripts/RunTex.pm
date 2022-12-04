@@ -386,7 +386,7 @@ sub run {
     my ($ht, $ht_run);
     if ($do_htlatex) {
        $ht = $self->{tex4ht} || {};
-       $ht_run = $ht->{run} || 'htlatex';
+       $ht_run = $ht->{run} || { 'exe' => 'htlatex' };
 
        my $ht_cfg = $ht->{cfg} || {};
        my @ht_txt = ht_cnf2txt($ht_cfg);

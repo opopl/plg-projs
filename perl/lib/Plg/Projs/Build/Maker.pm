@@ -379,13 +379,14 @@ sub _cmd_ht_run {
     my ($mkr, $ref) = @_;
     $ref ||= {};
 
-    my $run  = $ref->{run} || 'htlatex';
+    my $run  = $ref->{run} || { exe => 'htlatex' };
+    my $exe = $run->{exe};
 
     my $proj = $ref->{proj} || $mkr->{proj};
     my $cfg  = $ref->{cfg} || $proj;
 
     my $cmd;
-    for($run){
+    for($exe){
         /^htlatex$/ && do {
             $cmd = sprintf('htlatex %s %s', $proj, $cfg) . qq{ '-cunihtf -utf8'};
             last;
