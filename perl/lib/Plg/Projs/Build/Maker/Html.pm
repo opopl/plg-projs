@@ -19,19 +19,19 @@ sub _sec_link_html {
     });
     my $output_ex = -f $output ? 1 : 0;
 
+    my $color = $ref->{color};
+
+    #$color ||= $output_ex ? 'green' : 'red';
+    $link_title = sprintf('\textcolor{%s}{%s}', $color, $link_title) if $color;
+
     my $sec_loc = sprintf('../%s/jnd_ht.html', $target);
     my $link = sprintf('\href{%s}{%s}', $sec_loc, $link_title );
 
-    my $color = $ref->{color};
-    $color ||= $output_ex ? 'green' : 'red';
-
-    if ($color) {
-        $link = sprintf('\textcolor{%s}{%s}', $color, $link);
-    }
+    # my $fbicon = $output_ex ? 'check.mark.white.heavy' : 'exclamation.mark';
+    # $link = sprintf('@igg{fbicon.%s} %s', $fbicon, $link) if $fbicon;
+    # '✅' => '@igg{fbicon.check.mark.white.heavy}',
 
     $link .= '\par' if $ref->{par};
-
-    $link .= '\par\textcolor{blue}{aaaaaaaaaaaaaa}\par';
 
     $DB::single = 1;1;
 

@@ -111,7 +111,6 @@ sub run_plans {
                 output_ex => -f $output,
                 output_mtime => -f $output ? stat($output)->mtime : 0,
             });
-            print Dumper($plan_def) . "\n";
         }
 
         if ($author_id) {
