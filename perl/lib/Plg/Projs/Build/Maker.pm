@@ -379,6 +379,7 @@ sub _cmd_ht_run {
     my ($mkr, $ref) = @_;
     $ref ||= {};
 
+    $DB::single = 1;
     my $run  = $ref->{run} || { exe => 'htlatex' };
     my $exe = $run->{exe};
 

@@ -241,7 +241,6 @@ sub _join_lines {
                     my @authors = map {
                         $bld->_author_get({ author_id => $_, f => [qw(plain)] })
                     } @author_ids;
-                    $DB::single = 1;
 
                     my ($title, $url) = @{$ii_data}{qw(title url)};
                     my @ii_title_href;

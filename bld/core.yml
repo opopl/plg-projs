@@ -6,8 +6,6 @@
 
 tex_exe: xelatex
 
-run_tex:
-  shell: system
 
 vars:
   img_root: '@env{IMG_ROOT}'
@@ -372,10 +370,14 @@ sii:
         - '\def\ii#1{\InputIfFileExists{\PROJ.#1.tex}{}{}}'
         - ''
 
+run_tex:
+  shell: system
+
 ###tex4ht
 tex4ht:
   # options: htlatex, make4ht
-  run: htlatex
+  run:
+    exe : htlatex
 
   cfg:
     vars:
