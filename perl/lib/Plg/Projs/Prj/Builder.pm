@@ -452,14 +452,15 @@ sub run_plans_after {
     my ($bld, $ref) = @_;
     $ref ||= {};
 
-    print Dumper($plan_stat) . "\n";
-    my (@ok, @fail);
+    my (@ok, @fail, @skip);
     while(my($plan_name, $stat)=each %{$plan_stat}){
-        my $is_ok = $stat->{ok};
-        if ($is_ok) {
+        my $status = $stat->{status};
+        if ($status eq 'ok') {
            push @ok, $plan_name;
-        }else{
+        } elsif ($status eq 'fail') {
            push @fail, $plan_name;
+        } elsif ($status eq 'skip') {
+           push @skip, $plan_name;
         }
     }
 
@@ -470,6 +471,8 @@ sub run_plans_after {
     my @info;
     push @info, 
         $delim, '[BUILDER] plan execution report', $delim,
+        @ok ? ( 'SUCCESS:', @ok ) : (),
+        @fail ? ( 'FAIL:', @fail ) : (),
         ;
 
     print $_ . "\n" for(@info);
@@ -603,18 +606,25 @@ sub run_plans {
         my $rw = $plans->{rw} || $plan_def->{rw};
         my ($output, $output_ex, $output_mtime) = @{$plan_def}{qw( output output_ex output_mtime )};
 
-        next if !$rw && $output_ex;
+        my $skip; 
+        $skip ||= !$rw && $output_ex;
+
         next if exists $plan_stat->{$plan_name};
 
-        $bld->run_argv($argv);
-
-        my $plan_ok;
-        $plan_ok ||= !$rw && !$output_ex && -f $output;
-        $plan_ok ||= $rw && -f $output && ( stat($output)->mtime > $output_mtime );
+        my $status;
+        unless ($skip) {
+            $bld->run_argv($argv) unless $skip;
+            my $plan_ok;
+            $plan_ok ||= !$rw && !$output_ex && -f $output;
+            $plan_ok ||= $rw && -f $output && ( stat($output)->mtime > $output_mtime );
+            $status = $plan_ok ? 'ok' : 'fail';
+        }else{
+            $status = 'skip';
+        }
 
         dict_update($plan_stat,{ 
            $plan_name => { 
-              ok => $plan_ok,
+              status => $status,
            } 
         });
     }

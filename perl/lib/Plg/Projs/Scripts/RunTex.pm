@@ -18,6 +18,8 @@ use Base::Enc qw( unc_decode );
 use XML::LibXML;
 use XML::LibXML::PrettyPrint;
 
+use Capture::Tiny qw(capture);
+
 use File::stat;
 use File::Path qw(rmtree);
 use File::Slurp::Unicode;
@@ -370,7 +372,7 @@ sub _do_htlatex {
 sub run {
     my ($self) = @_;
 
-    my $mkx = $self->{mkx};
+    my ($obj_bld, $mkx) = @{$self}{qw( obj_bld mkx )};
 
     my $root = $self->{root};
     my $proj = $self->{proj};
@@ -382,6 +384,7 @@ sub run {
         dir  => $root,
     };
     my $do_htlatex = $self->_do_htlatex;
+    my $shell = $self->{shell} || $obj_bld->_vals_('run_tex.shell') || 'system';
 
     my ($ht, $ht_run);
     if ($do_htlatex) {
@@ -425,7 +428,18 @@ sub run {
         local $_ = $cmd;
 
         unless(ref $cmd){
-            my $code = system("$_");
+            my ($stdout, $stderr, $code);
+            
+            $DB::single = 1;
+            if ($shell eq 'system') {
+                $code = system("$_");
+            }else{
+                print '[RUNTEX] start cmd: ' . $cmd . "\n";
+                ($stdout, $stderr, $code) = capture { 
+                    system("$_");
+                };
+                print '[RUNTEX] end cmd: ' . $cmd . "\n";
+            }
             $ok &&= $code ? 0 : 1;
         }elsif(ref $cmd eq 'CODE'){
             $cmd->();
