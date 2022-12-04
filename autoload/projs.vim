@@ -14,10 +14,10 @@ function! projs#namefromfile (...)
 
 endfunction
 
-"call projs#secfromfile ({ 
-"   \ "file" : file, 
-"   \ "type" : "basename", 
-"   \ "proj" : proj 
+"call projs#secfromfile ({
+"   \ "file" : file,
+"   \ "type" : "basename",
+"   \ "proj" : proj
 "   \ })
 
 function! projs#secfromfile (...)
@@ -32,11 +32,11 @@ function! projs#secfromfile (...)
 
     let sec = ''
     if type == 'basename'
-        let basename = file 
-    
+        let basename = file
+
         if basename =~ '^\w\+\.\(.*\)\.tex$'
             let sec = substitute(basename,'^\w\+\.\(.*\)\.tex$','\1','g')
-        elseif basename == proj . '.tex' 
+        elseif basename == proj . '.tex'
             let sec = '_main_'
         elseif basename =~ '\.\(\w\+\)\.vim$'
             let sec = '_vim_'
@@ -58,7 +58,7 @@ function! projs#help (...)
 
     let topics = base#qw('maps')
 
-    let topic = base#getfromchoosedialog({ 
+    let topic = base#getfromchoosedialog({
             \ 'list'        : topics,
             \ 'startopt'    : get(topics,0,''),
             \ 'header'      : "Available help topics are: ",
@@ -75,7 +75,7 @@ endfunction
 
 if 0
   projs_new
-  
+
   projs#new()
   projs#new(proj)
   projs#new(proj,{ git_add : 1 })
@@ -94,7 +94,7 @@ function! projs#new (...)
  echo delim
  echo " "
  echo "This will create a new TeX project skeleton "
- echo "    in projects' root directory: " . projs#root() 
+ echo "    in projects' root directory: " . projs#root()
  echo " "
  echo delim
 
@@ -102,7 +102,7 @@ function! projs#new (...)
  if !yn | return 0 | endif
 
  let newopts = projs#varget('PrjNew_opts',{})
-  
+
  if a:0
      let proj     = a:1
      let projtype = 'regular'
@@ -118,14 +118,14 @@ function! projs#new (...)
 
  if ! strlen(proj)
      call base#warn({ 'text' : 'no project name provided' })
-     return 0 
+     return 0
  endif
 
  let projtype   = projs#select#projtype()
  let projstruct = projs#select#projstruct()
 
  call projs#rootcd()
- 
+
  if projs#ex(proj)
     let rw = input('Project already exists, rewrite (1/0)?: ',0)
 
@@ -153,23 +153,23 @@ function! projs#new (...)
   endfor
 
   call projs#proj#git_add()
-  
+
   call base#echoredraw('Created new project: ' . proj)
-  
+
   call base#varset('proj',proj)
-  
+
   call projs#listadd(proj)
-  
+
   let loadmain = input('Load the main project file? (1/0): ', 1)
-  if loadmain 
+  if loadmain
     VSECBASE _main_
   endif
-  
+
   TgUpdate projs_this
   call projs#update('list')
 
   call base#echoprefixold()
-    
+
   return 1
 
 endf
@@ -189,7 +189,7 @@ endfunction
 "     projs#viewproj
 
 function! projs#selectproject (...)
-    
+
     if a:0
       let pat  = a:1
     endif
@@ -208,13 +208,13 @@ function! projs#selectproject (...)
     "call base#buf#open_split({ 'lines' : lines })
 
     let msg_a = [
-      \ "select project: ", 
+      \ "select project: ",
       \ ]
     let msg = join(msg_a,"\n")
-    
+
     let proj = base#input_we(msg,'',{ 'complete' : 'custom,projs#complete' })
     return proj
-    
+
 endfunction
 
 if 0
@@ -222,7 +222,7 @@ if 0
    view project
  Usage
    call projs#viewproj (proj)
-   PV 
+   PV
    PV proj
  Call tree
    Calls:
@@ -266,9 +266,9 @@ function! projs#viewproj (...)
 
     call projs#varset('secname',sec)
     call projs#varset('proj',proj)
-    
+
     call projs#sec#open(sec)
- 
+
     if (exists("*make#makeprg"))
         call make#makeprg('projs_latexmk',{ 'echo' : 0 })
     endif
@@ -324,12 +324,12 @@ function! projs#img (...)
   let fmt_sub = 'projs#img#%s'
   let front = [
       \ 'Current project:' , "\t" . proj,
-      \ 'Possible IMG actions: ' 
+      \ 'Possible IMG actions: '
       \ ]
   let desc = base#varget('projs_desc_IMG',{})
 
   let Fc = projs#fc#match_proj({ 'proj' : proj })
-  
+
   call base#util#split_acts({
     \ 'act'     : act,
     \ 'acts'    : acts,
@@ -359,10 +359,10 @@ function! projs#insert (...)
       call add(info,[ act, get(desc,act,'') ])
     endfor
     let proj = projs#proj#name()
-    let lines = [ 
+    let lines = [
       \ 'Current project:' , "\t" . proj,
       \ 'Current section:' , "\t" . projs#buf#sec(),
-      \ 'Possible PrjInsert actions: ' 
+      \ 'Possible PrjInsert actions: '
       \ ]
 
     call extend(lines, pymy#data#tabulate({
@@ -377,10 +377,10 @@ function! projs#insert (...)
       call matchadd(hl,'\s\+'.proj.'\s\+')
       call matchadd(hl,proj)
     endfunction
-    
+
     let Fc = s:obj.init
 
-    call base#buf#open_split({ 
+    call base#buf#open_split({
       \ 'lines'    : lines ,
       \ 'cmds_pre' : ['resize 99'] ,
       \ 'Fc'       : Fc,
@@ -389,7 +389,7 @@ function! projs#insert (...)
   endif
 
 
-  
+
 endfunction
 
 function! projs#htlatex (...)
@@ -403,7 +403,7 @@ function! projs#visual (...)
 
   let sub = 'projs#visual#' . act . '(start,end)'
   exe 'call ' . sub
-  
+
 endfunction
 
 function! projs#buf_cmd (...)
@@ -424,10 +424,10 @@ function! projs#buf_cmd (...)
     endfor
     let proj = projs#proj#name()
     let sec  = b:sec
-    let lines = [ 
+    let lines = [
       \ 'Current project:' , "\t" . proj,
       \ 'Current section:' , "\t" . sec,
-      \ 'Possible PrjBuf actions: ' 
+      \ 'Possible PrjBuf actions: '
       \ ]
 
     call extend(lines, pymy#data#tabulate({
@@ -442,10 +442,10 @@ function! projs#buf_cmd (...)
       call matchadd(hl,'\s\+'.proj.'\s\+')
       call matchadd(hl,proj)
     endfunction
-    
+
     let Fc = s:obj.init
 
-    call base#buf#open_split({ 
+    call base#buf#open_split({
       \ 'lines'    : lines ,
       \ 'cmds_pre' : ['resize 99'] ,
       \ 'Fc'       : Fc,
@@ -470,9 +470,9 @@ function! projs#gui (...)
       call add(info,[ act, get(desc,act,'') ])
     endfor
     let proj = projs#proj#name()
-    let lines = [ 
+    let lines = [
       \ 'Current project:' , "\t" . proj,
-      \ 'Possible PrjGui actions: ' 
+      \ 'Possible PrjGui actions: '
       \ ]
 
     call extend(lines, pymy#data#tabulate({
@@ -487,10 +487,10 @@ function! projs#gui (...)
       call matchadd(hl,'\s\+'.proj.'\s\+')
       call matchadd(hl,proj)
     endfunction
-    
+
     let Fc = s:obj.init
 
-    call base#buf#open_split({ 
+    call base#buf#open_split({
       \ 'lines'    : lines ,
       \ 'cmds_pre' : ['resize 99'] ,
       \ 'Fc'       : Fc,
@@ -514,9 +514,9 @@ function! projs#action (...)
       call add(info,[ act, get(desc,act,'') ])
     endfor
     let proj = projs#proj#name()
-    let lines = [ 
+    let lines = [
       \ 'Current project:' , "\t" . proj,
-      \ 'Possible PrjAct actions: ' 
+      \ 'Possible PrjAct actions: '
       \ ]
 
     call extend(lines, pymy#data#tabulate({
@@ -531,10 +531,10 @@ function! projs#action (...)
       call matchadd(hl,'\s\+'.proj.'\s\+')
       call matchadd(hl,proj)
     endfunction
-    
+
     let Fc = s:obj.init
 
-    call base#buf#open_split({ 
+    call base#buf#open_split({
       \ 'lines'    : lines ,
       \ 'cmds_pre' : ['resize 99'] ,
       \ 'Fc'       : Fc,
@@ -580,13 +580,13 @@ function! projs#switch (...)
   let sec = input('Section to open:',sec,'custom,projs#complete#secnames')
 
   call projs#sec#open(sec)
-  
+
 endfunction
 
 if 0
   call projs#onload ()
   call projs#onload ({ 'proj' : proj })
-  
+
   call tree
      calls
        projs#maps
@@ -600,7 +600,7 @@ function! projs#onload (...)
   if a:0 | let ref = a:1 | endif
 
   if !base#buf#is_file()
-    return 
+    return
   endif
 
   let comps          = base#comps#bufact(&ft)
@@ -644,7 +644,7 @@ function! projs#onload (...)
   endif
 
   call projs#maps()
-    
+
   let prf = { 'prf' : 'projs#onload' }
   call base#log([
     \ 'ref => ' . base#dump(ref),
@@ -670,14 +670,14 @@ function! projs#exe_latex (...)
   else
     let exe_latex = projs#varget('exe_latex',exe_latex)
   endif
-  
+
  return exe_latex
 
 endfunction
 
 
 function! projs#gensecdat (...)
- 
+
  let f = projs#path([ proj . '.secs.i.dat' ])
  call projs#varset('secdatfile',f)
 
@@ -694,7 +694,7 @@ function! projs#gensecdat (...)
 endf
 
 fun! projs#opensecorder()
- 
+
   let f = projs#path([proj . '.secorder.i.dat' ])
 
   call projs#varset('secorderfile',f)
@@ -704,9 +704,9 @@ fun! projs#opensecorder()
 
 endf
 
- 
-"" Remove the project 
-""  This function does not affect the current value of proj 
+
+"" Remove the project
+""  This function does not affect the current value of proj
 ""          if proj is different from the project being removed.
 ""          On the other hand, if proj is the project requested to be removed,
 ""     proj is unlet in the end of the function body
@@ -714,7 +714,7 @@ endf
 " former DC_PrjRemove
 "
 if 0
-  call in 
+  call in
     plugin/projs_init.vim
 endif
 
@@ -735,7 +735,7 @@ endfunction
 function! projs#echo(text,...)
 
   let opts = get(a:000,0,{})
- 
+
   let prf = { 'plugin' : 'projs'}
   call extend(prf,opts)
   call base#log(a:text,prf)
@@ -756,46 +756,46 @@ function! projs#info ()
     let secnames = projs#proj#secnames()
 
     call projs#update('loaded')
-        
+
     call base#echo({ 'text' : "PROJECTS ", 'hl' : 'Title' } )
 
     call base#echo({ 'text' : "Projects directory: " } )
-    call base#echo({ 
+    call base#echo({
         \ 'text' : "projs#root()     => " . projs#root(),
         \ 'indentlev' : indentlev, })
 
-    call base#echo({ 
+    call base#echo({
         \ 'text' : "projs#rootid()   => " . projs#rootid(),
         \ 'indentlev' : indentlev, })
 
-    call base#echo({ 
-        \ 'text' : "$PROJSDIR => " . base#envvar('PROJSDIR'), 
+    call base#echo({
+        \ 'text' : "$PROJSDIR => " . base#envvar('PROJSDIR'),
         \ 'indentlev' : indentlev, })
 
     call base#echo({ 'text' : "Projects PDF dir: " } )
-    call base#echo({ 
+    call base#echo({
         \ 'text' : "pdffin => " . projs#var('pdffin'),
         \ 'indentlev' : indentlev, })
 
     call base#echo({ 'text' : "Project type: " } )
-    call base#echo({ 
+    call base#echo({
         \ 'text'      : "projtype => " . projs#varget('projtype',''),
         \ 'indentlev' : indentlev, })
-    
+
     call base#echo({ 'text' : "Current project: " } )
-    call base#echo({ 
-        \ 'text' : "proj => " . proj, 
+    call base#echo({
+        \ 'text' : "proj => " . proj,
         \ 'indentlev' : indentlev, })
-    
+
     call base#echo({ 'text' : "Current section: " } )
-    call base#echo({ 
-        \ 'text' : "secname => " . secname, 
+    call base#echo({
+        \ 'text' : "secname => " . secname,
         \ 'indentlev' : indentlev })
 
     call base#echo({ 'text' : "Loaded projects: " } )
     let loaded=projs#var('loaded')
-    call base#echo({ 
-        \ 'text' : "loaded => " . base#dump(loaded), 
+    call base#echo({
+        \ 'text' : "loaded => " . base#dump(loaded),
         \ 'indentlev' : indentlev })
 
     let cnt = input('Continue? (1/0): ',0)
@@ -804,8 +804,8 @@ function! projs#info ()
     let cnt = input('Show list of sections? (1/0): ',1)
     if cnt
         call base#echo({ 'text' : "Sections: " } )
-        call base#echo({ 
-            \ 'text' : "secnames => " . "\n\t" . join(secnames,"\n\t"), 
+        call base#echo({
+            \ 'text' : "secnames => " . "\n\t" . join(secnames,"\n\t"),
             \ 'indentlev' : indentlev })
     endif
 
@@ -820,7 +820,7 @@ function! projs#info ()
         for v in vv
             if exists("vl") | unlet vl | endif
             let vl = projs#var(v)
-    
+
             if base#type(vl) == 'List'
                 let str = "\n\t" . join(vl,"\n\t")
             else
@@ -911,9 +911,9 @@ function! projs#filejoinlines (...)
     if sec == '_main_'
 
         if write_jfile
-          echo 'Writing joined lines into: ' 
+          echo 'Writing joined lines into: '
           echo '  ' . jfile
-      
+
           call writefile(lines,jfile)
         endif
 
@@ -930,14 +930,14 @@ function! projs#maps (...)
   let ext  = get(ref,'ext','tex')
 
   if !base#buf#is_file()
-    return 
+    return
   endif
 
   if len(exts)
     for ext in exts
       call projs#maps({ 'ext' : ext })
     endfor
-    return 
+    return
   endif
 
   let msg = [ printf('basename: %s', b:basename ) ]
@@ -950,7 +950,7 @@ function! projs#maps (...)
     let maps = base#yaml#parse_fs({ 'file' : file })
 
     call base#varset('projs_maps',maps)
-  
+
   endif
 
   for [ map, mp ] in items(maps)
@@ -959,7 +959,7 @@ function! projs#maps (...)
 
   call base#rdw('OK: projs#maps')
 
-  
+
 endfunction
 
 function! projs#builddir (...)
@@ -967,7 +967,7 @@ function! projs#builddir (...)
     let qw_a     = split(qw,' ')
 
     let sub_path = ''
-    
+
     if len(qw)
       let sub_path = join(qw_a, base#file#sep() )
     endif
@@ -994,7 +994,7 @@ endfunction
 
 if 0
   Call tree
-    Used by 
+    Used by
       ProjsInit
     Called in
       plugin/projs_init.vim
@@ -1014,7 +1014,7 @@ function! projs#init (...)
 
     " -------------------------------------------------
     " load variables from the corresponding dat files
-    " load: 
+    " load:
     "   data/list/vars.i.dat
     "
     "   all other dat files in data/list, data/dict subdirs
@@ -1024,7 +1024,7 @@ function! projs#init (...)
     " plg_projs augroup - autocommand group
     call projs#init#au()
 
-    " init projs variables: 
+    " init projs variables:
     "   templates_tex, templates_vim
     call projs#init#templates()
 
@@ -1076,7 +1076,7 @@ function! projs#listwrite2dat (...)
 
  let dfile = projs#path([ 'PROJS.i.dat' ])
  call writefile(list,dfile)
-    
+
 endfunction
 
 function! projs#xmlfile (...)
@@ -1094,7 +1094,7 @@ function! projs#root (...)
         call projs#var('root',root)
     endif
     return projs#var('root')
-endf    
+endf
 
 function! projs#rootid (...)
   let rootid = get(a:000,0,'')
@@ -1103,7 +1103,7 @@ function! projs#rootid (...)
   endif
 
   return projs#varget('rootid','')
-endf  
+endf
 
 function! projs#url_dir ()
   let html_root = base#envvar('html_root','')
@@ -1116,7 +1116,7 @@ function! projs#url_dir ()
   endif
 
   return url_dir
-endf    
+endf
 
 
 function! projs#rootbasename ()
@@ -1124,37 +1124,37 @@ function! projs#rootbasename ()
     let bn   = fnamemodify(root,":p:h:t")
 
     return bn
-endf    
+endf
 
 function! projs#rootcd ()
     let dir =  projs#root()
     exe 'cd ' . dir
-endf    
+endf
 
 function! projs#plgdir ()
     return projs#var('plgdir')
-endf    
+endf
 
 function! projs#datadir ()
     return projs#var('datadir')
-endf    
+endf
 
 function! projs#plgcd ()
     let dir = projs#plgdir()
     exe 'cd ' . dir
-endf    
+endf
 
 function! projs#listfromdat ()
     let file = projs#list_dat()
-    let list = base#readdatfile({ 
-            \ "file" : file, 
-            \ "type" : "List", 
+    let list = base#readdatfile({
+            \ "file" : file,
+            \ "type" : "List",
             \ "sort" : 1,
             \ "uniq" : 1,
             \ })
     call projs#var("list",list)
     return list
-endf    
+endf
 
 function! projs#list_dat ()
     let file = ap#file#catfile([ projs#root(), 'PROJS.i.dat' ])
@@ -1179,14 +1179,14 @@ function! projs#listfromfiles ()
     "
     let root = projs#root()
 
-    let list = base#find({ 
+    let list = base#find({
         \ "dirs" : [ root ]                  ,
         \ "ext"  : [ "tex" ]                 ,
         \ "relpath" : 1                      ,
         \ "subdirs" : 0                      ,
-        \ "pat"     : '^(\w+)\.tex$'         , 
+        \ "pat"     : '^(\w+)\.tex$'         ,
         \ })
-        
+
     let exclude = projs#list#exclude()
 
     let nlist=[]
@@ -1214,12 +1214,12 @@ function! projs#listfromfiles ()
     "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
     return nlist
-endf    
+endf
 
 function! projs#piclist ()
   let list = projs#varget('piclist',[])
   return list
-endf    
+endf
 
 if 0
   projs#list
@@ -1234,9 +1234,9 @@ if 0
     array - list of projects
   Call tree:
     calls:
-      
+
     called by:
-      
+
 endif
 
 function! projs#list (...)
@@ -1264,7 +1264,7 @@ function! projs#list (...)
     endw
 
     return copy(list)
-endf    
+endf
 
 function! projs#listadd (proj)
     let list = projs#list()
@@ -1274,7 +1274,7 @@ function! projs#listadd (proj)
     endif
 
     call projs#varset("list",list)
-    
+
 endfunction
 
 function! projs#ex (proj)
@@ -1325,7 +1325,7 @@ function! projs#path (pa)
     let fullpath = base#file#catfile(arr)
 
     return fullpath
-    
+
 endfunction
 
 function! projs#vars (...)
@@ -1364,9 +1364,9 @@ function! projs#varget (varname,...)
     else
       let val = base#varget('projs_'.a:varname)
     endif
-   
+
     return val
-    
+
 endfunction
 
 
@@ -1392,7 +1392,7 @@ function! projs#varsetfromdat (varname,...)
         return 0
     endif
 
-    let data = base#readdatfile({ 
+    let data = base#readdatfile({
         \   "file" : datafile ,
         \   "type" : type ,
         \   })
@@ -1445,7 +1445,7 @@ function! projs#renameproject(...)
  let files = projs#proj#files()
 
  call projs#proj#name(new)
- 
+
  for f in files
     let nf = substitute(f,'^'.old,new,'g')
     call rename(f,nf)
@@ -1470,7 +1470,7 @@ function! projs#renameproject(...)
  endfor
 
  call projs#update('list')
- 
+
 endfunction
 
 ""used in:
@@ -1482,10 +1482,10 @@ function! projs#genperl(...)
  let proj = projs#var('proj')
 
  call extend(pmfiles, {
-            \   'generate_pm' : g:paths['perlmod'] . '/lib/TeX/Project/Generate/' . proj . '.pm',  
-            \   'generate_pl' : g:paths['projs']  . '/generate.' . proj . '.pl',  
+            \   'generate_pm' : g:paths['perlmod'] . '/lib/TeX/Project/Generate/' . proj . '.pm',
+            \   'generate_pl' : g:paths['projs']  . '/generate.' . proj . '.pl',
             \   })
- 
+
 endfunction
 
 function! projs#prjmakeoption (...)
@@ -1497,7 +1497,7 @@ function! projs#prjmakeoption (...)
             let opt  = projs#varget('prjmake_opt','')
         else
             let opts = projs#varget('prjmake_opts',[])
-            let opt  = base#getfromchoosedialog({ 
+            let opt  = base#getfromchoosedialog({
                 \ 'list'        : opts,
                 \ 'startopt'    : 'regular',
                 \ 'header'      : "Available options for projs#build#run(...) are: ",
@@ -1513,7 +1513,7 @@ endfunction
 "Usage:
 "   call projs#prjmake ()
 "   call projs#prjmake (opt)
-"     where opt 
+"     where opt
 "
 "Call tree:
 "   Calls:
@@ -1544,14 +1544,14 @@ function! projs#buildnum (...)
  call base#log([
   \ 'proj => ' . proj ,
   \ ],prf)
-        
+
  """" --------------------- get build number, initialize output pdf directory
  let pdfout = projs#path([ 'pdf_built' ])
  call base#mkdir(pdfout)
 
  let bnum = 1
- let pdfs = base#find({ 
-    \ "dirs" : [ pdfout ], 
+ let pdfs = base#find({
+    \ "dirs" : [ pdfout ],
     \ "exts" : ["pdf"],
     \ "relpath" : 1,
     \ "pat"     : '^'.proj.'(\d+)\.pdf',
@@ -1583,7 +1583,7 @@ function! projs#buildnum (...)
 
  """" ---------------------
  return snum
-    
+
 endfunction
 
 function! projs#setbuildvars (...)
@@ -1594,7 +1594,7 @@ function! projs#setbuildvars (...)
  call base#log([
   \ 'ref => ' . base#dump(ref),
   \ ],prf)
-        
+
  let proj = projs#proj#name()
 
  let bnum      = projs#buildnum()
@@ -1627,7 +1627,7 @@ function! projs#setbuildvars (...)
   let log = split(txt,"\n")
 
   call base#log(log,prf)
-    
+
 endfunction
 
 """zlan
@@ -1641,12 +1641,12 @@ function! projs#zlan (...)
   let fmt_sub = 'projs#zlan#zo#%s'
   let front = [
       \ 'Current project:' , "\t" . proj,
-      \ 'Possible ZLAN actions: ' 
+      \ 'Possible ZLAN actions: '
       \ ]
   let desc = base#varget('projs_desc_ZLAN',{})
 
   let Fc = projs#fc#match_proj({ 'proj' : proj })
-  
+
   call base#util#split_acts({
     \ 'act'     : act,
     \ 'acts'    : acts,
@@ -1660,7 +1660,7 @@ endfunction
 
 function! projs#git (...)
     call projs#rootcd()
-    
+
 endfunction
 
 if 0
@@ -1704,7 +1704,7 @@ function! projs#grep (...)
       let exts_s = input('project file extensions: ',exts_s)
 
       let exts  = base#qw(exts_s)
-      let files = projs#proj#files({ 
+      let files = projs#proj#files({
         \ "exts" : exts,
         \  })
 
@@ -1722,24 +1722,24 @@ function! projs#grep (...)
 
     if !len(files)
       call base#rdwe('projs#grep: no files!')
-      return 
+      return
     endif
 
-    call base#grep#async({ 
+    call base#grep#async({
       \ 'files' : files,
-      \ 'pat'   : pat 
+      \ 'pat'   : pat
       \ })
 
 
-    "call base#grep({ 
+    "call base#grep({
         "\ "pat"   : pat   ,
         "\ "files" : files ,
         "\ })
-    
+
 endfunction
 
 function! projs#update_qw (s)
-  let s = a:s 
+  let s = a:s
   let opts = base#qwsort(s)
 
   for o in opts
@@ -1762,7 +1762,7 @@ function! projs#update (...)
   if a:0
        let opt = a:1
   else
-       let opt = base#getfromchoosedialog({ 
+       let opt = base#getfromchoosedialog({
             \ 'list'        : opts,
             \ 'startopt'    : 'regular',
             \ 'header'      : "Available options are: ",
@@ -1790,7 +1790,7 @@ function! projs#update (...)
         call projs#echo("Updating list of pictures",prf)
 
         let pdir = projs#path(['pics',proj])
-        let piclist = base#find({ 
+        let piclist = base#find({
             \ "dirs"    : [pdir],
             \ "qw_exts" : 'jpg png eps',
             \ "rmext"   : 1,
@@ -1824,24 +1824,24 @@ function! projs#update (...)
         call projs#echo("Updating list of loaded projects",prf)
 
         call base#buffers#get()
-    
+
         let bufs=base#var('bufs')
         let loaded={}
-    
+
         for b in bufs
           let file = get(b,'shortname','')
           let path = get(b,'path','')
           let ext  = get(b,'ext','')
-    
+
           if path != projs#root() | continue | endif
-    
+
           let proj = projs#namefromfile({ 'file' : file })
           call extend(loaded,{ proj : 1 })
         endfor
         call projs#varset('loaded',keys(loaded))
 
     endif
-    
+
 endfunction
 
 
@@ -1858,7 +1858,7 @@ function! projs#load (...)
         PrjView latexref
     elseif opt == 'paps_phd'
     endif
-    
+
 endfunction
 
 function! projs#exists (...)
@@ -1870,6 +1870,6 @@ function! projs#exists (...)
     endif
 
     return 0
-    
+
 endfunction
 

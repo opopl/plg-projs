@@ -107,7 +107,8 @@ function! projs#db#create_tables ()
   let pylib   = projs#pylib()
   call pymy#py3#add_lib( pylib . '/plg/projs' )
 
-  let tables   = base#qw('projs tags authors')
+  let tables   = base#qw('projs tree_children')
+  call extend(tables,base#qw(' _info_projs_tags _info_projs_author_id'))
 
   for table in tables
     let sql_file = base#qw#catpath('plg projs data sql create_table_' . table . '.sql')
@@ -794,7 +795,7 @@ function! projs#db#tag_list (...)
   let ref = get(a:000,0,{})
 
   let proj = projs#proj#name()
-	let proj = base#x#get(ref,'proj',proj)
+  let proj = base#x#get(ref,'proj',proj)
 
   "let pat  = base#x#get(ref,'pat','')
 
