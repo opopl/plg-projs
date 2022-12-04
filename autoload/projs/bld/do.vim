@@ -36,7 +36,12 @@ function! projs#bld#do#jnd_view (...)
   let ref = get(a:000,0,{})
 
   let target     = base#x#get(ref,'target','')
-  let target_ext = base#x#get(ref,'target_ext','pdf')
+
+  call base#varset('this',base#qw('html pdf'))
+  let target_ext = base#x#get(ref,'target_ext','')
+  if !len(target_ext)
+    let target_ext = base#input('target_ext: ','',{ 'complete' : 'custom,base#complete#this' })
+  endif
 
   if !len(target)
     let target = projs#bld#target()

@@ -494,14 +494,16 @@ sub run_plans {
     my $mkr = $bld->{maker};
 
     my $plans    = $ref->{plans} || $bld->{plans} || {};
-    my $plan_seq = $ref->{plan_seq} || $plans->{seq} || [];
+    my $plan_seq = clone( $ref->{plan_seq} || $plans->{seq} || [] );
 
     my $define = clone( $plans->{define} || {} );
 
     my ($def_dict, $def_order) = $bld->_obj2dict_order($define);
     $DB::single = 1;
 
-    foreach my $plan_name (@$plan_seq) {
+    while(@$plan_seq) {
+        my $plan_name = shift @$plan_seq;
+
         my $plan_def = {};
 
         #print Dumper($define) . "\n";
@@ -632,6 +634,7 @@ sub run_plans {
               status => $status,
            } 
         });
+
     }
 
     return $bld;
@@ -655,17 +658,15 @@ sub run {
 
     return $bld if $bld->{skip_run};
 
-    my $plans = $bld->{plans} || {};
-    my $plan_seq = $plans->{seq} || [];
+    my $act     = $bld->{act};
 
-    if(!@$plan_seq) {
+    if($act eq 'plan'){
+        $bld
+            ->run_plans
+            ->run_plans_after;
+    }else{
         $bld->run_maker;
-        return $bld;
     }
-
-    $bld
-        ->run_plans
-        ->run_plans_after;
 
     return $bld;
 }

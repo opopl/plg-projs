@@ -104,7 +104,6 @@ sub cmd_jnd_build {
     my $do_box = $bld->{box};
 
     my $img_dir = $do_box ? catfile($src_dir,qw(imgs)) : '';
-    $DB::single = 1;
 
     my $target = $bld->{target};
 

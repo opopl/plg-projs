@@ -118,8 +118,6 @@ sub trg_adjust {
        },
       };
       dict_update($bld, $h);
-      $DB::single = 1;1;
-
     }
 
     return $bld;
@@ -156,6 +154,26 @@ sub trg_load_yml {
     $bld->{'targets'}->{$target} = $ht;
 
     return $bld;
+}
+
+sub _trg_output {
+    my ($bld, $ref) = @_;
+    $ref ||= {};
+
+    my $target = $ref->{target} || $bld->{target};
+
+    my $output;
+    my $mkr = $bld->{maker};
+
+    my ($root_id, $proj) = @{$bld}{qw( root_id proj )};
+
+    if ($bld->{do_htlatex}) {
+       $output = catfile($mkr->{htmlout}, $root_id, $proj, $target, qw(jnd_ht.html));
+    }else{
+       $output = catfile($mkr->{pdfout}, $root_id, $proj, $target . '.pdf' );
+    }
+
+    return $output;
 }
 
 sub _trg_yfile {

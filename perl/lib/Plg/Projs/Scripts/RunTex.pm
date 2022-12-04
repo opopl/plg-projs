@@ -440,6 +440,10 @@ sub run {
                 };
                 print '[RUNTEX] end cmd: ' . $cmd . "\n";
                 print '[RUNTEX] exit code: ' . $code . "\n";
+
+                if ($code) {
+                   print $stderr . "\n";
+                }
             }
             $ok &&= $code ? 0 : 1;
         }elsif(ref $cmd eq 'CODE'){
