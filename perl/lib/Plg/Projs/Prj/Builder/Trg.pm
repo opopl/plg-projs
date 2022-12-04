@@ -161,13 +161,14 @@ sub _trg_output {
     $ref ||= {};
 
     my $target = $ref->{target} || $bld->{target};
+    my $do_htlatex = $ref->{do_htlatex} || $bld->{do_htlatex};
 
     my $output;
     my $mkr = $bld->{maker};
 
     my ($root_id, $proj) = @{$bld}{qw( root_id proj )};
 
-    if ($bld->{do_htlatex}) {
+    if ($do_htlatex) {
        $output = catfile($mkr->{out_dir_html}, $target, qw(jnd_ht.html));
     }else{
        $output = catfile($mkr->{out_dir_pdf}, join("." => ($proj,$target,'pdf')) );

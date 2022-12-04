@@ -7,6 +7,8 @@ use warnings;
 
 binmode STDOUT,':encoding(utf8)';
 
+use Data::Dumper qw(Dumper);
+
 use Capture::Tiny qw(capture);
 use Clone qw(clone);
 
@@ -100,12 +102,16 @@ sub run_plans {
         }
 
         if($target){
-            my $output = $bld->_trg_output({ target => $target });
+            my $output = $bld->_trg_output({
+                target => $target,
+                do_htlatex => $plan_def->{do_htlatex},
+            });
             dict_update($plan_def, {
                 output => $output,
                 output_ex => -f $output,
                 output_mtime => -f $output ? stat($output)->mtime : 0,
             });
+            print Dumper($plan_def) . "\n";
         }
 
         if ($author_id) {
@@ -149,7 +155,7 @@ sub run_plans {
         my $rw = $plans->{rw} || $plan_def->{rw};
         my ($output, $output_ex, $output_mtime) = @{$plan_def}{qw( output output_ex output_mtime )};
 
-        my $skip; 
+        my $skip;
         $skip ||= !$rw && $output_ex;
 
         next if exists $plan_stat->{$plan_name};
@@ -165,10 +171,10 @@ sub run_plans {
             $status = 'skip';
         }
 
-        dict_update($plan_stat,{ 
-           $plan_name => { 
+        dict_update($plan_stat,{
+           $plan_name => {
               status => $status,
-           } 
+           }
         });
 
     }
@@ -198,7 +204,7 @@ sub run_plans_after {
 
     my $delim = '-' x 50;
     my @info;
-    push @info, 
+    push @info,
         $delim, '[BUILDER] plan execution report', $delim,
         @ok ? ( 'SUCCESS:', @ok ) : (),
         @fail ? ( 'FAIL:', @fail ) : (),
@@ -222,5 +228,5 @@ sub run_argv {
 }
 
 1;
- 
+
 
