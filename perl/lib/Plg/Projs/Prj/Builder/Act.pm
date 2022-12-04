@@ -27,7 +27,7 @@ sub act_dump_bld {
     my $data = $bld->_opt_argv_('data','');
 
     $bld->dump_bld($data);
-    exit 0;
+    return $bld;
 }
 
 sub act_show_acts {
@@ -37,7 +37,7 @@ sub act_show_acts {
         print $acts . "\n";
     }
 
-    exit 0;
+    return $bld;
 }
 
 sub act_db_pull {
@@ -129,7 +129,7 @@ sub act_show_trg {
     foreach my $trg ($bld->_trg_list) {
         print $trg . "\n";
     }
-    exit 0;
+    return $bld;
 }
 
 1;

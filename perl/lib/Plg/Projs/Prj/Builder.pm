@@ -8,6 +8,9 @@ use warnings;
 
 binmode STDOUT,':encoding(utf8)';
 
+use Capture::Tiny qw(capture);
+
+
 use File::Slurp::Unicode;
 
 use XML::Hash::LX;
@@ -244,7 +247,7 @@ sub act_exe {
 
     if (ref $act_cmd eq 'CODE') {
         $act_cmd->();
-        exit 0;
+        $bld->{skip_run} = 1;
     }
     return $bld;
 }
@@ -513,8 +516,22 @@ sub run_plans {
         if ($author_id) {
             my ($pref) = ($plan_name =~ m/^(.*)$author_id/);
             my $cmd = qq{ dump_bld -t $target -d 'sii.scts._main_.ii.inner.body' -f json };
-            print qq{$cmd} . "\n";
-            $bld->run_argv($cmd);
+
+            my ($stdout, $stderr) = capture {
+               $bld->run_argv($cmd);
+            };
+            $stdout ||= '';
+
+            my ($js, @js_data, $js_txt);
+            for(split "\n" => $stdout){
+                chomp;
+                /^begin_json/ && do { $js = 1; next; };
+                /^end_json/ && do { undef $js; next; };
+                $js && do { push @js_data, $_; next; };
+            }
+            $js_txt = join("\n",@js_data);
+
+            print Dumper($js_txt) . "\n";
         }
 
         print '[BUILDER] Running plan: ' . $plan_name . "\n";
@@ -543,6 +560,8 @@ sub run_argv {
 
 sub run {
     my ($bld) = @_;
+
+    return $bld if $bld->{skip_run};
 
     my $plans = $bld->{plans} || {};
     my $plan_seq = $plans->{seq} || [];
