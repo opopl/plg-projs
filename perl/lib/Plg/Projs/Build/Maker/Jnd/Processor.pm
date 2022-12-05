@@ -158,6 +158,10 @@ sub init {
 sub tab_store_wd {
   my ($self) = @_;
 
+  my $mkr = $self->{mkr};
+  my $do_htlatex = $mkr->{do_htlatex};
+  return $self if $do_htlatex;
+
   my $tab = $self->{tab};
   return $self unless $tab;
 
@@ -1268,6 +1272,7 @@ sub _d2tex {
   my ($self, $d, $tab) = @_;
 
   my $mkr = $self->{mkr};
+  my $do_htlatex = $mkr->{do_htlatex};
 
   $d ||= $self->{d};
   $tab ||= $self->{tab};
@@ -1343,6 +1348,8 @@ sub _d2tex {
   $wd = $wd*$d->{width_by} if $d->{width_by};
 
   if ($tab) {
+    $wd = 1.0 if $do_htlatex;
+
     $self->tab_cell_update({ wd => $wd }) if $wd;
   }
 
