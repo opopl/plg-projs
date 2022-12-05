@@ -67,8 +67,16 @@ sub run_plans {
         #print Dumper($def_order) . "\n";
         #print Dumper($plan_name) . "\n";
 
+        # stores info for exact name match
+        my $def_eq;
+
         MATCH: foreach my $def_key (@$def_order){
             my $def_value = $def_dict->{$def_key};
+
+            if ($plan_name eq $def_key) {
+                $def_eq = $def_value;
+                next MATCH;
+            }
 
             my @m = ($plan_name =~ m/$def_key/);
             next unless @m;
@@ -102,6 +110,7 @@ sub run_plans {
                 dict_update($plan_def, { $pp => $+{$pp} }) if $+{$pp};
             }
         }
+        dict_update($plan_def, $def_eq) if $def_eq;
 
         my $argv = $plan_def->{argv} || '';
         $argv =~ /\s+-t\s+(?<target>\S+)/ && do {
@@ -164,7 +173,7 @@ sub run_plans {
         }
 
         print '[BUILDER] Running plan: ' . $plan_name . "\n";
-        #print Dumper($plan_def) . "\n";
+        print Dumper($plan_def) . "\n";
 
         my $dry = $plans->{dry} || $plan_def->{dry};
         next if $dry;
