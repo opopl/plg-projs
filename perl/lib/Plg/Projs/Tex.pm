@@ -536,8 +536,9 @@ our %fbicons_face = (
 our %fbicons_n = (
   #"\N{U+1F44C}" => '',
   "\N{U+1F3FB}" => '',
+  "\N{U+1F3FC}" => '',
 
-  "\N{U+2665}" => 'black.heart.suit',
+  "\N{U+2665}" => 'heart.suit',
 );
 
 ###fbicons
