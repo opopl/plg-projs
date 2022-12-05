@@ -430,6 +430,7 @@ tex4ht:
       - '\Configure{enquote}{\HCode{<strong>}}{\HCode{</strong>}}'
 
       - '\Configure{textbf}{\HCode{<span class="bold">}\NoFonts}{\EndNoFonts\HCode{</span>}}'
+      - '\Configure{emph}{\HCode{<span class="em">}\NoFonts}{\EndNoFonts\HCode{</span>}}'
 
       'frames':
       - '\ifOption{frames}{%'
@@ -490,6 +491,8 @@ tex4ht:
       'text' :
          '.bold' :
             'font-weight'      : bold
+         '.em' :
+            'font-style'       : italic
 
       'pic' :
          'img' :
