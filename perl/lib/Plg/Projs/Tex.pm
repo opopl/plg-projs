@@ -532,8 +532,12 @@ our %fbicons_face = (
   '😯' => 'face.hushed',
 );
 
+###fbicons_n
 our %fbicons_n = (
   #"\N{U+1F44C}" => '',
+  "\N{U+1F3FB}" => '',
+
+  "\N{U+2665}" => 'black.heart.suit',
 );
 
 ###fbicons
@@ -845,7 +849,7 @@ sub _fbicon_igg {
       $count = 0; $prev = undef;
     }
 
-    my $rpl = ' ' . join(" ",@rpl) . ' ';
+    my $rpl = @rpl ? join(" " => '',@rpl,'') : '';
     $rpl .= $str if $str;
 
     return $rpl;

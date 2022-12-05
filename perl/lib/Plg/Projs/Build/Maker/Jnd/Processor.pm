@@ -894,9 +894,15 @@ sub ldo_no_cmt {
 
        while(my($k,$v)=each %fbicons){
           m/($k)/ && do {
-             my $fbi = $fbicons{$1};
-             my $igg = _fbicon_igg($fbi);
-             $DB::single = 1;1;
+             my ($igg, $igg_exp);
+             unless ($v) {
+                 s/$k//g;
+             }else{
+                 # see also _fbicon_igg
+                 $igg = sprintf('@igg{fbicon.%s}',$v);
+                 $igg_exp = $self->_expand_igg($igg);
+                 s/$k/$igg_exp/g;
+             }
           };
        }
        #m/(\N{U+1F44C})/ && do {
