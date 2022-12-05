@@ -550,9 +550,12 @@ our %fbicons_hcode = (
   # Combining Acute Accent 
   "\N{U+0301}" => '',
 
-  # white smiling face
-  #     face.smiling.white
+  # face.smiling.white
   "\N{U+263A}" => '',
+
+  # face.frowning.white
+  "\N{U+2639}" => '',
+
 );
 
 ###fbicons
