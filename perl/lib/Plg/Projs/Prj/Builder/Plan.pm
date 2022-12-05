@@ -11,6 +11,7 @@ use Data::Dumper qw(Dumper);
 
 use Capture::Tiny qw(capture);
 use Clone qw(clone);
+use String::Util qw(trim);
 
 use JSON::XS;
 use File::Spec::Functions qw(catfile);
@@ -39,10 +40,25 @@ sub run_plans {
     my ($def_dict, $def_order) = $bld->_obj2dict_order($define);
     $DB::single = 1;
 
-    while(@$plan_seq) {
+    SEQ: while(@$plan_seq) {
         my $plan_name = shift @$plan_seq;
+        $plan_name = trim($plan_name) unless ref $plan_name;
 
         my $plan_def = {};
+
+        if (ref $plan_name eq 'HASH') {
+            while(my($k,$v)=each %{$plan_name}){
+               $k = trim($k);
+               if ($k =~ m/^(\S+)\+\s*$/) {
+                   my $plus = $1;
+                   if (ref $v eq 'ARRAY') {
+                       unshift @$plan_seq, map { $plus . $_ } @$v;
+                   }
+               }
+                
+            }
+            next SEQ;
+        }
 
         #print Dumper($define) . "\n";
         #print Dumper($def_dict) . "\n";
