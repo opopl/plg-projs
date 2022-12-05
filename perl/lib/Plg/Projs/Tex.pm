@@ -546,6 +546,13 @@ our %fbicons_n = (
 our %fbicons_hcode = (
   # ruble sign
   "\N{U+20BD}" => '',
+
+  # Combining Acute Accent 
+  "\N{U+0301}" => '',
+
+  # white smiling face
+  #     face.smiling.white
+  "\N{U+263A}" => '',
 );
 
 ###fbicons
