@@ -490,7 +490,7 @@ tex4ht:
           - '    }%'  
           - '}'
           # https://tex.stackexchange.com/questions/563276/graphics-scaling-in-tex4ht/563314#563314
-          'll' :
+          'l3' :
           - '\makeatletter'
           - '\ExplSyntaxOn'
           - '\Configure{Gin-dim}{style="width:\fp_eval:n{round(\Gin@req@width/\textwidth*100,2)}\char_generate:nn { `\% } { 12 }"}'
@@ -543,7 +543,7 @@ tex4ht:
     - '$ifvar{graphics.png.link} @@conf{graphics.png.link}'
     - '$ifvar{graphics.jpg.link} @@conf{graphics.jpg.link}'
     - '$ifvar{graphics.jpg.width} @@conf{graphics.jpg.width}'
-    - '$ifvar{graphics.jpg.ll} @@conf{graphics.jpg.ll}'
+    - '$ifvar{graphics.jpg.l3} @@conf{graphics.jpg.l3}'
     - ''
     - '@@css{verb}'
     - '@@css{text}'
