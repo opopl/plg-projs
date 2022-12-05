@@ -62,6 +62,9 @@ use Base::DB qw(
 use Plg::Projs::Tex qw(
     texify
     escape_latex
+
+    %fbicons
+    _fbicon_igg
 );
 
 use Base::List qw(
@@ -888,6 +891,18 @@ sub ldo_no_cmt {
        s/\N{U+10DD}/\\hcode{&\\#x10DD;}/g; # ო
        s/\N{U+10E4}/\\hcode{&\\#x10E4;}/g; # ფ
        s/\N{U+10E2}/\\hcode{&\\#x10E2;}/g; # ტ
+
+       while(my($k,$v)=each %fbicons){
+          m/($k)/ && do {
+             my $fbi = $fbicons{$1};
+             my $igg = _fbicon_igg($fbi);
+             $DB::single = 1;1;
+          };
+       }
+       #m/(\N{U+1F44C})/ && do {
+          #$DB::single = 1;1;
+          #next;
+       #};
     }
     push @{$self->{nlines}}, @push;
 

@@ -180,7 +180,8 @@ sub run_plans {
         }
 
         print '[BUILDER] Running plan: ' . $plan_name . "\n";
-        print Dumper($plan_def) . "\n";
+        my $dmp = $plans->{dmp} || $plan_def->{dmp};
+        print Dumper($plan_def) . "\n" if $dmp;
 
         my $dry = $plans->{dry} || $plan_def->{dry};
         next if $dry;
