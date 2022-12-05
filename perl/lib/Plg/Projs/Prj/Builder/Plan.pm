@@ -19,6 +19,8 @@ use File::stat;
 
 use Base::Arg qw(
    dict_exe_cb
+   list_exe_cb
+
    dict_update
 
    varexp
@@ -40,6 +42,11 @@ sub run_plans {
     my $define = clone( $plans->{define} || {} );
 
     my ($def_dict, $def_order) = $bld->_obj2dict_order($define);
+
+    my $plan_vars = $plans->{vars} || {};
+    #list_exe_cb($plan_seq, { cb_list => sub { varexp(shift,$plan_vars) } });
+    varexp($plan_seq, $plan_vars);
+
     $DB::single = 1;
 
     SEQ: while(@$plan_seq) {
