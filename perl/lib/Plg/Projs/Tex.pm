@@ -53,6 +53,7 @@ my @ex_vars_scalar=qw(
 );
 my @ex_vars_hash=qw(
     %fbicons
+    %fbicons_hcode
 );
 my @ex_vars_array=qw(
 );
@@ -541,15 +542,23 @@ our %fbicons_n = (
   "\N{U+2665}" => 'heart.suit',
 );
 
+###fbicons_hcode
+our %fbicons_hcode = (
+  # ruble sign
+  "\N{U+20BD}" => '',
+);
+
 ###fbicons
 our %fbicons = (
   %fbicons_all,
-  %fbicons_n,
   %fbicons_face,
   %fbicons_weak,
   %fbicons_heart,
   %fbicons_person,
   %fbicons_arrows,
+
+  %fbicons_n,
+  %fbicons_hcode,
 );
 
 sub texify_ref {

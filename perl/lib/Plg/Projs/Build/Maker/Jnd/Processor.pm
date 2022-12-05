@@ -64,6 +64,7 @@ use Plg::Projs::Tex qw(
     escape_latex
 
     %fbicons
+    %fbicons_hcode
     _fbicon_igg
 );
 
@@ -896,7 +897,14 @@ sub ldo_no_cmt {
           m/($k)/ && do {
              my ($igg, $igg_exp);
              unless ($v) {
-                 s/$k//g;
+                 my $hcode = $mkr->{do_htlatex};
+                 $hcode &&= defined $fbicons_hcode{$k} ? 1 : 0;
+
+                 unless($hcode){ s/$k//g; }
+                 else{ 
+                    my $ord = sprintf("%04x", ord($k));
+                    s/$k/\\hcode{&\\#x$ord;}/g;
+                 }
              }else{
                  # see also _fbicon_igg
                  $igg = sprintf('@igg{fbicon.%s}',$v);
