@@ -95,7 +95,7 @@ sub run_plans {
                 return $_;
             };
             my $vv = clone($def_value);
-            dict_exe_cb($vv, $cb);
+            dict_exe_cb($vv, { cb => $cb });
             dict_update($plan_def, $vv);
 
             foreach my $pp (qw( sec author_id)) {
