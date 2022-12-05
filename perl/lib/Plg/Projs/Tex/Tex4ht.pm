@@ -17,6 +17,10 @@ use Base::List qw(uniq);
 use Deep::Hash::Utils qw( deepvalue );
 use Data::Dumper qw(Dumper);
 
+use Base::Arg qw(
+    varexp
+);
+
 @ISA     = qw(Exporter);
 @EXPORT  = qw( );
 $VERSION = '0.01';
@@ -144,50 +148,6 @@ sub ht_cnf2txt {
 
 }
 
-sub varval {
-    my ($path, $vars, $default) = @_;
-    $vars ||= {};
-
-    my @path_a = split('\.', $path);
-    my $val = deepvalue($vars, @path_a ) // $default;
-    return $val;
-}
-
-sub varexp {
-    my ($val, $vars) = @_;
-    $vars ||= {};
-
-    if(ref $val eq 'ARRAY'){
-       my $list = $val;
-       my $new = [];
-       foreach my $x (@$list) {
-           $x = varexp($x, $vars);
-           next unless defined $x;
-           push @$new,$x;
-       }
-       return $new;
-    }
-
-    local $_ = $val;
-
-    my $re_ifvar = qr/^\$ifvar\{([^{}]+)\}\s*/;
-    my $re_var = qr/\$var\{([^{}]+)\}/;
-
-    /$re_ifvar/ && do {
-       my $val = varval($1, $vars);
-       return unless $val;
-
-       s/$re_ifvar//g;
-    };
-
-    if (/^$re_var$/) {
-        $_ = varval($1, $vars);
-    }elsif(/$re_var/){
-        s|$re_var|varval($1, $vars, '')|ge;
-    }
-
-    return $_;
-}
 
 1;
 
