@@ -24,6 +24,7 @@ use Base::Arg qw(
    dict_update
 
    varexp
+   varval
 );
 
 my $plan_stat = {};
@@ -47,11 +48,17 @@ sub run_plans {
     #list_exe_cb($plan_seq, { cb_list => sub { varexp(shift,$plan_vars) } });
     varexp($plan_seq, $plan_vars);
 
+    my $lim = varval('seq.limit', $plan_vars);
+
     $DB::single = 1;
 
+    my $j_seq = 0;
     SEQ: while(@$plan_seq) {
         my $plan_name = shift @$plan_seq;
         $plan_name = trim($plan_name) unless ref $plan_name;
+
+        $j_seq++;
+        last if $lim && $j_seq == $lim;
 
         my $plan_def = {};
 
