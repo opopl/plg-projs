@@ -142,7 +142,7 @@ sub run_plans {
             });
             dict_update($plan_def, {
                 output => $output,
-                output_ex => -f $output,
+                output_ex => -f $output ? 1 : 0,
                 output_mtime => -f $output ? stat($output)->mtime : 0,
             });
         }
