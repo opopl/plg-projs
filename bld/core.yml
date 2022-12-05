@@ -446,6 +446,7 @@ tex4ht:
       - '    {\let\contentsname=\empty \tableofcontents}'
       - '}{}'
 
+###tex4ht_@@conf_graphics
       'graphics':
         'cmd' :
         - '\newcommand{\thealt}{No alt test was set.}'
@@ -471,6 +472,30 @@ tex4ht:
           'base' :
           - '\Configure{graphics*}{jpg}{'
           - '\Picture[\HCode{\thealt}]{$var{tex.gin_base}.jpg}}'
+          'link' :
+          - '\Configure{graphics*}%'
+          - '  {jpg}%'
+          - '  {'
+          - '    \Link[$var{tex.gin_base} .jpg target="_blank"]{}{}%'
+          - '       \Picture[pict]{$var{tex.gin_base} .jpg'
+          - '          \space width="300px" }%'
+          - '    \EndLink'
+          - '}'
+          'width' :
+          - '\Configure{graphics*}'
+          - ' {jpg}%'
+          - ' {%'  
+          - '   \Picture[pict]{\csname Gin@base\endcsname .jpg'
+          - '     \space width="\the\dimexpr \expandafter\csname Gin@req@width\endcsname * 1.5" '
+          - '    }%'  
+          - '}'
+          # https://tex.stackexchange.com/questions/563276/graphics-scaling-in-tex4ht/563314#563314
+          'll' :
+          - '\makeatletter'
+          - '\ExplSyntaxOn'
+          - '\Configure{Gin-dim}{style="width:\fp_eval:n{round(\Gin@req@width/\textwidth*100,2)}\char_generate:nn { `\% } { 12 }"}'
+          - '\ExplSyntaxOff'
+          - '\makeatother'
 
       'fonts':
       - '\NoFonts'
@@ -514,8 +539,12 @@ tex4ht:
     - ''
     - '@@conf{graphics.png.base}'
     - '@@conf{graphics.jpg.base}'
+    - '@@conf{graphics.jpg.width}'
     - ''
     - '$ifvar{graphics.png.link} @@conf{graphics.png.link}'
+    - '$ifvar{graphics.jpg.link} @@conf{graphics.jpg.link}'
+    - '$ifvar{graphics.jpg.width} @@conf{graphics.jpg.width}'
+    - '$ifvar{graphics.jpg.ll} @@conf{graphics.jpg.ll}'
     - ''
     - '@@css{verb}'
     - '@@css{text}'
