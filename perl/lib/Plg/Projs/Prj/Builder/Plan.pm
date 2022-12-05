@@ -20,6 +20,8 @@ use File::stat;
 use Base::Arg qw(
    dict_exe_cb
    dict_update
+
+   varexp
 );
 
 my $plan_stat = {};
@@ -55,7 +57,7 @@ sub run_plans {
                        unshift @$plan_seq, map { $plus . $_ } @$v;
                    }
                }
-                
+
             }
             next SEQ;
         }
