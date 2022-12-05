@@ -64,6 +64,8 @@ my @ex_vars_array=qw(
         texify_ref
 
         escape_latex
+
+        _fbicon_igg
     )],
     'vars'  => [ @ex_vars_scalar,@ex_vars_array,@ex_vars_hash ]
 );
@@ -530,9 +532,14 @@ our %fbicons_face = (
   '😯' => 'face.hushed',
 );
 
+our %fbicons_n = (
+  #"\N{U+1F44C}" => '',
+);
+
 ###fbicons
 our %fbicons = (
   %fbicons_all,
+  %fbicons_n,
   %fbicons_face,
   %fbicons_weak,
   %fbicons_heart,
