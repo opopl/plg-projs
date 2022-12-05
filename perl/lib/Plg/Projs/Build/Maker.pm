@@ -381,7 +381,6 @@ sub _cmd_ht_run {
     my ($mkr, $ref) = @_;
     $ref ||= {};
 
-    $DB::single = 1;
     my $run  = $ref->{run} || { exe => 'htlatex' };
     my $exe = $run->{exe};
 
@@ -389,16 +388,26 @@ sub _cmd_ht_run {
     my $cfg  = $ref->{cfg} || $proj;
 
     my $cmd;
+	my $run_argc = $run->{argc} || {};
+	my $argc = { 
+		tex4ht => $run_argc->{tex4ht} || q{ -cunihtf -utf8},
+		t4ht   => $run_argc->{t4ht} || '',
+		latex  => $run_argc->{latex} || '',
+	};
+	my @ord = qw(tex4ht t4ht latex);
+	my $opts = join(' ' => map { qq{'$_'} } @{$argc}{@ord} );
+
     for($exe){
         /^htlatex$/ && do {
-            $cmd = sprintf('htlatex %s %s', $proj, $cfg) . qq{ '-cunihtf -utf8'};
+            $cmd = sprintf('htlatex %s %s %s', $proj, $cfg, $opts);
             last;
         };
         /^make4ht$/ && do {
-            $cmd = sprintf('make4ht %s %s', $proj, $cfg) . qq{ '-cunihtf -utf8'};
+            $cmd = sprintf('make4ht %s %s %s', $proj, $cfg, $opts);
             last;
         };
     }
+	$DB::single = 1;
 
     return $cmd;
 }
