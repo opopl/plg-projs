@@ -588,6 +588,11 @@ sub cmd_print_ii_body {
     my $ii_body = $bld->_vals_($path);
 
     my $ii_list = $bld->_sct_ii_expand($ii_body);
+    my $yaml = YAML::XS::Dump($ii_list);
+
+    my @out;
+    push @out, 'begin_yaml', $yaml, 'end_yaml';
+    print join("\n",@out) . "\n";
 
     return $mkr;
 }

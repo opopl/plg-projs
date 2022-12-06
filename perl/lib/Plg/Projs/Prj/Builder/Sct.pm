@@ -104,60 +104,8 @@ sub _sct_lines {
             my $path = 'ii ' . $p;
 
             my $ii_list = d_path($data,$path,[]);
-            my @ii;
             #my @ii = d_str_split_sn($data,$path);
-            foreach my $ii_sec (@$ii_list) {
-                unless(ref $ii_sec){
-                   push @ii, $ii_sec;
-                }
-                elsif (ref $ii_sec eq 'HASH') {
-                   my ($sql, $select, $shell)    = @{$ii_sec}{qw(sql select shell)};
-
-###@ii_shell
-                   $shell && do {
-                      unless (ref $shell) {
-                         my @list = qx{$shell};
-                         my @iish;
-                         for(@list){
-                             chomp;
-                             /^\\ii\{(.*)\}\s*$/ && do { push @iish, $1; next; };
-
-                             push @iish, $_;
-                         }
-                         push @ii, @iish;
-                      }
-                   };
-
-###@ii_sql
-                   $sql && do {
-                      unless (ref $sql) {
-                      }elsif(ref $sql eq 'HASH'){
-                         my $query  = $sql->{query} || '';
-                         my $params = $sql->{params} || [];
-                         my $ref = {
-                             dbfile  => $mkr->{dbfile},
-                             q       => $query,
-                             p       => $params,
-                         };
-                         my $list = dbh_select_as_list($ref);
-                         push @ii, @$list;
-                      }
-###@ii_select
-                   };
-                   $select && do {
-                      my $list = [];
-
-                      unless (ref $select) {
-
-                      }elsif(ref $select eq 'HASH'){
-                         push @$list, $prj->_secs_select($select);
-                      }
-
-                      push @ii, @$list;
-                      1;
-                   };
-                }
-            }
+            my @ii = $bld->_sct_ii_expand($ii_list);
 
             foreach my $ii_sec (@ii) {
               push @lines, sprintf('\ii{%s}',$ii_sec);
@@ -261,6 +209,67 @@ sub _bld_env {
 sub _sct_ii_expand {
     my ($bld, $ii_list) = @_;
     $ii_list ||= [];
+
+    my $mkr = $bld->{maker};
+    my $prj = $mkr->{prj};
+
+    my @ii;
+
+    foreach my $ii_sec (@$ii_list) {
+        unless(ref $ii_sec){
+           push @ii, $ii_sec;
+        }
+        elsif (ref $ii_sec eq 'HASH') {
+           my ($sql, $select, $shell)    = @{$ii_sec}{qw(sql select shell)};
+
+###@ii_shell
+           $shell && do {
+              unless (ref $shell) {
+                 my @list = qx{$shell};
+                 my @iish;
+                 for(@list){
+                     chomp;
+                     /^\\ii\{(.*)\}\s*$/ && do { push @iish, $1; next; };
+
+                     push @iish, $_;
+                 }
+                 push @ii, @iish;
+              }
+           };
+
+###@ii_sql
+           $sql && do {
+              unless (ref $sql) {
+              }elsif(ref $sql eq 'HASH'){
+                 my $query  = $sql->{query} || '';
+                 my $params = $sql->{params} || [];
+                 my $ref = {
+                     dbfile  => $mkr->{dbfile},
+                     q       => $query,
+                     p       => $params,
+                 };
+                 my $list = dbh_select_as_list($ref);
+                 push @ii, @$list;
+              }
+           };
+
+###@ii_select
+           $select && do {
+              my $list = [];
+
+              unless (ref $select) {
+
+              }elsif(ref $select eq 'HASH'){
+                 push @$list, $prj->_secs_select($select);
+              }
+
+              push @ii, @$list;
+              1;
+           };
+        }
+    }
+
+    wantarray ? @ii : \@ii;
 }
 
 sub _sct_data {
