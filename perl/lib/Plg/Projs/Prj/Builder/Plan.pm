@@ -205,8 +205,12 @@ sub run_plans {
         unless ($skip) {
             $bld->run_argv($argv) unless $skip;
             my $plan_ok;
-            $plan_ok ||= !$rw && !$output_ex && -f $output;
-            $plan_ok ||= $rw && -f $output && ( stat($output)->mtime > $output_mtime );
+            if ($output) {
+                $plan_ok ||= !$rw && !$output_ex && -f $output;
+                $plan_ok ||= $rw && -f $output && ( stat($output)->mtime > $output_mtime );
+            }else{
+                $plan_ok = 1;
+            }
             $status = $plan_ok ? 'ok' : 'fail';
         }else{
             $status = 'skip';
