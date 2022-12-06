@@ -561,3 +561,41 @@ tex4ht:
 #(fancyhdr)                You might also make \topmargin smaller to compensate:
 
 #(fancyhdr)                \addtolength{\topmargin}{-8.29706pt}.
+#
+
+###plans
+plans:
+  define:
+  - '^compile\.pdf\.':
+      'target_ext' : 'pdf'
+
+  - '^compile\.htx\.':
+      'target_ext' : 'html'
+      'do_htlatex' : 1
+
+  - '^compile\.pdf\.trg\.(?<trg>\S+)$':
+      'argv' : 'compile -t $+{trg}'
+
+  - '^compile\.htx\.trg\.(?<trg>\S+)$':
+      'argv' : 'compile -c htx -t $+{trg}'
+
+  - '^compile\.pdf\.buf\.(?<sec>\S+)$':
+      'argv' : 'compile -t _buf.$+{sec}'
+
+  - '^compile\.htx\.buf\.(?<sec>\S+)$':
+      'argv' : 'compile -c htx -t _buf.$+{sec}'
+
+  - '^join\.htx\.buf\.(?<sec>\S+)$':
+      'argv' : 'join -c htx -t _buf.$+{sec}'
+
+  - '^join\.pdf\.buf\.(?<sec>\S+)$':
+      'argv' : 'join -t _buf.$+{sec}'
+
+  - '^compile\.htx\.auth\.(?<author_id>\S+)$':
+      'argv' : 'compile -c htx -t _auth.$+{author_id}'
+      'do_children' : 1
+      'pref_ci' : 'compile.htx.buf.'
+
+  - '^act\.(?<act>\w+)$':
+      'argv' : '$+{act}'
+
