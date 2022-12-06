@@ -388,14 +388,14 @@ sub _cmd_ht_run {
     my $cfg  = $ref->{cfg} || $proj;
 
     my $cmd;
-	my $run_argc = $run->{argc} || {};
-	my $argc = { 
-		tex4ht => $run_argc->{tex4ht} || q{ -cunihtf -utf8},
-		t4ht   => $run_argc->{t4ht} || '',
-		latex  => $run_argc->{latex} || '',
-	};
-	my @ord = qw(tex4ht t4ht latex);
-	my $opts = join(' ' => map { qq{'$_'} } @{$argc}{@ord} );
+    my $run_argc = $run->{argc} || {};
+    my $argc = { 
+        tex4ht => $run_argc->{tex4ht} || q{ -cunihtf -utf8},
+        t4ht   => $run_argc->{t4ht} || '',
+        latex  => $run_argc->{latex} || '',
+    };
+    my @ord = qw(tex4ht t4ht latex);
+    my $opts = join(' ' => map { qq{'$_'} } @{$argc}{@ord} );
 
     for($exe){
         /^htlatex$/ && do {
@@ -407,7 +407,7 @@ sub _cmd_ht_run {
             last;
         };
     }
-	$DB::single = 1;
+    $DB::single = 1;
 
     return $cmd;
 }
@@ -586,6 +586,8 @@ sub cmd_print_ii_body {
 
     my $path = 'sii.scts._main_.ii.inner.body';
     my $ii_body = $bld->_vals_($path);
+
+    my $ii_list = $bld->_sct_ii_expand($ii_body);
 
     return $mkr;
 }

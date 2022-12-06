@@ -258,6 +258,11 @@ sub _bld_env {
     return $val;
 }
 
+sub _sct_ii_expand {
+    my ($bld, $ii_list) = @_;
+    $ii_list ||= [];
+}
+
 sub _sct_data {
     my ($bld, $sec) = @_;
 
