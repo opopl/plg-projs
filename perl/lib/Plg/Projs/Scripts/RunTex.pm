@@ -455,7 +455,7 @@ sub run {
                 $code = system("$_");
             }else{
                 print '[RUNTEX] start cmd: ' . $cmd . "\n";
-                eval { 
+                eval {
                     my ($o, $e);
                     local $SIG{__WARN__} = sub {};
                     ($o, $e, $code) = capture {
@@ -473,8 +473,10 @@ sub run {
                 }
 
                 if ($code) {
-                   my @tail = splice @stdout, -30, -1;
-                   print $_ . "\n" for(@tail);
+                   if ($do_htlatex) {
+	                   my @tail = splice @stdout, -30, -1;
+	                   print $_ . "\n" for(@tail);
+                   }
                 }
             }
             $ok &&= $code ? 0 : 1;

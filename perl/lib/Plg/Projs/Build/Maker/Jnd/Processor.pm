@@ -789,6 +789,8 @@ sub ldo_no_cmt {
   while (1) {
     $_ = $self->_expand_igg($_);
 
+    $self->line_process_chars(\$_);
+
     m/^\s*%%\s*\\ii\{(.*)\}\s*$/ && do {
        $self->{sec_info} = {};
        $self->{sec_info}->{sec} =  $1;
@@ -806,6 +808,8 @@ sub ldo_no_cmt {
     #$DB::single = 1 if /subsection/;
 
     m/$pats->{sect}/ && do {
+       $DB::single = 1;
+
        my $seccmd = $1;
        $self->{sec_info}->{title} =  $1;
 
@@ -869,56 +873,8 @@ sub ldo_no_cmt {
     unshift @push, @top, $_;
 
     for(@push){
-
-       # Combining Breve
-       #s/\N{U+0306}//g;
-       s/\x{0438}\x{0306}/й/g;
-
-       s/\N{U+02BC}/'/g;
-
-       #s/«([^«»]+)»/\\enquote{$1}/g;
-       s/«([^«»]+)»/\"$1\"/g;
-
-       # ≤
-       s/\N{U+2264}/\$\\le\$/g;
-
-       # georgian
-       s/\N{U+10E1}/\\hcode{&\\#x10E1;}/g;
-       s/\N{U+10D0}/\\hcode{&\\#x10D0;}/g;
-       s/\N{U+10E5}/\\hcode{&\\#x10E5;}/g;
-       s/\N{U+10E0}/\\hcode{&\\#x10E0;}/g;
-       s/\N{U+10D7}/\\hcode{&\\#x10D7;}/g; # თ
-       s/\N{U+10D5}/\\hcode{&\\#x10D5;}/g; # ვ
-       s/\N{U+10D4}/\\hcode{&\\#x10D4;}/g; # ე
-       s/\N{U+10DA}/\\hcode{&\\#x10DA;}/g; # ლ
-       s/\N{U+10DD}/\\hcode{&\\#x10DD;}/g; # ო
-       s/\N{U+10E4}/\\hcode{&\\#x10E4;}/g; # ფ
-       s/\N{U+10E2}/\\hcode{&\\#x10E2;}/g; # ტ
-
-       while(my($k,$v)=each %replace_unicode){
-          s/$k/$v/g;
-       }
-
-       while(my($k,$v)=each %fbicons){
-          m/($k)/ && do {
-             my ($igg, $igg_exp);
-             unless ($v) {
-                 my $hcode = $mkr->{do_htlatex};
-                 $hcode &&= defined $fbicons_hcode{$k} ? 1 : 0;
-
-                 unless($hcode){ s/$k//g; }
-                 else{
-                    my $ord = sprintf("%04x", ord($k));
-                    s/$k/\\hcode{&\\#x$ord;}/g;
-                 }
-             }else{
-                 # see also _fbicon_igg
-                 $igg = sprintf('@igg{fbicon.%s}',$v);
-                 $igg_exp = $self->_expand_igg($igg);
-                 s/$k/$igg_exp/g;
-             }
-          };
-       }
+       $self->line_process_chars(\$_);
+  
        #m/(\N{U+1F44C})/ && do {
           #$DB::single = 1;1;
           #next;
@@ -932,6 +888,68 @@ sub ldo_no_cmt {
     #$DB::single = 1 if grep { /\N{U+0306}/ } @push;
     #$DB::single = 1 if grep { /\\HCode/ } @push;
   }
+
+  return $self;
+}
+
+sub line_process_chars {
+  my ($self, $sref) = @_;
+
+  my $mkr = $self->{mkr};
+
+  local $_ = $$sref;
+
+  # Combining Breve
+  #s/\N{U+0306}//g;
+  s/\x{0438}\x{0306}/й/g;
+
+  s/\N{U+02BC}/'/g;
+
+  #s/«([^«»]+)»/\\enquote{$1}/g;
+  s/«([^«»]+)»/\"$1\"/g;
+
+  # ≤
+  s/\N{U+2264}/\$\\le\$/g;
+
+  # georgian
+  s/\N{U+10E1}/\\hcode{&\\#x10E1;}/g;
+  s/\N{U+10D0}/\\hcode{&\\#x10D0;}/g;
+  s/\N{U+10E5}/\\hcode{&\\#x10E5;}/g;
+  s/\N{U+10E0}/\\hcode{&\\#x10E0;}/g;
+  s/\N{U+10D7}/\\hcode{&\\#x10D7;}/g; # თ
+  s/\N{U+10D5}/\\hcode{&\\#x10D5;}/g; # ვ
+  s/\N{U+10D4}/\\hcode{&\\#x10D4;}/g; # ე
+  s/\N{U+10DA}/\\hcode{&\\#x10DA;}/g; # ლ
+  s/\N{U+10DD}/\\hcode{&\\#x10DD;}/g; # ო
+  s/\N{U+10E4}/\\hcode{&\\#x10E4;}/g; # ფ
+  s/\N{U+10E2}/\\hcode{&\\#x10E2;}/g; # ტ
+
+  while(my($k,$v)=each %replace_unicode){
+     s/$k/$v/g;
+  }
+
+  while(my($k,$v)=each %fbicons){
+     m/($k)/ && do {
+        my ($igg, $igg_exp);
+        unless ($v) {
+            my $hcode = $mkr->{do_htlatex};
+            $hcode &&= defined $fbicons_hcode{$k} ? 1 : 0;
+
+            unless($hcode){ s/$k//g; }
+            else{
+               my $ord = sprintf("%04x", ord($k));
+               s/$k/\\hcode{&\\#x$ord;}/g;
+            }
+        }else{
+            # see also _fbicon_igg
+            $igg = sprintf('@igg{fbicon.%s}',$v);
+            $igg_exp = $self->_expand_igg($igg);
+            s/$k/$igg_exp/g;
+        }
+     };
+  }
+
+  $$sref = $_;
 
   return $self;
 }
