@@ -545,6 +545,9 @@ our %fbicons_n = (
   "\N{U+2665}" => 'heart.suit',
   "\N{U+2764}" => 'heart.red',
   "\N{U+262E}" => 'peace',
+  "\N{U+2600}" => 'black.sun.rays',
+  "\N{U+2744}" => 'snowflake',
+  "\N{U+2603}" => 'snowman',
 );
 
 ###fbicons_hcode
@@ -560,8 +563,52 @@ our %fbicons_hcode = (
 
   # face.frowning.white
   "\N{U+2639}" => '',
+);
 
+our %fbicons_hcode_hebrew = map { $_ => '' } (
+  "\N{U+05D0}",
+  "\N{U+05D9}",
+  "\N{U+05E8}",
+  "\N{U+05E0}",
+  "\N{U+05D4}",
+  "\N{U+05D5}",
+  "\N{U+05E7}",
+  "\N{U+05DE}",
+  "\N{U+05D1}",
+  "\N{U+05E1}",
+);
 
+our %fbicons_hcode_georgian = map { $_ => '' } (
+);
+
+our %fbicons_hcode_greek = map { $_ => '' } (
+  # epsilon
+  "\N{U+03B5}",
+  # omega 
+  "\N{U+03C9}",
+  # alpha
+  "\N{U+03B1}",
+  # psi
+  "\N{U+03C8}",
+  # iota with tonos
+  "\N{U+03AF}",
+);
+
+our %fbicons_hcode_cyrillic = map { $_ => '' } (
+  # Cyrillic Small Letter Little Yus 
+  "\N{U+0467}",
+
+  # Cyrillic Small Letter Yat
+  "\N{U+0463}",
+
+);
+
+%fbicons_hcode = (
+    %fbicons_hcode, 
+    %fbicons_hcode_hebrew,
+    %fbicons_hcode_georgian,
+    %fbicons_hcode_greek,
+    %fbicons_hcode_cyrillic,
 );
 
 ###replace_unicode
@@ -574,6 +621,15 @@ our %replace_unicode = (
 
   # variation selector 16
   "\N{U+FE0F}" => '',
+
+  "\N{U+E206}" => '',
+
+  # Fullwidth Hyphen-Minus 
+  "\N{U+FF0D}" => '\\dshM',
+  #"\N{U+FF0D}" => '---',
+
+  # Fullwidth Question Mark
+  "\N{U+FF1F}" => '?',
 );
 
 ###fbicons
