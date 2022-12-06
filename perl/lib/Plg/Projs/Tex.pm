@@ -51,10 +51,13 @@ my @ex_vars_scalar=qw(
     $texify_out
     $texify_config
 );
+
 my @ex_vars_hash=qw(
     %fbicons
     %fbicons_hcode
+    %replace_unicode
 );
+
 my @ex_vars_array=qw(
 );
 
@@ -540,6 +543,8 @@ our %fbicons_n = (
   "\N{U+1F3FC}" => '',
 
   "\N{U+2665}" => 'heart.suit',
+  "\N{U+2764}" => 'heart.red',
+  "\N{U+262E}" => 'peace',
 );
 
 ###fbicons_hcode
@@ -556,6 +561,19 @@ our %fbicons_hcode = (
   # face.frowning.white
   "\N{U+2639}" => '',
 
+
+);
+
+###replace_unicode
+our %replace_unicode = (
+  "\N{U+FF08}" => '(',
+  "\N{U+FF09}" => ')',
+  "\N{U+FF01}" => '!',
+
+  "\N{U+1FAE1}" => "+",
+
+  # variation selector 16
+  "\N{U+FE0F}" => '',
 );
 
 ###fbicons

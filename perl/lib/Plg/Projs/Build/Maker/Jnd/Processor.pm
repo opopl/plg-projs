@@ -63,6 +63,8 @@ use Plg::Projs::Tex qw(
     texify
     escape_latex
 
+    %replace_unicode
+
     %fbicons
     %fbicons_hcode
     _fbicon_igg
@@ -867,8 +869,6 @@ sub ldo_no_cmt {
     unshift @push, @top, $_;
 
     for(@push){
-       # variation selector 16
-       s/\N{U+FE0F}//g;
 
        # Combining Breve
        #s/\N{U+0306}//g;
@@ -881,8 +881,6 @@ sub ldo_no_cmt {
 
        # ≤
        s/\N{U+2264}/\$\\le\$/g;
-
-       s/\N{U+1FAE1}/+/g;
 
        # georgian
        s/\N{U+10E1}/\\hcode{&\\#x10E1;}/g;
@@ -897,6 +895,10 @@ sub ldo_no_cmt {
        s/\N{U+10E4}/\\hcode{&\\#x10E4;}/g; # ფ
        s/\N{U+10E2}/\\hcode{&\\#x10E2;}/g; # ტ
 
+       while(my($k,$v)=each %replace_unicode){
+          s/$k/$v/g;
+       }
+
        while(my($k,$v)=each %fbicons){
           m/($k)/ && do {
              my ($igg, $igg_exp);
@@ -905,7 +907,7 @@ sub ldo_no_cmt {
                  $hcode &&= defined $fbicons_hcode{$k} ? 1 : 0;
 
                  unless($hcode){ s/$k//g; }
-                 else{ 
+                 else{
                     my $ord = sprintf("%04x", ord($k));
                     s/$k/\\hcode{&\\#x$ord;}/g;
                  }

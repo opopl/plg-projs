@@ -6,6 +6,7 @@ use warnings;
 use utf8;
 
 binmode STDOUT,':encoding(utf8)';
+#use open qw/:std :utf8/;
 
 use Plg::Projs::Build::Maker;
 use Plg::Projs::Prj::Builder;
@@ -447,21 +448,34 @@ sub run {
         local $_ = $cmd;
 
         unless(ref $cmd){
-            my ($stdout, $stderr, $code);
+            my (@stdout, @stderr, $code);
 
             $DB::single = 1;
             if ($shell eq 'system') {
                 $code = system("$_");
             }else{
                 print '[RUNTEX] start cmd: ' . $cmd . "\n";
-                ($stdout, $stderr, $code) = capture {
-                    system("$_");
+                eval { 
+                    my ($o, $e);
+                    local $SIG{__WARN__} = sub {};
+                    ($o, $e, $code) = capture {
+                        #binmode(STDOUT, ":utf8");
+                        system("$_");
+                    };
+                    push @stdout, split("\n",$o);
+                    push @stderr, split("\n",$e);
                 };
-                print '[RUNTEX] end cmd: ' . $cmd . "\n";
-                print '[RUNTEX] exit code: ' . $code . "\n";
+                if ($@) {
+                    warn $@ . "\n";
+                }else{
+                    print '[RUNTEX] end cmd: ' . $cmd . "\n";
+                    print '[RUNTEX] exit code: ' . $code . "\n";
+                }
 
                 if ($code) {
-                   print $stderr . "\n";
+                   #my @tail = splice @stdout, -30, -1;
+                   #print $_ . "\n" for(@tail);
+                   #print $stdout . "\n" if $stdout;
                 }
             }
             $ok &&= $code ? 0 : 1;
