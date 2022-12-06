@@ -473,9 +473,8 @@ sub run {
                 }
 
                 if ($code) {
-                   #my @tail = splice @stdout, -30, -1;
-                   #print $_ . "\n" for(@tail);
-                   #print $stdout . "\n" if $stdout;
+                   my @tail = splice @stdout, -30, -1;
+                   print $_ . "\n" for(@tail);
                 }
             }
             $ok &&= $code ? 0 : 1;
