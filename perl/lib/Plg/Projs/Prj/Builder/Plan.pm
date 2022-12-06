@@ -17,6 +17,10 @@ use JSON::XS;
 use File::Spec::Functions qw(catfile);
 use File::stat;
 
+use File::Dat::Utils qw(
+   readarr
+);
+
 use Base::Arg qw(
    dict_exe_cb
    list_exe_cb
@@ -70,6 +74,18 @@ sub run_plans {
                    if (ref $v eq 'ARRAY') {
                        unshift @$plan_seq, map { $plus . $_ } @$v;
                    }
+                   next SEQ;
+
+               }elsif($k eq 'file'){
+                   my $file = $v;
+                   next unless -f $file;
+
+                   local $_ = $file;
+                   /\.i\.dat$/ && do {
+                       my @list = readarr($file);
+                       unshift @$plan_seq, @list;
+                   };
+                   next SEQ;
                }
 
             }

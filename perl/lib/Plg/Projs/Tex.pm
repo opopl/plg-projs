@@ -548,6 +548,8 @@ our %fbicons_n = (
   "\N{U+2600}" => 'black.sun.rays',
   "\N{U+2744}" => 'snowflake',
   "\N{U+2603}" => 'snowman',
+  "\N{U+1F405}" => 'tiger',
+  "\N{U+271D}"  => 'christian.cross',
 );
 
 ###fbicons_hcode
@@ -566,16 +568,37 @@ our %fbicons_hcode = (
 );
 
 our %fbicons_hcode_hebrew = map { $_ => '' } (
+  "\N{U+05B0}",
+  "\N{U+05B4}",
+  "\N{U+05B5}",
+  "\N{U+05B6}",
+  "\N{U+05B7}",
+  "\N{U+05B8}",
+  "\N{U+05B9}",
+  "\N{U+05BC}",
   "\N{U+05D0}",
-  "\N{U+05D9}",
-  "\N{U+05E8}",
-  "\N{U+05E0}",
+  "\N{U+05D1}",
+  "\N{U+05D2}",
+  "\N{U+05D3}",
   "\N{U+05D4}",
   "\N{U+05D5}",
-  "\N{U+05E7}",
+  "\N{U+05D7}",
+  "\N{U+05D8}",
+  "\N{U+05D9}",
+  "\N{U+05DB}",
+  "\N{U+05DC}",
+  "\N{U+05DD}",
   "\N{U+05DE}",
-  "\N{U+05D1}",
+  "\N{U+05DF}",
+  "\N{U+05E0}",
   "\N{U+05E1}",
+  "\N{U+05E2}",
+  "\N{U+05E4}",
+  "\N{U+05E5}",
+  "\N{U+05E7}",
+  "\N{U+05E8}",
+  "\N{U+05E9}",
+  "\N{U+05EA}",
 );
 
 our %fbicons_hcode_georgian = map { $_ => '' } (
@@ -623,6 +646,7 @@ our %replace_unicode = (
   "\N{U+FE0F}" => '',
 
   "\N{U+E206}" => '',
+  "\N{U+25AB}" => '',
 
   # Fullwidth Hyphen-Minus 
   "\N{U+FF0D}" => '\\dshM',
