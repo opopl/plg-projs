@@ -599,3 +599,6 @@ plans:
   - '^act\.(?<act>\w+)$':
       'argv' : '$+{act}'
 
+  - '^act\.(?<act>\w+)\.trg.(?<trg>\S+)$':
+      'argv' : '$+{act} -t $+{trg}'
+

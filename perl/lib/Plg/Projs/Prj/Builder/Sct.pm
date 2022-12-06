@@ -158,6 +158,7 @@ sub _sct_lines {
                    };
                 }
             }
+
             foreach my $ii_sec (@ii) {
               push @lines, sprintf('\ii{%s}',$ii_sec);
             }

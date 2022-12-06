@@ -578,7 +578,20 @@ sub cmd_print_ii_base {
     return $mkr;
 }
 
+###print_ii_body
 sub cmd_print_ii_body {
+    my ($mkr) = @_;
+
+    my $bld = $mkr->{bld};
+
+    my $path = 'sii.scts._main_.ii.inner.body';
+    my $ii_body = $bld->_vals_($path);
+
+    return $mkr;
+}
+
+###print_ii_body_raw
+sub cmd_print_ii_body_raw {
     my ($mkr) = @_;
 
     my $bld = $mkr->{bld};

@@ -80,6 +80,7 @@ sub inj_base {
         print_ii_exclude
         print_ii_tree
         print_ii_body
+        print_ii_body_raw
     );
 
     my $h = {

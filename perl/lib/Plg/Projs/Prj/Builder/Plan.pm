@@ -95,6 +95,8 @@ sub run_plans {
             my @m = ($plan_name =~ m/$def_key/);
             next unless @m;
 
+            my %named = %+;
+
             # matched vars
             my @mv = eval {
                 local $SIG{__WARN__} = sub {};
@@ -110,8 +112,8 @@ sub run_plans {
                    s/\$$j/$w/g;
                 }
                 # named matches
-                for my $k (keys %+){
-                   my $v = $+{$k};
+                for my $k (keys %named){
+                   my $v = $named{$k};
                    s/\$\+\{$k\}/$v/g;
                 }
                 return $_;
