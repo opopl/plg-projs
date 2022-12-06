@@ -250,6 +250,7 @@ sub ht_pretty_print {
     my $file = $ref->{file};
 
     my $ht = $self->{tex4ht} || {};
+    my $run_after = $ht->{run_after} || {};
 
     unless ($file) {
         my @ht_files = File::Find::Rule
@@ -341,14 +342,16 @@ sub ht_pretty_print {
         }
     );
 
-    $dom->findnodes('//body')->map(
-        sub { my ($node) = @_;
-            my $js = $dom->createElement('script');
-            my $src = join("/" => qw( .. .. .. ctl js dist bundle.js ));
-            $js->setAttribute( src => $src );
-            $node->appendChild($js);
-        }
-    );
+    if ($run_after->{js}) {
+        $dom->findnodes('//body')->map(
+            sub { my ($node) = @_;
+                my $js = $dom->createElement('script');
+                my $src = join("/" => qw( .. .. .. ctl js dist bundle.js ));
+                $js->setAttribute( src => $src );
+                $node->appendChild($js);
+            }
+        );
+    }
 
     #my @block = qw/table tables columns entry latex_table options/;
     my @block = qw//;
