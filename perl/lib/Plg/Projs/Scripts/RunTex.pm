@@ -236,6 +236,13 @@ sub run_after {
     return $self;
 }
 
+sub ht_load_dom {
+    my ($self,$ref) = @_;
+    $ref ||= {};
+
+    return $self;
+}
+
 sub ht_pretty_print {
     my ($self,$ref) = @_;
     $ref ||= {};
@@ -331,6 +338,15 @@ sub ht_pretty_print {
             local $_ = $node->getData();
             s/’/'/g;
             $node->setData($_);
+        }
+    );
+
+    $dom->findnodes('//body')->map(
+        sub { my ($node) = @_;
+            my $js = $dom->createElement('script');
+            my $src = join("/" => qw( .. .. .. ctl js dist bundle.js ));
+            $js->setAttribute( src => $src );
+            $node->appendChild($js);
         }
     );
 
