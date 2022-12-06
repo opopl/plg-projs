@@ -229,7 +229,9 @@ sub _sct_ii_expand {
                  my @iish;
                  for(@list){
                      chomp;
-                     /^\\ii\{(.*)\}\s*$/ && do { push @iish, $1; next; };
+                     next unless length $_;
+
+                     /^\\ii\{(\S+)\}\s*$/ && do { push @iish, $1; next; };
 
                      push @iish, $_;
                  }
