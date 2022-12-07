@@ -615,6 +615,8 @@ our %fbicons_hcode_georgian = map { $_ => '' } (
 );
 
 our %fbicons_hcode_greek = map { $_ => '' } (
+  # <span id="char-node" style="font-family:u0000">ώ</span>
+  #
   # epsilon
   "\N{U+03B5}",
   # omega 
@@ -651,6 +653,14 @@ our %fbicons_hcode_greek = map { $_ => '' } (
   "\N{U+03BF}",
   # Greek Small Letter Lamda
   "\N{U+03BB}",
+  # Greek Small Letter Eta with Tonos
+  "\N{U+03AE}",
+  # Greek Capital Letter Kappa
+  "\N{U+039A}",
+  # Greek Small Letter Omega with Tonos
+  "\N{U+03CE}",
+  # Greek Capital Letter Tau
+  "\N{U+03A4}",
 );
 
 our %fbicons_hcode_cyrillic = map { $_ => '' } (
