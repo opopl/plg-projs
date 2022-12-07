@@ -552,6 +552,12 @@ our %fbicons_n = (
   "\N{U+271D}"  => 'christian.cross',
   "\N{U+1F972}"  => 'face.smiling.tear',
   "\N{U+1F47B}" => 'ghost',
+
+  "\N{U+1F47B}" => 'ghost',
+
+  "\N{U+1F1E6}\N{U+1F1FF}" => 'flag.az',
+  "\N{U+1F628}" => 'face.fearful',
+
 );
 
 ###fbicons_hcode
@@ -646,6 +652,9 @@ our %replace_unicode = (
 
   "\N{U+1FAE1}" => "+",
 
+  # hyphen bullet
+  "\N{U+2043}" => "-",
+
   # variation selector 16
   "\N{U+FE0F}" => '',
 
@@ -654,6 +663,9 @@ our %replace_unicode = (
 
   # Object Replacement Character
   "\N{U+FFFC}" => '',
+
+  # Braille Pattern Blank
+  "\N{U+2800}" => '',
 
   # Fullwidth Hyphen-Minus 
   "\N{U+FF0D}" => '\\dshM',
