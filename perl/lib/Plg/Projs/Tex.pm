@@ -557,6 +557,8 @@ our %fbicons_n = (
 
   "\N{U+1F1E6}\N{U+1F1FF}" => 'flag.az',
   "\N{U+1F628}" => 'face.fearful',
+  "\N{U+1F41F}" => 'fish',
+  "\N{U+1F466}" => 'boy',
 
 );
 
@@ -612,6 +614,19 @@ our %fbicons_hcode_hebrew = map { $_ => '' } (
 );
 
 our %fbicons_hcode_georgian = map { $_ => '' } (
+);
+
+our %fbicons_hcode_arabic = map { $_->{char} => '' } (
+  { char => "\N{U+0645}", name => 'Arabic Letter Meem' },
+  { char => "\N{U+062D}", name => 'Arabic Letter Hah' },
+  { char => "\N{U+062F}", name => 'Arabic Letter Dal' },
+  { char => "\N{U+0627}", name => 'Arabic Letter Alef' },
+  { char => "\N{U+0644}", name => 'Arabic Letter Lam' },
+  { char => "\N{U+0631}", name => 'Arabic Letter Reh' },
+  { char => "\N{U+0628}", name => 'Arabic Letter Beh' },
+  { char => "\N{U+064A}", name => 'Arabic Letter Yeh' },
+  { char => "\N{U+0639}", name => 'Arabic Letter Ain' },
+  { char => "\N{U+0649}", name => 'Arabic Letter Alef Maksura' },
 );
 
 our %fbicons_hcode_greek = map { $_ => '' } (
@@ -677,6 +692,7 @@ our %fbicons_hcode_cyrillic = map { $_ => '' } (
     %fbicons_hcode_hebrew,
     %fbicons_hcode_georgian,
     %fbicons_hcode_greek,
+    %fbicons_hcode_arabic,
     %fbicons_hcode_cyrillic,
 );
 
