@@ -20,6 +20,7 @@ use YAML::XS qw();
 use File::Spec::Functions qw(catfile);
 use File::stat;
 use File::Slurp::Unicode;
+use File::Basename qw(basename);
 
 use File::Dat::Utils qw(
    readarr
@@ -145,10 +146,11 @@ sub plan_exec {
     }elsif($status eq 'success'){
         my $output = $def->{output};
         my $obn = basename($output);
+        my ($ext) = ( $obn =~ /\.(\w+)$/ );
         if (grep { /$^O/ } qw(linux darwin)) {
-          my $tln = catfile($ENV{HOME},qw(Documents),$obn);
-          system("test -h $obn && rm $obn");
-          system("ln -s $output $obn");
+          my $ln = catfile($ENV{HOME},qw(Documents),"plan.output.$ext");
+          system("test -h $ln && rm $ln");
+          system("ln -s $output $ln");
         }
     }
 
