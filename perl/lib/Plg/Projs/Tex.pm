@@ -635,6 +635,22 @@ our %fbicons_hcode_greek = map { $_ => '' } (
   "\N{U+03B9}",
   # Greek Small Letter Sigma
   "\N{U+03C3}",
+  # Greek Capital Letter Alpha 
+  "\N{U+0391}",
+  # Greek Small Letter Nu  
+  "\N{U+03BD}",
+  # Greek Small Letter Tau
+  "\N{U+03C4}",
+  # Greek Small Letter Eta
+  "\N{U+03B7}",
+  # Greek Capital Letter Sigma
+  "\N{U+03A3}",
+  # Greek Small Letter Chi
+  "\N{U+03C7}",
+  # Greek Small Letter Omicron
+  "\N{U+03BF}",
+  # Greek Small Letter Lamda
+  "\N{U+03BB}",
 );
 
 our %fbicons_hcode_cyrillic = map { $_ => '' } (
