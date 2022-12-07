@@ -575,6 +575,9 @@ our %fbicons_hcode = (
 
   # face.frowning.white
   "\N{U+2639}" => '',
+
+  # flower
+  "\N{U+2698}" => '',
 );
 
 our %fbicons_hcode_hebrew = map { $_ => '' } (
