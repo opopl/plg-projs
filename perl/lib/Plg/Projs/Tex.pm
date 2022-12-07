@@ -625,6 +625,16 @@ our %fbicons_hcode_greek = map { $_ => '' } (
   "\N{U+03C8}",
   # iota with tonos
   "\N{U+03AF}",
+  # Lambda
+  "\N{U+039B}",
+  # Greek Small Letter Alpha with Tonos 
+  "\N{U+03AC}",
+  # Greek Small Letter Rho
+  "\N{U+03C1}",
+  # Greek Small Letter Iota 
+  "\N{U+03B9}",
+  # Greek Small Letter Sigma
+  "\N{U+03C3}",
 );
 
 our %fbicons_hcode_cyrillic = map { $_ => '' } (
