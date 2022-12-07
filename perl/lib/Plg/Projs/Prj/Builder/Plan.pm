@@ -88,7 +88,7 @@ sub plan_exec {
         }else{
             $plan_ok = 1;
         }
-        $status = $plan_ok ? 'ok' : 'fail';
+        $status = $plan_ok ? 'success' : 'fail';
 
         if ($ffile && -f $ffile) {
             my @lines;
@@ -141,6 +141,15 @@ sub plan_exec {
         $DB::single = 1;
 
         die "[BUILDER] plan fail, see $err_file for details" if $onfail->{die};
+
+    }elsif($status eq 'success'){
+        my $output = $def->{output};
+        my $obn = basename($output);
+        if (grep { /$^O/ } qw(linux darwin)) {
+          my $tln = catfile($ENV{HOME},qw(Documents),$obn);
+          system("test -h $obn && rm $obn");
+          system("ln -s $output $obn");
+        }
     }
 
     return $bld;
@@ -338,7 +347,7 @@ sub run_plans_after {
     my (@ok, @fail, @skip);
     while(my($plan_name, $stat)=each %{$plan_stat}){
         my $status = $stat->{status};
-        if ($status eq 'ok') {
+        if ($status eq 'success') {
            push @ok, $plan_name;
         } elsif ($status eq 'fail') {
            push @fail, $plan_name;

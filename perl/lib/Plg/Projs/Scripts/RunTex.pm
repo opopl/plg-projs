@@ -498,12 +498,17 @@ sub run {
                           chomp;
                           $j++;
 
+                          my (@marker);
+
                           /^%%sec\.here\s+(\S+)/ && do { $here = $1; };
                           $err_sec = $here if $j == $err{lnum};
 
                           next if $j > $err{lnum} + $size || $j < $err{lnum} - $size;
-                          my $str = sprintf('%d:%s %s',$j, ($err{lnum} == $j) ? ':' : '' ,$_);
-                          push @err_block, $str;
+                          my $str = sprintf('%d: %s', $j, $_);
+
+                          ($err{lnum} == $j) && do { push @marker, '-' x 50 };
+
+                          push @err_block, @marker, $str, @marker;
                        }
                        #print Dumper(\%err) . "\n";
                        #print Dumper(\@err_block) =~ s/\\x\{([0-9a-f]{2,})\}/chr hex $1/ger;
@@ -513,6 +518,7 @@ sub run {
                            block => \@err_block,
                            file => $fpath,
                            sec => $err_sec,
+                           tail => [@tail],
                        };
                        $obj_bld->{err} = $self->{err} if $obj_bld;
 

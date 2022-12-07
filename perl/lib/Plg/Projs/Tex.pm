@@ -550,6 +550,8 @@ our %fbicons_n = (
   "\N{U+2603}" => 'snowman',
   "\N{U+1F405}" => 'tiger',
   "\N{U+271D}"  => 'christian.cross',
+  "\N{U+1F972}"  => 'face.smiling.tear',
+  "\N{U+1F47B}" => 'ghost',
 );
 
 ###fbicons_hcode
