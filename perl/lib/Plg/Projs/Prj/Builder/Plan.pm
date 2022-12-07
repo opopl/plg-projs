@@ -33,6 +33,63 @@ use Base::Arg qw(
 
 my $plan_stat = {};
 
+sub _plan_def {
+    my ($bld, $ref) = @_;
+    $ref ||= {};
+
+    my $plan_def = $bld->{plan_def};
+
+    return $plan_def;
+}
+
+sub plan_exec {
+    my ($bld, $ref) = @_;
+    $ref ||= {};
+
+    my ($name, $def, $plans) = @{$ref}{qw(name def plans)};
+
+    my $argv = $def->{argv} || '';
+
+    print '[BUILDER] Running plan: ' . $name . "\n";
+    my $dmp = $plans->{dmp} || $def->{dmp};
+    print Dumper($def) . "\n" if $dmp;
+
+    my $dry = $plans->{dry} || $def->{dry};
+    next if $dry;
+
+    my $rw = $plans->{rw} || $def->{rw};
+    my ($output, $output_ex, $output_mtime) = @{$def}{qw( output output_ex output_mtime )};
+
+    my $skip;
+    $skip ||= !$rw && $output_ex;
+
+    next if exists $plan_stat->{$name};
+
+    my $status;
+    unless ($skip) {
+        $bld->run_argv($argv) unless $skip;
+        my $plan_ok;
+        if ($output) {
+            $plan_ok ||= !$rw && !$output_ex && -f $output;
+            $plan_ok ||= $rw && -f $output && ( stat($output)->mtime > $output_mtime );
+        }else{
+            $plan_ok = 1;
+        }
+        $status = $plan_ok ? 'ok' : 'fail';
+    }else{
+        $status = 'skip';
+    }
+
+    dict_update($plan_stat,{
+       $name => {
+          status => $status,
+       }
+    });
+
+
+    return $bld;
+}
+
 sub run_plans {
     my ($bld, $ref) = @_;
     $ref ||= {};
@@ -206,40 +263,10 @@ sub run_plans {
             $bld->run_plans({ plan_seq => \@child_seq });
         }
 
-        print '[BUILDER] Running plan: ' . $plan_name . "\n";
-        my $dmp = $plans->{dmp} || $plan_def->{dmp};
-        print Dumper($plan_def) . "\n" if $dmp;
-
-        my $dry = $plans->{dry} || $plan_def->{dry};
-        next if $dry;
-
-        my $rw = $plans->{rw} || $plan_def->{rw};
-        my ($output, $output_ex, $output_mtime) = @{$plan_def}{qw( output output_ex output_mtime )};
-
-        my $skip;
-        $skip ||= !$rw && $output_ex;
-
-        next if exists $plan_stat->{$plan_name};
-
-        my $status;
-        unless ($skip) {
-            $bld->run_argv($argv) unless $skip;
-            my $plan_ok;
-            if ($output) {
-                $plan_ok ||= !$rw && !$output_ex && -f $output;
-                $plan_ok ||= $rw && -f $output && ( stat($output)->mtime > $output_mtime );
-            }else{
-                $plan_ok = 1;
-            }
-            $status = $plan_ok ? 'ok' : 'fail';
-        }else{
-            $status = 'skip';
-        }
-
-        dict_update($plan_stat,{
-           $plan_name => {
-              status => $status,
-           }
+        $bld->plan_exec({
+            name => $plan_name,
+            def => $plan_def,
+            plans => $plans,
         });
 
     }

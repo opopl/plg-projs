@@ -648,6 +648,9 @@ our %replace_unicode = (
   "\N{U+E206}" => '',
   "\N{U+25AB}" => '',
 
+  # Object Replacement Character
+  "\N{U+FFFC}" => '',
+
   # Fullwidth Hyphen-Minus 
   "\N{U+FF0D}" => '\\dshM',
   #"\N{U+FF0D}" => '---',
