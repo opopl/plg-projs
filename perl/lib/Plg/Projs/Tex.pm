@@ -567,6 +567,9 @@ our %fbicons_hcode = (
   # ruble sign
   "\N{U+20BD}" => '',
 
+  # hryvnia
+  "\N{U+20B4}" => '',
+
   # Combining Acute Accent 
   "\N{U+0301}" => '',
 
@@ -679,6 +682,8 @@ our %fbicons_hcode_greek = map { $_ => '' } (
   "\N{U+03CE}",
   # Greek Capital Letter Tau
   "\N{U+03A4}",
+  # Greek Small Letter Mu
+  "\N{U+03BC}",
 );
 
 our %fbicons_hcode_cyrillic = map { $_ => '' } (

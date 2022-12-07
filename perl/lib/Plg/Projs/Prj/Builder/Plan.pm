@@ -338,6 +338,7 @@ sub run_plans {
 
     }
 
+
     return $bld;
 }
 
@@ -370,6 +371,13 @@ sub run_plans_after {
         ;
 
     print $_ . "\n" for(@info);
+
+    YAML::XS::DumpFile('plan.stat.yaml' => {
+        stat => $plan_stat,
+        ok => [@ok],
+        skip => [@skip],
+        fail => [@fail],
+    });
 
     return $bld;
 }
