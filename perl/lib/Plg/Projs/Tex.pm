@@ -584,6 +584,7 @@ our %fbicons_hcode_hebrew = map { $_ => '' } (
   "\N{U+05D3}",
   "\N{U+05D4}",
   "\N{U+05D5}",
+  "\N{U+05D6}",
   "\N{U+05D7}",
   "\N{U+05D8}",
   "\N{U+05D9}",
@@ -601,6 +602,7 @@ our %fbicons_hcode_hebrew = map { $_ => '' } (
   "\N{U+05E8}",
   "\N{U+05E9}",
   "\N{U+05EA}",
+  "\N{U+05F3}",
 );
 
 our %fbicons_hcode_georgian = map { $_ => '' } (
