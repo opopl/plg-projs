@@ -61,9 +61,6 @@ sub run_plans {
         my $plan_name = shift @$plan_seq;
         $plan_name = trim($plan_name) unless ref $plan_name;
 
-        $j_seq++;
-        last if $lim && $j_seq == $lim;
-
         my $plan_def = {};
 
         if (ref $plan_name eq 'HASH') {
@@ -80,17 +77,22 @@ sub run_plans {
                    my $file = $v;
                    next unless -f $file;
 
+
                    local $_ = $file;
                    /\.i\.dat$/ && do {
                        my @list = readarr($file);
                        unshift @$plan_seq, @list;
                    };
+                   $DB::single = 1;
                    next SEQ;
                }
 
             }
             next SEQ;
         }
+
+        $j_seq++;
+        last if $lim && $j_seq == $lim+1;
 
         #print Dumper($define) . "\n";
         #print Dumper($def_dict) . "\n";

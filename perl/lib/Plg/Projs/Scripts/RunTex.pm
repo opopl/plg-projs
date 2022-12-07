@@ -35,6 +35,8 @@ use JSON::XS;
 
 use Base::Arg qw(
     hash_inject
+
+    varval
 );
 
 sub new
@@ -474,8 +476,11 @@ sub run {
 
                 if ($code) {
                    if ($do_htlatex) {
-	                   my @tail = splice @stdout, -30, -1;
-	                   print $_ . "\n" for(@tail);
+                       my @tail = splice @stdout, -30, -1;
+                       print $_ . "\n" for(@tail);
+                       if ( varval('err.die'  => $ht_run) ) {
+                           die "[RUNTEX] error";
+                       }
                    }
                 }
             }
