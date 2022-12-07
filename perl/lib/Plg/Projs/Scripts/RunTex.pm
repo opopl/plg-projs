@@ -15,6 +15,9 @@ use FindBin qw($Bin $Script);
 use Cwd;
 use Data::Dumper qw(Dumper);
 use Base::Enc qw( unc_decode );
+use File::Basename qw(basename);
+use File::Spec::Functions qw(catfile);
+use File::Copy qw(copy);
 
 use XML::LibXML;
 use XML::LibXML::PrettyPrint;
@@ -481,7 +484,7 @@ sub run {
 
                        my %err;
                        for(@tail){
-                          /^(?<file>\S+):(?<lnum>\d+):\s*LaTeX Error/ && do { 
+                          /^(?<file>\S+):(?<lnum>\d+):\s*LaTeX Error/ && do {
                               $err{$_} = $+{$_} for keys %+;
                               next;
                           };
@@ -498,8 +501,21 @@ sub run {
                           my $str = sprintf('%d:%s %s',$j, ($err{lnum} == $j) ? ':' : '' ,$_);
                           push @err_block, $str;
                        }
-                       print Dumper(\%err) . "\n";
-                       print Dumper(\@err_block) =~ s/\\x\{([0-9a-f]{2,})\}/chr hex $1/ger;
+                       #print Dumper(\%err) . "\n";
+                       #print Dumper(\@err_block) =~ s/\\x\{([0-9a-f]{2,})\}/chr hex $1/ger;
+                       my $fpath = catfile(getcwd(), basename($err{file}));
+                       $self->{err} = {
+                           %err,
+                           block => \@err_block,
+                           file => $fpath,
+                       };
+                       if($obj_bld){
+                          my $broot = $obj_bld->{root};
+                          $obj_bld->{err} = $self->{err};
+                          $broot && -d $broot && do {
+                             copy($fpath, catfile($broot,qw(err.tex)));
+                          };
+                       }
 
                        if ( varval('err.die'  => $ht_run) ) {
                            die "[RUNTEX] error";

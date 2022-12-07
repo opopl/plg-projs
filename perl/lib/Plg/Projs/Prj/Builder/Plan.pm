@@ -6,6 +6,7 @@ use strict;
 use warnings;
 
 binmode STDOUT,':encoding(utf8)';
+use open qw/:std :utf8/;
 
 use Data::Dumper qw(Dumper);
 
@@ -30,6 +31,8 @@ use Base::Arg qw(
 
    varexp
    varval
+
+   dump_enc
 );
 
 my $plan_stat = {};
@@ -65,6 +68,8 @@ sub plan_exec {
 
     my $rw = $plans->{rw} || $def->{rw};
     my ($output, $output_ex, $output_mtime) = @{$def}{qw( output output_ex output_mtime )};
+
+    my $onfail = varval('exec.onfail' => $plans) || {};
 
     my $skip;
     $skip ||= !$rw && $output_ex;
@@ -107,7 +112,11 @@ sub plan_exec {
        }
     });
 
-    die '[BUILDER] plan fail' if varval('exec.onfail.die' => $plans);
+    if ($status eq 'fail'){
+        #print dump_enc($bld->{err}) =~ s/\\x\{([0-9a-f]{2,})\}/chr hex $1/ger;
+
+        die '[BUILDER] plan fail' if $onfail->{die};
+    }
 
     return $bld;
 }
