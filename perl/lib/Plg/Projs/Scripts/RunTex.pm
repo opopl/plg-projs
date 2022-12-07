@@ -493,11 +493,15 @@ sub run {
                        my @lines = read_file $err{file};
                        my $j = 0;
                        my $size = 20;
+                       my ($err_sec,$here);
                        for(@lines){
                           chomp;
                           $j++;
 
-                          next if $j > $err{lnum}+$size || $j < $err{lnum}-$size;
+                          /^%%sec\.here\s+(\S+)/ && do { $here = $1; };
+                          $err_sec = $here if $j == $err{lnum};
+
+                          next if $j > $err{lnum} + $size || $j < $err{lnum} - $size;
                           my $str = sprintf('%d:%s %s',$j, ($err{lnum} == $j) ? ':' : '' ,$_);
                           push @err_block, $str;
                        }
@@ -508,18 +512,9 @@ sub run {
                            %err,
                            block => \@err_block,
                            file => $fpath,
+                           sec => $err_sec,
                        };
-                       if($obj_bld){
-                          my $broot = $obj_bld->{root};
-                          $obj_bld->{err} = $self->{err};
-                          $broot && -d $broot && do {
-                             if (grep { /$^O/ } qw(linux darwin)) {
-                                system("cd $broot && ln -s $fpath");
-                             }else{
-                                copy($fpath, catfile($broot,qw(err.tex)));
-                             }
-                          };
-                       }
+                       $obj_bld->{err} = $self->{err} if $obj_bld;
 
                        if ( varval('err.die'  => $ht_run) ) {
                            die "[RUNTEX] error";

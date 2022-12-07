@@ -116,11 +116,29 @@ sub plan_exec {
 
     if ($status eq 'fail'){
         #print dump_enc($bld->{err}) =~ s/\\x\{([0-9a-f]{2,})\}/chr hex $1/ger;
-        $DB::single = 1;
         my $err = $bld->{err};
-        my $err_file = 'plan.err.yaml';
+        my ($fpath, $sec) = @{$err}{qw(file sec)};
 
+        my $err_file = 'plan.err.yaml';
         YAML::XS::DumpFile($err_file => $err);
+
+        if (grep { /$^O/ } qw(linux darwin)) {
+           system("test -h err.tex && rm err.tex");
+           system("ln -s $fpath err.tex");
+        }else{
+           copy($fpath, 'err.tex');
+        }
+        my $sd = $bld->_sec_data({
+           sec => $sec,
+        });
+        my $sec_path = $sd->{'@file_path'};
+        if ($sec_path && -f $sec_path){
+            if (grep { /$^O/ } qw(linux darwin)) {
+               system("test -h err.sec.tex && rm err.sec.tex");
+               system("ln -s $sec_path err.sec.tex");
+            }
+        }
+        $DB::single = 1;
 
         die "[BUILDER] plan fail, see $err_file for details" if $onfail->{die};
     }
