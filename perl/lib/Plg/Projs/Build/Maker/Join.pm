@@ -266,6 +266,7 @@ sub _join_lines {
 
                 sect           => $sect,
                 ii_sec         => $ii_sec,
+                parent_sec     => $sec,
 
                 ii_include_all => $ii_include_all,
                 include_below  => $include_below,

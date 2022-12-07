@@ -92,6 +92,7 @@ sub _line_process_pat_ii {
 
     my $delim  = $ref->{delim} || '';
     my $parent_info  = $ref->{parent_info} || [];
+    my $parent_sec  = $ref->{parent_sec} || '';
 
     my $lines         = $ref->{lines} || [];
     my $include_below = $ref->{include_below} || [];
@@ -126,7 +127,9 @@ sub _line_process_pat_ii {
         $delim,
         '%% ' . $line,
         $delim,
+        '%%sec.here ' . $ii_sec,
         @ii_lines,
+        '%%sec.here ' . $parent_sec,
         @$parent_info
     ;
 

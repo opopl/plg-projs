@@ -513,7 +513,11 @@ sub run {
                           my $broot = $obj_bld->{root};
                           $obj_bld->{err} = $self->{err};
                           $broot && -d $broot && do {
-                             copy($fpath, catfile($broot,qw(err.tex)));
+                             if (grep { /$^O/ } qw(linux darwin)) {
+                                system("cd $broot && ln -s $fpath");
+                             }else{
+                                copy($fpath, catfile($broot,qw(err.tex)));
+                             }
                           };
                        }
 
