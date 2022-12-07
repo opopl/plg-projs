@@ -559,7 +559,7 @@ our %fbicons_n = (
   "\N{U+1F628}" => 'face.fearful',
   "\N{U+1F41F}" => 'fish',
   "\N{U+1F466}" => 'boy',
-
+  "\N{U+1F936}" => 'mother.christmas',
 );
 
 ###fbicons_hcode
@@ -703,6 +703,9 @@ our %replace_unicode = (
   "\N{U+FF01}" => '!',
 
   "\N{U+1FAE1}" => "+",
+
+  # square root
+  "\N{U+221A}" => "",
 
   # hyphen bullet
   "\N{U+2043}" => "-",
