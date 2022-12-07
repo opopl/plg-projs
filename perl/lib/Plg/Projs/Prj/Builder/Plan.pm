@@ -135,8 +135,8 @@ sub plan_exec {
         my $sec_path = $sd->{'@file_path'};
         if ($sec_path && -f $sec_path){
             if (grep { /$^O/ } qw(linux darwin)) {
-               system("test -h err.sec.tex && rm err.sec.tex");
-               system("ln -s $sec_path err.sec.tex");
+               system("test -h err.sec.tx && rm err.sec.tx");
+               system("ln -s $sec_path err.sec.tx");
             }
         }
         $DB::single = 1;
