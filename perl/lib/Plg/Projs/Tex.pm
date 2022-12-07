@@ -736,6 +736,9 @@ our %replace_unicode = (
 
   # Fullwidth Question Mark
   "\N{U+FF1F}" => '?',
+
+  # U+0308 - Combining Diaeresis
+  "\x{0456}\x{0308}" => 'ї',
 );
 
 ###fbicons

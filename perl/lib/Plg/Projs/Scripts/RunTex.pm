@@ -11,6 +11,8 @@ use open qw/:std :utf8/;
 use Plg::Projs::Build::Maker;
 use Plg::Projs::Prj::Builder;
 
+use Encode;
+
 use FindBin qw($Bin $Script);
 use Cwd;
 use Data::Dumper qw(Dumper);
@@ -521,6 +523,7 @@ sub run {
                            tail => [@tail],
                        };
                        $obj_bld->{err} = $self->{err} if $obj_bld;
+                       $DB::single = 1;
 
                        if ( varval('err.die'  => $ht_run) ) {
                            die "[RUNTEX] error";

@@ -374,7 +374,7 @@ sub run_plans_after {
 
     YAML::XS::DumpFile('plan.stat.yaml' => {
         stat => $plan_stat,
-        ok => [@ok],
+        ok   => [@ok],
         skip => [@skip],
         fail => [@fail],
     });
