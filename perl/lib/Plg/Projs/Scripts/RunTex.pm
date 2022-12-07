@@ -484,7 +484,7 @@ sub run {
 
                        my %err;
                        for(@tail){
-                          /^(?<file>\S+):(?<lnum>\d+):\s*LaTeX Error/ && do {
+                          /^(?<file>\S+):(?<lnum>\d+):\s*(LaTeX Error|Emergency stop)/ && do {
                               $err{$_} = $+{$_} for keys %+;
                               next;
                           };
