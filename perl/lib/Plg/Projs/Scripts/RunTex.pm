@@ -6,7 +6,7 @@ use warnings;
 use utf8;
 
 binmode STDOUT,':encoding(utf8)';
-#use open qw/:std :utf8/;
+use open qw/:std :utf8/;
 
 use Plg::Projs::Build::Maker;
 use Plg::Projs::Prj::Builder;
@@ -478,6 +478,29 @@ sub run {
                    if ($do_htlatex) {
                        my @tail = splice @stdout, -30, -1;
                        print $_ . "\n" for(@tail);
+
+                       my %err;
+                       for(@tail){
+                          /^(?<file>\S+):(?<lnum>\d+):\s*LaTeX Error/ && do { 
+                              $err{$_} = $+{$_} for keys %+;
+                              next;
+                          };
+                       }
+                       my @err_block;
+                       my @lines = read_file $err{file};
+                       my $j = 0;
+                       my $size = 20;
+                       for(@lines){
+                          chomp;
+                          $j++;
+
+                          next if $j > $err{lnum}+$size || $j < $err{lnum}-$size;
+                          my $str = sprintf('%d:%s %s',$j, ($err{lnum} == $j) ? ':' : '' ,$_);
+                          push @err_block, $str;
+                       }
+                       print Dumper(\%err) . "\n";
+                       print Dumper(\@err_block) =~ s/\\x\{([0-9a-f]{2,})\}/chr hex $1/ger;
+
                        if ( varval('err.die'  => $ht_run) ) {
                            die "[RUNTEX] error";
                        }
