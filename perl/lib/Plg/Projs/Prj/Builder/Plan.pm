@@ -16,6 +16,7 @@ use String::Util qw(trim);
 use JSON::XS;
 use File::Spec::Functions qw(catfile);
 use File::stat;
+use File::Slurp::Unicode;
 
 use File::Dat::Utils qw(
    readarr
@@ -46,9 +47,14 @@ sub plan_exec {
     my ($bld, $ref) = @_;
     $ref ||= {};
 
+    my $proj = $bld->{proj};
+
     my ($name, $def, $plans) = @{$ref}{qw(name def plans)};
 
     my $argv = $def->{argv} || '';
+
+    # fail file
+    my $ffile = varval('vars.fail_file' => $plans) || sprintf('%s.plan.fail.i.dat',$proj);
 
     print '[BUILDER] Running plan: ' . $name . "\n";
     my $dmp = $plans->{dmp} || $def->{dmp};
@@ -76,6 +82,21 @@ sub plan_exec {
             $plan_ok = 1;
         }
         $status = $plan_ok ? 'ok' : 'fail';
+
+        if ($ffile && -f $ffile) {
+            my @lines;
+            my @flist = read_file($ffile);
+            for(@flist){
+               chomp; $_ = trim($_);
+
+               if ($plan_ok) {
+                   next if /^#/;
+                   my $pref = /^$name$/ ? '#' : '';
+                   $_ = $pref . $_;
+               }
+            }
+            write_file($ffile,join("\n",@flist) . "\n") if $plan_ok;
+        }
     }else{
         $status = 'skip';
     }
@@ -86,6 +107,7 @@ sub plan_exec {
        }
     });
 
+    die '[BUILDER] plan fail' if varval('exec.onfail.die' => $plans);
 
     return $bld;
 }
