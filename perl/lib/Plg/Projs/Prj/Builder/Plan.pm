@@ -15,6 +15,8 @@ use Clone qw(clone);
 use String::Util qw(trim);
 
 use JSON::XS;
+use YAML::XS qw();
+
 use File::Spec::Functions qw(catfile);
 use File::stat;
 use File::Slurp::Unicode;
@@ -114,8 +116,13 @@ sub plan_exec {
 
     if ($status eq 'fail'){
         #print dump_enc($bld->{err}) =~ s/\\x\{([0-9a-f]{2,})\}/chr hex $1/ger;
+        $DB::single = 1;
+        my $err = $bld->{err};
+        my $err_file = 'plan.err.yaml';
 
-        die '[BUILDER] plan fail' if $onfail->{die};
+        YAML::XS::DumpFile($err_file => $err);
+
+        die "[BUILDER] plan fail, see $err_file for details" if $onfail->{die};
     }
 
     return $bld;
