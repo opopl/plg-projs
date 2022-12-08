@@ -69,12 +69,16 @@ sub act_db_sync {
             chomp;
             my @line = split /\s+/;
             my $last = pop @line;
+            my $re;
             if ($^O eq 'linux') {
-                next unless $last =~ m|^\/mnt\/usb\/(\w+)|;
-                push @rmt, $1;
+                $re = qr|^\/mnt\/usb\/(\w+)|;
+            } elsif ($^O eq 'darwin') {
+                $re = qr|^\/Volumes\/(\w+)|;
             }
+            next unless $re && $last =~ m|$re|;
+            push @rmt, $1;
         }
-    
+
         if (@rmt) {
             $bld->act_db_sync({ %$ref, rmt => $_ }) for(@rmt);
             return $bld;
