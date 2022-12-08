@@ -591,6 +591,9 @@ plans:
   - '^join\.pdf\.buf\.(?<sec>\S+)$':
       'argv' : 'join -t _buf.$+{sec}'
 
+  - '^compile\.pdf\.auth\.(?<author_id>\S+)$':
+      'argv' : 'compile -t _auth.$+{author_id}'
+
   - '^compile\.htx\.auth\.(?<author_id>\S+)$':
       'argv' : 'compile -c htx -t _auth.$+{author_id}'
       'do_children' : 1
