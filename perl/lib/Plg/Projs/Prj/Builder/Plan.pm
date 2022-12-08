@@ -67,7 +67,7 @@ sub plan_exec {
     print Dumper($def) . "\n" if $dmp;
 
     my $dry = $plans->{dry} || $def->{dry};
-    next if $dry;
+    return $bld if $dry;
 
     my $rw = $plans->{rw} || $def->{rw};
     my ($output, $output_ex, $output_mtime) = @{$def}{qw( output output_ex output_mtime )};
@@ -77,13 +77,13 @@ sub plan_exec {
     my $skip;
     $skip ||= !$rw && $output_ex;
 
-    next if exists $plan_stat->{$name};
+    return $bld if exists $plan_stat->{$name};
 
     my $status;
     unless ($skip) {
         $bld->run_argv($argv) unless $skip;
         my $plan_ok;
-        if ($output) {
+        if ($output && defined $output_ex) {
             $plan_ok ||= !$rw && !$output_ex && -f $output;
             $plan_ok ||= $rw && -f $output && ( stat($output)->mtime > $output_mtime );
         }else{
@@ -226,6 +226,7 @@ sub run_plans {
         # stores info for exact name match
         my $def_eq;
 
+        $DB::single = 1;
         MATCH: foreach my $def_key (@$def_order){
             my $def_value = $def_dict->{$def_key};
 
@@ -271,6 +272,11 @@ sub run_plans {
         dict_update($plan_def, $def_eq) if $def_eq;
 
         my $argv = $plan_def->{argv} || '';
+        unless ($argv) {
+            warn '[BUILDER.plan] argv zero, plan = ' . $plan_name . "\n";
+            next SEQ;
+        }
+
         $argv =~ /\s+-t\s+(?<target>\S+)/ && do {
            $plan_def->{target} = $+{target};
         };
@@ -329,6 +335,7 @@ sub run_plans {
             my @child_seq = map { $pref_ci . $_ } @$children;
             $bld->run_plans({ plan_seq => \@child_seq });
         }
+        $DB::single = 1;
 
         $bld->plan_exec({
             name => $plan_name,
@@ -387,6 +394,8 @@ sub run_argv {
     $argv ||= '';
 
     local @ARGV = grep { length $_ } split ' ' => $argv;
+    return $bld unless @ARGV;
+
     $bld->init({ anew => 1 });
     $bld->{plans} = undef;
     $bld->run;
