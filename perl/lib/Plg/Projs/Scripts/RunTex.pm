@@ -12,6 +12,7 @@ use Plg::Projs::Build::Maker;
 use Plg::Projs::Prj::Builder;
 
 use Encode;
+use DateTime;
 
 use FindBin qw($Bin $Script);
 use Cwd;
@@ -462,6 +463,9 @@ sub run {
                 $code = system("$_");
             }else{
                 print '[RUNTEX] start cmd: ' . $cmd . "\n";
+                my ($start, $end, $elapsed);
+
+                $start = DateTime->now->epoch;
                 eval {
                     my ($o, $e);
                     local $SIG{__WARN__} = sub {};
@@ -469,9 +473,13 @@ sub run {
                         #binmode(STDOUT, ":utf8");
                         system("$_");
                     };
+
                     push @stdout, split("\n",$o);
                     push @stderr, split("\n",$e);
                 };
+                $end = DateTime->now->epoch;
+                $elapsed = $end - $start;
+
                 if ($@) {
                     warn $@ . "\n";
                 }else{
