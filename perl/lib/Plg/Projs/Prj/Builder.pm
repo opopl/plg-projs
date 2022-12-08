@@ -84,6 +84,8 @@ sub inj_base {
     );
 
     my $h = {
+        ok => 1,
+
         trg_list => [qw( usual )],
         maps_act => {
             # Plg::Projs::Build::Maker::Jnd cmd_jnd_build

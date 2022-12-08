@@ -140,11 +140,15 @@ sub cmd_jnd_build {
             ->init_mkx;
     };
 
+    $mkr->{ok} ||= 1;
     if ($run_tex) {
        $run_tex->run->run_after;
+       $mkr->{ok} &&= $run_tex->{ok};
     }else{
-       system($cmd);
+       my $code = system($cmd);
+       $mkr->{ok} &&= $code ? 0 : 1;
     }
+    die 'maker fail' unless $mkr->{ok};
 
     my @dest;
     push @dest,

@@ -405,6 +405,8 @@ sub shell {
     my ($cmd, $shell, $do_htlatex) = @{$ref}{qw( cmd shell do_htlatex )};
     my ($ht_run, $obj_bld) = @{$ref}{qw( ht_run obj_bld )};
 
+    return $self unless $self->{ok};
+
     $DB::single = 1;
     if ($shell eq 'system') {
         $code = system("$_");
@@ -437,6 +439,7 @@ sub shell {
         }
 
         if ($code) {
+
            if ($do_htlatex) {
                my @tail = splice @stdout, -30, -1;
                print $_ . "\n" for(@tail);
@@ -488,6 +491,8 @@ sub shell {
            }
         }
     }
+
+    $self->{ok} = 0 if $code;
 
     return $self;
 }
@@ -543,8 +548,9 @@ sub run {
 
     $DB::single = 1;
 
+    $self->{ok} ||= 1;
+
     my $i = 1;
-    my $ok = 1;
     while (@cmds) {
         my $cmd = shift @cmds;
 
@@ -561,7 +567,6 @@ sub run {
             };
             $self->shell($r);
 
-            #$ok &&= $code ? 0 : 1;
         }elsif(ref $cmd eq 'CODE'){
             $cmd->();
             next;
@@ -593,7 +598,6 @@ sub run {
         };
 
         $i++;
-
     }
 
     return $self;
