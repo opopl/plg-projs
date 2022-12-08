@@ -427,12 +427,14 @@ sub shell {
         };
         $end = DateTime->now->epoch;
         $elapsed = $end - $start;
+        $self->{elapsed} += $elapsed;
 
         if ($@) {
             warn $@ . "\n";
         }else{
             print '[RUNTEX] end cmd: ' . $cmd . "\n";
             print '[RUNTEX] exit code: ' . $code . "\n";
+            print '[RUNTEX] elapsed: ' . $elapsed . "\n" if $elapsed;
         }
 
         if ($code) {
