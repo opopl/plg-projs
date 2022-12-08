@@ -277,6 +277,8 @@ sub run_plans {
             next SEQ;
         }
 
+        print '[BUILDER] Found plan: ' . $plan_name . "\n";
+
         $argv =~ /\s+-t\s+(?<target>\S+)/ && do {
            $plan_def->{target} = $+{target};
         };
@@ -332,8 +334,11 @@ sub run_plans {
             my $children = $plan_def->{children} || [];
             my $pref_ci = $plan_def->{pref_ci} || '';
 
-            my @child_seq = map { $pref_ci . $_ } @$children;
-            $bld->run_plans({ plan_seq => \@child_seq });
+            if (@$children) {
+                print '[BUILDER] Found children' . "\n";
+                my @child_seq = map { $pref_ci . $_ } @$children;
+                $bld->run_plans({ plan_seq => \@child_seq });
+            }
         }
         $DB::single = 1;
 

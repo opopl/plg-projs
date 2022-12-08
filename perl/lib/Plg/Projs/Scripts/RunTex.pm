@@ -223,7 +223,6 @@ sub rm_zero {
         my $size = $st->size;
 
         unless ($size) {
-            print $f . "\n";
             rmtree($f);
             next;
         }
