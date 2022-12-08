@@ -150,6 +150,7 @@ sub cmd_jnd_build {
     }
     unless($mkr->{ok}){
         warn '[MAKER] fail' . "\n";
+        chdir $mkr->{root};
         return $mkr;
     }
 

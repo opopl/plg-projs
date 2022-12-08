@@ -31,6 +31,7 @@ use Base::Arg qw(
    list_exe_cb
 
    dict_update
+   dict_new
 
    varexp
    varval
@@ -403,6 +404,7 @@ sub run_argv {
 
     $bld->init({ anew => 1 });
     $bld->{plans} = undef;
+    dict_update($bld, dict_new('run.iffail.exit' => 0));
     $bld->run;
 
     return $bld;

@@ -478,7 +478,9 @@ sub run {
         $bld->{ok} &&= $bld->{maker}->{ok};
     }
 
-    exit 1 if (!$bld->{ok} && $bld->_vals_('run.iffail.exit'));
+    if (!$bld->{ok} && $bld->_vals_('run.iffail.exit')){
+        die '[BUILDER] fail';
+    }
 
     return $bld;
 }
