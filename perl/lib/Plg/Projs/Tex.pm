@@ -27,6 +27,9 @@ use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
 
 use Text::Sprintf::Named qw(named_sprintf);
 
+use Plg::Projs::Tex::Unicode::Greek;
+use Plg::Projs::Tex::Unicode::Japanese;
+
 @ISA     = qw(Exporter);
 @EXPORT  = qw( );
 $VERSION = '0.01';
@@ -635,56 +638,8 @@ our %fbicons_hcode_arabic = map { $_->{char} => '' } (
   { char => "\N{U+0649}", name => 'Arabic Letter Alef Maksura' },
 );
 
-our %fbicons_hcode_greek = map { $_ => '' } (
-  # <span id="char-node" style="font-family:u0000">ώ</span>
-  #
-  # epsilon
-  "\N{U+03B5}",
-  # omega 
-  "\N{U+03C9}",
-  # alpha
-  "\N{U+03B1}",
-  # psi
-  "\N{U+03C8}",
-  # iota with tonos
-  "\N{U+03AF}",
-  # Lambda
-  "\N{U+039B}",
-  # Greek Small Letter Alpha with Tonos 
-  "\N{U+03AC}",
-  # Greek Small Letter Rho
-  "\N{U+03C1}",
-  # Greek Small Letter Iota 
-  "\N{U+03B9}",
-  # Greek Small Letter Sigma
-  "\N{U+03C3}",
-  # Greek Capital Letter Alpha 
-  "\N{U+0391}",
-  # Greek Small Letter Nu  
-  "\N{U+03BD}",
-  # Greek Small Letter Tau
-  "\N{U+03C4}",
-  # Greek Small Letter Eta
-  "\N{U+03B7}",
-  # Greek Capital Letter Sigma
-  "\N{U+03A3}",
-  # Greek Small Letter Chi
-  "\N{U+03C7}",
-  # Greek Small Letter Omicron
-  "\N{U+03BF}",
-  # Greek Small Letter Lamda
-  "\N{U+03BB}",
-  # Greek Small Letter Eta with Tonos
-  "\N{U+03AE}",
-  # Greek Capital Letter Kappa
-  "\N{U+039A}",
-  # Greek Small Letter Omega with Tonos
-  "\N{U+03CE}",
-  # Greek Capital Letter Tau
-  "\N{U+03A4}",
-  # Greek Small Letter Mu
-  "\N{U+03BC}",
-);
+our %fbicons_hcode_greek = Plg::Projs::Tex::Unicode::Greek::MAP;
+our %fbicons_hcode_japanese = Plg::Projs::Tex::Unicode::Japanese::MAP;
 
 our %fbicons_hcode_cyrillic = map { $_ => '' } (
   # Cyrillic Small Letter Little Yus 
@@ -696,10 +651,11 @@ our %fbicons_hcode_cyrillic = map { $_ => '' } (
 );
 
 %fbicons_hcode = (
-    %fbicons_hcode, 
+    %fbicons_hcode,
     %fbicons_hcode_hebrew,
     %fbicons_hcode_georgian,
     %fbicons_hcode_greek,
+    %fbicons_hcode_japanese,
     %fbicons_hcode_arabic,
     %fbicons_hcode_cyrillic,
 );
