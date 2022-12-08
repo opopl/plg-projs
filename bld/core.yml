@@ -372,8 +372,15 @@ sii:
         - '\def\ii#1{\InputIfFileExists{\PROJ.#1.tex}{}{}}'
         - ''
 
+###run_tex
 run_tex:
   shell: system
+
+###run
+run:
+   iffail:
+     # exit if $bld->{ok} = 0 after $bld->run() invocation
+     exit: 1
 
 ###tex4ht
 tex4ht:

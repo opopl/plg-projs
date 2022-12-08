@@ -462,9 +462,6 @@ sub _obj2dict_order {
 }
 
 
-
-
-
 sub run {
     my ($bld) = @_;
 
@@ -478,7 +475,10 @@ sub run {
             ->run_plans_after;
     }else{
         $bld->run_maker;
+        $bld->{ok} &&= $bld->{maker}->{ok};
     }
+
+    exit 1 if (!$bld->{ok} && $bld->_vals_('run.iffail.exit'));
 
     return $bld;
 }

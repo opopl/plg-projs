@@ -148,14 +148,17 @@ sub cmd_jnd_build {
        my $code = system($cmd);
        $mkr->{ok} &&= $code ? 0 : 1;
     }
-    die 'maker fail' unless $mkr->{ok};
+    unless($mkr->{ok}){
+        warn '[MAKER] fail' . "\n";
+        return $mkr;
+    }
 
     my @dest;
     push @dest,
         $do_htlatex ? (
            catfile($mkr->{out_dir_html},$target)
-        ) : ( 
-           $mkr->{out_dir_pdf} 
+        ) : (
+           $mkr->{out_dir_pdf}
         )
         ;
 
@@ -195,23 +198,23 @@ sub cmd_jnd_build {
         if (-e $pdf_file) {
             while (1) {
                 my $st = stat($pdf_file);
-    
+
                 unless ($st->size) {
                     die "Zero File Size: $pdf_file" . "\n";
                     last;
                 }
-    
+
                 foreach(@dest) {
                     mkpath $_ unless -d;
-    
+
                     my $d = catfile($_, $proj_pdf_name . '.pdf');
-    
+
                     print "Copied PDF File to:" . "\n";
                     print "     " . $d . "\n";
-    
+
                     copy($pdf_file, $d);
                 }
-    
+
                 last;
             }
         }
