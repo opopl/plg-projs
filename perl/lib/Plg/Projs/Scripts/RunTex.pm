@@ -397,6 +397,100 @@ sub _do_htlatex {
     return $do_htlatex;
 }
 
+sub shell {
+    my ($self, $ref) = @_;
+    $ref ||= {};
+
+    my (@stdout, @stderr, $code);
+
+    my ($cmd, $shell, $do_htlatex) = @{$ref}{qw( shell do_htlatex )};
+    my ($ht_run, $obj_bld) = @{$ref}{qw( ht_run obj_bld )};
+
+    $DB::single = 1;
+    if ($shell eq 'system') {
+        $code = system("$_");
+    }else{
+        print '[RUNTEX] start cmd: ' . $cmd . "\n";
+        my ($start, $end, $elapsed);
+
+        $start = DateTime->now->epoch;
+        eval {
+            my ($o, $e);
+            local $SIG{__WARN__} = sub {};
+            ($o, $e, $code) = capture {
+                #binmode(STDOUT, ":utf8");
+                system("$_");
+            };
+
+            push @stdout, split("\n",$o);
+            push @stderr, split("\n",$e);
+        };
+        $end = DateTime->now->epoch;
+        $elapsed = $end - $start;
+
+        if ($@) {
+            warn $@ . "\n";
+        }else{
+            print '[RUNTEX] end cmd: ' . $cmd . "\n";
+            print '[RUNTEX] exit code: ' . $code . "\n";
+        }
+
+        if ($code) {
+           if ($do_htlatex) {
+               my @tail = splice @stdout, -30, -1;
+               print $_ . "\n" for(@tail);
+
+               my %err;
+               for(@tail){
+                  /^(?<file>\S+):(?<lnum>\d+):\s*(LaTeX Error|Emergency stop)/ && do {
+                      $err{$_} = $+{$_} for keys %+;
+                      next;
+                  };
+               }
+               my @err_block;
+               my @lines = read_file $err{file};
+               my $j = 0;
+               my $size = 20;
+               my ($err_sec,$here);
+               for(@lines){
+                  chomp;
+                  $j++;
+
+                  my (@marker);
+
+                  /^%%sec\.here\s+(\S+)/ && do { $here = $1; };
+                  $err_sec = $here if $j == $err{lnum};
+
+                  next if $j > $err{lnum} + $size || $j < $err{lnum} - $size;
+                  my $str = sprintf('%d: %s', $j, $_);
+
+                  ($err{lnum} == $j) && do { push @marker, '-' x 50 };
+
+                  push @err_block, @marker, $str, @marker;
+               }
+               #print Dumper(\%err) . "\n";
+               #print Dumper(\@err_block) =~ s/\\x\{([0-9a-f]{2,})\}/chr hex $1/ger;
+               my $fpath = catfile(getcwd(), basename($err{file}));
+               $self->{err} = {
+                   %err,
+                   block => \@err_block,
+                   file => $fpath,
+                   sec => $err_sec,
+                   tail => [@tail],
+               };
+               $obj_bld->{err} = $self->{err} if $obj_bld;
+               $DB::single = 1;
+
+               if ( varval('err.die'  => $ht_run) ) {
+                   die "[RUNTEX] error";
+               }
+           }
+        }
+    }
+
+    return $self;
+}
+
 sub run {
     my ($self) = @_;
 
@@ -456,90 +550,17 @@ sub run {
         local $_ = $cmd;
 
         unless(ref $cmd){
-            my (@stdout, @stderr, $code);
+            my $r = {
+               cmd        => $cmd,
+               shell      => $shell,
 
-            $DB::single = 1;
-            if ($shell eq 'system') {
-                $code = system("$_");
-            }else{
-                print '[RUNTEX] start cmd: ' . $cmd . "\n";
-                my ($start, $end, $elapsed);
+               do_htlatex => $do_htlatex,
+               ht_run     => $ht_run,
+               obj_bld    => $obj_bld,
+            };
+            $self->shell($r);
 
-                $start = DateTime->now->epoch;
-                eval {
-                    my ($o, $e);
-                    local $SIG{__WARN__} = sub {};
-                    ($o, $e, $code) = capture {
-                        #binmode(STDOUT, ":utf8");
-                        system("$_");
-                    };
-
-                    push @stdout, split("\n",$o);
-                    push @stderr, split("\n",$e);
-                };
-                $end = DateTime->now->epoch;
-                $elapsed = $end - $start;
-
-                if ($@) {
-                    warn $@ . "\n";
-                }else{
-                    print '[RUNTEX] end cmd: ' . $cmd . "\n";
-                    print '[RUNTEX] exit code: ' . $code . "\n";
-                }
-
-                if ($code) {
-                   if ($do_htlatex) {
-                       my @tail = splice @stdout, -30, -1;
-                       print $_ . "\n" for(@tail);
-
-                       my %err;
-                       for(@tail){
-                          /^(?<file>\S+):(?<lnum>\d+):\s*(LaTeX Error|Emergency stop)/ && do {
-                              $err{$_} = $+{$_} for keys %+;
-                              next;
-                          };
-                       }
-                       my @err_block;
-                       my @lines = read_file $err{file};
-                       my $j = 0;
-                       my $size = 20;
-                       my ($err_sec,$here);
-                       for(@lines){
-                          chomp;
-                          $j++;
-
-                          my (@marker);
-
-                          /^%%sec\.here\s+(\S+)/ && do { $here = $1; };
-                          $err_sec = $here if $j == $err{lnum};
-
-                          next if $j > $err{lnum} + $size || $j < $err{lnum} - $size;
-                          my $str = sprintf('%d: %s', $j, $_);
-
-                          ($err{lnum} == $j) && do { push @marker, '-' x 50 };
-
-                          push @err_block, @marker, $str, @marker;
-                       }
-                       #print Dumper(\%err) . "\n";
-                       #print Dumper(\@err_block) =~ s/\\x\{([0-9a-f]{2,})\}/chr hex $1/ger;
-                       my $fpath = catfile(getcwd(), basename($err{file}));
-                       $self->{err} = {
-                           %err,
-                           block => \@err_block,
-                           file => $fpath,
-                           sec => $err_sec,
-                           tail => [@tail],
-                       };
-                       $obj_bld->{err} = $self->{err} if $obj_bld;
-                       $DB::single = 1;
-
-                       if ( varval('err.die'  => $ht_run) ) {
-                           die "[RUNTEX] error";
-                       }
-                   }
-                }
-            }
-            $ok &&= $code ? 0 : 1;
+            #$ok &&= $code ? 0 : 1;
         }elsif(ref $cmd eq 'CODE'){
             $cmd->();
             next;
