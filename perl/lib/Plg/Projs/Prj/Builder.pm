@@ -151,6 +151,11 @@ sub init {
     #my $data = LoadFile($file);
     my $s = Dump($bld->{opts_maker});
 
+    my @c = $bld->_config;
+    my $cnf = @c ? join("," => @c) : '';
+    my ($act, $target) = @{$bld}{qw( act target )};
+    print qq{[BUILDER] act = $act, target = $target, config = $cnf } . "\n";
+
     return $bld;
 }
 
