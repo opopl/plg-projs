@@ -403,7 +403,7 @@ sub shell {
 
     my (@stdout, @stderr, $code);
 
-    my ($cmd, $shell, $do_htlatex) = @{$ref}{qw( shell do_htlatex )};
+    my ($cmd, $shell, $do_htlatex) = @{$ref}{qw( cmd shell do_htlatex )};
     my ($ht_run, $obj_bld) = @{$ref}{qw( ht_run obj_bld )};
 
     $DB::single = 1;

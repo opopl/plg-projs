@@ -51,8 +51,8 @@ sub _bld_ind_printindex {
 
         my $idx_file = $name ? qq{$name.idx} : qq{jnd.idx};
 
-        print qq{$idx_file} . "\n";
-        print getcwd() . "\n";
+        #print qq{$idx_file} . "\n";
+        #print getcwd() . "\n";
         return unless -e $idx_file;
 
 #\printindex[$name]
