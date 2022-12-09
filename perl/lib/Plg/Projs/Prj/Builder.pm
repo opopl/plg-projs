@@ -67,6 +67,8 @@ use Base::Arg qw(
     dict_new
 
     dict_expand_env
+
+    varval
 );
 
 use Plg::Projs::Build::Maker;
@@ -479,6 +481,29 @@ sub run {
     }
 
     unless($bld->{ok}){
+        my ($act, $do_htlatex, $target) = @{$bld}{qw( act do_htlatex target )};
+
+        my $trg = $target;
+        $target =~ /^_(buf|auth)\./ && do {
+           $trg = $1;
+        };
+
+        my $ff = varval('plans.vars.fail_file' => $bld);
+        if ($ff) {
+            my $pln = join => ($act, $do_htlatex ? 'htx' : 'pdf', $trg );
+            my @lines = -f $ff ? read_file $ff : ();
+
+            my (%plans, @order);
+            for(@lines){
+                chomp;
+
+                s/^[#]*//g;
+                $_ = trim($_);
+
+                #push ;
+            }
+        }
+
         warn '[BUILDER.fail] run fail' . "\n";
         exit 1 if $bld->_vals_('run.iffail.exit');
     }else{

@@ -564,6 +564,11 @@ our %fbicons_n = (
   "\N{U+1F41F}" => 'fish',
   "\N{U+1F466}" => 'boy',
   "\N{U+1F936}" => 'mother.christmas',
+  "\N{U+25AA}" => 'black.small.square',
+  "\N{U+1F62B}" => 'face.tired',
+  "\N{U+261D}" => 'index.pointing.up',
+
+  #"\N{<++>}" => '<++>',
 );
 
 ###fbicons_hcode
@@ -701,6 +706,7 @@ our %replace_unicode = (
 
   # U+0308 - Combining Diaeresis
   "\x{0456}\x{0308}" => 'ї',
+  "е\x{0308}" => 'ё',
 );
 
 ###fbicons
