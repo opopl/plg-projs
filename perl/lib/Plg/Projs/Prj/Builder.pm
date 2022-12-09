@@ -26,6 +26,7 @@ use Base::String qw(
     str_split
     str_split_sn
 );
+use String::Util qw(trim);
 
 use Plg::Projs::GetImg;
 
@@ -480,28 +481,42 @@ sub run {
         $bld->{ok} &&= $bld->{maker}->{ok};
     }
 
+    $bld->{ok} = 0;
     unless($bld->{ok}){
         my ($act, $do_htlatex, $target) = @{$bld}{qw( act do_htlatex target )};
 
         my $trg = $target;
-        $target =~ /^_(buf|auth)\./ && do {
-           $trg = $1;
+        $target =~ /^_(buf|auth)\.(.*)$/ && do {
+           $trg = join("." => $1, $2);
         };
 
         my $ff = varval('plans.vars.fail_file' => $bld);
+        my (%fail, @order);
+        my $pln = join '.' => ($act, $do_htlatex ? 'htx' : 'pdf', $trg );
+
         if ($ff) {
-            my $pln = join => ($act, $do_htlatex ? 'htx' : 'pdf', $trg );
             my @lines = -f $ff ? read_file $ff : ();
 
-            my (%plans, @order);
+            my $sp = join("",qw( + + ));
             for(@lines){
                 chomp;
 
-                s/^[#]*//g;
-                $_ = trim($_);
+                my $failed = /^\s*#/ ? 1 : 0;
 
-                #push ;
+                s/^[#]*//g; $_ = trim($_);
+                next unless length $_;
+                next if /\+\+/ || !/^\w/;
+
+                $fail{$_} = 1 if $failed;
+                push @order, $_;
             }
+            my $af = 'af';
+            write_file($af, Dumper(\@order, \%fail, $pln) );
+        }
+        $fail{$pln} ||= 1;
+
+        unless (grep { /^$pln$/ } @order) {
+           push @order, $pln;
         }
 
         warn '[BUILDER.fail] run fail' . "\n";
