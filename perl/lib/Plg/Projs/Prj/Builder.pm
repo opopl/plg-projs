@@ -481,7 +481,7 @@ sub run {
         $bld->{ok} &&= $bld->{maker}->{ok};
     }
 
-    $bld->{ok} = 0;
+    #$bld->{ok} = 0;
     unless($bld->{ok}){
         my ($act, $do_htlatex, $target) = @{$bld}{qw( act do_htlatex target )};
 
