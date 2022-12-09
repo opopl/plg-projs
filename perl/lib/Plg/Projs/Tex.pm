@@ -671,6 +671,9 @@ our %replace_unicode = (
 
   "\N{U+1FAE1}" => "+",
 
+  # thin space
+  "\N{U+2009}" => " ",
+
   # square root
   "\N{U+221A}" => "",
 

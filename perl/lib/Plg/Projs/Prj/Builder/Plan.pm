@@ -142,7 +142,8 @@ sub plan_exec {
         }
         $DB::single = 1;
 
-        die "[BUILDER] plan fail, see $err_file for details" if $onfail->{die};
+        warn "[BUILDER.fail] plan fail, see $err_file for details" . "\n";
+        exit 1 if $onfail->{die};
 
     }elsif($status eq 'success'){
         my $output = $def->{output};
@@ -153,6 +154,8 @@ sub plan_exec {
           system("test -h $ln && rm $ln");
           system("ln -s $output $ln");
         }
+
+        print "[BUILDER.ok] plan success: $name" . "\n";
     }
 
     return $bld;
