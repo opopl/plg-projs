@@ -559,7 +559,6 @@ our %fbicons_n = (
 
   "\N{U+1F47B}" => 'ghost',
 
-  "\N{U+1F1E6}\N{U+1F1FF}" => 'flag.az',
   "\N{U+1F628}" => 'face.fearful',
   "\N{U+1F41F}" => 'fish',
   "\N{U+1F466}" => 'boy',
@@ -567,6 +566,9 @@ our %fbicons_n = (
   "\N{U+25AA}" => 'black.small.square',
   "\N{U+1F62B}" => 'face.tired',
   "\N{U+261D}" => 'index.pointing.up',
+  "\N{U+26A1}" => 'lightning',
+
+  "\N{U+1F1E6}\N{U+1F1FF}" => 'flag.az',
 
   #"\N{<++>}" => '<++>',
 );
@@ -581,6 +583,8 @@ our %fbicons_hcode = (
 
   # Combining Acute Accent 
   "\N{U+0301}" => '',
+  # Combining Grave Accent
+  "\N{U+0300}" => '',
 
   # face.smiling.white
   "\N{U+263A}" => '',
@@ -590,6 +594,7 @@ our %fbicons_hcode = (
 
   # flower
   "\N{U+2698}" => '',
+
 );
 
 our %fbicons_hcode_hebrew = map { $_ => '' } (
@@ -676,6 +681,9 @@ our %replace_unicode = (
 
   "\N{U+1FAE1}" => "+",
 
+  # minus sign
+  "\N{U+2212}" => "-",
+
   # thin space
   "\N{U+2009}" => " ",
 
@@ -707,6 +715,8 @@ our %replace_unicode = (
   # U+0308 - Combining Diaeresis
   "\x{0456}\x{0308}" => 'ї',
   "е\x{0308}" => 'ё',
+
+
 );
 
 ###fbicons
