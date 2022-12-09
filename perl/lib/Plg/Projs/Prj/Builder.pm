@@ -479,7 +479,10 @@ sub run {
     }
 
     unless($bld->{ok}){
-        die '[BUILDER] fail' if $bld->_vals_('run.iffail.exit');
+        warn '[BUILDER] run fail' . "\n";
+        exit 1 if $bld->_vals_('run.iffail.exit');
+    }else{
+        print '[BUILDER] run success' . "\n";
     }
 
     return $bld;

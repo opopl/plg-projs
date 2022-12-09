@@ -29,6 +29,7 @@ use Text::Sprintf::Named qw(named_sprintf);
 
 use Plg::Projs::Tex::Unicode::Greek;
 use Plg::Projs::Tex::Unicode::Japanese;
+use Plg::Projs::Tex::Unicode::CJK;
 
 @ISA     = qw(Exporter);
 @EXPORT  = qw( );
@@ -640,6 +641,7 @@ our %fbicons_hcode_arabic = map { $_->{char} => '' } (
 
 our %fbicons_hcode_greek = Plg::Projs::Tex::Unicode::Greek::MAP;
 our %fbicons_hcode_japanese = Plg::Projs::Tex::Unicode::Japanese::MAP;
+our %fbicons_hcode_cjk = Plg::Projs::Tex::Unicode::CJK::MAP;
 
 our %fbicons_hcode_cyrillic = map { $_ => '' } (
   # Cyrillic Small Letter Little Yus 
@@ -656,6 +658,7 @@ our %fbicons_hcode_cyrillic = map { $_ => '' } (
     %fbicons_hcode_georgian,
     %fbicons_hcode_greek,
     %fbicons_hcode_japanese,
+    %fbicons_hcode_cjk,
     %fbicons_hcode_arabic,
     %fbicons_hcode_cyrillic,
 );
