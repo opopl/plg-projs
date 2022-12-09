@@ -600,6 +600,10 @@ sub run {
         $i++;
     }
 
+	my $ok = $self->{ok};
+	print qq{[RUNTEX.ok]} . "\n" if $ok;
+	print qq{[RUNTEX.fail]} . "\n" unless $ok;
+
     return $self;
 };
 

@@ -95,6 +95,14 @@ cmd_jnd_compose
 sub cmd_jnd_build {
     my ($mkr) = @_;
 
+    my $on_end = sub {
+        my $ok = $mkr->{ok};
+        chdir $mkr->{root};
+        print '[MAKER.ok]' . "\n" if $ok;
+        print '[MAKER.fail]' . "\n" unless $ok;
+        return 1;
+    };
+
     my $proj    = $mkr->{proj};
     my $src_dir = $mkr->{src_dir};
 
@@ -149,9 +157,7 @@ sub cmd_jnd_build {
        $mkr->{ok} &&= $code ? 0 : 1;
     }
     unless($mkr->{ok}){
-        warn '[MAKER] fail' . "\n";
-        chdir $mkr->{root};
-        return $mkr;
+        $on_end->(); return $mkr;
     }
 
     my @dest;
@@ -165,7 +171,12 @@ sub cmd_jnd_build {
 
     $DB::single = 1;
     if ($do_htlatex) {
-        if (-e $ht_file) {
+        unless (-e $ht_file) {
+           warn '[MAKER] no HTML created!' . "\n";
+           $on_end->(); return $mkr;
+        }else{
+           print '[MAKER] HTML created' . "\n";
+
            foreach my $dst (@dest) {
               mkpath $dst unless -d $dst;
 
@@ -196,7 +207,12 @@ sub cmd_jnd_build {
            }
         }
     }else{
-        if (-e $pdf_file) {
+        unless (-e $pdf_file) {
+            warn '[MAKER] no PDF file!' . "\n";
+            $on_end->(); return $mkr;
+        }else{
+            print '[MAKER] PDF file created' . "\n";
+
             while (1) {
                 my $st = stat($pdf_file);
 
@@ -221,14 +237,8 @@ sub cmd_jnd_build {
         }
     }
 
-    chdir $mkr->{root};
-
-    return $mkr;
-
+    $on_end->(); return $mkr;
 }
 
-
-
 1;
-
 

@@ -381,7 +381,7 @@ sub run_plans_after {
     my $delim = '-' x 50;
     my @info;
     push @info,
-        $delim, '[BUILDER] plan execution report', $delim,
+        $delim, '[BUILDER.plan.report] plan execution report', $delim,
         @ok ? ( 'SUCCESS:', @ok ) : (),
         @fail ? ( 'FAIL:', @fail ) : (),
         ;
