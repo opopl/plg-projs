@@ -491,14 +491,16 @@ sub run {
         };
 
         my $ff = varval('plans.vars.fail_file' => $bld);
-        my (%fail, @order);
+        my (%fail, @fails_read, @fails_write);
         my $pln = join '.' => ($act, $do_htlatex ? 'htx' : 'pdf', $trg );
 
         if ($ff) {
-            my @lines = -f $ff ? read_file $ff : ();
+            @fails_read = -f $ff ? read_file $ff : ();
+            my @lines = @fails_read;
 
             my $sp = join("",qw( + + ));
-            for(@lines){
+            while(@lines){
+                local $_ = shift @lines;
                 chomp;
 
                 my $failed = /^\s*#/ ? 1 : 0;
@@ -508,15 +510,29 @@ sub run {
                 next if /\+\+/ || !/^\w/;
 
                 $fail{$_} = 1 if $failed;
-                push @order, $_;
             }
             my $af = 'af';
-            write_file($af, Dumper(\@order, \%fail, $pln) );
-        }
-        $fail{$pln} ||= 1;
 
-        unless (grep { /^$pln$/ } @order) {
-           push @order, $pln;
+            $fail{$pln} ||= 1;
+            my $done;
+            for(@fails_read){
+                chomp;
+                $_ = trim($_);
+
+                /^[#]+(.*)$/ && do {
+                    my $p = $1;
+                    do { $done = 1; $_ = $p } if $p eq $pln;
+                };
+                /^([^#].*)$/ && do {
+                    my $p = $1;
+                    $done = 1 if $p eq $pln;
+                };
+
+                push @fails_write, $_;
+            }
+            push @fails_write, $pln unless $done;
+
+            write_file($ff,join("\n",@fails_write) . "\n");
         }
 
         warn '[BUILDER.fail] run fail' . "\n";
