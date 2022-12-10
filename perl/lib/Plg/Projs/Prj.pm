@@ -13,7 +13,7 @@ use File::Slurp::Unicode;
 
 use File::Basename qw(basename dirname);
 use File::Spec::Functions qw(catfile);
-use File::Find qw(find);
+use File::Find::Rule;
 use File::Path qw(mkpath rmtree);
 
 use Data::Dumper qw(Dumper);
@@ -145,13 +145,17 @@ sub cnf_trg_list {
 
     my @t;
     my $pat = qr/^$proj\.bld\.(.*)\.yml$/;
-    find({
-        wanted => sub {
+    my $rule = File::Find::Rule->new;
+
+    $rule
+        ->maxdepth(1)
+        ->exec(sub {
+            local $_ = shift;
             return unless /$pat/;
-            push @t,$1;
-        }
-    },$root
-    );
+            push @t, $1;
+        })
+        ->in($root);
+
     my $inc_all = 0;
     $inc_all = ( grep { /^_all_$/ } @$include ) ? 1 : 0;
     $inc_all = 0 if @$exclude;
@@ -1163,6 +1167,24 @@ sub _db_file {
 
     return $self->{db_file};
 }
+
+sub init_db_tables {
+    my ($self, $ref) = @_;
+    $ref ||= {};
+
+    my $rule = File::Find::Rule->new;
+
+    my $dir = catfile($ENV{PLG},qw( projs data sql ));
+
+    my @sql_files = $rule
+            ->name('create_table_*.sql')
+            ->maxdepth(1)
+            ->in($dir)
+            ;
+
+    return $self;
+}
+
 
 sub init_db {
     my ($self, $ref) = @_;
