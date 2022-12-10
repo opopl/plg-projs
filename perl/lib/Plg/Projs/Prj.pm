@@ -39,6 +39,7 @@ use Base::Git qw(
 
 use Base::DB qw(
     dbh_do
+    dbh_create_tables
 
     dbi_connect
 
@@ -1175,27 +1176,20 @@ sub init_db_tables {
     my ($self, $ref) = @_;
     $ref ||= {};
 
-    my $rule = File::Find::Rule->new;
-
-    my $sql_dir = $ref->{sql_dir} || catfile($ENV{PLG},qw( projs data sql ));
-
-    my $prefix = $ref->{prefix} || 'create_table_';
+    my $sql_dir = catfile($ENV{PLG},qw( projs data sql ));
     my $table_order = $ref->{table_order} || [qw(
         projs tree_children
         _info_projs_tags
         _info_projs_author_id
     )];
+    my $prefix = $ref->{prefix};
 
-    foreach my $table (@$table_order) {
-        my $sql_file = catfile($sql_dir, sprintf('%s%s.sql', $prefix, $table));
-        next unless -f $sql_file;
-
-        my $sql_code = read_file $sql_file;
-        dbh_do({
-           dbh => $self->{dbh},
-           q => $sql_code,
-        });
-    }
+    dbh_create_tables({
+       dbh         => $self->{dbh},
+       sql_dir     => $sql_dir,
+       table_order => $table_order,
+       prefix => $prefix,
+    });
 
     return $self;
 }
