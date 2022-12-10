@@ -95,6 +95,9 @@ sub trg_adjust {
        'patch'  => {
           'sii.scts._main_.ii.inner.body'  => [$sec],
        },
+       'build'  => {
+          sec => $sec
+       }
       };
       dict_update($bld, $h);
 
@@ -209,5 +212,5 @@ sub _trg_opts_maker {
 }
 
 1;
- 
+
 

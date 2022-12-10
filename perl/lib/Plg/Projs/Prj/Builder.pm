@@ -511,20 +511,28 @@ sub ok_after {
     my $pln = join '.' => ($act, $do_htlatex ? 'htx' : 'pdf', $trg );
 
     $bld->{target_ext} ||= $do_htlatex ? 'html' : 'pdf';
+
+    my $start = $bld->_vals_('build.start');
+    my $end = time();
+
+    my $duration = $end - $start;
     my $ref = {
         dbh => $bld->{dbh_bld},
         t => 'builds',
         i => q{INSERT OR IGNORE},
         h => {
             plan => $pln,
-            cmd => join(" " => @{$bld->{cmda} || []}),
+            cmd => join(" " => @{$bld->_vals_('build.cmda') || []}),
             status => $bld->{ok} ? 'success' : 'fail',
+            start => $bld->_vals_('build.start'),
+            sec => $bld->_vals_('build.sec'),
+            duration => $duration,
 
-            map { $_ => $bld->{$_} } qw( proj target target_ext),
+            map { $_ => $bld->{$_} } qw( proj target target_ext ),
         },
     };
-    $DB::single = 1;
-    #dbh_insert_hash($ref);
+    dbh_insert_hash($ref);
+    print Dumper({ map { $_ => $bld->{$_} } qw(sec build) }) . "\n";
 
     if($bld->{ok}){
         print '[BUILDER.ok] run success' . "\n";
