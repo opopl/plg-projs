@@ -22,6 +22,10 @@ use Clone qw(clone);
 
 use YAML qw( LoadFile Load Dump DumpFile );
 
+use Base::DB qw(
+    dbi_connect
+);
+
 use Base::String qw(
     str_split
     str_split_sn
@@ -76,6 +80,17 @@ use Plg::Projs::Build::Maker;
 
 sub init_db_bld {
     my ($bld) = @_;
+
+    my $dbh_bld = dbi_connect({
+        dbfile => catfile($bld->{root},qw(bld.db))
+    });
+
+    $bld->{dbh_bld} = $dbh_bld;
+    $bld->init_db_tables({
+       dbh => $dbh_bld,
+       table_order => [qw( builds )],
+       prefix => 'bld.create_table_',
+    });
 
     return $bld;
 }

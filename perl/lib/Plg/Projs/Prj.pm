@@ -1176,6 +1176,7 @@ sub init_db_tables {
     my ($self, $ref) = @_;
     $ref ||= {};
 
+    my $dbh = $ref->{dbh} || $self->{dbh};
     my $sql_dir = catfile($ENV{PLG},qw( projs data sql ));
     my $table_order = $ref->{table_order} || [qw(
         projs tree_children
@@ -1185,7 +1186,7 @@ sub init_db_tables {
     my $prefix = $ref->{prefix};
 
     dbh_create_tables({
-       dbh         => $self->{dbh},
+       dbh         => $dbh,
        sql_dir     => $sql_dir,
        table_order => $table_order,
        prefix => $prefix,
