@@ -439,6 +439,8 @@ sub run_maker {
     local @ARGV = ();
     $mkr->run;
 
+    $bld->{ok} &&= $bld->{maker}->{ok};
+
     return $bld;
 }
 
@@ -486,6 +488,72 @@ sub _obj2dict_order {
     return (\%dict, \@order);
 }
 
+sub ok_after {
+    my ($bld) = @_;
+
+    if($bld->{ok}){
+        print '[BUILDER.ok] run success' . "\n";
+        exit 0 if $bld->_vals_('run.ifok.exit');
+        return $bld;
+    }
+
+    my ($act, $do_htlatex, $target) = @{$bld}{qw( act do_htlatex target )};
+
+    my $trg = $target;
+    $target =~ /^_(buf|auth)\.(.*)$/ && do {
+       $trg = join("." => $1, $2);
+    };
+
+    my $ff = varval('plans.vars.fail_file' => $bld);
+    my (%fail, @fails_read, @fails_write);
+    my $pln = join '.' => ($act, $do_htlatex ? 'htx' : 'pdf', $trg );
+
+    if ($ff) {
+        @fails_read = -f $ff ? read_file $ff : ();
+        my @lines = @fails_read;
+
+        my $sp = join("",qw( + + ));
+        while(@lines){
+            local $_ = shift @lines;
+            chomp;
+
+            my $failed = /^\s*#/ ? 1 : 0;
+
+            s/^[#]*//g; $_ = trim($_);
+            next unless length $_;
+            next if /\+\+/ || !/^\w/;
+
+            $fail{$_} = 1 if $failed;
+        }
+        my $af = 'af';
+
+        $fail{$pln} ||= 1;
+        my $done;
+        for(@fails_read){
+            chomp;
+            $_ = trim($_);
+
+            /^[#]+(.*)$/ && do {
+                my $p = $1;
+                do { $done = 1; $_ = $p } if $p eq $pln;
+            };
+            /^([^#].*)$/ && do {
+                my $p = $1;
+                $done = 1 if $p eq $pln;
+            };
+
+            push @fails_write, $_;
+        }
+        push @fails_write, $pln unless $done;
+
+        write_file($ff,join("\n",@fails_write) . "\n");
+    }
+
+    warn '[BUILDER.fail] run fail' . "\n";
+    exit 1 if $bld->_vals_('run.iffail.exit');
+
+    return $bld;
+}
 
 sub run {
     my ($bld) = @_;
@@ -499,70 +567,11 @@ sub run {
             ->run_plans
             ->run_plans_after;
     }else{
-        $bld->run_maker;
-        $bld->{ok} &&= $bld->{maker}->{ok};
+        $bld
+            ->run_maker
+            ->ok_after;
     }
 
-    #$bld->{ok} = 0;
-    unless($bld->{ok}){
-        my ($act, $do_htlatex, $target) = @{$bld}{qw( act do_htlatex target )};
-
-        my $trg = $target;
-        $target =~ /^_(buf|auth)\.(.*)$/ && do {
-           $trg = join("." => $1, $2);
-        };
-
-        my $ff = varval('plans.vars.fail_file' => $bld);
-        my (%fail, @fails_read, @fails_write);
-        my $pln = join '.' => ($act, $do_htlatex ? 'htx' : 'pdf', $trg );
-
-        if ($ff) {
-            @fails_read = -f $ff ? read_file $ff : ();
-            my @lines = @fails_read;
-
-            my $sp = join("",qw( + + ));
-            while(@lines){
-                local $_ = shift @lines;
-                chomp;
-
-                my $failed = /^\s*#/ ? 1 : 0;
-
-                s/^[#]*//g; $_ = trim($_);
-                next unless length $_;
-                next if /\+\+/ || !/^\w/;
-
-                $fail{$_} = 1 if $failed;
-            }
-            my $af = 'af';
-
-            $fail{$pln} ||= 1;
-            my $done;
-            for(@fails_read){
-                chomp;
-                $_ = trim($_);
-
-                /^[#]+(.*)$/ && do {
-                    my $p = $1;
-                    do { $done = 1; $_ = $p } if $p eq $pln;
-                };
-                /^([^#].*)$/ && do {
-                    my $p = $1;
-                    $done = 1 if $p eq $pln;
-                };
-
-                push @fails_write, $_;
-            }
-            push @fails_write, $pln unless $done;
-
-            write_file($ff,join("\n",@fails_write) . "\n");
-        }
-
-        warn '[BUILDER.fail] run fail' . "\n";
-        exit 1 if $bld->_vals_('run.iffail.exit');
-    }else{
-        print '[BUILDER.ok] run success' . "\n";
-        exit 0 if $bld->_vals_('run.ifok.exit');
-    }
 
     return $bld;
 }
