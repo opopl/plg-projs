@@ -74,6 +74,12 @@ use Base::Arg qw(
 
 use Plg::Projs::Build::Maker;
 
+sub init_db_bld {
+    my ($bld) = @_;
+
+    return $bld;
+}
+
 sub inj_base {
     my ($bld) = @_;
 
@@ -128,6 +134,7 @@ sub init {
     return $bld if $bld->{bld_skip_init};
 
     $bld
+        ->init_db_bld
         ->inj_base
         ->prj_load_yml # process PROJ.yml file, set trg_list
         ->inj_targets

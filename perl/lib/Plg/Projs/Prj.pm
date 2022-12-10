@@ -1177,16 +1177,17 @@ sub init_db_tables {
 
     my $rule = File::Find::Rule->new;
 
-    my $sql_dir = catfile($ENV{PLG},qw( projs data sql ));
+    my $sql_dir = $ref->{sql_dir} || catfile($ENV{PLG},qw( projs data sql ));
 
-    my @table_order = qw(
+    my $prefix = $ref->{prefix} || 'create_table_';
+    my $table_order = $ref->{table_order} || [qw(
         projs tree_children
         _info_projs_tags
         _info_projs_author_id
-    );
+    )];
 
-    foreach my $table (@table_order) {
-        my $sql_file = catfile($sql_dir, sprintf('create_table_%s.sql', $table));
+    foreach my $table (@$table_order) {
+        my $sql_file = catfile($sql_dir, sprintf('%s%s.sql', $prefix, $table));
         next unless -f $sql_file;
 
         my $sql_code = read_file $sql_file;
