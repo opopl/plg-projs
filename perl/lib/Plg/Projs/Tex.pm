@@ -567,6 +567,10 @@ our %fbicons_n = (
   "\N{U+1F62B}" => 'face.tired',
   "\N{U+261D}" => 'index.pointing.up',
   "\N{U+26A1}" => 'lightning',
+  "\N{U+270C}" => 'hand.victory',
+  "\N{U+2642}" => 'male.sign',
+  "\N{U+203C}" => "exclamation.mark.double",
+  "\N{U+1FAE4}" => 'face.diagonal.mouth',
 
   "\N{U+1F1E6}\N{U+1F1FF}" => 'flag.az',
 
