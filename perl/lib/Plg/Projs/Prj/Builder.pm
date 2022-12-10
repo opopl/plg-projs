@@ -19,11 +19,13 @@ use Deep::Hash::Utils qw(reach);
 
 use Scalar::Util qw(blessed reftype);
 use Clone qw(clone);
+use DateTime;
 
 use YAML qw( LoadFile Load Dump DumpFile );
 
 use Base::DB qw(
     dbi_connect
+    dbh_insert_hash
 );
 
 use Base::String qw(
@@ -145,6 +147,10 @@ sub init {
     }
 
     $bld->Plg::Projs::Prj::init();
+
+    $bld->{build} = {
+        cmda => [$0, @ARGV],
+    };
 
     return $bld if $bld->{bld_skip_init};
 
@@ -436,6 +442,11 @@ sub run_maker {
 
     my $mkr = $bld->{maker};
 
+    dict_update($bld->{build}, {
+       start => time(),
+       status => 'running',
+    });
+
     local @ARGV = ();
     $mkr->run;
 
@@ -491,22 +502,38 @@ sub _obj2dict_order {
 sub ok_after {
     my ($bld) = @_;
 
-    if($bld->{ok}){
-        print '[BUILDER.ok] run success' . "\n";
-        exit 0 if $bld->_vals_('run.ifok.exit');
-        return $bld;
-    }
-
     my ($act, $do_htlatex, $target) = @{$bld}{qw( act do_htlatex target )};
 
     my $trg = $target;
     $target =~ /^_(buf|auth)\.(.*)$/ && do {
        $trg = join("." => $1, $2);
     };
+    my $pln = join '.' => ($act, $do_htlatex ? 'htx' : 'pdf', $trg );
+
+    $bld->{target_ext} ||= $do_htlatex ? 'html' : 'pdf';
+    my $ref = {
+        dbh => $bld->{dbh_bld},
+        t => 'builds',
+        i => q{INSERT OR IGNORE},
+        h => {
+            plan => $pln,
+            cmd => join(" " => @{$bld->{cmda} || []}),
+            status => $bld->{ok} ? 'success' : 'fail',
+
+            map { $_ => $bld->{$_} } qw( proj target target_ext),
+        },
+    };
+    $DB::single = 1;
+    #dbh_insert_hash($ref);
+
+    if($bld->{ok}){
+        print '[BUILDER.ok] run success' . "\n";
+        exit 0 if $bld->_vals_('run.ifok.exit');
+        return $bld;
+    }
 
     my $ff = varval('plans.vars.fail_file' => $bld);
     my (%fail, @fails_read, @fails_write);
-    my $pln = join '.' => ($act, $do_htlatex ? 'htx' : 'pdf', $trg );
 
     if ($ff) {
         @fails_read = -f $ff ? read_file $ff : ();
@@ -571,7 +598,6 @@ sub run {
             ->run_maker
             ->ok_after;
     }
-
 
     return $bld;
 }
