@@ -190,11 +190,11 @@ sub _trg_yfile {
 
     for($target){
         /^core$/ && do {
-            $yfile = catfile($ENV{PLG},qw( projs bld core.yml ));
+            $yfile = catfile($ENV{PLG}, qw( projs bld core.yml ));
             next;
         };
 
-        $yfile = catfile($root,sprintf('%s.bld.%s.yml',$proj, $target));
+        $yfile = catfile($root, sprintf('%s.bld.%s.yml', $proj, $target));
         last;
     }
     return $yfile;
@@ -208,7 +208,6 @@ sub _trg_opts_maker {
     my $om = $bld->_val_('targets', $target, 'opts_maker', @args);
 
     return $om;
-
 }
 
 1;
