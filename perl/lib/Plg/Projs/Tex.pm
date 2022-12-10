@@ -571,6 +571,13 @@ our %fbicons_n = (
   "\N{U+2642}" => 'male.sign',
   "\N{U+203C}" => "exclamation.mark.double",
   "\N{U+1FAE4}" => 'face.diagonal.mouth',
+  "\N{U+1F31A}" => 'face.new.moon',
+  "\N{U+1F336}" => 'hot.pepper',
+  "\N{U+1F910}" => 'face.zipper.mouth',
+  "\N{U+1F4B8}" => 'money.wings',
+  "\N{U+1F4B0}" => 'money.bag',
+  "\N{U+1F37B}" => 'cheers',
+  "\N{U+1F37A}" => 'beer',
 
   "\N{U+1F1E6}\N{U+1F1FF}" => 'flag.az',
 

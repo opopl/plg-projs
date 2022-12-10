@@ -12,12 +12,12 @@ sub trg_inj_core {
     my $bld = $self;
 
     my $om = {
-        sections => { 
+        sections => {
             line_sub => sub {
                 my ($line,$r_sec) = @_;
-    
+
                 my $sec = $r_sec->{sec};
-    
+
                 return $line;
             },
             insert => {
@@ -46,5 +46,5 @@ sub trg_inj_core {
 }
 
 1;
- 
+
 

@@ -130,6 +130,7 @@ sub cmd_jnd_build {
 
     my $tex4ht = $bld->{tex4ht};
 
+    my $run_tex_opts = $bld->{run_tex} || {};
     my $run_tex = eval {
         require Plg::Projs::Scripts::RunTex;
         my %n = (
@@ -142,6 +143,7 @@ sub cmd_jnd_build {
             obj_mkr => $mkr,
 
             tex4ht  => $tex4ht,
+            %$run_tex_opts,
         );
         Plg::Projs::Scripts::RunTex
             ->new(%n)

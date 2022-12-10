@@ -405,7 +405,13 @@ sub shell {
     my ($cmd, $shell, $do_htlatex) = @{$ref}{qw( cmd shell do_htlatex )};
     my ($ht_run, $obj_bld) = @{$ref}{qw( ht_run obj_bld )};
 
+    $shell ||= $self->{shell};
+    $do_htlatex ||= $self->{do_htlatex};
+
     return $self unless $self->{ok};
+
+    my $skip_code_re = $ref->{skip_code};
+    my $skip_code = ( $skip_code_re && $cmd =~ m/$skip_code_re/ ) ? 1 : 0;
 
     $DB::single = 1;
     if ($shell eq 'system') {
@@ -429,6 +435,7 @@ sub shell {
         $end = DateTime->now->epoch;
         $elapsed = $end - $start;
         $self->{elapsed} += $elapsed;
+        $code = 0 if $skip_code;
 
         if ($@) {
             warn $@ . "\n";
@@ -513,6 +520,7 @@ sub run {
     };
     my $do_htlatex = $self->_do_htlatex;
     my $shell = $self->{shell} || $obj_bld->_vals_('run_tex.shell') || 'system';
+    my $skip_code = $obj_bld->_vals_('run_tex.skip.code');
 
     my ($ht, $ht_run);
     if ($do_htlatex) {
@@ -564,6 +572,8 @@ sub run {
                do_htlatex => $do_htlatex,
                ht_run     => $ht_run,
                obj_bld    => $obj_bld,
+
+               skip_code => $skip_code,
             };
             $self->shell($r);
 
@@ -600,9 +610,9 @@ sub run {
         $i++;
     }
 
-	my $ok = $self->{ok};
-	print qq{[RUNTEX.ok]} . "\n" if $ok;
-	print qq{[RUNTEX.fail]} . "\n" unless $ok;
+    my $ok = $self->{ok};
+    print qq{[RUNTEX.ok]} . "\n" if $ok;
+    print qq{[RUNTEX.fail]} . "\n" unless $ok;
 
     return $self;
 };

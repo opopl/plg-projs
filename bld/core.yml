@@ -375,6 +375,8 @@ sii:
 ###run_tex
 run_tex:
   shell: system
+  skip:
+    code: '^bibtex'
 
 ###run
 run:
