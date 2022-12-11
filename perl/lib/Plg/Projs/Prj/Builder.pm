@@ -522,10 +522,21 @@ sub _obj2dict_order {
 sub build_update_start {
     my ($bld) = @_;
 
+    my ($act, $do_htlatex, $target) = @{$bld}{qw( act do_htlatex target )};
+
+    my $trg = $target;
+    $target =~ /^_(buf|auth)\.(.*)$/ && do {
+       $trg = join("." => $1, $2);
+    };
+    my $pln = join '.' => ($act, $do_htlatex ? 'htx' : 'pdf', $trg );
+
     dict_update($bld->{build}, {
        start => time(),
        status => 'running',
+       plan => $pln,
     });
+
+    $bld->{target_ext} ||= $do_htlatex ? 'html' : 'pdf';
 
     return $bld;
 }
@@ -562,17 +573,8 @@ sub build_update_end {
 sub ok_after {
     my ($bld) = @_;
 
-    my ($act, $do_htlatex, $target) = @{$bld}{qw( act do_htlatex target )};
-
-    my $trg = $target;
-    $target =~ /^_(buf|auth)\.(.*)$/ && do {
-       $trg = join("." => $1, $2);
-    };
-    my $pln = join '.' => ($act, $do_htlatex ? 'htx' : 'pdf', $trg );
-
-    $bld->{target_ext} ||= $do_htlatex ? 'html' : 'pdf';
-
     #print Dumper({ map { $_ => $bld->{$_} } qw(sec build) }) . "\n";
+    my $pln = $bld->_vals_('build.plan');
 
     if($bld->{ok}){
         print '[BUILDER.ok] run success' . "\n";
@@ -645,6 +647,7 @@ sub run {
         $bld
             ->build_update_start
             ->run_maker
+            ->build_update_end
             ->ok_after;
     }
 
