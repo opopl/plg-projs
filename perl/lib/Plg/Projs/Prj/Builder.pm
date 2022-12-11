@@ -174,6 +174,7 @@ sub init {
         ->process_ii_updown
         ->process_config
         ->expand_env
+        ->expand_vars
         ->init_imgman
         ->init_maker
         ->act_exe
@@ -208,6 +209,25 @@ sub init_imgman {
 
   $bld->{imgman} = $imgman;
 
+
+  return $bld;
+}
+
+sub expand_vars {
+  my ($bld) = @_;
+
+  my $vars = $bld->{vars};
+  my $cb = sub {
+      local $_ = shift;
+      return unless defined $_;
+      s/\@var\{(\w+)\}/$bld->_bld_var($1)/ge;
+      return $_;
+  };
+  foreach my $x (qw(opts_maker sii)) {
+    dict_exe_cb($bld->{$x},{ cb => $cb });
+  }
+  # x $bld->_vals_('sii.scts')
+  # x $bld->_vals_('sii@scts@preamble.fancyhdr','@')
 
   return $bld;
 }

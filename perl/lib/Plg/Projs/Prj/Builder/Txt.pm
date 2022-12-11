@@ -29,7 +29,7 @@ sub _txt_expand {
     my $txt_ref   = $ref->{txt_ref};
 
     @$txt_lines = split("\n",$$txt_ref) if $txt_ref;
-    
+
     my $decs = $bld->_val_('decs');
     my %decs = map { $_ => 1 } str_split_sn($decs);
 
@@ -43,9 +43,9 @@ sub _txt_expand {
         s/\@\@(\w+)\b/$bld->{$1}/ge;
 
 ###m_@var
-        s/\@var\{(\w+)\}/$bld->_bld_var($1)/ge; 
+        s/\@var\{(\w+)\}/$bld->_bld_var($1)/ge;
 ###m_@env
-        s/\@env\{(\w+)\}/$bld->_bld_env($1)/ge; 
+        s/\@env\{(\w+)\}/$bld->_bld_env($1)/ge;
 
 ###m_@ifdec
         /\@ifdec\{([^{}]+)\}/ && do {
@@ -84,5 +84,5 @@ sub _txt_expand {
 }
 
 1;
- 
+
 
