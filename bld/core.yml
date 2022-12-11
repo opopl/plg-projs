@@ -18,6 +18,8 @@ vars:
   nextpage: 'Наступна'
   layout:
     tabcont: 1
+    listfigs: 0
+    listtabs: 0
   ii_base:
   - body
   - preamble
@@ -211,7 +213,7 @@ sii:
          - '\phantomsection'
          - '\begin{center}'
          - '  {\Huge\bfseries \indicesname}\par'
-         - '  \hyperlink{tabcont}{@var{contname}}'
+         - '  @ifvar{layout.tabcont} \hyperlink{tabcont}{@var{contname}}'
          - '\end{center}'
          - '\addcontentsline{toc}{part}{\indicesname}'
          - '\hypertarget{indices}{}'
@@ -248,7 +250,7 @@ sii:
            - '  \fancyhead[C]{%'
            - '      @igg{fbicon.flag.ukraina}{repeat=3}~~'
            - '      \Acrobatmenu{PrevPage}{@var{prevpage}}~~'
-           - '      \hyperlink{tabcont}{@var{contname}}~~%'
+           - '@ifvar{layout.tabcont} \hyperlink{tabcont}{@var{contname}}~~%'
            - '      \Acrobatmenu{NextPage}{@var{nextpage}}~~'
            - '      @igg{fbicon.flag.ukraina}{repeat=3}~~'
            - '  }%'
@@ -346,8 +348,8 @@ sii:
           start:
 ###sii@scts@_main_@ii@inner@start
           #- titlepage
-          - listfigs
-          - listtabs
+          - '@ifvar{layout.listtabs} listtabs'
+          - '@ifvar{layout.listfigs} listfigs'
           - '@ifvar{layout.tabcont} tabcont'
           body:
           - body
