@@ -141,7 +141,7 @@ sub cmd_jnd_build {
             obj_mkr => $mkr,
 
             %$run_tex_opts,
-            map { $_ => $bld->{$_} } qw(do_htlatex tex4ht),
+            map { $_ => $bld->{$_} } qw( do_htlatex tex4ht ),
         );
         Plg::Projs::Scripts::RunTex
             ->new(%n)

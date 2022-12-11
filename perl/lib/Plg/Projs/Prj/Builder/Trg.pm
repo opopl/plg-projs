@@ -66,6 +66,7 @@ sub _trg_list {
 sub trg_inject {
     my ($bld, $trg, $hash ) = @_;
 
+	$DB::single = 1;
     hash_inject($bld, { targets => { $trg => $hash }} );
 
     return $bld;

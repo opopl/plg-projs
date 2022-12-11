@@ -511,7 +511,7 @@ sub run {
         dir  => $root,
     };
     my $do_htlatex = $self->{do_htlatex};
-    my $shell = $self->{shell} || $obj_bld->_vals_('run_tex.shell') || 'system';
+    my $shell = $self->{shell} || 'system';
     my $skip_code = varval('skip.exit_code' => $self);
     my $ext = 'pdf';
 

@@ -389,6 +389,9 @@ run_tex:
   cmd:
     texindy: 0
 
+targets:
+  aa:
+
 ###run
 run:
    iffail:
