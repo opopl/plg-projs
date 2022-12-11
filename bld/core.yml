@@ -389,7 +389,10 @@ run_tex:
     - '@clean'
     - '@ht_run'
   cmd:
-    texindy: 0
+    texindy:
+      skip: 1
+    tex:
+      interaction: nonstopmode
 
 targets:
   aa:

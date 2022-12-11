@@ -55,6 +55,68 @@ sub new
     return $self;
 }
 
+sub _cmd_tex {
+    my ($self) = @_;
+
+    my $proj    = $self->{proj};
+	my $cnf = varval('cmd.tex' => $self) || {};
+	$DB::single = 1;
+
+    my $opts = [
+        sprintf('-interaction=%s',$cnf->{interaction}),
+        '-file-line-error',
+    ];
+
+    my $cmd = join(" ", $self->{tex_exe}, @$opts, $proj);
+
+    return $cmd;
+}
+
+sub _cmd_ht_run {
+    my ($self, $ref) = @_;
+    $ref ||= {};
+
+    my $run  = $ref->{run} || { exe => 'htlatex' };
+    my $exe = $run->{exe};
+
+    my $proj = $ref->{proj} || $self->{proj};
+    my $cfg  = $ref->{cfg} || $proj;
+
+    my $cmd;
+    my $run_argc = $run->{argc} || {};
+    my $argc = { 
+        tex4ht => $run_argc->{tex4ht} || q{ -cunihtf -utf8},
+        t4ht   => $run_argc->{t4ht} || '',
+        latex  => $run_argc->{latex} || '',
+    };
+    my @ord = qw(tex4ht t4ht latex);
+    my $opts = join(' ' => map { qq{'$_'} } @{$argc}{@ord} );
+
+    for($exe){
+        /^htlatex$/ && do {
+            $cmd = sprintf('htlatex %s %s %s', $proj, $cfg, $opts);
+            last;
+        };
+        /^make4ht$/ && do {
+            $cmd = sprintf('make4ht %s %s %s', $proj, $cfg, $opts);
+            last;
+        };
+    }
+    $DB::single = 1;
+
+    return $cmd;
+}
+
+sub _cmd_bibtex {
+    my ($self) = @_;
+
+    my $proj    = $self->{proj};
+
+    my $cmd = sprintf('bibtex %s',$proj);
+
+    return $cmd;
+}
+
 sub _sub_gen_print_index {
     my ($self) = @_;
 
@@ -501,9 +563,7 @@ sub run {
 
     my ($obj_bld, $mkx) = @{$self}{qw( obj_bld mkx )};
 
-    my $root = $self->{root};
-    my $proj = $self->{proj};
-    my $tex  = $self->{tex_exe};
+    my ($root, $proj, $tex) = @{$self}{qw( root proj tex_exe )};
 
     my $sub_pi = $self->_sub_gen_print_index;
 
@@ -541,16 +601,16 @@ sub run {
        };
 
        /^\@tex$/ && do {
-          push @cmds, $mkx->_cmd_tex;
+          push @cmds, $self->_cmd_tex;
        };
 
        /^\@bibtex$/ && do {
-          push @cmds, $mkx->_cmd_bibtex;
+          push @cmds, $self->_cmd_bibtex;
        };
 
        /^\@ht_run$/ && do {
           push @cmds,
-            $mkx->_cmd_ht_run({
+            $self->_cmd_ht_run({
                 proj => $proj,
                 run => $ht_run
             });
@@ -563,17 +623,15 @@ sub run {
         push @cmds,
             -f './_clean.sh' ? './_clean.sh' : (),
             $do_htlatex ? (
-                #$mkx->_cmd_tex,
-                #$mkx->_cmd_bibtex,
-                $mkx->_cmd_ht_run({
+                $self->_cmd_ht_run({
                     proj => $proj,
                     run => $ht_run
                 })
             ) : (
-                $mkx->_cmd_tex,
-                $mkx->_cmd_bibtex,
-                $mkx->_cmd_tex,
-                $mkx->_cmd_tex,
+                $self->_cmd_tex,
+                $self->_cmd_bibtex,
+                $self->_cmd_tex,
+                $self->_cmd_tex,
             )
             ;
     }
@@ -620,13 +678,13 @@ sub run {
             my @bbl = $mkx->_find_([$root],[qw(bbl)]);
 
             unshift @cmds,
-               $mkx->_cmd_tex,
+               $self->_cmd_tex,
                $sub_pi,
                ;
 
             if (@bbl) {
                 push @cmds,
-                    $mkx->_cmd_tex;
+                    $self->_cmd_tex;
             }
         };
 

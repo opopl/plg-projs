@@ -305,7 +305,7 @@ sub init {
     my $tex_opts_a = [];
     push @$tex_opts_a,
         '-file-line-error',
-        '-interaction nonstopmode',
+        '-interaction=nonstopmode',
         sprintf(qq{ -output-directory=./%s}, $h->{build_dir_unix}),
         ;
 
@@ -349,15 +349,7 @@ sub _find_ {
     return @files;
 }
 
-sub _cmd_bibtex {
-    my ($mkr, $ref) = @_;
 
-    my $proj    = $mkr->{proj};
-
-    my $cmd = sprintf('bibtex %s',$proj);
-
-    return $cmd;
-}
 
 sub _sub_clean {
     my ($mkr, $ref) = @_;
@@ -377,57 +369,9 @@ sub _sub_clean {
     return $sub;
 }
 
-sub _cmd_ht_run {
-    my ($mkr, $ref) = @_;
-    $ref ||= {};
 
-    my $run  = $ref->{run} || { exe => 'htlatex' };
-    my $exe = $run->{exe};
 
-    my $proj = $ref->{proj} || $mkr->{proj};
-    my $cfg  = $ref->{cfg} || $proj;
 
-    my $cmd;
-    my $run_argc = $run->{argc} || {};
-    my $argc = { 
-        tex4ht => $run_argc->{tex4ht} || q{ -cunihtf -utf8},
-        t4ht   => $run_argc->{t4ht} || '',
-        latex  => $run_argc->{latex} || '',
-    };
-    my @ord = qw(tex4ht t4ht latex);
-    my $opts = join(' ' => map { qq{'$_'} } @{$argc}{@ord} );
-
-    for($exe){
-        /^htlatex$/ && do {
-            $cmd = sprintf('htlatex %s %s %s', $proj, $cfg, $opts);
-            last;
-        };
-        /^make4ht$/ && do {
-            $cmd = sprintf('make4ht %s %s %s', $proj, $cfg, $opts);
-            last;
-        };
-    }
-    $DB::single = 1;
-
-    return $cmd;
-}
-
-sub _cmd_tex {
-    my ($mkr, $ref) = @_;
-
-    my $opts = [
-        '-interaction=nonstopmode',
-        '-file-line-error',
-    ];
-
-    #print qq{[RunTex] run tex_exe #$tex_count} . "\n";
-
-    my $proj    = $mkr->{proj};
-
-    my $cmd     = sprintf('%s %s %s',$mkr->{tex_exe},join(" ",@$opts),$proj);
-
-    return $cmd;
-}
 
 sub _cmds_texindy {
     my ($mkr, $ref) = @_;
