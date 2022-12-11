@@ -11,6 +11,8 @@ binmode STDOUT,':encoding(utf8)';
 use Capture::Tiny qw(capture);
 use File::stat;
 
+use Digest::MD5 qw(md5);
+
 use File::Slurp::Unicode;
 
 use XML::Hash::LX;
@@ -26,6 +28,7 @@ use YAML qw( LoadFile Load Dump DumpFile );
 use Base::DB qw(
     dbi_connect
     dbh_insert_hash
+    dbh_insert_update_hash
 );
 
 use Base::String qw(
@@ -529,14 +532,51 @@ sub build_update_start {
        $trg = join("." => $1, $2);
     };
     my $pln = join '.' => ($act, $do_htlatex ? 'htx' : 'pdf', $trg );
+    my $start = time();
+    my $md5 = md5($pln);
+    my $buuid = join '@' => $start, $md5;
 
     dict_update($bld->{build}, {
-       start => time(),
+       start => $start,
+       buuid => $buuid,
        status => 'running',
        plan => $pln,
     });
 
     $bld->{target_ext} ||= $do_htlatex ? 'html' : 'pdf';
+
+    #$bld->build_update_db({ 
+        #status => 'running',
+        ##duration => $duration,
+    #});
+
+    return $bld;
+}
+
+sub build_update_db {
+    my ($bld, $data) = @_;
+    $data ||= {};
+
+    my $pln = $bld->_vals_('build.plan');
+    my $buuid = $bld->_vals_('build.buuid');
+
+    my $ref = {
+        dbh => $bld->{dbh_bld},
+        t => 'builds',
+        i => q{INSERT OR IGNORE},
+        h => {
+            plan => $pln,
+            cmd => join(" " => @{$bld->_vals_('build.cmda') || []}),
+            status => $bld->{ok} ? 'success' : 'fail',
+            start => $bld->_vals_('build.start'),
+            sec => $bld->_vals_('build.sec'),
+
+            ( map { $_ => $bld->{$_} } qw( proj target target_ext ) ),
+            %$data,
+            buuid => $buuid,
+        },
+    };
+    dbh_insert_update_hash($ref);
 
     return $bld;
 }
@@ -550,22 +590,11 @@ sub build_update_end {
     my $pln = $bld->_vals_('build.plan');
 
     my $duration = $end - $start;
-    my $ref = {
-        dbh => $bld->{dbh_bld},
-        t => 'builds',
-        i => q{INSERT OR IGNORE},
-        h => {
-            plan => $pln,
-            cmd => join(" " => @{$bld->_vals_('build.cmda') || []}),
-            status => $bld->{ok} ? 'success' : 'fail',
-            start => $bld->_vals_('build.start'),
-            sec => $bld->_vals_('build.sec'),
-            duration => $duration,
 
-            map { $_ => $bld->{$_} } qw( proj target target_ext ),
-        },
-    };
-    dbh_insert_hash($ref);
+    $bld->build_update_db({ 
+        status => $bld->{ok} ? 'success' : 'fail',
+        duration => $duration,
+    });
 
     return $bld;
 }
