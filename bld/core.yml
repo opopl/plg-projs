@@ -319,7 +319,7 @@ sii:
            imakeidx: xindy
            tocloft: titles
 
-###sct__main_
+###sii@scts@_main_
     '_main_':
       #contents: '@doc @ii @setcounter @perl'
       contents:
@@ -334,6 +334,8 @@ sii:
       - '@ii.inner.body'
       - '@ii.inner.end'
       - '\end{document}'
+
+###sii@scts@_main_@ii
       ii:
         prm:
           - preamble
