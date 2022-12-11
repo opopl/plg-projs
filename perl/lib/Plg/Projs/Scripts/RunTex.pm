@@ -512,12 +512,18 @@ sub shell {
                my %err;
 
                my @tail_save = @tail;
+               my (@error_message);
                while(@tail){
-                  local $_ = shift @tail;
-                  chomp;
+                  local $_ = shift @tail; chomp;
 
                   /^(?<file>\S+):(?<lnum>\d+):\s*(LaTeX Error|Emergency stop)/ && do {
                       $err{$_} = $+{$_} for keys %+;
+                      push @error_message, $_;
+                      while (@tail) {
+                          local $_ = shift @tail; chomp;
+                          last if /^\s*$/;
+                          push @error_message, $_;
+                      }
                       next;
                   };
                }
@@ -549,11 +555,12 @@ sub shell {
                my $fpath = catfile(getcwd(), basename($err{file}));
                $self->{errors} = {
                    %err,
-                   block => \@err_block,
-                   file => $fpath,
-                   sec => $err_sec,
-                   tail => [@tail],
+                   block     => \@err_block,
+                   file      => $fpath,
+                   sec       => $err_sec,
+                   tail      => [@tail],
                    tail_join => join("\n",@tail),
+                   msg       => join("\n",@error_message),
                };
                dict_update($obj_bld->{build},{ errors => $self->{errors} }) if $obj_bld;
                $DB::single = 1;
