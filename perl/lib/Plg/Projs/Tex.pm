@@ -569,7 +569,6 @@ our %fbicons_n = (
   "\N{U+26A1}" => 'lightning',
   "\N{U+270C}" => 'hand.victory',
   "\N{U+2642}" => 'male.sign',
-  "\N{U+203C}" => "exclamation.mark.double",
   "\N{U+1FAE4}" => 'face.diagonal.mouth',
   "\N{U+1F31A}" => 'face.new.moon',
   "\N{U+1F336}" => 'hot.pepper',
@@ -578,6 +577,10 @@ our %fbicons_n = (
   "\N{U+1F4B0}" => 'money.bag',
   "\N{U+1F37B}" => 'cheers',
   "\N{U+1F37A}" => 'beer',
+  "\N{U+1F34C}" => 'banana',
+
+  "\N{U+203C}" => "exclamation.mark.double",
+  "\N{U+2757}" => 'exclamation.mark',
 
   "\N{U+1F1E6}\N{U+1F1FF}" => 'flag.az',
 
