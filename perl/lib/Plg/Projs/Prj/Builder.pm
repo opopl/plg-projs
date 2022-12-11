@@ -592,9 +592,11 @@ sub build_update_end {
 
     my $duration = $end - $start;
 
+    my $err = $bld->{ok} ? '' : $bld->_vals_('build.errors.tail_join');
     $bld->build_update_db({ 
         status => $bld->{ok} ? 'success' : 'fail',
         duration => $duration,
+        $err ? ( err => $err ) : (),
     });
 
     return $bld;

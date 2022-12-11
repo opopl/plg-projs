@@ -546,6 +546,7 @@ sub shell {
                    file => $fpath,
                    sec => $err_sec,
                    tail => [@tail],
+                   tail_join => join("\n",@tail),
                };
                dict_update($obj_bld->{build},{ errors => $self->{errors} }) if $obj_bld;
                $DB::single = 1;
