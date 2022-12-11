@@ -465,10 +465,7 @@ sub run_maker {
 
     my $mkr = $bld->{maker};
 
-    dict_update($bld->{build}, {
-       start => time(),
-       status => 'running',
-    });
+
 
     local @ARGV = ();
     $mkr->run;
@@ -522,21 +519,24 @@ sub _obj2dict_order {
     return (\%dict, \@order);
 }
 
-sub ok_after {
+sub build_update_start {
     my ($bld) = @_;
 
-    my ($act, $do_htlatex, $target) = @{$bld}{qw( act do_htlatex target )};
+    dict_update($bld->{build}, {
+       start => time(),
+       status => 'running',
+    });
 
-    my $trg = $target;
-    $target =~ /^_(buf|auth)\.(.*)$/ && do {
-       $trg = join("." => $1, $2);
-    };
-    my $pln = join '.' => ($act, $do_htlatex ? 'htx' : 'pdf', $trg );
+    return $bld;
+}
 
-    $bld->{target_ext} ||= $do_htlatex ? 'html' : 'pdf';
+sub build_update_end {
+    my ($bld) = @_;
 
     my $start = $bld->_vals_('build.start');
     my $end = time();
+
+    my $pln = $bld->_vals_('build.plan');
 
     my $duration = $end - $start;
     my $ref = {
@@ -555,6 +555,23 @@ sub ok_after {
         },
     };
     dbh_insert_hash($ref);
+
+    return $bld;
+}
+
+sub ok_after {
+    my ($bld) = @_;
+
+    my ($act, $do_htlatex, $target) = @{$bld}{qw( act do_htlatex target )};
+
+    my $trg = $target;
+    $target =~ /^_(buf|auth)\.(.*)$/ && do {
+       $trg = join("." => $1, $2);
+    };
+    my $pln = join '.' => ($act, $do_htlatex ? 'htx' : 'pdf', $trg );
+
+    $bld->{target_ext} ||= $do_htlatex ? 'html' : 'pdf';
+
     #print Dumper({ map { $_ => $bld->{$_} } qw(sec build) }) . "\n";
 
     if($bld->{ok}){
@@ -626,6 +643,7 @@ sub run {
             ->run_plans_after;
     }else{
         $bld
+            ->build_update_start
             ->run_maker
             ->ok_after;
     }
