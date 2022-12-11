@@ -510,12 +510,19 @@ sub shell {
                print $_ . "\n" for(@tail);
 
                my %err;
-               for(@tail){
+
+               my @tail_save = @tail;
+               while(@tail){
+                  local $_ = shift @tail;
+                  chomp;
+
                   /^(?<file>\S+):(?<lnum>\d+):\s*(LaTeX Error|Emergency stop)/ && do {
                       $err{$_} = $+{$_} for keys %+;
                       next;
                   };
                }
+               @tail = @tail_save;
+
                my @err_block;
                my @lines = read_file $err{file};
                my $j = 0;
