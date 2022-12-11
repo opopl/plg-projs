@@ -234,8 +234,7 @@ sub rm_zero {
 sub run_after {
     my ($self) = @_;
 
-    my $do_htlatex = $self->_do_htlatex;
-    return $self unless $do_htlatex;
+    return $self unless $self->{do_htlatex};
 
     my $ht = $self->{tex4ht} || {};
 
@@ -389,13 +388,6 @@ sub ht_pretty_print {
     return $self;
 }
 
-sub _do_htlatex {
-    my ($self) = @_;
-
-    my $do_htlatex = $self->{do_htlatex} || $self->{obj_bld}->{do_htlatex};
-    return $do_htlatex;
-}
-
 sub shell {
     my ($self, $ref) = @_;
     $ref ||= {};
@@ -518,12 +510,15 @@ sub run {
     my $r = {
         dir  => $root,
     };
-    my $do_htlatex = $self->_do_htlatex;
+    my $do_htlatex = $self->{do_htlatex};
     my $shell = $self->{shell} || $obj_bld->_vals_('run_tex.shell') || 'system';
     my $skip_code = varval('skip.exit_code' => $self);
+    my $ext = 'pdf';
 
     my ($ht, $ht_run);
     if ($do_htlatex) {
+       $ext = 'html';
+
        $ht = $self->{tex4ht} || {};
        $ht_run = $ht->{run} || { 'exe' => 'htlatex' };
 
@@ -535,7 +530,7 @@ sub run {
 
        $tex = $self->{tex_exe} = $mkx->{tex_exe} = 'latex';
     }
-    my $sequence = varval('sequence' => $self) || [];
+    my $sequence = varval(sprintf('sequence.%s',$ext) => $self) || [];
     $DB::single = 1;
 
     my @cmds;
