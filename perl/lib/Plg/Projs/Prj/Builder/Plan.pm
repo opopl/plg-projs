@@ -118,7 +118,7 @@ sub plan_exec {
 
     if ($status eq 'fail'){
         #print dump_enc($bld->{err}) =~ s/\\x\{([0-9a-f]{2,})\}/chr hex $1/ger;
-        my $errors = $bld->{errors};
+        my $errors = $bld->_vals_('build.errors');
         my ($fpath, $sec) = @{$errors}{qw(file sec)};
 
         my $err_file = 'plan.err.yaml';

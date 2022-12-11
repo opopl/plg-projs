@@ -43,6 +43,7 @@ use Base::Arg qw(
     hash_inject
 
     varval
+    dict_update
 );
 
 sub new
