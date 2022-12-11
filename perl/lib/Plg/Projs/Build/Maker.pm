@@ -27,7 +27,6 @@ use base qw(
     Plg::Projs::Build::Maker::Pats
 
     Plg::Projs::Build::Maker::Jnd
-    Plg::Projs::Build::Maker::Tree
     Plg::Projs::Build::Maker::Html
 );
 
@@ -554,22 +553,6 @@ sub cmd_print_ii_body_raw {
     my @out;
     push @out, 'begin_yaml', $yaml, 'end_yaml';
     print join("\n",@out) . "\n";
-
-    return $mkr;
-}
-
-###print_ii_tree
-sub cmd_print_ii_tree {
-    my ($mkr) = @_;
-
-    $mkr
-        ->tree_fill
-        ->tree_write_fs
-        ;
-
-    #my $f_bn = basename($file_tree);
-
-    #print qq{[proj: $proj, root_id: $root_id] Tree written to: $f_bn} . "\n";
 
     return $mkr;
 }

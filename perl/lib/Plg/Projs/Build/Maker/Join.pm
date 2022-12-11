@@ -144,7 +144,6 @@ sub _join_lines {
     my @prepend = $mkr->_line_plus($sec,'prepend');
     push @lines, @prepend;
 
-    $mkr->tree_init({ sec => $sec });
     my %flg;
     my @yaml;
 
@@ -218,11 +217,9 @@ sub _join_lines {
         m/$pats->{ii}/ && do {
             my $ii_sec   = $1;
 
-            $mkr
-                ->tree_init({ sec => $ii_sec })
-                ->tree_add_parent({ sec => $ii_sec, parent => $sec })
-                ->tree_add_child({ sec => $sec, child => $ii_sec })
-                ;
+            my $exclude_ref = $mkr->_vals_('join_lines.ii.exclude') || {};
+            my @exclude = map { $exclude_ref->{$_} ? $_ : () } keys %$exclude_ref;
+            next if grep { /^$ii_sec/ } @exclude;
 
             if ($bld->{do_htlatex}) {
                 my $url = $r_sec->{url};
@@ -389,8 +386,8 @@ sub ii_insert_updown {
     my $ii_updown = $bld->_bld_var('ii_updown') || '';
 
     return $mkr unless ($ii_updown);
-    $mkr
-        ->tree_import_fs
+    #$mkr
+        #->tree_import_fs
         #->tree_dump
         ;
 
@@ -409,15 +406,15 @@ sub ii_insert_updown {
 
         my (@parents, @children);
 
-        @parents  = @{$mkr->_tree_sec_get($s,'parents') || []};
-        @children = @{$mkr->_tree_sec_get($s,'children') || []};
+        #@parents  = @{$mkr->_tree_sec_get($s,'parents') || []};
+        #@children = @{$mkr->_tree_sec_get($s,'children') || []};
 
         while(@parents){
             my $par = shift @parents;
 
             $i_updown{$par} = 1;
 
-            push @parents,@{$mkr->_tree_sec_get($par,'parents') || []};
+            #push @parents,@{$mkr->_tree_sec_get($par,'parents') || []};
         }
 
         while(@children){
@@ -425,7 +422,7 @@ sub ii_insert_updown {
 
             $i_updown{$cld} = 1;
 
-            push @children,@{$mkr->_tree_sec_get($cld,'children') || []};
+            #push @children,@{$mkr->_tree_sec_get($cld,'children') || []};
         }
 
         last unless @updown;
