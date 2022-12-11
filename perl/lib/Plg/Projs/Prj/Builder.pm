@@ -169,6 +169,7 @@ sub init {
         ->trg_apply                             # apply $target data into $bld instance
         ->trg_adjust
         ->load_yaml
+        ->trg_adjust_conf
         ->load_decs
         ->load_patch
         ->process_ii_updown

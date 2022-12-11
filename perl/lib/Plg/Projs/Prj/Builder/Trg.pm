@@ -66,11 +66,27 @@ sub _trg_list {
 sub trg_inject {
     my ($bld, $trg, $hash ) = @_;
 
-	$DB::single = 1;
     hash_inject($bld, { targets => { $trg => $hash }} );
 
     return $bld;
+}
 
+sub trg_adjust_conf {
+    my ($bld, $target) = @_;
+
+    $target //= $bld->{target};
+    my $proj = $bld->{proj};
+    local $_ = $bld->{target};
+
+    my $target_conf = $bld->_val_('target_conf') || {};
+    while(my($k,$v)=each %$target_conf){
+        m/$k/ && do {
+           dict_update($bld, $v);
+           next;
+        };
+    }
+
+    return $bld;
 }
 
 sub trg_adjust {
