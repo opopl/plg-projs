@@ -559,8 +559,6 @@ sub build_update_db {
     my $pln = $bld->_vals_('build.plan');
     my $buuid = $bld->_vals_('build.buuid');
 
-    print Dumper($buuid) . "\n";
-
     my $ref = {
         dbh => $bld->{dbh_bld},
         t => 'builds',
@@ -579,7 +577,6 @@ sub build_update_db {
         },
         on_list => [qw( buuid )]
     };
-    print Dumper($ref) . "\n";
     dbh_insert_update_hash($ref);
 
     return $bld;
