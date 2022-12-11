@@ -386,6 +386,7 @@ run_tex:
     - '@tex'
     - '@tex'
     html:
+    - '@ht_run'
   cmd:
     texindy: 0
 

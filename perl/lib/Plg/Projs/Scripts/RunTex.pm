@@ -533,25 +533,51 @@ sub run {
     my $sequence = varval(sprintf('sequence.%s',$ext) => $self) || [];
     $DB::single = 1;
 
-    my @cmds;
-    push @cmds,
-        -f './_clean.sh' ? './_clean.sh' : (),
-        $do_htlatex ? (
-            #$mkx->_cmd_tex,
-            #$mkx->_cmd_bibtex,
+    my (@cmds, @clean);
+    push @clean, -f './_clean.sh' ? './_clean.sh' : ();
+    for(@$sequence){
+       /^\@clean$/ && do {
+          push @cmds, @clean;
+       };
+
+       /^\@tex$/ && do {
+          push @cmds, $mkx->_cmd_tex;
+       };
+
+       /^\@bibtex$/ && do {
+          push @cmds, $mkx->_cmd_bibtex;
+       };
+
+       /^\@ht_run$/ && do {
+          push @cmds,
             $mkx->_cmd_ht_run({
                 proj => $proj,
                 run => $ht_run
-            })
-        ) : (
-            $mkx->_cmd_tex,
-            $mkx->_cmd_bibtex,
-            $mkx->_cmd_tex,
-            $mkx->_cmd_tex,
-        )
-        ;
+            });
+       };
 
+    }
     $DB::single = 1;
+
+    unless (@$sequence) {
+        push @cmds,
+            -f './_clean.sh' ? './_clean.sh' : (),
+            $do_htlatex ? (
+                #$mkx->_cmd_tex,
+                #$mkx->_cmd_bibtex,
+                $mkx->_cmd_ht_run({
+                    proj => $proj,
+                    run => $ht_run
+                })
+            ) : (
+                $mkx->_cmd_tex,
+                $mkx->_cmd_bibtex,
+                $mkx->_cmd_tex,
+                $mkx->_cmd_tex,
+            )
+            ;
+    }
+
 
     $self->{ok} ||= 1;
 
