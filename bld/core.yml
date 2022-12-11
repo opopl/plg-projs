@@ -20,6 +20,7 @@ vars:
     tabcont: 1
     listfigs: 0
     listtabs: 0
+    indexing: 1
   ii_base:
   - body
   - preamble
@@ -230,11 +231,12 @@ sii:
 
 ###sii@scts@preamble.filecontents
     'preamble.filecontents':
-       contents: '@input'
+       contents:
+       - '@input'
        input:
-       - 'src.preamble.filecontents.xdy'
-       - 'src.preamble.filecontents.index_eng_xdy'
-       - 'src.preamble.filecontents.index_rus_xdy'
+       - '@ifvar{layout.indexing} src.preamble.filecontents.xdy'
+       - '@ifvar{layout.indexing} src.preamble.filecontents.index_eng_xdy'
+       - '@ifvar{layout.indexing} src.preamble.filecontents.index_rus_xdy'
 
 ###sii@scts@preamble.fancyhdr
     'preamble.fancyhdr':
@@ -519,10 +521,10 @@ tex4ht:
           'width' :
           - '\Configure{graphics*}'
           - ' {jpg}%'
-          - ' {%'  
+          - ' {%'
           - '   \Picture[pict]{\csname Gin@base\endcsname .jpg'
           - '     \space width="\the\dimexpr \expandafter\csname Gin@req@width\endcsname * 1.5" '
-          - '    }%'  
+          - '    }%'
           - '}'
           # https://tex.stackexchange.com/questions/563276/graphics-scaling-in-tex4ht/563314#563314
           'l3' :
