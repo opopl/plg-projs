@@ -233,6 +233,7 @@ sii:
     'preamble.filecontents':
        contents:
        - '@input'
+       - '\relax'
        input:
        - '@ifvar{layout.indexing} src.preamble.filecontents.xdy'
        - '@ifvar{layout.indexing} src.preamble.filecontents.index_eng_xdy'
