@@ -16,6 +16,8 @@ vars:
   contname: '\contentsname'
   prevpage: 'Попередня'
   nextpage: 'Наступна'
+  layout:
+    tabcont: 1
   ii_base:
   - body
   - preamble
@@ -342,10 +344,11 @@ sii:
           - defs
         inner:
           start:
+###sii@scts@_main_@ii@inner@start
           #- titlepage
           - listfigs
           - listtabs
-          - tabcont
+          - '@ifvar{layout.tabcont} tabcont'
           body:
           - body
           end:

@@ -76,6 +76,7 @@ use Base::Arg qw(
     dict_expand_env
 
     varval
+    varexp
 );
 
 use Plg::Projs::Build::Maker;
@@ -224,10 +225,12 @@ sub expand_vars {
       return $_;
   };
   foreach my $x (qw(opts_maker sii)) {
-    dict_exe_cb($bld->{$x},{ cb => $cb });
+    #dict_exe_cb($bld->{$x},{ cb => $cb });
+    varexp($bld->{$x}, $bld->{vars}, { pref => '\@' });
   }
   # x $bld->_vals_('sii.scts')
   # x $bld->_vals_('sii@scts@preamble.fancyhdr','@')
+  # x $bld->_vals_('sii@scts@_main_@ii@inner@start','@')
 
   return $bld;
 }
