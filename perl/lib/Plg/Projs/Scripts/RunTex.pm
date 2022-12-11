@@ -60,12 +60,15 @@ sub _cmd_tex {
 
     my $proj    = $self->{proj};
 	my $cnf = varval('cmd.tex' => $self) || {};
-	$DB::single = 1;
+    my $interaction = $cnf->{interaction} || '';
+
+    $self->{shell} = 'system' if $interaction eq 'errorstopmode';
 
     my $opts = [
-        sprintf('-interaction=%s',$cnf->{interaction}),
+        $interaction ? sprintf('-interaction=%s',$interaction) : (),
         '-file-line-error',
     ];
+	$DB::single = 1;
 
     my $cmd = join(" ", $self->{tex_exe}, @$opts, $proj);
 
