@@ -18,9 +18,10 @@ vars:
   nextpage: 'Наступна'
   layout:
     tabcont: 1
+    indexing: 1
+
     listfigs: 0
     listtabs: 0
-    indexing: 1
   ii_base:
   - body
   - preamble
@@ -138,7 +139,7 @@ sii:
         opts: 'a4paper,11pt'
       ii:
       - preamble.packages
-      - preamble.index
+      - '@ifvar{layout.indexing} preamble.index'
       #- preamble.acrobat_menu
       - preamble.filecontents
       - preamble.fancyhdr
@@ -357,7 +358,7 @@ sii:
           body:
           - body
           end:
-          - index
+          - '@ifvar{layout.indexing} index'
           #- bib
       txt:
         inner:
