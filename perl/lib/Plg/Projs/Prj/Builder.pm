@@ -11,7 +11,7 @@ binmode STDOUT,':encoding(utf8)';
 use Capture::Tiny qw(capture);
 use File::stat;
 
-use Digest::MD5 qw(md5);
+use Digest::MD5 qw(md5_hex);
 
 use File::Slurp::Unicode;
 
@@ -533,7 +533,7 @@ sub build_update_start {
     };
     my $pln = join '.' => ($act, $do_htlatex ? 'htx' : 'pdf', $trg );
     my $start = time();
-    my $md5 = md5($pln);
+    my $md5 = md5_hex($pln);
     my $buuid = join '@' => $start, $md5;
 
     dict_update($bld->{build}, {
@@ -545,10 +545,9 @@ sub build_update_start {
 
     $bld->{target_ext} ||= $do_htlatex ? 'html' : 'pdf';
 
-    #$bld->build_update_db({ 
-        #status => 'running',
-        ##duration => $duration,
-    #});
+    $bld->build_update_db({ 
+        status => 'running',
+    });
 
     return $bld;
 }
@@ -560,22 +559,27 @@ sub build_update_db {
     my $pln = $bld->_vals_('build.plan');
     my $buuid = $bld->_vals_('build.buuid');
 
+    print Dumper($buuid) . "\n";
+
     my $ref = {
         dbh => $bld->{dbh_bld},
         t => 'builds',
-        i => q{INSERT OR IGNORE},
+        #i => q{INSERT OR IGNORE},
         h => {
             plan => $pln,
             cmd => join(" " => @{$bld->_vals_('build.cmda') || []}),
             status => $bld->{ok} ? 'success' : 'fail',
             start => $bld->_vals_('build.start'),
             sec => $bld->_vals_('build.sec'),
+            duration => 0,
 
             ( map { $_ => $bld->{$_} } qw( proj target target_ext ) ),
             %$data,
             buuid => $buuid,
         },
+        on_list => [qw( buuid )]
     };
+    print Dumper($ref) . "\n";
     dbh_insert_update_hash($ref);
 
     return $bld;
