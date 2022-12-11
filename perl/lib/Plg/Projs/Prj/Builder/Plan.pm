@@ -118,11 +118,11 @@ sub plan_exec {
 
     if ($status eq 'fail'){
         #print dump_enc($bld->{err}) =~ s/\\x\{([0-9a-f]{2,})\}/chr hex $1/ger;
-        my $err = $bld->{err};
-        my ($fpath, $sec) = @{$err}{qw(file sec)};
+        my $errors = $bld->{errors};
+        my ($fpath, $sec) = @{$errors}{qw(file sec)};
 
         my $err_file = 'plan.err.yaml';
-        YAML::XS::DumpFile($err_file => $err);
+        YAML::XS::DumpFile($err_file => $errors);
 
         if (grep { /$^O/ } qw(linux darwin)) {
            system("test -h err.tex && rm err.tex");

@@ -14,5 +14,6 @@ CREATE TABLE IF NOT EXISTS builds (
     start INTEGER NOT NULL,
 
     -- optional
-    sec  TEXT
+    sec  TEXT,
+    err  TEXT
 );

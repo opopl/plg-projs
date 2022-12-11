@@ -59,7 +59,7 @@ sub _cmd_tex {
     my ($self) = @_;
 
     my $proj    = $self->{proj};
-	my $cnf = varval('cmd.tex' => $self) || {};
+    my $cnf = varval('cmd.tex' => $self) || {};
     my $interaction = $cnf->{interaction} || '';
 
     $self->{shell} = 'system' if $interaction eq 'errorstopmode';
@@ -68,7 +68,7 @@ sub _cmd_tex {
         $interaction ? sprintf('-interaction=%s',$interaction) : (),
         '-file-line-error',
     ];
-	$DB::single = 1;
+    $DB::single = 1;
 
     my $cmd = join(" ", $self->{tex_exe}, @$opts, $proj);
 
@@ -539,14 +539,14 @@ sub shell {
                #print Dumper(\%err) . "\n";
                #print Dumper(\@err_block) =~ s/\\x\{([0-9a-f]{2,})\}/chr hex $1/ger;
                my $fpath = catfile(getcwd(), basename($err{file}));
-               $self->{err} = {
+               $self->{errors} = {
                    %err,
                    block => \@err_block,
                    file => $fpath,
                    sec => $err_sec,
                    tail => [@tail],
                };
-               $obj_bld->{err} = $self->{err} if $obj_bld;
+               dict_update($obj_bld->{build},{ errors => $self->{errors} }) if $obj_bld;
                $DB::single = 1;
 
                if ( varval('err.die'  => $ht_run) ) {
