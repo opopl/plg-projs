@@ -109,7 +109,7 @@ sii:
     titletoc: 1
 
   generate:
-###generate
+###sii@generate
     'on':
     - '_main_'
     - index
@@ -125,7 +125,7 @@ sii:
 
 # Plg::Projs::Prj::Builder::Sct
   scts:
-###sct_preamble
+###sii@scts@preamble
     preamble:
       contents: '@doc @ii @setcounter @perl'
       doc:
@@ -141,7 +141,7 @@ sii:
       setcounter:
         secnumdepth: 0
 
-###sct_listfigs
+###sii@scts@listfigs
     listfigs:
        contents:
        - '\IfFileExists{./lst_figs.tex}{%'
@@ -154,7 +154,7 @@ sii:
          - '\addcontentsline{toc}{chapter}{\listfigurename}'
          - '\listoffigures'
 
-###sct_listtabs
+###sii@scts@listtabs
     listtabs:
        contents:
        - '\IfFileExists{./lst_tabs.tex}{%'
@@ -167,7 +167,7 @@ sii:
          - '\addcontentsline{toc}{chapter}{\listtablename}'
          - '\listoftables'
 
-###sct_tabcont
+###sii@scts@tabcont
     tabcont:
        contents:
        - '@txt.core'
@@ -184,11 +184,11 @@ sii:
          - '\newpage'
          - '\fi'
 
-###sct_preamble.index
+###sii@scts@preamble.index
     'preamble.index':
        contents: '@makeindex'
 
-###sct_index
+###sii@scts@index
     'index':
        contents:
        #- '\IfFileExists{./print_index.tex}{%'
@@ -224,7 +224,7 @@ sii:
            - '  \stopcontents[indices]'
            - '@fi'
 
-###sct_preamble.filecontents
+###sii@scts@preamble.filecontents
     'preamble.filecontents':
        contents: '@input'
        input:
@@ -232,7 +232,7 @@ sii:
        - 'src.preamble.filecontents.index_eng_xdy'
        - 'src.preamble.filecontents.index_rus_xdy'
 
-###sct_preamble.fancyhdr
+###sii@scts@preamble.fancyhdr
     'preamble.fancyhdr':
        contents:
        - '@txt.ps.ltsStory'
@@ -257,7 +257,7 @@ sii:
            - ' '
            - '\pagestyle{fancy}'
 
-###sct_preamble.packages
+###sii@scts@preamble.packages
     'preamble.packages':
        contents: '@pkg @ii'
        ii:
@@ -375,8 +375,19 @@ sii:
 ###run_tex
 run_tex:
   shell: system
+  do_htlatex: 0
   skip:
-    code: '^bibtex'
+    exit_code: '^bibtex'
+  sequence:
+    pdf:
+    - '@clean'
+    - '@tex'
+    - '@bibtex'
+    - '@tex'
+    - '@tex'
+    html:
+  cmd:
+    texindy: 0
 
 ###run
 run:

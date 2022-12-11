@@ -520,7 +520,7 @@ sub run {
     };
     my $do_htlatex = $self->_do_htlatex;
     my $shell = $self->{shell} || $obj_bld->_vals_('run_tex.shell') || 'system';
-    my $skip_code = $obj_bld->_vals_('run_tex.skip.code');
+    my $skip_code = $obj_bld->_vals_('run_tex.skip.exit_code');
 
     my ($ht, $ht_run);
     if ($do_htlatex) {
@@ -535,6 +535,8 @@ sub run {
 
        $tex = $self->{tex_exe} = $mkx->{tex_exe} = 'latex';
     }
+    my $sequence = varval('sequence' => $self) || [];
+    $DB::single = 1;
 
     my @cmds;
     push @cmds,

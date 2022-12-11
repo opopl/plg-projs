@@ -532,7 +532,7 @@ sub ok_after {
         },
     };
     dbh_insert_hash($ref);
-    print Dumper({ map { $_ => $bld->{$_} } qw(sec build) }) . "\n";
+    #print Dumper({ map { $_ => $bld->{$_} } qw(sec build) }) . "\n";
 
     if($bld->{ok}){
         print '[BUILDER.ok] run success' . "\n";
