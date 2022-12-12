@@ -1179,18 +1179,17 @@ sub cmd_fetch_uri {
     $ref ||= {};
 
     my $uri = $ref->{uri} || $self->{uri};
-    $DB::single = 1;
 
     my $atend = sub { $self->info_ok_fail };
 
-    my $jlines = [
+    my $flines = [
         '\ifcmt',
         '  pic ' . $uri,
         '\fi',
     ];
 
     my %n = (
-       jlines => $jlines,
+       flines => $flines,
     );
     my $ftc = $self->_new_fetcher(\%n);
     $ftc->loop;
