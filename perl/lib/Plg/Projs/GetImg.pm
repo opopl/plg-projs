@@ -381,8 +381,8 @@ sub get_opt {
         # load_file - include children
         "with_children",
 
-        # for fetch_remote command
-        "remote=s",
+        # for fetch_uri command
+        "uri=s",
     );
 
     unless( @ARGV ){
@@ -918,7 +918,7 @@ sub cmd_load_sec {
             }
 
         }
-        
+
     }
 
     return $self;
@@ -1174,12 +1174,28 @@ sub cmd_add_images {
     return $self;
 }
 
-sub cmd_fetch_remote {
+sub cmd_fetch_uri {
     my ($self, $ref) = @_;
     $ref ||= {};
 
-    my $remote = $ref->{remote} || $self->{remote};
+    my $uri = $ref->{uri} || $self->{uri};
     $DB::single = 1;
+
+    my $atend = sub { $self->info_ok_fail };
+
+    my $jlines = [
+        '\ifcmt',
+        '  pic ' . $uri,
+        '\fi',
+    ];
+
+    my %n = (
+       jlines => $jlines,
+    );
+    my $ftc = $self->_new_fetcher(\%n);
+    $ftc->loop;
+
+    $atend->() unless $ref->{skip_atend};
 
     return $self;
 }
@@ -1218,7 +1234,7 @@ sub load_file {
         });
         $file = $sec_data->{'@file_path'};
         $file_bn = $sec_data->{'file'};
-        
+
     }
 
     # no section, no file
@@ -1228,18 +1244,18 @@ sub load_file {
         foreach(@files){
             my $file = catfile($root,$_->{file});
             my $sec  = $_->{sec};
-    
+
             next unless -f $file;
-    
+
             $self->load_file({
                 sec        => $sec,
                 skip_atend => 1,
                 with_children => $with_children,
             });
         }
-    
+
         $atend->();
-   
+
         return $self;
     }
 
