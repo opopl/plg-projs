@@ -380,6 +380,9 @@ sub get_opt {
 
         # load_file - include children
         "with_children",
+
+        # for fetch_remote command
+        "remote=s",
     );
 
     unless( @ARGV ){
@@ -1167,6 +1170,16 @@ sub cmd_add_images {
            };
        }
     }
+
+    return $self;
+}
+
+sub cmd_fetch_remote {
+    my ($self, $ref) = @_;
+    $ref ||= {};
+
+    my $remote = $ref->{remote} || $self->{remote};
+    $DB::single = 1;
 
     return $self;
 }
