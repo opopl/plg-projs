@@ -1,0 +1,10 @@
+
+CREATE TABLE IF NOT EXISTS "docs" (
+	"dnum"	INTEGER NOT NULL DEFAULT 1 UNIQUE,
+	"ext"	TEXT,
+	"url"	TEXT UNIQUE,
+	"size"	INTEGER NOT NULL,
+	"md5"	TEXT,
+	"mtime"	INTEGER,
+	PRIMARY KEY("dnum")
+);
