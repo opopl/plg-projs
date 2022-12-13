@@ -65,7 +65,6 @@ sub html_pretty {
     $ref ||= {};
 
     my ($file, $html, $output) = @{$ref}{qw( file html output )};
-    my $html_string;
 
     $html ||= read_file $file;
     my $html_string = ref $html eq 'SCALAR' ? $$html : $html;
