@@ -549,17 +549,16 @@ sub _pln_running {
     $ref ||= {};
 
     my $pln = $ref->{plan} || $bld->_pln;
-    my $ref = {
+    my $r_db = {
         dbh => $bld->{dbh_bld},
-        t => qq{builds},
-        q => 'count(*) as cnt',
+        q => 'SELECT COUNT(*) AS cnt FROM builds',
         w => {
             status => 'running',
             plan => $pln,
         }
     };
 
-    my $cnt = dbh_select_fetchone($ref);
+    my $cnt = dbh_select_fetchone($r_db);
     return $cnt;
 }
 
@@ -725,6 +724,11 @@ sub run {
             ->run_plans
             ->run_plans_after;
     }else{
+        if ($bld->_pln_running) {
+            print '[BUILDER] already running: ' . $bld->_pln .  "\n";
+            return $bld;
+        }
+
         $bld
             ->build_update_start
             ->run_maker
