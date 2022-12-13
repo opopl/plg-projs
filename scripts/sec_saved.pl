@@ -10,5 +10,5 @@ use base qw(
 	Plg::Projs::Sec::Saved
 );
 
-__PACKAGE__->new->run;
+__PACKAGE__->new->main;
 
