@@ -177,6 +177,7 @@ sub init {
     };
 
     return $bld if $bld->{bld_skip_init};
+	$DB::single = 1;
 
     $bld
         ->init_db_bld
@@ -223,7 +224,7 @@ sub init_imgman {
   my ($bld) = @_;
 
   my $img_root = $bld->_bld_var('img_root');
-  my ($proj, $root, $rootid) = @{$bld}{qw( proj root root_id )};
+  my ($proj, $root, $rootid) = @{$bld}{qw( proj root rootid )};
 
   my $imgman = Plg::Projs::GetImg->new(
      skip_get_opt => 1,
@@ -763,7 +764,7 @@ sub init_maker {
         pdf_name     => $pdf_name,
         proj         => $bld->{proj},
         root         => $bld->{root},
-        root_id      => $bld->{root_id},
+        rootid       => $bld->{rootid},
         cmd          => !ref $act_cmd ? $act_cmd : 'compile',
         %$om,
         tex_exe      => $bld->{tex_exe},

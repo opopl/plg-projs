@@ -52,11 +52,11 @@ sub new
 sub init {
     my ($self) = @_;
 
-	my $root = getcwd();
+    my $root = getcwd();
     my $h = {
-        cmd => 'run',
-        root     => $root,
-        root_id  => basename($root),
+        cmd     => 'run',
+        root    => $root,
+        rootid  => basename($root),
     };
 
     hash_inject($self, $h);
@@ -64,9 +64,10 @@ sub init {
     $self
         ->get_opt
         ->get_yaml
+        # proj should be initialized by this moment
         ->Plg::Projs::Prj::init()
         ;
-	$DB::single = 1;
+    $DB::single = 1;
 
     return $self;
 }
@@ -154,7 +155,7 @@ sub get_opt {
 sub cmd_run {
     my ($self) = @_;
 
-	#my @secs = $self->_secs_select
+    #my @secs = $self->_secs_select
 
 
     return $self;

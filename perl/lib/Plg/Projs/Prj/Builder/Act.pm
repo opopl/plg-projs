@@ -60,7 +60,7 @@ sub act_db_sync {
 
     my ($push, $pull, $rmt) = @{$ref}{qw( push pull rmt )};
 
-    my $root_id = $bld->{root_id};
+    my $rootid = $bld->{rootid};
 
     unless ($rmt) {
         my @rmt;
@@ -102,7 +102,7 @@ sub act_db_sync {
 
     my %dbf = (
         'local'  => $bld->_db_file,
-        'remote' => catfile($rmt_db_dir, $root_id . '.db')
+        'remote' => catfile($rmt_db_dir, $rootid . '.db')
     );
 
     my ($m_local, $m_remote) = map {

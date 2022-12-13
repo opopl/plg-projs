@@ -164,7 +164,7 @@ sub json_load {
     my $ind = $in_data->{bld}->{ind} || [];
     my $obj_bld =  Plg::Projs::Prj::Builder->new(
         root    => $in_data->{root} || '',
-        root_id => $in_data->{root_id} || '',
+        rootid  => $in_data->{rootid} || '',
         proj    => $in_data->{proj} || '',
 
         prj_skip_db       => 1,

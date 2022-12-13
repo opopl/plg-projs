@@ -22,7 +22,7 @@ sub _line_process_pat_sect {
 
     $ref ||= {};
 
-    my $root_id = $ref->{root_id} || $mkr->{root_id};
+    my $rootid = $ref->{rootid} || $mkr->{rootid};
     my $proj    = $ref->{proj} || $mkr->{proj};
 
     # section name inside \section{...}
@@ -45,7 +45,7 @@ sub _line_process_pat_sect {
 
     push @$lines, 
         $line,
-        $mkr->_debug_sec($root_id, $proj, $sec),
+        $mkr->_debug_sec($rootid, $proj, $sec),
         '\par',
         ;
 

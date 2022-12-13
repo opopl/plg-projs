@@ -1150,13 +1150,13 @@ sub init_proj {
     return $self if $self->{proj};
 
     my ($proj)  = ($Script =~ m/^(\w+)\..*$/);
-    my $root_id = basename($Bin);
+    my $rootid = basename($Bin);
     my $root    = $Bin;
 
     my $h = {
         proj     => $proj,
         root     => $root,
-        root_id  => $root_id,
+        rootid  => $rootid,
     };
 
     hash_inject($self, $h);

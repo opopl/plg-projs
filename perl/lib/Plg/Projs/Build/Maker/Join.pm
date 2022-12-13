@@ -74,7 +74,7 @@ sub _join_lines {
     my $file = $ref->{file} || '';
 
     my $root    = $mkr->{root};
-    my $root_id = $mkr->{root_id} || '';
+    my $rootid = $mkr->{rootid} || '';
     my $proj    = $ref->{proj} || $mkr->{proj};
 
     my @include = $mkr->_ii_include;
@@ -185,7 +185,7 @@ sub _join_lines {
 
             $mkr->_line_process_pat_sect({
                sect    => $sect,
-               root_id => $root_id,
+               rootid => $rootid,
                proj    => $proj,
                sec     => $sec,
 

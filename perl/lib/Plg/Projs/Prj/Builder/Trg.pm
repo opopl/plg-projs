@@ -186,7 +186,7 @@ sub _trg_output {
     my $output;
     my $mkr = $bld->{maker};
 
-    my ($root_id, $proj) = @{$bld}{qw( root_id proj )};
+    my ($rootid, $proj) = @{$bld}{qw( rootid proj )};
 
     if ($do_htlatex) {
        $output = catfile($mkr->{out_dir_html}, $target, qw(jnd_ht.html));

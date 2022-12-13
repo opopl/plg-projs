@@ -122,7 +122,7 @@ sub get_opt {
     );
 
     $mkr->{root}    ||= getcwd();
-    $mkr->{root_id} = basename($mkr->{root});
+    $mkr->{rootid} = basename($mkr->{root});
 
     unless( @ARGV ){
         $mkr->dhelp;
@@ -157,8 +157,8 @@ sub dhelp {
         $0
     ROOT:
         $mkr->{root}
-    ROOT_ID:
-        $mkr->{root_id}
+    rootid:
+        $mkr->{rootid}
     USAGE
         $Script PROJ OPTIONS
     OPTIONS
@@ -177,10 +177,10 @@ sub dhelp {
 sub init_prj {
     my ($mkr) = @_;
 
-    if ($mkr->{root} && $mkr->{root_id} && $mkr->{proj}) {
+    if ($mkr->{root} && $mkr->{rootid} && $mkr->{proj}) {
         $mkr->{prj} = Plg::Projs::Prj->new(
             root   => $mkr->{root},
-            rootid => $mkr->{root_id},
+            rootid => $mkr->{rootid},
             proj   => $mkr->{proj},
         );
     }
@@ -267,7 +267,7 @@ sub init {
     my $proj    = $mkr->{proj};
 
     my $root    = $mkr->{root} || '';
-    my $root_id = $mkr->{root_id} || '';
+    my $rootid = $mkr->{rootid} || '';
 
     my $pdfout  = $ENV{PDFOUT} || catfile($ENV{HOME},qw(out pdf));
     my $htmlout = $ENV{HTMLOUT} || catfile($ENV{HOME},qw(out html));
@@ -285,8 +285,8 @@ sub init {
         build_dir_unix  => join("/",@build_dir_a),
         build_dir       => catfile($root, @build_dir_a),
         bib_file        => catfile($root, qq{$proj.refs.bib}),
-        out_dir_pdf     => catfile($pdfout, $root_id, $proj),
-        out_dir_html    => catfile($htmlout, $root_id, $proj),
+        out_dir_pdf     => catfile($pdfout, $rootid, $proj),
+        out_dir_html    => catfile($htmlout, $rootid, $proj),
         dbfile          => catfile($root,'projs.sqlite'),
         cmd             => 'bare',
         ii_tree         => {},           # see _join_lines
@@ -312,7 +312,7 @@ sub init {
 
     $h = { %$h,
         src_dir       => catfile($h->{build_dir},qw( .. src ), $target_ext, $target),
-        src_dir_box   => catfile($ENV{BOX}, $root_id, $proj, $target_ext, $target),
+        src_dir_box   => catfile($ENV{BOX}, $rootid, $proj, $target_ext, $target),
         tex_opts      => $tex_opts,
         tex_opts_a    => $tex_opts_a,
         out_dir_pdf_b => catfile($h->{out_dir_pdf}, qw(b_pdflatex) )
@@ -482,7 +482,7 @@ sub cmd_json_out_runtex {
         },
         proj         => $bld->{proj},
         root         => $bld->{root},
-        root_id      => $bld->{root_id},
+        rootid      => $bld->{rootid},
     };
 
     my $j_data = $coder->encode($h);
@@ -578,7 +578,7 @@ sub create_bat_in_src {
     my $dir  = $mkr->{src_dir};
 
     my $proj    = $mkr->{proj};
-    my $root_id = $mkr->{root_id};
+    my $rootid  = $mkr->{rootid};
 
     my %f = (
         'latexmkrc' => sub {
