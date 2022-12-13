@@ -11,6 +11,16 @@ use FindBin qw($Bin $Script);
 use YAML qw(LoadFile);
 use Getopt::Long qw(GetOptions);
 
+use Base::Enc qw( unc_decode );
+use File::Basename qw(basename);
+use File::Spec::Functions qw(catfile);
+use File::Copy qw(copy);
+use File::Slurp::Unicode;
+
+use XML::LibXML;
+use XML::LibXML::PrettyPrint;
+
+
 use Base::Arg qw(
     hash_inject
     hash_update
@@ -36,7 +46,7 @@ sub init {
     my ($self) = @_;
 
     my $h = {
-        cmd => 'load_file',
+        cmd => 'pretty',
     };
 
     hash_inject($self, $h);
@@ -60,6 +70,66 @@ sub get_yaml {
     foreach my $k (keys %$data) {
         $self->{$k} = $$data{$k};
     }
+
+    return $self;
+}
+
+sub cmd_pretty {
+    my ($self, $ref) = @_;
+    $ref ||= {};
+
+    my $file = $ref->{file} || $self->{input};
+    my $output = $ref->{output} || $self->{output};
+
+    my $html = read_file $file;
+
+    $XML::LibXML::skipXMLDeclaration =
+        $ref->{libxml_skip_xml_decl} || $self->{libxml_skip_xml_decl};
+    my $opts_prettyprint = $ref->{opts_prettyprint} || {};
+
+    my $defs = {
+        expand_entities => 0,
+        load_ext_dtd    => 1,
+        no_blanks       => 1,
+        no_cdata        => 1,
+        line_numbers    => 1,
+    };
+
+    my $parser = XML::LibXML->new(%$defs);
+
+    my $string = $ref->{decode} ? unc_decode($html) : $html;
+    my $inp = {
+        string          => $string,
+        recover         => 1,
+        suppress_errors => 1,
+    };
+    my $dom = $parser->load_html($inp);
+    my $node = $dom;
+
+    #my @block = qw/table tables columns entry latex_table options/;
+    my @block = qw//;
+    my %cb = (
+        compact =>  sub {
+            my $node = shift;
+            my $name = $node->nodeName;
+            return 0 if grep { /^$name$/ } @block;
+            return 1;
+        },
+    );
+    my $pp = XML::LibXML::PrettyPrint->new(
+        indent_string => "  ",
+        element => {
+            inline   => [qw/span/],
+            block    => [@block],
+            #compact  => [qw//,$cb{compact}],
+            preserves_whitespace => [qw/pre/],
+        },
+        %$opts_prettyprint,
+    );
+    $pp->pretty_print($node);
+
+    my $text = $dom->toStringHTML;
+    write_file($output, $text);
 
     return $self;
 }
