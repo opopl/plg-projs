@@ -1032,7 +1032,7 @@ sub _dir_sec_new {
     my ($self, $ref) = @_;
     $ref ||= {};
 
-    my $sec    = $ref->{sec};
+    my $sec    = $ref->{sec} || $self->{sec};
     my $proj   = $ref->{proj} || $self->{proj};
     my $rootid = $self->{rootid};
 
@@ -1043,6 +1043,23 @@ sub _dir_sec_new {
     my $dir_sec_new = catfile($new_dir, $sec);
 
     return $dir_sec_new;
+}
+
+sub _dir_sec_done {
+    my ($self, $ref) = @_;
+    $ref ||= {};
+
+    my $sec    = $ref->{sec} || $self->{sec};
+    my $proj   = $ref->{proj} || $self->{proj};
+    my $rootid = $self->{rootid};
+
+    # current cmd data
+    my $pic_data = catfile($ENV{PIC_DATA}, $rootid, $proj);
+    my $done_dir  = catfile($pic_data, qw(done));
+
+    my $dir_sec_done = catfile($done_dir, qw(secs), $sec);
+
+    return $dir_sec_done;
 }
 
 sub _sec_data {
