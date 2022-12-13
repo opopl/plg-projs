@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-script="$PLG/projs/scripts/bufact/tex/get_img.pl"
+script="$PLG/projs/scripts/bufact/html/html_pretty.pl"
 
 if [[ $PERLDB ]]; then
   perl -d $script $*
