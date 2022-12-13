@@ -6,4 +6,7 @@ use utf8;
 
 use Data::Dumper qw(Dumper);
 
+use base qw(Plg::Projs::Html::Pretty);
+
+__PACKAGE__->new->run;
 

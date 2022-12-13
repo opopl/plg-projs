@@ -50,9 +50,6 @@ use Base::Util qw(
   md5sum
 );
 
-use Base::Arg qw(
-  dict_update
-);
 
 use Base::Data qw(
   d_path
@@ -89,6 +86,8 @@ use Base::DB qw(
 use Base::Arg qw(
     hash_inject
     hash_update
+
+    dict_update
 );
 
 sub new
