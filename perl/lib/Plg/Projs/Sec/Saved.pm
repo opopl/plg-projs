@@ -12,6 +12,8 @@ use FindBin qw($Bin $Script);
 use YAML qw(LoadFile);
 use Getopt::Long qw(GetOptions);
 
+use Plg::Projs::GetImg;
+
 use Base::Enc qw( unc_decode );
 use File::Basename qw(basename);
 use File::Spec::Functions qw(catfile);
@@ -23,6 +25,8 @@ use Cwd qw(getcwd);
 use XML::LibXML;
 use XML::LibXML::PrettyPrint;
 use File::Find::Rule;
+
+use Mojo::DOM;
 
 use Plg::Projs::Html qw(
     html_pretty
@@ -184,6 +188,51 @@ sub cmd_run {
 
     my $html_dir = dirname($html_file);
     chdir($html_dir);
+    #current
+    #
+    my $p_file = sprintf(q{p.%s},basename($html_file));
+
+    my $html = html_pretty({
+        file => $html_file,
+        output => $p_file,
+    });
+    my $dom = Mojo::DOM->new($html);
+
+    my $i=0;
+
+    $dom->find('meta, link, script')->map('remove');
+
+    my $imgman = Plg::Projs::GetImg->new(
+        skip_get_opt => 1,
+        map { $_ => $self->{$_} } qw( root rootid proj sec ),
+        cmd => 'fetch_uri',
+    );
+
+    my $j=0;
+    $dom->find('image, img')->each(
+        sub {
+            my $href_save = $_->attr('data-savepage-href');
+            return if !$href_save || $j == 1;
+            $j++;
+            $imgman->cmd_fetch_uri({ uri => $href_save });
+
+            print qq{$j => $href_save} . "\n";
+        }
+    );
+
+    $dom->find('style')->each(
+        sub {
+            $i++;
+            my $txt = $_->content;
+            my $css_file = "$i.css";
+            write_file($css_file,$txt);
+            #my $href = '/prj/sec/asset/' . $css_file;
+            my $href = $css_file;
+            $_->replace(sprintf('<link rel="stylesheet" href="%s">',$href));
+        }
+    );
+    #print Dumper($c) . "\n";
+    write_file($p_file,"$dom");
 
     return $self;
 }
