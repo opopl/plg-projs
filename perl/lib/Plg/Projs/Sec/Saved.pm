@@ -223,18 +223,30 @@ sub cmd_run {
             local $_ = $node;
             my $href_save = $_->attr('data-savepage-href');
             my $href_data = $_->attr('href');
-            return if !$href_save || $j == 5;
+            return if !$href_save || $j == 10;
             $j++;
 
-            print qq{$href_data} . "\n";
-            if ($href_data =~ /^data:image\/jpeg;base64,(.*)/) {
+            if ($href_data && $href_data =~ /^data:image\/jpeg;base64,(.*)/) {
                 my $data = $1;
                 my $decoded = decode_base64($data);
+                my $f = qq{$j.jpg};
 
-                open my $fh, '>', qq{$j.jpg} or die $!;
+                open my $fh, '>', $f or die $!;
                 binmode $fh;
                 print $fh $decoded;
                 close $fh;
+
+                my $md5 = md5sum($f);
+
+                my $imgs = $imgman->_db_imgs({
+                    fields => [qw( url inum img size proj sec )],
+                    where => { md5 => $md5 }
+                });
+                unless (@$imgs) {
+                    #$imgman->cmd_fetch_fs({ 
+                            #path => $f 
+                        #});
+                }
             }
 
 #            my $imgs = $imgman->_db_imgs({
