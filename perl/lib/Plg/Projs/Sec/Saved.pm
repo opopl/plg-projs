@@ -67,7 +67,6 @@ sub init {
         # proj should be initialized by this moment
         ->Plg::Projs::Prj::init()
         ;
-    $DB::single = 1;
 
     return $self;
 }
@@ -156,7 +155,10 @@ sub cmd_run {
     my ($self) = @_;
 
     #my @secs = $self->_secs_select
+    my $sec = $self->{sec};
 
+    my $dir_sec_new =  $self->_dir_sec_new({ sec => $sec });
+    $DB::single = 1;
 
     return $self;
 }
