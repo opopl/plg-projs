@@ -200,7 +200,7 @@ sub cmd_run {
 
     my $i=0;
 
-    $dom->find('meta, link, script')->map('remove');
+    $dom->find('meta, script, link')->map('remove');
 
     my $imgman = Plg::Projs::GetImg->new(
         skip_get_opt => 1,
@@ -214,6 +214,22 @@ sub cmd_run {
             my $href_save = $_->attr('data-savepage-href');
             return if !$href_save || $j == 1;
             $j++;
+
+            my $imgs = $imgman->_db_imgs({
+                    fields => [qw( url inum img size proj sec )],
+                    where => { url => $href_save }
+                });
+
+            my $img_db = $imgs->[0] if @$imgs;
+            if ($img_db) {
+                print Dumper($img_db) . "\n";
+                my $img = $img_db->{img};
+                my $href_db = 'file://' . catfile($imgman->{img_root},$img);
+                #$_->replace(sprintf('<img href="%s">',$href_db));
+                $_->attr({ href => $href_db });
+                undef $_->{'data-savepage-href'};
+            }
+
             $imgman->cmd_fetch_uri({ uri => $href_save });
 
             print qq{$j => $href_save} . "\n";
