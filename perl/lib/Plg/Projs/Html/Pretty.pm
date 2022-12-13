@@ -20,6 +20,10 @@ use File::Slurp::Unicode;
 use XML::LibXML;
 use XML::LibXML::PrettyPrint;
 
+use Plg::Projs::Html qw(
+    html_pretty
+);
+
 
 use Base::Arg qw(
     hash_inject
@@ -81,56 +85,10 @@ sub cmd_pretty {
     my $file = $ref->{file} || $self->{input};
     my $output = $ref->{output} || $self->{output};
 
-    my $html = read_file $file;
-
-    $XML::LibXML::skipXMLDeclaration =
-        $ref->{libxml_skip_xml_decl} || $self->{libxml_skip_xml_decl};
-    my $opts_prettyprint = $ref->{opts_prettyprint} || {};
-
-    my $defs = {
-        expand_entities => 0,
-        load_ext_dtd    => 1,
-        no_blanks       => 1,
-        no_cdata        => 1,
-        line_numbers    => 1,
-    };
-
-    my $parser = XML::LibXML->new(%$defs);
-
-    my $string = $ref->{decode} ? unc_decode($html) : $html;
-    my $inp = {
-        string          => $string,
-        recover         => 1,
-        suppress_errors => 1,
-    };
-    my $dom = $parser->load_html($inp);
-    my $node = $dom;
-
-    #my @block = qw/table tables columns entry latex_table options/;
-    my @block = qw//;
-    my %cb = (
-        compact =>  sub {
-            my $node = shift;
-            my $name = $node->nodeName;
-            return 0 if grep { /^$name$/ } @block;
-            return 1;
-        },
-    );
-    my $pp = XML::LibXML::PrettyPrint->new(
-        indent_string => "  ",
-        element => {
-            inline   => [qw/span/],
-            block    => [@block],
-            #compact  => [qw//,$cb{compact}],
-            preserves_whitespace => [qw/pre/],
-        },
-        %$opts_prettyprint,
-    );
-    $pp->strip_whitespace($node);
-    $pp->pretty_print($node);
-
-    my $text = $dom->toStringHTML;
-    write_file($output, $text);
+    html_pretty({ 
+       file   => $file,
+       output => $output,
+    });
 
     return $self;
 }
