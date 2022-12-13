@@ -248,7 +248,7 @@ sub cmd_run {
         }
     );
     #print Dumper($c) . "\n";
-    write_file($p_file,"$dom");
+    write_file($p_file, $dom->to_string);
 
     return $self;
 }
