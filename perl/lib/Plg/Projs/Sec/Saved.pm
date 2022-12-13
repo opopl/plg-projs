@@ -27,6 +27,11 @@ use XML::LibXML::PrettyPrint;
 use File::Find::Rule;
 
 use Mojo::DOM;
+use HTML5::DOM;
+use MIME::Base64 qw(decode_base64);
+use Base::Util qw(
+    md5sum
+);
 
 use Plg::Projs::Html qw(
     html_pretty
@@ -196,7 +201,10 @@ sub cmd_run {
         file => $html_file,
         output => $p_file,
     });
-    my $dom = Mojo::DOM->new($html);
+    #my $dom = Mojo::DOM->new($html);
+    my $parser = HTML5::DOM->new();
+
+    my $dom = $parser->parse($html);
 
     my $i=0;
 
@@ -211,44 +219,59 @@ sub cmd_run {
     my $j=0;
     $dom->find('image, img')->each(
         sub {
+            my ($node, $index) = @_;
+            local $_ = $node;
             my $href_save = $_->attr('data-savepage-href');
-            return if !$href_save || $j == 1;
+            my $href_data = $_->attr('href');
+            return if !$href_save || $j == 5;
             $j++;
 
-            my $imgs = $imgman->_db_imgs({
-                    fields => [qw( url inum img size proj sec )],
-                    where => { url => $href_save }
-                });
+            print qq{$href_data} . "\n";
+            if ($href_data =~ /^data:image\/jpeg;base64,(.*)/) {
+                my $data = $1;
+                my $decoded = decode_base64($data);
 
-            my $img_db = $imgs->[0] if @$imgs;
-            if ($img_db) {
-                print Dumper($img_db) . "\n";
-                my $img = $img_db->{img};
-                my $href_db = 'file://' . catfile($imgman->{img_root},$img);
-                #$_->replace(sprintf('<img href="%s">',$href_db));
-                $_->attr({ href => $href_db });
-                undef $_->{'data-savepage-href'};
+                open my $fh, '>', qq{$j.jpg} or die $!;
+                binmode $fh;
+                print $fh $decoded;
+                close $fh;
             }
 
-            $imgman->cmd_fetch_uri({ uri => $href_save });
+#            my $imgs = $imgman->_db_imgs({
+                #fields => [qw( url inum img size proj sec )],
+                #where => { url => $href_save }
+            #});
 
-            print qq{$j => $href_save} . "\n";
+            #my $img_db = $imgs->[0] if @$imgs;
+            #if ($img_db) {
+                #print Dumper($img_db) . "\n";
+                #my $img = $img_db->{img};
+                #my $href_db = 'file://' . join('/', $imgman->{img_root}, $img);
+                #$_->attr({ href => $href_db });
+                #delete $_->{'data-savepage-href'};
+                #return;
+            #}
+
+            #$imgman->cmd_fetch_uri({ uri => $href_save });
+
+            #print qq{$j => $href_save} . "\n";
         }
     );
 
-    $dom->find('style')->each(
-        sub {
-            $i++;
-            my $txt = $_->content;
-            my $css_file = "$i.css";
-            write_file($css_file,$txt);
-            #my $href = '/prj/sec/asset/' . $css_file;
-            my $href = $css_file;
-            $_->replace(sprintf('<link rel="stylesheet" href="%s">',$href));
-        }
-    );
+#    $dom->find('style')->each(
+        #sub {
+            #$i++;
+            #my $txt = $_->content;
+            #my $css_file = "$i.css";
+            #write_file($css_file,$txt);
+            ##my $href = '/prj/sec/asset/' . $css_file;
+            #my $href = $css_file;
+            #$_->replace(sprintf('<link rel="stylesheet" href="%s">',$href));
+        #}
+    #);
     #print Dumper($c) . "\n";
-    write_file($p_file, $dom->to_string);
+    #write_file($p_file, $dom->to_string);
+    write_file($p_file, $dom->html);
 
     return $self;
 }

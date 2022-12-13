@@ -382,6 +382,8 @@ sub get_opt {
 
         # for fetch_uri command
         "uri=s",
+        # for fetch_fs command
+        "fs=s",
     );
 
     unless( @ARGV ){
@@ -1184,6 +1186,32 @@ sub cmd_fetch_uri {
     my $flines = [
         '\ifcmt',
         '  pic ' . $uri,
+        '\fi',
+    ];
+
+    my %n = (
+       flines => $flines,
+    );
+    my $ftc = $self->_new_fetcher(\%n);
+    $ftc->loop;
+
+    $atend->() unless $ref->{skip_atend};
+
+    return $self;
+}
+
+sub cmd_fetch_fs {
+    my ($self, $ref) = @_;
+    $ref ||= {};
+
+    my $path = $ref->{path} || $self->{path};
+
+    my $atend = sub { $self->info_ok_fail };
+
+    my $flines = [
+        '\ifcmt',
+        '  import',
+        '  @path ' . $path,
         '\fi',
     ];
 
