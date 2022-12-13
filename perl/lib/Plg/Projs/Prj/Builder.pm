@@ -27,6 +27,8 @@ use YAML qw( LoadFile Load Dump DumpFile );
 
 use Base::DB qw(
     dbi_connect
+
+    dbh_select_fetchone
     dbh_insert_hash
     dbh_insert_update_hash
 );
@@ -542,8 +544,23 @@ sub _obj2dict_order {
     return (\%dict, \@order);
 }
 
-sub _pln_build_status {
-    my ($bld) = @_;
+sub _pln_running {
+    my ($bld, $ref) = @_;
+    $ref ||= {};
+
+    my $pln = $ref->{plan} || $bld->_pln;
+    my $ref = {
+        dbh => $bld->{dbh_bld},
+        t => qq{builds},
+        q => 'count(*) as cnt',
+        w => {
+            status => 'running',
+            plan => $pln,
+        }
+    };
+
+    my $cnt = dbh_select_fetchone($ref);
+    return $cnt;
 }
 
 sub _pln {
