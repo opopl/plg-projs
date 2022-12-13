@@ -126,6 +126,7 @@ sub cmd_pretty {
         },
         %$opts_prettyprint,
     );
+    $pp->strip_whitespace($node);
     $pp->pretty_print($node);
 
     my $text = $dom->toStringHTML;
