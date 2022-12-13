@@ -41,6 +41,7 @@ use Plg::Projs::GetImg;
 
 use base qw(
     Plg::Projs::Prj
+    Plg::Projs::Doc
 
     Base::Obj
     Base::Opt
@@ -101,6 +102,23 @@ sub init_db_bld {
     return $bld;
 }
 
+sub init_db_doc {
+    my ($bld) = @_;
+
+    my $dbh_doc = dbi_connect({
+        dbfile => catfile($bld->{doc_root},qw(doc.db))
+    });
+
+    $bld->{dbh_doc} = $dbh_doc;
+    $bld->init_db_tables({
+       dbh => $dbh_doc,
+       table_order => [qw( docs )],
+       prefix => 'doc.create_table_',
+    });
+
+    return $bld;
+}
+
 sub inj_base {
     my ($bld) = @_;
 
@@ -150,6 +168,7 @@ sub init {
     }
 
     $bld->Plg::Projs::Prj::init();
+    $bld->Plg::Projs::Doc::init();
 
     $bld->{build} = {
         cmda => [$0, @ARGV],
@@ -159,6 +178,7 @@ sub init {
 
     $bld
         ->init_db_bld
+        ->init_db_doc
         ->inj_base
         ->prj_load_yml # process PROJ.yml file, set trg_list
         ->inj_targets
@@ -522,7 +542,11 @@ sub _obj2dict_order {
     return (\%dict, \@order);
 }
 
-sub build_update_start {
+sub _pln_build_status {
+    my ($bld) = @_;
+}
+
+sub _pln {
     my ($bld) = @_;
 
     my ($act, $do_htlatex, $target) = @{$bld}{qw( act do_htlatex target )};
@@ -532,6 +556,16 @@ sub build_update_start {
        $trg = join("." => $1, $2);
     };
     my $pln = join '.' => ($act, $do_htlatex ? 'htx' : 'pdf', $trg );
+
+    $bld->{target_ext} ||= $do_htlatex ? 'html' : 'pdf';
+
+    return $pln;
+}
+
+sub build_update_start {
+    my ($bld) = @_;
+
+    my $pln = $bld->_pln;
     my $start = time();
     my $md5 = md5_hex($pln);
     my $buuid = join '@' => $start, $md5;
@@ -543,9 +577,7 @@ sub build_update_start {
        plan => $pln,
     });
 
-    $bld->{target_ext} ||= $do_htlatex ? 'html' : 'pdf';
-
-    $bld->build_update_db({ 
+    $bld->build_update_db({
         status => 'running',
     });
 
@@ -593,7 +625,7 @@ sub build_update_end {
     my $duration = $end - $start;
 
     my $err = $bld->{ok} ? '' : $bld->_vals_('build.errors.msg');
-    $bld->build_update_db({ 
+    $bld->build_update_db({
         status => $bld->{ok} ? 'success' : 'fail',
         duration => $duration,
         $err ? ( err => $err ) : (),
