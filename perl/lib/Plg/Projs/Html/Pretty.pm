@@ -74,7 +74,9 @@ sub print_help {
         LOCATION:
             $0
         OPTIONS:
-            --f_yaml -y string YAML control file
+            --f_yaml -y  string    YAML control file
+            --input  -i  string    Input HTML file
+            --output -o  string    output HTML file
         USAGE:
             PROCESS HTML FILE:
                 perl $Script -i INPUT -o OUTPUT -y YFILE
