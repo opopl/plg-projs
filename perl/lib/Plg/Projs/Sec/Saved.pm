@@ -17,10 +17,12 @@ use File::Basename qw(basename);
 use File::Spec::Functions qw(catfile);
 use File::Copy qw(copy);
 use File::Slurp::Unicode;
+use File::Basename qw(basename dirname);
 use Cwd qw(getcwd);
 
 use XML::LibXML;
 use XML::LibXML::PrettyPrint;
+use File::Find::Rule;
 
 use Plg::Projs::Html qw(
     html_pretty
@@ -93,7 +95,7 @@ sub cmd_pretty {
     my $file = $ref->{file} || $self->{input};
     my $output = $ref->{output} || $self->{output};
 
-    html_pretty({ 
+    html_pretty({
        file   => $file,
        output => $output,
     });
@@ -158,7 +160,30 @@ sub cmd_run {
     my $sec = $self->{sec};
 
     my $dir_sec_new =  $self->_dir_sec_new({ sec => $sec });
-    $DB::single = 1;
+    my $dir_sec_done =  $self->_dir_sec_done({ sec => $sec });
+
+    my $rule = File::Find::Rule->new;
+
+    my $dirs = [ $dir_sec_new, $dir_sec_done ];
+
+    my ($html_file);
+    foreach my $dir ( map { catfile($_, qw(html)) } @$dirs ) {
+        next unless -d $dir;
+
+        ($html_file) = $rule
+            ->name('*.html')
+            ->maxdepth(1)
+            ->exec(sub {
+               local $_ = shift;
+               return /^we\.html$/ ? 1 : 0;
+            })
+            ->in($dir);
+    }
+
+    return $self unless $html_file;
+
+    my $html_dir = dirname($html_file);
+    chdir($html_dir);
 
     return $self;
 }
@@ -172,5 +197,4 @@ sub main {
 }
 
 1;
- 
 

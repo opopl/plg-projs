@@ -17,6 +17,7 @@ use File::Find::Rule;
 use File::Path qw(mkpath rmtree);
 
 use Data::Dumper qw(Dumper);
+use DateTime;
 
 use YAML::XS qw( LoadFile );
 
@@ -64,6 +65,8 @@ use base qw(
 );
 
 use Base::Arg qw(
+    varval
+
     hash_inject
     hash_update
 
@@ -1036,11 +1039,13 @@ sub _dir_sec_new {
     my $proj   = $ref->{proj} || $self->{proj};
     my $rootid = $self->{rootid};
 
+    my $sub    = $ref->{sub} || '';
+
     # current cmd data
     my $pic_data = catfile($ENV{PIC_DATA}, $rootid, $proj);
     my $new_dir  = catfile($pic_data, qw(new));
 
-    my $dir_sec_new = catfile($new_dir, $sec);
+    my $dir_sec_new = catfile($new_dir, $sec, $sub);
 
     return $dir_sec_new;
 }
@@ -1053,11 +1058,24 @@ sub _dir_sec_done {
     my $proj   = $ref->{proj} || $self->{proj};
     my $rootid = $self->{rootid};
 
+    my $sub    = $ref->{sub} || '';
+
     # current cmd data
     my $pic_data = catfile($ENV{PIC_DATA}, $rootid, $proj);
     my $done_dir  = catfile($pic_data, qw(done));
 
-    my $dir_sec_done = catfile($done_dir, qw(secs), $sec);
+    my $dir_sec_done = catfile($done_dir, qw(secs), $sec, $sub);
+
+    my $mfile = catfile($ENV{PLG},qw( projs data yaml months.yaml ));
+    my $map_months = LoadFile($mfile) // {};
+
+    if ($sec =~ /^(?<day>\d+)_(?<month>\d+)_(?<year>\d+)\.(\S+)$/) {
+
+        my $dt = DateTime->new( map { $_ => $+{$_} } qw(day month year));
+
+        my $month_name = varval(sprintf('en.short.%s', $dt->month) => $map_months);
+        $dir_sec_done = catfile($done_dir, $+{year}, $month_name, $+{day}, $sec, $sub);
+    }
 
     return $dir_sec_done;
 }
