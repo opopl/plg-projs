@@ -243,9 +243,9 @@ sub cmd_run {
                     where => { md5 => $md5 }
                 });
                 unless (@$imgs) {
-                    #$imgman->cmd_fetch_fs({ 
-                            #path => $f 
-                        #});
+                    $imgman->pic_add({
+                        path => $f
+                    });
                 }
             }
 

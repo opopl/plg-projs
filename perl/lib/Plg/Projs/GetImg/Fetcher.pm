@@ -104,16 +104,31 @@ sub d_block_import {
 
     my $url_parent = $sec_data->{url} if $sec_data;
 
-    if (-d $path) {
-        my $imgs_db = $imgman->_db_imgs({
+    my $add_opts = {
+       tags => $tags_a,
+       url_parent => $url_parent,
+
+       proj   => $proj,
+       sec    => $sec,
+       rootid => $rootid,
+
+       mv => 0,
+    };
+
+    my (@imgs_fs, @imgs_db_md5, $imgs_db);
+    if (-f $path) {
+        push @imgs_fs, $path;
+
+    } elsif (-d $path) {
+        $imgs_db = $imgman->_db_imgs({
             tags => { and => $tags_a },
             fields => [qw( url name_orig caption md5 )],
             mode  => 'rows',
             where => { proj => $proj, sec => $sec },
         });
-        my @imgs_db_md5 = map { $_->{md5} } @$imgs_db;
+        @imgs_db_md5 = map { $_->{md5} } @$imgs_db;
 
-        my @imgs_fs = $imgman->_fs_find_imgs({
+        @imgs_fs = $imgman->_fs_find_imgs({
             find  => { max_depth => 1 },
             dirs  => [ $path ],
             filter => {
@@ -124,21 +139,13 @@ sub d_block_import {
             limit => $limit,
         });
         $DB::single = 1;
-        #we import into database all screenshots on the filesystem
-        foreach my $img_path (@imgs_fs) {
-            $imgman->pic_add({
-                file => $img_path,
-                tags => $tags_a,
-                url_parent => $url_parent,
-    
-                proj   => $proj,
-                sec    => $sec,
-                rootid => $rootid,
-    
-                mv => 0,
-            });
-        }
-        1;
+    }
+    #we import into database all screenshots on the filesystem
+    foreach my $img_path (@imgs_fs) {
+        $imgman->pic_add({
+            file => $img_path,
+            %$add_opts,
+        });
     }
 
     $self->{d} = undef;

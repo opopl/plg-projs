@@ -955,18 +955,20 @@ sub pic_add {
     my $dt = DateTime->now;
     my $t = $dt->strftime('%d_%m_%y.%H.%M.%S');
 
-    my $md5    = md5sum($img_file_local);
-    my $inf_local    = image_info($img_file_local);
-    my $url_tm = sprintf(q{tm://%s@%s}, $t, $md5);
+    my $md5        = md5sum($img_file_local);
+    my $inf_local  = image_info($img_file_local);
+    my $url_tm     = sprintf(q{tm://%s@%s}, $t, $md5);
 
     my $exif_local = ImageInfo($img_file_local);
 
     my ($width, $height, $ext) = @{$inf_local}{qw( width height file_ext )};
 
+    my $w = { md5 => $md5 };
+    $w->{url} = $ref->{url} if $ref->{url};
     my $r = {
         t => qq{ imgs },
         q => q{ SELECT COUNT(*) FROM imgs },
-        w => { md5 => $md5 },
+        w => $w,
     };
 
     # do not insert image with the same md5
@@ -984,7 +986,7 @@ sub pic_add {
     my $img_file = catfile($self->{img_root}, $img);
 
     my $ins = {
-       url    => $url_tm,
+       url    => $ref->{url} || $url_tm,
        inum   => $inum,
        img    => $img,
        ext    => $ext,
