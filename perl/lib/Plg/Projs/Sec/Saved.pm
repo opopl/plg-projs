@@ -9,8 +9,12 @@ binmode STDOUT,':encoding(utf8)';
 
 use Data::Dumper qw(Dumper);
 use FindBin qw($Bin $Script);
-use YAML qw(LoadFile);
 use Getopt::Long qw(GetOptions);
+
+#use YAML qw(LoadFile DumpFile Dump);
+use YAML::XS qw(LoadFile DumpFile Dump);
+
+use URL::XS qw(parse_url);
 
 use Plg::Projs::GetImg;
 
@@ -259,7 +263,8 @@ sub cmd_run {
         ->do_css
         ->do_img
         ->do_write2fs({ file => $p_file_view, pretty => 1 })
-        ->do_clean
+        ->do_unwrap
+        ->do_a_href
         ->do_write2fs({ file => $p_file_parse, pretty => 1 })
         ;
 
@@ -465,7 +470,42 @@ sub do_meta {
     return $self;
 }
 
-sub do_clean {
+sub do_a_href {
+    my ($self, $ref) = @_;
+    $ref ||= {};
+
+    my $dom = $ref->{dom} || $self->{dom};
+
+    my $j=0;
+    my @urls;
+    $dom->find('a[href]')->each(
+        sub {
+            my ($node, $index) = @_;
+            #return if $j > 10;
+
+            local $_ = $node;
+            my $href = $_->{href};
+            my $parsed = eval {
+                parse_url($href);
+            };
+            push @urls,
+              {     url => $href,
+                    parsed=> $parsed
+              };
+
+            $j++;
+        }
+    );
+    chdir $self->{root};
+    my $ofile = 'saved.out.yaml';
+    my $dmp = Dumper([@urls]) . "\n";
+    #my $yml = Dump({ urls => [@urls] });
+    write_file($ofile, $dmp);
+
+    return $self;
+}
+
+sub do_unwrap {
     my ($self, $ref) = @_;
     $ref ||= {};
 
