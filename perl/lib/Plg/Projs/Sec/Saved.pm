@@ -235,10 +235,11 @@ sub cmd_run {
 
             $j++;
 
-            if ($href_data =~ /^data:image\/jpeg;base64,(.*)/) {
-                my $data = $1;
+            if ($href_data =~ /^data:image\/(?<type>png|jpeg);base64,(?<data>.*)/) {
+                my ($data, $type) = @+{qw(data type)};
+                my $ext = $type eq 'jpeg' ? 'jpg' : $type;
                 my $decoded = decode_base64($data);
-                my $f = qq{$j.jpg};
+                my $f = qq{$j.$ext};
 
                 open my $fh, '>', $f or die $!;
                 binmode $fh;
@@ -250,14 +251,12 @@ sub cmd_run {
                 my $img_db;
                 my $step = 0;
                 while(1) {
-                    dbh_update_hash({
-                        dbh => $imgman->{dbh},
-                        t => 'imgs',
-                        h => {
-                            map { $_ => $self->{$_} } qw( rootid proj sec ),
-                        },
-                        w => { md5 => $md5 },
-                    });
+#                    dbh_update_hash({
+                        #dbh => $imgman->{dbh},
+                        #t => 'imgs',
+                        #h => { #map { $_ => $self->{$_} } qw( rootid proj sec ), },
+                        #w => { md5 => $md5 },
+                    #});
 
                     $img_db = $imgman->_db_img_one({
                         fields => [qw( url inum img size proj sec )],
@@ -268,6 +267,9 @@ sub cmd_run {
                     $imgman->pic_add({
                         file => $f,
                         url => $href_save,
+                        ins_db => {
+                            map { $_ => $self->{$_} } qw( rootid proj sec ),
+                        },
                     });
 
                     $step++;
@@ -281,19 +283,6 @@ sub cmd_run {
                     delete $_->{'data-savepage-href'};
                 }
              }
-
-#            my $imgs = $imgman->_db_imgs({
-                #fields => [qw( url inum img size proj sec )],
-                #where => { url => $href_save }
-            #});
-
-            #if ($img_db) {
-
-            #}
-
-            #$imgman->cmd_fetch_uri({ uri => $href_save });
-
-            #print qq{$j => $href_save} . "\n";
         }
     );
 
