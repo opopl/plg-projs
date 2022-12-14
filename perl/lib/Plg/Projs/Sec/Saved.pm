@@ -86,6 +86,7 @@ sub init {
         ->get_yaml
         # proj should be initialized by this moment
         ->Plg::Projs::Prj::init()
+        ->init_imgman
         ;
     $DB::single = 1;
 
@@ -202,6 +203,18 @@ sub _sec_html_file {
     return $html_file;
 }
 
+sub init_imgman {
+    my ($self) = @_;
+
+    $self->{imgman} = Plg::Projs::GetImg->new(
+        skip_get_opt => 1,
+        map { $_ => $self->{$_} } qw( root rootid proj sec ),
+        cmd => 'fetch_uri',
+    );
+
+    return $self;
+}
+
 sub cmd_run {
     my ($self) = @_;
 
@@ -237,11 +250,6 @@ sub cmd_run {
 
     my $dom = $self->{dom} = $parser->parse($html);
 
-    $self->{imgman} = Plg::Projs::GetImg->new(
-        skip_get_opt => 1,
-        map { $_ => $self->{$_} } qw( root rootid proj sec ),
-        cmd => 'fetch_uri',
-    );
     # 70001
     # 69992
     # 69993
@@ -283,6 +291,9 @@ sub do_img {
         url_parent => $url_parent,
     };
 
+    my $img_dir = 'imgs';
+    mkpath $img_dir unless -d $img_dir;
+
     my $j=0;
     $dom->find('image, img')->each(
         sub {
@@ -309,7 +320,7 @@ sub do_img {
                 my ($data, $type) = @+{qw(data type)};
                 my $ext = $type eq 'jpeg' ? 'jpg' : $type;
                 my $decoded = decode_base64($data);
-                my $f = qq{$j.$ext};
+                my $f = catfile($img_dir, qq{$j.$ext});
 
                 open my $fh, '>', $f or die $!;
                 binmode $fh;
