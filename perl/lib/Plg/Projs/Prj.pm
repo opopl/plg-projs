@@ -1074,7 +1074,7 @@ sub _dir_sec_done {
         my $dt = DateTime->new( map { $_ => $+{$_} } qw(day month year));
 
         my $month_name = varval(sprintf('en.short.%s', $dt->month) => $map_months);
-        $dir_sec_done = catfile($done_dir, $+{year}, $month_name, $+{day}, $sec, $sub);
+        $dir_sec_done = catfile($done_dir, $+{year}, $month_name, $dt->day, $sec, $sub);
     }
 
     return $dir_sec_done;
