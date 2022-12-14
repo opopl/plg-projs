@@ -206,7 +206,18 @@ sub cmd_run {
     my ($self) = @_;
 
     #my @secs = $self->_secs_select
-    my $sec = $self->{sec};
+    my ($sec, $secs) = @{$self}{qw( sec secs )};
+    $secs ||= [];
+
+    unless ($sec) {
+        foreach my $ss (@$secs) {
+            $self->{sec} = $ss;
+            $self->cmd_run;
+        }
+        return $self;
+    }
+
+    print qq{[Saved] processing section => $sec } . "\n";
 
     my $html_file = $self->_sec_html_file;
     return $self unless $html_file;
@@ -364,12 +375,12 @@ sub unwrap {
 
     unless($len || $txt) {
        if (grep { /^$tag$/ } qw(span div)) {
-	       print qq{$i => remove} . "\n";
-	       my $parent = $node->parent;
-	       $node->remove();
-	
-	       $self->unwrap($parent) if $parent;
-	       return $self;
+           #print qq{$i => remove} . "\n";
+           my $parent = $node->parent;
+           $node->remove();
+
+           $self->unwrap($parent) if $parent;
+           return $self;
        }
     }
 
@@ -386,7 +397,7 @@ sub unwrap {
                     my $c_style = $child->attr('style');
                     next unless $p_style || $c_style;
 
-                    $c_style = join ';' => (  
+                    $c_style = join ';' => (
                         $p_style ? $p_style : (),
                         $c_style ? $c_style : (),
                     );
@@ -397,16 +408,16 @@ sub unwrap {
             }
             #print Dumper($attr) . "\n";
 
-            $class_list->each(sub { 
+            $class_list->each(sub {
                my $class = shift;
                $child->classList->add($class);
                #print Dumper($class) . "\n";
             });
 
-	        $node->parent->replaceChild($child => $node);
-	        $node = $child;
+            $node->parent->replaceChild($child => $node);
+            $node = $child;
         }
-	    $self->unwrap($child);
+        $self->unwrap($child);
         return $self;
     }
 
@@ -434,7 +445,7 @@ sub do_meta {
     $dom->find('meta, script, link')->map('remove');
 
     my $meta = $dom->createElement('meta');
-    $meta->attr({ 
+    $meta->attr({
         'http-equiv' => "Content-Type",
         'content'  => "text/html; charset=utf-8",
     });
@@ -491,10 +502,10 @@ sub do_css {
             #my $href = '/prj/sec/asset/' . $css_file;
             my $href = $css_file;
             my $link = $dom->createElement('link');
-            $link->attr({ 
-                rel  => 'stylesheet', 
-                type => 'text/css', 
-                href => $href 
+            $link->attr({
+                rel  => 'stylesheet',
+                type => 'text/css',
+                href => $href
             });
             $_->replace($link);
         }
