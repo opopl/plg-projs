@@ -25,6 +25,7 @@ use Cwd qw(getcwd);
 use XML::LibXML;
 use XML::LibXML::PrettyPrint;
 use File::Find::Rule;
+use File::Path qw(mkpath rmtree);
 
 use Mojo::DOM;
 use HTML5::DOM;
@@ -213,20 +214,45 @@ sub cmd_run {
     #my $dom = Mojo::DOM->new($html);
     my $parser = HTML5::DOM->new();
 
-    my $dom = $parser->parse($html);
-
-    my $i=0;
+    my $dom = $self->{dom} = $parser->parse($html);
 
     $dom->find('meta, script, link')->map('remove');
 
-    my $imgman = Plg::Projs::GetImg->new(
+    $self->{imgman} = Plg::Projs::GetImg->new(
         skip_get_opt => 1,
         map { $_ => $self->{$_} } qw( root rootid proj sec ),
         cmd => 'fetch_uri',
     );
 
+    $self
+        ->do_css
+        ->do_img
+        ;
+
+    write_file($p_file, $dom->html);
+
+    return $self;
+}
+
+sub do_img {
+    my ($self, $ref) = @_;
+    $ref ||= {};
+
+    my $dom = $ref->{dom} || $self->{dom};
+    my $imgman = $self->{imgman};
+
+    my $sec = $self->{sec};
+    my $sd = $self->_sec_data({ sec => $sec });
+
+    my $url_parent = $sd->{url};
+    my $db_upd = $self->{db_upd};
+
+    my $ins_db = {
+        ( map { $_ => $self->{$_} } qw( rootid proj sec ) ),
+        url_parent => $url_parent,
+    };
+
     my $j=0;
-    $DB::single = 1;
     $dom->find('image, img')->each(
         sub {
             my ($node, $index) = @_;
@@ -264,12 +290,14 @@ sub cmd_run {
                 my $img_db;
                 my $step = 0;
                 while(1) {
-#                    dbh_update_hash({
-                        #dbh => $imgman->{dbh},
-                        #t => 'imgs',
-                        #h => { #map { $_ => $self->{$_} } qw( rootid proj sec ), },
-                        #w => { md5 => $md5 },
-                    #});
+                    if ($db_upd) {
+	                    dbh_update_hash({
+	                        dbh => $imgman->{dbh},
+	                        t => 'imgs',
+	                        h => $ins_db,
+	                        w => { md5 => $md5 },
+	                    });
+                    }
 
                     $img_db = $imgman->_db_img_one({
                         fields => [qw( url inum img size proj sec )],
@@ -278,11 +306,11 @@ sub cmd_run {
                     last if $img_db || $step == 1;
 
                     $imgman->pic_add({
-                        file => $f,
-                        url => $href_save,
-                        ins_db => {
-                            map { $_ => $self->{$_} } qw( rootid proj sec ),
-                        },
+                        file   => $f,
+                        url    => $href_save,
+                        ins_db => $ins_db,
+                        mv     => 1,
+                        tags   => [qw( fb.saved )],
                     });
 
                     $step++;
@@ -298,7 +326,19 @@ sub cmd_run {
         }
     );
 
-    $j=0;
+    return $self;
+}
+
+sub do_css {
+    my ($self, $ref) = @_;
+    $ref ||= {};
+
+    my $dom = $ref->{dom} || $self->{dom};
+
+    my $css_dir = 'css';
+    mkpath $css_dir unless -d $css_dir;
+
+    my $j = 0;
     $dom->find('style')->each(
         sub {
             local $_ = shift;
@@ -306,7 +346,7 @@ sub cmd_run {
             my $css_txt = $_->text;
             $css_txt = tidy_css($css_txt);
 
-            my $css_file = "$j.css";
+            my $css_file = "css/$j.css";
             write_file($css_file, $css_txt);
             #my $href = '/prj/sec/asset/' . $css_file;
             my $href = $css_file;
@@ -315,7 +355,6 @@ sub cmd_run {
             $_->replace($link);
         }
     );
-    write_file($p_file, $dom->html);
 
     return $self;
 }

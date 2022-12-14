@@ -933,6 +933,23 @@ sub cmd_load_sec {
     return $self;
 }
 
+sub db_pic_update {
+    my ($self, $ref) = @_;
+    $ref ||= {};
+
+    my $url = $ref->{url};
+
+    dbh_base2info({
+       'tbase'  => 'imgs',
+       'bwhere' => { url => $url },
+       'jcol'   => 'url',
+       'b2i'    => { 'tags' => 'tag' },
+       'bcols'  => [qw( tags )],
+    });
+
+    return $self;
+}
+
 sub pic_add {
     my ($self, $ref) = @_;
     $ref ||= {};
