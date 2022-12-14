@@ -217,16 +217,20 @@ sub cmd_run {
     );
 
     my $j=0;
+    $DB::single = 1;
     $dom->find('image, img')->each(
         sub {
             my ($node, $index) = @_;
             local $_ = $node;
             my $href_save = $_->attr('data-savepage-href');
             my $href_data = $_->attr('href');
-            return if !$href_save || $j == 10;
+
+            return if $j == 10;
+            return unless $href_save && $href_data;
+
             $j++;
 
-            if ($href_data && $href_data =~ /^data:image\/jpeg;base64,(.*)/) {
+            if ($href_data =~ /^data:image\/jpeg;base64,(.*)/) {
                 my $data = $1;
                 my $decoded = decode_base64($data);
                 my $f = qq{$j.jpg};
@@ -238,30 +242,39 @@ sub cmd_run {
 
                 my $md5 = md5sum($f);
 
-                my $imgs = $imgman->_db_imgs({
-                    fields => [qw( url inum img size proj sec )],
-                    where => { md5 => $md5 }
-                });
-                unless (@$imgs) {
-                    $imgman->pic_add({
-                        path => $f
+                my $img_db;
+                my $step = 0;
+                while(1) {
+                    $img_db = $imgman->_db_img_one({
+                        fields => [qw( url inum img size proj sec )],
+                        where => { md5 => $md5 }
                     });
+                    last if $img_db || $step == 1;
+
+                    $imgman->pic_add({
+                        file => $f,
+                        url => $href_save,
+                    });
+
+                    $step++;
                 }
-            }
+
+                if ($img_db) {
+                    print Dumper($img_db) . "\n";
+                    my $img = $img_db->{img};
+                    my $href_db = 'file://' . join('/', $imgman->{img_root}, $img);
+                    $_->attr({ href => $href_db });
+                    delete $_->{'data-savepage-href'};
+                }
+             }
 
 #            my $imgs = $imgman->_db_imgs({
                 #fields => [qw( url inum img size proj sec )],
                 #where => { url => $href_save }
             #});
 
-            #my $img_db = $imgs->[0] if @$imgs;
             #if ($img_db) {
-                #print Dumper($img_db) . "\n";
-                #my $img = $img_db->{img};
-                #my $href_db = 'file://' . join('/', $imgman->{img_root}, $img);
-                #$_->attr({ href => $href_db });
-                #delete $_->{'data-savepage-href'};
-                #return;
+  
             #}
 
             #$imgman->cmd_fetch_uri({ uri => $href_save });

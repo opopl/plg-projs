@@ -490,6 +490,14 @@ sub _fail {
     return @{$self->{fail}};
 }
 
+sub _db_img_one {
+    my ($self, $ref) = @_;
+    $ref ||= {};
+
+    my $imgs = $self->_db_imgs($ref);
+    return $imgs->[0];
+}
+
 sub _db_imgs {
     my ($self, $ref) = @_;
     $ref ||= {};
@@ -933,6 +941,12 @@ sub pic_add {
     my $img_file_local = $ref->{file};
     return $self unless -f $img_file_local;
 
+    # rewrite ?
+    my $pic_rw = $ref->{rw};
+
+    # database insert ?
+    my $ins_db = $ref->{ins_db} || {};
+
     my ($name_orig) = ( basename($img_file_local)  =~ m/^(.*)\.(\w+)$/g );
 
     my $stat_local = stat($img_file_local);
@@ -973,7 +987,7 @@ sub pic_add {
 
     # do not insert image with the same md5
     my $cnt = dbh_select_fetchone($r);
-    if ($cnt) {
+    if ($cnt && !$pic_rw) {
       rmtree $img_file_local if $mv;
 
       return $self;
@@ -985,8 +999,9 @@ sub pic_add {
     my $img = qq{$inum.$ext};
     my $img_file = catfile($self->{img_root}, $img);
 
+    my $url_ins = $ref->{url} || $url_tm;
     my $ins = {
-       url    => $ref->{url} || $url_tm,
+       url    => $url_ins,
        inum   => $inum,
        img    => $img,
        ext    => $ext,
@@ -1005,6 +1020,8 @@ sub pic_add {
 
        $ins->{$x} = $ref->{$x};
     }
+    $ins = { %$ins, %$ins_db };
+
     $DB::single = 1;
 
     copy($img_file_local, $img_file);
@@ -1029,7 +1046,7 @@ sub pic_add {
        $ok &&= eval {
            dbh_base2info({
               'tbase'  => 'imgs',
-              'bwhere' => { url => $url_tm },
+              'bwhere' => { url => $url_ins },
               'jcol'   => 'url',
               'b2i'    => { 'tags' => 'tag' },
               'bcols'  => [qw( tags )],
