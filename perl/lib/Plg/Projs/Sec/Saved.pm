@@ -235,8 +235,8 @@ sub cmd_run {
 
     $self
         ->do_clean
-        ->do_css
-        ->do_img
+        #->do_css
+        #->do_img
         ;
 
     write_file($p_file, $dom->html);
@@ -346,6 +346,27 @@ sub do_clean {
     my $dom = $ref->{dom} || $self->{dom};
 
     $dom->find('meta, script, link')->map('remove');
+
+    my $i = 0;
+    all: while(1){
+        $i++;
+        print qq{i => $i} . "\n";
+
+        my ($prev, $div ) = ( $dom->at('body'), undef );
+        down: while(1){
+            $div = $prev->at('div');
+            last unless $div;
+
+            $prev = $div;
+        }
+
+        #print Dumper($i, $prev->html, $prev->children->length ) . "\n";
+        unless ($prev->children->length || $prev->text) {
+            $prev->remove;
+        }
+
+        last if $i == 100;
+    }
 
     return $self;
 }
