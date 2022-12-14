@@ -215,31 +215,40 @@ sub cmd_run {
     chdir($html_dir);
     #current
     #
-    my $p_file = sprintf(q{p.%s},basename($html_file));
+    my $p_file_view = sprintf(q{p.%s},basename($html_file));
+    my $p_file_parse = sprintf(q{p.parse.%s},basename($html_file));
 
     my $html = html_pretty({
         file => $html_file,
-        output => $p_file,
     });
     #my $dom = Mojo::DOM->new($html);
     my $parser = HTML5::DOM->new();
 
     my $dom = $self->{dom} = $parser->parse($html);
 
-
     $self->{imgman} = Plg::Projs::GetImg->new(
         skip_get_opt => 1,
         map { $_ => $self->{$_} } qw( root rootid proj sec ),
         cmd => 'fetch_uri',
     );
+    # 70001
+    # 69992
+    # 69993
 
     $self
+        ->do_css
+        ->do_img
+        ->do_write2fs({ file => $p_file_view })
         ->do_clean
-        #->do_css
-        #->do_img
+        ->do_write2fs({ file => $p_file_parse })
         ;
 
-    write_file($p_file, $dom->html);
+    #write_file($p_file, $dom->html);
+    #html_pretty({
+        #file => $p_file,
+        #output => $p_file,
+    #});
+
 
     return $self;
 }
@@ -341,33 +350,75 @@ sub do_img {
 
 my $i = 0;
 sub unwrap {
-    my ($self, $node) = @_;
+    my ($self, $node, $tags) = @_;
+    $tags ||= [qw(div)];
 
-    #return $self if $i > 10000;
+    #return $self if $i > 100;
+    $i++;
 
-    my ($len, $txt);
+    my ($len, $txt, $tag);
     $len = $node->children->length;
     $txt = $node->text;
-    while(!$len && !$txt) {
-       print qq{$i => remove} . "\n";
-       my $parent = $node->parent;
-       $node->remove();
-       $node = $parent;
+    $tag = $node->tag;
 
-       last unless $node;
-	   $len = $node->children->length;
-	   $txt = $node->text;
+    unless($len || $txt) {
+       if (grep { /^$tag$/ } qw(span div)) {
+	       print qq{$i => remove} . "\n";
+	       my $parent = $node->parent;
+	       $node->remove();
+	
+	       $self->unwrap($parent) if $parent;
+	       return $self;
+       }
+    }
+
+    if ($len == 1) {
+        my $child = $node->children->[0];
+        if ($tag eq 'div' && $child->tag eq 'div') {
+            my $class_list = $node->classList;
+            my $attr = $node->attr;
+            while(my($k,$v) = each %$attr){
+                next if $k eq 'class';
+
+                if ($k eq 'style') {
+                    my $p_style = $node->attr('style');
+                    my $c_style = $child->attr('style');
+                    next unless $p_style || $c_style;
+
+                    $c_style = join ';' => (  
+                        $p_style ? $p_style : (),
+                        $c_style ? $c_style : (),
+                    );
+                    $child->attr('style' => $c_style);
+
+                }
+                $child->attr({ $k  => $v });
+            }
+            #print Dumper($attr) . "\n";
+
+            $class_list->each(sub { 
+               my $class = shift;
+               $child->classList->add($class);
+               #print Dumper($class) . "\n";
+            });
+
+	        $node->parent->replaceChild($child => $node);
+	        $node = $child;
+        }
+	    $self->unwrap($child);
+        return $self;
     }
 
     return $self unless $node;
     $node->children->each( sub{
        local $_ = shift;
-       return unless $_->tag eq 'div';
-       $i++;
+       my $tag = $_->tag;
+       #return unless grep { /^$tag$/ } @$tags;
+       #return unless $_->tag eq 'div';
 
        $self->unwrap($_);
 
-       return 
+       return $_;
     });
 
     return $self;
@@ -381,7 +432,29 @@ sub do_clean {
 
     $dom->find('meta, script, link')->map('remove');
 
+    my $meta = $dom->createElement('meta');
+    $meta->attr({ 
+        'http-equiv' => "Content-Type",
+        'content'  => "text/html; charset=utf-8",
+    });
+    $dom->at('head')->append($meta);
+
     $self->unwrap($dom->at('body'));
+
+    return $self;
+}
+
+sub do_write2fs {
+    my ($self, $ref) = @_;
+    $ref ||= {};
+
+    my $dom = $ref->{dom} || $self->{dom};
+    my $file = $ref->{file};
+
+    my $html = $dom->html;
+    $html = $ref->{pretty} ? html_pretty({ html => $html }) : $html;
+
+    write_file($file, $html);
 
     return $self;
 }
@@ -408,7 +481,11 @@ sub do_css {
             #my $href = '/prj/sec/asset/' . $css_file;
             my $href = $css_file;
             my $link = $dom->createElement('link');
-            $link->attr({ rel => 'stylesheet', href => $href });
+            $link->attr({ 
+                rel  => 'stylesheet', 
+                type => 'text/css', 
+                href => $href 
+            });
             $_->replace($link);
         }
     );

@@ -104,7 +104,7 @@ sub html_pretty {
     my $pp = XML::LibXML::PrettyPrint->new(
         indent_string => "  ",
         element => {
-            inline   => [qw/span/],
+			inline   => [qw/span/],
             block    => [@block],
             #compact  => [qw//,$cb{compact}],
             preserves_whitespace => [qw/pre/],
