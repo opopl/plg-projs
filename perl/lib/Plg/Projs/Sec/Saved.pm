@@ -339,6 +339,40 @@ sub do_img {
     return $self;
 }
 
+my $i = 0;
+sub unwrap {
+    my ($self, $node) = @_;
+
+    #return $self if $i > 10000;
+
+    my ($len, $txt);
+    $len = $node->children->length;
+    $txt = $node->text;
+    while(!$len && !$txt) {
+       print qq{$i => remove} . "\n";
+       my $parent = $node->parent;
+       $node->remove();
+       $node = $parent;
+
+       last unless $node;
+	   $len = $node->children->length;
+	   $txt = $node->text;
+    }
+
+    return $self unless $node;
+    $node->children->each( sub{
+       local $_ = shift;
+       return unless $_->tag eq 'div';
+       $i++;
+
+       $self->unwrap($_);
+
+       return 
+    });
+
+    return $self;
+}
+
 sub do_clean {
     my ($self, $ref) = @_;
     $ref ||= {};
@@ -347,26 +381,7 @@ sub do_clean {
 
     $dom->find('meta, script, link')->map('remove');
 
-    my $i = 0;
-    all: while(1){
-        $i++;
-        print qq{i => $i} . "\n";
-
-        my ($prev, $div ) = ( $dom->at('body'), undef );
-        down: while(1){
-            $div = $prev->at('div');
-            last unless $div;
-
-            $prev = $div;
-        }
-
-        #print Dumper($i, $prev->html, $prev->children->length ) . "\n";
-        unless ($prev->children->length || $prev->text) {
-            $prev->remove;
-        }
-
-        last if $i == 100;
-    }
+    $self->unwrap($dom->at('body'));
 
     return $self;
 }
