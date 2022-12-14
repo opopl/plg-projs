@@ -172,13 +172,13 @@ sub get_opt {
     return $self;
 }
 
-sub cmd_run {
-    my ($self) = @_;
+sub _sec_html_file {
+    my ($self,$ref) = @_;
+    $ref ||= {};
 
-    #my @secs = $self->_secs_select
-    my $sec = $self->{sec};
+    my $sec = $ref->{sec} || $self->{sec};
 
-    my $dir_sec_new =  $self->_dir_sec_new({ sec => $sec });
+    my $dir_sec_new  =  $self->_dir_sec_new({ sec => $sec });
     my $dir_sec_done =  $self->_dir_sec_done({ sec => $sec });
 
     my $rule = File::Find::Rule->new;
@@ -199,6 +199,16 @@ sub cmd_run {
             ->in($dir);
     }
 
+    return $html_file;
+}
+
+sub cmd_run {
+    my ($self) = @_;
+
+    #my @secs = $self->_secs_select
+    my $sec = $self->{sec};
+
+    my $html_file = $self->_sec_html_file;
     return $self unless $html_file;
 
     my $html_dir = dirname($html_file);
@@ -216,7 +226,6 @@ sub cmd_run {
 
     my $dom = $self->{dom} = $parser->parse($html);
 
-    $dom->find('meta, script, link')->map('remove');
 
     $self->{imgman} = Plg::Projs::GetImg->new(
         skip_get_opt => 1,
@@ -225,6 +234,7 @@ sub cmd_run {
     );
 
     $self
+        ->do_clean
         ->do_css
         ->do_img
         ;
@@ -261,8 +271,8 @@ sub do_img {
 
             my $href_name;
             foreach my $x (qw(href src)) {
-	            $href_save ||= $_->attr('data-savepage-' . $x);
-	            $href_img ||= $_->attr($x);
+                $href_save ||= $_->attr('data-savepage-' . $x);
+                $href_img ||= $_->attr($x);
 
                 if ($href_img && $href_save){
                     $href_name = $x; last;
@@ -291,12 +301,12 @@ sub do_img {
                 my $step = 0;
                 while(1) {
                     if ($db_upd) {
-	                    dbh_update_hash({
-	                        dbh => $imgman->{dbh},
-	                        t => 'imgs',
-	                        h => $ins_db,
-	                        w => { md5 => $md5 },
-	                    });
+                        dbh_update_hash({
+                            dbh => $imgman->{dbh},
+                            t => 'imgs',
+                            h => $ins_db,
+                            w => { md5 => $md5 },
+                        });
                     }
 
                     $img_db = $imgman->_db_img_one({
@@ -325,6 +335,17 @@ sub do_img {
              }
         }
     );
+
+    return $self;
+}
+
+sub do_clean {
+    my ($self, $ref) = @_;
+    $ref ||= {};
+
+    my $dom = $ref->{dom} || $self->{dom};
+
+    $dom->find('meta, script, link')->map('remove');
 
     return $self;
 }
