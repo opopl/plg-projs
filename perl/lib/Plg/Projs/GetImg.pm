@@ -978,7 +978,7 @@ sub pic_add {
     my ($width, $height, $ext) = @{$inf_local}{qw( width height file_ext )};
 
     my $w = { md5 => $md5 };
-    $w->{url} = $ref->{url} if $ref->{url};
+    #$w->{url} = $ref->{url} if $ref->{url};
     my $r = {
         t => qq{ imgs },
         q => q{ SELECT COUNT(*) FROM imgs },

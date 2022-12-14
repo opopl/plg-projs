@@ -86,6 +86,7 @@ sub init {
         # proj should be initialized by this moment
         ->Plg::Projs::Prj::init()
         ;
+    $DB::single = 1;
 
     return $self;
 }
