@@ -28,6 +28,9 @@ use File::Find::Rule;
 
 use Mojo::DOM;
 use HTML5::DOM;
+
+use CSS::Tidy 'tidy_css';
+
 use MIME::Base64 qw(decode_base64);
 use Base::Util qw(
     md5sum
@@ -227,15 +230,24 @@ sub cmd_run {
         sub {
             my ($node, $index) = @_;
             local $_ = $node;
-            my $href_save = $_->attr('data-savepage-href');
-            my $href_data = $_->attr('href');
+            my ($href_save, $href_img);
 
-            return if $j == 10;
-            return unless $href_save && $href_data;
+            my $href_name;
+            foreach my $x (qw(href src)) {
+	            $href_save ||= $_->attr('data-savepage-' . $x);
+	            $href_img ||= $_->attr($x);
+
+                if ($href_img && $href_save){
+                    $href_name = $x; last;
+                }
+            }
+
+            #return if $j == 100;
+            return unless $href_name && $href_save && $href_img;
 
             $j++;
 
-            if ($href_data =~ /^data:image\/(?<type>png|jpeg);base64,(?<data>.*)/) {
+            if ($href_img =~ /^data:image\/(?<type>png|jpeg);base64,(?<data>.*)/) {
                 my ($data, $type) = @+{qw(data type)};
                 my $ext = $type eq 'jpeg' ? 'jpg' : $type;
                 my $decoded = decode_base64($data);
@@ -276,29 +288,32 @@ sub cmd_run {
                 }
 
                 if ($img_db) {
-                    print Dumper($img_db) . "\n";
                     my $img = $img_db->{img};
                     my $href_db = 'file://' . join('/', $imgman->{img_root}, $img);
-                    $_->attr({ href => $href_db });
-                    delete $_->{'data-savepage-href'};
+                    $_->attr({ $href_name => $href_db });
+                    delete $_->{'data-savepage-' . $href_name };
                 }
              }
         }
     );
 
-#    $dom->find('style')->each(
-        #sub {
-            #$i++;
-            #my $txt = $_->content;
-            #my $css_file = "$i.css";
-            #write_file($css_file,$txt);
-            ##my $href = '/prj/sec/asset/' . $css_file;
-            #my $href = $css_file;
-            #$_->replace(sprintf('<link rel="stylesheet" href="%s">',$href));
-        #}
-    #);
-    #print Dumper($c) . "\n";
-    #write_file($p_file, $dom->to_string);
+    $j=0;
+    $dom->find('style')->each(
+        sub {
+            local $_ = shift;
+            $j++;
+            my $css_txt = $_->text;
+            $css_txt = tidy_css($css_txt);
+
+            my $css_file = "$j.css";
+            write_file($css_file, $css_txt);
+            #my $href = '/prj/sec/asset/' . $css_file;
+            my $href = $css_file;
+            my $link = $dom->createElement('link');
+            $link->attr({ rel => 'stylesheet', href => $href });
+            $_->replace($link);
+        }
+    );
     write_file($p_file, $dom->html);
 
     return $self;
