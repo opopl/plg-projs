@@ -37,6 +37,11 @@ use Plg::Projs::Html qw(
     html_pretty
 );
 
+use Base::DB qw(
+    dbh_insert_update_hash
+    dbh_update_hash
+);
+
 
 use Base::Arg qw(
     hash_inject
@@ -245,6 +250,15 @@ sub cmd_run {
                 my $img_db;
                 my $step = 0;
                 while(1) {
+                    dbh_update_hash({
+                        dbh => $imgman->{dbh},
+                        t => 'imgs',
+                        h => {
+                            map { $_ => $self->{$_} } qw( rootid proj sec ),
+                        },
+                        w => { md5 => $md5 },
+                    });
+
                     $img_db = $imgman->_db_img_one({
                         fields => [qw( url inum img size proj sec )],
                         where => { md5 => $md5 }
@@ -274,7 +288,7 @@ sub cmd_run {
             #});
 
             #if ($img_db) {
-  
+
             #}
 
             #$imgman->cmd_fetch_uri({ uri => $href_save });
