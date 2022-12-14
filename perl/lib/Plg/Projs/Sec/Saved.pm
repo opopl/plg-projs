@@ -236,11 +236,12 @@ sub cmd_run {
     # 69993
 
     $self
+        ->do_meta
         ->do_css
         ->do_img
-        ->do_write2fs({ file => $p_file_view })
+        ->do_write2fs({ file => $p_file_view, pretty => 1 })
         ->do_clean
-        ->do_write2fs({ file => $p_file_parse })
+        ->do_write2fs({ file => $p_file_parse, pretty => 1 })
         ;
 
     #write_file($p_file, $dom->html);
@@ -424,7 +425,7 @@ sub unwrap {
     return $self;
 }
 
-sub do_clean {
+sub do_meta {
     my ($self, $ref) = @_;
     $ref ||= {};
 
@@ -438,6 +439,15 @@ sub do_clean {
         'content'  => "text/html; charset=utf-8",
     });
     $dom->at('head')->append($meta);
+
+    return $self;
+}
+
+sub do_clean {
+    my ($self, $ref) = @_;
+    $ref ||= {};
+
+    my $dom = $ref->{dom} || $self->{dom};
 
     $self->unwrap($dom->at('body'));
 
