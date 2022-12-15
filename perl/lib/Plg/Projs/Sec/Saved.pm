@@ -243,6 +243,8 @@ sub cmd_run {
         return $self;
     }
 
+    my $sd = $self->{sec_data} = $self->_sec_data({ sec => $sec });
+
     print qq{[Saved] processing section => $sec } . "\n";
 
     my $html_file = $self->_sec_html_file;
@@ -609,16 +611,23 @@ sub do_clean_class {
     my $msg_a = varval('config.dom.match.post' => $self) || [];
     my $msg = join(", ",@$msg_a);
 
-    my $cnt;
+    my ($cnt_html, $cnt_text);
     $dom->find($msg)->each(
         sub {
            my $node = shift;
-           #$cnt = $node->textContent;
-           $cnt = $node->html;
+           $cnt_text = $node->textContent;
+           $cnt_html = $node->html;
            #print Encode::encode('utf8',$node->textContent) . "\n";
         }
     );
-    write_file($self->{p_file_content}, $cnt) if $cnt;
+
+    if($cnt_html && $cnt_text){
+        write_file($self->{p_file_content}, $cnt_html);
+
+        my $sd = $self->{sec_data};
+        my $sec_file = catfile($self->{root}, $sd->{file});
+        append_file($sec_file, $cnt_text);
+    }
 
     my (@article);
 
