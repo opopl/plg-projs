@@ -653,7 +653,7 @@ sub do_clean_class {
                        push @comments, $cmt->innerHTML;
                        push @comments_tex,
                            sprintf('\iusr{%s}',$a_title),'',
-                           $cmt_text,''
+                           join("\n" => map { trim($_) } (split "\n" => $cmt_text)),''
                            ;
                    }
                }
