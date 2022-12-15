@@ -627,7 +627,7 @@ sub do_clean_class {
            $node->find('a[href]')->each(
                sub {
                    my $a = shift;
-                   my $a_title = $a->text || '';
+                   my $a_title = $a->textContent || '';
                    return unless trim($a_title);
 
                    my $href = $a->attr('href');
@@ -644,7 +644,11 @@ sub do_clean_class {
 #current
                    while(1){
                        $em = $em->parent;
+                       #last if !$em || $em->tag eq 'span';
                        last if !$em || $em->tag eq 'span';
+                   }
+                   unless ($em) {
+                       print Dumper($a->html) . "\n";
                    }
                    my $cmt = $em->next if $em;
                    my $cmt_text = $cmt->textContent if $cmt;
