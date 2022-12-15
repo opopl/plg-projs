@@ -263,7 +263,9 @@ sub cmd_run {
         p_file_comments_tex => sprintf(q{p.parse.comments.%s.tex},basename($html_file)),
     });
 
-    $self->{parser} ||= HTML5::DOM->new();
+    $self->{parser} ||= HTML5::DOM->new({
+        #ignore_whitespace => 1,
+    });
 
     unless (-f $self->{p_file_view}) {
         $self->fs_write_view;
@@ -297,6 +299,7 @@ sub fs_write_parse {
 
     $self
         ->do_clean_class
+        ->do_article
         ->do_a_href
         ->do_write2fs({ file => $self->{p_file_parse}, pretty => 1 })
         ;
@@ -617,62 +620,91 @@ sub do_clean_class {
     );
     write_file($self->{p_file_content}, $cnt) if $cnt;
 
-    my (@article, @comments, @comments_tex);
+    my (@article);
+
+    my $span = $dom->at('span');
+    while($span){
+        my $children = $span->childNodes;
+        my $p = $span->parent;
+
+        my $chtml = join "\n" => @{$children->map('html')};
+        my $cfr = $dom->parseFragment($chtml);
+        $p->replaceChild($cfr => $span);
+
+        $span = $dom->at('span');
+    }
+
     $dom->find('div[role="article"]')->each(
         sub {
            my $node = shift;
            push @article, $node->html;
-           #print Encode::encode('utf8',$node->textContent) . "\n";
-           #
-           $node->find('a[href]')->each(
-               sub {
-                   my $a = shift;
-                   my $a_title = $a->textContent || '';
-                   return unless trim($a_title);
-
-                   my $href = $a->attr('href');
-                   my $uri = URI::Fast->new($href);
-                   my $query = $uri->query_hash;
-                   my $cmid = $query->{comment_id} || [];
-                   return unless @$cmid;
-
-                   my $cmid_s = $cmid->[0];
-
-                   my $em = $a;
-                   push @comments, qq{<div>$a_title</div>};
-                   #push @comments, qq{<div>$cmid_s</div>};
-#current
-                   while(1){
-                       $em = $em->parent;
-                       #last if !$em || $em->tag eq 'span';
-                       last if !$em || $em->tag eq 'span';
-                   }
-                   unless ($em) {
-                       print Dumper($a->html) . "\n";
-                   }
-                   my $cmt = $em->next if $em;
-                   my $cmt_text = $cmt->textContent if $cmt;
-
-                   if ($cmt_text) {
-                       push @comments, $cmt->innerHTML;
-                       push @comments_tex,
-                           sprintf('\iusr{%s}',$a_title),'',
-                           join("\n" => map { trim($_) } (split "\n" => $cmt_text)),''
-                           ;
-                   }
-               }
-           );
         }
     );
 
     write_file($self->{p_file_article}, join("\n",@article) . "\n") if @article;
-    write_file($self->{p_file_comments}, join("\n",@comments) . "\n") if @comments;
-    write_file($self->{p_file_comments_tex}, join("\n",@comments_tex) . "\n") if @comments_tex;
 
     #"jsc_c_x
 
     return $self;
 }
+
+sub do_article {
+    my ($self, $ref) = @_;
+    $ref ||= {};
+
+    my $html = read_file $self->{p_file_article};
+    my $dom_article = $self->{parser}->parse($html);
+
+    my (@comments, @comments_tex);
+    $dom_article->find('a[href]')->each(
+        sub {
+            my $a = shift;
+            my $a_title = $a->textContent || '';
+            return unless trim($a_title);
+
+            my $href = $a->attr('href');
+            my $uri = URI::Fast->new($href);
+            my $query = $uri->query_hash;
+            my $cmid = $query->{comment_id} || [];
+            return unless @$cmid;
+
+            my $cmid_s = $cmid->[0];
+
+            my $em = $a;
+            push @comments, qq{<div>$a_title</div>};
+            #push @comments, qq{<div>$cmid_s</div>};
+
+            my $cmt = $a->parent->find('div')->last;
+            my $cmt_text = $cmt->textContent if $cmt;
+#current
+#            while(1){
+                #$em = $em->parent;
+                ##last if !$em || $em->tag eq 'span';
+                ##last if !$em || $em->tag eq 'span';
+                #last if $em->tag eq 'span';
+            #}
+            #unless ($em) {
+                #print Dumper($a->html) . "\n";
+            #}
+            #my $cmt = $em->next if $em;
+            #my $cmt_text = $cmt->textContent if $cmt;
+
+            if ($cmt_text) {
+                push @comments, $cmt->html;
+                push @comments_tex,
+                    sprintf('\iusr{%s}',$a_title),'',
+                    join("\n" => map { trim($_) } (split "\n" => $cmt_text)),''
+                    ;
+            }
+        }
+    );
+
+    write_file($self->{p_file_comments}, join("\n",@comments) . "\n") if @comments;
+    write_file($self->{p_file_comments_tex}, join("\n",@comments_tex) . "\n") if @comments_tex;
+
+    return $self;
+}
+
 
 sub do_unwrap {
     my ($self, $ref) = @_;
