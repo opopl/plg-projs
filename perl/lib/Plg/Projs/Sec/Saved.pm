@@ -5,6 +5,7 @@ use utf8;
 use strict;
 use warnings;
 
+use Encode;
 binmode STDOUT,':encoding(utf8)';
 
 use Data::Dumper qw(Dumper);
@@ -15,6 +16,7 @@ use Getopt::Long qw(GetOptions);
 use YAML::XS qw(LoadFile DumpFile Dump);
 
 use URL::XS qw(parse_url);
+use URI;
 
 use Plg::Projs::GetImg;
 
@@ -31,8 +33,10 @@ use XML::LibXML::PrettyPrint;
 use File::Find::Rule;
 use File::Path qw(mkpath rmtree);
 
-use Mojo::DOM;
 use HTML5::DOM;
+
+#use Mojo::DOM;
+#my $dom = Mojo::DOM->new($html);
 
 use CSS::Tidy 'tidy_css';
 
@@ -56,6 +60,7 @@ use Base::Arg qw(
     hash_update
 
     dict_update
+    varval
 );
 
 use base qw(
@@ -239,33 +244,27 @@ sub cmd_run {
     my $html_file = $self->_sec_html_file;
     return $self unless $html_file;
 
-    my $html_dir = dirname($html_file);
+    my $html_dir = $self->{html_dir} = dirname($html_file);
     chdir($html_dir);
-    #current
-    #
-    my $p_file_view = sprintf(q{p.%s},basename($html_file));
-    my $p_file_parse = sprintf(q{p.parse.%s},basename($html_file));
+   
+    $self->{p_file_orig} = $html_file;
+    $self->{p_file_view} = sprintf(q{p.%s},basename($html_file));
+    $self->{p_file_parse} = sprintf(q{p.parse.%s},basename($html_file));
+    $self->{p_file_unwrap} = sprintf(q{p.unwrap.%s},basename($html_file));
 
-    my $html = html_pretty({
-        file => $html_file,
-    });
-    #my $dom = Mojo::DOM->new($html);
-    my $parser = HTML5::DOM->new();
+    $self->{parser} ||= HTML5::DOM->new();
 
-    my $dom = $self->{dom} = $parser->parse($html);
+    unless (-f $self->{p_file_view}) {
+        $self->fs_write_view;
+    }
 
-    # 70001
-    # 69992
-    # 69993
-
+    unless (-f $self->{p_file_unwrap}) {
+        $self->fs_write_unwrap;
+    }
     $self
-        ->do_meta
-        ->do_css
-        ->do_img
-        ->do_write2fs({ file => $p_file_view, pretty => 1 })
-        ->do_unwrap
+        ->do_clean_class
         ->do_a_href
-        ->do_write2fs({ file => $p_file_parse, pretty => 1 })
+        ->do_write2fs({ file => $self->{p_file_parse}, pretty => 1 })
         ;
 
     #write_file($p_file, $dom->html);
@@ -274,6 +273,36 @@ sub cmd_run {
         #output => $p_file,
     #});
 
+
+    return $self;
+}
+
+sub fs_write_unwrap {
+    my ($self, $ref) = @_;
+    $ref ||= {};
+
+    my $html = read_file $self->{p_file_view};
+    $self->{dom} = $self->{parser}->parse($html);
+
+    $self
+       ->do_unwrap
+       ->do_write2fs({ file => $self->{p_file_unwrap}, pretty => 1 });
+
+    return $self;
+}
+
+sub fs_write_view {
+    my ($self, $ref) = @_;
+    $ref ||= {};
+
+    my $html = html_pretty({ file => $self->{p_file_orig} });
+    $self->{dom} = $self->{parser}->parse($html);
+
+    $self
+        ->do_meta
+        ->do_css
+        ->do_img
+        ->do_write2fs({ file => $self->{p_file_view}, pretty => 1 });
 
     return $self;
 }
@@ -367,7 +396,7 @@ sub do_img {
                     my $img = $img_db->{img};
                     my $href_db = 'file://' . join('/', $imgman->{img_root}, $img);
                     $_->attr({ $href_name => $href_db });
-                    delete $_->{'data-savepage-' . $href_name };
+                    $_->removeAttr('data-savepage-' . $href_name );
                 }
              }
         }
@@ -485,22 +514,76 @@ sub do_a_href {
 
             local $_ = $node;
             my $href = $_->{href};
-            my $parsed = eval {
-                parse_url($href);
+            my ($parsed,$uri);
+            eval {
+                $uri = URI->new($href);
+                $parsed = parse_url($href);
+
+                if ($uri && $parsed) {
+                    $parsed->{query} = $uri->query;
+                }
             };
             push @urls,
               {     url => $href,
-                    parsed=> $parsed
+                    parsed => $parsed
               };
 
             $j++;
         }
     );
+    my $cwd = getcwd();
     chdir $self->{root};
     my $ofile = 'saved.out.yaml';
     my $dmp = Dumper([@urls]) . "\n";
     #my $yml = Dump({ urls => [@urls] });
     write_file($ofile, $dmp);
+    chdir $cwd;
+
+    return $self;
+}
+
+sub do_clean_class {
+    my ($self, $ref) = @_;
+    $ref ||= {};
+
+    my $dom = $ref->{dom} || $self->{dom};
+
+    print qq{[clean_class]} . "\n";
+
+    my $remove_a = varval('dom.remove.node' => $self) || [];
+    my $remove = join(", " => @$remove_a);
+    if ($remove) {
+        $dom->find($remove)->each(
+           sub {
+               my $node = shift;
+               $node->remove();
+           }
+        );
+    }
+
+    my $remove_class_a = varval('dom.remove.class' => $self) || [];
+    my $remove_class = join(", " => @$remove_class_a);
+    if ($remove_class) {
+        $dom->find($remove_class)->each(
+           sub {
+               my $node = shift;
+               $node->removeAttr('class');
+           }
+        );
+    }
+
+    my $cnt;
+    $dom->find('#jsc_c_x')->each(
+        sub {
+           my $node = shift;
+           $cnt = $node->textContent;
+           #print Encode::encode('utf8',$node->textContent) . "\n";
+        }
+    );
+    my $cnt_file = catfile($self->{root},'cnt.txt');
+    write_file($cnt_file, $cnt);
+
+    #"jsc_c_x
 
     return $self;
 }
@@ -519,6 +602,8 @@ sub do_unwrap {
 sub do_write2fs {
     my ($self, $ref) = @_;
     $ref ||= {};
+
+    chdir($self->{html_dir});
 
     my $dom = $ref->{dom} || $self->{dom};
     my $file = $ref->{file};
