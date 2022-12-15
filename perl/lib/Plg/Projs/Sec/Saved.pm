@@ -246,11 +246,15 @@ sub cmd_run {
 
     my $html_dir = $self->{html_dir} = dirname($html_file);
     chdir($html_dir);
-   
-    $self->{p_file_orig} = $html_file;
-    $self->{p_file_view} = sprintf(q{p.%s},basename($html_file));
-    $self->{p_file_parse} = sprintf(q{p.parse.%s},basename($html_file));
-    $self->{p_file_unwrap} = sprintf(q{p.unwrap.%s},basename($html_file));
+
+    dict_update($self,{
+        p_file_orig => $html_file,
+        p_file_view => sprintf(q{p.%s},basename($html_file)),
+        p_file_unwrap => sprintf(q{p.unwrap.%s},basename($html_file)),
+
+        p_file_parse => sprintf(q{p.parse.%s},basename($html_file)),
+        p_file_content => sprintf(q{p.parse.content.%s},basename($html_file)),
+    });
 
     $self->{parser} ||= HTML5::DOM->new();
 
@@ -261,11 +265,9 @@ sub cmd_run {
     unless (-f $self->{p_file_unwrap}) {
         $self->fs_write_unwrap;
     }
-    $self
-        ->do_clean_class
-        ->do_a_href
-        ->do_write2fs({ file => $self->{p_file_parse}, pretty => 1 })
-        ;
+
+    $self->fs_write_parse;
+
 
     #write_file($p_file, $dom->html);
     #html_pretty({
@@ -277,9 +279,29 @@ sub cmd_run {
     return $self;
 }
 
+sub fs_write_parse {
+    my ($self, $ref) = @_;
+    $ref ||= {};
+
+    print qq{[Saved] fs_write_parse} . "\n";
+
+    my $html = read_file $self->{p_file_unwrap};
+    $self->{dom} = $self->{parser}->parse($html);
+
+    $self
+        ->do_clean_class
+        ->do_a_href
+        ->do_write2fs({ file => $self->{p_file_parse}, pretty => 1 })
+        ;
+
+    return $self;
+}
+
 sub fs_write_unwrap {
     my ($self, $ref) = @_;
     $ref ||= {};
+
+    print qq{[Saved] fs_write_unwrap} . "\n";
 
     my $html = read_file $self->{p_file_view};
     $self->{dom} = $self->{parser}->parse($html);
@@ -294,6 +316,8 @@ sub fs_write_unwrap {
 sub fs_write_view {
     my ($self, $ref) = @_;
     $ref ||= {};
+
+    print qq{[Saved] fs_write_view } . "\n";
 
     my $html = html_pretty({ file => $self->{p_file_orig} });
     $self->{dom} = $self->{parser}->parse($html);
@@ -550,8 +574,9 @@ sub do_clean_class {
 
     print qq{[clean_class]} . "\n";
 
-    my $remove_a = varval('dom.remove.node' => $self) || [];
+    my $remove_a = varval('config.dom.remove.node' => $self) || [];
     my $remove = join(", " => @$remove_a);
+    print qq{$remove} . "\n";
     if ($remove) {
         $dom->find($remove)->each(
            sub {
@@ -561,8 +586,9 @@ sub do_clean_class {
         );
     }
 
-    my $remove_class_a = varval('dom.remove.class' => $self) || [];
+    my $remove_class_a = varval('config.dom.remove.class' => $self) || [];
     my $remove_class = join(", " => @$remove_class_a);
+    print qq{$remove_class} . "\n";
     if ($remove_class) {
         $dom->find($remove_class)->each(
            sub {
@@ -572,16 +598,19 @@ sub do_clean_class {
         );
     }
 
+    my $msg_a = varval('config.dom.match.post' => $self) || [];
+    my $msg = join(", ",@$msg_a);
+
     my $cnt;
-    $dom->find('#jsc_c_x')->each(
+    $dom->find($msg)->each(
         sub {
            my $node = shift;
-           $cnt = $node->textContent;
+           #$cnt = $node->textContent;
+           $cnt = $node->html;
            #print Encode::encode('utf8',$node->textContent) . "\n";
         }
     );
-    my $cnt_file = catfile($self->{root},'cnt.txt');
-    write_file($cnt_file, $cnt);
+    write_file($self->{p_file_content}, $cnt) if $cnt;
 
     #"jsc_c_x
 
