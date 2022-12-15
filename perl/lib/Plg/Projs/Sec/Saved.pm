@@ -254,6 +254,7 @@ sub cmd_run {
 
         p_file_parse => sprintf(q{p.parse.%s},basename($html_file)),
         p_file_content => sprintf(q{p.parse.content.%s},basename($html_file)),
+        p_file_article => sprintf(q{p.parse.article.%s},basename($html_file)),
     });
 
     $self->{parser} ||= HTML5::DOM->new();
@@ -576,7 +577,6 @@ sub do_clean_class {
 
     my $remove_a = varval('config.dom.remove.node' => $self) || [];
     my $remove = join(", " => @$remove_a);
-    print qq{$remove} . "\n";
     if ($remove) {
         $dom->find($remove)->each(
            sub {
@@ -588,7 +588,6 @@ sub do_clean_class {
 
     my $remove_class_a = varval('config.dom.remove.class' => $self) || [];
     my $remove_class = join(", " => @$remove_class_a);
-    print qq{$remove_class} . "\n";
     if ($remove_class) {
         $dom->find($remove_class)->each(
            sub {
@@ -611,6 +610,17 @@ sub do_clean_class {
         }
     );
     write_file($self->{p_file_content}, $cnt) if $cnt;
+
+    my @article;
+    $dom->find('div[role="article"]')->each(
+        sub {
+           my $node = shift;
+           push @article, $node->html;
+           #print Encode::encode('utf8',$node->textContent) . "\n";
+        }
+    );
+
+    write_file($self->{p_file_article}, join("\n",@article) . "\n") if @article;
 
     #"jsc_c_x
 
