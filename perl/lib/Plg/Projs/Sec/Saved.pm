@@ -17,8 +17,12 @@ use YAML::XS qw(LoadFile DumpFile Dump);
 
 use URL::XS qw(parse_url);
 use URI;
+#use URI::XS;
+use URI::Fast;
 
 use Plg::Projs::GetImg;
+
+use String::Util qw(trim);
 
 use Base::Enc qw( unc_decode );
 use File::Basename qw(basename);
@@ -255,6 +259,8 @@ sub cmd_run {
         p_file_parse => sprintf(q{p.parse.%s},basename($html_file)),
         p_file_content => sprintf(q{p.parse.content.%s},basename($html_file)),
         p_file_article => sprintf(q{p.parse.article.%s},basename($html_file)),
+        p_file_comments => sprintf(q{p.parse.comments.%s},basename($html_file)),
+        p_file_comments_tex => sprintf(q{p.parse.comments.%s.tex},basename($html_file)),
     });
 
     $self->{parser} ||= HTML5::DOM->new();
@@ -611,16 +617,53 @@ sub do_clean_class {
     );
     write_file($self->{p_file_content}, $cnt) if $cnt;
 
-    my @article;
+    my (@article, @comments, @comments_tex);
     $dom->find('div[role="article"]')->each(
         sub {
            my $node = shift;
            push @article, $node->html;
            #print Encode::encode('utf8',$node->textContent) . "\n";
+           #
+           $node->find('a[href]')->each(
+               sub {
+                   my $a = shift;
+                   my $a_title = $a->text || '';
+                   return unless trim($a_title);
+
+                   my $href = $a->attr('href');
+                   my $uri = URI::Fast->new($href);
+                   my $query = $uri->query_hash;
+                   my $cmid = $query->{comment_id} || [];
+                   return unless @$cmid;
+
+                   my $cmid_s = $cmid->[0];
+
+                   my $em = $a;
+                   push @comments, qq{<div>$a_title</div>};
+                   #push @comments, qq{<div>$cmid_s</div>};
+#current
+                   while(1){
+                       $em = $em->parent;
+                       last if !$em || $em->tag eq 'span';
+                   }
+                   my $cmt = $em->next if $em;
+                   my $cmt_text = $cmt->textContent if $cmt;
+
+                   if ($cmt_text) {
+                       push @comments, $cmt->innerHTML;
+                       push @comments_tex,
+                           sprintf('\iusr{%s}',$a_title),'',
+                           $cmt_text,''
+                           ;
+                   }
+               }
+           );
         }
     );
 
     write_file($self->{p_file_article}, join("\n",@article) . "\n") if @article;
+    write_file($self->{p_file_comments}, join("\n",@comments) . "\n") if @comments;
+    write_file($self->{p_file_comments_tex}, join("\n",@comments_tex) . "\n") if @comments_tex;
 
     #"jsc_c_x
 
