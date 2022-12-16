@@ -415,15 +415,26 @@ sub ht_pretty_print {
         }
     );
 
-    if ($run_after->{js}) {
-        $dom->findnodes('//body')->map(
-            sub { my ($node) = @_;
-                my $js = $dom->createElement('script');
-                my $src = join("/" => qw( .. .. .. ctl js dist bundle.js ));
-                $js->setAttribute( src => $src );
-                $node->appendChild($js);
+    my $js = $run_after->{js} || {};
+    if ($js) {
+        my $do_js = $js->{do} || [];
+
+        foreach my $do (@$do_js) {
+            my ($act, $data) = @{$do}{qw( act data )};
+
+            if ($act eq 'body_append_script') {
+                my $src = $data->{src};
+
+                $dom->findnodes('//body')->map(
+                    sub { my ($node) = @_;
+                        my $elem = $dom->createElement('script');
+                        #my $src = join("/" => qw( .. .. .. ctl js dist bundle.js ));
+                        $elem->setAttribute( src => $src ) if $src;
+                        $node->appendChild($elem);
+                    }
+                );
             }
-        );
+        }
     }
 
     #my @block = qw/table tables columns entry latex_table options/;
