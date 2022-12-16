@@ -1217,6 +1217,7 @@ sub init_db_tables {
         projs tree_children
         _info_projs_tags
         _info_projs_author_id
+        saved
     )];
     my $prefix = $ref->{prefix};
 
