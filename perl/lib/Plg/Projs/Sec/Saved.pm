@@ -413,7 +413,10 @@ sub do_img {
 
                     $img_db = $imgman->_db_img_one({
                         fields => [qw( url inum img size proj sec )],
-                        where => { md5 => $md5 }
+                        where => [
+                            { md5 => $md5 },
+                            { url => $href_save }
+                        ]
                     });
                     last if $img_db || $step == 1;
 

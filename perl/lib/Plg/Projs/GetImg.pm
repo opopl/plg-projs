@@ -996,14 +996,14 @@ sub pic_add {
 
     my ($width, $height, $ext) = @{$inf_local}{qw( width height file_ext )};
 
-    #my $w = { md5 => $md5 };
-    #$w->{url} = $ref->{url} if $ref->{url};
-    my $q = q{ SELECT COUNT(*) FROM imgs WHERE md5 = ? OR url = ? };
-    my $p = [ $md5, $url_ins ];
+    my $w = [
+        { md5 => $md5 },
+        { url => $url_ins }
+    ];
     my $r = {
         t => qq{ imgs },
-        q => $q,
-        p => $p,
+        q => q{ SELECT COUNT(*) FROM imgs },
+        w => $w,
     };
 
     # do not insert image with the same md5 or url
