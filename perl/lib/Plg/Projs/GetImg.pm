@@ -990,19 +990,23 @@ sub pic_add {
     my $inf_local  = image_info($img_file_local);
     my $url_tm     = sprintf(q{tm://%s@%s}, $t, $md5);
 
+    my $url_ins = $ref->{url} || $url_tm;
+
     my $exif_local = ImageInfo($img_file_local);
 
     my ($width, $height, $ext) = @{$inf_local}{qw( width height file_ext )};
 
-    my $w = { md5 => $md5 };
+    #my $w = { md5 => $md5 };
     #$w->{url} = $ref->{url} if $ref->{url};
+    my $q = q{ SELECT COUNT(*) FROM imgs WHERE md5 = ? OR url = ? };
+    my $p = [ $md5, $url_ins ];
     my $r = {
         t => qq{ imgs },
-        q => q{ SELECT COUNT(*) FROM imgs },
-        w => $w,
+        q => $q,
+        p => $p,
     };
 
-    # do not insert image with the same md5
+    # do not insert image with the same md5 or url
     my $cnt = dbh_select_fetchone($r);
     if ($cnt && !$pic_rw) {
       rmtree $img_file_local if $mv;
@@ -1016,7 +1020,6 @@ sub pic_add {
     my $img = qq{$inum.$ext};
     my $img_file = catfile($self->{img_root}, $img);
 
-    my $url_ins = $ref->{url} || $url_tm;
     my $ins = {
        url    => $url_ins,
        inum   => $inum,

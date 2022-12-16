@@ -521,6 +521,7 @@ function! projs#insert#ii_url ()
       \  }
 
   call projs#sec#new(ii_sec, r_new)
+  call lts#buf#scr#new({ 'sec' : ii_sec })
 
 "  let r_children = {
       "\  'proj'     : proj,
