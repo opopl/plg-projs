@@ -55,6 +55,17 @@ use constant MAP => map { $_ => '' } (
   # Greek Small Letter Mu
   "\N{U+03BC}",
 
+  "\N{U+1F10}",
+  "\N{U+03B8}",
+  "\N{U+03BA}",
+  "\N{U+03CC}",
+  "\N{U+03C2}",
+
+  # Greek Small Letter Gamma
+  "\N{U+03B3}",
+
+  # Latin Small Letter Gamma
+  "\N{U+0263}",
 );
 
 1;

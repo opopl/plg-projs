@@ -578,6 +578,10 @@ our %fbicons_n = (
   "\N{U+1F37B}" => 'cheers',
   "\N{U+1F37A}" => 'beer',
   "\N{U+1F34C}" => 'banana',
+  "\N{U+1F977}" => 'ninja',
+  "\N{U+2640}" => 'female.sign',
+  "\N{U+1F93C}" => 'wrestling',
+  "\N{U+1F43B}" => 'bear.face',
 
   "\N{U+203C}" => "exclamation.mark.double",
   "\N{U+2757}" => 'exclamation.mark',
@@ -661,18 +665,22 @@ our %fbicons_hcode_arabic = map { $_->{char} => '' } (
   { char => "\N{U+064A}", name => 'Arabic Letter Yeh' },
   { char => "\N{U+0639}", name => 'Arabic Letter Ain' },
   { char => "\N{U+0649}", name => 'Arabic Letter Alef Maksura' },
+  { char => "\N{U+0647}", name => 'Arabic Letter Heh' },
+  { char => "\N{U+0642}", name => 'Arabic Letter Qaf' },
+  { char => "\N{U+0648}", name => 'Arabic Letter Waw' },
+  { char => "\N{U+0643}", name => 'Arabic Letter Kaf' },
+  { char => "\N{U+0646}", name => 'Arabic Letter Noon' },
+  { char => "\N{U+062C}", name => 'Arabic Letter Jeem' },
 );
 
 our %fbicons_hcode_greek = Plg::Projs::Tex::Unicode::Greek::MAP;
 our %fbicons_hcode_japanese = Plg::Projs::Tex::Unicode::Japanese::MAP;
 our %fbicons_hcode_cjk = Plg::Projs::Tex::Unicode::CJK::MAP;
 
-our %fbicons_hcode_cyrillic = map { $_ => '' } (
-  # Cyrillic Small Letter Little Yus 
-  "\N{U+0467}",
-
-  # Cyrillic Small Letter Yat
-  "\N{U+0463}",
+our %fbicons_hcode_cyrillic = map { $_->{char} => '' } (
+  { char => "\N{U+0467}", name => "Cyrillic Small Letter Little Yus" },
+  { char => "\N{U+0463}", name => "Cyrillic Small Letter Yat" },
+  { char => "\N{U+A657}", name => "Cyrillic Small Letter Iotified A" },
 
 );
 
@@ -712,6 +720,10 @@ our %replace_unicode = (
 
   "\N{U+E206}" => '',
   "\N{U+25AB}" => '',
+
+  # Emoji Modifier Fitzpatrick Type-5 Emoji
+  "\N{U+1F3FE}" => '',
+
 
   # Object Replacement Character
   "\N{U+FFFC}" => '',
