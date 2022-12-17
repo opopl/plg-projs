@@ -582,6 +582,9 @@ our %fbicons_n = (
   "\N{U+2640}" => 'female.sign',
   "\N{U+1F93C}" => 'wrestling',
   "\N{U+1F43B}" => 'bear.face',
+  "\N{U+1FAF6}" => 'heart.hands',
+  "\N{U+1F60A}" => 'face.smiling.eyes.smiling',
+  "\N{U+1F3E5}" => 'hospital',
 
   "\N{U+203C}" => "exclamation.mark.double",
   "\N{U+2757}" => 'exclamation.mark',
@@ -671,6 +674,7 @@ our %fbicons_hcode_arabic = map { $_->{char} => '' } (
   { char => "\N{U+0643}", name => 'Arabic Letter Kaf' },
   { char => "\N{U+0646}", name => 'Arabic Letter Noon' },
   { char => "\N{U+062C}", name => 'Arabic Letter Jeem' },
+  { char => "\N{U+0632}", name => 'Arabic Letter Zain' },
 );
 
 our %fbicons_hcode_greek = Plg::Projs::Tex::Unicode::Greek::MAP;
