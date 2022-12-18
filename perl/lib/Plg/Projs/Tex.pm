@@ -585,6 +585,8 @@ our %fbicons_n = (
   "\N{U+1FAF6}" => 'heart.hands',
   "\N{U+1F60A}" => 'face.smiling.eyes.smiling',
   "\N{U+1F3E5}" => 'hospital',
+  "\N{U+2714}" => 'check.mark',
+  "\N{U+1FAE3}" => 'face.eye.peeking',
 
   "\N{U+203C}" => "exclamation.mark.double",
   "\N{U+2757}" => 'exclamation.mark',
