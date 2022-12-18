@@ -382,6 +382,9 @@ sub get_opt {
 
         # for fetch_uri command
         "uri=s",
+        "uri_parent=s",
+        "uri_tags=s",
+        "uri_caption=s",
         # for fetch_fs command
         "fs=s",
     );
@@ -1230,6 +1233,7 @@ sub cmd_fetch_uri {
 
     my %n = (
        flines => $flines,
+       sec => $self->{sec},
     );
     my $ftc = $self->_new_fetcher(\%n);
     $ftc->loop;
