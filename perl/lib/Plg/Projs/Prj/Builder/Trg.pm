@@ -82,9 +82,9 @@ sub trg_adjust_conf {
     my $target_conf = $bld->_val_('target_conf') || {};
     while(my($k,$v) = each %$target_conf){
         m/$k/ && do {
-           my $matched = \%+;
-           varexp($v, $matched, { name => 'matched' });
+           my $matched = { %+ };
            $DB::single = 1;
+           varexp($v, $matched, { name => 'matched' });
            dict_update($bld, $v);
            next;
         };
