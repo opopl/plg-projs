@@ -65,7 +65,6 @@ sub _sct_lines {
     #print $bld->_bld_var('pagestyle') . "\n";
 
     my @lines;
-    print Dumper($sec) . "\n";
 
     #my $cref = d_str_split_sn($data,'contents') // [];
     my $cref = d_path($data, 'contents') // [];
