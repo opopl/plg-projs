@@ -74,6 +74,7 @@ use Base::DB qw(
     dbh_delete
 
     dbh_select
+    dbh_select_as_list
     dbh_select_join
     dbh_select_fetchone
 
@@ -499,6 +500,19 @@ sub _db_img_one {
 
     my $imgs = $self->_db_imgs($ref);
     return $imgs->[0];
+}
+
+sub _db_img_tags {
+    my ($self, $ref) = @_;
+    $ref ||= {};
+
+    my $url = $ref->{url};
+    my $tags = dbh_select_as_list({
+         q => q{ SELECT tag FROM _info_imgs_tags },
+         w => { url => $url },
+    });
+
+    return $tags;
 }
 
 sub _db_imgs {
@@ -1214,6 +1228,38 @@ sub cmd_add_images {
        }
     }
 
+    return $self;
+}
+
+sub cmd_list {
+    my ($self, $ref) = @_;
+    $ref ||= {};
+
+    my ($sec, $proj) = @{$self}{qw(sec proj)};
+    my $prj  = $self->{prj} || $self->_new_prj;
+
+    my $pic_data = [];
+    my $ii_list = [ $sec ];
+
+    my ($child);
+    while (@$ii_list) {
+        $child = shift @$ii_list;
+
+        my $imgs = $self->_db_imgs({
+                fields => [qw( url sec )],
+                where => { sec => $child, proj => $proj }
+        });
+        foreach my $x (@$imgs) {
+            my $url = $x->{url};
+            my $tags = $self->_db_img_tags({ url => $url });
+            push @{$pic_data}, { %$x, tags => $tags };
+        }
+
+        my $children = $prj->_sec_children({ sec => $child, proj => $proj });
+        push @$ii_list, @$children;
+    }
+
+    print Dumper($pic_data) . "\n";
     return $self;
 }
 
