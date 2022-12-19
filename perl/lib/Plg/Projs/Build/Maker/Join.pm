@@ -246,6 +246,7 @@ sub _join_lines {
 
                     #$DB::single = 1 if $sect && $sect eq 'section';
 
+                    $DB::single = 1;
                     if (@ii_title_href) {
                         my $htitle = join(", " => @ii_title_href);
                         push @lines, $mkr->_sec_link_html({

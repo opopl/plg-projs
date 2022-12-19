@@ -117,17 +117,16 @@ sii:
   generate:
 ###sii@generate
     'on':
-    - '_main_'
-    - index
-    - tabcont
-    - listfigs
-    - listtabs
-    - preamble
-    - preamble.packages
-    - preamble.index
-    - preamble.filecontents
-    - preamble.fancyhdr
-
+      '_main_': 1
+      index: 1
+      tabcont: 1
+      listfigs: 1
+      listtabs: 1
+      preamble: 1
+      preamble.packages: 1
+      preamble.index: 1
+      preamble.filecontents: 1
+      preamble.fancyhdr: 1
 
 # Plg::Projs::Prj::Builder::Sct
   scts:

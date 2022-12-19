@@ -27,8 +27,9 @@ use Base::Data qw(
 sub _gen_sec {
     my ($bld, $sec) = @_;
 
-    my $on = $bld->_val_list_ref_('sii generate on');
-    return () unless grep { /^$sec$/ } @$on;
+    my $on_ref = $bld->_vals_('sii.generate.on') // {};
+    my @on = map { $on_ref->{$_} ? $_ : () } keys %$on_ref;
+    return () unless grep { /^$sec$/ } @on;
 
     my @lines = $bld->_sct_lines($sec);
     return @lines;
