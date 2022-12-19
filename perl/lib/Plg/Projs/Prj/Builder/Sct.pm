@@ -65,9 +65,62 @@ sub _sct_lines {
     #print $bld->_bld_var('pagestyle') . "\n";
 
     my @lines;
+    print Dumper($sec) . "\n";
 
-    my @contents = d_str_split_sn($data,'contents');
-    foreach (@contents) {
+    #my $cref = d_str_split_sn($data,'contents') // [];
+    my $cref = d_path($data, 'contents') // [];
+    my @contents;
+    unless (ref $cref) {
+        push @contents, str_split_sn($cref);
+    }elsif(ref $cref eq 'ARRAY'){
+        push @contents, @$cref;
+    }
+
+###loop_CONT
+    CONT: while(@contents) {
+        local $_ = shift @contents;
+
+        if (ref $_ eq 'HASH') {
+            my $ccc = $_;
+            my $type = $ccc->{type};
+
+            # final result
+            my @final;
+
+            if ($type eq 'sql') {
+                my ($db, $query, $params) = @{$ccc}{qw( db query params )};
+                next CONT unless $db && $query;
+                $params ||= [];
+
+                my ($output, $cmt) = @{$ccc}{qw( output cmt )};
+
+                my $dbx;
+                if ($db eq 'img') { $dbx = $bld->{imgman}->{dbh}; }
+                my $ref = {
+                    dbh => $dbx,
+                    q => $query,
+                    p => $params,
+                };
+
+                my ($rows) = dbh_select($ref);
+                foreach my $rw (@$rows) {
+                    ( my $fin = $output ) =~ s|@@\{(\w+)\}|( $rw->{$1} // '' )|ge;
+                    push @final, $fin;
+                }
+
+                if (@final) {
+                    push @lines, $cmt ? '\ifcmt' : (), @final, $cmt ? '\fi' : ();
+                }
+                $DB::single = 1;1;
+            }
+            next;
+        }else{
+            my @s = str_split_sn($_);
+            if (@s > 1) {
+                unshift @contents, @s;
+                next;
+            }
+        }
 ###@zero
         /^\@zero$/ && do {
             push @lines,'';
@@ -170,11 +223,11 @@ sub _sct_lines {
                 my @o = str_split_sn($s_o);
 
                 $s_o = join(',' => @o);
-                
+
                 my $o = $s_o ? qq{[$s_o]} : '';
-        
+
                 local $_ = sprintf('\usepackage%s{%s}',$o,$pack);
-        
+
                 push @lines,$_ if length;
             }
             next;
@@ -297,5 +350,5 @@ sub _sct_data {
 }
 
 1;
- 
+
 
