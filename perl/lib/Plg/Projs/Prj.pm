@@ -1125,6 +1125,39 @@ sub _sec_data {
     return $rw;
 }
 
+sub _sec_pic_data {
+    my ($self, $ref) = @_;
+    $ref ||= {};
+
+    my ($proj, $sec) = @{$ref}{qw(proj sec)};
+
+    my $pic_data = [];
+    my $ii_list = [ $sec ];
+
+    my $imgman = $self->{imgman};
+    return unless $imgman;
+
+    my ($child);
+    while (@$ii_list) {
+        $child = shift @$ii_list;
+
+        my $imgs = $imgman->_db_imgs({
+            fields => [qw( url sec )],
+            where => { sec => $child, proj => $proj }
+        });
+        foreach my $x (@$imgs) {
+            my $url = $x->{url};
+            my $tags = $imgman->_db_img_tags({ url => $url });
+            push @{$pic_data}, { %$x, tags => $tags };
+        }
+
+        my $children = $self->_sec_children({ sec => $child, proj => $proj });
+        push @$ii_list, @$children;
+    }
+
+    return $pic_data;
+}
+
 sub _sec_data_pics {
     my ($self, $ref) = @_;
     $ref ||= {};

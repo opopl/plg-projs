@@ -1238,26 +1238,10 @@ sub cmd_list {
     my ($sec, $proj) = @{$self}{qw(sec proj)};
     my $prj  = $self->{prj} || $self->_new_prj;
 
-    my $pic_data = [];
-    my $ii_list = [ $sec ];
-
-    my ($child);
-    while (@$ii_list) {
-        $child = shift @$ii_list;
-
-        my $imgs = $self->_db_imgs({
-                fields => [qw( url sec )],
-                where => { sec => $child, proj => $proj }
-        });
-        foreach my $x (@$imgs) {
-            my $url = $x->{url};
-            my $tags = $self->_db_img_tags({ url => $url });
-            push @{$pic_data}, { %$x, tags => $tags };
-        }
-
-        my $children = $prj->_sec_children({ sec => $child, proj => $proj });
-        push @$ii_list, @$children;
-    }
+    my $pic_data = $prj->_sec_pic_data({
+        sec => $sec,
+        proj => $proj,
+    });
 
     print Dumper($pic_data) . "\n";
     return $self;
