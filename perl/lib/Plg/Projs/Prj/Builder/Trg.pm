@@ -15,6 +15,7 @@ use Base::Arg qw(
     hash_inject
     dict_update
     dict_rm_ctl
+    varexp
 );
 
 use Base::String qw(
@@ -79,8 +80,11 @@ sub trg_adjust_conf {
     local $_ = $bld->{target};
 
     my $target_conf = $bld->_val_('target_conf') || {};
-    while(my($k,$v)=each %$target_conf){
+    while(my($k,$v) = each %$target_conf){
         m/$k/ && do {
+           my $matched = \%+;
+           varexp($v, $matched, { name => 'matched' });
+           $DB::single = 1;
            dict_update($bld, $v);
            next;
         };
