@@ -92,6 +92,7 @@ sub _sct_lines {
                 $params ||= [];
 
                 my ($output, $cmt) = @{$ccc}{qw( output cmt )};
+                my (@begin, @end);
 
                 my $dbx;
                 if ($db eq 'img') { $dbx = $bld->{imgman}->{dbh}; }
@@ -100,6 +101,15 @@ sub _sct_lines {
                     q => $query,
                     p => $params,
                 };
+                if ($cmt) {
+                    push @begin, '\ifcmt';
+                    push @end, '\fi';
+                    my $tab = $cmt && ref $cmt eq 'HASH' && $cmt->{tab};
+                    if ($tab) {
+                        push @begin, sprintf(' tab_begin %s',$tab);
+                        unshift @end, ' tab_end';
+                    }
+                }
 
                 my ($rows) = dbh_select($ref);
                 foreach my $rw (@$rows) {
@@ -108,7 +118,7 @@ sub _sct_lines {
                 }
 
                 if (@final) {
-                    push @lines, $cmt ? '\ifcmt' : (), @final, $cmt ? '\fi' : ();
+                    push @lines, @begin, @final, @end;
                 }
                 $DB::single = 1;1;
             }
