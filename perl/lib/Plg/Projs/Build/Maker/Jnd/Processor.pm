@@ -1032,6 +1032,9 @@ sub globals_update {
 sub lpush_d {
   my ($self, $d, $tab) = @_;
 
+  my $mkr = $self->{mkr};
+  my $do_htlatex = $mkr->{do_htlatex};
+
   my $d_custom = 1 if $d;
   $d ||= $self->{d};
   return $self unless $d;
@@ -1039,14 +1042,23 @@ sub lpush_d {
   $tab ||= $self->{tab};
 
   my @d_tex = $self->_d2tex($d, $tab);
-  if ($tab) {
-    push @{$tab->{store}}, @d_tex;
-  }else{
-    push @{$self->{nlines}}, @d_tex;
-  }
 
-  if ($tab) {
-     my $i_col = $tab->{i_col};
+  unless($tab) {
+     push @{$self->{nlines}}, @d_tex;
+  }else{
+     my ($i_col, $i_row) = @{$tab}{qw( i_col i_row )};
+
+     if ($tab->{separate} && $i_row > 1 && $i_col == 1) {
+        unless($do_htlatex) {
+            push @{$tab->{store}},
+                $self->_tab_end,
+                $self->_fig_end,
+                $self->_fig_start,
+                $self->_tab_start;
+        }
+     }
+
+     push @{$tab->{store}}, @d_tex;
 
      if ($d->{caption}) {
         push @{$tab->{cap_list}},
@@ -1076,6 +1088,7 @@ sub lpush_d {
 
      #push @{$self->{nlines}}, @s;
      push @{$tab->{store}},@s;
+     $DB::single = 1;1;
   }
 
   $self->{d} = undef unless $d_custom;

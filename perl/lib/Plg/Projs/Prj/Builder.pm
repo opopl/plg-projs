@@ -727,7 +727,7 @@ sub run {
     }else{
         if ($bld->_pln_running) {
             print '[BUILDER] already running: ' . $bld->_pln .  "\n";
-            return $bld;
+			#return $bld;
         }
 
         $bld
