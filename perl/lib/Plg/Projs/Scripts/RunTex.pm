@@ -88,7 +88,7 @@ sub _cmd_ht_run {
 
     my $cmd;
     my $run_argc = $run->{argc} || {};
-    my $argc = { 
+    my $argc = {
         tex4ht => $run_argc->{tex4ht} || q{ -cunihtf -utf8},
         t4ht   => $run_argc->{t4ht} || '',
         latex  => $run_argc->{latex} || '',
@@ -322,6 +322,9 @@ sub ht_pretty_print {
 
     my $file = $ref->{file};
 
+    my $obj_bld = $self->{obj_bld};
+    my $imgman = $obj_bld->{imgman} if $obj_bld;
+
     my $ht = $self->{tex4ht} || {};
     my $run_after = $ht->{run_after} || {};
 
@@ -376,6 +379,20 @@ sub ht_pretty_print {
             $parent->removeChild($node);
         }
     );
+
+    if ($imgman) {
+        $dom->findnodes('//img')->map(
+            sub { my ($node) = @_;
+                  local $_ = $node->{src};
+                  my ($inum) = ( /(\d+)\.\w+$/ );
+                  my $rw = $imgman->_db_img_one({
+                      where => { inum => $inum }
+                  });
+                  my $url = $rw->{url} if $rw;
+                  $node->{url} = $url if $url;
+            }
+        );
+    }
 
     $dom->findnodes('//pre[contains(@class,"verbatim")]/span')->map(
         sub {

@@ -1088,7 +1088,6 @@ sub lpush_d {
 
      #push @{$self->{nlines}}, @s;
      push @{$tab->{store}},@s;
-     $DB::single = 1;1;
   }
 
   $self->{d} = undef unless $d_custom;
@@ -1404,9 +1403,13 @@ sub _d2tex {
   my $o = join(",",@o);
 
   my (@ig, $ig_cmd);
+
+  #my $wd_html = sprintf('%d%%', $wd*100);
+
   $ig_cmd = sprintf(q|  \includegraphics[%s]{%s} |, $o, $img_path );
-  if ($mkr->{box}) {
-    # body...
+  if($do_htlatex) {
+      #$ig_cmd = sprintf('\HCode{<div class="prj-img" url="%s">} %s \HCode{</div>}', $rw->{url}, $ig_cmd);
+      #$ig_cmd = sprintf(q|  \HCode{<img src="%s" url="%s" width="%s" />} |, $img_file, $rw->{url}, $wd_html );
   }
 
   push @ig,
