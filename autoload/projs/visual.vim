@@ -80,7 +80,6 @@ function! projs#visual#ii_to_new_secs (start, end, ... )
 
   let r = {
     \  'git_add'    : 1,
-    \  'p_tree'     : 1,
     \  'rewrite'    : 0,
     \  'parent_sec' : b:sec,
     \  'sec_type'   : sec_type,

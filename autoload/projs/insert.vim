@@ -252,7 +252,6 @@ function! projs#insert#ii ()
 
   let r_new = {
       \ 'view'       : 'edit',
-      \ 'p_tree'     : 1,
       \ 'parent_sec' : sec,
       \  }
 
@@ -375,7 +374,6 @@ function! projs#insert#ii_date (...)
 
   let r_new = {
       \ 'view'       : 'edit',
-      \ 'p_tree'     : 1,
       \ 'date'       : date,
       \ 'title'      : date_t,
       \ 'sec_type'   : sec_type,
@@ -515,7 +513,6 @@ function! projs#insert#ii_url ()
       \  'author'     : author,
       \  'tags'       : tags,
       \  'view'       : 'edit',
-      \  'p_tree'     : 1,
       \  'rewrite'    : 1,
       \  'parent_sec' : sec,
       \  }

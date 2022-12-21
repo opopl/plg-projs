@@ -1272,10 +1272,6 @@ function! projs#sec#new(sec,...)
        endif
     endif
 
-    if get(ref,'p_tree')
-      "call projs#bld#do#print_ii_tree({ 'target' : 'usual' })
-    endif
-
     return 1
 endfunction
 """sec_new_end }
