@@ -413,6 +413,8 @@ sub sec_import_x {
         });
     }
 
+    return $self if $ref->{no_sec_create};
+
     # we grab all screenshots already in the database
     $imgs_db = $imgman->_db_imgs({
         tags => { and => $tgx },

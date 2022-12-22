@@ -874,6 +874,7 @@ sub cmd_load_sec {
        },
     };
     my $insert_mode = $cmd_data->{insert_mode};
+    my $no_sec_create = $cmd_data->{no_sec_create};
 
     foreach my $x (@$keys) {
         my $mapx = $map->{$x};
@@ -899,6 +900,8 @@ sub cmd_load_sec {
 
             root_dir => $root_dir,
             insert_mode => $insert_mode,
+
+            no_sec_create => $no_sec_create,
         };
 
         my $xdir = $mapx->{dir};
