@@ -11,6 +11,7 @@ from selenium.common.exceptions import TimeoutException
 import xml.etree.ElementTree as et
 from lxml import etree
 import lxml.html
+import pathlib
 
 from io import StringIO, BytesIO
 
@@ -188,6 +189,8 @@ class FbPost(
     if not self.email and self.password:
       self.lge('login_send - no email and password given')
       return self
+
+    import pdb; pdb.set_trace()
 
     #email_element = self.driver.find_element_by_id('email')
     email_element = self.driver.find_element_by_id('m_login_email')

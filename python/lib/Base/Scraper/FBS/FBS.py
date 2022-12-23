@@ -49,7 +49,6 @@ from Base.Scraper.PicBase import PicBase
 
 from dict_recursive_update import recursive_update
 
-
 #p [ x['clist'] for x in clist if 'clist' in x and len(x['clist'])]
  
 class FBS(CoreClass,
@@ -141,7 +140,6 @@ class FBS(CoreClass,
 
       for k, v in ref.items():
         setattr(self, k, v)
-
 
 
     def _host2site(self,host=''):

@@ -12,6 +12,8 @@ from selenium import webdriver as webDriver
 import time
 import os,sys,re
 import pickle
+import pathlib
+import json
 
 class mixDrv:
 
@@ -21,6 +23,8 @@ class mixDrv:
   def drv_init(self):
     if self.driver:
       return self
+
+    return self
 
     self.lgi('[drv_init] start')
 
@@ -87,13 +91,20 @@ class mixDrv:
 
     self.lg('driver','info',f'Loading cookie file: {file}')
 
-    cookies = pickle.load(open(file, "rb"))
+    suff = pathlib.Path(file).suffix
+    cookies = {}
+    if suff == '.pkl':
+      cookies = pickle.load(open(file, "rb"))
+    elif suff == '.json':
+      cookies = json.load(open(file, "r"))
+
+    import pdb; pdb.set_trace()
+
     if self.driver:
       for cookie in cookies:
         self.driver.add_cookie(cookie)
 
     time.sleep(2)
-    import pdb; pdb.set_trace()
 
     return self
 
