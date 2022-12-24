@@ -1315,12 +1315,15 @@ sub _secs {
     $ref ||= {};
 
     my $proj  = $ref->{proj} || $self->{proj};
+    my $w = $ref->{w} || {};
+    my $limit = $ref->{limit} || 0;
 
     my $r = {
         dbh => $self->{dbh},
         t   => 'projs',
         f   => [qw(sec)],
-        w   => { proj => $proj },
+        w   => { proj => $proj, %$w },
+        $limit ? ( limit => $limit ) : (),
     };
 
     my $secs = dbh_select_as_list($r);
