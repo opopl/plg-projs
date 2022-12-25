@@ -1258,11 +1258,13 @@ sub cmd_fetch_uri {
 
     my $atend = sub { $self->info_ok_fail };
     my $tags = $ref->{tags} || $self->{uri_tags};
+    my $caption = $ref->{caption} || $self->{uri_caption};
 
     my $flines = [
         '\ifcmt',
         '  pic ' . $uri,
-        $tags ?  '  @tags ' . $tags : (),
+        $tags ?     '  @tags ' . $tags : (),
+        $caption ?  '  @caption ' . $caption : (),
         '\fi',
     ];
 
