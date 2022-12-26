@@ -86,11 +86,36 @@ sub new
     return $self;
 }
 
+sub init_dirs {
+    my ($self) = @_;
+
+    my ( $rootid, $proj ) = @{$self}{qw( rootid proj )};
+    my $pdfout  = $ENV{PDFOUT} || catfile($ENV{HOME},qw(out pdf));
+    my $htmlout = $ENV{HTMLOUT} || catfile($ENV{HOME},qw(out html));
+
+    my $h = {
+        pdfout  => $pdfout,
+        htmlout => $htmlout,
+    };
+
+    if ($rootid) {
+        $h = { %$h,
+            out_dir_pdf  => catfile($pdfout, $rootid, $proj),
+            out_dir_html => catfile($htmlout, $rootid, $proj),
+        };
+    }
+
+    hash_inject($self, $h);
+
+    return $self;
+}
+
 sub init {
     my ($self) = @_;
 
     $self
         ->init_proj
+        ->init_dirs
         ->init_db
         ->init_db_tables
         ;
