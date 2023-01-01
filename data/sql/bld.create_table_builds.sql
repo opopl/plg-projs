@@ -3,7 +3,7 @@ CREATE TABLE IF NOT EXISTS builds (
     -- mandatory
     bid INTEGER UNIQUE NOT NULL PRIMARY KEY,
     buuid TEXT UNIQUE NOT NULL,
-    
+
     cmd TEXT NOT NULL,
     proj TEXT NOT NULL,
     target TEXT NOT NULL,
