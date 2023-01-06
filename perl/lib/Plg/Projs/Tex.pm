@@ -587,11 +587,13 @@ our %fbicons_n = (
   "\N{U+1F3E5}" => 'hospital',
   "\N{U+2714}" => 'check.mark',
   "\N{U+1FAE3}" => 'face.eye.peeking',
+  "\N{U+2B50}"  => 'white.medium.star',
 
   "\N{U+203C}" => "exclamation.mark.double",
   "\N{U+2757}" => 'exclamation.mark',
 
   "\N{U+1F1E6}\N{U+1F1FF}" => 'flag.az',
+  "\N{U+1F1F3}\N{U+1F1F1}" => 'flag.nl',
 
   #"\N{<++>}" => '<++>',
 );
