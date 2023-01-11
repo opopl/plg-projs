@@ -1279,6 +1279,7 @@ sub init_db_tables {
         _info_projs_author_id
         saved
         tag_details
+        authors auth_details
     )];
     my $prefix = $ref->{prefix};
 
