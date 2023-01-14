@@ -588,6 +588,7 @@ our %fbicons_n = (
   "\N{U+2714}" => 'check.mark',
   "\N{U+1FAE3}" => 'face.eye.peeking',
   "\N{U+2B50}"  => 'white.medium.star',
+  "\N{U+2B07}"  => 'downwards.black.arrow',
 
   "\N{U+203C}" => "exclamation.mark.double",
   "\N{U+2757}" => 'exclamation.mark',
