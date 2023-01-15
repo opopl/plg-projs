@@ -595,6 +595,7 @@ our %fbicons_n = (
 
   "\N{U+1F1E6}\N{U+1F1FF}" => 'flag.az',
   "\N{U+1F1F3}\N{U+1F1F1}" => 'flag.nl',
+  "\N{U+1F1E8}\N{U+1F1FF}" => 'flag.cz',
 
   #"\N{<++>}" => '<++>',
 );
