@@ -189,7 +189,6 @@ our %fbicons_all = (
   '🔻' => 'red.triangle.pointed.down',
   '🚫' => 'prohibited',
   '🩹' => 'adhesive.bandage',
-  '📘' => 'blue.book',
   '🏫' => 'school',
   '⚔️'  => 'crossed.swords',
   '🎖' => 'military.medal',
@@ -264,7 +263,6 @@ our %fbicons_all = (
   '📇' => 'card.index',
   '👤' => 'shadow',
   '🚚' => 'delivery.truck',
-  '📓' => 'notebook',
   '🐈' => 'cat',
   '🆘' => 'sos.button',
   '👁' => 'glaz',
@@ -589,6 +587,7 @@ our %fbicons_n = (
   "\N{U+1FAE3}" => 'face.eye.peeking',
   "\N{U+2B50}"  => 'white.medium.star',
   "\N{U+2B07}"  => 'downwards.black.arrow',
+  "\N{U+1F43F}" => 'chipmunk',
 
   "\N{U+203C}" => "exclamation.mark.double",
   "\N{U+2757}" => 'exclamation.mark',
@@ -755,9 +754,19 @@ our %replace_unicode = (
 
 );
 
+###fbicons_book
+our %fbicons_book = (
+  '📘' => 'blue.book',
+  '📓' => 'notebook',
+  "\N{U+1F4D7}" => 'book.green',
+  "\N{U+1F4D9}" => 'book.orange',
+  "\N{U+1F4D5}" => 'book.closed',
+);
+
 ###fbicons
 our %fbicons = (
   %fbicons_all,
+  %fbicons_book,
   %fbicons_face,
   %fbicons_weak,
   %fbicons_heart,
