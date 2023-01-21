@@ -1395,7 +1395,7 @@ sub fb_format {
 
           #while(/($k+)/){
           #}
-          s/($k+)/_fbicon_igg($1)/ge;
+          #s/($k+)/_fbicon_igg($1)/ge;
         }
 
         #s/^\\iusr\{(.*)\}\\par\s*$/\\iusr{$1}/g;
