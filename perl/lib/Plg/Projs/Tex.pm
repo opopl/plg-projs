@@ -588,6 +588,13 @@ our %fbicons_n = (
   "\N{U+2B50}"  => 'white.medium.star',
   "\N{U+2B07}"  => 'downwards.black.arrow',
   "\N{U+1F43F}" => 'chipmunk',
+  "\N{U+2763}"  => 'heart.exclamation',
+
+  '❤️🩹' => 'heart.white.middle',
+  "\N{U+1FAC2}" => 'people.hugging',
+
+  # replacement character
+  "\N{U+FFFD}" => 'u_fffd',
 
   "\N{U+203C}" => "exclamation.mark.double",
   "\N{U+2757}" => 'exclamation.mark',
