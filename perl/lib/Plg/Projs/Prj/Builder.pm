@@ -306,7 +306,7 @@ sub load_patch {
 sub load_yaml {
     my ($bld) = @_;
 
-    my @yfiles = @{$bld->{opt}->{yfile} || []};
+    my @yfiles = @{$bld->{yfiles} || $bld->{opt}->{yfile} || []};
     push @yfiles, 'bld.yml';
 
     my %done;

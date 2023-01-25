@@ -583,12 +583,15 @@ our %fbicons_n = (
   "\N{U+1FAF6}" => 'heart.hands',
   "\N{U+1F60A}" => 'face.smiling.eyes.smiling',
   "\N{U+1F3E5}" => 'hospital',
-  "\N{U+2714}" => 'check.mark',
+  "\N{U+2714}"  => 'check.mark',
   "\N{U+1FAE3}" => 'face.eye.peeking',
   "\N{U+2B50}"  => 'white.medium.star',
   "\N{U+2B07}"  => 'downwards.black.arrow',
   "\N{U+1F43F}" => 'chipmunk',
   "\N{U+2763}"  => 'heart.exclamation',
+  "\N{U+1FAD9}" => 'jar',
+  "\N{U+2620}"  => 'skull.crossbones',
+  "\N{U+1F626}" => 'face.frowning.open.mouth',
 
   '❤️🩹' => 'heart.white.middle',
   "\N{U+1FAC2}" => 'people.hugging',
@@ -627,6 +630,9 @@ our %fbicons_hcode = (
 
   # flower
   "\N{U+2698}" => '',
+
+  # invisible comma
+  "\N{U+2063}" => '',
 
 );
 
@@ -1415,6 +1421,8 @@ sub fb_format {
         };
 
         s/…/.../g;
+        s/‘/'/g;
+        s/’/'/g;
 
         push @new,$_;
     }
