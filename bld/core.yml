@@ -545,13 +545,15 @@ tex4ht:
       '@type' : 'css'
       'verb' :
          '.verbatim,.verb' :
-            'font-weight'      : bold
-            'background-color' : gray
-            'color'            : white
+            #'font-weight'      : bold
+            #'background-color' : gray
+            #'color'            : white
          '.fancyvrb' :
-            'font-weight'      : bold
-            'background-color' : gray
-            'color'            : white
+            #'font-weight'      : bold
+            #'background-color' : gray
+            #'color'            : white
+         '.tabular' :
+            'text-align' : left
 
       'text' :
          '.bold' :

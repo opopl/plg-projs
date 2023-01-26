@@ -732,6 +732,27 @@ sub match_tab_begin {
   return $self;
 }
 
+sub match_perl_begin {
+  my ($self, $opts_s) = @_;
+
+  return $self;
+}
+
+sub match_perl_end {
+  my ($self, $opts_s) = @_;
+
+  my $d = $self->{d};
+  my $perl = $d->{perl};
+
+  my $ev = eval $perl;
+
+  unless($@) {
+    push @{$self->{nlines}}, $ev if defined $ev;
+  }
+
+  return $self;
+}
+
 sub match_tab_end {
   my ($self) = @_;
 
@@ -874,7 +895,7 @@ sub ldo_no_cmt {
 
     for(@push){
        $self->line_process_chars(\$_);
-  
+
        #m/(\N{U+1F44C})/ && do {
           #$DB::single = 1;1;
           #next;
@@ -1632,6 +1653,8 @@ sub loop {
 ###m_comment
     m/^\s*%/ && do { push @{$self->{nlines}},$_; next; };
 
+    #m/^\s*\@caption_begin\b(.*)/g && do { $self->match_caption_begin($1); next; };
+
 ###m_caption_begin
     m/^\s*\@caption_begin\b(.*)/g && do { $self->match_caption_begin($1); next; };
     m/^\s*\@caption_end\b(.*)/g && do { $self->match_caption_end($1); next; };
@@ -1718,6 +1741,9 @@ sub loop {
 ###m_tab
     m/^\s*tab_begin\b(.*)/g && do { $self->match_tab_begin($1); next; };
     m/^\s*tab_end\s*$/g && do { $self->match_tab_end; next; };
+
+    m/^\s*perl_begin\b(.*)/g && do { $self->match_perl_begin($1); next; };
+    m/^\s*perl_end\s*$/g && do { $self->match_perl_end; next; };
 
 ###m_pic@
     m/^\s*(pic|doc|ig|igc)@(.*)$/g && do {

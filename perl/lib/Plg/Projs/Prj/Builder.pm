@@ -28,6 +28,9 @@ use YAML qw( LoadFile Load Dump DumpFile );
 use Base::DB qw(
     dbi_connect
 
+    dbh_do
+
+    dbh_select
     dbh_select_fetchone
     dbh_insert_hash
     dbh_insert_update_hash
@@ -149,6 +152,9 @@ sub inj_base {
             'db_sync'          => sub { $bld->act_db_sync; },
             'db_push'          => sub { $bld->act_db_push; },
             'db_pull'          => sub { $bld->act_db_pull; },
+
+            'bld_delrun'       => sub { $bld->builds_delete_running; },
+            'bld_listrun'      => sub { $bld->builds_list_running; },
             %print,
             %{$bld->{custom}->{maps_act} || {}}
         },
@@ -177,7 +183,7 @@ sub init {
     };
 
     return $bld if $bld->{bld_skip_init};
-	$DB::single = 1;
+    $DB::single = 1;
 
     $bld
         ->init_db_bld
@@ -601,6 +607,35 @@ sub build_update_start {
     return $bld;
 }
 
+sub builds_list_running {
+    my ($bld, $data) = @_;
+    $data ||= {};
+
+    my $ref = {
+        dbh => $bld->{dbh_bld},
+        t => 'builds',
+        q => q{ SELECT * FROM builds WHERE status = 'running' },
+    };
+    my ($rows) = dbh_select($ref);
+    print Dumper($rows) . "\n";
+
+    return $bld;
+}
+
+sub builds_delete_running {
+    my ($bld, $data) = @_;
+    $data ||= {};
+
+    my $ref = {
+        dbh => $bld->{dbh_bld},
+        t => 'builds',
+        q => q{ DELETE FROM builds WHERE status = 'running' },
+    };
+    dbh_do($ref);
+
+    return $bld;
+}
+
 sub build_update_db {
     my ($bld, $data) = @_;
     $data ||= {};
@@ -727,7 +762,7 @@ sub run {
     }else{
         if ($bld->_pln_running) {
             print '[BUILDER] already running: ' . $bld->_pln .  "\n";
-			return $bld;
+            return $bld;
         }
 
         $bld
