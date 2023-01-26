@@ -735,16 +735,21 @@ sub match_tab_begin {
 sub match_perl_begin {
   my ($self, $opts_s) = @_;
 
+  $self->{perl} = [];
+  $self->{is_perl} = 1;
+
   return $self;
 }
 
 sub match_perl_end {
   my ($self, $opts_s) = @_;
 
-  my $d = $self->{d};
-  my $perl = $d->{perl};
+  my @perl_a = @{$self->{perl} || []};
+  delete $self->{$_} for(qw(is_perl perl));
+  return $self unless @perl_a;
 
-  my $ev = eval $perl;
+  my $perl_s = join("\n",@perl_a);
+  my $ev = eval $perl_s;
 
   unless($@) {
     push @{$self->{nlines}}, $ev if defined $ev;
@@ -1707,6 +1712,7 @@ sub loop {
        next;
     }
 
+
 ###m_tex
     m/^\s*tex\s+(.*)$/g && do {
         my $tex = trim($1);
@@ -1744,6 +1750,11 @@ sub loop {
 
     m/^\s*perl_begin\b(.*)/g && do { $self->match_perl_begin($1); next; };
     m/^\s*perl_end\s*$/g && do { $self->match_perl_end; next; };
+
+    if ($self->{is_perl}) {
+       push @{$self->{perl}}, $_ if $self->{perl};
+       next;
+    }
 
 ###m_pic@
     m/^\s*(pic|doc|ig|igc)@(.*)$/g && do {
