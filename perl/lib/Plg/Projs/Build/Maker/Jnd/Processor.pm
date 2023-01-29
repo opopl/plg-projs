@@ -750,6 +750,7 @@ sub match_perl_end {
 
   my $perl_s = join("\n",@perl_a);
   my $ev = eval $perl_s;
+  $DB::single = 1;
 
   unless($@) {
     push @{$self->{nlines}}, $ev if defined $ev;
@@ -1712,6 +1713,14 @@ sub loop {
        next;
     }
 
+###m_perl
+    m/^\s*perl_begin\b(.*)/g && do { $self->match_perl_begin($1); next; };
+    m/^\s*perl_end\s*$/g && do { $self->match_perl_end; next; };
+
+    if ($self->{is_perl}) {
+       push @{$self->{perl}}, $_ if $self->{perl};
+       next;
+    }
 
 ###m_tex
     m/^\s*tex\s+(.*)$/g && do {
@@ -1748,13 +1757,7 @@ sub loop {
     m/^\s*tab_begin\b(.*)/g && do { $self->match_tab_begin($1); next; };
     m/^\s*tab_end\s*$/g && do { $self->match_tab_end; next; };
 
-    m/^\s*perl_begin\b(.*)/g && do { $self->match_perl_begin($1); next; };
-    m/^\s*perl_end\s*$/g && do { $self->match_perl_end; next; };
 
-    if ($self->{is_perl}) {
-       push @{$self->{perl}}, $_ if $self->{perl};
-       next;
-    }
 
 ###m_pic@
     m/^\s*(pic|doc|ig|igc)@(.*)$/g && do {

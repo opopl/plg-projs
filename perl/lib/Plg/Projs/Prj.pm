@@ -15,6 +15,7 @@ use File::Basename qw(basename dirname);
 use File::Spec::Functions qw(catfile);
 use File::Find::Rule;
 use File::Path qw(mkpath rmtree);
+use File::Dat::Utils qw(readarr);
 
 use Data::Dumper qw(Dumper);
 use DateTime;
@@ -1273,14 +1274,11 @@ sub init_db_tables {
 
     my $dbh = $ref->{dbh} || $self->{dbh};
     my $sql_dir = catfile($ENV{PLG},qw( projs data sql ));
-    my $table_order = $ref->{table_order} || [qw(
-        projs tree_children
-        _info_projs_tags
-        _info_projs_author_id
-        saved
-        tag_details
-        authors auth_details
-    )];
+    my $to_dat = catfile($sql_dir,qw(table_order.i.dat));
+    return $self unless -f $to_dat;
+
+    my $table_order = $ref->{table_order} || readarr($to_dat);
+
     my $prefix = $ref->{prefix};
 
     dbh_create_tables({

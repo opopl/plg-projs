@@ -561,7 +561,6 @@ our %fbicons_n = (
   "\N{U+1F41F}" => 'fish',
   "\N{U+1F466}" => 'boy',
   "\N{U+1F936}" => 'mother.christmas',
-  "\N{U+25AA}" => 'black.small.square',
   "\N{U+1F62B}" => 'face.tired',
   "\N{U+261D}" => 'index.pointing.up',
   "\N{U+26A1}" => 'lightning',
@@ -592,6 +591,9 @@ our %fbicons_n = (
   "\N{U+1FAD9}" => 'jar',
   "\N{U+2620}"  => 'skull.crossbones',
   "\N{U+1F626}" => 'face.frowning.open.mouth',
+
+  "\N{U+25AA}" => 'black.small.square',
+  "\N{U+25FC}" => 'black.medium.square',
 
   '❤️🩹' => 'heart.white.middle',
   "\N{U+1FAC2}" => 'people.hugging',
@@ -633,6 +635,8 @@ our %fbicons_hcode = (
 
   # invisible comma
   "\N{U+2063}" => '',
+
+  "\N{U+1F3FD}" => '',
 
 );
 
