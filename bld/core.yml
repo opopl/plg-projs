@@ -459,6 +459,15 @@ tex4ht:
       - '\Configure{DOCTYPE}{\HCode{<!DOCTYPE html>\Hnewline}}'
       - '\Configure{HTML}{\HCode{<html>\Hnewline}}{\HCode{\Hnewline</html>}}'
 
+      #- '\Configure{subsection}{\HCode{<section>}}{\HCode{</section>}}{}{}'
+      - '\Configure{subsection}'
+      - '  {\EndP\IgnorePar\Tg<section>}'
+      - '  {\EndP\Tg</section>}'
+      #- '  {\Tg<title>}'
+      #- '  {\Tg</title>\ShowPar}'
+      - '  {\Tg<h3>}'
+      - '  {\Tg</h3>\ShowPar}'
+
       'verbatim':
 #https://tex.stackexchange.com/questions/561158/make4ht-is-removing-blank-lines-from-verbatim-environment#561167
       - '\Configure{verbatim}{\HCode{}}{\csname a:sp\endcsname}'

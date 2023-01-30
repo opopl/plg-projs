@@ -595,6 +595,21 @@ function! projs#insert#label (...)
 
 endfunction
 
+function! projs#insert#purl (...)
+  let ref = get(a:000,0,{})
+
+  let proj = projs#proj#name()
+  let sec  = projs#buf#sec()
+  let sec  = get(ref,'sec',sec)
+
+  let url = projs#db#url({ 'proj' : proj })
+
+  let label = printf('\Purl{%s}',url)
+
+  call append(line('.'),label)
+
+endfunction
+
 function! projs#insert#secname ()
   let sec = projs#proj#secname()
   call append(line('.'),sec)
