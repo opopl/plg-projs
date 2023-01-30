@@ -468,6 +468,15 @@ tex4ht:
       - '  {\Tg<h3>}'
       - '  {\Tg</h3>\ShowPar}'
 
+      - '\ConfigureEnv{prjstory}{%'
+      - '  \ifvmode\IgnorePar\fi\EndP\HCode{<div class="prj-story">}%'
+      - '  }{\ifvmode\IgnorePar\fi\EndP\HCode{\Hnewline</div>}}%'
+      - '{}{}'
+
+      #- '\renewenvironment{prjstory}[2]{%'
+      #- '\ifvmode\IgnorePar\fi\EndP\HCode{<div class="prj-story">}%'
+      #- '}{\ifvmode\IgnorePar\fi\EndP\HCode{\Hnewline</div>}}'
+
       'verbatim':
 #https://tex.stackexchange.com/questions/561158/make4ht-is-removing-blank-lines-from-verbatim-environment#561167
       - '\Configure{verbatim}{\HCode{}}{\csname a:sp\endcsname}'

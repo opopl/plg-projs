@@ -25,6 +25,8 @@ sub _line_process_pat_sect {
     my $rootid = $ref->{rootid} || $mkr->{rootid};
     my $proj    = $ref->{proj} || $mkr->{proj};
 
+    my $do_htlatex = $mkr->{do_htlatex};
+
     # section name inside \section{...}
     my $sect = $ref->{sect} || '';
 
@@ -43,10 +45,13 @@ sub _line_process_pat_sect {
         sect      => $sect,
     };
 
+    push @$at_end, '\end{prjstory}' if $do_htlatex;
+
     push @$lines, 
         $line,
         $mkr->_debug_sec($rootid, $proj, $sec),
         '\par',
+        $do_htlatex ? '\begin{prjstory}' : (),
         ;
 
     foreach my $ord (@$ins_order) {
