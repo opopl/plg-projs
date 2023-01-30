@@ -438,6 +438,8 @@ tex4ht:
           prjstory : 1
        href:
           blank : 1
+       url:
+          blank : 1
 
        graphics:
           png:
@@ -486,6 +488,9 @@ tex4ht:
         - '\renewcommand{\href}[2]{\bgroup\let~\H@tilde%'
         - '  \Link[#1 target="_blank"]{}{}%'
         - '  {#2}\egroup\EndLink}%'
+
+      'url':
+        'blank':
         - ''
         - '\renewcommand{\url}[1]{\bgroup\let~\H@tilde%'
         - '  \Link[#1 target="_blank"]{}{}{#1}%'
@@ -621,6 +626,7 @@ tex4ht:
     - '$ifvar{head.subsection} @@conf{head.subsection}'
     - '$ifvar{env.prjstory} @@conf{env.prjstory}'
     - '$ifvar{href.blank} @@conf{href.blank}'
+    - '$ifvar{url.blank} @@conf{url.blank}'
     - ''
     - '@@conf{verbatim}'
     - '@@conf{cmd}'
