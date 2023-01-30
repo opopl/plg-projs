@@ -118,12 +118,13 @@ class LTS(
   nlines = []
 
   def __init__(self,args={}):
-    self.lts_root  = os.environ.get('P_SR')
+    self.lts_root  = os.getcwd()
+    self.rootid    = Path(self.lts_root).name
+
     self.html_root = os.environ.get('HTML_ROOT')
     self.img_root  = os.environ.get('IMG_ROOT')
 
     self.proj      = 'letopis'
-    self.rootid    = 'p_sr'
 
     self.db_file_pages = os.path.join(self.html_root,'h.db')
     self.db_file_projs = os.path.join(self.lts_root,'projs.sqlite')
@@ -1794,12 +1795,13 @@ class LTS(
       'table'   : 'projs',
       'insert'  : {
         'sec'       : sec,
+        'proj'      : proj,
         'tags'      : data.get('tags',''),
         'title'     : data.get('title',''),
         'url'       : data.get('url',''),
         'author_id' : data.get('author_id',''),
       },
-      'on_list' : [ 'sec' ]
+      'on_list' : [ 'sec', 'proj' ]
     }
 
     dbw.insert_update_dict(d)
@@ -1833,6 +1835,7 @@ class LTS(
     if sec and len(data):
       self.sec_db_update({
         'sec'  : sec,
+        'proj' : proj,
         'data' : data,
       })
 
