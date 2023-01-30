@@ -12,6 +12,7 @@ sub _pats {
          'iifig' => '^\s*\\\\iifig\{(.+)\}.*$',
          'input' => '^\s*\\\\input\{(\S+)\}.*$',
          'sect'  => '^\s*\\\\(part|chapter|section|subsection|subsubsection|paragraph)\{(.*)\}\s*$',
+         'sect_cmt'  => '^\s*\\\\qqSecCmt\s*$',
          'label_sec'  => '^\s*\\\\label\{sec:(.*)\}\s*$',
          'date' => '^(?<day>\d+)_(?<month>\d+)_(?<year>\d+)$',
     };

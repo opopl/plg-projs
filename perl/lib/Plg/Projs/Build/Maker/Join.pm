@@ -126,7 +126,7 @@ sub _join_lines {
         sec  => $sec,
         proj => $proj,
     });
-    while(my($k,$v)=each %$sd){
+    while(my($k, $v) = each %$sd){
         $sd->{$k} = '' unless defined $sd->{$k};
     }
 
@@ -185,7 +185,7 @@ sub _join_lines {
 
             $mkr->_line_process_pat_sect({
                sect    => $sect,
-               rootid => $rootid,
+               rootid  => $rootid,
                proj    => $proj,
                sec     => $sec,
 

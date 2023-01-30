@@ -432,6 +432,11 @@ tex4ht:
        'tex':
          'gin_base' : '\csname Gin@base\endcsname'
 
+       head:
+          subsection : 1
+       env:
+          prjstory : 1
+
        graphics:
           png:
              link: 0
@@ -459,19 +464,23 @@ tex4ht:
       - '\Configure{DOCTYPE}{\HCode{<!DOCTYPE html>\Hnewline}}'
       - '\Configure{HTML}{\HCode{<html>\Hnewline}}{\HCode{\Hnewline</html>}}'
 
-      #- '\Configure{subsection}{\HCode{<section>}}{\HCode{</section>}}{}{}'
-      - '\Configure{subsection}'
-      - '  {\EndP\IgnorePar\Tg<section>}'
-      - '  {\EndP\Tg</section>}'
-      #- '  {\Tg<title>}'
-      #- '  {\Tg</title>\ShowPar}'
-      - '  {\Tg<h3>}'
-      - '  {\Tg</h3>\ShowPar}'
+      'head':
+        'subsection':
+          #- '\Configure{subsection}{\HCode{<section>}}{\HCode{</section>}}{}{}'
+          - '\Configure{subsection}'
+          - '  {\EndP\IgnorePar\Tg<section>}'
+          - '  {\EndP\Tg</section>}'
+          #- '  {\Tg<title>}'
+          #- '  {\Tg</title>\ShowPar}'
+          - '  {\Tg<h3>}'
+          - '  {\Tg</h3>\ShowPar}'
 
-      - '\ConfigureEnv{prjstory}{%'
-      - '  \ifvmode\IgnorePar\fi\EndP\HCode{<div class="prj-story">}%'
-      - '  }{\ifvmode\IgnorePar\fi\EndP\HCode{\Hnewline</div>}}%'
-      - '{}{}'
+      'env':
+        'prjstory':
+          - '\ConfigureEnv{prjstory}{%'
+          - '  \ifvmode\IgnorePar\fi\EndP\HCode{<div class="prj-story">}%'
+          - '  }{\ifvmode\IgnorePar\fi\EndP\HCode{\Hnewline</div>}}%'
+          - '{}{}'
 
       #- '\renewenvironment{prjstory}[2]{%'
       #- '\ifvmode\IgnorePar\fi\EndP\HCode{<div class="prj-story">}%'
@@ -589,6 +598,10 @@ tex4ht:
     - '@@preamble'
     - ''
     - '@@conf{top}'
+    - ''
+    - '$ifvar{head.subsection} @@conf{head.subsection}'
+    - '$ifvar{env.prjstory} @@conf{env.prjstory}'
+    - ''
     - '@@conf{verbatim}'
     - '@@conf{cmd}'
     - ''
