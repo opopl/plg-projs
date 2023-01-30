@@ -436,6 +436,8 @@ tex4ht:
           subsection : 1
        env:
           prjstory : 1
+       href:
+          blank : 1
 
        graphics:
           png:
@@ -464,6 +466,7 @@ tex4ht:
       - '\Configure{DOCTYPE}{\HCode{<!DOCTYPE html>\Hnewline}}'
       - '\Configure{HTML}{\HCode{<html>\Hnewline}}{\HCode{\Hnewline</html>}}'
 
+###tex4ht_@@head
       'head':
         'subsection':
           #- '\Configure{subsection}{\HCode{<section>}}{\HCode{</section>}}{}{}'
@@ -475,6 +478,22 @@ tex4ht:
           - '  {\Tg<h3>}'
           - '  {\Tg</h3>\ShowPar}'
 
+###tex4ht_@@href
+      'href':
+        'blank':
+        - '\makeatletter'
+        - ''
+        - '\renewcommand{\href}[2]{\bgroup\let~\H@tilde%'
+        - '  \Link[#1 target="_blank"]{}{}%'
+        - '  {#2}\egroup\EndLink}%'
+        - ''
+        - '\renewcommand{\url}[1]{\bgroup\let~\H@tilde%'
+        - '  \Link[#1 target="_blank"]{}{}{#1}%'
+        - '  \egroup\EndLink}%'
+        - ''
+        - '\makeatother'
+
+###tex4ht_@@env
       'env':
         'prjstory':
           - '\ConfigureEnv{prjstory}{%'
@@ -601,6 +620,7 @@ tex4ht:
     - ''
     - '$ifvar{head.subsection} @@conf{head.subsection}'
     - '$ifvar{env.prjstory} @@conf{env.prjstory}'
+    - '$ifvar{href.blank} @@conf{href.blank}'
     - ''
     - '@@conf{verbatim}'
     - '@@conf{cmd}'
