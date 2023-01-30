@@ -458,6 +458,7 @@ tex4ht:
             - '$var{preamble.next}'
             - charset=utf-8
             - javascript
+            #- sections+
 
 ###tex4ht_@@conf_top
     '@@conf':
@@ -469,14 +470,13 @@ tex4ht:
 ###tex4ht_@@head
       'head':
         'subsection':
-          #- '\Configure{subsection}{\HCode{<section>}}{\HCode{</section>}}{}{}'
-          - '\Configure{subsection}'
+          - '\Configure{subsection}%'
           - '  {\EndP\IgnorePar\Tg<section>}'
           - '  {\EndP\Tg</section>}'
-          #- '  {\Tg<title>}'
-          #- '  {\Tg</title>\ShowPar}'
-          - '  {\Tg<h3>}'
+          - '  {\HCode{<h3>}}%'
+          #- '  {\Tg<h3>\TitleMark\space}'
           - '  {\Tg</h3>\ShowPar}'
+          #- '\ConfigureMark{subsection}{\thesubsection\space}'
 
 ###tex4ht_@@href
       'href':
