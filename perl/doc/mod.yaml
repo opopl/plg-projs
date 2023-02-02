@@ -1,0 +1,33 @@
+
+modules:
+- 'Plg::Projs::Prj::Builder'
+- 'Plg::Projs::Prj::Builder::Act'
+- 'Plg::Projs::Prj::Builder::Defs'
+- 'Plg::Projs::Prj::Builder::Dmp'
+- 'Plg::Projs::Prj::Builder::Gen'
+- 'Plg::Projs::Prj::Builder::Insert'
+- 'Plg::Projs::Prj::Builder::Txt'
+- 'Plg::Projs::Prj::Builder::Var'
+- 'Plg::Projs::Prj::Builder::Plan'
+
+- 'Plg::Projs::Prj::Builder::Trg'
+- 'Plg::Projs::Prj::Builder::Trg::core'
+
+- 'Plg::Projs::Prj::Builder::Sct'
+- 'Plg::Projs::Prj::Builder::Sct::Index'
+- 'Plg::Projs::Prj::Builder::Sct::yml_select'
+
+- 'Plg::Projs::GetImg'
+- 'Plg::Projs::GetImg::Fetcher'
+
+- 'Plg::Projs::Build::Maker'
+- 'Plg::Projs::Build::Maker::IndFile'
+- 'Plg::Projs::Build::Maker::Bat'
+- 'Plg::Projs::Build::Maker::Join'
+- 'Plg::Projs::Build::Maker::Line'
+- 'Plg::Projs::Build::Maker::Sec'
+- 'Plg::Projs::Build::Maker::Pats'
+
+- 'Plg::Projs::Build::Maker::Jnd'
+- 'Plg::Projs::Build::Maker::Html'
+

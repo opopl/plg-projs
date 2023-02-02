@@ -19,5 +19,6 @@ CREATE TABLE IF NOT EXISTS projs (
     rootid TEXT,
     url TEXT,
     title TEXT,
-    date TEXT
+    date TEXT,
+    options TEXT
 );
