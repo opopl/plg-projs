@@ -30,6 +30,8 @@ use Base::Arg qw(
   d2dict
   d2list
   dict_update_kv
+
+  varval
 );
 
 #use Date::Manip;
@@ -1333,6 +1335,8 @@ sub _d2tex {
   my $mkr = $self->{mkr};
   my $do_htlatex = $mkr->{do_htlatex};
 
+  my $cnf = $mkr->_vals_('processor._d2tex') || {};
+
   $d ||= $self->{d};
   $tab ||= $self->{tab};
 
@@ -1365,8 +1369,8 @@ sub _d2tex {
 
   my $caption = $d->{caption};
   if ($caption){
-    Plg::Projs::Tex::texify(\$caption);
-    $caption = escape_latex($caption);
+    Plg::Projs::Tex::texify(\$caption) if varval('caption.texify', $cnf);
+    $caption = escape_latex($caption) if varval('caption.escape_latex', $cnf);
   }
 
   # current graphic width

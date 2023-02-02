@@ -55,6 +55,12 @@ opts_maker:
     ii_exclude : 0
     ii_include : 0
 
+  processor:
+    _d2tex:
+       caption:
+         texify: 0
+         escape_latex: 1
+
   sections :
 # Plg::Projs::Build::Maker   init_ii_include
 #                            ii_filter

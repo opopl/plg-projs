@@ -982,7 +982,7 @@ sub rpl_quotes {
 }
 
 sub escape_latex {
-    local $_ = $s;
+    local $_ = shift || $s;
 
     my $escape_s = q{ & % $ # _ { } ~ ^\ };
     my @escape = map { trim($_) } split(" " => $escape_s);
@@ -1000,6 +1000,7 @@ sub escape_latex {
     }
 
     $s = $_;
+    return $s;
 }
 
 sub rpl_verbs {
