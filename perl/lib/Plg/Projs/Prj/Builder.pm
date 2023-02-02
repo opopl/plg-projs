@@ -155,6 +155,7 @@ sub inj_base {
 
             'bld_delrun'       => sub { $bld->builds_delete_running; },
             'bld_listrun'      => sub { $bld->builds_list_running; },
+            'web'              => sub { $bld->web; },
             %print,
             %{$bld->{custom}->{maps_act} || {}}
         },
@@ -467,6 +468,7 @@ sub get_act {
 sub get_opt {
     my ($bld) = @_;
 
+    return $bld if $bld->{skip_get_opt};
     Getopt::Long::Configure(qw(bundling no_getopt_compat no_auto_abbrev no_ignore_case_always));
 
     my %opt;
@@ -632,6 +634,13 @@ sub builds_delete_running {
         q => q{ DELETE FROM builds WHERE status = 'running' },
     };
     dbh_do($ref);
+
+    return $bld;
+}
+
+sub web {
+    my ($bld, $ref) = @_;
+    $ref ||= {};
 
     return $bld;
 }

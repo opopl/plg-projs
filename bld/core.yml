@@ -440,6 +440,7 @@ tex4ht:
           blank : 1
        url:
           blank : 1
+       javascript: 1 
 
        graphics:
           png:
@@ -480,6 +481,13 @@ tex4ht:
           - '  {\Tg</h3>\ShowPar}'
           #- '\ConfigureMark{subsection}{\thesubsection\space}'
 
+###tex4ht_@@javascript
+      'javascript':
+        'base':
+        #- '\JavaScript'
+        #- 'alert(new Date().getTime());'
+        #- '\EndJavaScript'
+
 ###tex4ht_@@href
       'href':
         'blank':
@@ -488,9 +496,12 @@ tex4ht:
         - '\renewcommand{\href}[2]{\bgroup\let~\H@tilde%'
         - '  \Link[#1 target="_blank"]{}{}%'
         - '  {#2}\egroup\EndLink}%'
+        - ''
+        - '\makeatother'
 
       'url':
         'blank':
+        - '\makeatletter'
         - ''
         - '\renewcommand{\url}[1]{\bgroup\let~\H@tilde%'
         - '  \Link[#1 target="_blank"]{}{}{#1}%'
@@ -643,6 +654,8 @@ tex4ht:
     - '$ifvar{graphics.jpg.link} @@conf{graphics.jpg.link}'
     - '$ifvar{graphics.jpg.width} @@conf{graphics.jpg.width}'
     - '$ifvar{graphics.jpg.l3} @@conf{graphics.jpg.l3}'
+    - ''
+    - '$ifvar{javascript} @@conf{javascript.base}'
     - ''
     - '@@css{verb}'
     - '@@css{text}'
