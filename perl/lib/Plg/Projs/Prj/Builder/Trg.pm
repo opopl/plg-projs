@@ -138,7 +138,8 @@ sub trg_adjust {
           my $coder = JSON::XS->new->utf8->pretty->allow_nonref;
           my $sec_options = eval { $coder->decode($json); };
           if ($sec_options) {
-            dict_update($bld, $sec_options);
+            my $patch = { patch => $sec_options };
+            dict_update($bld, $patch);
           }
       }
 
