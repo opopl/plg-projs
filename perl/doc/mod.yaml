@@ -1,5 +1,7 @@
 
 modules:
+- 'Plg::Projs::Prj'
+
 - 'Plg::Projs::Prj::Builder'
 - 'Plg::Projs::Prj::Builder::Act'
 - 'Plg::Projs::Prj::Builder::Defs'
@@ -20,6 +22,8 @@ modules:
 - 'Plg::Projs::GetImg'
 - 'Plg::Projs::GetImg::Fetcher'
 
+- 'Plg::Projs::Scripts::RunTex'
+
 - 'Plg::Projs::Build::Maker'
 - 'Plg::Projs::Build::Maker::IndFile'
 - 'Plg::Projs::Build::Maker::Bat'
@@ -28,6 +32,13 @@ modules:
 - 'Plg::Projs::Build::Maker::Sec'
 - 'Plg::Projs::Build::Maker::Pats'
 
-- 'Plg::Projs::Build::Maker::Jnd'
 - 'Plg::Projs::Build::Maker::Html'
+
+- 'Plg::Projs::Build::Maker::Jnd'
+- 'Plg::Projs::Build::Maker::Jnd::Processor'
+
+- 'Plg::Projs::Tex'
+- 'Plg::Projs::Tex::Gen'
+
+- 'Plg::Projs::Rgx'
 

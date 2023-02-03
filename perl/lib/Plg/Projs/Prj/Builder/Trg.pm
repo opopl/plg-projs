@@ -8,6 +8,7 @@ use Data::Dumper qw(Dumper);
 
 use Base::XML::Dict qw(xml2dict);
 use YAML qw( LoadFile Load Dump DumpFile );
+use JSON::XS;
 
 use Deep::Hash::Utils qw(deepvalue);
 
@@ -20,6 +21,11 @@ use Base::Arg qw(
 
 use Base::String qw(
     str_split
+);
+
+use Base::DB qw(
+    dbh_select
+    dbh_select_fetchone
 );
 
 use Base::XML qw(
@@ -121,6 +127,20 @@ sub trg_adjust {
        }
       };
       dict_update($bld, $h);
+
+      my $ref = {
+        dbh  => $bld->{dbh},
+        q    => q{ SELECT options FROM projs },
+        w    => { sec => $sec, proj => $proj },
+      };
+      my $json = dbh_select_fetchone($ref);
+      if ($json) {
+          my $coder = JSON::XS->new->utf8->pretty->allow_nonref;
+          my $sec_options = eval { $coder->decode($json); };
+          if ($sec_options) {
+            dict_update($bld, $sec_options);
+          }
+      }
 
     }elsif(/^_auth\.(\S+)$/){
       my $author_id = $1;

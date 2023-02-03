@@ -604,6 +604,8 @@ our %fbicons_n = (
   "\N{U+203C}" => "exclamation.mark.double",
   "\N{U+2757}" => 'exclamation.mark',
 
+  "\N{U+2049}" => 'exclamation.question.mark',
+
   "\N{U+1F1E6}\N{U+1F1FF}" => 'flag.az',
   "\N{U+1F1F3}\N{U+1F1F1}" => 'flag.nl',
   "\N{U+1F1E8}\N{U+1F1FF}" => 'flag.cz',
