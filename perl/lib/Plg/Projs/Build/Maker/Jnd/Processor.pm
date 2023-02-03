@@ -1332,7 +1332,11 @@ sub _d2tex_import {
 sub _d2tex {
   my ($self, $d, $tab) = @_;
 
-  my $mkr = $self->{mkr};
+  my ($mkr, $r_sec) = @{$self}{qw( mkr r_sec )};
+  my $bld = $mkr->{bld};
+  my $target = $bld->{target};
+  my $sec = $r_sec->{sec};
+
   my $do_htlatex = $mkr->{do_htlatex};
 
   my $cnf = $mkr->_vals_('processor._d2tex') || {};
@@ -1367,7 +1371,7 @@ sub _d2tex {
     push @tex, '% w2h = ' . $w2h;
   }
 
-  my $caption = $d->{caption};
+  my $caption = varval('rw.caption', $d_db) || $d->{caption};
   if ($caption){
     Plg::Projs::Tex::texify(\$caption) if varval('caption.texify', $cnf);
     $caption = escape_latex($caption) if varval('caption.escape_latex', $cnf);
