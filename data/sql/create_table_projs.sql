@@ -22,3 +22,5 @@ CREATE TABLE IF NOT EXISTS projs (
     date TEXT,
     options TEXT
 );
+
+-- ALTER TABLE projs ADD COLUMN options TEXT;
