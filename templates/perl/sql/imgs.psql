@@ -1,0 +1,20 @@
+
+SELECT R.md5 AS md5, R.url AS url,
+    R.rowid,
+    md5_hex_utf(R.url) AS url_md5,
+    I.img AS img,
+    I.inum AS inum
+    FROM
+    ( SELECT md5
+         FROM url2md5 GROUP BY md5 HAVING COUNT(md5) > 1
+         {$limit_s}
+    ) AS D
+INNER JOIN url2md5 AS R
+ON R.md5 = D.md5
+INNER JOIN imgs AS I
+ON I.md5 = D.md5
+-- GROUP BY I.url
+{$md5_cond}
+ORDER BY I.md5
+-- GROUP BY url_md5 HAVING COUNT(url_md5) > 1
+-- ORDER BY url_md5
