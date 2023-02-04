@@ -457,6 +457,7 @@ $acts_s
 sub get_act {
     my ($bld) = @_;
 
+    return $bld if $bld->{act};
     $bld->print_help unless @ARGV;
 
     my $act = shift @ARGV || 'compile';
