@@ -1148,8 +1148,13 @@ sub _d_db_data {
   return () unless $d;
 
   my $mkr   = $self->{mkr};
+  my $bld   = $mkr->{bld};
+  my $imgman = $bld->{imgman};
+
   my $r_sec = $self->{r_sec} || {};
   my $sec   = $r_sec->{sec};
+
+  my ($url, $name, $name_uniq) = @{$d}{qw( url name name_uniq )};
 
   my $w = {};
   for(qw( url name_uniq name )){
@@ -1163,17 +1168,38 @@ sub _d_db_data {
 
   my ($img_file, $img_path, $rw, @err);
 
+  # _db_imgs
+  #my $idb = $imgman->_db_img_one({ where => $w, all => 1 });
+  #todo
   while(1){
-    my ($rows, $cols, $q, $p) = dbh_select({
-       $dbh ? ( dbh => $dbh ) : (),
-       #dbfile => $self->{dbfile_img},
-       q   => q{ SELECT * FROM imgs },
-       p   => [],
-       w   => $w,
-    });
+    #my ($rows, $cols, $q, $p) = dbh_select({
+    my ($q, $ref_db);
+    $ref_db->{dbh} ||= $dbh if $dbh;
 
-    my $url = $d->{url};
-    unless (@$rows) {
+    if ($url) {
+        my $cols = varval('tbl_info.imgs.cols', $imgman) || [];
+        my $fi = join "," => map { 'i.' . $_ } @$cols;
+        $q = qq{
+              SELECT $fi FROM url2md5 um
+              INNER JOIN imgs i
+              ON um.md5 = i.md5
+              WHERE um.url = ?
+            };
+        $ref_db = { %$ref_db,
+           q   => $q,
+           p   => [ $url ],
+        };
+        $DB::single = 1;1;
+    }else{
+        $ref_db = { %$ref_db,
+           q   => q{ SELECT * FROM imgs },
+           w   => $w,
+        };
+    }
+
+    ($rw) = dbh_select_first($ref_db);
+
+    unless ($rw) {
        $DB::single = 1 unless $url;
        my $r = {
            msg => q{ No image found in Database! },
@@ -1186,8 +1212,6 @@ sub _d_db_data {
        push @err, qq{%Image not found: $url };
        last;
     }
-
-    $rw = shift @$rows;
 
     # latex representation of the image file path
     $img_path = $mkr->{box} ? join("/" => 'imgs', $rw->{img}) : sprintf(q{\imgroot/%s},$rw->{img});
