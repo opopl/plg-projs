@@ -73,6 +73,8 @@ use Base::DB qw(
     dbh_do
     dbh_delete
 
+    dbh_table_info
+
     dbh_select
     dbh_select_as_list
     dbh_select_join
@@ -205,6 +207,8 @@ sub init_db {
     $Base::DB::DBH = $dbh;
 
     $self->db_create if $anew;
+
+    $self->{tbl_info} = dbh_table_info();
 
 #    if ($self->{reset}) {
         #$self
@@ -522,6 +526,8 @@ sub _db_imgs {
     my $tags  = $ref->{tags} || {};
     my $where = $ref->{where} || {};
     my $fields = $ref->{fields} || [qw( url )];
+    my $all = $ref->{all} || 0;
+    $fields = [qw(*)] if $all;
 
     my $limit = $ref->{limit};
     my $mode  = $ref->{mode} || 'list';
