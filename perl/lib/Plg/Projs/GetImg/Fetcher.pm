@@ -49,7 +49,9 @@ use Base::String qw(
 use Base::DB qw(
     dbh_select_as_list
     dbh_select_fetchone
+    dbh_select_first
     dbh_insert_hash
+    dbh_insert_update_hash
 
     dbh_base2info
 );
@@ -162,8 +164,8 @@ sub d_process {
     $d->{'@'} ||= {};
 
     $self
-        ->d_get_inum
-        ->d_get_file
+        ->d_get_inum    # set $d->{'@'}->{'db'}
+        ->d_get_file    # set $d->{'@'}->{'fs'}
         ;
 
     $DB::single = 1;
@@ -360,7 +362,15 @@ sub d_get_inum {
   return $self unless $d && $d->{url};
 
   @{$d}{qw(inum img ext)} = dbh_select_as_list({
-      q => q{ SELECT inum, img, extension(img) AS ext FROM imgs WHERE url = ? },
+      q => q{
+        SELECT
+            i.inum AS inum, i.img AS img, extension(i.img) AS ext
+        FROM
+            url2md5 um
+        INNER JOIN imgs i
+        ON um.md5 = i.md5
+        WHERE um.url = ?
+      },
       p => [ $d->{url} ],
   });
   $d->{'@'}->{db} = $d->{inum} ? 1 : 0;
