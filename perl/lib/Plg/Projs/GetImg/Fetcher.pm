@@ -11,7 +11,7 @@ use File::Path qw( mkpath rmtree );
 use File::Basename qw(basename dirname);
 
 use Data::Dumper qw(Dumper);
-use File::Which qw(which);  
+use File::Which qw(which);
 
 use URI::Split qw(uri_split);
 use String::Util qw(trim);
@@ -46,7 +46,7 @@ use Base::String qw(
   str_split_trim
 );
 
-use Base::DB qw( 
+use Base::DB qw(
     dbh_select_as_list
     dbh_select_fetchone
     dbh_insert_hash
@@ -55,7 +55,7 @@ use Base::DB qw(
 );
 
 use Plg::Projs::Tex qw(
-    texify 
+    texify
 );
 
 sub new
@@ -93,7 +93,7 @@ sub d_block_import {
 
     my $tags_a = [];
     push @$tags_a,
-        $tags ? str_split_trim($tags => ",") : (); 
+        $tags ? str_split_trim($tags => ",") : ();
 
     my ($proj, $sec, $rootid, $sec_data) = @{$self}{qw( proj sec rootid sec_data )};
 
@@ -187,7 +187,7 @@ sub process_block {
     $DB::single = 1;
     $self
        ->d_process
-       ->d_block_import; 
+       ->d_block_import;
 
     $self->{block} = undef;
 
@@ -196,7 +196,7 @@ sub process_block {
 
 sub init {
     my ($self) = @_;
-    
+
     #$self->SUPER::init();
     #
     my $h = {
@@ -230,7 +230,7 @@ sub init {
        proj => undef,
        sec  => undef,
     };
- 
+
     hash_inject($self, $h);
     return $self;
 }
@@ -256,17 +256,38 @@ sub db_insert_img {
   $ins->{$_} = $d->{$_} // '' for(@keys_d_str);
   $DB::single = 1;
 
+  my ($url, $md5, $sec, $proj) = @{$ins}{qw( url md5 sec proj )};
+
   my $ok = 1;
   while (1) {
+    my $cnt_md5 = dbh_select_first({
+        t => 'imgs',
+        q => q{ SELECT * FROM imgs WHERE md5 = ? },
+        p => [ $md5 ]
+    });
+
+    unless ($cnt_md5) {
+        $ok &&= eval {
+          dbh_insert_update_hash({
+             t => 'imgs',
+             h => $ins,
+             on_list => [qw(url)],
+          });
+        };
+        $@ && do { warn $@; $ok = 0; };
+    }
 
     $ok &&= eval {
-      dbh_insert_hash({
-         t => 'imgs',
-         i => q{ INSERT OR REPLACE },
-         h => $ins
-      });
+       dbh_insert_update_hash({
+          t => 'url2md5',
+          h => {
+              url => $url, md5 => $md5,
+              sec => $sec, proj => $proj,
+          },
+          on_list => [qw(url md5)],
+       });
     };
-    $@ && do { warn $@; $ok = 0; };
+    $@ && do { $ok = 0; warn $@; };
 
     $ok &&= eval {
       dbh_base2info({
@@ -392,17 +413,17 @@ sub loop {
     next if /^\s*%/;
 
 ###m_ifcmt
-    m/^\\ifcmt\s*$/g && do { 
-        $self->{is_cmt} = 1; 
-        $self->{locals} = {}; 
-        next; 
+    m/^\\ifcmt\s*$/g && do {
+        $self->{is_cmt} = 1;
+        $self->{locals} = {};
+        next;
     };
 
-    m/^\\fi\s*$/g && do { 
+    m/^\\fi\s*$/g && do {
        $self->process_block;
-       $self->{is_cmt} = undef; 
-       $self->{locals} = undef; 
-       next; 
+       $self->{is_cmt} = undef;
+       $self->{locals} = undef;
+       next;
     };
 
     next unless $self->{is_cmt};
@@ -414,7 +435,7 @@ sub loop {
 
        # is_local => 1
        # or is_global => 1
-       $self->{'is_' . $k} = 1; 
+       $self->{'is_' . $k} = 1;
        $self->{block} = $k;
     };
 
@@ -471,7 +492,7 @@ sub _subs_url {
     my $lwp  = $self->{lwp};
 
     my @subs = (
-        sub { 
+        sub {
             my $curl = which 'curl';
             return unless $curl;
 
@@ -480,20 +501,20 @@ sub _subs_url {
             $hdr = 'User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux i686 on x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2820.59 Safari/537.36';
             $hdr = 'User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2226.0 Safari/537.36';
             my $o_hdr = $hdr ? sprintf('-H "%s"',$hdr) : '';
-    
+
             print qq{try: curl} . "\n";
-    
+
             my $url_s = $^O eq 'MSWin32' ? qq{"$url"} : qq{"$url"};
-    
+
             my $cmd = qq{ $curl $o_hdr -o "$img_file" $url_s };
             print qq{command:\n\t$cmd} . "\n";
             my $x = qx{ $cmd 2>&1 };
             #$self->debug(["Command:", $x]);
             return 'curl';
         },
-        sub { 
+        sub {
             print qq{try: lwp} . "\n";
-    
+
             my $res = $lwp->mirror($url,$img_file);
             unless ($res->is_success) {
                 my $r = {
@@ -527,7 +548,7 @@ sub d_push_status {
   my $imgman = $self->{imgman};
 
   return $self unless $d && $imgman;
-  
+
   push @{$imgman->{$key}}, clone($d);
 
   return $self;
@@ -539,8 +560,8 @@ sub _fetch {
   my $d = $self->{d};
   return unless $d && $d->{img_file};
 
-  return if !$self->_reload 
-        && $d->{'@'}->{fs} 
+  return if !$self->_reload
+        && $d->{'@'}->{fs}
         && $d->{'@'}->{db};
 
   $self->d_rm_file;
@@ -549,7 +570,7 @@ sub _fetch {
 
   my $sec = $self->{sec};
 
-  my @subs = $self->_subs_url({ 
+  my @subs = $self->_subs_url({
      url      => $d->{url},
      img_file => $d->{img_file},
      sec      => $sec,
@@ -592,7 +613,7 @@ sub _fetch {
 
   my $media_type_str = $iif->{file_media_type} || '';
   my ($img_type) = ( $media_type_str =~ m{image\/(\w+)} );
-        
+
   $d->{img_err} = $iif->{error};
   if ($d->{img_err}) {
      print qq{image_info FAIL: } . $d->{img} . "\n";
@@ -615,7 +636,7 @@ sub _fetch {
         $d->{ext} = $ft;
         my $img_new      = sprintf(q{%s.%s},@{$d}{qw(inum ext)});
         $d->{img} = $img_new;
-    
+
         my $img_file_new = catfile($self->{img_root},$img_new);
         move($d->{img_file}, $img_file_new);
         $d->{img_file} = $img_file_new;
@@ -666,5 +687,5 @@ sub _fetch {
 
 
 1;
- 
+
 
