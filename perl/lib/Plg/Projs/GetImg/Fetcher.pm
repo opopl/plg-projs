@@ -262,7 +262,7 @@ sub db_insert_img {
 
   my $ok = 1;
   while (1) {
-    my $cnt_md5 = dbh_select_first({
+    my ($cnt_md5) = dbh_select_first({
         t => 'imgs',
         q => q{ SELECT * FROM imgs WHERE md5 = ? },
         p => [ $md5 ]
