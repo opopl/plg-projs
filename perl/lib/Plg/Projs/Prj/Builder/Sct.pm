@@ -24,6 +24,10 @@ use Base::Data qw(
     d_path
 );
 
+use Base::Arg qw(
+    varval
+);
+
 use Base::DB qw(
     dbh_insert_hash
     dbh_select

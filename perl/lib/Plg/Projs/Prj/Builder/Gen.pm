@@ -15,6 +15,9 @@ use Base::Data qw(
     d_str_split_sn
     d_path
 );
+use Base::Arg qw(
+    varval
+);
 
 =head3 _gen_sec
 
@@ -29,7 +32,9 @@ sub _gen_sec {
 
     my $on_ref = $bld->_vals_('sii.generate.on') // {};
     my @on = map { $on_ref->{$_} ? $_ : () } keys %$on_ref;
-    return () unless grep { /^$sec$/ } @on;
+    my $has = grep { /^$sec$/ } @on;
+
+    return () unless $has;
 
     my @lines = $bld->_sct_lines($sec);
     return @lines;

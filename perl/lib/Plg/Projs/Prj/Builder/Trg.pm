@@ -17,6 +17,7 @@ use Base::Arg qw(
     dict_update
     dict_rm_ctl
     varexp
+    varval
 );
 
 use Base::String qw(

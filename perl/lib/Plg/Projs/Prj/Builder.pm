@@ -298,13 +298,16 @@ sub load_decs {
 sub load_patch {
     my ($bld) = @_;
 
-    my $patch = $bld->{patch} || {};
-    while(my($k,$v)=each %$patch){
-        my $d = dict_new($k, $v);
-        dict_update($bld, $d);
+    foreach my $key (keys %$bld) {
+        next unless $key =~ /^patch(?<sep>|[\@_]+)$/;
 
-        #my @path = split '\.' => $k;
-        #my $dd = $bld->_val_(@path);
+        my $sep = $+{sep} || '\.';
+        my $patch = $bld->{$key} || {};
+
+        while(my($k,$v) = each %$patch){
+            my $d = dict_new($k, $v, $sep);
+            dict_update($bld, $d);
+        }
     }
 
     return $bld;

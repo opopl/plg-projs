@@ -21,6 +21,10 @@ use Plg::Projs::Tex qw(
     texify
 );
 
+use Base::Arg qw(
+    varval
+);
+
 use Base::String qw(
     str_split
     str_split_sn
