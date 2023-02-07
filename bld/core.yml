@@ -22,6 +22,12 @@ vars:
 
     listfigs: 0
     listtabs: 0
+
+    doc:
+      orientation: 'portrait'
+      class: 'extreport'
+      font:
+        size: '11pt'
   ii_base:
   - body
   - preamble
@@ -140,8 +146,9 @@ sii:
     preamble:
       contents: '@doc @ii @setcounter @perl'
       doc:
-        class: extreport
-        opts: 'a4paper,11pt'
+        class: '@var{layout.doc.class}'
+        opts: 'a4paper,@var{layout.doc.font.size},@var{layout.doc.orientation}'
+
       ii:
       - preamble.packages
       - '@ifvar{layout.indexing} preamble.index'
