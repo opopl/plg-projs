@@ -131,6 +131,7 @@ sub trg_adjust_db_options {
                     $patches->{'patch' . $sep_str}->{$key} = $v;
                 }
             }
+            varexp($patches, { 'sec' => $sec });
             dict_update($bld, $patches);
           }
       }
