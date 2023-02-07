@@ -42,8 +42,8 @@ our %rgx_map = (
      }
    },
    builder => {
-     patch_bare => qr/^patch(?<sep>[%\._\@]+|)$/,
-     patch_key => qr/^patch(?<sep>[%\._\@]+|)(?<key>.*)$/,
+     patch_bare => qr/^patch(?<sep>[\/%\._\@]+|)$/,
+     patch_key => qr/^patch(?<sep>[\/%\._\@]+|)(?<key>.*)$/,
    }
 );
 
