@@ -20,6 +20,10 @@ use Base::Arg qw(
     varval
 );
 
+use Plg::Projs::Rgx qw(
+    %rgx_map
+);
+
 use Base::String qw(
     str_split
 );
@@ -100,6 +104,40 @@ sub trg_adjust_conf {
     return $bld;
 }
 
+sub trg_adjust_db_options {
+    my ($bld, $target) = @_;
+    $target //= $bld->{target};
+    my ($proj) = @{$bld}{qw(proj)};
+
+    if ($target =~ /^_buf\.(\S+)$/) {
+      my $sec = $1;
+
+      my $ref = {
+        dbh  => $bld->{dbh},
+        q    => q{ SELECT options FROM projs },
+        w    => { sec => $sec, proj => $proj },
+      };
+      my $json = dbh_select_fetchone($ref);
+      if ($json) {
+          my $coder = JSON::XS->new->utf8->pretty->allow_nonref;
+          my $sec_options = eval { $coder->decode($json); };
+          my $re_patch_key = varval('builder.patch_key',\%rgx_map);
+          if ($sec_options && ref $sec_options eq 'HASH') {
+            my $patches = {};
+            while(my($k,$v) = each %{$sec_options}){
+                if ($k =~ /$re_patch_key/) {
+                    my $sep_str = $+{sep} eq '.' ? '' : $+{sep};
+                    my $key = $+{key};
+                    $patches->{'patch' . $sep_str}->{$key} = $v;
+                }
+            }
+            dict_update($bld, $patches);
+          }
+      }
+    }
+    return $bld;
+}
+
 sub trg_adjust {
     my ($bld, $target) = @_;
 
@@ -128,21 +166,6 @@ sub trg_adjust {
        }
       };
       dict_update($bld, $h);
-
-      my $ref = {
-        dbh  => $bld->{dbh},
-        q    => q{ SELECT options FROM projs },
-        w    => { sec => $sec, proj => $proj },
-      };
-      my $json = dbh_select_fetchone($ref);
-      if ($json) {
-          my $coder = JSON::XS->new->utf8->pretty->allow_nonref;
-          my $sec_options = eval { $coder->decode($json); };
-          if ($sec_options) {
-            my $patch = { patch => $sec_options };
-            dict_update($bld, $patch);
-          }
-      }
 
     }elsif(/^_auth\.(\S+)$/){
       my $author_id = $1;

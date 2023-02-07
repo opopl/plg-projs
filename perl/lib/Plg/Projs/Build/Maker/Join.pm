@@ -223,7 +223,8 @@ sub _join_lines {
 
             my $exclude_ref = $mkr->_vals_('join_lines.ii.exclude') || {};
             my @exclude = map { $exclude_ref->{$_} ? $_ : () } keys %$exclude_ref;
-            next if grep { /^$ii_sec/ } @exclude;
+            my $exc = grep { /^$ii_sec$/ } @exclude;
+            next if $exc;
 
             if ($bld->{do_htlatex}) {
                 my $url = $r_sec->{url};

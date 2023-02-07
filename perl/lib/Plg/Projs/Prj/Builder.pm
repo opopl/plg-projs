@@ -207,6 +207,7 @@ sub init {
         ->trg_adjust
         ->load_yaml
         ->trg_adjust_conf
+        ->trg_adjust_db_options
         ->load_decs
         ->load_patch
         ->process_ii_updown
