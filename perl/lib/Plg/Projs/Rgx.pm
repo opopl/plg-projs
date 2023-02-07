@@ -40,6 +40,10 @@ our %rgx_map = (
      macros => {
        igg => qr/\@igg\{([^{}]*)\}(?:\{([^{}]*)\}|)/,
      }
+   },
+   builder => {
+     patch_bare => qr/^patch(?<sep>[\._\@]+|)$/,
+     patch_key => qr/^patch(?<sep>[\._\@]+|)(?<key>.*)$/,
    }
 );
 

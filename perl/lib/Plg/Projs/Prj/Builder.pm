@@ -25,6 +25,10 @@ use DateTime;
 
 use YAML qw( LoadFile Load Dump DumpFile );
 
+use Plg::Projs::Rgx qw(
+    %rgx_map
+);
+
 use Base::DB qw(
     dbi_connect
 
@@ -298,8 +302,9 @@ sub load_decs {
 sub load_patch {
     my ($bld) = @_;
 
+    my $re_patch_bare = varval('builder.patch_bare',\%rgx_map);
     foreach my $key (keys %$bld) {
-        next unless $key =~ /^patch(?<sep>|[\@_]+)$/;
+        next unless $key =~ /$re_patch_bare/;
 
         my $sep = $+{sep} || '\.';
         my $patch = $bld->{$key} || {};
