@@ -64,6 +64,7 @@ use base qw(
     Plg::Projs::Prj::Builder::Txt
     Plg::Projs::Prj::Builder::Var
     Plg::Projs::Prj::Builder::Plan
+    Plg::Projs::Prj::Builder::Web
 
     Plg::Projs::Prj::Builder::Sct
     Plg::Projs::Prj::Builder::Sct::Index
@@ -159,7 +160,7 @@ sub inj_base {
 
             'bld_delrun'       => sub { $bld->builds_delete_running; },
             'bld_listrun'      => sub { $bld->builds_list_running; },
-            'web'              => sub { $bld->web; },
+            'web'              => sub { $bld->act_web; },
             %print,
             %{$bld->{custom}->{maps_act} || {}}
         },
@@ -648,12 +649,6 @@ sub builds_delete_running {
     return $bld;
 }
 
-sub web {
-    my ($bld, $ref) = @_;
-    $ref ||= {};
-
-    return $bld;
-}
 
 sub build_update_db {
     my ($bld, $data) = @_;
