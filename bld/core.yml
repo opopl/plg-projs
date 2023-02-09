@@ -66,6 +66,7 @@ opts_maker:
        caption:
          texify: 0
          escape_latex: 1
+         numbering: 0
 
   sections :
 # Plg::Projs::Build::Maker   init_ii_include

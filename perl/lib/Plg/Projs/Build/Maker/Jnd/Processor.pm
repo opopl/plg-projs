@@ -303,6 +303,11 @@ sub _tab_start {
   if ($tab->{separate}) {
       my $layout = $tab->{layout};
       if ($layout) {
+          my @layout_regions = split "|" => $layout;
+          foreach my $region (@layout_regions) {
+              # body...
+          }
+
           my @layout_parts = grep { /^\d+$/ } split('\.' => $layout);
           my $layout_length = scalar @layout_parts;
           my $counter = $tab->{layout_counter} || 0;
@@ -1410,10 +1415,17 @@ sub _d2tex {
     push @tex, '% w2h = ' . $w2h;
   }
 
-  my $caption = varval('rw.caption', $d_db) || $d->{caption};
+  my $caption = varval('rw.caption', $d_db) || $d->{caption} || '';
   if ($caption){
     Plg::Projs::Tex::texify(\$caption) if varval('caption.texify', $cnf);
     $caption = escape_latex($caption) if varval('caption.escape_latex', $cnf);
+  }
+
+  my $numbering = varval('caption.numbering', $cnf);
+  if ($tab && $tab->{separate} && $numbering) {
+      my $index = $tab->{pic_index} || 0;
+      $caption = sprintf(q{(%d) %s}, ($index + 1), $caption);
+      $tab->{pic_index}++;
   }
 
   # current graphic width
