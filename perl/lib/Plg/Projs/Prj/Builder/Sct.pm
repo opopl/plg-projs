@@ -15,6 +15,7 @@ use File::Spec::Functions qw(catfile);
 
 use Base::String qw(
     str_split_sn
+    str_split_trim
     str_split
 );
 
@@ -94,6 +95,7 @@ sub _sct_lines {
                 my ($db, $query, $params) = @{$ccc}{qw( db query params )};
                 next CONT unless $db && $query;
                 $params ||= [];
+                 $DB::single = 1;
 
                 my ($output, $cmt) = @{$ccc}{qw( output cmt )};
                 my (@begin, @end);
@@ -110,7 +112,9 @@ sub _sct_lines {
                     push @end, '\fi';
                     my $tab = $cmt && ref $cmt eq 'HASH' && $cmt->{tab};
                     if ($tab) {
-                        push @begin, sprintf(' tab_begin %s',$tab);
+                        my $tab_s = !ref $tab ? $tab : ref $tab eq 'ARRAY' ?
+                            join "," => map { str_split_trim($_ => ',') } @$tab : '';
+                        push @begin, sprintf(' tab_begin %s',$tab_s);
                         unshift @end, ' tab_end';
                     }
                 }

@@ -20,7 +20,8 @@ CREATE TABLE IF NOT EXISTS projs (
     url TEXT,
     title TEXT,
     date TEXT,
-    options TEXT
+    options TEXT,
+    bookmark TEXT
 );
 
 -- ALTER TABLE projs ADD COLUMN options TEXT;
