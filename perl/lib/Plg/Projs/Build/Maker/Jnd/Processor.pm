@@ -301,21 +301,43 @@ sub _tab_start {
   );
 
   if ($tab->{separate}) {
-      my $layout = $tab->{layout};
+      my ($layout, $amount) = @{$tab}{qw(layout amount)};
       if ($layout) {
-          my @layout_regions = split "|" => $layout;
+          my ($pic_index) = @{$tab}{qw(pic_index)};
+          $pic_index ||= 0;
+
+          my @layout_regions = split '\|' => $layout;
+
           foreach my $region (@layout_regions) {
-              # body...
+              $region =~ /^(?:|\((?<cond>[^()]+)\))(?<seq>[\d\.]+)$/;
+              my ($cond, $seq) = @+{qw( cond seq )};
+              my $ok = 1;
+              if ($cond) {
+                local $_ = trim($cond);
+
+                /^last\.(?<num_str>(\w+))$/ && do {
+                   my $num_str = $+{'num_str'};
+                };
+                /^last\.(?<num>(\d+))$/ && do {
+                   my $num = $+{'num'} + 0;
+                   if ($amount && defined $pic_index && ($pic_index < ($amount - $num)) ) {
+                       $ok = 0;
+                   }
+                };
+              }
+
+              next unless $ok;
+
+              my @layout_parts = grep { /^\d+$/ } split('\.' => $seq);
+              my $layout_length = scalar @layout_parts;
+              my $counter = $tab->{layout_counter} || 0;
+
+              my $layout_index = $counter % $layout_length;
+              $tab->{cols} = $layout_parts[$layout_index];
+
+              $tab->{layout_counter}++;
+              last;
           }
-
-          my @layout_parts = grep { /^\d+$/ } split('\.' => $layout);
-          my $layout_length = scalar @layout_parts;
-          my $counter = $tab->{layout_counter} || 0;
-
-          my $layout_index = $counter % $layout_length;
-          $tab->{cols} = $layout_parts[$layout_index];
-
-          $tab->{layout_counter}++;
       }
   }
 
@@ -1190,7 +1212,6 @@ sub _d_db_data {
 
   # _db_imgs
   #my $idb = $imgman->_db_img_one({ where => $w, all => 1 });
-  #todo
   while(1){
     #my ($rows, $cols, $q, $p) = dbh_select({
     my ($q, $ref_db);

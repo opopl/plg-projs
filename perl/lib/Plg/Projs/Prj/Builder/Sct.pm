@@ -106,6 +106,10 @@ sub _sct_lines {
                     q => $query,
                     p => $params,
                 };
+                my ($rows) = dbh_select($ref);
+                next unless $rows && @$rows;
+                my $amount = scalar @$rows;
+
                 if ($cmt) {
                     push @begin, '\ifcmt';
                     push @end, '\fi';
@@ -113,12 +117,12 @@ sub _sct_lines {
                     if ($tab) {
                         my $tab_s = !ref $tab ? $tab : ref $tab eq 'ARRAY' ?
                             join "," => map { str_split_trim($_ => ',') } @$tab : '';
+                        $tab_s .= ',amount=' . $amount;
                         push @begin, sprintf(' tab_begin %s',$tab_s);
                         unshift @end, ' tab_end';
                     }
                 }
 
-                my ($rows) = dbh_select($ref);
                 foreach my $rw (@$rows) {
                     ( my $fin = $output ) =~ s|@@\{(\w+)\}|( $rw->{$1} // '' )|ge;
                     push @final, $fin;
