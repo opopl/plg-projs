@@ -300,6 +300,20 @@ sub _tab_start {
       minipage  => $self->_len2tex($tab->{minipage}),
   );
 
+  if ($tab->{separate}) {
+      my $layout = $tab->{layout};
+      if ($layout) {
+          my @layout_parts = grep { /^\d+$/ } split('\.' => $layout);
+          my $layout_length = scalar @layout_parts;
+          my $counter = $tab->{layout_counter} || 0;
+
+          my $layout_index = $counter % $layout_length;
+          $tab->{cols} = $layout_parts[$layout_index];
+
+          $tab->{layout_counter}++;
+      }
+  }
+
   push @tex,
     $tab->{center} ? '\begin{center}%' : (),
     $tab->{resizebox} ? sprintf('\resizebox{%s}{!}{%% start_resizebox',$w{resizebox}) : (),
@@ -1078,6 +1092,7 @@ sub lpush_d {
      my ($i_col, $i_row) = @{$tab}{qw( i_col i_row )};
 
      if ($tab->{separate} && $i_row > 1 && $i_col == 1) {
+
         unless($do_htlatex) {
             push @{$tab->{store}},
                 $self->_tab_end,

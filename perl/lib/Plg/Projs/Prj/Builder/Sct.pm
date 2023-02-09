@@ -95,7 +95,6 @@ sub _sct_lines {
                 my ($db, $query, $params) = @{$ccc}{qw( db query params )};
                 next CONT unless $db && $query;
                 $params ||= [];
-                 $DB::single = 1;
 
                 my ($output, $cmt) = @{$ccc}{qw( output cmt )};
                 my (@begin, @end);
@@ -128,7 +127,6 @@ sub _sct_lines {
                 if (@final) {
                     push @lines, @begin, @final, @end;
                 }
-                $DB::single = 1;1;
             }
             next;
         }else{
