@@ -89,7 +89,7 @@ sub _sct_lines {
             my $type = $ccc->{type};
 
             # final result
-            my @final;
+            my @pic_content;
 
             if ($type eq 'sql') {
                 my ($db, $query, $params) = @{$ccc}{qw( db query params )};
@@ -113,23 +113,41 @@ sub _sct_lines {
                 if ($cmt) {
                     push @begin, '\ifcmt';
                     push @end, '\fi';
-                    my $tab = $cmt && ref $cmt eq 'HASH' && $cmt->{tab};
-                    if ($tab) {
-                        my $tab_s = !ref $tab ? $tab : ref $tab eq 'ARRAY' ?
-                            join "," => map { str_split_trim($_ => ',') } @$tab : '';
-                        $tab_s .= ',amount=' . $amount;
-                        push @begin, sprintf(' tab_begin %s',$tab_s);
-                        unshift @end, ' tab_end';
+
+                    while(1){
+                        if ($amount == 1) {
+                            my $rw = shift @$rows;
+                            my ($url, $caption) = @{$rw}{qw( url caption )};
+                            my $opts = varval('single.opts', $cmt) || {};
+                            my $indent = ' ' x 3;
+                            push @pic_content,
+                                sprintf('%s ig %s', $indent, $url),
+                                $caption ? sprintf('%s @caption %s', $indent, $caption) : (),
+                                ( map { sprintf('%s %s %s', $indent, $_, $opts->{$_}) } keys %$opts ),
+                                ;
+                            last;
+                        }
+
+                        my $tab = $cmt && ref $cmt eq 'HASH' && $cmt->{tab};
+                        if ($tab) {
+                            my $tab_s = !ref $tab ? $tab : ref $tab eq 'ARRAY' ?
+                                join "," => map { str_split_trim($_ => ',') } @$tab : '';
+                            $tab_s .= ',amount=' . $amount;
+                            push @begin, sprintf(' tab_begin %s',$tab_s);
+                            unshift @end, ' tab_end';
+                        }
+
+                        last;
                     }
                 }
 
                 foreach my $rw (@$rows) {
                     ( my $fin = $output ) =~ s|@@\{(\w+)\}|( $rw->{$1} // '' )|ge;
-                    push @final, $fin;
+                    push @pic_content, $fin;
                 }
 
-                if (@final) {
-                    push @lines, @begin, @final, @end;
+                if (@pic_content) {
+                    push @lines, @begin, @pic_content, @end;
                 }
             }
             next;
