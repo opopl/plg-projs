@@ -107,14 +107,14 @@ sub _sct_lines {
                     p => $params,
                 };
                 my ($rows) = dbh_select($ref);
-                next unless $rows && @$rows;
+                next CONT unless $rows && @$rows;
                 my $amount = scalar @$rows;
 
                 if ($cmt) {
                     push @begin, '\ifcmt';
                     push @end, '\fi';
 
-                    while(1){
+                    AMOUNT: while(1){
                         if ($amount == 1) {
                             my $rw = shift @$rows;
                             my ($url, $caption) = @{$rw}{qw( url caption )};
@@ -125,19 +125,36 @@ sub _sct_lines {
                                 $caption ? sprintf('%s @caption %s', $indent, $caption) : (),
                                 ( map { sprintf('%s %s %s', $indent, $_, $opts->{$_}) } keys %$opts ),
                                 ;
-                            last;
+                            last AMOUNT;
                         }
 
                         my $tab = $cmt && ref $cmt eq 'HASH' && $cmt->{tab};
                         if ($tab) {
-                            my $tab_s = !ref $tab ? $tab : ref $tab eq 'ARRAY' ?
-                                join "," => map { str_split_trim($_ => ',') } @$tab : '';
-                            $tab_s .= ',amount=' . $amount;
+                            my (@tab_a, $tab_s);
+                            $tab_s = !ref $tab ? $tab : '';
+                            unless($tab_s){
+                                if(ref $tab eq 'ARRAY'){
+                                    foreach my $x (@$tab) {
+                                        unless(ref $x){
+                                            push @tab_a, $x;
+                                        } elsif(ref $x eq 'ARRAY'){
+                                            push @tab_a, @$x;
+                                        } elsif(ref $x eq 'HASH'){
+                                            while(my($k,$v)=each %{$x}){
+                                                push @tab_a, sprintf('%s=%s',$k => $v);
+                                            }
+                                        }
+                                    }
+                                }
+                                push @tab_a, sprintf("amount=%s",$amount);
+                                $tab_s = join("," => @tab_a);
+                            }
+
                             push @begin, sprintf(' tab_begin %s',$tab_s);
                             unshift @end, ' tab_end';
                         }
 
-                        last;
+                        last AMOUNT;
                     }
                 }
 
