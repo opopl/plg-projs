@@ -301,32 +301,43 @@ sub _tab_start {
   );
 
   if ($tab->{separate}) {
-      my ($layout, $amount) = @{$tab}{qw(layout amount)};
-      if ($layout) {
-          my ($pic_index) = @{$tab}{qw(pic_index)};
-          $pic_index ||= 0;
-
+      my ($layout, $amount) = @{$tab}{qw( layout amount )};
+      $tab->{pic_index} ||= 0;
+      my $pic_index = $tab->{pic_index};
+      if ($layout && $amount) {
           my @layout_regions = split '\|' => $layout;
 
-          foreach my $region (@layout_regions) {
+          REGION: foreach my $region (@layout_regions) {
               $region =~ /^(?:|\((?<cond>[^()]+)\))(?<seq>[\d\.]+)$/;
               my ($cond, $seq) = @+{qw( cond seq )};
               my $ok = 1;
               if ($cond) {
                 local $_ = trim($cond);
 
-                /^last\.(?<num_str>(\w+))$/ && do {
-                   my $num_str = $+{'num_str'};
+                #/^last\.(?<num_str>(\w+))$/ && do {
+                   #my $num_str = $+{'num_str'};
+                #};
+
+                # range
+                /^(?<range>(?<start>\d+)\s*\-\s*(?<end>\d+|last))$/ && do {
+                   my ($range, $start, $end) = @+{qw( range start end )};
+
+                   $end = $amount if $end eq 'last';
+                   $ok &&= ( $start > 0 );
+                   $ok &&= ( $end > $start );
+                   $ok &&= ( $pic_index >= ($start-1) );
+                   $ok &&= ( $pic_index <= ($end-1) );
                 };
+                # last
                 /^last\.(?<num>(\d+))$/ && do {
                    my $num = $+{'num'} + 0;
-                   if ($amount && defined $pic_index && ($pic_index < ($amount - $num)) ) {
+                   if ($amount && ($pic_index < ($amount - $num)) ) {
                        $ok = 0;
                    }
                 };
               }
 
-              next unless $ok;
+              next REGION unless $ok;
 
               my @layout_parts = grep { /^\d+$/ } split('\.' => $seq);
               my $layout_length = scalar @layout_parts;
@@ -336,7 +347,7 @@ sub _tab_start {
               $tab->{cols} = $layout_parts[$layout_index];
 
               $tab->{layout_counter}++;
-              last;
+              last REGION;
           }
       }
   }
@@ -1443,9 +1454,10 @@ sub _d2tex {
   }
 
   my $numbering = varval('caption.numbering', $cnf);
-  if ($tab && $tab->{separate} && $numbering) {
+  if ($tab && $tab->{separate}) {
       my $index = $tab->{pic_index} || 0;
-      $caption = sprintf(q{(%d) %s}, ($index + 1), $caption);
+
+      $caption = sprintf(q{(%d) %s}, ($index + 1), $caption) if $numbering;
       $tab->{pic_index}++;
   }
 
