@@ -27,6 +27,9 @@ use Base::Data qw(
 
 use Base::Arg qw(
     varval
+    opts2dict
+    dict2opts
+    dict_update
 );
 
 use Base::DB qw(
@@ -130,25 +133,32 @@ sub _sct_lines {
 
                         my $tab = $cmt && ref $cmt eq 'HASH' && $cmt->{tab};
                         if ($tab) {
-                            my (@tab_a, $tab_s);
+                            my $tab_s;
                             $tab_s = !ref $tab ? $tab : '';
+                            my $tab_dict = opts2dict($tab_s) || {};
                             unless($tab_s){
                                 if(ref $tab eq 'ARRAY'){
                                     foreach my $x (@$tab) {
                                         unless(ref $x){
-                                            push @tab_a, $x;
+                                            my $d = opts2dict($x);
+                                            dict_update($tab_dict, $d) if $d;
                                         } elsif(ref $x eq 'ARRAY'){
-                                            push @tab_a, @$x;
-                                        } elsif(ref $x eq 'HASH'){
-                                            while(my($k,$v)=each %{$x}){
-                                                push @tab_a, sprintf('%s=%s',$k => $v);
+                                            for(@$x){
+                                                my $d = opts2dict($_);
+                                                dict_update($tab_dict, $d) if $d;
                                             }
+                                        } elsif(ref $x eq 'HASH'){
+                                            dict_update($tab_dict, $x);
                                         }
                                     }
+                                }elsif(ref $tab eq 'HASH'){
+                                    dict_update($tab_dict, $tab);
                                 }
-                                push @tab_a, sprintf("amount=%s",$amount);
-                                $tab_s = join("," => @tab_a);
                             }
+
+                            $tab_dict->{cols} = $amount if $amount < $tab_dict->{cols};
+                            $tab_dict->{amount} = $amount;
+                            $tab_s = dict2opts($tab_dict);
 
                             push @begin, sprintf(' tab_begin %s',$tab_s);
                             unshift @end, ' tab_end';
