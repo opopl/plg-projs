@@ -249,7 +249,7 @@ sub db_insert_img {
   my $ins = {};
 
   my @keys_self = qw( proj rootid sec );
-  my @keys_d = qw( inum url img size );
+  my @keys_d = qw( inum url img size mtime );
   my @keys_d_str = qw( caption tags name type md5 width height );
 
   $ins->{$_} = $self->{$_} for(@keys_self);
@@ -258,7 +258,7 @@ sub db_insert_img {
   $ins->{$_} = $d->{$_} // '' for(@keys_d_str);
   $DB::single = 1;
 
-  my ($url, $md5, $sec, $proj) = @{$ins}{qw( url md5 sec proj )};
+  my ($url, $md5, $mtime, $sec, $proj) = @{$ins}{qw( url md5 mtime sec proj )};
 
   my $ok = 1;
   while (1) {
@@ -285,6 +285,7 @@ sub db_insert_img {
           h => {
               url => $url, md5 => $md5,
               sec => $sec, proj => $proj,
+              mtime => $mtime,
           },
           on_list => [qw(url md5)],
        });
@@ -678,6 +679,7 @@ sub _fetch {
 
   return unless $fs;
   $d->{size} = stat($d->{img_file})->size;
+  $d->{mtime} = stat($d->{img_file})->mtime;
   return unless $d->{size};
 
   $d->{'@'}->{fs} = 1;
