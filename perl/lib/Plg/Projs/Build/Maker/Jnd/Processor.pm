@@ -64,6 +64,7 @@ use Base::DB qw(
 use Plg::Projs::Tex qw(
     texify
     escape_latex
+    unicode2pics
 
     %replace_unicode
 
@@ -1428,6 +1429,7 @@ sub _d2tex {
 
   my $d_db = $self->_d_db_data($d);
   my ($img_file, $img_path, $rw)  = @{$d_db}{qw( img_file img_path rw )};
+  #$DB::single = 1;
 
   unless ($img_file && $img_path) {
     my $err = $d_db->{err} || [];
@@ -1451,7 +1453,9 @@ sub _d2tex {
   if ($caption){
     Plg::Projs::Tex::texify(\$caption) if varval('caption.texify', $cnf);
     $caption = escape_latex($caption) if varval('caption.escape_latex', $cnf);
+    $caption = unicode2pics($caption) if varval('caption.unicode2pics', $cnf);
   }
+  $DB::single = 1 if $caption;
 
   my $numbering = varval('caption.numbering', $cnf);
   if ($tab && $tab->{separate}) {

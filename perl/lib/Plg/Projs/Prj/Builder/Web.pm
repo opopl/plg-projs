@@ -16,6 +16,8 @@ use Image::Info qw(
 use Image::ExifTool qw(ImageInfo);
 use Text::Template;
 
+use Plg::Projs::Prj::Builder::Web::Routes;
+
 use Plg::Projs::Template qw(
     tmpl_render
     $tm_dir
@@ -34,12 +36,15 @@ sub act_web {
     my $imgman = $bld->{imgman};
     my $img_root = $imgman->{img_root};
 
-    ### GET /
+### GET /
     get '/' => sub {
-        redirect '/act/img/html';
+        #redirect '/act/img/html';
+        redirect '/prj/sec/html';
     };
 
-    ### GET /img/raw/:inum
+### GET /img/raw/:inum
+    #get '/img/raw/:inum' => $routes->jsonImgRawInum();
+
     get '/img/raw/:inum' => sub {
         my $inum = route_parameters->get('inum');
 
@@ -64,7 +69,7 @@ sub act_web {
         }
     };
 
-    ### GET /img/data/:inum
+###GET /img/data/:inum
     get '/img/data/:inum' => sub {
         my $inum = route_parameters->get('inum');
 
@@ -76,7 +81,7 @@ sub act_web {
         $jsn->encode($img_db);
     };
 
-    ### GET /act/:act
+###GET /act/:act
     get '/act/:act/html' => sub {
         my $act = route_parameters->get('act');
         my $sub = sprintf(q{act_%s},$act);
@@ -89,6 +94,20 @@ sub act_web {
 
         $ref->{res} // 'err';
     };
+
+###GET /prj/sec/html
+    get '/prj/sec/html' => sub {
+        my $sec = query_parameters->get('sec');
+        my $proj = query_parameters->get('proj');
+
+        my $data = {
+            sec => $sec,
+            proj => $proj,
+        };
+
+        tmpl_render('sec.phtml',{ data => $data });
+    };
+
     dance;
 
     return $bld;

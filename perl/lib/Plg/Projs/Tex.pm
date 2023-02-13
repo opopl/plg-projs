@@ -72,6 +72,7 @@ my @ex_vars_array=qw(
         texify_ref
 
         escape_latex
+        unicode2pics
 
         _fbicon_igg
     )],
@@ -587,12 +588,13 @@ our %fbicons_n = (
   "\N{U+1FAE4}" => 'face.diagonal.mouth',
   "\N{U+1F31A}" => 'face.new.moon',
   "\N{U+1F628}" => 'face.fearful',
-  "\N{U+1F972}"  => 'face.smiling.tear',
+  "\N{U+1F972}" => 'face.smiling.tear',
   "\N{U+1F62B}" => 'face.tired',
   "\N{U+1FAE3}" => 'face.eye.peeking',
   "\N{U+1F60A}" => 'face.smiling.eyes.smiling',
   "\N{U+1F626}" => 'face.frowning.open.mouth',
   "\N{U+1F979}" => 'face.holding.back.tears',
+  "\N{U+1F631}" => 'face.screaming.in.fear',
 
   "\N{U+25AA}" => 'black.small.square',
   "\N{U+25FC}" => 'black.medium.square',
@@ -983,6 +985,23 @@ sub rpl_quotes {
     }
 
     $s = join("",@n);
+}
+
+sub unicode2pics {
+    local $_ = shift || $s;
+
+    my @utf = keys %fbicons;
+    my @fbi;
+    while(@utf){
+      my $k = shift @utf;
+
+      #while(/($k+)/){
+      #}
+      s/($k+)/_fbicon_igg($1)/ge;
+    }
+
+    $s = $_;
+    return $s;
 }
 
 sub escape_latex {
