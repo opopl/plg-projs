@@ -70,16 +70,7 @@ sub new
     return $self;
 }
 
-sub d_rm_file {
-  my ($self) = @_;
 
-  my $d = $self->{d};
-  return $self unless $d && $d->{img_file} && -f $d->{img_file};
-
-  rmtree $d->{img_file};
-  $d->{'@'}->{fs} = 0;
-  return $self;
-}
 
 sub d_block_import {
     my ($self) = @_;
@@ -169,9 +160,17 @@ sub d_process {
         ;
 
     $DB::single = 1;
-    my $fetch_ok = $self->_fetch;
-
-    $self->db_insert_img if $fetch_ok;
+    my $okr = {};
+    eval {
+       die unless $self->_fetch_file;
+       $self->db_insert_img($okr);
+    };
+    my $ok = $okr->{ok};
+    unless($ok && !$@){
+        $self->d_rollback_fs;
+    }else{
+        $self->d_backup_fs_remove;
+    }
 
     $self->{d} = undef;
 
@@ -238,7 +237,7 @@ sub init {
 }
 
 sub db_insert_img {
-  my ($self) = @_;
+  my ($self, $okr) = @_;
 
   my $d = $self->{d};
   return $self unless $d;
@@ -309,6 +308,7 @@ sub db_insert_img {
   }
 
   $self->d_push_status('ok') if $ok;
+  $okr->{ok} = $ok;
 
   return $self;
 }
@@ -401,6 +401,7 @@ sub d_get_file {
   }
 
   $d->{img_file} = catfile($self->{img_root},$d->{img});
+  $d->{img_file_bk} = catfile($self->{img_root},$d->{img} . '.bk');
 
   $d->{'@'}->{fs} = -f $d->{img_file} ? 1 : 0;
 
@@ -565,7 +566,46 @@ sub d_push_status {
   return $self;
 }
 
-sub _fetch {
+sub d_backup_fs_remove {
+  my ($self) = @_;
+
+  my $d = $self->{d};
+  my $bk = $d && $d->{img_file_bk};
+  return $self unless $bk;
+
+  rmtree $bk if -f $bk;
+
+  return $self;
+}
+
+sub d_backup_fs {
+  my ($self) = @_;
+
+  my $d = $self->{d};
+  my $img_file = $d && $d->{img_file};
+  return $self unless $d && $img_file && -f $img_file;
+
+  move($d->{img_file}, $d->{img_file_bk}) if -f $img_file;
+  $d->{'@'}->{fs} = 0;
+  return $self;
+}
+
+sub d_rollback_fs {
+  my ($self) = @_;
+
+  my $d = $self->{d};
+  my $ok = 1;
+  $ok &&= $d && $d->{img_file} && $d->{img_file_bk};
+  return $self unless $ok;
+
+  my ($ifile, $ifile_bk) = @{$d}{qw( img_file img_file_bk )};
+
+  move($ifile_bk, $ifile) if -f $ifile_bk;
+
+  return $self;
+}
+
+sub _fetch_file {
   my ($self) = @_;
 
   my $d = $self->{d};
@@ -575,7 +615,7 @@ sub _fetch {
         && $d->{'@'}->{fs}
         && $d->{'@'}->{db};
 
-  $self->d_rm_file;
+  $self->d_backup_fs;
 
   my $imgman  = $self->{imgman};
 
@@ -614,6 +654,7 @@ sub _fetch {
   unless(-f $d->{img_file}){
      print qq{DOWNLOAD FAIL: } . $d->{img} . "\n";
      $self->d_push_status('fail');
+
      return ;
   }else{
      print qq{DOWNLOAD SUCCESS: } . $d->{img} . "\n";
@@ -694,7 +735,7 @@ sub _fetch {
 
   return 1;
 }
-# endof: _fetch
+# endof: _fetch_file
 # see also: db_insert_img
 
 
