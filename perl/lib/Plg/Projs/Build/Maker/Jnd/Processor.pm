@@ -1449,7 +1449,7 @@ sub _d2tex {
     push @tex, '% w2h = ' . $w2h;
   }
 
-  my $caption = varval('rw.caption', $d_db) || $d->{caption} || '';
+  my $caption = $d->{caption_here} || varval('rw.caption', $d_db) || $d->{caption} || '';
   if ($caption){
     Plg::Projs::Tex::texify(\$caption) if varval('caption.texify', $cnf);
     $caption = escape_latex($caption) if varval('caption.escape_latex', $cnf);
