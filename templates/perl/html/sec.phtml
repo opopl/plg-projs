@@ -6,12 +6,20 @@ Section: {$sec}
 
 Project: {$proj}
 
-<div>
+<div id="tabs_sec">
   <ul>
-  	<li> <a href="#tab_sec_html">HTML</a> </li>
-  	<li> <a href="#tab_sec_json">Json</a> </li>
+    <li> <a href="#tab_sec_html">HTML</a> </li>
+    <li> <a href="#tab_sec_json">Json</a> </li>
   </ul>
   <div id="tab_sec_json">
+    JSON
+    <pre>
+    {
+       my $sd = $bld->_sec_data({ sec => $sec, proj => $proj });
+       my $sd_json = $jsn->encode($sd) if $sd;
+       $sd_json;
+    }
+    </pre>
   </div>
   <div id="tab_sec_html">
   </div>
