@@ -5,10 +5,21 @@ use strict;
 use warnings;
 use utf8;
 
-use Data::Dumper qw(Dumper);
+use FindBin qw($Bin $Script);
+
+BEGIN {
+    $ENV{DANCER_PUBLIC} = $Bin .'/public';
+}
+
 use Dancer2;
-use JSON::XS ();
+
 use File::Spec::Functions qw(catfile);
+
+use Data::Dumper qw(Dumper);
+use Cwd;
+
+#use Dancer2;
+use JSON::XS ();
 use Image::Info qw(
     image_info
     image_type
@@ -24,17 +35,23 @@ use Plg::Projs::Template qw(
     $tm_file_page
 );
 
-#set serializer => 'JSON';
 set 'logger'       => 'console';
 set 'log'          => 'debug';
+set 'static_handler' => 1;
+#set public => path( Cwd::cwd(), 'public' );
+
+#set serializer => 'JSON';
 
 my $jsn = JSON::XS->new->utf8->pretty->allow_nonref;
 
 sub act_web {
     my ($bld) = @_;
 
+    #print Dumper($ENV{DANCER_PUBLIC}) . "\n";
+
     my $imgman = $bld->{imgman};
     my $img_root = $imgman->{img_root};
+    $DB::single = 1;
 
 ### GET /
     get '/' => sub {
@@ -103,6 +120,8 @@ sub act_web {
         my $data = {
             sec => $sec,
             proj => $proj,
+            bld => \$bld,
+            jsn => \$jsn,
         };
 
         tmpl_render('sec.phtml',{ data => $data });
