@@ -2,7 +2,7 @@
 CREATE TABLE IF NOT EXISTS imgs (
      url TEXT UNIQUE,
      url_parent TEXT,
-     inum INTEGER,
+     inum INTEGER UNIQUE,
      tags TEXT,
      rootid TEXT,
      proj TEXT,
@@ -11,12 +11,12 @@ CREATE TABLE IF NOT EXISTS imgs (
      caption TEXT,
      ext TEXT,
      type TEXT,
-     md5 TEXT,
+     md5 TEXT UNIQUE,
      name TEXT,
      name_uniq TEXT UNIQUE,
-     WIDTH INTEGER,
-     HEIGHT INTEGER,
-     WIDTH_TEX TEXT,
+     width INTEGER,
+     height INTEGER,
+     width_tex TEXT,
      size INTEGER,
      mtime INTEGER
 );
