@@ -129,6 +129,30 @@ sub init_db_doc {
     return $bld;
 }
 
+sub init_db_imgs {
+    my ($bld) = @_;
+
+    my $imgman = $bld->{imgman};
+
+    $bld->init_db_tables({
+       dbh => $imgman->{dbh},
+       table_order => [qw( imgs url2md5 )],
+       prefix => 'img.create_table_',
+    });
+
+#    my $q = q{
+         #INSERT OR REPLACE INTO url2md5
+         #SELECT url, md5, mtime, sec, proj FROM imgs WHERE url IS NOT NULL AND md5 IS NOT NULL;
+    #};
+
+    #dbh_do({ 
+       #dbh => $imgman->{dbh},
+       #q => $q,
+    #});
+
+    return $bld;
+}
+
 sub inj_base {
     my ($bld) = @_;
 
@@ -216,6 +240,7 @@ sub init {
         ->expand_env
         ->expand_vars
         ->init_imgman
+        ->init_db_imgs
         ->init_maker
         ->act_exe
         ;
@@ -248,6 +273,7 @@ sub init_imgman {
   );
 
   $bld->{imgman} = $imgman;
+
 
 
   return $bld;

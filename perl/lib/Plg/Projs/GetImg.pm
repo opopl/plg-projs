@@ -70,6 +70,7 @@ use base qw(
 use Base::DB qw(
     dbi_connect
 
+    dbh_create_tables
     dbh_do
     dbh_delete
 
@@ -209,6 +210,14 @@ sub init_db {
     $self->db_create if $anew;
 
     $self->{tbl_info} = dbh_table_info();
+
+#    my $sql_dir = catfile($ENV{PLG},qw( projs data sql ));
+    #dbh_create_tables({
+       #dbh         => $dbh,
+       #sql_dir     => $sql_dir,
+       #table_order => [qw( imgs url2md5 )],
+       #prefix => 'img.create_table_',
+    #});
 
 #    if ($self->{reset}) {
         #$self

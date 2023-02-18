@@ -605,6 +605,9 @@ our %fbicons_n = (
   # replacement character
   "\N{U+FFFD}" => 'u_fffd',
 
+  # Combining Breve
+  "\N{U+1F3FF}" => '',
+
   "\N{U+203C}" => "exclamation.mark.double",
   "\N{U+2757}" => 'exclamation.mark',
 
