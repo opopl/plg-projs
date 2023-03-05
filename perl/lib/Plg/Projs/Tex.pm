@@ -578,7 +578,6 @@ our %fbicons_n = (
   "\N{U+1F3E5}" => 'hospital',
   "\N{U+2714}"  => 'check.mark',
   "\N{U+2B50}"  => 'white.medium.star',
-  "\N{U+2B07}"  => 'downwards.black.arrow',
   "\N{U+1F43F}" => 'chipmunk',
   "\N{U+2763}"  => 'heart.exclamation',
   "\N{U+1FAD9}" => 'jar',
@@ -596,8 +595,13 @@ our %fbicons_n = (
   "\N{U+1F979}" => 'face.holding.back.tears',
   "\N{U+1F631}" => 'face.screaming.in.fear',
 
+  "\N{U+25B6}" => 'black.play.button',
+
   "\N{U+25AA}" => 'black.small.square',
   "\N{U+25FC}" => 'black.medium.square',
+
+  "\N{U+2B07}"  => 'downwards.black.arrow',
+  "\N{U+27A1}"  => 'rightwards.black.arrow',
 
   '❤️🩹' => 'heart.white.middle',
   "\N{U+1FAC2}" => 'people.hugging',
@@ -612,6 +616,18 @@ our %fbicons_n = (
   "\N{U+2757}" => 'exclamation.mark',
 
   "\N{U+2049}" => 'exclamation.question.mark',
+
+  "\N{U+2618}"  => 'shamrock',
+  "\N{U+1FA84}" => 'magic.wand',
+  "\N{U+2693}"  => 'anchor',
+  "\N{U+1F3F5}" => 'rosette',
+  "\N{U+1F956}" => "baguette.bread",
+  "\N{U+1F35C}" => "steaming.bowl",
+  "\N{U+1F9F9}" => 'broom',
+  "\N{U+1F36A}" => 'cookie',
+  "\N{U+1F9C1}" => 'cupcake',
+
+  "\N{U+2661}"  => 'heart.white.suit',
 
   "\N{U+1F1E6}\N{U+1F1FF}" => 'flag.az',
   "\N{U+1F1F3}\N{U+1F1F1}" => 'flag.nl',
@@ -647,6 +663,9 @@ our %fbicons_hcode = (
 
   "\N{U+1F3FD}" => '',
   "\N{U+2028}" => '',
+
+  # Latin Small Letter E with Circumflex and Acute
+  "\N{U+1EBF}" => '',
 
 );
 
@@ -686,7 +705,14 @@ our %fbicons_hcode_hebrew = map { $_ => '' } (
   "\N{U+05F3}",
 );
 
-our %fbicons_hcode_georgian = map { $_ => '' } (
+our %fbicons_hcode_georgian = map { $_->{char} => '' } (
+  { char => "\N{U+10E9}", name => 'Georgian Letter Chin' },
+  { char => "\N{U+10DC}", name => 'Georgian Letter Nar' },
+  { char => "\N{U+10D2}", name => 'Georgian Letter Gan' },
+  { char => "\N{U+10DB}", name => 'Georgian Letter Man' },
+  { char => "\N{U+10D3}", name => 'Georgian Letter Don' },
+  { char => "\N{U+10D8}", name => 'Georgian Letter In' },
+  { char => "\N{U+10E7}", name => 'Georgian Letter Qar' },
 );
 
 our %fbicons_hcode_arabic = map { $_->{char} => '' } (
