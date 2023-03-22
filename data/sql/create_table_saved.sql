@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS saved (
     location TEXT NOT NULL DEFAULT 'absent',
     html_file TEXT,
 
-    CHECK(location IN ('new', 'done', 'absent')),
+    CHECK(location IN ('new', 'done', 'absent', 'spare')),
     FOREIGN KEY(file) REFERENCES projs(file) ON DELETE CASCADE ON UPDATE CASCADE
 
 --     done INTEGER DEFAULT 0,
@@ -22,5 +22,4 @@ CREATE TABLE IF NOT EXISTS saved (
 
     -- --- import imgs into db
     -- done_import_img INTEGER DEFAULT 0,
-
 );
