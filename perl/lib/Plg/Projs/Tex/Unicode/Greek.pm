@@ -58,6 +58,14 @@ use constant MAP => map { $_ => '' } (
   "\N{U+03A9}",
   # Greek Small Letter Pi
   "\N{U+03C0}",
+  # Greek Capital Letter Zeta Ζ
+  "\N{U+0396}",
+  # Greek Small Letter Beta β
+  "\N{U+03B2}",
+  # Greek Capital Letter Phi
+  "\N{U+03A6}",
+  # Greek Small Letter Upsilon
+  "\N{U+03C5}",
 
   "\N{U+1F10}",
   "\N{U+03B8}",

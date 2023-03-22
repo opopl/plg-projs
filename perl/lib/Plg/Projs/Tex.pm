@@ -557,6 +557,12 @@ our %fbicons_n = (
 
   "\N{U+1F47B}" => 'ghost',
 
+  "\N{U+1F570}" => 'mantelpiece.clock',
+  "\N{U+270F}" => 'pencil',
+  "\N{U+1F58A}" => 'pen.ballpoint',
+  "\N{U+1F5A8}" => 'printer',
+  "\N{U+270D}" => 'writing.hand',
+
   "\N{U+1F41F}" => 'fish',
   "\N{U+1F466}" => 'boy',
   "\N{U+1F936}" => 'mother.christmas',
@@ -599,6 +605,10 @@ our %fbicons_n = (
 
   "\N{U+25AA}" => 'black.small.square',
   "\N{U+25FC}" => 'black.medium.square',
+  "\N{U+2B1C}" => 'white.large.square',
+  "\N{U+2139}" => 'information.source',
+  "\N{U+23F1}" => 'stopwatch',
+  "\N{U+2708}" => 'airplane',
 
   "\N{U+2B07}"  => 'downwards.black.arrow',
   "\N{U+27A1}"  => 'rightwards.black.arrow',
@@ -611,6 +621,8 @@ our %fbicons_n = (
 
   # Combining Breve
   "\N{U+1F3FF}" => '',
+
+  "\N{U+1FAE0}" => 'face.melting',
 
   "\N{U+203C}" => "exclamation.mark.double",
   "\N{U+2757}" => 'exclamation.mark',
@@ -628,6 +640,8 @@ our %fbicons_n = (
   "\N{U+1F9C1}" => 'cupcake',
 
   "\N{U+2661}"  => 'heart.white.suit',
+
+  "\N{U+1F3ED}"  => 'factory',
 
   "\N{U+1F1E6}\N{U+1F1FF}" => 'flag.az',
   "\N{U+1F1F3}\N{U+1F1F1}" => 'flag.nl',
