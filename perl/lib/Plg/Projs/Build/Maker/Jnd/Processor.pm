@@ -1451,8 +1451,8 @@ sub _d2tex {
 
   my $caption = $d->{caption_here} || varval('rw.caption', $d_db) || $d->{caption} || '';
   if ($caption){
-    Plg::Projs::Tex::texify(\$caption) if varval('caption.texify', $cnf);
     $caption = escape_latex($caption) if varval('caption.escape_latex', $cnf);
+    Plg::Projs::Tex::texify(\$caption) if varval('caption.texify', $cnf);
     $self->line_process_chars(\$caption) if varval('caption.unicode2pics', $cnf);
   }
   $DB::single = 1 if $caption;
