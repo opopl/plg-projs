@@ -556,6 +556,7 @@ our %fbicons_n = (
   "\N{U+1F47B}" => 'ghost',
 
   "\N{U+1F47B}" => 'ghost',
+  "\N{U+1F9A2}" => 'swan',
 
   "\N{U+1F570}" => 'mantelpiece.clock',
   "\N{U+270F}" => 'pencil',
@@ -642,10 +643,16 @@ our %fbicons_n = (
   "\N{U+2661}"  => 'heart.white.suit',
 
   "\N{U+1F3ED}"  => 'factory',
+  "\N{U+1F3D6}"  => 'beach.with.umbrella',
+  "\N{U+1F349}"  => 'watermelon',
+  "\N{U+1F991}"  => 'squid',
+  "\N{U+1F420}"  => 'tropical.fish',
+  "\N{U+1F419}"  => 'octopus',
 
   "\N{U+1F1E6}\N{U+1F1FF}" => 'flag.az',
   "\N{U+1F1F3}\N{U+1F1F1}" => 'flag.nl',
   "\N{U+1F1E8}\N{U+1F1FF}" => 'flag.cz',
+  "\N{U+1F1F7}\N{U+1F1FA}" => 'flag.rossia',
 
   #"\N{<++>}" => '<++>',
 );
@@ -1003,7 +1010,8 @@ sub rpl_quotes {
 
     # opening/closing quotes
     my %br = (
-        q{“} => q{”}
+        q{“} => q{”},
+        q{«} => q{»},
     );
 
     C: while (@c) {
