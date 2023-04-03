@@ -134,6 +134,13 @@ def cleanup(db_file, root, proj):
   conn.commit()
   conn.close()
 
+def info(db_file):
+  conn = sqlite3.connect(db_file)
+  c = conn.cursor()
+
+  conn.commit()
+  conn.close()
+
 def fill_from_files(db_file, root, root_id, proj, logfun):
   conn = sqlite3.connect(db_file)
   c = conn.cursor()
@@ -148,11 +155,13 @@ def fill_from_files(db_file, root, root_id, proj, logfun):
   pt_bib   = re.compile('^(\w+)\.refs\.bib$')
   pt_bld_sec = re.compile('^bld\.(.*)$')
   pt_dat_i = re.compile('^(.*)\.i$')
-
+  
   f = []
   for (dirpath, dirnames, filenames) in os.walk(root):
     f.extend(filenames)
     break
+
+  import pdb; pdb.set_trace()
   
   x = 0
   i = 0
@@ -171,10 +180,6 @@ def fill_from_files(db_file, root, root_id, proj, logfun):
         if ext == 'tex':
           if not sec: 
             sec = '_main_' 
-
-        if ext == 'xml':
-          if not sec: 
-            sec = '_xml_' 
 
         if ext == 'yml':
           if sec:
@@ -238,7 +243,7 @@ def fill_from_files(db_file, root, root_id, proj, logfun):
   rows = c.fetchall()
   for row in rows:
     proj = row[0]
-    dir_pm = os.path.join(root,'perl','lib','projs',root_id,proj)
+    dir_pm = os.path.join(root, 'perl', 'lib', 'projs', root_id, proj)
     if os.path.isdir(dir_pm):
       for (dirpath, dirnames, filenames) in os.walk(dir_pm):
         for f in filenames:

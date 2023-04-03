@@ -14,6 +14,7 @@ parser.add_argument("-r", "--root",help="root",default="")
 parser.add_argument("--rootid", help="rootid",default="")
 parser.add_argument("--dbfile", help="dbfile",default="")
 parser.add_argument("-l","--list", help="list of projects",default="")
+parser.add_argument("-i","--info", help="db info",default="")
 
 parser.add_argument("-c", "--create", help="create tables anew",action="store_true")
 parser.add_argument("-a", "--all",    help="fill all projects",action="store_true")
@@ -53,7 +54,7 @@ if args.proj:
 #create tables anew
 if args.create:
   db.drop_tbl({ 'db_file' : dbfile, 'tbl' : 'projs' })
-  sql_dir = os.path.join(dirname,'..','data','sql')
+  sql_dir = os.path.join(dirname, '..', 'data', 'sql')
   f = []
   for (dirpath, dirnames, filenames) in os.walk(sql_dir):
     f.extend(filenames)
@@ -64,9 +65,13 @@ if args.create:
     if m:
       sql_file = os.path.join(sql_dir,file)
       db.create_tables(dbfile, sql_file)
+import pdb; pdb.set_trace()
 
 if args.all:
   db.fill_from_files( dbfile, root, rootid, '', logfun )
+
+if args.info:
+  db.info( dbfile, root, rootid )
 
 # fill the selected list of projects
 if args.list:
