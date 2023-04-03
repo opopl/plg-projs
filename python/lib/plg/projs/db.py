@@ -8,6 +8,9 @@ import sys
 import Base.DBW as dbw
 import Base.Util as util
 
+from dict_recursive_update import recursive_update
+from tabulate import tabulate
+
 #import pprint
 #pp = pprint.PrettyPrinter(indent=4)
 
@@ -135,11 +138,21 @@ def cleanup(db_file, root, proj):
   conn.close()
 
 def info(db_file):
-  conn = sqlite3.connect(db_file)
-  c = conn.cursor()
+  tb_list = dbw._tb_list({ 'db_file' : db_file })
+  info = { 'cnt' : {} }
 
-  conn.commit()
-  conn.close()
+  for tbl in tb_list:
+    q = f'SELECT COUNT(*) AS cnt FROM {tbl}'
+    cnt = dbw.sql_fetchval(q,[],{ 'db_file' : db_file })
+    recursive_update(info, util.dictnew(f'cnt.{tbl}',cnt))
+
+  counts = info['cnt']
+  info_cnt_data = []
+  for tbl in counts.keys():
+    count = counts[tbl]
+    info_cnt_data.append([ tbl, count ])
+  t = tabulate(info_cnt_data,headers = util.qw('table count'))
+  print(t)
 
 def fill_from_files(db_file, root, root_id, proj, logfun):
   conn = sqlite3.connect(db_file)
