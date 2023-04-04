@@ -19,6 +19,8 @@ parser.add_argument("-l", "--list", help="list of projects", default="")
 parser.add_argument("-i", "--info", help="db info", action="store_true")
 parser.add_argument("-e", "--ext", help="list of extensions (use with: --all)", default="")
 
+parser.add_argument("-d", "--delete", help="delete from database absent files", action="store_true")
+
 parser.add_argument("-c", "--create", help="create tables anew", action="store_true")
 parser.add_argument("-a", "--all",    help="fill all projects", action="store_true")
 
@@ -70,6 +72,14 @@ if args.create:
       sql_file = os.path.join(sql_dir,file)
       db.create_tables(dbfile, sql_file)
 
+if args.info:
+  db.info(dbfile)
+  exit(0)
+
+if args.delete:
+  db_files = []
+  exit(0)
+
 ###_all
 if args.all:
   exts = string.split_n_trim(txt = args.ext, sep = ',')
@@ -82,10 +92,6 @@ if args.all:
     'exts'    : exts,
   }
   db.fill_from_files( **r )
-
-if args.info:
-  db.info(dbfile)
-  exit(0)
 
 # fill the selected list of projects
 ###_list
