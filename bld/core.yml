@@ -128,6 +128,14 @@ sii:
     story: 1
     titletoc: 1
 
+###sii_ctl
+  ctl:
+    Sct:
+      _sct_lines:
+        loop:
+          ii:
+
+# Gen.pm _gen_sec()
   generate:
 ###sii@generate
     'on':
@@ -455,7 +463,7 @@ tex4ht:
           blank : 1
        url:
           blank : 1
-       javascript: 1 
+       javascript: 1
 
        graphics:
           png:
