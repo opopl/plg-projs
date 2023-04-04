@@ -8,15 +8,17 @@ import sys
 import Base.DBW as dbw
 import Base.Util as util
 
+from pathlib import Path
+
 from dict_recursive_update import recursive_update
 from tabulate import tabulate
 
 #import pprint
 #pp = pprint.PrettyPrinter(indent=4)
 
-p = { 
-    'tex_file'   : re.compile('^(\w+)\.(?:(.*)\.|)tex'), 
-    'proj_file'  : re.compile('^(\w+)\.(?:(.*)\.|)(tex|pl|vim)'), 
+p = {
+    'tex_file'   : re.compile('^(\w+)\.(?:(.*)\.|)tex'),
+    'proj_file'  : re.compile('^(\w+)\.(?:(.*)\.|)(tex|pl|vim)'),
     'tags'       : re.compile('^\s*%%tags (.*)$'),
     'author'     : re.compile('^\s*%%author (.*)$'),
     'author_id'  : re.compile('^\s*%%author_id (.*)$'),
@@ -30,7 +32,7 @@ p_keys = util.qw('tags author_id url title')
 def create_tables(db_file, sql_file):
   conn = sqlite3.connect(db_file)
   c = conn.cursor()
-  
+
   sql = open(sql_file, 'r').read()
   for q in sqlparse.split(sql):
     try:
@@ -39,7 +41,7 @@ def create_tables(db_file, sql_file):
         print(e)
     except:
         print("Errors ",sys.exc_info()[0]," for sqlite query: " + q )
-  
+
   conn.commit()
   conn.close()
 
@@ -65,7 +67,7 @@ def author_add(r):
 def sql_file_exec(db_file, sql_file):
   conn = sqlite3.connect(db_file)
   c = conn.cursor()
-  
+
   sql = open(sql_file, 'r').read()
   for q in sqlparse.split(sql):
     try:
@@ -74,7 +76,7 @@ def sql_file_exec(db_file, sql_file):
         print(e)
     except:
         print("Errors ", sys.exc_info()[0], " for sqlite query: " + q )
-  
+
   conn.commit()
   conn.close()
 
@@ -91,9 +93,9 @@ def drop_tbl(r):
   for t in tables:
     print('''Dropping table in db: %s, table: %s ''' % (db_file,t) )
     c = conn.cursor()
-    
+
     c.execute('''DROP TABLE IF EXISTS %s''' % t)
-  
+
   conn.commit()
   conn.close()
 
@@ -154,7 +156,7 @@ def info(db_file):
   t = tabulate(info_cnt_data,headers = util.qw('table count'))
   print(t)
 
-def fill_from_files(db_file, root, root_id, proj, logfun):
+def fill_from_files(db_file = '', root = '', root_id = '', proj = '', logfun = '', exts = []):
   conn = sqlite3.connect(db_file)
   c = conn.cursor()
 
@@ -168,116 +170,126 @@ def fill_from_files(db_file, root, root_id, proj, logfun):
   pt_bib   = re.compile('^(\w+)\.refs\.bib$')
   pt_bld_sec = re.compile('^bld\.(.*)$')
   pt_dat_i = re.compile('^(.*)\.i$')
-  
-  f = []
-  for (dirpath, dirnames, filenames) in os.walk(root):
-    f.extend(filenames)
-    break
 
-  import pdb; pdb.set_trace()
-  
+  pfiles = []
+  proot = Path(root)
+  if len(exts):
+    for ext in exts:
+      found = list(proot.glob(f'*.{ext}'))
+      pfiles.extend(found)
+  else:
+    pfiles.extend(proot.glob(f'*.{ext}'))
+
   x = 0
   i = 0
   h_projs = []
-  for file in f:
+  for pfile in pfiles:
     i+=1
-    fpath = os.path.join(root,file)
+    file = pfile.name
+    fpath = pfile.as_posix()
     m = pt.match(file)
-    if m:
-      proj_m = m.group(1)
-      ext    = m.group(3)
-      x+=1
-      if ( not proj ) or ( proj_m == proj ):
-        sec    = m.group(2)
+    if not m:
+      continue
 
-        if ext == 'tex':
-          if not sec: 
-            sec = '_main_' 
+    proj_m = m.group(1)
+    ext    = m.group(3)
+    x+=1
+    if proj and not ( proj_m == proj ):
+      continue
 
-        if ext == 'yml':
-          if sec:
-            m = pt_bld_sec.match(sec)
-            if m:
-              sec = '_bld.' + m.group(1)
+    sec    = m.group(2)
 
-        if ext == 'pl':
-          if not sec: 
-            continue
-          else:
-            sec = '_perl.%s' % sec 
+    if ext == 'tex':
+      sec = sec if sec else '_main_'
 
-        if ext == 'dat':
-            m = pt_dat_i.match(sec)
-            if m:
-                sec_m = re.sub(pt_dat_i,r'\1',sec)
-                if sec_m == 'ii_include':
-                    sec = '_ii_include_'
-                if sec_m == 'ii_exclude':
-                    sec = '_ii_exclude_'
 
-        if ext == 'vim':
-          if not sec: 
-            sec = '_vim_' 
+    if ext == 'yml':
+      if sec:
+        m = pt_bld_sec.match(sec)
+        sec = '_bld.' + m.group(1) if m else None
+      else:
+        sec = '_yml_'
 
-        if ext == 'bib':
-            m_bib = pt_bib.match(file)
-            if m_bib:
-                sec = '_bib_' 
+    if ext == 'pl':
+      if not sec:
+        continue
+      else:
+        sec = '_perl.%s' % sec
 
-        if not sec:
-            continue
+    if ext == 'dat':
+        m = pt_dat_i.match(sec)
+        if m:
+            sec_m = re.sub(pt_dat_i,r'\1',sec)
+            if sec_m == 'ii_include':
+                sec = '_ii_include_'
+            if sec_m == 'ii_exclude':
+                sec = '_ii_exclude_'
 
-        data   = get_data(fpath)
+    if ext == 'vim':
+      if not sec:
+        sec = '_vim_'
 
-        tags      = data.get('tags','')
-        author_id = data.get('author_id','')
-        url       = data.get('url','')
+    if ext == 'bib':
+      m_bib = pt_bib.match(file)
+      if m_bib:
+          sec = '_bib_'
 
-        ins = { 
-          'file'      : file,
-          'author_id' : author_id,
-          'proj'      : proj_m,
-          'rootid'    : root_id,
-          'sec'       : sec,
-          'tags'      : tags,
-          'url'       : url,
-          'title'     : data.get('title',''),
-          'parent'    : data.get('parent',''),
-        }
+    if not sec:
+      continue
 
-        dbw.insert_update_dict({
-            'conn'     : conn,
-            'table'    : 'projs',
-            'insert'   : ins,
-            'on_list'  : ['file']
-        })
+    import pdb; pdb.set_trace()
 
-  c.execute('''SELECT DISTINCT proj FROM projs''')
-  rows = c.fetchall()
-  for row in rows:
-    proj = row[0]
-    dir_pm = os.path.join(root, 'perl', 'lib', 'projs', root_id, proj)
-    if os.path.isdir(dir_pm):
-      for (dirpath, dirnames, filenames) in os.walk(dir_pm):
-        for f in filenames:
-            file_pm = os.path.join(dir_pm,f)
-            pm_rel = os.path.relpath( file_pm, root )
-            (pm_head,pm_tail) = os.path.split(file_pm)
-            (pm_root,pm_ext) = os.path.splitext(pm_tail)
-            sec = '_pm.%s' % pm_root 
+    data   = get_data(fpath)
 
-            dbw.insert_update_dict({
-                'conn'     : conn,
-                'table'    : 'projs',
-                'insert' : { 
-                  'file'    : pm_rel,
-                  'proj'    : proj,
-                  'rootid'  : root_id,
-                  'sec'     : sec,
-                 },
-                'on_list' : ['file']
-            })
-        break
+    tags      = data.get('tags','')
+    author_id = data.get('author_id','')
+    url       = data.get('url','')
+
+    ins = {
+      'file'      : file,
+      'author_id' : author_id,
+      'proj'      : proj_m,
+      'rootid'    : root_id,
+      'sec'       : sec,
+      'tags'      : tags,
+      'url'       : url,
+      'title'     : data.get('title',''),
+      'parent'    : data.get('parent',''),
+    }
+
+    dbw.insert_update_dict({
+        'conn'     : conn,
+        'table'    : 'projs',
+        'insert'   : ins,
+        'on_list'  : ['file']
+    })
+
+#  c.execute('''SELECT DISTINCT proj FROM projs''')
+  #rows = c.fetchall()
+  #for row in rows:
+    #proj = row[0]
+    #dir_pm = os.path.join(root, 'perl', 'lib', 'projs', root_id, proj)
+    #if os.path.isdir(dir_pm):
+      #for (dirpath, dirnames, filenames) in os.walk(dir_pm):
+        #for f in filenames:
+            #file_pm = os.path.join(dir_pm,f)
+            #pm_rel = os.path.relpath( file_pm, root )
+            #(pm_head,pm_tail) = os.path.split(file_pm)
+            #(pm_root,pm_ext) = os.path.splitext(pm_tail)
+            #sec = '_pm.%s' % pm_root
+
+            #dbw.insert_update_dict({
+                #'conn'     : conn,
+                #'table'    : 'projs',
+                #'insert' : {
+                  #'file'    : pm_rel,
+                  #'proj'    : proj,
+                  #'rootid'  : root_id,
+                  #'sec'     : sec,
+                 #},
+                #'on_list' : ['file']
+            #})
+        #break
 
   conn.commit()
   conn.close()
