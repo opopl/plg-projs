@@ -157,8 +157,6 @@ def info(db_file):
   print(t)
 
 def fill_from_files(db_file = '', root = '', root_id = '', proj = '', logfun = '', exts = []):
-  conn = sqlite3.connect(db_file)
-  c = conn.cursor()
 
   if len(proj):
     pt = re.compile('^(%s)\.(?:(.*)\.|)(\w+)$' % proj)
@@ -194,6 +192,9 @@ def fill_from_files(db_file = '', root = '', root_id = '', proj = '', logfun = '
     proj_m = m.group(1)
     ext    = m.group(3)
     x+=1
+    if proj_m in ['bld']:
+      continue
+
     if proj and not ( proj_m == proj ):
       continue
 
@@ -201,7 +202,6 @@ def fill_from_files(db_file = '', root = '', root_id = '', proj = '', logfun = '
 
     if ext == 'tex':
       sec = sec if sec else '_main_'
-
 
     if ext == 'yml':
       if sec:
@@ -237,8 +237,6 @@ def fill_from_files(db_file = '', root = '', root_id = '', proj = '', logfun = '
     if not sec:
       continue
 
-    import pdb; pdb.set_trace()
-
     data   = get_data(fpath)
 
     tags      = data.get('tags','')
@@ -258,7 +256,7 @@ def fill_from_files(db_file = '', root = '', root_id = '', proj = '', logfun = '
     }
 
     dbw.insert_update_dict({
-        'conn'     : conn,
+        'db_file'  : db_file,
         'table'    : 'projs',
         'insert'   : ins,
         'on_list'  : ['file']
@@ -291,6 +289,5 @@ def fill_from_files(db_file = '', root = '', root_id = '', proj = '', logfun = '
             #})
         #break
 
-  conn.commit()
-  conn.close()
+  return 1
 

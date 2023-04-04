@@ -610,6 +610,8 @@ our %fbicons_n = (
   "\N{U+2139}" => 'information.source',
   "\N{U+23F1}" => 'stopwatch',
   "\N{U+2708}" => 'airplane',
+  "\N{U+264E}" => 'libra',
+  "\N{U+265F}" => 'black.chess.pawn',
 
   "\N{U+2B07}"  => 'downwards.black.arrow',
   "\N{U+27A1}"  => 'rightwards.black.arrow',
