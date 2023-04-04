@@ -4,20 +4,23 @@ import getopt,argparse
 
 import re
 
+import Base.String as string
+
 usage='''
 This script will fill the "projs" sqlite database
 '''
 parser = argparse.ArgumentParser(usage=usage)
 
-parser.add_argument("-p", "--proj", help="select_project",default="")
-parser.add_argument("-r", "--root",help="root",default="")
-parser.add_argument("--rootid", help="rootid",default="")
-parser.add_argument("--dbfile", help="dbfile",default="")
-parser.add_argument("-l","--list", help="list of projects",default="")
-parser.add_argument("-i","--info", help="db info",action="store_true")
+parser.add_argument("-p", "--proj", help="select_project", default="")
+parser.add_argument("-r", "--root", help="root", default="")
+parser.add_argument("--rootid", help="rootid", default="")
+parser.add_argument("--dbfile", help="dbfile", default="")
+parser.add_argument("-l", "--list", help="list of projects", default="")
+parser.add_argument("-i", "--info", help="db info", action="store_true")
+parser.add_argument("-e", "--ext", help="list of extensions (use with: --all)", default="")
 
-parser.add_argument("-c", "--create", help="create tables anew",action="store_true")
-parser.add_argument("-a", "--all",    help="fill all projects",action="store_true")
+parser.add_argument("-c", "--create", help="create tables anew", action="store_true")
+parser.add_argument("-a", "--all",    help="fill all projects", action="store_true")
 
 args = parser.parse_args()
 
@@ -52,6 +55,7 @@ if args.proj:
   db.fill_from_files( dbfile, root, rootid, proj, logfun )
 
 #create tables anew
+###_create
 if args.create:
   db.drop_tbl({ 'db_file' : dbfile, 'tbl' : 'projs' })
   sql_dir = os.path.join(dirname, '..', 'data', 'sql')
@@ -66,14 +70,25 @@ if args.create:
       sql_file = os.path.join(sql_dir,file)
       db.create_tables(dbfile, sql_file)
 
+###_all
 if args.all:
-  db.fill_from_files( dbfile, root, rootid, '', logfun )
+  exts = string.split_n_trim(txt = args.ext, sep = ',')
+  r = {
+    'db_file' : dbfile,
+    'root'    : root,
+    'root_id' : rootid,
+    'proj'    : '',
+    'logfun'  : logfun,
+    'exts'    : exts,
+  }
+  db.fill_from_files( **r )
 
 if args.info:
   db.info(dbfile)
   exit(0)
 
 # fill the selected list of projects
+###_list
 if args.list:
   list = args.list
   projs = list.split(",")
