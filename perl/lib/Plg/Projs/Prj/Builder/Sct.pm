@@ -184,6 +184,7 @@ sub _sct_lines {
                 unshift @contents, @s;
                 next;
             }
+            $_ = trim($_);
         }
 ###@zero
         /^\@zero$/ && do {
@@ -218,15 +219,26 @@ sub _sct_lines {
             my $p = $1 // '';
             $p =~ s/\./ /g;
 
+            my $ctl = varval('sii.ctl.Sct._sct_lines.loop.ii', $bld, {});
+
             my $path = 'ii ' . $p;
 
             my $ii_list = d_path($data,$path,[]);
             #my @ii = d_str_split_sn($data,$path);
             my @ii = $bld->_sct_ii_expand($ii_list);
 
+            my $ins = varval('foreach_ii_sec.insert.after', $ctl, []);
+            my $match = varval('foreach_ii_sec.match', $ctl, '');
             foreach my $ii_sec (@ii) {
               push @lines, sprintf('\ii{%s}',$ii_sec);
+
+              if (!$match || ($match && ($ii_sec =~ /$match/) )) {
+                if (@$ins) {
+                    push @lines, map { sprintf('\ii{%s.%s}', $ii_sec, $_) } @$ins;
+                }
+              }
             }
+            #$DB::single = 1 if $p =~ /\s*inner\s+body/;1;
             next;
         };
 ###@input
@@ -309,11 +321,13 @@ sub _sct_lines {
         };
 
         $bld->_txt_expand({ txt_ref => \$_ });
-        push @lines,$_;
+        push @lines, $_;
 
     }
-    return @lines;
 
+    $DB::single = 1 if $sec eq '_main_';1;
+
+    return @lines;
 }
 
 sub _bld_env {
