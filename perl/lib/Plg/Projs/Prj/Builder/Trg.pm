@@ -83,23 +83,34 @@ sub trg_inject {
     return $bld;
 }
 
+sub _trg_conf {
+    my ($bld, $ref) = @_;
+    $ref ||= {};
+    my ($proj, $target, @conf, $target_conf);
+    $proj = $ref->{proj} || $bld->{proj};
+    $target = $ref->{target} || $bld->{target};
+    $target_conf = $bld->_val_('target_conf') || {};
+    local $_ = $target;
+    while(my($k,$v) = each %$target_conf){
+        m/$k/ && do {
+           my $matched = { %+ };
+           varexp($v, $matched, { name => 'matched' });
+           push @conf, $v;
+           $DB::single = 1;1;
+           next;
+        };
+    }
+
+    wantarray ? @conf : \@conf;
+}
+
 sub trg_adjust_conf {
     my ($bld, $target) = @_;
 
     $target //= $bld->{target};
     my $proj = $bld->{proj};
-    local $_ = $bld->{target};
-
-    my $target_conf = $bld->_val_('target_conf') || {};
-    while(my($k,$v) = each %$target_conf){
-        m/$k/ && do {
-           my $matched = { %+ };
-           varexp($v, $matched, { name => 'matched' });
-           $DB::single = 1;
-           dict_update($bld, $v);
-           next;
-        };
-    }
+    my @update = $bld->_trg_conf({ target => $target, proj => $proj });
+    dict_update($bld, $_) for @update;
 
     return $bld;
 }
