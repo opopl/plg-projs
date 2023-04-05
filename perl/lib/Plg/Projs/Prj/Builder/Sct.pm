@@ -13,6 +13,11 @@ use Data::Dumper qw(Dumper);
 use File::Slurp::Unicode;
 use File::Spec::Functions qw(catfile);
 
+use JSON::XS;
+use Plg::Projs::Rgx qw(
+    %rgx_map
+);
+
 use Base::String qw(
     str_split_sn
     str_split_trim
@@ -27,6 +32,7 @@ use Base::Data qw(
 
 use Base::Arg qw(
     varval
+    varexp
     opts2dict
     dict2opts
     dict_update
@@ -47,6 +53,7 @@ use Base::DB qw(
 
     jcond
 );
+
 
 =head3 _sct_lines
 
@@ -238,7 +245,7 @@ sub _sct_lines {
                 }
               }
             }
-            #$DB::single = 1 if $p =~ /\s*inner\s+body/;1;
+            $DB::single = 1 if $p =~ /\s*inner\s+body/;1;
             next;
         };
 ###@input
@@ -403,6 +410,41 @@ sub _sct_ii_expand {
     }
 
     wantarray ? @ii : \@ii;
+}
+
+sub _sct_db_patches {
+    my ($bld, $ref) = @_;
+    $ref ||= {};
+    my $options;
+
+    my $proj = $ref->{proj} || $bld->{proj};
+    my $sec = $ref->{sec};
+
+    my $ref = {
+      dbh  => $bld->{dbh},
+      q    => q{ SELECT options FROM projs },
+      w    => { sec => $sec, proj => $proj },
+    };
+    my $json = dbh_select_fetchone($ref);
+    return unless $json;
+
+    my $coder = JSON::XS->new->utf8->pretty->allow_nonref;
+    my $sec_options = eval { $coder->decode($json); };
+    my $re_patch_key = varval('builder.patch_key',\%rgx_map);
+
+    return unless $sec_options && ref $sec_options eq 'HASH';
+
+    my $patches = {};
+    while(my($k,$v) = each %{$sec_options}){
+        if ($k =~ /$re_patch_key/) {
+            my $sep_str = $+{sep} eq '.' ? '' : $+{sep};
+            my $key = $+{key};
+            $patches->{'patch' . $sep_str}->{$key} = $v;
+        }
+    }
+    varexp($patches, { 'sec' => $sec });
+
+    return $patches;
 }
 
 sub _sct_data {

@@ -112,29 +112,8 @@ sub trg_adjust_db_options {
     if ($target =~ /^_buf\.(\S+)$/) {
       my $sec = $1;
 
-      my $ref = {
-        dbh  => $bld->{dbh},
-        q    => q{ SELECT options FROM projs },
-        w    => { sec => $sec, proj => $proj },
-      };
-      my $json = dbh_select_fetchone($ref);
-      if ($json) {
-          my $coder = JSON::XS->new->utf8->pretty->allow_nonref;
-          my $sec_options = eval { $coder->decode($json); };
-          my $re_patch_key = varval('builder.patch_key',\%rgx_map);
-          if ($sec_options && ref $sec_options eq 'HASH') {
-            my $patches = {};
-            while(my($k,$v) = each %{$sec_options}){
-                if ($k =~ /$re_patch_key/) {
-                    my $sep_str = $+{sep} eq '.' ? '' : $+{sep};
-                    my $key = $+{key};
-                    $patches->{'patch' . $sep_str}->{$key} = $v;
-                }
-            }
-            varexp($patches, { 'sec' => $sec });
-            dict_update($bld, $patches);
-          }
-      }
+      my $patches = $bld->_sct_db_patches({ proj => $proj, sec => $sec });
+      dict_update($bld, $patches) if $patches;
     }
     return $bld;
 }
