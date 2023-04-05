@@ -328,18 +328,23 @@ sub load_decs {
 }
 
 sub load_patch {
-    my ($bld) = @_;
+    my ($bld, $ref) = @_;
+    $ref ||= {};
+
+    my ($origin, $dest);
+    $origin = $ref->{origin} || $bld;
+    $dest = $ref->{dest} || $bld;
 
     my $re_patch_bare = varval('builder.patch_bare',\%rgx_map);
-    foreach my $key (keys %$bld) {
+    foreach my $key (keys %$origin) {
         next unless $key =~ /$re_patch_bare/;
 
         my $sep = $+{sep} || '\.';
-        my $patch = $bld->{$key} || {};
+        my $patch = $origin->{$key} || {};
 
         while(my($k,$v) = each %$patch){
             my $d = dict_new($k, $v, $sep);
-            dict_update($bld, $d);
+            dict_update($dest, $d);
         }
     }
 
