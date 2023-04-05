@@ -5,6 +5,7 @@ use strict;
 use warnings;
 
 use Data::Dumper qw(Dumper);
+use Clone qw( clone );
 
 use Base::XML::Dict qw(xml2dict);
 use YAML qw( LoadFile Load Dump DumpFile );
@@ -89,7 +90,7 @@ sub _trg_conf {
     my ($proj, $target, @conf, $target_conf);
     $proj = $ref->{proj} || $bld->{proj};
     $target = $ref->{target} || $bld->{target};
-    $target_conf = $bld->_val_('target_conf') || {};
+    $target_conf = clone( $bld->_val_('target_conf') || {} );
     local $_ = $target;
     while(my($k,$v) = each %$target_conf){
         m/$k/ && do {
