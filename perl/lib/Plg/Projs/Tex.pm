@@ -650,6 +650,8 @@ our %fbicons_n = (
   "\N{U+1F991}"  => 'squid',
   "\N{U+1F420}"  => 'tropical.fish',
   "\N{U+1F419}"  => 'octopus',
+  "\N{U+1F35E}"  => 'hlib',
+  "\N{U+1F43E}"  => 'paw.prints',
 
   "\N{U+1F1E6}\N{U+1F1FF}" => 'flag.az',
   "\N{U+1F1F3}\N{U+1F1F1}" => 'flag.nl',

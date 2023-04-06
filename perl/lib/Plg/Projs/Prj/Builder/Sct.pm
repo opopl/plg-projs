@@ -242,6 +242,25 @@ sub _sct_lines {
               if (!$match || ($match && ($ii_sec =~ /$match/) )) {
                 if (@$ins) {
                     push @lines, map { sprintf('\ii{%s.%s}', $ii_sec, $_) } @$ins;
+
+                    my @cnf = $bld->_trg_conf({ target => "_buf.$ii_sec" });
+                    my $c = shift @cnf;
+                    delete $c->{patch}->{'sii.scts._main_.ii.inner.body @push'};
+                    delete $c->{patch}->{'opts_maker.join_lines.ii.exclude'}->{'index'};
+                    delete $c->{patch}->{'vars.layout.indexing'};
+                    delete $c->{patch}->{'vars.layout.tabcont'};
+                    delete $c->{run_tex};
+
+                    my $c_db = $bld->_sct_db_patches({ sec => $ii_sec });
+
+                    my $new = {};
+                    $bld->load_patch({ origin => $c, dest => $new });
+                    $bld->load_patch({ origin => $c_db, dest => $new });
+                    my $vars = delete($new->{vars}) // {};
+                    varexp($c, $vars, { pref => '@' });
+                    $bld->load_patch({ origin => $c });
+                    my $exc = varval('sii.generate.on', $bld);
+                    $DB::single = 1;1;
                 }
               }
             }
@@ -420,12 +439,12 @@ sub _sct_db_patches {
     my $proj = $ref->{proj} || $bld->{proj};
     my $sec = $ref->{sec};
 
-    my $ref = {
+    my $r_db = {
       dbh  => $bld->{dbh},
       q    => q{ SELECT options FROM projs },
       w    => { sec => $sec, proj => $proj },
     };
-    my $json = dbh_select_fetchone($ref);
+    my $json = dbh_select_fetchone($r_db);
     return unless $json;
 
     my $coder = JSON::XS->new->utf8->pretty->allow_nonref;
