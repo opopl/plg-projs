@@ -10,6 +10,8 @@ use Cwd qw(getcwd);
 use String::Util qw(trim);
 use Data::Dumper qw(Dumper);
 
+use Text::Template;
+
 use File::Slurp::Unicode;
 use File::Spec::Functions qw(catfile);
 
@@ -69,10 +71,13 @@ use Base::DB qw(
 =cut
 
 sub _sct_lines {
-    my ($bld, $sec) = @_;
+    my ($bld, $sec, $ref) = @_;
+    $ref ||= {};
 
     my $mkr = $bld->{maker};
     my $prj = $mkr->{prj};
+
+    my $proj = $ref->{proj} || $bld->{proj};
 
     my $data      = $bld->_sct_data($sec);
     my $pack_opts = d_path($data,'pkg pack_opts',{});
@@ -101,7 +106,23 @@ sub _sct_lines {
             # final result
             my @pic_content;
 
-            if ($type eq 'sql') {
+###loop_item_sql_img
+            if ($type eq 'sql_img') {
+                my ($tmpl) = @{$ccc}{qw( tmpl )};
+                my $tdir = catfile($ENV{PLG},qw(templates sql img));
+
+                my $data = {
+                   sec => $sec,
+                   proj => $proj,
+                };
+                my $tfile = catfile($tdir, $tmpl);
+
+                my $sql = Text::Template
+                    ->new(SOURCE => $tfile)
+                    ->fill_in(HASH => $data);
+
+###loop_item_sql
+            } elsif ($type eq 'sql') {
                 my ($db, $query, $params) = @{$ccc}{qw( db query params )};
                 next CONT unless $db && $query;
                 $params ||= [];
