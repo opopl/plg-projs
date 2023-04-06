@@ -84,6 +84,18 @@ sub trg_inject {
     return $bld;
 }
 
+sub _trg_is_buf {
+    my ($bld, $ref) = @_;
+    $ref ||= {};
+    my ($proj, $target);
+    $proj = $ref->{proj} || $bld->{proj};
+    $target = $ref->{target} || $bld->{target};
+
+    my $re_buf = varval('builder.target.buf',\%rgx_map);
+
+    return $target =~ /$re_buf/ ? 1 : 0;
+}
+
 sub _trg_conf {
     my ($bld, $ref) = @_;
     $ref ||= {};

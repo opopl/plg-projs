@@ -236,10 +236,17 @@ sub _sct_lines {
 
             my $ins = varval('foreach_ii_sec.insert.after', $ctl, []);
             my $match = varval('foreach_ii_sec.match', $ctl, '');
+            my $ctl_not_buf = varval('foreach_ii_sec.target_not_buf', $ctl, 0);
+
             foreach my $ii_sec (@ii) {
               push @lines, sprintf('\ii{%s}',$ii_sec);
 
-              if (!$match || ($match && ($ii_sec =~ /$match/) )) {
+              my $ok;
+              $ok ||= !$match;
+              $ok ||= ($match && ($ii_sec =~ /$match/) );
+              $ok &&= !($ctl_not_buf && $bld->_trg_is_buf);
+
+              if ($ok) {
                 if (@$ins) {
                     push @lines, map { sprintf('\ii{%s.%s}', $ii_sec, $_) } @$ins;
 

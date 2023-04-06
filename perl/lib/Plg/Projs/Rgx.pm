@@ -19,7 +19,7 @@ my @ex_vars_scalar=qw(
 );
 ###export_vars_hash
 my @ex_vars_hash=qw(
-   %rgx_map 
+   %rgx_map
 );
 ###export_vars_array
 my @ex_vars_array=qw(
@@ -27,7 +27,7 @@ my @ex_vars_array=qw(
 
 %EXPORT_TAGS = (
 ###export_funcs
-    'funcs' => [qw( 
+    'funcs' => [qw(
         rgx_match
     )],
     'vars'  => [ @ex_vars_scalar,@ex_vars_array,@ex_vars_hash ]
@@ -36,7 +36,7 @@ my @ex_vars_array=qw(
 @EXPORT_OK = ( @{ $EXPORT_TAGS{'funcs'} }, @{ $EXPORT_TAGS{'vars'} } );
 
 our %rgx_map = (
-   jnd => { 
+   jnd => {
      macros => {
        igg => qr/\@igg\{([^{}]*)\}(?:\{([^{}]*)\}|)/,
      }
@@ -44,6 +44,9 @@ our %rgx_map = (
    builder => {
      patch_bare => qr/^patch(?<sep>[\/%\._\@]+|)$/,
      patch_key => qr/^patch(?<sep>[\/%\._\@]+|)(?<key>.*)$/,
+     target => {
+       buf => qr/^_buf\.(?<section>(?<day>\d+)_(?<month>\d+)_(?<year>\d+)\.(\S+))$/,
+     }
    }
 );
 
