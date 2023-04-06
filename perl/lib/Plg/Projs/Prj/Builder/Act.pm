@@ -8,6 +8,10 @@ binmode STDOUT,':encoding(utf8)';
 use strict;
 use warnings;
 
+use Base::Util qw(
+  md5sum
+);
+
 use File::Path qw(mkpath rmtree);
 use File::Spec::Functions qw(catfile);
 use File::Copy qw(copy move);
@@ -123,6 +127,16 @@ sub act_db_sync {
         print qq{ db PULL: remote => local } . "\n";
         copy(@dbf{qw( remote local )});
     }
+
+    my (%stats, %hashes);
+    for(qw(local remote)){
+        my $fdb = $dbf{$_};
+        $stats{$_} = stat($fdb);
+        $hashes{$_} = md5sum($fdb);
+    }
+
+    print qq{  local:  } . $dbf{local} . "\n";
+    print qq{  remote: } . $dbf{remote} . "\n";
 
     return $bld;
 }
