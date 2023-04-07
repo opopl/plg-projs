@@ -11,6 +11,7 @@ use String::Util qw(trim);
 use Data::Dumper qw(Dumper);
 
 use Text::Template;
+use Clone qw(clone);
 
 use File::Slurp::Unicode;
 use File::Spec::Functions qw(catfile);
@@ -108,18 +109,53 @@ sub _sct_lines {
 
 ###loop_item_sql_img
             if ($type eq 'sql_img') {
-                my ($tmpl) = @{$ccc}{qw( tmpl )};
-                my $tdir = catfile($ENV{PLG},qw(templates sql img));
+                my ($tmpl_file, $tmpl_data, $sql_params) = @{$ccc}{qw( tmpl_file tmpl_data sql_params )};
+
+                my $tdir_sql = catfile($ENV{PLG},qw(projs templates sql img));
+                my $tfile_sql = catfile($tdir_sql, $tmpl_file);
+                next unless -e $tfile_sql;
+
+                my $tdir_tex = catfile($ENV{PLG},qw(projs templates tex img));
+                my $tfile_tex = catfile($tdir_tex,qw( pics.tex.pl ));
+                next unless -e $tfile_tex;
+
+                my $dbx = $bld->{imgman}->{dbh};
 
                 my $data = {
                    sec => $sec,
                    proj => $proj,
                 };
-                my $tfile = catfile($tdir, $tmpl);
+                $tmpl_data ||= {};
+                dict_update($data, $tmpl_data);
 
-                my $sql = Text::Template
-                    ->new(SOURCE => $tfile)
+                my $query = Text::Template
+                    ->new(SOURCE => $tfile_sql)
                     ->fill_in(HASH => $data);
+                my $ref = {
+                    dbh => $dbx,
+                    q => $query,
+                    p => $sql_params,
+                };
+                my ($pics) = dbh_select($ref);
+                next unless @$pics;
+
+                my $tex_header = $ccc->{tex_header} || [];
+
+                my $tex = Text::Template
+                    ->new(SOURCE => $tfile_tex)
+                    ->fill_in(
+                        HASH => {
+                            %$data,
+                            pics => clone($pics),
+                            header => $tex_header,
+                            width => '0.8',
+                        },
+                        PREPEND => join "\n" => (
+                            'use Data::Dumper;',
+                            'use Plg::Projs::Tex qw(pics2tex);',
+                        )
+                    );
+                push @lines, split("\n" => $tex);
 
 ###loop_item_sql
             } elsif ($type eq 'sql') {

@@ -75,6 +75,8 @@ my @ex_vars_array=qw(
         unicode2pics
 
         _fbicon_igg
+
+        pics2tex
     )],
     'vars'  => [ @ex_vars_scalar,@ex_vars_array,@ex_vars_hash ]
 );
@@ -611,6 +613,7 @@ our %fbicons_n = (
   "\N{U+23F1}" => 'stopwatch',
   "\N{U+2708}" => 'airplane',
   "\N{U+264E}" => 'libra',
+  "\N{U+1F330}" => 'kashtan',
   "\N{U+265F}" => 'black.chess.pawn',
 
   "\N{U+2B07}"  => 'downwards.black.arrow',
@@ -669,7 +672,7 @@ our %fbicons_hcode = (
   # hryvnia
   "\N{U+20B4}" => '',
 
-  # Combining Acute Accent 
+  # Combining Acute Accent
   "\N{U+0301}" => '',
   # Combining Grave Accent
   "\N{U+0300}" => '',
@@ -818,7 +821,7 @@ our %replace_unicode = (
   # Braille Pattern Blank
   "\N{U+2800}" => '',
 
-  # Fullwidth Hyphen-Minus 
+  # Fullwidth Hyphen-Minus
   "\N{U+FF0D}" => '\\dshM',
   #"\N{U+FF0D}" => '---',
 
@@ -934,7 +937,7 @@ sub _str {
         $s = $$ss;
         @split = split("\n" => $s);
 
-        $texify_config->{n_end_input} = ( $s =~ /\n$/ ) ? 1 : 0; 
+        $texify_config->{n_end_input} = ( $s =~ /\n$/ ) ? 1 : 0;
 
     } elsif (ref $ss eq 'ARRAY'){
         @split = @$ss;
@@ -944,7 +947,7 @@ sub _str {
         $s = $ss;
         @split = split("\n" => $s);
 
-        $texify_config->{n_end_input} = ( $s =~ /\n$/ ) ? 1 : 0; 
+        $texify_config->{n_end_input} = ( $s =~ /\n$/ ) ? 1 : 0;
     }
 
     if (defined $s_start && defined $s_end) {
@@ -1315,6 +1318,54 @@ sub rpl_urls {
 
     _new2s();
 }
+
+sub pics2tex {
+  my ($ref) = @_;
+  $ref ||= {};
+  my ($pics, $cols_in, $width) = @{$ref}{qw(pics cols width)};
+  my $size = scalar @$pics;
+  $cols_in ||= $size;
+
+  my @begin = ('\ifcmt');
+  my @end = ('\fi','');
+
+  my @tex;
+  if($size == 1){
+    my $pic = shift @$pics;
+    my $url = $pic->{url};
+    if($url){
+      push @tex,
+        @begin,
+        " ig $url",
+        " \@width $width",
+        " \@wrap center",
+        @end,
+        ;
+    }
+  }else{
+    my $cols = $size < $cols_in ? $size : $cols_in;
+    $cols = 2 if $size == 4;
+    push @tex, @begin, "tab_begin cols=$cols,no_fig,center,separate";
+
+    while(@$pics) {
+       if($size > $cols_in && @$pics < $cols_in ){
+         push @tex,
+            'tab_end',@end,
+            pics2tex({ pics => $pics, width => $width });
+         return @tex;
+       }
+
+       my $pic = shift @$pics;
+
+       my $url = $pic->{url};
+       next unless $url;
+       push @tex, sprintf('   pic %s',$url);
+    }
+    push @tex, 'tab_end', @end;
+  }
+  return @tex;
+}
+
 
 sub fb_auth {
     my (@lines, @new);
