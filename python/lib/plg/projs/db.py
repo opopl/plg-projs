@@ -206,7 +206,21 @@ def fill_from_files(db_file = '', root = '', root_id = '', proj = '', logfun = '
     if ext == 'yml':
       if sec:
         m = pt_bld_sec.match(sec)
-        sec = '_bld.' + m.group(1) if m else None
+        if not m:
+          sec = None
+        else:
+          target = m.group(1)
+          sec = f'_bld.{target}'
+          ins_trg = {
+            'proj'      : proj_m,
+            'target'    : target,
+          }
+          dbw.insert_update_dict({
+              'db_file'  : db_file,
+              'table'    : 'targets',
+              'insert'   : ins_trg,
+              'on_list'  : ['proj','target']
+          })
       else:
         sec = '_yml_'
 
