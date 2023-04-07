@@ -7,5 +7,5 @@ SELECT DISTINCT imgs.url FROM imgs
    WHERE
      inf1.tag = "scrn"
      AND inf2.tag = "orig.video"
-     AND imgs.sec = "{$sec}"
+     AND imgs.sec = "{$parent_section}"
    ORDER BY imgs.mtime

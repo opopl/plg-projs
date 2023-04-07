@@ -13,6 +13,11 @@ use Base::String qw(
     str_split
 );
 
+use Base::Arg qw(
+    dict2opts
+    dict_update
+);
+
 use String::Util qw(trim);
 use Text::Wrap ();
 
@@ -1322,9 +1327,15 @@ sub rpl_urls {
 sub pics2tex {
   my ($ref) = @_;
   $ref ||= {};
-  my ($pics, $cols_in, $width) = @{$ref}{qw(pics cols width)};
+  my ($pics, $cols_in, $width, $tab_opts) = @{$ref}{qw(pics cols width tab_opts)};
+  my ($split, $add_layout) = @{$ref}{qw(split add_layout)};
   my $size = scalar @$pics;
   $cols_in ||= $size;
+  $tab_opts ||= {
+     'no_fig' => 1,
+     'center' => 1,
+     'separate' => 1,
+  };
 
   my @begin = ('\ifcmt');
   my @end = ('\fi','');
@@ -1345,10 +1356,37 @@ sub pics2tex {
   }else{
     my $cols = $size < $cols_in ? $size : $cols_in;
     $cols = 2 if $size == 4;
-    push @tex, @begin, "tab_begin cols=$cols,no_fig,center,separate";
+    dict_update($tab_opts,{ cols => $cols });
+    if ($add_layout){ 
+        my %ok = map { $_ => 0 } ( 1 .. 5 ); 
+        $ok{3} ||= ($cols == 3) && ($size % $cols == 1);
+        $ok{2} ||= ($cols == 2) && ($size % $cols == 1);
+        my %lts = (
+            3 => '(last.4)2.2',
+            2 => '(last.3)3',
+        );
 
+        if ($ok{$cols}) {
+            my $layout = $lts{$cols};
+            dict_update($tab_opts,{ layout => $layout, amount => $size });
+	        return pics2tex({
+	           split    => 0,
+	           add_layout    => 0,
+	           pics     => $pics,
+	           cols     => $cols,
+	           width    => $width,
+	           tab_opts => $tab_opts
+	        });
+        }
+    }
+    my $opts_s = dict2opts($tab_opts);
+    push @tex, @begin, "tab_begin $opts_s";
+
+    my ($irow, $ipic);
     while(@$pics) {
-       if($size > $cols_in && @$pics < $cols_in ){
+       $irow = 0 if $irow && $irow == $cols;
+
+       if($split && $size > $cols && @$pics < $cols && !$irow){
          push @tex,
             'tab_end',@end,
             pics2tex({ pics => $pics, width => $width });
@@ -1356,10 +1394,13 @@ sub pics2tex {
        }
 
        my $pic = shift @$pics;
-
        my $url = $pic->{url};
        next unless $url;
-       push @tex, sprintf('   pic %s',$url);
+
+       $irow++;
+       $ipic++;
+
+       push @tex, '% ' . $ipic, sprintf('   pic %s',$url);
     }
     push @tex, 'tab_end', @end;
   }

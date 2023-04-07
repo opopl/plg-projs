@@ -155,6 +155,8 @@ sub _sct_lines {
                             'use Plg::Projs::Tex qw(pics2tex);',
                         )
                     );
+                $DB::single = 1;
+
                 push @lines, split("\n" => $tex);
 
 ###loop_item_sql
@@ -328,7 +330,6 @@ sub _sct_lines {
                 }
               }
             }
-            $DB::single = 1 if $p =~ /\s*inner\s+body/;1;
             next;
         };
 ###@input
@@ -414,8 +415,6 @@ sub _sct_lines {
         push @lines, $_;
 
     }
-
-    $DB::single = 1 if $sec eq '_main_';1;
 
     return @lines;
 }

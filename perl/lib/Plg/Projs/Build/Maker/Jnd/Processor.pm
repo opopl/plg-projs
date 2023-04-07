@@ -1242,7 +1242,6 @@ sub _d_db_data {
            q   => $q,
            p   => [ $url ],
         };
-        $DB::single = 1;1;
     }else{
         $ref_db = { %$ref_db,
            q   => q{ SELECT * FROM imgs },
