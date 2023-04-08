@@ -45,6 +45,7 @@ from Base.Mix.mixGetOpt import mixGetOpt
 from Base.Mix.mixFileSys import mixFileSys
 
 from Base.Scraper.LTS.ltsAuthor import ltsAuthor
+from Base.Scraper.LTS.ltsTarget import ltsTarget
 
 from Base.Zlan import Zlan
 from Base.Core import CoreClass
@@ -59,6 +60,7 @@ class LTS(
      mixFileSys,
 
      ltsAuthor,
+     ltsTarget,
   ):
 
   usage='''
