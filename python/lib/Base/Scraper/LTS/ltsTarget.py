@@ -7,6 +7,8 @@ import Base.Const as const
 
 import os,re,sys
 from pathlib import Path
+import shutil
+
 
 import Base.DBW as dbw
 import Base.Util as util
@@ -23,23 +25,39 @@ from Base.Scraper.Pic import Pic
 
 class ltsTarget:
   def trg_new(self, ref = {}):
-    target       = ref.get('target','')
-    trg_import   = ref.get('trg_import','')
+    proj       = ref.get('proj',self.proj)
+    target     = ref.get('target','')
+    trg_import = ref.get('trg_import','')
 
-    ok = ok and target and ( target != trg_import )
+    tfile_import = self._dir('lts_root',f'{proj}.bld.{trg_import}.yml')
+    db_file = self.prj.db_file
+
+    ok = True
+    ok = ok and target and trg_import
+    ok = ok and ( target != trg_import )
+    ok = ok and os.path.isfile(tfile_import)
     if not ok:
+      print(f'Import target file does not exist!')
       return self
 
-    acts = [
-      [ 'author_move_db_pages_main', [ ref ] ],
-      [ 'author_move_db_pages', [ ref ] ],
-      [ 'author_move_db_projs', [ ref ] ],
-      [ 'author_move_dat', [ ref ] ],
-    ]
+    tfile_new = self._dir('lts_root',f'{proj}.bld.{target}.yml')
 
-    util.call(self,acts)
+    shutil.copyfile(tfile_import, tfile_new)
+
+    if not os.path.isfile(tfile_new):
+      print(f'New target file not created!')
+      return self
+
+    sec = f'_bld.{target}'
+    ins_trg = {
+      'proj'      : proj,
+      'target'    : target,
+    }
+    dbw.insert_update_dict({
+        'db_file'  : db_file,
+        'table'    : 'targets',
+        'insert'   : ins_trg,
+        'on_list'  : ['proj','target']
+    })
 
     return self
-
-
- 
