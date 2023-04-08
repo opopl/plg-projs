@@ -1357,26 +1357,27 @@ sub pics2tex {
     my $cols = $size < $cols_in ? $size : $cols_in;
     $cols = 2 if $size == 4;
     dict_update($tab_opts,{ cols => $cols });
-    if ($add_layout){ 
-        my %ok = map { $_ => 0 } ( 1 .. 5 ); 
+    if ($add_layout){
+        my %ok = map { $_ => 0 } ( 1 .. 5 );
         $ok{3} ||= ($cols == 3) && ($size % $cols == 1);
         $ok{2} ||= ($cols == 2) && ($size % $cols == 1);
         my %lts = (
             3 => '(last.4)2.2',
             2 => '(last.3)3',
         );
+        $lts{2} = '2.1' if $size == 3;
 
         if ($ok{$cols}) {
             my $layout = $lts{$cols};
             dict_update($tab_opts,{ layout => $layout, amount => $size });
-	        return pics2tex({
-	           split    => 0,
-	           add_layout    => 0,
-	           pics     => $pics,
-	           cols     => $cols,
-	           width    => $width,
-	           tab_opts => $tab_opts
-	        });
+            return pics2tex({
+               split    => 0,
+               add_layout    => 0,
+               pics     => $pics,
+               cols     => $cols,
+               width    => $width,
+               tab_opts => $tab_opts
+            });
         }
     }
     my $opts_s = dict2opts($tab_opts);
@@ -1542,6 +1543,20 @@ sub hyp2ii {
 
        /\\hyperlink\{([^{}]*)\}/ && do { push @new, sprintf(q{\ii{%s}},$1) };
        next;
+    }
+
+    _new2s();
+}
+
+sub ii2yaml {
+    _lines();
+
+    for(@lines){
+        next if _ln_push($_);
+
+        s/^\s*\\ii\{(\S+)\}\s*$/  - '$1'/g;
+
+        push @new,$_;
     }
 
     _new2s();
