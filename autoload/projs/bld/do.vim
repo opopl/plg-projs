@@ -90,6 +90,59 @@ function! projs#bld#do#jnd_view (...)
 
 endfunction
 
+function! projs#bld#do#trg_new (...)
+
+  let targets = projs#bld#trg#list()
+  let proj    = projs#proj#name()
+
+  call base#varset('this',targets)
+
+  let target = ''
+  while (!len(target) || base#inlist(target,targets))
+    let target = input(printf('[%s] new target name: ',proj),'','custom,base#complete#this')
+  endw
+  let tfile = projs#bld#trg#file(target)
+
+  let trg_import = ''
+  while (!len(trg_import) || !base#inlist(trg_import,targets))
+    let trg_import = input(printf('[%s] import: ',proj),'','custom,base#complete#this')
+  endw
+  let tfile_import = projs#bld#trg#file(trg_import)
+  if !filereadable(tfile_import)
+    call base#rdwe('import file does not exist! abort')
+    return
+  endif
+
+  let args = [ {
+    \ 'proj'       : proj,
+    \ 'target'     : target,
+    \ 'trg_import' : trg_import,
+    \ } ]
+
+  let s:obj = { 'tfile' : tfile }
+  function! s:obj.init (...) dict
+    let tfile = get(self,'tfile','')
+    if !filereadable(tfile)
+      return
+    endif
+
+    call base#fileopen({
+      \  'files'    : [tfile],
+      \  'load_buf' : 1,
+      \  })
+  endfunction
+
+  let Fc_done = s:obj.init
+
+  call lts#py#act({
+    \ 'act'          : 'trg_new',
+    \ 'args'         : args,
+    \ 'Fc_done'      : Fc_done,
+    \ 'Fc_done_args' : [],
+    \ })
+
+endfunction
+
 function! projs#bld#do#view_trg ()
   let trg = projs#bld#trg#choose()
 

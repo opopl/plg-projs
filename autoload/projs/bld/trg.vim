@@ -42,6 +42,12 @@ if 0
     called by
 endif
 
+function! projs#bld#trg#file (target)
+  let proj  = projs#proj#name()
+  let tfile = projs#pathqw(printf('%s.bld.%s.yml',proj,a:target))
+  return tfile
+endf
+
 function! projs#bld#trg#full (...)
   let ref = get(a:000,0,{})
 
@@ -75,7 +81,8 @@ if 0
           projs#action#bld_compile_xelatex
 endif
 
-function! projs#bld#trg#choose ()
+function! projs#bld#trg#choose (...)
+  let ref = get(a:000,0,{})
 
   let targets = projs#bld#trg#list()
   let proj    = projs#proj#name()
