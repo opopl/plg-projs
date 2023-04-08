@@ -4,7 +4,8 @@ view_trg
 jnd_view
 dump
 dump_sec
-trg_dump
+#trg_dump
+trg_new
 core_dump
 last_compile
 print_ii_tree
