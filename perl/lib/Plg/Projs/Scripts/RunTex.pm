@@ -502,6 +502,7 @@ sub shell {
     $DB::single = 1;
     if ($shell eq 'system') {
         $code = system("$_");
+        $code = 0 if $skip_code;
     }else{
         print '[RUNTEX] start cmd: ' . $cmd . "\n";
         my ($start, $end, $elapsed);
