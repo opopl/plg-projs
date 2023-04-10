@@ -564,6 +564,7 @@ our %fbicons_n = (
 
   "\N{U+1F47B}" => 'ghost',
   "\N{U+1F9A2}" => 'swan',
+  "\N{U+1F36B}" => 'chocolate.bar',
 
   "\N{U+1F570}" => 'mantelpiece.clock',
   "\N{U+270F}" => 'pencil',
@@ -1543,6 +1544,20 @@ sub hyp2ii {
 
        /\\hyperlink\{([^{}]*)\}/ && do { push @new, sprintf(q{\ii{%s}},$1) };
        next;
+    }
+
+    _new2s();
+}
+
+sub list2yaml {
+    _lines();
+
+    for(@lines){
+        next if _ln_push($_);
+
+        s/^(.*)$/  - '$1'/g;
+
+        push @new,$_;
     }
 
     _new2s();
