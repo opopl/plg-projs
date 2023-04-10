@@ -31,6 +31,7 @@ class ltsTarget:
 
     tfile_import = self._dir('lts_root',f'{proj}.bld.{trg_import}.yml')
     db_file = self.prj.db_file
+    import pdb; pdb.set_trace()
 
     ok = True
     ok = ok and target and trg_import
@@ -40,7 +41,8 @@ class ltsTarget:
       print(f'Import target file does not exist!')
       return self
 
-    tfile_new = self._dir('lts_root',f'{proj}.bld.{target}.yml')
+    tfile_new_name = f'{proj}.bld.{target}.yml'
+    tfile_new = self._dir('lts_root',tfile_new_name)
 
     shutil.copyfile(tfile_import, tfile_new)
 
@@ -48,7 +50,18 @@ class ltsTarget:
       print(f'New target file not created!')
       return self
 
-    sec = f'_bld.{target}'
+    ins_sec = {
+      'file'      : tfile_new_name,
+      'proj'      : proj,
+      'sec'       : f'_bld.{target}',
+    }
+    dbw.insert_update_dict({
+        'db_file'  : db_file,
+        'table'    : 'projs',
+        'insert'   : ins_sec,
+        'on_list'  : ['file']
+    })
+
     ins_trg = {
       'proj'      : proj,
       'target'    : target,
