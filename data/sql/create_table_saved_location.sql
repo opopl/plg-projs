@@ -1,9 +1,9 @@
 
-CREATE TABLE IF NOT EXISTS saved (
+CREATE TABLE IF NOT EXISTS saved_location (
     file TEXT NOT NULL UNIQUE,
     location TEXT NOT NULL DEFAULT NULL,
 
-    CHECK(location IN ('new', 'done', null, 'spare')),
+    CHECK(location IN ('new', 'done', 'spare', null )),
     FOREIGN KEY(file) REFERENCES projs(file) ON DELETE CASCADE ON UPDATE CASCADE
 
 -- e.g. we.html
