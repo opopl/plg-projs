@@ -4,6 +4,7 @@ expand_punctuation
 expand_vertically
 #fb_auth
 ii2yaml
+list2yaml
 fbb
 fb_format
 fb_iusr

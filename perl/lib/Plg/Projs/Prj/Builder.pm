@@ -65,6 +65,7 @@ use base qw(
     Plg::Projs::Prj::Builder::Var
     Plg::Projs::Prj::Builder::Plan
     Plg::Projs::Prj::Builder::Web
+    Plg::Projs::Prj::Builder::Out
 
     Plg::Projs::Prj::Builder::Sct
     Plg::Projs::Prj::Builder::Sct::Index

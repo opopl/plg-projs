@@ -328,6 +328,7 @@ sii:
          - datetime2
          - mathtext
          - nameref
+         - lipsum
          #- p.fancyhdr
          - fancyhdr
          - fancyvrb

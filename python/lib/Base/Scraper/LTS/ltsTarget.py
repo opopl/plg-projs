@@ -31,7 +31,6 @@ class ltsTarget:
 
     tfile_import = self._dir('lts_root',f'{proj}.bld.{trg_import}.yml')
     db_file = self.prj.db_file
-    import pdb; pdb.set_trace()
 
     ok = True
     ok = ok and target and trg_import

@@ -329,6 +329,12 @@ sub _tab_start {
                    $ok &&= ( $pic_index >= ($start-1) );
                    $ok &&= ( $pic_index <= ($end-1) );
                 };
+                # first
+                /^first\.(?<num>(\d+))$/ && do {
+                   my $num = $+{'num'} + 0;
+                   $ok = 0 if $pic_index+1 > $num;
+                };
+
                 # last
                 /^last\.(?<num>(\d+))$/ && do {
                    my $num = $+{'num'} + 0;
@@ -1449,6 +1455,7 @@ sub _d2tex {
   }
 
   my $caption = $d->{caption_here} || varval('rw.caption', $d_db) || $d->{caption} || '';
+  $caption = undef if $d->{no_caption};
   if ($caption){
     $caption = escape_latex($caption) if varval('caption.escape_latex', $cnf);
     Plg::Projs::Tex::texify(\$caption) if varval('caption.texify', $cnf);
