@@ -9,7 +9,7 @@ if 0
     let data = projs#url#fb#data({ 'url' : url })
     echo data
 
-    let data = projs#url#fb#data({ 
+    let data = projs#url#fb#data({
       \ 'url'    : url,
       \ 'prompt' : 1,
       })
@@ -21,6 +21,7 @@ if 0
       projs#data#dict#update
 endif
 
+" {
 function! projs#url#fb#data (...)
   let ref = get(a:000,0,{})
 
@@ -47,8 +48,7 @@ function! projs#url#fb#data (...)
   let author_id = ''
   let author    = ''
 
-  let fb_auth  = path_front
-
+"""match.fb.permalink_php
   if path_front == 'permalink.php'
     let fb_auth = ''
     let post_id = get(query_p, 'story_fbid', '')
@@ -56,6 +56,11 @@ function! projs#url#fb#data (...)
       let fb_auth = get(query_p, 'id', '')
     endif
 
+  elseif base#inlist(path_front,[ 'photo', 'media', 'events', 'watch' ])
+    let author_id = projs#author#select_id()
+    return { 'author_id' : author_id }
+
+"""match.fb.groups {
   elseif path_front =~ 'groups'
     let fb_auth  = ''
     let fb_group = get(path_a,1,'')
@@ -91,16 +96,20 @@ function! projs#url#fb#data (...)
 
       if !len(author)
         let author_id = printf('fb_group.%s',fb_group_id)
-  
+
         let author_db = projs#author#get_db({ 'author_id' : author_id })
         let author    = base#x#get(author_db,'name','')
-  
+
         if !len(author)
           let author = projs#author#add_prompt({ 'author_id' : author_id })
         endif
       endif
 
     endif
+" }
+   else
+     let fb_auth = path_front
+
   endif
 
   "debug echo 'fb_auth => ' . fb_auth
@@ -111,14 +120,14 @@ function! projs#url#fb#data (...)
     if !len(author_id) && prompt
       call base#varset('this', projs#author#ids_db())
       let author_id = input(printf('[ facebook auth: %s ] Enter new author_id: ',fb_auth), '', 'custom,base#complete#this')
-  
+
       let author_db = projs#author#get_db({ 'author_id' : author_id })
       let author = get(author_db,'name','')
       if !len(author)
         let author = projs#author#add_prompt({ 'author_id' : author_id })
       endif
-  
-      call projs#facebook#add_author_id({ 
+
+      call projs#facebook#add_author_id({
         \ 'author_id' : author_id ,
         \ 'fb_auth'   : fb_auth ,
         \ })
@@ -132,5 +141,7 @@ function! projs#url#fb#data (...)
       \ 'author_id' : author_id,
       \ }
   return data
-  
+
 endfunction
+
+" }
