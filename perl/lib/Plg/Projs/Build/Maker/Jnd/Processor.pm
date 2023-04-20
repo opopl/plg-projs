@@ -1461,7 +1461,11 @@ sub _d2tex {
     Plg::Projs::Tex::texify(\$caption) if varval('caption.texify', $cnf);
     $self->line_process_chars(\$caption) if varval('caption.unicode2pics', $cnf);
   }
-  $DB::single = 1 if $caption;
+  my $childof = $d->{childof};
+  if (varval('caption.href.childof', $cnf) && $childof && $caption !~ /\\href\{/) {
+     $caption = sprintf('\href{%s}{%s}', $childof, $caption);
+  }
+  $DB::single = 1 if $caption && $childof;
 
   my $numbering = varval('caption.numbering', $cnf);
   if ($tab && $tab->{separate}) {
