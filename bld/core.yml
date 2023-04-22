@@ -68,6 +68,8 @@ opts_maker:
          escape_latex: 1
          unicode2pics: 1
          numbering: 0
+         #wrap:
+           #sprintf: '\textbf{\emph{%s}}'
 
   sections :
 # Plg::Projs::Build::Maker   init_ii_include
@@ -288,6 +290,8 @@ sii:
            - '}'
            - ' '
            - '\pagestyle{fancy}'
+           #- '\fancyhf{}'
+           #- '\fancyhf[rh]{\thepage}'
 
 ###sii@scts@preamble.packages
     'preamble.packages':

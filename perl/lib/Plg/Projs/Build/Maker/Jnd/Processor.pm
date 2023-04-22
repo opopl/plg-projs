@@ -1466,6 +1466,8 @@ sub _d2tex {
      $caption = sprintf('\href{%s}{%s}', $childof, $caption);
   }
   $DB::single = 1 if $caption && $childof;
+  my $sprintf = varval('caption.wrap.sprintf', $cnf);
+  $caption = sprintf($sprintf, $caption) if $caption && $sprintf;
 
   my $numbering = varval('caption.numbering', $cnf);
   if ($tab && $tab->{separate}) {
