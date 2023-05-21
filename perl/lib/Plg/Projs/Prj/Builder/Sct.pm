@@ -297,6 +297,8 @@ sub _sct_lines {
             my $match = varval('foreach_ii_sec.match', $ctl, '');
             my $ctl_not_buf = varval('foreach_ii_sec.target_not_buf', $ctl, 0);
 
+            my $if_or = varval('foreach_ii_sec.if_or', $ctl, []);
+
             foreach my $ii_sec (@ii) {
               push @lines, sprintf('\ii{%s}',$ii_sec);
 
@@ -325,6 +327,15 @@ sub _sct_lines {
                     my $vars = delete($new->{vars}) // {};
                     varexp($c, $vars, { pref => '@' });
                     $bld->load_patch({ origin => $c });
+                    if ($if_or && @$if_or) {
+                        foreach my $x (@$if_or) {
+                            next unless $x->{ii_sec} eq $ii_sec;
+                            my $patch_bld = $x->{patch_bld} || {};
+                            if ($patch_bld && ref $patch_bld eq 'HASH') {
+                               $bld->load_patch({ origin => $patch_bld });
+                            }
+                        }
+                    }
                     my $exc = varval('sii.generate.on', $bld);
                     $DB::single = 1;1;
                 }

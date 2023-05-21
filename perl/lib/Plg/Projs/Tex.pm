@@ -638,6 +638,7 @@ our %fbicons_n = (
   "\N{U+1F430}" => 'rabbit.face',
   "\N{U+1F407}" => 'rabbit',
   "\N{U+1F95A}" => 'egg',
+  "\N{U+2604}"  => 'comet',
 
   "\N{U+2B07}"  => 'downwards.black.arrow',
   "\N{U+27A1}"  => 'rightwards.black.arrow',
