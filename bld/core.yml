@@ -167,6 +167,7 @@ sii:
       #- preamble.acrobat_menu
       - preamble.filecontents
       - preamble.fancyhdr
+      - preamble.cmd
       perl: "'\\relax';"
       setcounter:
         secnumdepth: 0
@@ -277,7 +278,7 @@ sii:
            - '  \fancyhead[L]{\storyLink}%'
            - '  \fancyhead[R]{\storyDate}%'
            - '  \fancyhead[C]{%'
-           - '      @igg{fbicon.flag.ukraina}{repeat=3}~~'
+           #- '      @igg{fbicon.flag.ukraina}{repeat=3}~~'
            - '      \Acrobatmenu{PrevPage}{@var{prevpage}}~~'
            - '@ifvar{layout.tabcont} \hyperlink{tabcont}{@var{contname}}~~%'
            - '      \Acrobatmenu{NextPage}{@var{nextpage}}~~'

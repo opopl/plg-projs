@@ -4,6 +4,10 @@ package Plg::Projs::Prj::Builder::Insert;
 use strict;
 use warnings;
 
+use Base::Arg qw(
+  varval
+);
+
 sub _insert_hyperlinks {
     my ($bld) = @_;
 
@@ -34,7 +38,9 @@ sub _insert_story {
     return [] unless $sec && $title && $date;
 
     ( my $date_dot = $date ) =~ s/_/./g;
-    my $cut = 20;
+    my $cut = varval('vars.layout.header.title_cut', $bld) || 20;
+    $DB::single = 1;
+    $cut = int($cut);
 
     $title =~ s/\\enquote\{([^{}]*)\}/$1/g;
     my $title_cut = (length($title) < $cut) ? $title : ( substr($title, 0, $cut) . '...' );

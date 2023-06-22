@@ -418,12 +418,19 @@ snippet gl0
 	  ig <++>
 	  @caption @label <++>
 	\fi
+snippet head
+	\begin{center}
+	  \em\color{blue}\bfseries\Large
+	  <++>
+	\end{center}
+snippet iod
+	\ii{insert.author.demidko_olga}
 snippet gl
 	\ifcmt
 	  ig <++>
 	  @caption @label <++>
 	  @wrap center
-	  @width 0.8
+	  @width 0.9
 	  @childof <++>
 	\fi
 snippet g03

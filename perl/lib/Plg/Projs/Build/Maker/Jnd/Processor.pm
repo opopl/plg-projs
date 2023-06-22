@@ -682,11 +682,13 @@ sub _tex_author {
 
   my @tex;
   my $mkr = $self->{mkr};
+  my @f;
+  push @f,'plain';
 
   my @ids = (!ref $author_id) ? str_split($author_id,{ 'sep' => ',', uniq => 1 }) : @$author_id;
   foreach my $id (@ids) {
      my $prj    = $mkr->{prj};
-     my $author = $prj->_author_get({ author_id => $id });
+     my $author = $prj->_author_get({ author_id => $id, f => [@f] });
 
      next unless $author;
 

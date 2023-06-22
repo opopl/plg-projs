@@ -552,6 +552,8 @@ our %fbicons_n = (
   "\N{U+1F3FB}" => '',
   "\N{U+1F3FC}" => '',
 
+  "\N{U+2611}" => 'ballot.box.with.check',
+
   "\N{U+2665}" => 'heart.suit',
   "\N{U+2764}" => 'heart.red',
   "\N{U+262E}" => 'peace',
