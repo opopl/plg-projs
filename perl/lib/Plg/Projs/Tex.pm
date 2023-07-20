@@ -580,6 +580,11 @@ our %fbicons_n = (
   "\N{U+1F5A8}" => 'printer',
   "\N{U+270D}" => 'writing.hand',
 
+  "\N{U+1F4CE}" => 'paperclip',
+  "\N{U+1F3E4}" => 'postoffice',
+  "\N{U+1F3DE}" => 'national.park',
+  "\N{U+1F393}" => 'graduation.cap',
+
   "\N{U+1F41F}" => 'fish',
   "\N{U+1F466}" => 'boy',
   "\N{U+1F936}" => 'mother.christmas',
@@ -683,10 +688,13 @@ our %fbicons_n = (
   "\N{U+1F43E}"  => 'paw.prints',
 
   "\N{U+1F1E9}\N{U+1F1EA}" => 'flag.germany',
+  # A Z
   "\N{U+1F1E6}\N{U+1F1FF}" => 'flag.az',
   "\N{U+1F1F3}\N{U+1F1F1}" => 'flag.nl',
   "\N{U+1F1E8}\N{U+1F1FF}" => 'flag.cz',
   "\N{U+1F1F7}\N{U+1F1FA}" => 'flag.rossia',
+  # C A
+  "\N{U+1F1E8}\N{U+1F1E6}" => 'flag.canada',
 
   #"\N{<++>}" => '<++>',
 );
