@@ -43,8 +43,6 @@ sub pdf2img {
     }
 
 }
-$DB::single = 1;1;
-
 
 1;
 
