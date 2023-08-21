@@ -610,6 +610,11 @@ our %fbicons_n = (
   "\N{U+2763}"  => 'heart.exclamation',
   "\N{U+1FAD9}" => 'jar',
   "\N{U+2620}"  => 'skull.crossbones',
+  "\N{U+23F3}"  => 'hourglass.flowing.sand',
+  "\N{U+1F3D5}"  => 'camping',
+  "\N{U+1F587}"  => 'linked.paperclips',
+  "\N{U+1F34F}"  => 'green.apple',
+  "\N{U+1F34E}"  => 'red.apple',
 
   "\N{U+1F910}" => 'face.zipper.mouth',
   "\N{U+1FAE4}" => 'face.diagonal.mouth',
