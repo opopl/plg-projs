@@ -549,7 +549,10 @@ sub _tex_caption {
   my $tab = $self->{tab};
   $d ||= $self->{d};
 
-  my $c = $self->_fig_skip($d) ? 'captionof{figure}[]' : 'caption[]' ;
+  my $caption_short = $d->{caption_short} || '';
+
+  my $c = $self->_fig_skip($d) ? sprintf('captionof{figure}[%s]', $caption_short) : sprintf('caption[%s]', $caption_short) ;
+  #my $c = $self->_fig_skip($d) ? 'captionof{figure}[]' : 'caption[]' ;
   #$caption ? ( sprintf(q| \%s{%s} |, $c, ( $tab ? '\Large ' : '' ) . $caption ) ) : ();
   $caption ? ( sprintf(q| \%s{%s} |, $c, $caption ) ) : ();
 }
