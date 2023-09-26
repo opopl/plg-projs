@@ -569,10 +569,41 @@ our %fbicons_n = (
   "\N{U+1F5E8}" => 'left.speech.bubble',
   "\N{U+1FA96}" => 'military.helmet',
   "\N{U+1F4C6}" => 'tear.off.calendar',
+  "\N{U+1F4FD}" => 'film.projector',
+  "\N{U+1F4F9}" => 'video.camera',
+  "\N{U+1FAD6}" => 'teapot',
+  "\N{U+1F9C3}" => 'beverage.box',
+  "\N{U+1F964}" => 'cup.with.straw',
+  "\N{U+1F354}" => 'hamburger',
+  "\N{U+1F9CB}" => 'bubble.tea',
+  "\N{U+1F32D}" => 'hotdog',
+  "\N{U+1F35F}" => 'french.fries',
+  "\N{U+1F355}" => 'slice.of.pizza',
+  "\N{U+1F32F}" => 'burrito',
+  "\N{U+1F357}" => 'poultry.leg',
+  "\N{U+1F356}" => 'meat.on.bone',
+  "\N{U+1F953}" => 'bacon',
+  "\N{U+1F969}" => 'cut.of.meat',
+  "\N{U+1F52E}" => 'crystal.ball',
+  "\N{U+1F369}" => 'doughnut',
+  "\N{U+1F36C}" => 'candy',
+  "\N{U+1F3A7}" => 'headphone',
+  "\N{U+2B06}"  => 'upwards.black.arrow',
+  "\N{U+1F3A0}" => 'carousel.horse',
 
   "\N{U+1F47B}" => 'ghost',
   "\N{U+1F9A2}" => 'swan',
   "\N{U+1F36B}" => 'chocolate.bar',
+  "\N{U+23E9}"  => 'right.double.triangle',
+  "\N{U+1F550}" => 'clock.face.one.oclock',
+  "\N{U+1F4C5}" => 'calendar',
+  "\N{U+1F3DB}" => 'classical.building',
+  "\N{U+1F553}" => 'clock.face.four.oclock',
+  "\N{U+1F556}" => 'clock.face.seven.oclock',
+  "\N{U+1F931}" => 'breast.feeding',
+  "\N{U+1F536}" => 'large.orange.diamond',
+  "\N{U+1F505}" => 'low.brightness.symbol',
+  "\N{U+2734}"  => 'eight.pointed.black.star',
 
   "\N{U+1F570}" => 'mantelpiece.clock',
   "\N{U+270F}" => 'pencil',
@@ -654,8 +685,13 @@ our %fbicons_n = (
 
   "\N{U+2B07}"  => 'downwards.black.arrow',
   "\N{U+27A1}"  => 'rightwards.black.arrow',
+  "\N{U+1F4D1}"  => 'bookmark.tabs',
+  "\N{U+1F475}"  => 'older.woman',
+  "\N{U+1F9B3}"  => 'white.hair',
 
   '❤️🩹' => 'heart.white.middle',
+  "\N{U+2764}\N{U+FE0F}\N{U+1FA79}" => 'heart.white.middle',
+  "\N{U+2764}\N{U+1FA79}" => 'heart.white.middle',
   "\N{U+1FAC2}" => 'people.hugging',
 
   # replacement character
@@ -691,6 +727,11 @@ our %fbicons_n = (
   "\N{U+1F419}"  => 'octopus',
   "\N{U+1F35E}"  => 'hlib',
   "\N{U+1F43E}"  => 'paw.prints',
+
+  #"\N{U+F0B7}"   => '',
+
+  # G R
+  "\N{U+1F1EC}\N{U+1F1F7}" => 'flag.greek',
 
   "\N{U+1F1E9}\N{U+1F1EA}" => 'flag.germany',
   # A Z
