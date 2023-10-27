@@ -30,7 +30,7 @@ sub _author_get {
 
     my $author_id = $ref->{author_id} || '';
 
-    my $db_file = catfile($ENV{HTML_ROOT},'h.db');
+    my $db_file = $self->_db_file;
 
     my $author = dbh_select_fetchone({
         dbfile => $db_file,
