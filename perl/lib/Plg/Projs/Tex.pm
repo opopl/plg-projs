@@ -301,7 +301,6 @@ our %fbicons_all = (
   '🌟' => 'glowing.star',
   '🎁' => 'gift.wrapped',
   '🌊' => 'water.wave',
-  '🎭' => 'performing.arts',
   '🥀' => 'wilted.flower',
   '🎄' => 'christmas.tree',
   '🐮' => 'cow.face',
@@ -554,6 +553,8 @@ our %fbicons_n = (
 
   "\N{U+2611}" => 'ballot.box.with.check',
 
+  #'🎭' => 'performing.arts'
+  "\N{U+1F3AD}" => 'performing.arts',
   "\N{U+2665}" => 'heart.suit',
   "\N{U+2764}" => 'heart.red',
   "\N{U+262E}" => 'peace',
@@ -590,6 +591,15 @@ our %fbicons_n = (
   "\N{U+1F3A7}" => 'headphone',
   "\N{U+2B06}"  => 'upwards.black.arrow',
   "\N{U+1F3A0}" => 'carousel.horse',
+  "\N{U+1F3A4}" => 'microphone',
+  "\N{U+26F8}"  => 'iceskate',
+  "\N{U+1FAA7}" => 'piacard',
+  "\N{U+1F3D7}" => 'building.construction',
+  "\N{U+1FA7A}" => 'stethoscope',
+  "\N{U+1F42C}" => 'dolphin',
+  "\N{U+1F537}" => 'large.blue.diamond',
+  "\N{U+1F3E3}" => 'japanese.post.office',
+  "\N{U+1F39E}" => 'film.frames',
 
   "\N{U+1F47B}" => 'ghost',
   "\N{U+1F9A2}" => 'swan',
@@ -1431,7 +1441,7 @@ sub pics2tex {
     }
   }else{
     my $cols = $size < $cols_in ? $size : $cols_in;
-    $cols = 2 if $size == 4;
+    #$cols = 2 if $size == 4;
     dict_update($tab_opts,{ cols => $cols });
     if ($add_layout){
         my %ok = map { $_ => 0 } ( 1 .. 5 );
