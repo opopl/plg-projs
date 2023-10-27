@@ -398,7 +398,7 @@ class ltsAuthor:
           }
 
           d = {
-            'db_file' : self.db_file_pages,
+            'db_file' : self.db_file_projs,
             'table'   : 'authors',
             'insert'  : d_auth,
             'on_list' : [ 'id' ],
@@ -416,7 +416,7 @@ class ltsAuthor:
             }
 
             d = {
-              'db_file' : self.db_file_pages,
+              'db_file' : self.db_file_projs,
               'table'   : 'auth_details',
               'insert'  : d_auth_detail,
               'on_list' : [ 'id', 'fb_id' ],
@@ -431,7 +431,7 @@ class ltsAuthor:
               'fb_group_id'  : fb_group_id,
             }
             d = {
-              'db_file' : self.db_file_pages,
+              'db_file' : self.db_file_projs,
               'table'   : 'auth_details',
               'insert'  : d_auth_detail,
               'on_list' : [ 'id' ],
@@ -439,7 +439,7 @@ class ltsAuthor:
             }
             dbw.insert_update_dict(d)
 
-    r_db = { 'db_file' : self.db_file_pages }
+    r_db = { 'db_file' : self.db_file_projs }
 
     cnt = {}
     for t in util.qw('authors auth_details'):
