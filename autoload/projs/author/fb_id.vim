@@ -1,6 +1,6 @@
 
 function! projs#author#fb_id#list_db ()
-  let dbfile = base#qw#catpath('html_root','h.db')
+  let dbfile = projs#db#file()
   
   let q = 'SELECT DISTINCT fb_id FROM auth_details ORDER BY fb_id ASC'
   let p = []
