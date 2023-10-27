@@ -1305,7 +1305,7 @@ class LTS(
     return self
 
   def db_update_auth_details(self, ref = {}):
-    db_file  = self.db_file_pages
+    db_file  = self.db_file_projs
 
     q = 'SELECT id FROM authors'
     auth_ids = dbw.sql_fetchlist(q,[],{ 'db_file' : db_file })
