@@ -1861,7 +1861,7 @@ class LTS(
         name = auth.get('name','')
         if name:
           d = {
-            'db_file' : self.db_file_pages,
+            'db_file' : self.db_file_projs,
             'table'   : 'authors',
             'insert'  : {
                'id'    : site,
