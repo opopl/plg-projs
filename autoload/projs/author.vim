@@ -25,7 +25,7 @@ function! projs#author#get_db (...)
   let author_id = get(ref,'author_id','')
   if !len(author_id) | return {} | endif
 
-  let dbfile = projs#bs#db_file()
+  let dbfile = projs#db#file()
 
   let q  = 'SELECT * FROM authors '
   let q .= '  INNER JOIN auth_details '
@@ -260,7 +260,7 @@ function! projs#author#hash ()
 endfunction
 
 function! projs#author#ids_db ()
-  let dbfile = projs#bs#db_file()
+  let dbfile = projs#db#file()
   
   let q = 'SELECT DISTINCT id FROM authors ORDER BY id ASC'
   let p = []
