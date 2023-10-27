@@ -289,11 +289,11 @@ class ltsAuthor:
       if fb_id:
         cols_d = dbw._cols({
             'table'   : 'auth_details',
-            'db_file' : self.db_file_pages
+            'db_file' : self.db_file_projs
         })
 
         author_id = dbw.sql_fetchval('''SELECT id FROM auth_details WHERE fb_id = ? ''',[ fb_id ],
-           { 'db_file' : self.db_file_pages })
+           { 'db_file' : self.db_file_projs })
 
     if author_id:
       auth = {
@@ -302,7 +302,7 @@ class ltsAuthor:
 
       rw = dbw.sql_fetchone('''SELECT * FROM authors WHERE id = ? ''',
          [ author_id ],
-         { 'db_file' : self.db_file_pages })
+         { 'db_file' : self.db_file_projs })
       row  = rw.get('row',{})
       cols = rw.get('cols',[])
       for col in cols:
@@ -314,7 +314,7 @@ class ltsAuthor:
 
         vallist = dbw.sql_fetchlist(f'''SELECT {col} FROM auth_details WHERE id = ?''',
            [ author_id ],
-           { 'db_file' : self.db_file_pages })
+           { 'db_file' : self.db_file_projs })
 
         val = None
         if vallist and (len(vallist) == 1) and (vallist[0] == None):
