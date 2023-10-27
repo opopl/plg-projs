@@ -49,7 +49,7 @@ function! projs#author#id#list_fs ()
 endfunction
 
 function! projs#author#id#list_db ()
-  let dbfile = base#qw#catpath('html_root','h.db')
+	let dbfile = projs#db#file()
   
   let q = 'SELECT DISTINCT id FROM authors ORDER BY id ASC'
   let p = []
