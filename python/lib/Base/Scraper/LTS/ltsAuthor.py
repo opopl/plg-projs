@@ -275,7 +275,7 @@ class ltsAuthor:
 
   def _author_exist(self, id = ''):
     id = dbw.sql_fetchval('SELECT id FROM authors WHERE id = ?',[ id ],
-      { 'db_file' : self.db_file_pages })
+      { 'db_file' : self.db_file_projs })
     return id
 
   def _auth_data(self, ref = {}):
