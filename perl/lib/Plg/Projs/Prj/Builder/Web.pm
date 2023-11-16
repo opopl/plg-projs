@@ -114,7 +114,7 @@ sub act_web {
 
 ###GET /prj/sec/html
     get '/prj/sec/html' => sub {
-        my $sec = query_parameters->get('sec');
+        my $sec  = query_parameters->get('sec');
         my $proj = query_parameters->get('proj');
 
         my $data = {

@@ -281,7 +281,9 @@ sub tab_init {
       store      => [],
       cells      => {},
       rws        => {},
-      reduce     => 0.9,
+      # for targets
+      #reduce     => 0.85,
+      reduce     => 0.90,
   };
   hash_inject($self->{tab}, $h);
 
@@ -380,9 +382,14 @@ sub _tab_end {
 
   my $env = $tab->{env};
 
+  my ($mkr) = @{$self}{qw( mkr )};
+  my $cnf = $mkr->_vals_('processor._d2tex') || {};
+  my $tab_caption = $tab->{caption};
+  Plg::Projs::Tex::texify(\$tab_caption) if varval('caption.texify', $cnf);
+
   push @tex,
     sprintf(q| \end{%s}|,$env),
-    $tab->{caption} ? sprintf('\captionof{table}{%s}%%',$tab->{caption}) : (),
+    $tab_caption ? sprintf('\captionof{table}{%s}%%',$tab_caption) : (),
     $tab->{minipage} ? '\end{minipage}' : (),
     $tab->{resizebox} ? '}% fin_resizebox' : (),
     $tab->{center} ? '\end{center}' : (),
@@ -1475,6 +1482,7 @@ sub _d2tex {
   $caption = sprintf($sprintf, $caption) if $caption && $sprintf;
 
   my $numbering = varval('caption.numbering', $cnf);
+  $numbering = undef if $tab && $tab->{no_numbering};
   if ($tab && $tab->{separate}) {
       my $index = $tab->{pic_index} || 0;
 
@@ -1484,6 +1492,8 @@ sub _d2tex {
 
   # current graphic width
   my $wd = $d->{width} || $rw->{width_tex};
+  $DB::single = 1;
+  $wd = $rw->{width_tex} if varval('override_width_tex',$cnf) && $rw->{'width_tex'};
 
 ###cell_width
   if($tab){
@@ -1528,6 +1538,7 @@ sub _d2tex {
   push @tex,
     $tab ? sprintf('%%tab row: %s, col: %s ', @{$tab}{qw(i_row i_col)}) : (),
     $wd ? sprintf('\setlength{\cellWidth}{%s}',$self->_len2tex($wd)) : ();
+  $DB::single = 1 if $rw->{'width_tex'};
 
   my @o;
   push @o,
@@ -1651,6 +1662,7 @@ sub _d2tex {
   }
 
   push @tex, $self->_wrapped($wrap,'end');
+  $DB::single = 1 if $rw->{width_tex};
 
   return @tex;
 }

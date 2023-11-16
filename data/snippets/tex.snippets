@@ -6,11 +6,60 @@ snippet iifba
 	% -------------------------------------
 	\ii{fbauth.<++>}
 	% -------------------------------------
+snippet sb
+	Сергей Буров
 snippet mpp
 	\begin{center}
 	\begin{minipage}{\textwidth}
 	\end{minipage}
 	\end{center}
+snippet bsk
+	\bigskip
+snippet od
+	Ольга Демідко
+snippet odm
+	Ольга Демідко (Маріуполь)
+snippet tv
+	Тетяна Веремєєва
+snippet iv
+	Яна Іванова
+snippet dn
+	donbas24.news
+snippet dnv
+	Донбас Новини
+snippet ep
+	Еліна Прокопчук
+snippet as
+	Алевтина Швецова
+snippet ns
+	Наталія Сорокіна
+snippet insod
+	\ii{insert.read_also.demidko.donbas24.<++>}
+snippet on
+	Олена Онєгіна
+snippet ir
+	Ігор Романов
+snippet mc
+	mrpl.city
+snippet odd
+	Ольга Демідко, donbas24.news
+snippet hrefvideo
+	\href{<++>}{%
+	Відео: <+title+>, <+author+>, <+date+>}%
+	\footnote{\url{<++>}} %
+	\footnote{\url{<++>}}
+snippet tbk
+	\titlebreak\ 
+snippet qt
+	\begin{quote}
+	  <++>
+	\end{quote}
+snippet vd
+	Відео: <++>
+snippet hp
+	\hyp{}
+snippet tbs
+	\textbackslash
 snippet prg
 	pic <++>
 	@ref <++>
@@ -266,13 +315,25 @@ snippet fig
 	fig_begin
 		<++>
 	fig_end
+snippet lb
+	\begin{leftbar}
+	   <++>
+	\end{leftbar}
+snippet pari
+	\par\noindent
 snippet leftbar
 	\begin{leftbar}
-		\begingroup
-			\bfseries
-				<++>
-		\endgroup
+	   <++>
 	\end{leftbar}
+snippet fub
+	\footnote{<+title+>, <+author+>, <+site+>, <+date+>, \par\url{<++>}}
+snippet fuba
+	\footnote{<+title+>, <+author+>, <+site+>, <+date+>, %
+	\par\url{<++>}, \par%
+	Internet Archive: \url{<++>}%
+	}
+snippet fu
+	\footnote{\url{<++>}}
 snippet lbbf
 	\begin{leftbar}
 		\begingroup
@@ -423,6 +484,8 @@ snippet head
 	  \em\color{blue}\bfseries\Large
 	  <++>
 	\end{center}
+snippet ipk
+	\ii{insert.author.port_kultur}
 snippet iod
 	\ii{insert.author.demidko_olga}
 snippet gl
@@ -491,16 +554,59 @@ snippet pictb2
 snippet pictb
 	
 	\ifcmt
-	  tab_begin cols=3,no_fig,center,separate
+	  tab_begin cols=3,no_fig,center,separate,no_numbering
 
 	     pic <++>
 
 	  tab_end
 	\fi
+snippet mds
+	\medskip
+snippet ard
+	https://archive.org/details/<++>
+snippet rada
+	\textbf{Читайте також:} \href{<+IA+>}{\emph{<+title+>}}%
+	\footnote{<+title+>, <+author+>, <+site+>, <+date+>, \par%
+	\url{<+url+>}, \par%
+	Internet Archive: \url{<+IA+>}%
+	}
+snippet radu
+	\textbf{Читайте також:} \href{<+url+>}{\emph{<+title+>}}%
+	\footnote{<+title+>, <+author+>, <+site+>, <+date+>, \par%
+	\url{<+url+>}%
+	}
+snippet rado
+	\textbf{Читайте також:} \emph{<+title+>}%
+	\footnote{<+title+>, <+author+>, <+site+>, <+date+>, \par%
+	\url{<+url+>}%
+	}
+snippet rad
+	\ii{defs.auth}
+	\def\pubIA{<+IA+>}
+	\def\pubTitle{<+title+>}
+	\def\pubDate{<+date+>}
+	\def\pubOrigin{<+url+>}
+	\def\pubAuthor{\pubAuthorDemidko}
+	\def\pubSite{<++>}
+	
+	\textbf{Читайте також:} \href{\pubIA}{%
+	\pubTitle, \pubAuthor, \pubSite, \pubDate}%
+	\footnote{\pubTitle, \pubAuthor, \pubSite, \pubDate, \par\url{\pubOrigin}, \par Internet Archive: \url{\pubIA}}
+snippet rad1
+	\textbf{Читайте також:} \href{<+IA+>}{%
+	<+title+>, Ольга Демідко, mrpl.city, <+date+>}%
+	\footnote{<+title+>, Ольга Демідко, mrpl.city, <+date+>, \par\url{<+url+>}, \par Internet Archive: \url{<+IA+>}}
 snippet cm
 	@comments%start
 	  <++>
 	@comments%end
+snippet pcc
+	pic <++>
+	@width 0.9
+	@caption_here <++>, джерело: сайт Історія Маріуполя
+	@caption_short <++>
+snippet cph
+	@caption_here <++>
 snippet cpg
 	@caption_long <++>
 snippet cp

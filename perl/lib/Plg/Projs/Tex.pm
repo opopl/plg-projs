@@ -553,6 +553,24 @@ our %fbicons_n = (
 
   "\N{U+2611}" => 'ballot.box.with.check',
 
+  "\N{U+1F4C4}" => 'page.facing.up',
+  "\N{U+1F387}" => 'firework.sparkler',
+  "\N{U+1FAB6}" => 'feather',
+  "\N{U+1F467}" => 'girl',
+  "\N{U+1F37C}" => 'baby.bottle',
+  "\N{U+1F37D}" => 'fork.and.knife.with.plate',
+  "\N{U+1F455}" => 'tshirt',
+  "\N{U+1F9FC}" => 'bar.of.soap',
+  "\N{U+1F6CF}" => 'bed',
+  "\N{U+1F465}" => 'busts.in.silhouette',
+  "\N{U+1F7E5}" => 'large.red.square',
+  "\N{U+1F3F0}" => 'european.castle',
+  "\N{U+1F3D8}" => 'house.buildings',
+  "\N{U+1F52C}" => 'microscope',
+  "\N{U+2695}" => 'staff.of.aesculapius',
+  "\N{U+1F3EF}" => 'japanese.castle',
+  "\N{U+1F985}" => 'eagle',
+  "\N{U+1F4BB}" => 'personal.computer',
   #'🎭' => 'performing.arts'
   "\N{U+1F3AD}" => 'performing.arts',
   "\N{U+2665}" => 'heart.suit',
@@ -749,6 +767,8 @@ our %fbicons_n = (
   "\N{U+1F1F3}\N{U+1F1F1}" => 'flag.nl',
   "\N{U+1F1E8}\N{U+1F1FF}" => 'flag.cz',
   "\N{U+1F1F7}\N{U+1F1FA}" => 'flag.rossia',
+  # LT
+  "\N{U+1F1F1}\N{U+1F1F9}" => 'flag.litva',
   # C A
   "\N{U+1F1E8}\N{U+1F1E6}" => 'flag.canada',
 
